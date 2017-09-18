@@ -1,0 +1,48 @@
+name: EduardAPI
+description: A melhor API ja criada pelo Eduard
+main: net.eduard.eduardapi.EduardAPI
+version: 1.0
+authors: [Eduard]
+soft-depend: [Essentials,Vault]
+website: https://www.youtube.com/user/EduTutoriaisHD
+commands:
+  antihack: 
+    description: Controle de Hacks e Bots
+    aliases: [antibot]
+    usage: /<command> help
+  map: 
+    description: Controle dos Mapas da API
+    aliases: [mapa]
+    usage: /<command> help
+  permission: 
+    description: Controle de Permissoes
+    aliases: [perm,permissao,grupo,group]
+    usage: /<command> help
+  economy: 
+    description: Controle de Economia
+    aliases: [dinheiro,eco,money]
+    usage: /<command> help
+  goto:
+    description: Teleportar para um Mundo
+    aliases: [world,go,ir,irpara,mundo]
+    usage: /<command> <world>
+  config:
+    description: Controle das Configs da API
+    aliases: [configs,config]
+    usage: /<command> help
+  api:
+    description: Comando principal da API
+    aliases: [eduardapi,eduard,e]
+    usage: /<command> help
+  enchant:
+    description: Aplicar encantamentos nos Itens
+    aliases: [enchantment]
+    usage: /<command> [enchant] [level] [player]
+  sound:
+    description: Tocar som do Minecraft
+    aliases: [som]
+    usage: /<command> <sound> [volume] [pitch] [player] [-world]
+  lag:
+    description: Controle e Remocao de Lag
+    aliases: [withoutlag,semlag,clearlag,tirarlag]
+    usage: /<command> help

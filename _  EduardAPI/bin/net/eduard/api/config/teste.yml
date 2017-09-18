@@ -1,0 +1,16 @@
+
+basico: valor
+lista: [item1 , item2]
+lista2: 
+- item1
+- item2
+mapa: {key: valor,outrokey: valor}
+lista3: []
+secao:
+  subsecao1: valor1
+  subsecao2: valor2
+
+#- {key:value}
+#- key:
+#    key: value
+#    affs: 3
