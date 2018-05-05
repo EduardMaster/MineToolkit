@@ -13,6 +13,7 @@ public class Explosion implements Storable{
 	private boolean breakBlocks;
 	private boolean makeFire;
 	public Explosion() {
+		
 	}
 	public Explosion(float power, boolean breakBlocks, boolean makeFire) {
 		super();

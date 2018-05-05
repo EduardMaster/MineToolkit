@@ -11,9 +11,9 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.click.PlayerClick;
-import net.eduard.api.click.PlayerClickEffect;
 import net.eduard.api.setup.Mine;
+import net.eduard.api.setup.click.PlayerClick;
+import net.eduard.api.setup.click.PlayerClickEffect;
 import net.eduard.api.setup.game.Ability;
 import net.eduard.api.setup.game.Jump;
 

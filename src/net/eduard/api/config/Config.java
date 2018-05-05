@@ -85,7 +85,6 @@ public class Config implements Storable {
 		this.name = name;
 		this.plugin = plugin;
 		init();
-		
 
 	}
 
@@ -101,7 +100,7 @@ public class Config implements Storable {
 			}
 		}
 		if (!contains) {
-//			System.out.println("avancar");
+			// System.out.println("avancar");
 			file = new File(plugin.getDataFolder(), name);
 			root = new ConfigSection("", "{}");
 			lines = new ArrayList<>();
@@ -109,8 +108,8 @@ public class Config implements Storable {
 			root.lineSpaces = 1;
 			this.root.father = root;
 			reloadConfig();
-		}else {
-//			System.out.println("voltar");
+		} else {
+			// System.out.println("voltar");
 		}
 	}
 
@@ -130,10 +129,10 @@ public class Config implements Storable {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				//			} else {
-//				plugin.saveResource(name, true);
-			}else {
-				if (plugin.getResource(name)!=null) {
+				// } else {
+				// plugin.saveResource(name, true);
+			} else {
+				if (plugin.getResource(name) != null) {
 					plugin.saveResource(name, true);
 				}
 			}

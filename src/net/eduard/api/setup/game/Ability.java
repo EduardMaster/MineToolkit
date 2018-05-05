@@ -12,8 +12,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.click.PlayerInteract;
 import net.eduard.api.setup.Mine;
+import net.eduard.api.setup.click.PlayerInteract;
 import net.eduard.api.setup.manager.CooldownManager;
 
 public class Ability extends CooldownManager {

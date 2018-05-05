@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.setup.StorageAPI.Copyable;
 import net.eduard.api.setup.manager.EffectManager;
+import net.eduard.api.setup.util.ClickEffect;
 
 public class Gui extends Menu implements Copyable {
 

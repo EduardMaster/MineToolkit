@@ -1,10 +1,17 @@
 package net.eduard.api.setup;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -30,17 +37,129 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 
 
 /**
  * API contendo coisas relacionado a Textos e Numeros
- * 
- * @author Eduard-PC
+ * @version 2.0
+ * @since Lib v2.0
+ * @author Eduard
  *
  */
 public final class Extra {
-	
+	/**
+	 * Pega um Objecto serializavel do Arquivo
+	 * 
+	 * @param file
+	 *            Arquivo
+	 * @return Objeto
+	 */
+	public static Object getSerializable(File file) {
+		if (!file.exists()) {
+			return null;
+		}
+		try {
+
+			FileInputStream getStream = new FileInputStream(file);
+			ObjectInputStream get = new ObjectInputStream(getStream);
+			Object object = get.readObject();
+			get.close();
+			getStream.close();
+			return object;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Salva um Objecto no Arquivo em forma de serialização Java
+	 * 
+	 * @param object
+	 *            Objeto (Dado)
+	 * @param file
+	 *            Arquivo
+	 */
+	public static void setSerializable(Object object, File file) {
+		try {
+			FileOutputStream saveStream = new FileOutputStream(file);
+			ObjectOutputStream save = new ObjectOutputStream(saveStream);
+			if (object instanceof Serializable) {
+				save.writeObject(object);
+			} else {
+			}
+			save.close();
+			saveStream.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Desfazr o ZIP do Arquivo
+	 * 
+	 * @param zipFilePath
+	 *            Arquivo
+	 * @param destDirectory
+	 *            Destino
+	 */
+	public static void unzip(String zipFilePath, String destDirectory)
+
+	{
+		try {
+			File destDir = new File(destDirectory);
+			if (!destDir.exists()) {
+				destDir.mkdir();
+			}
+			ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
+			ZipEntry entry = zipIn.getNextEntry();
+
+			while (entry != null) {
+				String filePath = destDirectory + File.separator + entry.getName();
+				if (!entry.isDirectory()) {
+					extractFile(zipIn, filePath);
+				} else {
+					File dir = new File(filePath);
+					dir.mkdir();
+				}
+				zipIn.closeEntry();
+				entry = zipIn.getNextEntry();
+			}
+			zipIn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Defaz o ZIP do Arquivo
+	 * 
+	 * @param zipIn
+	 *            Input Stream (Coneção de Algum Arquivo)
+	 * @param filePath
+	 *            Destino Arquivo
+	 */
+	public static void extractFile(ZipInputStream zipIn, String filePath) {
+		try {
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+			byte[] bytesIn = new byte[4096];
+			int read = 0;
+			while ((read = zipIn.read(bytesIn)) != -1) {
+				bos.write(bytesIn, 0, read);
+			}
+			bos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	/**
 	 * Pega uma lista de classes de uma package
 	 * 

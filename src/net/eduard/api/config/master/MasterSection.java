@@ -18,13 +18,14 @@ public class MasterSection {
 			String[] split = path.split(config.section);
 			String first = split[0];
 			String last = path.replace(first + config.section, "");
-			MasterSection section = new MasterSection(config,this, first);
+			MasterSection section = new MasterSection(config, this, first);
 			return section.getSection(last);
 		} else {
-			return new MasterSection(config,this, path.replace(config.section, ""));
+			return new MasterSection(config, this, path.replace(config.section, ""));
 		}
 	}
-	public MasterSection add(String path,Object value, String comments) {
+
+	public MasterSection add(String path, Object value, String comments) {
 		if (!contains(path)) {
 			return set(path, value, comments);
 		}
@@ -35,11 +36,8 @@ public class MasterSection {
 		MasterSection sec = getSection(path);
 		if (!sec.getParent().getMap().containsKey(sec.getKey())) {
 			for (String comment : comments) {
-				sec.getParent()
-						.getMap().put(
-								String.valueOf(MasterConfig.COMMENT)
-										+ sec.getParent().getMap().size(),
-								comment);
+				sec.getParent().getMap().put(String.valueOf(MasterConfig.COMMENT) + sec.getParent().getMap().size(),
+						comment);
 			}
 
 		}
@@ -47,31 +45,37 @@ public class MasterSection {
 		sec.setValue(value);
 		return sec;
 	}
+
 	public MasterSection remove(String path) {
 		MasterSection sec = getSection(path);
 		sec.getParent().remove(sec.getKey());
 		sec.setValue(null);
 		return sec;
 	}
+
 	public Object get(String path) {
 		return getSection(path).getValue();
 	}
+
 	public boolean contains(String path) {
 		return get(path) != null;
 	}
-	public MasterSection(MasterConfig config,MasterSection parent, String key) {
+
+	public MasterSection(MasterConfig config, MasterSection parent, String key) {
 		this.config = config;
 		this.setParent(parent);
 		this.setKey(key);
-		if (parent!=null) {
+		if (parent != null) {
 			this.value = parent.getMap().get(key);
 		}
 
 	}
+
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getMap() {
 		return (Map<String, Object>) value;
 	}
+
 	public boolean isRoot() {
 		return parent == null;
 	}
@@ -99,6 +103,5 @@ public class MasterSection {
 	public void setKey(String key) {
 		this.key = key;
 	}
-
 
 }

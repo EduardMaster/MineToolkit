@@ -22,6 +22,7 @@ public class MasterConfig {
 		}
 		return builder.toString();
 	}
+
 	public static String getSpaces(int size) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < size; i++) {
@@ -29,6 +30,7 @@ public class MasterConfig {
 		}
 		return builder.toString();
 	}
+
 	public static List<String> toLines(String line) {
 		List<String> lines = new ArrayList<>();
 		if (line.contains("\n")) {
@@ -40,6 +42,7 @@ public class MasterConfig {
 			lines.add(line);
 		return lines;
 	}
+
 	public static char COMMENT = '#';
 	public static char SAVE = '!';
 	public static char STRING_START = '\'';
@@ -73,9 +76,11 @@ public class MasterConfig {
 	protected int tabSize = TAB_SIZE;
 	protected int currentTab;
 	protected int spacesSkipped;
+
 	public MasterConfig() {
 		restartRead();
 	}
+
 	public MasterConfig(File folder, String name) {
 		restartRead();
 		this.folder = folder;
@@ -83,6 +88,7 @@ public class MasterConfig {
 		this.name = name;
 		reloadConfig();
 	}
+
 	public void saveResourceOf(Class<?> clz) {
 		try {
 			Files.deleteIfExists(file.toPath());
@@ -91,6 +97,7 @@ public class MasterConfig {
 			e.printStackTrace();
 		}
 	}
+
 	public void saveResource(boolean force) {
 		if (plugin != null) {
 			plugin.saveResource(name, force);
@@ -100,6 +107,7 @@ public class MasterConfig {
 			saveResourceOf(getClass());
 		}
 	}
+
 	public void saveDefaultConfig() {
 		saveResource(false);
 		reloadConfig();
@@ -134,34 +142,31 @@ public class MasterConfig {
 	protected void readContentFromFile() {
 		file.getParentFile().mkdirs();
 
-			BufferedReader reader;
-			try {
-				reader = Files.newBufferedReader(file.toPath(),
-						Charset.forName("UTF-8"));
-				text = new StringBuilder();
-				int first = 0;
-				String line = null;
-				while ((line = reader.readLine())!=null) {
-					if (first!=0) {
-						add(NEW_LINE);
-					}
-					add(line);
-					first++;
+		BufferedReader reader;
+		try {
+			reader = Files.newBufferedReader(file.toPath(), Charset.forName("UTF-8"));
+			text = new StringBuilder();
+			int first = 0;
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				if (first != 0) {
+					add(NEW_LINE);
 				}
-				reader.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				add(line);
+				first++;
 			}
-			
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	protected void writeContentToFile() {
 		file.getParentFile().mkdirs();
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(file.toPath(),
-					Charset.forName("UTF-8"));
+			BufferedWriter writer = Files.newBufferedWriter(file.toPath(), Charset.forName("UTF-8"));
 			writer.write(text.toString());
 			writer.close();
 		} catch (Exception e) {
@@ -171,16 +176,20 @@ public class MasterConfig {
 	protected void add(Object value) {
 		text.append(value);
 	}
+
 	protected void saveTab() {
 		add(getSpaces(tabSize * currentTab));
 	}
+
 	protected void saveNewLine() {
 		add(NEW_LINE);
 		saveTab();
 	}
+
 	private void resetText() {
 		this.text = new StringBuilder();
 	}
+
 	public void saveJson() {
 		resetText();
 
@@ -190,6 +199,7 @@ public class MasterConfig {
 			saveAsJson(value);
 		}
 	}
+
 	protected void saveAsJson(Object value) {
 		if (value instanceof Map) {
 			@SuppressWarnings("unchecked")
@@ -263,6 +273,7 @@ public class MasterConfig {
 		}
 		// writeContentToFile();
 	}
+
 	protected void saveOneLine(Object value) {
 		if (value instanceof Map) {
 			@SuppressWarnings("unchecked")
@@ -310,10 +321,12 @@ public class MasterConfig {
 			add(TEXT_END);
 		}
 	}
+
 	public void saveConfig() {
 		saveYaml();
 		writeContentToFile();
 	}
+
 	protected void saveAsYaml(Object value) {
 		if (value instanceof Map) {
 			@SuppressWarnings("unchecked")
@@ -361,6 +374,7 @@ public class MasterConfig {
 			add(value.toString());
 		}
 	}
+
 	public void saveYaml() {
 		resetText();
 		if (value == null) {
@@ -378,25 +392,30 @@ public class MasterConfig {
 		}
 		return root;
 	}
+
 	public Object getValue() {
 		return value;
 	}
+
 	public boolean contains(String path) {
 		return root.contains(path);
 	}
+
 	public void set(String path, Object value) {
 		root.set(path, value);
 	}
+
 	public Object get(String path, Object value) {
 		return root.get(path);
 	}
+
 	protected void expected(char value) {
 		expected(String.valueOf(value));
 	}
+
 	protected void expected(String value) {
 		System.out.println("\nErro na linha: " + (currentLine + 1));
-		System.out.println("->  "
-				+ String.copyValueOf(textChars, lastLine, currentLineIndex));
+		System.out.println("->  " + String.copyValueOf(textChars, lastLine, currentLineIndex));
 		System.out.println("->  " + getSpaces(currentLineIndex) + "^");
 		System.out.println("Esperava-se: ( " + value + " )");
 	}
@@ -410,6 +429,7 @@ public class MasterConfig {
 		}
 		return textChars[currentIndex];
 	}
+
 	protected void toNextChar() {
 
 		if (getCurrentChar() == NEW_LINE) {
@@ -420,24 +440,30 @@ public class MasterConfig {
 		currentLineIndex++;
 		currentIndex++;
 	}
+
 	protected char getNextChar() {
 		currentIndex++;
 		char value = getCurrentChar();
 		currentIndex--;
 		return value;
 	}
+
 	protected int ignoreSpaces() {
 		return skipChars(SPACE);
 	}
+
 	protected int ignoreSpacesAndNewLines() {
 		return skipChars(SPACE, NEW_LINE);
 	}
+
 	protected boolean findEnd() {
 		return currentIndex >= textChars.length;
 	}
+
 	public boolean hasRoot() {
 		return value instanceof Map;
 	}
+
 	public void reloadConfig() {
 		if (!isFolder()) {
 			if (file.exists()) {
@@ -447,6 +473,7 @@ public class MasterConfig {
 			}
 		}
 	}
+
 	public Object readEntry(Map<String, Object> map) {
 		try {
 			if (getCurrentChar() == COMMENT) {
@@ -462,6 +489,7 @@ public class MasterConfig {
 		}
 		return map;
 	}
+
 	public Object readObject() {
 
 		if (getCurrentChar() == MAP_START) {
@@ -530,26 +558,25 @@ public class MasterConfig {
 			if (findEnd()) {
 				return "";
 			}
-			 
-			//int last = spacesSkipped;
+
+			// int last = spacesSkipped;
 			ignoreSpacesAndNewLines();
 			int init = spacesSkipped;
 			if (getCurrentChar() == LIST_ITEM) {
-				
+
 				List<Object> list = new ArrayList<>();
-				while (!findEnd() && getCurrentChar() == LIST_ITEM
-						&& spacesSkipped == init) {
+				while (!findEnd() && getCurrentChar() == LIST_ITEM && spacesSkipped == init) {
 					list.add(readObject());
 					ignoreSpacesAndNewLines();
 				}
 				return list;
-			
+
 			} else {
 				LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 				while (!findEnd() && spacesSkipped == init) {
 					ignoreSpacesAndNewLines();
 					readEntry(map);
-					
+
 				}
 				return map;
 			}
@@ -572,8 +599,7 @@ public class MasterConfig {
 			toNextChar();
 			StringBuilder str = new StringBuilder();
 			while (!(findEnd())) {
-				if (getCurrentChar() == NEW_LINE
-						| getCurrentChar() == COMMENT) {
+				if (getCurrentChar() == NEW_LINE | getCurrentChar() == COMMENT) {
 					toNextChar();
 					break;
 				}
@@ -585,11 +611,8 @@ public class MasterConfig {
 
 			StringBuilder str = new StringBuilder();
 			while (!findEnd()) {
-				if (getCurrentChar() == ENTRY_DELIMITER
-						| getCurrentChar() == COMMENT
-						| getCurrentChar() == LIST_END
-						| getCurrentChar() == MAP_END
-						| getCurrentChar() == NEW_LINE) {
+				if (getCurrentChar() == ENTRY_DELIMITER | getCurrentChar() == COMMENT | getCurrentChar() == LIST_END
+						| getCurrentChar() == MAP_END | getCurrentChar() == NEW_LINE) {
 					// talves precise por
 					// toNextChar();
 					break;
@@ -601,6 +624,7 @@ public class MasterConfig {
 		}
 
 	}
+
 	protected int skipChars(char... charsToSkip) {
 		// lastSpacesSkipped = spacesSkipped;
 		spacesSkipped = 0;

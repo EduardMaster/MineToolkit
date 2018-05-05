@@ -11,11 +11,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import net.eduard.api.setup.Mine;
 import net.eduard.api.setup.manager.EventsManager;
+import net.eduard.api.setup.manager.FallManager;
 
 public class LaunchPad extends EventsManager {
 
 	public static final Map<World, Boolean> WORLDS = new HashMap<>();
-	public static final NoFall NO_FALL = new NoFall();
+	public static final FallManager NO_FALL = new FallManager();
 
 	private int blockHigh;
 	private int blockId = 20;

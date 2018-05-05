@@ -12,6 +12,7 @@ public class Chunk implements Variable, Copyable {
 	private int x, z;
 
 	public org.bukkit.Chunk getChunk() {
+	
 		return Bukkit.getWorld(world).getChunkAt(x, z);
 	}
 

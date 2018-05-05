@@ -19,6 +19,7 @@ import org.bukkit.scoreboard.Team;
 import net.eduard.api.setup.Mine;
 import net.eduard.api.setup.StorageAPI.Copyable;
 import net.eduard.api.setup.StorageAPI.Storable;
+import net.eduard.api.setup.lib.FakePlayer;
 
 @SuppressWarnings("deprecation")
 public class DisplayBoard implements Storable, Copyable {

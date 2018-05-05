@@ -10,9 +10,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.click.PlayerClickEntity;
-import net.eduard.api.click.PlayerClickEntityEffect;
 import net.eduard.api.setup.Mine;
+import net.eduard.api.setup.click.PlayerClickEntity;
+import net.eduard.api.setup.click.PlayerClickEntityEffect;
 import net.eduard.api.setup.game.Ability;
 
 public class TimeLord extends Ability {

@@ -19,8 +19,8 @@ import net.eduard.api.setup.Mine;
 import net.eduard.api.setup.VaultAPI;
 import net.eduard.api.setup.event.ScoreUpdateEvent;
 import net.eduard.api.setup.game.DisplayBoard;
-import net.eduard.api.setup.game.FakePlayer;
 import net.eduard.api.setup.game.Tag;
+import net.eduard.api.setup.lib.FakePlayer;
 
 public class PlayerManager extends TimeManager {
 	private boolean tagsEnabled;

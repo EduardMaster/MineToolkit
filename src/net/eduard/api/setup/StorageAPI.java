@@ -10,7 +10,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -25,10 +24,11 @@ import java.util.UUID;
  * SQL, YAML<br>
  * <br>
  * 
- * @see Esta classe é muito boa também {@link AutoBase}
+ * 
  * 
  * @author Eduard
- * @version 1.0
+ * @version 1.2
+ * @since Lib v1.0
  *
  */
 @SuppressWarnings("unchecked")
@@ -39,6 +39,7 @@ public final class StorageAPI {
 		if (enabled)
 			System.out.println("[StorageAPI] " + msg);
 	}
+	
 
 	/**
 	 * 
@@ -176,7 +177,7 @@ public final class StorageAPI {
 		public Object save(Object object);
 
 	}
-
+	
 	public static interface Copyable {
 		public default <E> E copy(E copied) {
 			E result = StorageAPI.copy(copied);
@@ -195,9 +196,14 @@ public final class StorageAPI {
 		public default void onCopy() {
 		}
 	}
+	@Target({ java.lang.annotation.ElementType.FIELD })
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface NoCopyable {
 
+	}
 	public static <E> E copy(E object) {
 		Class<? extends Object> claz = object.getClass();
+//		System.out.println("classe a ser copiada " + object + " e array? " + claz.isArray());
 		if (isList(claz)) {
 			List<Object> list = (List<Object>) object;
 			List<Object> newList = new ArrayList<>();
@@ -213,28 +219,34 @@ public final class StorageAPI {
 				newMap.put(copy(entry.getKey()), copy(entry.getValue()));
 			}
 			object = (E) newMap;
-
+		}else if (isCloneable(claz)) {
+			object = clone(object);
 		} else if (claz.isArray()) {
-			Object[] array = (Object[]) object;
-			object = (E) Arrays.copyOf(array, array.length);
+			int len = Array.getLength(object);
+			Object newArray = Array.newInstance(object.getClass().getComponentType(), len);
+			for (int index = 0; index < len; index++) {
+				Array.set(newArray, index, Array.get(object, index));
+			}
 		} else if (isPrimiteOrWrapper(claz) || isString(claz)) {
 
 		} else {
 			try {
+				
 				E newInstance = (E) object.getClass().newInstance();
 				while (!claz.equals(Object.class)) {
 					for (Field field : claz.getDeclaredFields()) {
 						if (Modifier.isStatic(field.getModifiers()))
 							continue;
-						if (Modifier.isTransient(field.getModifiers()))
+						if (field.isAnnotationPresent(NoCopyable.class))
 							continue;
+						
+						
 						field.setAccessible(true);
 						try {
 							Object value = field.get(object);
 							if (value != null) {
 								field.set(newInstance, copy(value));
 							}
-							field.setAccessible(true);
 
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -248,6 +260,10 @@ public final class StorageAPI {
 
 		}
 		return object;
+	}
+
+	public static boolean isCloneable(Class<?> claz) {
+		return Cloneable.class.isAssignableFrom(claz);
 	}
 
 	public static <E> E clone(E object) {
@@ -268,7 +284,7 @@ public final class StorageAPI {
 		} catch (Exception e) {
 
 		}
-		return null;
+		return object;
 	}
 
 	/**
@@ -388,7 +404,7 @@ public final class StorageAPI {
 		aliases.put(claz, storable == null ? claz.getSimpleName() : storable.alias());
 	}
 
-	public static void registerPackage(Class<?> clazzPlugin,String pack) {
+	public static void registerPackage(Class<?> clazzPlugin, String pack) {
 		log("PACKAGE " + pack);
 
 		List<Class<?>> classes = Extra.getClasses(clazzPlugin, pack);
@@ -411,6 +427,7 @@ public final class StorageAPI {
 		}
 		return store;
 	}
+
 	public static void autoRegisterClass(Class<?> claz) {
 
 		if (isRegistred(claz))
@@ -495,35 +512,6 @@ public final class StorageAPI {
 		return storages.containsKey(claz);
 	}
 
-	// public static List<String> invalidClasses = new ArrayList<>();
-
-
-	// public static void autoRegisterAlias(String alias) {
-	// if (isRegistred(alias))
-	// return;
-	// System.out.println(alias);
-	// Class<?> claz = null;
-	// for ()
-	// for (String pack : packages) {
-	// String name = pack + "." + alias;
-	// if (invalidClasses.contains(name))
-	// continue;
-	// try {
-	// claz = Class.forName(name);
-	// break;
-	// } catch (Exception e) {
-	// invalidClasses.add(name);
-	// }
-	// }
-	// if (claz != null) {
-	// if (!isRegistred(claz)) {
-	// if (isStorable(claz)) {
-	// register((Class<? extends Storable>) claz);
-	// }
-	// }
-	// }
-
-	// }
 
 	public static Object restoreObject(Type type, Object value) {
 		try {
@@ -978,6 +966,126 @@ public final class StorageAPI {
 
 	public static void registerPackage(Class<?> clazzForPackage) {
 		registerPackage(clazzForPackage, clazzForPackage.getName());
+	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 */
+
+	public static String toStr(Object obj) {
+		Class<? extends Object> c = obj.getClass();
+		StringBuilder b = new StringBuilder();
+		for (Field f : c.getDeclaredFields()) {
+			f.setAccessible(true);
+			if (Modifier.isTransient(f.getModifiers())) {
+				continue;
+			}
+
+			try {
+				Object value = f.get(obj);
+				if (value == null) {
+					b.append("-;");
+
+				} else {
+					if (StorageAPI.isList(f.getType())) {
+						int index = 0;
+						for (Object object : (List<Object>) value) {
+							if (index>0) {
+								b.append(",");
+							}else index++;
+							b.append(object);
+						}
+						
+					} else if (StorageAPI.isMap(f.getType())) {
+						int index = 0;
+						for (Entry<Object, Object> entrada : ((Map<Object, Object>) value).entrySet()) {
+							if (index>0) {
+								b.append(",");
+							}else index++;
+							b.append(entrada.getKey() + "=" + entrada.getValue());
+						}
+						
+					} else {
+						b.append(value );
+					}
+					b.append(";");
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		return b.toString();
+	}
+
+	public static <E> E toObj(String str, Class<E> e) {
+		String[] split = str.split(";");
+		E resultadoFinal = null;
+		try {
+			resultadoFinal = (E) e.newInstance();
+		} catch (InstantiationException | IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		int index = 0;
+		for (Field f : e.getDeclaredFields()) {
+			if (Modifier.isTransient(f.getModifiers())) {
+				continue;
+			}
+			f.setAccessible(true);
+
+			try {
+				Object toModify = split[index];
+				if (toModify.equals("-")) {
+					toModify = null;
+				} else if (StorageAPI.isList(f.getType())) {
+
+					Class<?> type = StorageAPI.getTypeKey(f.getGenericType());
+					String[] subSplit = toModify.toString().split(",");
+					List<Object> list = new ArrayList<>();
+					for (String pedaco : subSplit) {
+						if (pedaco.isEmpty())
+							continue;
+						list.add(Extra.getResult(Extra.class, "to" + Extra.toTitle(type.getSimpleName()),
+								new Object[] { Object.class }, pedaco));
+					}
+					toModify = list;
+				} else if (StorageAPI.isMap(f.getType())) {
+
+					Class<?> key = StorageAPI.getTypeKey(f.getGenericType());
+					Class<?> value = StorageAPI.getTypeValue(f.getGenericType());
+					String[] subSplit = toModify.toString().split(",");
+					Map<Object, Object> mapa = new HashMap<>();
+					for (String pedaco : subSplit) {
+						String[] corte = pedaco.split("=");
+						Object chave = Extra.getResult(Extra.class, "to" + Extra.toTitle(key.getSimpleName()),
+								new Object[] { Object.class }, corte[0]);
+
+						Object valor = Extra.getResult(Extra.class, "to" + Extra.toTitle(value.getSimpleName()),
+								new Object[] { Object.class }, corte[1]);
+						mapa.put(chave, valor);
+					}
+					toModify = mapa;
+				} else {
+					toModify = Extra.getResult(Extra.class, "to" + Extra.toTitle(f.getType().getSimpleName()),
+							new Object[] { Object.class }, toModify);
+				}
+				f.set(resultadoFinal, toModify);
+			} catch (IllegalArgumentException | IllegalAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			index++;
+		}
+
+		return resultadoFinal;
+
 	}
 
 }

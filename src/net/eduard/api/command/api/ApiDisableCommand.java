@@ -9,7 +9,7 @@ import net.eduard.api.setup.manager.CommandManager;
 public class ApiDisableCommand extends CommandManager {
 
 	public ApiDisableCommand() {
-		super("reload");
+		super("disable","desabilitar");
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,

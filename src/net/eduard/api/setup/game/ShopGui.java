@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.setup.Mine;
 import net.eduard.api.setup.VaultAPI;
+import net.eduard.api.setup.util.ClickEffect;
 
 public class ShopGui extends Menu {
 

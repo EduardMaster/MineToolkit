@@ -14,6 +14,7 @@ public class GameTeam {
 	private int maxSize;
 
 	public GameTeam() {
+		
 	}
 
 	public GameTeam(Game game) {

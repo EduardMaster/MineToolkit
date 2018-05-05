@@ -24,10 +24,10 @@ public class MapLoadCommand extends CommandManager {
 			if (Mine.onlyPlayer(sender)) {
 				Player p = (Player) sender;
 				if (Mine.SCHEMATICS.containsKey(args[1].toLowerCase())) {
-//					Mine.MAPS.put(p, Mine.SCHEMATICS.get(args[1].toLowerCase()));
-					p.sendMessage("§bEduardMine §6Mapa carregado com sucesso!");
+					Mine.MAPS.put(p, Mine.SCHEMATICS.get(args[1].toLowerCase()));
+					p.sendMessage("§bEduardAPI §6Mapa carregado com sucesso!");
 				} else {
-					p.sendMessage("§bEduardMine §cMapa invalido: §f" + args[1]);
+					p.sendMessage("§bEduardAPI §cMapa invalido: §f" + args[1]);
 				}
 
 			}

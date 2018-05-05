@@ -1,6 +1,5 @@
 package net.eduard.api.setup;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -13,10 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -34,12 +30,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.UUID;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -48,6 +41,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -76,12 +70,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
-import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -103,15 +98,14 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import net.eduard.api.config.Config;
-import net.eduard.api.config.ConfigSection;
-import net.eduard.api.server.event.PlayerTargetEvent;
 import net.eduard.api.setup.StorageAPI.Storable;
 import net.eduard.api.setup.StorageAPI.Variable;
-import net.eduard.api.setup.game.FakePlayer;
+import net.eduard.api.setup.event.PlayerTargetEvent;
 import net.eduard.api.setup.game.Schematic;
 import net.eduard.api.setup.game.Sounds;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.setup.lib.FakePlayer;
+import net.eduard.api.setup.lib.Item;
+import net.eduard.api.setup.manager.EmptyWorldGenerator;
 import net.eduard.api.setup.manager.PlayerManager;
 import net.eduard.api.setup.manager.TimeManager;
 
@@ -122,11 +116,38 @@ import net.eduard.api.setup.manager.TimeManager;
  * @version 3.0
  */
 public final class Mine {
-
-	
+	public boolean isBeaconPlaced(Location loc) {
+		int yMin = loc.getBlockY();
+		int xMin = loc.getBlockX();
+		int zMin = loc.getBlockZ();
+		boolean is = false;
+		for (int y = yMin; y < yMin + 5; y++) {
+			for (int x = xMin - 2; x > xMin + 2; x++) {
+				for (int z = zMin - 2; x > zMin + 2; z++) {
+					Location subloc = new Location(loc.getWorld(), x, y, z);
+					if (subloc.getBlock().getType() == Material.BEACON) {
+						is = true;
+					} else
+						is = false;
+				}
+			}
+		}
+		return is;
+	}
+	/**
+	 * Gerenciador dos jogadores
+	 */
 	private static PlayerManager playerManager;
-	
 
+	/**
+	 * Pega classes de um plugin pela Classe
+	 * 
+	 * @param plugin
+	 *            Plugin
+	 * @param pkgname
+	 *            Pacote
+	 * @return Lista de Classes
+	 */
 	public static List<Class<?>> getClasses(JavaPlugin plugin, String pkgname) {
 		List<Class<?>> lista = new ArrayList<>();
 		try {
@@ -140,50 +161,56 @@ public final class Mine {
 
 		return lista;
 	}
+
+	/**
+	 * Pega classes de um plugin pela package da Classe
+	 * 
+	 * @param plugin
+	 *            Plugin
+	 * @param clazzName
+	 *            Classe
+	 * @return Lista de Classes
+	 */
 	public static List<Class<?>> getClasses(JavaPlugin plugin, Class<?> clazzName) {
 		return getClasses(plugin, clazzName.getPackage().getName());
 	}
-	
 
-	/***
-	 * ----------------------------------------------------------
+	/**
+	 * Pega classes de um plugin pela package da Classe que implementam Listener
 	 * 
+	 * @param plugin
+	 *            Plugin
+	 * @param clazzName
+	 *            Classe
+	 * @return Lista de Classes de Listener
 	 */
-
-	
-
-	public static List<Class<?>> getListeners(JavaPlugin plugin,String packname) {
+	public static List<Class<?>> getListeners(JavaPlugin plugin, String packname) {
 
 		return getClasses(plugin, packname).stream().filter(classe -> classe != null)
 				.filter(classe -> Listener.class.isAssignableFrom(classe)).collect(Collectors.toList());
 	}
-	
-	
-	/*  
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
 
-	/**
+	/*
 	 * Mapa de Arenas registradas
 	 */
 	public static Map<String, Schematic> SCHEMATICS = new HashMap<>();
-	/**
-	 * Mapa das posições 1 dos jogadores
-	 */
-	public static Map<Player, Location> POSITION1 = new HashMap<>();
-	/**
-	 * Mapa das posições 2 dos jogadores
-	 */
-	public static Map<Player, Location> POSITION2 = new HashMap<>();
+
+	public static Map<Player, Schematic> MAPS = new HashMap<>();
+
+	public static Schematic getSchematic(Player player) {
+		Schematic schema = MAPS.get(player);
+		if (schema == null) {
+			MAPS.put(player, schema = new Schematic());
+		}
+		return schema;
+	}
+
 	/**
 	 * Som do rosnar do gato
 	 */
 	public static final Sounds ROSNAR = Sounds.create("CAT_PURR");
 
-	public static Config MAPS_CONFIG;
+	public static ConfigAPI MAPS_CONFIG;
 
 	/**
 	 * Mensagem de quando console digita um comando
@@ -269,31 +296,12 @@ public final class Mine {
 	public static TimeManager TIME;
 
 	/**
-	 * Mapa dos Comandos do Servidor
-	 */
-	// private static Map<String, Command> commands = new HashMap<>();
-
-	public static boolean hasPos1(Player p) {
-		return POSITION1.get(p) != null;
-	}
-
-	public static boolean hasPos2(Player p) {
-		return POSITION2.get(p) != null;
-	}
-
-	public static Schematic getSchematic(Player player) {
-		// return new Schematic(player.getLocation(), POSITION1.get(player),
-		// POSITION2.get(player));
-		return null;
-	}
-
-	/**
 	 * Ligando algumas coisas
 	 */
 	static {
 		try {
 			TIME = new TimeManager(getMainPlugin());
-			MAPS_CONFIG = new Config(getMainPlugin(), "maps.yml");
+			MAPS_CONFIG = new ConfigAPI("maps/", getMainPlugin());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -395,30 +403,6 @@ public final class Mine {
 
 	}
 
-	@SafeVarargs
-	public static void commands(ConfigSection section, CommandManager... cmds) {
-		for (CommandManager cmd : cmds) {
-			try {
-
-				String name = cmd.getName();
-				if (section != null) {
-					if (section.contains(name)) {
-						cmd = (CommandManager) section.get(name);
-
-					}
-
-				}
-				cmd.register();
-				if (section != null) {
-					section.add(name, cmd);
-
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	public static boolean noConsole(CommandSender sender) {
 
 		if (!(sender instanceof Player)) {
@@ -482,6 +466,11 @@ public final class Mine {
 		return applyScoreboard(player, title, lines);
 	}
 
+	/**
+	 * Pega o plugin que ligo a Mine
+	 * 
+	 * @return Plugin
+	 */
 	public static JavaPlugin getMainPlugin() {
 		return JavaPlugin.getProvidingPlugin(Mine.class);
 	}
@@ -490,6 +479,7 @@ public final class Mine {
 		Mine.send(sender, message);
 
 	}
+
 	@SuppressWarnings("deprecation")
 	public static Scoreboard applyScoreboard(Player player, String title, String... lines) {
 		Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -510,21 +500,21 @@ public final class Mine {
 		player.setScoreboard(board);
 		return board;
 	}
-	/*
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
 
+	/**
+	 * Checa se Chunk1 é igual a Chunk2
+	 * 
+	 * @param chunk1
+	 * @param chunk2
+	 * @return
+	 */
 	public static boolean equals(Chunk chunk1, Chunk chunk2) {
 		return chunk1.getX() == chunk2.getX() && chunk1.getZ() == chunk2.getZ();
 	}
 
-	/*
+	/**
 	 * Abrir um Menu Gui paginado
-	 * 
-	 * 
+	 *
 	 */
 	public static void openGui(Player player, List<ItemStack> lista, int pagina, int divisao, String nome, int linhas,
 			int index, int voltarSlot, int avancarSlot) {
@@ -557,6 +547,16 @@ public final class Mine {
 
 	}
 
+	public static ItemStack newBook(String name, String title, String author, String... pages) {
+		ItemStack item = newItem(Material.WRITTEN_BOOK, name);
+		BookMeta meta = (BookMeta) item.getItemMeta();
+		meta.addPage(pages);
+		meta.setAuthor(author);
+		meta.setTitle(title);
+		item.setItemMeta(meta);
+		return item;
+	}
+
 	public static List<Chunk> getChunks(Location location, int amount, int size) {
 		List<Chunk> lista = new ArrayList<>();
 		Chunk chunkInicial = location.getChunk();
@@ -577,283 +577,11 @@ public final class Mine {
 		return lista;
 	}
 
-	public static void registerDefaults() {
-		StorageAPI.register(Item.class, new Item());
-
-		StorageAPI.register(MaterialData.class, new Variable() {
-
-			@SuppressWarnings("deprecation")
-			@Override
-			public Object save(Object object) {
-				if (object instanceof MaterialData) {
-					MaterialData materialData = (MaterialData) object;
-					return materialData.getItemTypeId() + ":" + materialData.getData();
-
-				}
-				return null;
-			}
-
-			@SuppressWarnings("deprecation")
-			@Override
-			public Object get(Object object) {
-				if (object instanceof String) {
-					String string = (String) object;
-					try {
-						String[] split = string.split(":");
-						return new MaterialData(Material.getMaterial(Mine.toInt(split[0])), Mine.toByte(split[1]));
-					} catch (Exception e) {
-						new MaterialData(Material.STONE);
-					}
-
-				}
-				return null;
-			}
-		});
-		StorageAPI.register(Vector.class, new Storable() {
-
-			@Override
-			public Object restore(Map<String, Object> map) {
-				return new Vector();
-			}
-
-			@Override
-			public void store(Map<String, Object> map, Object object) {
-
-			}
-
-			@Override
-			public String alias() {
-				return "Vector";
-			}
-		});
-		StorageAPI.register(Enchantment.class, new Variable() {
-
-			@SuppressWarnings("deprecation")
-			@Override
-			public Object save(Object object) {
-				if (object instanceof Enchantment) {
-					Enchantment enchantment = (Enchantment) object;
-					return enchantment.getId();
-
-				}
-				return null;
-			}
-
-			@SuppressWarnings("deprecation")
-			@Override
-			public Object get(Object object) {
-				if (object instanceof String) {
-					String string = (String) object;
-					return Enchantment.getById(Extra.toInt(string));
-
-				}
-				return null;
-			}
-		});
-		StorageAPI.register(PotionEffectType.class, new Variable() {
-
-			@Override
-			public Object get(Object object) {
-				if (object instanceof String) {
-
-					String string = (String) object;
-					String[] split = string.split(";");
-					return PotionEffectType.getByName(split[1]);
-				}
-				return null;
-			}
-
-			@SuppressWarnings("deprecation")
-			@Override
-			public Object save(Object object) {
-				if (object instanceof PotionEffectType) {
-					PotionEffectType potionEffectType = (PotionEffectType) object;
-					return potionEffectType.getName() + ";" + potionEffectType.getId();
-
-				}
-				return null;
-			}
-
-		});
-		StorageAPI.register(PotionEffect.class, new Variable() {
-
-			@Override
-			public Object save(Object object) {
-				return null;
-			}
-
-			@Override
-			public Object get(Object object) {
-				return new PotionEffect(PotionEffectType.SPEED, 20, 0);
-			}
-		});
-		StorageAPI.register(OfflinePlayer.class, new Variable() {
-
-			@Override
-			public Object get(Object object) {
-				if (object instanceof String) {
-					String id = (String) object;
-					String[] split = id.split(";");
-					return new FakePlayer(split[0], UUID.fromString(split[1]));
-
-				}
-				return null;
-			}
-
-			@Override
-			public Object save(Object object) {
-				if (object instanceof OfflinePlayer) {
-					OfflinePlayer p = (OfflinePlayer) object;
-					return p.getName() + ";" + p.getUniqueId().toString();
-
-				}
-				return null;
-			}
-
-		});
-		StorageAPI.register(Location.class, new Storable() {
-
-			@Override
-			public Object restore(Map<String, Object> map) {
-				return new Location(Bukkit.getWorlds().get(0), 1, 1, 1);
-			}
-
-			@Override
-			public void store(Map<String, Object> map, Object object) {
-			}
-
-			@Override
-			public String alias() {
-				return "Location";
-			}
-
-		});
-
-		StorageAPI.register(Chunk.class, new Variable() {
-
-			@Override
-			public Object get(Object object) {
-				if (object instanceof String) {
-					String string = (String) object;
-					String[] split = string.split(";");
-					return Bukkit.getWorld(split[0]).getChunkAt(Extra.toInt(split[1]), Extra.toInt(split[2]));
-
-				}
-				return null;
-			}
-
-			@Override
-			public Object save(Object object) {
-				if (object instanceof Chunk) {
-					Chunk chunk = (Chunk) object;
-					return chunk.getWorld().getName() + ";" + chunk.getX() + ";" + chunk.getZ();
-				}
-
-				return null;
-			}
-
-		});
-
-		StorageAPI.register(World.class, new Variable() {
-			@Override
-			public Object get(Object object) {
-				if (object instanceof String) {
-					String world = (String) object;
-					return Bukkit.getWorld(world);
-
-				}
-				return null;
-			}
-
-			@Override
-			public Object save(Object object) {
-				if (object instanceof World) {
-					World world = (World) object;
-					return world.getName();
-
-				}
-				return null;
-			}
-		});
-		StorageAPI.register(ItemStack.class, new Storable() {
-			@Override
-			public Object restore(Map<String, Object> map) {
-				int id = Extra.toInt(map.get("id"));
-				int amount = Extra.toInt(map.get("amount"));
-				int data = Extra.toInt(map.get("data"));
-				@SuppressWarnings("deprecation")
-				ItemStack item = new ItemStack(id, amount, (short) data);
-				String name = Extra.toChatMessage((String) map.get("name"));
-				if (!name.isEmpty()) {
-					Mine.setName(item, name);
-				}
-				@SuppressWarnings("unchecked")
-				List<String> lore = Extra.toMessages((List<Object>) map.get("lore"));
-				if (!lore.isEmpty()) {
-					Mine.setLore(item, lore);
-				}
-				String enchants = (String) map.get("enchants");
-				if (!enchants.isEmpty()) {
-					if (enchants.contains(", ")) {
-						String[] split = enchants.split(", ");
-						for (String enchs : split) {
-							String[] sub = enchs.split("-");
-							@SuppressWarnings("deprecation")
-							Enchantment ench = Enchantment.getById(Extra.toInt(sub[0]));
-							Integer level = Extra.toInt(sub[1]);
-							item.addUnsafeEnchantment(ench, level);
-
-						}
-					} else {
-						String[] split = enchants.split("-");
-						@SuppressWarnings("deprecation")
-						Enchantment ench = Enchantment.getById(Extra.toInt(split[0]));
-						Integer level = Extra.toInt(split[1]);
-						item.addUnsafeEnchantment(ench, level);
-
-					}
-				}
-				return item;
-			}
-
-			@Override
-			public String alias() {
-				return "Item";
-			}
-
-			@SuppressWarnings("deprecation")
-			@Override
-			public void store(Map<String, Object> map, Object object) {
-				if (object instanceof ItemStack) {
-					ItemStack item = (ItemStack) object;
-					map.remove("durability");
-					map.remove("meta");
-					map.remove("type");
-					map.put("id", item.getTypeId());
-					map.put("data", item.getDurability());
-					map.put("amount", item.getAmount());
-					map.put("name", Mine.getName(item));
-					map.put("lore", Mine.getLore(item));
-					String enchants = "";
-					if (item.getItemMeta().hasEnchants()) {
-						StringBuilder str = new StringBuilder();
-						int id = 0;
-						for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
-							if (id > 0)
-								str.append(", ");
-							Enchantment enchantment = entry.getKey();
-							str.append(enchantment.getId() + "-" + entry.getValue());
-							id++;
-						}
-						enchants = str.toString();
-					}
-					map.put("enchants", enchants);
-				}
-
-			};
-		});
-	}
-
+	/**
+	 * Criar um coração vermelho
+	 * 
+	 * @return
+	 */
 	public static String getRedHeart() {
 		return ChatColor.RED + "♥";
 	}
@@ -862,166 +590,13 @@ public final class Mine {
 		return text.length() > lenght ? text.substring(0, lenght) : text;
 	}
 
-	public static class Item extends ItemStack implements Variable {
-
-		@SuppressWarnings("deprecation")
-		public Item(int id) {
-			super(id);
-		}
-
-		@SuppressWarnings("deprecation")
-		public Item() {
-			super(1);
-		}
-
-		@SuppressWarnings("deprecation")
-		public Item(int id, int amount, int data, String name, String... lore) {
-			setTypeId(id);
-			setAmount(amount);
-			setDurability((short) data);
-			ItemMeta meta = getItemMeta();
-			meta.setDisplayName(name);
-			;
-			meta.setLore(Arrays.asList(lore));
-			;
-			this.setItemMeta(meta);
-		}
-
-		/**
-		 * id:data-qnt;enchId-enchData,enchId-enchData;nome;descriao1,descricao2
-		 */
-		@SuppressWarnings("deprecation")
-		@Override
-		public Object get(Object object) {
-			if (object instanceof String) {
-				String text = (String) object;
-
-				try {
-					String[] split = text.split(";");
-					String[] splitData = split[0].split("-");
-					Integer qnt = Mine.toInt(splitData[1]);
-					String[] splitInfo = splitData[0].split(":");
-					Integer id = Mine.toInt(splitInfo[0]);
-					short data = Mine.toShort(splitInfo[1]);
-					ItemStack item = new Item();
-					item.setTypeId(id);
-					item.setDurability(data);
-					item.setAmount(qnt);
-					if (split.length > 0) {
-						if (split[1].contains(",")) {
-							String[] enchs = split[1].split(",");
-							for (String enchant : enchs) {
-								String[] ench = enchant.split("-");
-								Integer ench_id = Mine.toInt(ench[0]);
-								Integer ench_level = Mine.toInt(ench[1]);
-								item.addUnsafeEnchantment(Enchantment.getById(ench_id), ench_level);
-							}
-						} else {
-							if (!split[1].equals(" ")) {
-								String[] ench = split[1].split("-");
-								Integer ench_id = Mine.toInt(ench[0]);
-								Integer ench_level = Mine.toInt(ench[1]);
-								item.addUnsafeEnchantment(Enchantment.getById(ench_id), ench_level);
-							}
-
-						}
-					}
-					ItemMeta meta = item.getItemMeta();
-					if (split.length > 1) {
-						String nome = split[2];
-						if (!nome.equals(" ")) {
-							meta.setDisplayName(Extra.toChatMessage(nome));
-						}
-					}
-					if (split.length > 2) {
-						List<String> lista = new ArrayList<>();
-						String descricao = split[3];
-						if (descricao.contains(",")) {
-							String[] lore = descricao.split(",");
-							for (String line : lore) {
-								lista.add(Extra.toChatMessage(line));
-							}
-						} else {
-							if (!descricao.equals(" ")) {
-								lista.add(descricao);
-							}
-
-						}
-						meta.setLore(lista);
-					}
-					item.setItemMeta(meta);
-
-					return item;
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					return new Item(1);
-				}
-
-			}
-			return null;
-		}
-
-		@SuppressWarnings("deprecation")
-		@Override
-		public Object save(Object object) {
-			if (object instanceof ItemStack) {
-				ItemStack item = (ItemStack) object;
-				StringBuilder textao = new StringBuilder();
-				textao.append(item.getTypeId() + ":" + item.getDurability() + "-" + item.getAmount() + ";");
-				ItemMeta meta = item.getItemMeta();
-				if (meta != null) {
-
-					if (meta.hasEnchants()) {
-						boolean first = true;
-						for (Entry<Enchantment, Integer> enchant : item.getItemMeta().getEnchants().entrySet()) {
-							if (!first) {
-								textao.append(",");
-							} else
-								first = false;
-							textao.append(enchant.getKey().getId());
-							textao.append("-");
-							textao.append(enchant.getValue());
-						}
-					} else {
-						textao.append(" ");
-					}
-					textao.append(";");
-					if (item.getItemMeta().hasDisplayName()) {
-						textao.append(item.getItemMeta().getDisplayName());
-					} else {
-						textao.append(" ");
-					}
-					textao.append(";");
-					if (meta.hasLore()) {
-						boolean first = true;
-						for (String line : meta.getLore()) {
-							if (!first) {
-								textao.append(",");
-							} else
-								first = false;
-							textao.append(line);
-						}
-
-					} else {
-						textao.append(" ");
-					}
-					textao.append(";");
-				}
-				return textao.toString();
-			}
-			return null;
-		}
-
-	}
-
-	public static ItemStack reloadItem(String text) {
-		return (ItemStack) new Item().get(text);
-	}
-
-	public static String saveItem(ItemStack item) {
-		return (String) new Item().save(item);
-	}
+//	public static ItemStack reloadItem(String text) {
+//		return (ItemStack) new Item().get(text);
+//	}
+//
+//	public static String saveItem(ItemStack item) {
+//		return (String) new Item().save(item);
+//	}
 
 	public static ItemStack newBanner() {
 		ItemStack banner = new ItemStack(Material.BANNER);
@@ -1103,13 +678,6 @@ public final class Mine {
 			player.sendMessage(message);
 		}
 
-	}
-
-	private static Map<String, Replacer> replacers = new HashMap<>();
-
-	public static interface Replacer {
-
-		Object getText(Player p);
 	}
 
 	public static void resetScoreboards() {
@@ -1317,7 +885,7 @@ public final class Mine {
 	}
 
 	public static boolean hasMine() {
-		return hasPlugin("EduardMine");
+		return hasPlugin("EduardAPI");
 	}
 
 	public static Scoreboard getMainScoreboard() {
@@ -2808,115 +2376,24 @@ public final class Mine {
 		text.append(location.getPitch());
 		return text.toString();
 	}
-
-	/**
-	 * Pega um Objecto serializavel do Arquivo
-	 * 
-	 * @param file
-	 *            Arquivo
-	 * @return Objeto
-	 */
-	public static Object getSerializable(File file) {
-		if (!file.exists()) {
-			return null;
-		}
-		try {
-
-			FileInputStream getStream = new FileInputStream(file);
-			ObjectInputStream get = new ObjectInputStream(getStream);
-			Object object = get.readObject();
-			get.close();
-			getStream.close();
-			return object;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		return null;
+	
+	public static Vector toVector(String text) {
+		String[] split = text.split(",");
+	
+		double x = Double.parseDouble(split[0]);
+		double y = Double.parseDouble(split[1]);
+		double z = Double.parseDouble(split[2]);
+		
+		return new Vector(x, y, z);
 	}
 
-	/**
-	 * Salva um Objecto no Arquivo em forma de serialização Java
-	 * 
-	 * @param object
-	 *            Objeto (Dado)
-	 * @param file
-	 *            Arquivo
-	 */
-	public static void setSerializable(Object object, File file) {
-		try {
-			FileOutputStream saveStream = new FileOutputStream(file);
-			ObjectOutputStream save = new ObjectOutputStream(saveStream);
-			if (object instanceof Serializable) {
-				save.writeObject(object);
-			} else {
-			}
-			save.close();
-			saveStream.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-	}
-
-	/**
-	 * Desfazr o ZIP do Arquivo
-	 * 
-	 * @param zipFilePath
-	 *            Arquivo
-	 * @param destDirectory
-	 *            Destino
-	 */
-	public static void unzip(String zipFilePath, String destDirectory)
-
-	{
-		try {
-			File destDir = new File(destDirectory);
-			if (!destDir.exists()) {
-				destDir.mkdir();
-			}
-			ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
-			ZipEntry entry = zipIn.getNextEntry();
-
-			while (entry != null) {
-				String filePath = destDirectory + File.separator + entry.getName();
-				if (!entry.isDirectory()) {
-					extractFile(zipIn, filePath);
-				} else {
-					File dir = new File(filePath);
-					dir.mkdir();
-				}
-				zipIn.closeEntry();
-				entry = zipIn.getNextEntry();
-			}
-			zipIn.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	/**
-	 * Defaz o ZIP do Arquivo
-	 * 
-	 * @param zipIn
-	 *            Input Stream (Coneção de Algum Arquivo)
-	 * @param filePath
-	 *            Destino Arquivo
-	 */
-	public static void extractFile(ZipInputStream zipIn, String filePath) {
-		try {
-			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
-			byte[] bytesIn = new byte[4096];
-			int read = 0;
-			while ((read = zipIn.read(bytesIn)) != -1) {
-				bos.write(bytesIn, 0, read);
-			}
-			bos.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+	public static String saveVector(Vector vector) {
+		StringBuilder text = new StringBuilder();
+	
+		text.append(vector.getX() + ",");
+		text.append(vector.getY() + ",");
+		text.append(vector.getZ() + ",");
+		return text.toString();
 	}
 
 	/**
@@ -3021,11 +2498,13 @@ public final class Mine {
 	public static void unloadWorld(String name) {
 		World world = Bukkit.getWorld(name);
 		if (world != null) {
+			World mundoPadrao = Bukkit.getWorlds().get(0);
 			for (Player p : world.getPlayers()) {
-				p.kickPlayer("§cRestarting Server!");
+				p.teleport(mundoPadrao.getSpawnLocation());
 			}
+			
 		}
-		Bukkit.unloadWorld(name, false);
+		Bukkit.unloadWorld(name, true);
 	}
 
 	public static void deleteFolder(File file) {
@@ -3048,23 +2527,21 @@ public final class Mine {
 		unloadWorld(toWorld);
 		deleteWorld(toWorld);
 		copyWorldFolder(getWorldFolder(fromWorld), getWorldFolder(toWorld));
-		WorldCreator copy = new WorldCreator(toWorld);
-		copy.createWorld();
+		loadWorld(toWorld);
 	}
 
 	public static World loadWorld(String name) {
-		return new WorldCreator(name).createWorld();
+		return new WorldCreator(name).generator(new EmptyWorldGenerator()).createWorld();
 	}
 
 	public static World newEmptyWorld(String worldName) {
-		World world = new WorldCreator(worldName).generator(new EmptyWorldGenerator()).createWorld();
+		World world = loadWorld(worldName);
 		world.setSpawnLocation(100, 100, 100);
 		return world;
 	}
 
 	public static File getWorldFolder(String name) {
-		File file = new File(Bukkit.getWorldContainer().getParentFile(), name);
-		return file;
+		return new File(Bukkit.getWorldContainer(), name);
 	}
 
 	public static Location getHighLocation(Location loc1, Location loc2) {
@@ -3281,245 +2758,6 @@ public final class Mine {
 
 	public static ArrayList<String> getAsciiCompass(double inDegrees, String colorActive, String colorDefault) {
 		return getAsciiCompass(getCompassPointForDirection(inDegrees), colorActive, colorDefault);
-	}
-
-	/**
-	 * Gerador de Mundo Vasio
-	 * 
-	 * @author Eduard
-	 *
-	 */
-	public static class EmptyWorldGenerator extends ChunkGenerator {
-
-		@Override
-		public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ,
-				ChunkGenerator.BiomeGrid biomeGrid) {
-			byte[][] result = new byte[world.getMaxHeight() / 16][];
-			return result;
-		}
-
-		@Override
-		public Location getFixedSpawnLocation(World world, Random random) {
-			return new Location(world, 100, 100, 100);
-		}
-
-		public void setBlock(byte[][] result, int x, int y, int z, byte blockID) {
-			if (result[(y >> 4)] == null) {
-				result[(y >> 4)] = new byte[4096];
-			}
-			result[(y >> 4)][((y & 0xF) << 8 | z << 4 | x)] = blockID;
-		}
-
-		@SuppressWarnings("deprecation")
-		public byte getId(Material material) {
-			return (byte) material.getId();
-		}
-
-		public byte getId(Material material, short data) {
-			return 0;
-		}
-
-		public void setLayer(byte[][] result, int level, Material material) {
-			int x, z;
-			for (x = 0; x < 16; x++) {
-				for (z = 0; z < 16; z++) {
-					setBlock(result, x, level, z, getId(material));
-				}
-			}
-		}
-
-		public void setCorner(byte[][] result, int level, Material material) {
-			int x, z;
-			for (x = 0; x < 16; x++) {
-				setBlock(result, x, level, 0, getId(material));
-			}
-			for (z = 0; z < 16; z++) {
-				setBlock(result, 0, level, z, getId(material));
-			}
-		}
-
-		public void setLayer(byte[][] result, int minLevel, int maxLevel, Material material) {
-			int y;
-			for (y = minLevel; y <= maxLevel; y++) {
-				setLayer(result, y, material);
-			}
-		}
-	}
-
-	/**
-	 * Gerador de Mundo Plano
-	 * 
-	 * @author Eduard
-	 *
-	 */
-	public static class FlatWorldGenerator extends EmptyWorldGenerator {
-
-		@Override
-		public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ,
-				ChunkGenerator.BiomeGrid biomeGrid) {
-			byte[][] result = new byte[world.getMaxHeight() / 16][];
-			setLayer(result, 0, Material.BEDROCK);
-			setLayer(result, 1, 3, Material.DIRT);
-			setLayer(result, 4, Material.GRASS);
-			setCorner(result, 8, Material.DIAMOND_BLOCK);
-			return result;
-		}
-
-	}
-
-	/**
-	 * Mine de Cooldown para Habilidades e Kits
-	 * 
-	 * @author Eduard
-	 *
-	 */
-	public static abstract class Cooldowns {
-		/**
-		 * Tempo de Cooldown<br>
-		 * Em forma de Ticks<br>
-		 * Cada TICK = 1/20 de SEGUNDO
-		 */
-		private long ticks;
-
-		/**
-		 * Mapa contendo os Cooldowns em Andamento<br>
-		 * KEY = UUID = Id do Jogador<br>
-		 * VALUE = CooldownEvent = Evento do Cooldown<br>
-		 */
-		private Map<UUID, CooldownEvent> cooldowns = new HashMap<>();
-
-		/**
-		 * Metodo abstrato para oque vai acontecer quando sair do Cooldown
-		 * 
-		 * @param player
-		 *            Jogador
-		 */
-		public abstract void onLeftCooldown(Player player);
-
-		/**
-		 * Metodo abstrato para oque vai acontecer quando começar o Cooldown
-		 * 
-		 * @param player
-		 *            Jogador
-		 */
-		public abstract void onStartCooldown(Player player);
-
-		/**
-		 * Metodo abstrato para oque vai acontecer quando estiver ainda em Coodlwon
-		 * 
-		 * @param player
-		 */
-		public abstract void onInCooldown(Player player);
-
-		/**
-		 * Iniciando o Sistema de Cooldown
-		 * 
-		 * @param seconds
-		 *            Segundos de Cooldown
-		 */
-		public Cooldowns(int seconds) {
-			setTime(seconds);
-		}
-
-		/**
-		 * Define o Tempo de Cooldown
-		 * 
-		 * @param seconds
-		 *            Segundos
-		 */
-		public void setTime(int seconds) {
-			ticks = seconds * 20;
-		}
-
-		/**
-		 * 
-		 * @return Tempo de Cooldown em Ticks
-		 */
-		public long getTicks() {
-			return ticks;
-		}
-
-		public void setTicks(long ticks) {
-			this.ticks = ticks;
-		}
-
-		public void setOnCooldown(Player player) {
-			removeFromCooldown(player);
-			onStartCooldown(player);
-			CooldownEvent event = new CooldownEvent(ticks) {
-
-				@Override
-				public void run() {
-					removeFromCooldown(player);
-				}
-
-			};
-			event.runTaskLater(getPlugin(), ticks);
-			cooldowns.put(player.getUniqueId(), event);
-		}
-
-		public int getCooldown(Player player) {
-			if (onCooldown(player)) {
-				CooldownEvent cooldown = cooldowns.get(player.getUniqueId());
-				int result = (int) ((-cooldown.getStartTime() + System.currentTimeMillis()) / 1000);
-				return (int) (cooldown.getCooldownTime() - result);
-			}
-			return -1;
-		}
-
-		public JavaPlugin getPlugin() {
-			return JavaPlugin.getProvidingPlugin(getClass());
-		}
-
-		public boolean onCooldown(Player player) {
-			return cooldowns.containsKey(player.getUniqueId());
-		}
-
-		public void removeFromCooldown(Player player) {
-			if (onCooldown(player)) {
-				onLeftCooldown(player);
-				cooldowns.get(player.getUniqueId()).cancel();
-				cooldowns.remove(player.getUniqueId());
-			}
-		}
-
-		public boolean cooldown(Player player) {
-			if (onCooldown(player)) {
-				onInCooldown(player);
-				return false;
-			}
-			setOnCooldown(player);
-			return true;
-
-		}
-	}
-
-	public static abstract class CooldownEvent extends BukkitRunnable {
-
-		public CooldownEvent(long cooldownTime) {
-			setStartTime(System.currentTimeMillis());
-			setCooldownTime(cooldownTime);
-		}
-
-		private long cooldownTime;
-		private long startTime;
-
-		public long getStartTime() {
-			return startTime;
-		}
-
-		public void setStartTime(long startTime) {
-			this.startTime = startTime;
-		}
-
-		public long getCooldownTime() {
-			return cooldownTime;
-		}
-
-		public void setCooldownTime(long cooldownTime) {
-			this.cooldownTime = cooldownTime;
-		}
-
 	}
 
 	/**
@@ -4493,7 +3731,7 @@ public final class Mine {
 			sender.sendMessage(Mine.getReplacers(message, player));
 		} else {
 			sender.sendMessage(message);
-			;
+
 		}
 
 	}
@@ -4502,13 +3740,462 @@ public final class Mine {
 		broadcast(getReplacers(message, p));
 
 	}
+
 	public static PlayerManager getPlayerManager() {
 		return playerManager;
 	}
+
 	public static void setPlayerManager(PlayerManager playerManager) {
 		Mine.playerManager = playerManager;
 	}
 
-	
+	private static Map<String, Replacer> replacers = new HashMap<>();
+
+	public static interface Replacer {
+
+		Object getText(Player p);
+	}
+
+	public static void saveMaps() {
+
+		for (Entry<String, Schematic> entry : SCHEMATICS.entrySet()) {
+			Schematic mapa = entry.getValue();
+			String name = entry.getKey();
+
+			mapa.save(new File(MAPS_CONFIG.getFile(), name + ".map"));
+		}
+	}
+
+	public static void loadMaps() {
+
+		File file = MAPS_CONFIG.getFile();
+		file.mkdirs();
+
+		for (File subfile : file.listFiles()) {
+
+			SCHEMATICS.put(subfile.getName().replace(".map", ""), Schematic.load(subfile));
+
+		}
+
+	}
+	public static ItemStack newFirework() {
+		ItemStack fire = new ItemStack(Material.FIREWORK);
+		FireworkMeta meta = (FireworkMeta) fire.getItemMeta();
+//		meta.getEffects()
+		fire.setItemMeta(meta);
+		return fire;
+	}
+	public static ItemStack newFireworkCharge() {
+		ItemStack fire = new ItemStack(Material.FIREWORK_CHARGE);
+		FireworkEffectMeta meta = (FireworkEffectMeta) fire.getItemMeta();
+		meta.setEffect(FireworkEffect.builder().withColor(Color.RED).with(Type.STAR).build());
+		fire.setItemMeta(meta);
+		return fire;
+	}
+
+	public static void registerDefaults() {
+		StorageAPI.register(MaterialData.class, new Variable() {
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public Object save(Object object) {
+				if (object instanceof MaterialData) {
+					MaterialData materialData = (MaterialData) object;
+					return materialData.getItemTypeId() + ":" + materialData.getData();
+
+				}
+				return null;
+			}
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public Object get(Object object) {
+				if (object instanceof String) {
+					String string = (String) object;
+					try {
+						String[] split = string.split(":");
+						return new MaterialData(Material.getMaterial(Mine.toInt(split[0])), Mine.toByte(split[1]));
+					} catch (Exception e) {
+						new MaterialData( Material.STONE);
+					}
+
+				}
+				return null;
+			}
+		});
+		StorageAPI.register(Vector.class, new Storable() {
+
+			@Override
+			public Object restore(Map<String, Object> map) {
+				return new Vector();
+			}
+
+			@Override
+			public void store(Map<String, Object> map, Object object) {
+
+			}
+
+			@Override
+			public String alias() {
+				return "Vector";
+			}
+		});
+		StorageAPI.register(Enchantment.class, new Variable() {
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public Object save(Object object) {
+				if (object instanceof Enchantment) {
+					Enchantment enchantment = (Enchantment) object;
+					return enchantment.getId();
+
+				}
+				return null;
+			}
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public Object get(Object object) {
+				if (object instanceof String) {
+					String string = (String) object;
+					return Enchantment.getById(Extra.toInt(string));
+
+				}
+				return null;
+			}
+		});
+		StorageAPI.register(PotionEffectType.class, new Variable() {
+
+			@Override
+			public Object get(Object object) {
+				if (object instanceof String) {
+
+					String string = (String) object;
+					String[] split = string.split(";");
+					return PotionEffectType.getByName(split[1]);
+				}
+				return null;
+			}
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public Object save(Object object) {
+				if (object instanceof PotionEffectType) {
+					PotionEffectType potionEffectType = (PotionEffectType) object;
+					return potionEffectType.getName() + ";" + potionEffectType.getId();
+
+				}
+				return null;
+			}
+
+		});
+		StorageAPI.register(PotionEffect.class, new Variable() {
+
+			@Override
+			public Object save(Object object) {
+				return null;
+			}
+
+			@Override
+			public Object get(Object object) {
+				return new PotionEffect(PotionEffectType.SPEED, 20, 0);
+			}
+		});
+		StorageAPI.register(OfflinePlayer.class, new Variable() {
+
+			@Override
+			public Object get(Object object) {
+				if (object instanceof String) {
+					String id = (String) object;
+					String[] split = id.split(";");
+					return new FakePlayer(split[0], UUID.fromString(split[1]));
+
+				}
+				return null;
+			}
+
+			@Override
+			public Object save(Object object) {
+				if (object instanceof OfflinePlayer) {
+					OfflinePlayer p = (OfflinePlayer) object;
+					return p.getName() + ";" + p.getUniqueId().toString();
+
+				}
+				return null;
+			}
+
+		});
+		StorageAPI.register(Location.class, new Storable() {
+
+			@Override
+			public Object restore(Map<String, Object> map) {
+				return new Location(Bukkit.getWorlds().get(0), 1, 1, 1);
+			}
+
+			@Override
+			public void store(Map<String, Object> map, Object object) {
+			}
+
+			@Override
+			public String alias() {
+				return "Location";
+			}
+
+		});
+
+		StorageAPI.register(Chunk.class, new Variable() {
+
+			@Override
+			public Object get(Object object) {
+				if (object instanceof String) {
+					String string = (String) object;
+					String[] split = string.split(";");
+					return Bukkit.getWorld(split[0]).getChunkAt(Extra.toInt(split[1]), Extra.toInt(split[2]));
+
+				}
+				return null;
+			}
+
+			@Override
+			public Object save(Object object) {
+				if (object instanceof Chunk) {
+					Chunk chunk = (Chunk) object;
+					return chunk.getWorld().getName() + ";" + chunk.getX() + ";" + chunk.getZ();
+				}
+
+				return null;
+			}
+
+		});
+
+		StorageAPI.register(World.class, new Variable() {
+			@Override
+			public Object get(Object object) {
+				if (object instanceof String) {
+					String world = (String) object;
+					return Bukkit.getWorld(world);
+
+				}
+				return null;
+			}
+
+			@Override
+			public Object save(Object object) {
+				if (object instanceof World) {
+					World world = (World) object;
+					return world.getName();
+
+				}
+				return null;
+			}
+		});
+		StorageAPI.register(ItemStack.class, new Storable() {
+			@Override
+			public Object restore(Map<String, Object> map) {
+				int id = Extra.toInt(map.get("id"));
+				int amount = Extra.toInt(map.get("amount"));
+				int data = Extra.toInt(map.get("data"));
+				@SuppressWarnings("deprecation")
+				ItemStack item = new ItemStack(id, amount, (short) data);
+				String name = Extra.toChatMessage((String) map.get("name"));
+				if (!name.isEmpty()) {
+					Mine.setName(item, name);
+				}
+				@SuppressWarnings("unchecked")
+				List<String> lore = Extra.toMessages((List<Object>) map.get("lore"));
+				if (!lore.isEmpty()) {
+					Mine.setLore(item, lore);
+				}
+				String enchants = (String) map.get("enchants");
+				if (!enchants.isEmpty()) {
+					if (enchants.contains(", ")) {
+						String[] split = enchants.split(", ");
+						for (String enchs : split) {
+							String[] sub = enchs.split("-");
+							@SuppressWarnings("deprecation")
+							Enchantment ench = Enchantment.getById(Extra.toInt(sub[0]));
+							Integer level = Extra.toInt(sub[1]);
+							item.addUnsafeEnchantment(ench, level);
+
+						}
+					} else {
+						String[] split = enchants.split("-");
+						@SuppressWarnings("deprecation")
+						Enchantment ench = Enchantment.getById(Extra.toInt(split[0]));
+						Integer level = Extra.toInt(split[1]);
+						item.addUnsafeEnchantment(ench, level);
+
+					}
+				}
+				return item;
+			}
+
+			@Override
+			public String alias() {
+				return "Item";
+			}
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void store(Map<String, Object> map, Object object) {
+				if (object instanceof ItemStack) {
+					ItemStack item = (ItemStack) object;
+					map.remove("durability");
+					map.remove("meta");
+					map.remove("type");
+					map.put("id", item.getTypeId());
+					map.put("data", item.getDurability());
+					map.put("amount", item.getAmount());
+					map.put("name", Mine.getName(item));
+					map.put("lore", Mine.getLore(item));
+					String enchants = "";
+					if (item.getItemMeta().hasEnchants()) {
+						StringBuilder str = new StringBuilder();
+						int id = 0;
+						for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
+							if (id > 0)
+								str.append(", ");
+							Enchantment enchantment = entry.getKey();
+							str.append(enchantment.getId() + "-" + entry.getValue());
+							id++;
+						}
+						enchants = str.toString();
+					}
+					map.put("enchants", enchants);
+				}
+
+			};
+		});
+		
+		StorageAPI.register(Item.class, new Variable() {
+			
+			/**
+			 * id:data-qnt;enchId-enchData,enchId-enchData;nome;descriao1,descricao2
+			 */
+			@SuppressWarnings("deprecation")
+			@Override
+			public Object get(Object object) {
+				if (object instanceof String) {
+					String text = (String) object;
+
+					try {
+						String[] split = text.split(";");
+						String[] splitData = split[0].split("-");
+						Integer qnt = Mine.toInt(splitData[1]);
+						String[] splitInfo = splitData[0].split(":");
+						Integer id = Mine.toInt(splitInfo[0]);
+						short data = Mine.toShort(splitInfo[1]);
+						ItemStack item = new Item();
+						item.setTypeId(id);
+						item.setDurability(data);
+						item.setAmount(qnt);
+						if (split.length > 0) {
+							if (split[1].contains(",")) {
+								String[] enchs = split[1].split(",");
+								for (String enchant : enchs) {
+									String[] ench = enchant.split("-");
+									Integer ench_id = Mine.toInt(ench[0]);
+									Integer ench_level = Mine.toInt(ench[1]);
+									item.addUnsafeEnchantment(Enchantment.getById(ench_id), ench_level);
+								}
+							} else {
+								if (!split[1].equals(" ")) {
+									String[] ench = split[1].split("-");
+									Integer ench_id = Mine.toInt(ench[0]);
+									Integer ench_level = Mine.toInt(ench[1]);
+									item.addUnsafeEnchantment(Enchantment.getById(ench_id), ench_level);
+								}
+
+							}
+						}
+						ItemMeta meta = item.getItemMeta();
+						if (split.length > 1) {
+							String nome = split[2];
+							if (!nome.equals(" ")) {
+								meta.setDisplayName(Extra.toChatMessage(nome));
+							}
+						}
+						if (split.length > 2) {
+							List<String> lista = new ArrayList<>();
+							String descricao = split[3];
+							if (descricao.contains(",")) {
+								String[] lore = descricao.split(",");
+								for (String line : lore) {
+									lista.add(Extra.toChatMessage(line));
+								}
+							} else {
+								if (!descricao.equals(" ")) {
+									lista.add(descricao);
+								}
+
+							}
+							meta.setLore(lista);
+						}
+						item.setItemMeta(meta);
+
+						return item;
+
+					} catch (Exception e) {
+						e.printStackTrace();
+						return new Item(1);
+					}
+
+				}
+				return null;
+			}
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public Object save(Object object) {
+				if (object instanceof ItemStack) {
+					ItemStack item = (ItemStack) object;
+					StringBuilder textao = new StringBuilder();
+					textao.append(item.getTypeId() + ":" + item.getDurability() + "-" + item.getAmount() + ";");
+					ItemMeta meta = item.getItemMeta();
+					if (meta != null) {
+
+						if (meta.hasEnchants()) {
+							boolean first = true;
+							for (Entry<Enchantment, Integer> enchant : item.getItemMeta().getEnchants().entrySet()) {
+								if (!first) {
+									textao.append(",");
+								} else
+									first = false;
+								textao.append(enchant.getKey().getId());
+								textao.append("-");
+								textao.append(enchant.getValue());
+							}
+						} else {
+							textao.append(" ");
+						}
+						textao.append(";");
+						if (item.getItemMeta().hasDisplayName()) {
+							textao.append(item.getItemMeta().getDisplayName());
+						} else {
+							textao.append(" ");
+						}
+						textao.append(";");
+						if (meta.hasLore()) {
+							boolean first = true;
+							for (String line : meta.getLore()) {
+								if (!first) {
+									textao.append(",");
+								} else
+									first = false;
+								textao.append(line);
+							}
+
+						} else {
+							textao.append(" ");
+						}
+						textao.append(";");
+					}
+					return textao.toString();
+				}
+				return null;
+			}
+		});
+		
+	}
 
 }

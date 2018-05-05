@@ -9,7 +9,7 @@ import net.eduard.api.setup.manager.CommandManager;
 public class ApiListCommand extends CommandManager {
 
 	public ApiListCommand() {
-		super("reload");
+		super("list","plugins");
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,

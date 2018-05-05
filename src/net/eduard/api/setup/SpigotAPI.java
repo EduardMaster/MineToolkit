@@ -14,7 +14,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * API para utilização de metodos do Spigot com mais facilidade
- * 
+ * @version 1.2
+ * @since Lib v1.0
  * @author Eduard-PC
  *
  */
@@ -99,6 +100,15 @@ public final class SpigotAPI {
 	public static ChatColor TITLE = ChatColor.DARK_BLUE;
 	public static ChatColor TEXT = ChatColor.BLUE;
 
+	
+	/**
+	 * API que controla o chat
+	 * <br>Se chamava ChatAPI
+	 * @author Eduard
+	 * @version 1.1
+	 * @since Lib v1.0
+	 * 
+	 */
 	public static enum Chat {
 		NORMAL("§A", "§2"), ERROR("§C", "§4"), SIMPLE("§7", "§8"), GAME("§E", "§6"), SETUP("§B", "§3"), BONUS("§9",
 				"§1"), EFFECT("§D", "§5"), EXTRA("§F", "§0");

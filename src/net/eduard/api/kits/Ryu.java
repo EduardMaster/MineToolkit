@@ -15,8 +15,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
-import net.eduard.api.click.PlayerClick;
-import net.eduard.api.click.PlayerClickEffect;
+import net.eduard.api.setup.click.PlayerClick;
+import net.eduard.api.setup.click.PlayerClickEffect;
 import net.eduard.api.setup.game.Ability;
 
 public class Ryu extends Ability {

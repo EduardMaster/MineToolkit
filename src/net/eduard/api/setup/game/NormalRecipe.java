@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 
 import net.eduard.api.setup.StorageAPI.Storable;
+import net.eduard.api.setup.util.RecipeBuilder;
 
 public class NormalRecipe implements Storable, RecipeBuilder {
 

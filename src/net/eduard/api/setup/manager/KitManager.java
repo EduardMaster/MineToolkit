@@ -18,10 +18,10 @@ import org.bukkit.plugin.Plugin;
 import net.eduard.api.setup.Mine;
 import net.eduard.api.setup.VaultAPI;
 import net.eduard.api.setup.game.Ability;
-import net.eduard.api.setup.game.ClickEffect;
 import net.eduard.api.setup.game.KitType;
 import net.eduard.api.setup.game.Menu;
 import net.eduard.api.setup.game.Slot;
+import net.eduard.api.setup.util.ClickEffect;
 
 
 public class KitManager extends EventsManager {

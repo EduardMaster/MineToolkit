@@ -11,7 +11,7 @@ import org.bukkit.scoreboard.Team;
 
 import net.eduard.api.EduardAPI;
 import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.FakePlayer;
+import net.eduard.api.setup.lib.FakePlayer;
 
 
 public class CriarScoreboard {

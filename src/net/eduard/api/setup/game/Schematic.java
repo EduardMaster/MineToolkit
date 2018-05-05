@@ -9,12 +9,13 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
 
 import net.eduard.api.setup.Mine;
+import net.eduard.api.setup.StorageAPI.Copyable;
 import net.eduard.api.setup.StorageAPI.Storable;
 
 /**
@@ -23,38 +24,86 @@ import net.eduard.api.setup.StorageAPI.Storable;
  * @author Eduard-PC
  *
  */
-public class Schematic implements Storable {
+public class Schematic implements Storable, Copyable {
 
-	private String world;
+	private Vector relative, low, high;
+	private transient int count;
 	private short width;
 	private short height;
 	private short length;
-	private byte[] blocksId;
-	private byte[] blocksData;
+	private transient byte[] blocksId;
+	private transient byte[] blocksData;
+
+
+	public short getWidth() {
+		return width;
+	}
+
+	public void setWidth(short width) {
+		this.width = width;
+	}
+
+	public short getHeight() {
+		return height;
+	}
+
+	public void setHeight(short height) {
+		this.height = height;
+	}
+
+	public short getLength() {
+		return length;
+	}
+
+	public void setLength(short length) {
+		this.length = length;
+	}
 
 	public static int getIndex(int x, int y, int z, int width, int length) {
 		return y * width * length + z * width + x;
 	}
 
 	public Schematic() {
-		// TODO Auto-generated constructor stub
+	}
+
+
+	public boolean hasFirstLocation() {
+		return high != null;
+	}
+
+	public boolean hasSecondLocation() {
+		return low != null;
+	}
+
+	public void copy(Location relativeLocation) {
+		World world = relativeLocation.getWorld();
+		copy(relativeLocation, low.toLocation(world), high.toLocation(world));
+	}
+
+	public Schematic copy() {
+		return copy(this);
 	}
 
 	@SuppressWarnings("deprecation")
-	public void copy(Location firstLocation, Location secondLocation) {
+	public void copy(Location relativeLocation, Location firstLocation, Location secondLocation) {
+		setCount(0);
 		Location highLoc = Mine.getHighLocation(firstLocation, secondLocation);
 		Location lowLoc = Mine.getLowLocation(firstLocation, secondLocation);
-		this.world = highLoc.getWorld().getName();
+		setHigh(highLoc.toVector());
+		setLow(lowLoc.toVector());
+		setRelative(relativeLocation.toVector());
+
 		width = (short) (highLoc.getBlockX() - lowLoc.getBlockX());
 		height = (short) (highLoc.getBlockY() - lowLoc.getBlockY());
 		length = (short) (highLoc.getBlockZ() - lowLoc.getBlockZ());
 		int size = width * height * length;
 		this.blocksId = new byte[size];
 		this.blocksData = new byte[size];
-		World worldUsed = Bukkit.getWorld(world);
+		World worldUsed = relativeLocation.getWorld();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
+					count++;
 					int index = getIndex(x, y, z, width, length);
 					Block block = worldUsed.getBlockAt(lowLoc.getBlockX() + x, lowLoc.getBlockY() + y,
 							lowLoc.getBlockZ() + z);
@@ -66,23 +115,61 @@ public class Schematic implements Storable {
 		}
 	}
 
+	public byte[] getBlocksId() {
+		return blocksId;
+	}
+
+	public void setBlocksId(byte[] blocksId) {
+		this.blocksId = blocksId;
+	}
+
+	public byte[] getBlocksData() {
+		return blocksData;
+	}
+
+	public void setBlocksData(byte[] blocksData) {
+		this.blocksData = blocksData;
+	}
+
+	public void paste(Location newRelative) {
+		paste(newRelative, false);
+	}
+
 	@SuppressWarnings("deprecation")
-	public void paste(Location lowLoc) {
-		World worldUsed = Bukkit.getWorld(world);
+	public void paste(Location newRelative, boolean minusLag) {
+		World worldUsed = newRelative.getWorld();
+		int difX = newRelative.getBlockX() - relative.getBlockX();
+		int difY = newRelative.getBlockY() - relative.getBlockY();
+		int difZ = newRelative.getBlockZ() - relative.getBlockZ();
+		setCount(0);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
+					count++;
 					int index = getIndex(x, y, z, width, length);
-					Block block = worldUsed.getBlockAt(lowLoc.getBlockX() + x, lowLoc.getBlockY() + y,
-							lowLoc.getBlockZ() + z);
+					Block block = worldUsed.getBlockAt(difX + low.getBlockX() + x, difY + low.getBlockY() + y,
+							difZ + low.getBlockZ() + z);
 					byte typeId = blocksId[index];
 					byte typeData = blocksData[index];
-					if (block.getTypeId() != typeId && block.getData() != typeData) {
-						block.setTypeIdAndData(block.getTypeId(), block.getData(), false);
-					} else if (block.getData() != block.getData()) {
-						block.setData(typeData, false);
-					} else if (block.getTypeId() != block.getTypeId()) {
-						block.setTypeId(typeId, false);
+					if (typeId<0) {
+						typeId=0;
+					}
+					if (typeData<0) {
+						typeData=0;
+					}
+					if (minusLag) {
+						if (typeId == 0) {
+							continue;
+						}
+					}
+					if (block != null) {
+						if (block.getTypeId() != typeId || block.getData() != typeData)
+						{
+//							Mine.console("erro "+typeId+ "   "+typeData);
+							block.setTypeIdAndData(typeId, typeData, false);
+						}else {
+						}
+					}else {
 					}
 				}
 			}
@@ -101,7 +188,7 @@ public class Schematic implements Storable {
 		try {
 			FileOutputStream s = new FileOutputStream(file);
 			DataOutputStream d = new DataOutputStream(new GZIPOutputStream(s));
-			d.writeUTF(world);
+			
 			d.writeShort(width);
 			d.writeShort(height);
 			d.writeShort(length);
@@ -109,6 +196,9 @@ public class Schematic implements Storable {
 			d.write(blocksId);
 			d.writeInt(blocksId.length);
 			d.write(blocksData);
+			d.writeUTF(Mine.saveVector(low));
+			d.writeUTF(Mine.saveVector(high));
+			d.writeUTF(Mine.saveVector(relative));
 			d.flush();
 			d.close();
 		} catch (Exception e) {
@@ -116,14 +206,14 @@ public class Schematic implements Storable {
 		}
 	}
 
-	public void reload(File file) {
+	public Schematic reload(File file) {
 		try {
 			FileInputStream s = new FileInputStream(file);
 			DataInputStream d = new DataInputStream(new GZIPInputStream(s));
 			// int len = d.readShort();
 			// byte[] bytes = new byte[len];
 			// d.readFully(bytes);
-			this.world = d.readUTF();
+			
 			this.width = d.readShort();
 			this.height = d.readShort();
 			this.length = d.readShort();
@@ -136,13 +226,20 @@ public class Schematic implements Storable {
 			size = d.readInt();
 			this.blocksData = new byte[size];
 			d.readFully(blocksData);
+
+			low = Mine.toVector(d.readUTF());
+			high = Mine.toVector(d.readUTF());
+			relative = Mine.toVector(d.readUTF());
+
 			d.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return this;
 
 	}
+
 
 	@Override
 	public Object restore(Map<String, Object> map) {
@@ -155,5 +252,42 @@ public class Schematic implements Storable {
 		// TODO Auto-generated method stub
 
 	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public static Schematic load(File subfile) {
+		return new Schematic().reload(subfile);
+	}
+
+	public Vector getRelative() {
+		return relative;
+	}
+
+	public void setRelative(Vector relative) {
+		this.relative = relative;
+	}
+
+	public Vector getLow() {
+		return low;
+	}
+
+	public void setLow(Vector low) {
+		this.low = low;
+	}
+
+	public Vector getHigh() {
+		return high;
+	}
+
+	public void setHigh(Vector high) {
+		this.high = high;
+	}
+
 
 }

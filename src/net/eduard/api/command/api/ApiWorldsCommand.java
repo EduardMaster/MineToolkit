@@ -1,6 +1,8 @@
 
 package net.eduard.api.command.api;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -9,15 +11,21 @@ import net.eduard.api.setup.manager.CommandManager;
 public class ApiWorldsCommand extends CommandManager {
 
 	public ApiWorldsCommand() {
-		super("worlds");
+		super("worlds","mundos");
 	}
+
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] args) {
-		if (args.length ==0) {
-			
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		StringBuilder mundos = new StringBuilder();
+
+		for (World world : Bukkit.getWorlds()) {
+			if (mundos.length() > 0) {
+				mundos.append("§a, §f");
+			}
+			mundos.append("" + world.getName());
 		}
-		
+		sender.sendMessage("§aOs mundo existentes são: §f" + mundos.toString());
+
 		return true;
 	}
 

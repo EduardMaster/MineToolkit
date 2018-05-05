@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
-
-import net.eduard.api.setup.StorageAPI.Reference;
 
 /**
  * Sala do Minigame
@@ -20,12 +19,21 @@ public class Game {
 	private int time;
 	private Minigame minigame;
 	private boolean enabled;
-
-	@Reference
 	private GameMap map;
+	private MinigameMode mode;
 	private MinigameState state = MinigameState.STARTING;
 	private List<GamePlayer> players = new ArrayList<>();
+	private List<Chest> chests = new ArrayList<>();
+	private List<Chest> chestsFeast = new ArrayList<>();
 	private List<GameTeam> teams = new ArrayList<>();
+
+	public List<Chest> getChests() {
+		return chests;
+	}
+
+	public void setChests(List<Chest> chests) {
+		this.chests = chests;
+	}
 
 	public void broadcast(String message) {
 		for (GamePlayer player : players) {
@@ -67,23 +75,8 @@ public class Game {
 		setEnabled(true);
 	}
 
-	public void preStart() {
-		setState(MinigameState.STARTING);
-		System.out.println(getMap().getTimeIntoStart());
-		setTime(getMap().getTimeIntoStart());
-	}
-
-	public void startForced() {
-		setTime(getMap().getTimeOnForceTimer());
-	}
-
-	public void start() {
-		setTime(getMap().getTimeOnStartTimer());
-		setState(MinigameState.PLAYING);
-	}
-
 	public boolean checkEnd() {
-		return getTime() == getMap().getTimeIntoGameOver();
+		return getTime() == getMinigame().getTimeIntoGameOver();
 	}
 
 	public boolean checkWinner() {
@@ -102,19 +95,47 @@ public class Game {
 		return teams.stream().filter(team -> team.getPlayers(GamePlayerState.NORMAL).size() > 0).findFirst().get();
 	}
 
-	public void preGame() {
-		setTime(getMap().getTimeWithoutPvP());
+	public boolean checkForceStart() {
+		return getPlayers().size() >= map.getNeededPlayersAmount() && getMinigame().getTimeOnForceTimer() > time;
+	}
+
+	public void doPreStart() {
+		setState(MinigameState.STARTING);
+		setTime(getMinigame().getTimeIntoStart());
+	}
+
+	public void doStartForced() {
+		setTime(getMinigame().getTimeOnForceTimer());
+	}
+
+	public void doStart() {
+		setTime(getMinigame().getTimeOnStartTimer());
+		setState(MinigameState.PLAYING);
+	}
+
+	public void doPreGame() {
+		setTime(getMinigame().getTimeWithoutPvP());
 		setState(MinigameState.EQUIPPING);
 	}
 
-	public void preEnd() {
-		setTime(getMap().getTimeOnRestartTimer());
+	public void doPreEnd() {
+		setTime(getMinigame().getTimeOnRestartTimer());
 		setState(MinigameState.ENDING);
 	}
 
-	public void preRestart() {
-		setTime(getMap().getTimeOnRestartTimer());
+	public void doPreRestart() {
+		setTime(getMinigame().getTimeOnRestartTimer());
 		setState(MinigameState.RESTARTING);
+	}
+
+	public void doRestart() {
+		setState(MinigameState.RESTARTING);
+
+	}
+
+	public void leave(GamePlayer player) {
+		player.getGame().getPlayers().remove(player);
+		player.setGame(null);
 	}
 
 	public void leaveAll() {
@@ -123,16 +144,6 @@ public class Game {
 			GamePlayer player = it.next();
 			leave(player);
 		}
-	}
-
-	public void leave(GamePlayer player) {
-		player.getGame().getPlayers().remove(player);
-		player.setGame(null);
-	}
-
-	public void restart() {
-		setState(MinigameState.RESTARTING);
-
 	}
 
 	public List<Player> getPlayers(GamePlayerState state) {
@@ -150,7 +161,7 @@ public class Game {
 		this.minigame.getRooms().put(id, this);
 		this.map = map;
 		this.enabled = true;
-		this.time = map.getTimeIntoStart();
+		this.time = getMinigame().getTimeIntoStart();
 	}
 
 	public int getId() {
@@ -217,6 +228,26 @@ public class Game {
 		for (GameTeam team : teams) {
 			team.leaveAll();
 		}
+	}
+
+	public MinigameMode getMode() {
+		return mode;
+	}
+
+	public void setMode(MinigameMode mode) {
+		this.mode = mode;
+	}
+
+	public List<Chest> getChestsFeast() {
+		return chestsFeast;
+	}
+
+	public void setChestsFeast(List<Chest> chestsFeast) {
+		this.chestsFeast = chestsFeast;
+	}
+
+	public void join(GamePlayer player) {
+		players.add(player);
 	}
 
 }

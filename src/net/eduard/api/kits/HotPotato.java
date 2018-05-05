@@ -9,9 +9,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import net.eduard.api.click.PlayerClickEntity;
-import net.eduard.api.click.PlayerClickEntityEffect;
 import net.eduard.api.setup.Mine;
+import net.eduard.api.setup.click.PlayerClickEntity;
+import net.eduard.api.setup.click.PlayerClickEntityEffect;
 import net.eduard.api.setup.game.Ability;
 import net.eduard.api.setup.game.Explosion;
 

@@ -8,7 +8,13 @@ import net.eduard.api.config.Config;
 import net.eduard.api.setup.Mine;
 import net.eduard.api.setup.StorageAPI;
 import net.eduard.api.setup.manager.TimeManager;
-
+/**
+ * Representa os plugins feitos pelo Eduard
+ * @version 1.0
+ * @since 4.0
+ * @author Eduard
+ *
+ */
 public abstract class EduardPlugin extends JavaPlugin {
 
 	protected TimeManager time;

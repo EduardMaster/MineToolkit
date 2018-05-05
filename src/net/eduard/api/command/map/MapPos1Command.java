@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.setup.Mine;
+import net.eduard.api.setup.game.Schematic;
 import net.eduard.api.setup.manager.CommandManager;
 
 public class MapPos1Command extends CommandManager {
@@ -18,8 +19,9 @@ public class MapPos1Command extends CommandManager {
 			String label, String[] args) {
 		if (Mine.onlyPlayer(sender)) {
 			Player p = (Player) sender;
-			Mine.POSITION1.put(p, p.getLocation());
-			p.sendMessage("§bEduardMine §6Posição 1 setada!");
+			Schematic schema = Mine.getSchematic(p);
+			schema.setLow(p.getLocation().toVector());
+			p.sendMessage("§bEduardAPI §6Posição 1 setada!");
 		}
 		return true;
 	}

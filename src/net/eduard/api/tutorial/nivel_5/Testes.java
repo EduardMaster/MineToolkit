@@ -27,9 +27,9 @@ import net.eduard.api.setup.Extra;
 import net.eduard.api.setup.Extra.KeyType;
 import net.eduard.api.setup.Mine;
 import net.eduard.api.setup.game.DisplayBoard;
-import net.eduard.api.setup.game.FakePlayer;
 import net.eduard.api.setup.game.Schematic;
-import net.eduard.api.setup.game.Scoreboards;
+import net.eduard.api.setup.lib.FakePlayer;
+import net.eduard.api.setup.lib.Scoreboards;
 import net.eduard.api.setup.manager.TimeManager;
 
 public class Testes {
@@ -72,22 +72,22 @@ public class Testes {
 		meta.setDisplayName("teste");
 		meta.setLore(Arrays.asList("affs", "tensolandia"));
 		item.setItemMeta(meta);
-		System.out.println(Mine.saveItem(item));
-		System.out.println(Mine.reloadItem(Mine.saveItem(item)));
+//		System.out.println(Mine.saveItem(item));
+//		System.out.println(Mine.reloadItem(Mine.saveItem(item)));
 
 	}
 
 	public void test() {
-		World world = Bukkit.getWorld("world");
-		Location high = new Location(world, 0, 0, 0);
-		Location low = new Location(world, 100, 100, 100);
-		Schematic schematic = new Schematic();
-		schematic.copy(low, high);
-		File file = new File(EduardAPI.getInstance().getDataFolder(), "teste.txt");
-		schematic.save(file);
+//		World world = Bukkit.getWorld("world");
+//		Location high = new Location(world, 0, 0, 0);
+//		Location low = new Location(world, 100, 100, 100);
+//		Schematic schematic = new Schematic();
+//		schematic.copy(low, high);
+//		File file = new File(EduardAPI.getInstance().getDataFolder(), "teste.txt");
+//		schematic.save(file);
 
-		Schematic schema = new Schematic();
-		schema.reload(file);
+//		Schematic schema = new Schematic();
+//		schema.reload(file);
 
 	}
 

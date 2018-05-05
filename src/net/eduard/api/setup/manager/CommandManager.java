@@ -109,7 +109,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 			}
 			if (sub.usage == null)
 				sub.usage = Mine.USAGE + "/" + name + " " + sub.name;
-			Mine.console("§bCommandMine §fO subcomando §e" + sub.name + " §ffoi registrado no comando §a" + name);
+			Mine.console("§bCommandAPI §fO subcomando §e" + sub.name + " §ffoi registrado no comando §a" + name);
 			if (!sub.commands.isEmpty())
 				sub.updateSubs();
 		}
@@ -118,7 +118,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 	public boolean register() {
 		command = Bukkit.getPluginCommand(name);
 		if (command == null) {
-			Mine.console("§bCommandMine §fO comando §a" + name
+			Mine.console("§bCommandAPI §fO comando §a" + name
 					+ " §fnao foi registrado na plugin.yml de nenhum Plugin do Servidor");
 			return false;
 		}
@@ -159,7 +159,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		command.setDescription(description);
 		command.setPermission(permission);
 		command.setExecutor(this);
-		Mine.console("§bCommandMine §fO comando §a" + name + " §ffoi registrado para o Plugin §b"
+		Mine.console("§bCommandAPI §fO comando §a" + name + " §ffoi registrado para o Plugin §b"
 				+ command.getPlugin().getName());
 		commandsRegistred.put(name.toLowerCase(), this);
 		updateSubs();

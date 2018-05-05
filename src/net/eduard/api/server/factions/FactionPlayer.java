@@ -17,6 +17,7 @@ public class FactionPlayer implements Storable {
 	@Reference
 	private Faction faction;
 	private OfflinePlayer playerData;
+	private long lastLogin;
 	private int kills;
 	private int deaths;
 	private int deathsByEnemies;
@@ -220,6 +221,14 @@ public class FactionPlayer implements Storable {
 	}
 	public UUID getId() {
 		return getPlayerData().getUniqueId();
+	}
+
+	public long getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(long lastLogin) {
+		this.lastLogin = lastLogin;
 	}
 	
 

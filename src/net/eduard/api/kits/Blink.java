@@ -6,9 +6,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.click.PlayerClick;
-import net.eduard.api.click.PlayerClickEffect;
 import net.eduard.api.setup.Mine;
+import net.eduard.api.setup.click.PlayerClick;
+import net.eduard.api.setup.click.PlayerClickEffect;
 import net.eduard.api.setup.game.Ability;
 
 public class Blink extends Ability {

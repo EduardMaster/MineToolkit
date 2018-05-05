@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import net.eduard.api.click.PlayerEffect;
 import net.eduard.api.setup.Mine;
+import net.eduard.api.setup.click.PlayerEffect;
 import net.eduard.api.setup.game.Effects;
 import net.eduard.api.setup.game.Explosion;
 import net.eduard.api.setup.game.Jump;

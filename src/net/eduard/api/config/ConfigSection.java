@@ -9,7 +9,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.yaml.snakeyaml.Yaml;
 
 import net.eduard.api.setup.Mine;
 import net.eduard.api.setup.StorageAPI;
@@ -462,15 +464,15 @@ public class ConfigSection {
 		ConfigSection path = this;
 		boolean headerSeted = false;
 		List<String> currentComments = new ArrayList<>();
-//		int index = 0;
+		// int index = 0;
 		for (String line : config.lines) {
 			// System.err.println("-> " + line);
 			String space = getSpace(spaceId);
 			if (!headerSeted
 					&& (line.isEmpty() || (line.length() == 1 && !Character.isLetter(line.toCharArray()[0])))) {
 				headerSeted = true;
-//				System.out.println("index " + index);
-//				index++;
+				// System.out.println("index " + index);
+				// index++;
 				continue;
 			}
 			if (!headerSeted && isComment(line)) {
@@ -503,7 +505,7 @@ public class ConfigSection {
 
 				}
 			}
-//			index++;
+			// index++;
 		}
 
 	}

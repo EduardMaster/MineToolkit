@@ -19,8 +19,11 @@ import org.bukkit.plugin.Plugin;
 import net.eduard.api.setup.Mine;
 import net.eduard.api.setup.StorageAPI.Copyable;
 import net.eduard.api.setup.StorageAPI.Storable;
+import net.eduard.api.setup.util.ClickEffect;
 
 public class Menu implements Listener, Storable, Copyable {
+
+	
 
 	private transient ClickEffect[] clicks;
 	private transient ClickEffect click = new ClickEffect() {

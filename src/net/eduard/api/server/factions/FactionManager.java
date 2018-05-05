@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.server.ranks.Rank;
 import net.eduard.api.server.ranks.RankManager;
@@ -16,6 +17,10 @@ import net.eduard.api.setup.StorageAPI.Storable;
 import net.eduard.api.setup.game.Chunk;
 
 public class FactionManager implements Storable {
+	private ItemStack itemMaxPower,itemInstantPower;
+	private int maxPlayerSize=15;
+	private int startingPower=5,startingPowerMax=5;
+	
 	private Map<EntityType, Double> generatorsPrices = new HashMap<>();
 	private Map<String, Faction> factions = new HashMap<>();
 	private Map<UUID, FactionPlayer> members = new HashMap<>();
@@ -46,7 +51,7 @@ public class FactionManager implements Storable {
 
 		Rank rankLeader = new Rank("lider", 1);
 		rankLeader.setPosition(4);
-		rankLeader.setPrefix("**");
+		rankLeader.setPrefix("#");
 		rankLeader.setPreviousRank("captain");
 		ranks.getRanks().put("leader", rankLeader);
 
@@ -334,6 +339,46 @@ public class FactionManager implements Storable {
 
 	public void setGeneratorsPrices(Map<EntityType, Double> generatorsPrices) {
 		this.generatorsPrices = generatorsPrices;
+	}
+
+	public ItemStack getItemInstantPower() {
+		return itemInstantPower;
+	}
+
+	public void setItemInstantPower(ItemStack itemInstantPower) {
+		this.itemInstantPower = itemInstantPower;
+	}
+
+	public ItemStack getItemMaxPower() {
+		return itemMaxPower;
+	}
+
+	public void setItemMaxPower(ItemStack itemMaxPower) {
+		this.itemMaxPower = itemMaxPower;
+	}
+
+	public int getMaxPlayerSize() {
+		return maxPlayerSize;
+	}
+
+	public void setMaxPlayerSize(int maxPlayerSize) {
+		this.maxPlayerSize = maxPlayerSize;
+	}
+
+	public int getStartingPower() {
+		return startingPower;
+	}
+
+	public void setStartingPower(int startingPower) {
+		this.startingPower = startingPower;
+	}
+
+	public int getStartingPowerMax() {
+		return startingPowerMax;
+	}
+
+	public void setStartingPowerMax(int startingPowerMax) {
+		this.startingPowerMax = startingPowerMax;
 	}
 
 }

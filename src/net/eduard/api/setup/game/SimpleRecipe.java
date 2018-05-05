@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 
 import net.eduard.api.setup.StorageAPI.Storable;
+import net.eduard.api.setup.util.RecipeBuilder;
 
 public class SimpleRecipe implements Storable, RecipeBuilder {
 

@@ -13,7 +13,6 @@ public class MapCommand extends CommandManager {
 		register(new MapPos2Command());
 		register(new MapLoadCommand());
 		register(new MapSaveCommand());
-		register(new MapWorldCommand());
 		register(new MapHelpCommand());
 	}
 

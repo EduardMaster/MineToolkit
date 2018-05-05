@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.setup.Mine;
+import net.eduard.api.setup.game.Kit;
 import net.eduard.api.setup.manager.TimeManager;
 
 public abstract class Minigame extends TimeManager {
@@ -20,16 +21,49 @@ public abstract class Minigame extends TimeManager {
 	private String bungeeLobby = "Lobby";
 	private Location lobby;
 	private Map<String, GameMap> maps = new HashMap<>();
+	private List<Kit> kits = new ArrayList<>();
+	private int timeIntoStart = 60;
+	private int timeIntoRestart = 20;
+	private int timeIntoGameOver = 15 * 60;
+	private int timeWithoutPvP = 2 * 60;
+	private int timeOnStartTimer = 0;
+	private int timeOnRestartTimer = 40;
+	private int timeOnForceTimer = 10;
+	private List<MinigameMode> modes = new ArrayList<>();
+	public List<MinigameMode> getModes() {
+		return modes;
+	}
+
+	public void setModes(List<MinigameMode> modes) {
+		this.modes = modes;
+	}
+
+	public MinigameMode getMode(String name) {
+		for (MinigameMode mode : modes) {
+			if (mode.getName().equalsIgnoreCase(name)) {
+				return mode;
+			}
+		}
+		return null;
+	}
+
+	private transient GameMap setting;
 	private transient Map<Integer, Game> rooms = new HashMap<>();
 	private transient Map<Player, GamePlayer> players = new HashMap<>();
+
+
 
 	public Minigame() {
 	}
 
+
 	public Minigame(String name) {
 		setName(name);
 
-		new Game(this, new GameMap(this, getName()));
+	}
+
+	public Game uniqueGame() {
+		return new Game(this, new GameMap(this, getName()));
 	}
 
 	public Minigame(String name, Plugin plugin) {
@@ -37,8 +71,8 @@ public abstract class Minigame extends TimeManager {
 		setPlugin(plugin);
 	}
 
-	public void addMap(String name, GameMap map) {
-		maps.put(name.toLowerCase(), map);
+	public GameMap createMap(String nome) {
+		return new GameMap(this, nome);
 	}
 
 	public void broadcast(String message) {
@@ -204,13 +238,7 @@ public abstract class Minigame extends TimeManager {
 	}
 
 	public Object restore(Map<String, Object> map) {
-//		removeGame(1);
-//		System.out.println("Restaurando um Minigame");
-//		System.out.println("Valor2 "+getMap().getTimeIntoStart());
-//		System.out.println(rooms.size());
-//		System.out.println("Qnt "+rooms.size());
-		new Game(this, getMap());
-//		System.out.println("--- "+getMap());
+
 		return null;
 	}
 
@@ -254,6 +282,82 @@ public abstract class Minigame extends TimeManager {
 
 	public void setRooms(Map<Integer, Game> rooms) {
 		this.rooms = rooms;
+	}
+
+	public GameMap getSetting() {
+		return setting;
+	}
+
+	public boolean isSetting() {
+		return setting != null;
+	}
+
+	public void setSetting(GameMap setting) {
+		this.setting = setting;
+	}
+
+	public List<Kit> getKits() {
+		return kits;
+	}
+
+	public void setKits(List<Kit> kits) {
+		this.kits = kits;
+	}
+
+	public int getTimeIntoStart() {
+		return timeIntoStart;
+	}
+
+	public void setTimeIntoStart(int timeIntoStart) {
+		this.timeIntoStart = timeIntoStart;
+	}
+
+	public int getTimeIntoRestart() {
+		return timeIntoRestart;
+	}
+
+	public void setTimeIntoRestart(int timeIntoRestart) {
+		this.timeIntoRestart = timeIntoRestart;
+	}
+
+	public int getTimeIntoGameOver() {
+		return timeIntoGameOver;
+	}
+
+	public void setTimeIntoGameOver(int timeIntoGameOver) {
+		this.timeIntoGameOver = timeIntoGameOver;
+	}
+
+	public int getTimeWithoutPvP() {
+		return timeWithoutPvP;
+	}
+
+	public void setTimeWithoutPvP(int timeWithoutPvP) {
+		this.timeWithoutPvP = timeWithoutPvP;
+	}
+
+	public int getTimeOnStartTimer() {
+		return timeOnStartTimer;
+	}
+
+	public void setTimeOnStartTimer(int timeOnStartTimer) {
+		this.timeOnStartTimer = timeOnStartTimer;
+	}
+
+	public int getTimeOnRestartTimer() {
+		return timeOnRestartTimer;
+	}
+
+	public void setTimeOnRestartTimer(int timeOnRestartTimer) {
+		this.timeOnRestartTimer = timeOnRestartTimer;
+	}
+
+	public int getTimeOnForceTimer() {
+		return timeOnForceTimer;
+	}
+
+	public void setTimeOnForceTimer(int timeOnForceTimer) {
+		this.timeOnForceTimer = timeOnForceTimer;
 	}
 
 }

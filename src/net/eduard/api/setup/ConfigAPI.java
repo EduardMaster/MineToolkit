@@ -18,40 +18,48 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
 /**
- * Mine simplificada de criar configuração
- * Path = Endereço = Secao
+ * API simplificada de criar configuração Path = Endereço = Secao
+ * 
  * @author Eduard
- *
+ * @version 1.1
+ * @since 1.0
  */
 public class ConfigAPI {
 
-	
 	private Plugin plugin;
-	
+
 	private String name;
-	
+
 	private File file;
-	
+
 	private FileConfiguration config;
 
-	
 	public String getName() {
 		return name;
 	}
+
 	/**
 	 * Seta o Plugin da Config
-	 * @param plugin Plugin
+	 * 
+	 * @param plugin
+	 *            Plugin
 	 */
 	public void setPlugin(Plugin plugin) {
 		this.plugin = plugin;
 	}
+
 	/**
 	 * 
 	 * @return Arquivo
 	 */
 	public File getFile() {
 		return file;
+	}
+
+	public ConfigAPI createConfig(String name) {
+		return new ConfigAPI(name, plugin);
 	}
 
 	/**
@@ -73,18 +81,19 @@ public class ConfigAPI {
 	public ConfigAPI(String name) {
 		this(name, null);
 	}
+
 	/**
-	* Recarrega a config pelo conteudo do Arquivo
-	* @return Config
-	*/
+	 * Recarrega a config pelo conteudo do Arquivo
+	 * 
+	 * @return Config
+	 */
 	public ConfigAPI reloadConfig() {
 		file = new File(plugin.getDataFolder(), name);
 		config = YamlConfiguration.loadConfiguration(file);
 		InputStream defaults = plugin.getResource(file.getName());
 		if (defaults != null) {
 			@SuppressWarnings("deprecation")
-			YamlConfiguration loadConfig = YamlConfiguration
-					.loadConfiguration(defaults);
+			YamlConfiguration loadConfig = YamlConfiguration.loadConfiguration(defaults);
 			config.setDefaults(loadConfig);
 		}
 		return this;
@@ -92,6 +101,7 @@ public class ConfigAPI {
 
 	/**
 	 * Salva Config em forma de Texto no Arquivo
+	 * 
 	 * @return Config
 	 */
 	public ConfigAPI saveConfig() {
@@ -102,15 +112,17 @@ public class ConfigAPI {
 		}
 		return this;
 	}
+
 	/**
 	 * 
-	 * @param path Path
+	 * @param path
+	 *            Path
 	 * @return Pega uma mensagem
 	 */
 	public String message(String path) {
-		return ChatColor.translateAlternateColorCodes('&',
-				getConfig().getString(path));
+		return ChatColor.translateAlternateColorCodes('&', getConfig().getString(path));
 	}
+
 	public List<String> getMessages(String path) {
 		List<String> messages = new ArrayList<>();
 
@@ -121,6 +133,7 @@ public class ConfigAPI {
 		return messages;
 
 	}
+
 	/**
 	 * Salva a Config padrão caso não existe a Arquivo
 	 */
@@ -129,21 +142,27 @@ public class ConfigAPI {
 			plugin.saveResource(name, false);
 		reloadConfig();
 	}
+
 	/**
 	 * Salva a config padrão
 	 */
 	public void saveResource() {
 		plugin.saveResource(name, true);
 	}
+
 	/**
 	 * Remove a Secao
-	 * @param path Secao
+	 * 
+	 * @param path
+	 *            Secao
 	 */
 	public void remove(String path) {
 		config.set(path, null);
 	}
+
 	/**
 	 * Salva os padrões da Config
+	 * 
 	 * @return
 	 */
 	public ConfigAPI saveDefault() {
@@ -151,14 +170,17 @@ public class ConfigAPI {
 		saveConfig();
 		return this;
 	}
+
 	/**
 	 * 
-	 * @param path Secao
+	 * @param path
+	 *            Secao
 	 * @return Item da Secao
 	 */
 	public ItemStack getItem(String path) {
 		return (ItemStack) get(path);
 	}
+
 	public Location getLocation(String path) {
 		return (Location) get(path);
 	}
@@ -196,11 +218,12 @@ public class ConfigAPI {
 		if (obj instanceof ConfigurationSection) {
 			obj = toMap(path);
 		}
-		if (obj  instanceof Map) {
-			
+		if (obj instanceof Map) {
+
 		}
 		return StorageAPI.restoreValue(obj);
 	}
+
 	public Map<String, Object> toMap(String path) {
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 		Map<String, Object> sec = getSection(path).getValues(false);
@@ -229,7 +252,7 @@ public class ConfigAPI {
 	}
 
 	public double getDouble(String path) {
-		return config.getDouble(path,0);
+		return config.getDouble(path, 0);
 	}
 
 	public int getInt(String path) {
@@ -278,6 +301,10 @@ public class ConfigAPI {
 
 	public void set(String path, Object value) {
 		config.set(path, StorageAPI.storeValue(value));
+	}
+
+	public ConfigAPI createSubConfig(String name) {
+		return createConfig(getName() + name);
 	}
 
 }
