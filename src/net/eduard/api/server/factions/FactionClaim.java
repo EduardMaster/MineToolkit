@@ -1,14 +1,16 @@
 package net.eduard.api.server.factions;
 
-import java.util.Map;
-
 import org.bukkit.Location;
 
-import net.eduard.api.setup.StorageAPI.Reference;
-import net.eduard.api.setup.StorageAPI.Storable;
-import net.eduard.api.setup.game.Chunk;
+import net.eduard.api.lib.storage.StorageAPI.Reference;
+import net.eduard.api.lib.storage.StorageAPI.Storable;
+import net.eduard.api.lib.storage.game.Chunk;
 
 public class FactionClaim implements Storable {
+
+	public boolean inline() {
+		return true;
+	}
 
 	@Reference
 	private Faction faction;
@@ -67,18 +69,6 @@ public class FactionClaim implements Storable {
 		this(new Chunk(location.getChunk()));
 	}
 
-	public boolean isSafeZone() {
-		return faction.isSafeZone();
-	}
-
-	public boolean isFreeZone() {
-		return !isDomined() || faction.isFreeZone();
-	}
-
-	public boolean isWarZone() {
-		return faction.isWarZone();
-	}
-
 	public boolean isDomined() {
 		return faction != null;
 	}
@@ -107,16 +97,5 @@ public class FactionClaim implements Storable {
 		this.chunk = chunk;
 	}
 
-	@Override
-	public Object restore(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-		// TODO Auto-generated method stub
-
-	}
 
 }

@@ -2,15 +2,15 @@ package net.eduard.api;
 
 import java.util.UUID;
 
-import net.eduard.api.setup.StorageAPI;
-import net.eduard.api.setup.bungee.BungeeConfig;
-import net.eduard.api.setup.bungee.DBBungee;
-import net.eduard.api.setup.bungee.ServerAPI;
-import net.eduard.api.setup.bungee.ServerAPI.BungeeControl;
-import net.eduard.api.setup.bungee.ServerAPI.Server;
-import net.eduard.api.setup.bungee.ServerAPI.ServerState;
-import net.eduard.api.setup.bungee.ServerAPI.ServerType;
-import net.eduard.api.setup.manager.DBManager;
+import net.eduard.api.lib.DBBungee;
+import net.eduard.api.lib.ServerAPI;
+import net.eduard.api.lib.ServerAPI.BungeeControl;
+import net.eduard.api.lib.ServerAPI.Server;
+import net.eduard.api.lib.ServerAPI.ServerState;
+import net.eduard.api.lib.ServerAPI.ServerType;
+import net.eduard.api.lib.storage.BungeeConfig;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.manager.DBManager;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;

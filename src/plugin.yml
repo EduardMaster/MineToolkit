@@ -1,7 +1,7 @@
 name: EduardAPI
 description: A melhor API ja criada pelo Eduard
 main: net.eduard.api.EduardAPI
-version: 6.2.1
+version: 2.2.3
 authors: [Eduard]
 soft-depend: [Essentials,Vault,McMMO]
 website: https://www.youtube.com/user/EduTutoriaisHD

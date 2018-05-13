@@ -6,8 +6,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.config.Config;
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class ConfigReloadCommand extends CommandManager {
 

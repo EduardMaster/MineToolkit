@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 
 /**
@@ -23,17 +22,7 @@ public class Game {
 	private MinigameMode mode;
 	private MinigameState state = MinigameState.STARTING;
 	private List<GamePlayer> players = new ArrayList<>();
-	private List<Chest> chests = new ArrayList<>();
-	private List<Chest> chestsFeast = new ArrayList<>();
 	private List<GameTeam> teams = new ArrayList<>();
-
-	public List<Chest> getChests() {
-		return chests;
-	}
-
-	public void setChests(List<Chest> chests) {
-		this.chests = chests;
-	}
 
 	public void broadcast(String message) {
 		for (GamePlayer player : players) {
@@ -236,14 +225,6 @@ public class Game {
 
 	public void setMode(MinigameMode mode) {
 		this.mode = mode;
-	}
-
-	public List<Chest> getChestsFeast() {
-		return chestsFeast;
-	}
-
-	public void setChestsFeast(List<Chest> chestsFeast) {
-		this.chestsFeast = chestsFeast;
 	}
 
 	public void join(GamePlayer player) {

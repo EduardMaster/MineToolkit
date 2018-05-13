@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class LagMobsCommand extends CommandManager{
 

@@ -7,8 +7,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.manager.CommandManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;

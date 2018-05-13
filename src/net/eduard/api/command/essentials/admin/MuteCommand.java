@@ -8,8 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class MuteCommand extends CommandManager {
 

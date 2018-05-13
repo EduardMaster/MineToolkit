@@ -11,10 +11,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import net.eduard.api.config.Config;
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.VaultAPI;
-import net.eduard.api.setup.game.Title;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.VaultAPI;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Title;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class SetGroupCommand extends CommandManager {
 	public List<String> messages = new ArrayList<>();

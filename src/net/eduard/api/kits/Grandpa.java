@@ -3,8 +3,8 @@ package net.eduard.api.kits;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Ability;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Ability;
 
 public class Grandpa extends Ability{
 

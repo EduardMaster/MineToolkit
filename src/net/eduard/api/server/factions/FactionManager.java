@@ -10,11 +10,11 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import net.eduard.api.lib.storage.StorageAPI.Reference;
+import net.eduard.api.lib.storage.StorageAPI.Storable;
+import net.eduard.api.lib.storage.game.Chunk;
 import net.eduard.api.server.ranks.Rank;
 import net.eduard.api.server.ranks.RankManager;
-import net.eduard.api.setup.StorageAPI.Reference;
-import net.eduard.api.setup.StorageAPI.Storable;
-import net.eduard.api.setup.game.Chunk;
 
 public class FactionManager implements Storable {
 	private ItemStack itemMaxPower,itemInstantPower;

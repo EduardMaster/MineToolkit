@@ -13,8 +13,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class TempMuteCommand extends CommandManager {
 	public Map<String, Long> tempbanned = new HashMap<>();

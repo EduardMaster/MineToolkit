@@ -1,15 +1,15 @@
 package net.eduard.api.server.minigame;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import net.eduard.api.setup.StorageAPI.Copyable;
-import net.eduard.api.setup.StorageAPI.Storable;
-import net.eduard.api.setup.game.Schematic;
+import net.eduard.api.lib.storage.StorageAPI.Storable;
+import net.eduard.api.lib.storage.game.Schematic;
 
 /**
  * Mapa da Sala
@@ -17,7 +17,7 @@ import net.eduard.api.setup.game.Schematic;
  * @author Eduard-PC
  *
  */
-public class GameMap implements Storable, Copyable {
+public class GameMap implements Storable {
 
 	private String name;
 	private int teamSize;
@@ -25,6 +25,7 @@ public class GameMap implements Storable, Copyable {
 	private int maxPlayersAmount = 20;
 	private int neededPlayersAmount = 16;
 	private Location spawn, lobby;
+	private Map<String, Location> locations = new HashMap<>();
 	private List<Schematic> bases = new ArrayList<>();
 	private List<Location> spawns = new ArrayList<>();
 	private Schematic map, feast;
@@ -219,6 +220,14 @@ public class GameMap implements Storable, Copyable {
 
 	public void setTeamSize(int teamSize) {
 		this.teamSize = teamSize;
+	}
+
+	public Map<String, Location> getLocations() {
+		return locations;
+	}
+
+	public void setLocations(Map<String, Location> locations) {
+		this.locations = locations;
 	}
 
 }

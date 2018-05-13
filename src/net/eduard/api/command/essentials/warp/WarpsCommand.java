@@ -7,8 +7,8 @@ import org.bukkit.command.CommandSender;
 
 import net.eduard.api.config.Config;
 import net.eduard.api.config.ConfigSection;
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class WarpsCommand extends CommandManager {
 	public WarpsCommand() {

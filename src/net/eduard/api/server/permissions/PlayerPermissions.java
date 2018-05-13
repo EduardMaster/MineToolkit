@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import net.eduard.api.setup.StorageAPI.Reference;
+import net.eduard.api.lib.storage.StorageAPI.Reference;
 
 public class PlayerPermissions {
 	

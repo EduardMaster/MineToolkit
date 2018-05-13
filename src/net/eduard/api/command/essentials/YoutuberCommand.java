@@ -7,7 +7,7 @@ import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class YoutuberCommand extends CommandManager {
 	public List<String> messages = new ArrayList<>();

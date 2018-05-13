@@ -24,9 +24,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 
 import net.eduard.api.config.Config;
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Title;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Title;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class LoginCommand extends CommandManager {
 	public String message = "§aVoce foi logado com sucesso!";

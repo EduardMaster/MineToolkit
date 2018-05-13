@@ -11,11 +11,11 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.StorageAPI.Reference;
-import net.eduard.api.setup.StorageAPI.Storable;
-import net.eduard.api.setup.lib.FakePlayer;
-import net.eduard.api.setup.VaultAPI;
+import net.eduard.api.lib.FakePlayer;
+import net.eduard.api.lib.VaultAPI;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.StorageAPI.Reference;
+import net.eduard.api.lib.storage.StorageAPI.Storable;
 
 /**
  * Controlador de Ranks

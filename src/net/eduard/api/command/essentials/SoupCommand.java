@@ -16,9 +16,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Sounds;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Sounds;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class SoupCommand extends CommandManager {
 

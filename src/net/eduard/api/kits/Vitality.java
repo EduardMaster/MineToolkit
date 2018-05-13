@@ -1,15 +1,14 @@
 package net.eduard.api.kits;
 
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Ability;
-import net.eduard.api.setup.game.Sounds;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Ability;
+import net.eduard.api.lib.storage.game.Sounds;
 
 public class Vitality extends Ability {
 	public ItemStack soup = Mine.newItem(Material.BROWN_MUSHROOM, "§6Sopa");

@@ -9,10 +9,17 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Kit;
-import net.eduard.api.setup.manager.TimeManager;
-
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Kit;
+import net.eduard.api.lib.storage.manager.TimeManager;
+/**
+ * Representa um Jogo
+ * <br>MinigameSetup 1.0
+ * @version 2.0
+ * @since EduardAPI 2.0
+ * @author Eduard
+ *
+ */
 public abstract class Minigame extends TimeManager {
 
 	private String name;

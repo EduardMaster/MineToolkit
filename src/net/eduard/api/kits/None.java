@@ -1,7 +1,7 @@
 package net.eduard.api.kits;
 
-import net.eduard.api.setup.game.Ability;
-import net.eduard.api.setup.game.KitType;
+import net.eduard.api.lib.storage.game.Ability;
+import net.eduard.api.lib.storage.game.KitType;
 
 public class None extends Ability{
 

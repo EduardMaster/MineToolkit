@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.bukkit.Color;
 import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -16,13 +15,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.click.PlayerClick;
-import net.eduard.api.setup.click.PlayerClickEffect;
-import net.eduard.api.setup.game.Ability;
-import net.eduard.api.setup.game.Effects;
-import net.eduard.api.setup.game.Jump;
-import net.eduard.api.setup.game.Sounds;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.click.PlayerClick;
+import net.eduard.api.lib.storage.click.PlayerClickEffect;
+import net.eduard.api.lib.storage.game.Ability;
+import net.eduard.api.lib.storage.game.Effects;
+import net.eduard.api.lib.storage.game.Jump;
+import net.eduard.api.lib.storage.game.Sounds;
 
 public class Sonic extends Ability {
 	public static ArrayList<Player> inEffect = new ArrayList<>();

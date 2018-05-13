@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import net.eduard.api.setup.game.Ability;
+import net.eduard.api.lib.storage.game.Ability;
 
 public class LavaMan extends Ability {
 

@@ -13,11 +13,11 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.Mine.LocationEffect;
-import net.eduard.api.setup.click.PlayerClickEntity;
-import net.eduard.api.setup.click.PlayerClickEntityEffect;
-import net.eduard.api.setup.game.Ability;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.Mine.LocationEffect;
+import net.eduard.api.lib.storage.click.PlayerClickEntity;
+import net.eduard.api.lib.storage.click.PlayerClickEntityEffect;
+import net.eduard.api.lib.storage.game.Ability;
 
 public class Infernor extends Ability {
 	

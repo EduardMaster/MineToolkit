@@ -23,16 +23,16 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.VaultAPI;
-import net.eduard.api.setup.click.PlayerClick;
-import net.eduard.api.setup.click.PlayerClickEffect;
-import net.eduard.api.setup.click.PlayerClickEntity;
-import net.eduard.api.setup.click.PlayerClickEntityEffect;
-import net.eduard.api.setup.game.Jump;
-import net.eduard.api.setup.game.Slot;
-import net.eduard.api.setup.game.Sounds;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.VaultAPI;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.click.PlayerClick;
+import net.eduard.api.lib.storage.click.PlayerClickEffect;
+import net.eduard.api.lib.storage.click.PlayerClickEntity;
+import net.eduard.api.lib.storage.click.PlayerClickEntityEffect;
+import net.eduard.api.lib.storage.game.Jump;
+import net.eduard.api.lib.storage.game.Slot;
+import net.eduard.api.lib.storage.game.Sounds;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class AdminCommand extends CommandManager {
 

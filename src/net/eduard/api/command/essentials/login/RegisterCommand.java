@@ -8,9 +8,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import net.eduard.api.config.Config;
 import net.eduard.api.config.ConfigSection;
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Title;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Title;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class RegisterCommand extends CommandManager {
 	public String messageError = "§cVoce ja esta registrado!";

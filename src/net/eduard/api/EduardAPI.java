@@ -45,18 +45,17 @@ import net.eduard.api.command.essentials.SoundCommand;
 import net.eduard.api.command.map.MapCommand;
 import net.eduard.api.config.Config;
 import net.eduard.api.config.ConfigSection;
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.Mine.Replacer;
-import net.eduard.api.setup.StorageAPI;
-import net.eduard.api.setup.VaultAPI;
-import net.eduard.api.setup.bungee.BukkitAPI;
-import net.eduard.api.setup.bungee.ServerAPI.BukkitControl;
-import net.eduard.api.setup.game.Chunk;
-import net.eduard.api.setup.game.Drop;
-import net.eduard.api.setup.game.Schematic;
-import net.eduard.api.setup.manager.CommandManager;
-import net.eduard.api.setup.manager.PlayerManager;
-import net.eduard.api.setup.manager.TimeManager;
+import net.eduard.api.lib.BukkitAPI;
+import net.eduard.api.lib.VaultAPI;
+import net.eduard.api.lib.ServerAPI.BukkitControl;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.Mine.Replacer;
+import net.eduard.api.lib.storage.game.Drop;
+import net.eduard.api.lib.storage.game.Schematic;
+import net.eduard.api.lib.storage.manager.CommandManager;
+import net.eduard.api.lib.storage.manager.PlayersManager;
+import net.eduard.api.lib.storage.manager.TimeManager;
 
 /**
  * Classe Principal do Plugin EduardAPI herda todas propriedades de um
@@ -148,12 +147,10 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		messages = new Config(this, "messages.yml");
 		time = new TimeManager(this);
 
-		StorageAPI.register(Chunk.class, new Chunk());
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.command");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.click");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.setup.kits");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.setup.game");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.setup.manager");
+		
+		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.storage.game");
+		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.storage.manager");
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.server");
 		StorageAPI.registerClasses(Mine.class);
 		Mine.resetScoreboards();
@@ -206,7 +203,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 			}
 		}
 		BukkitControl.register(this);
-		Mine.setPlayerManager(new PlayerManager());
+		Mine.setPlayerManager(new PlayersManager());
 		Mine.getPlayerManager().register(this);
 		Mine.console("§bEduardAPI §acarregado!");
 

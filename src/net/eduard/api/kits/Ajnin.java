@@ -8,8 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Ability;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Ability;
 
 public class Ajnin extends Ability {
 

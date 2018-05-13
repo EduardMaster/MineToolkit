@@ -9,14 +9,20 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.yaml.snakeyaml.Yaml;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.StorageAPI;
-import net.eduard.api.setup.game.Sounds;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.game.Sounds;
 
+/**
+ * Sistema de PARSER YAML e YML
+ * 
+ * @author Eduard
+ * @version 2.0
+ * 
+ * @see Config
+ */
 public class ConfigSection {
 
 	private static String getComment(String line) {
@@ -353,7 +359,7 @@ public class ConfigSection {
 	}
 
 	public Object getValue() {
-		return StorageAPI.restoreValue(isMap() ? toMap() : get());
+		return StorageAPI.restoreData(isMap() ? toMap() : get(), null, null);
 
 	}
 
@@ -399,7 +405,7 @@ public class ConfigSection {
 			return sec;
 		}
 
-		sec.set(StorageAPI.storeValue(value));
+		sec.set(StorageAPI.storeData(value, value.getClass(), null));
 		sec.setComments(comments);
 		return sec;
 	}

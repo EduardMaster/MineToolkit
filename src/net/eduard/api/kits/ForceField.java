@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import net.eduard.api.setup.click.PlayerClick;
-import net.eduard.api.setup.click.PlayerClickEffect;
-import net.eduard.api.setup.game.Ability;
+import net.eduard.api.lib.storage.click.PlayerClick;
+import net.eduard.api.lib.storage.click.PlayerClickEffect;
+import net.eduard.api.lib.storage.game.Ability;
 
 
 public class ForceField extends Ability{

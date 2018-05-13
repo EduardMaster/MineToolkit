@@ -9,9 +9,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.setup.click.PlayerClick;
-import net.eduard.api.setup.click.PlayerClickEffect;
-import net.eduard.api.setup.game.Ability;
+import net.eduard.api.lib.storage.click.PlayerClick;
+import net.eduard.api.lib.storage.click.PlayerClickEffect;
+import net.eduard.api.lib.storage.game.Ability;
 
 public class Bomber extends Ability {
 

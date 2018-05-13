@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.util.Vector;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Ability;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Ability;
 import net.eduard.api.util.v1_7_R4.GrapplerHook;
 
 public class Grappler extends Ability {

@@ -2,7 +2,7 @@ package net.eduard.api.server.minigame;
 
 import org.bukkit.entity.Player;
 
-import net.eduard.api.setup.Mine;
+import net.eduard.api.lib.storage.Mine;
 
 public class GamePlayer {
 

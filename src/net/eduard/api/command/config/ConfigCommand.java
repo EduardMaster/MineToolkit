@@ -1,7 +1,7 @@
 
 package net.eduard.api.command.config;
 
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class ConfigCommand extends CommandManager {
 

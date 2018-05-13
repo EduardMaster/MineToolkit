@@ -6,9 +6,9 @@ import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Tag;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Tag;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class TagsCommand extends CommandManager {
 	public List<Tag> tags = new ArrayList<Tag>();

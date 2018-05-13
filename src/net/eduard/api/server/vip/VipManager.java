@@ -8,8 +8,8 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import net.eduard.api.setup.StorageAPI.Storable;
-import net.eduard.api.setup.VaultAPI;
+import net.eduard.api.lib.VaultAPI;
+import net.eduard.api.lib.storage.StorageAPI.Storable;
 
 public class VipManager implements Storable{
 

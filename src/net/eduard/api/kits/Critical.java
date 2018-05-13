@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Ability;
-import net.eduard.api.setup.game.Effects;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Ability;
+import net.eduard.api.lib.storage.game.Effects;
 
 public class Critical extends Ability {
 	public double chance = 0.3;

@@ -2,9 +2,9 @@ package net.eduard.api.server.vip;
 
 import java.util.Map;
 
-import net.eduard.api.setup.Extra;
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.StorageAPI.Storable;
+import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.StorageAPI.Storable;
 
 public class Vip implements Storable{
 

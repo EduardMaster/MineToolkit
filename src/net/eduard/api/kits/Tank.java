@@ -6,8 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import net.eduard.api.setup.game.Ability;
-import net.eduard.api.setup.game.Explosion;
+import net.eduard.api.lib.storage.game.Ability;
+import net.eduard.api.lib.storage.game.Explosion;
 
 import org.bukkit.event.entity.PlayerDeathEvent;
 

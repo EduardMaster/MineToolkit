@@ -1,7 +1,7 @@
 
 package net.eduard.api.command.essentials;
 
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class ArenaCommand extends CommandManager {
 

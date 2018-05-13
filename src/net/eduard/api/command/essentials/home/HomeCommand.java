@@ -7,12 +7,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.PluginDisableEvent;
 
 import net.eduard.api.config.Config;
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.click.PlayerEffect;
-import net.eduard.api.setup.game.Delay;
-import net.eduard.api.setup.game.Sounds;
-import net.eduard.api.setup.game.Title;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.click.PlayerEffect;
+import net.eduard.api.lib.storage.game.Delay;
+import net.eduard.api.lib.storage.game.Sounds;
+import net.eduard.api.lib.storage.game.Title;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class HomeCommand extends CommandManager {
 	public HomeCommand() {

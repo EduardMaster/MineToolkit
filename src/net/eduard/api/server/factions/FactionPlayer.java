@@ -6,9 +6,9 @@ import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import net.eduard.api.lib.storage.StorageAPI.Reference;
+import net.eduard.api.lib.storage.StorageAPI.Storable;
 import net.eduard.api.server.ranks.Rank;
-import net.eduard.api.setup.StorageAPI.Reference;
-import net.eduard.api.setup.StorageAPI.Storable;
 
 public class FactionPlayer implements Storable {
 
@@ -79,7 +79,6 @@ public class FactionPlayer implements Storable {
 		// TODO Auto-generated constructor stub
 	}
 
-
 	public FactionPlayer(Player player) {
 		setPlayerData(player);
 	}
@@ -129,45 +128,6 @@ public class FactionPlayer implements Storable {
 		this.kills = kills;
 	}
 
-	public FactionRel getRel(Faction faction) {
-		
-		if (faction == null) {
-			return FactionRel.FREE_ZONE;
-		}
-		if (getFaction() == null) {
-			return faction.getRel(getFaction());
-		}
-		if (getFaction().equals(faction)) {
-			return FactionRel.MEMBER;
-		}
-		return getFaction().getRel(faction);
-
-	}
-
-	public FactionRel getRel(FactionPlayer member) {
-		if (member.getFaction() == null) {
-			return FactionRel.NEUTRAL;
-		}
-		if (getFaction() == null) {
-			return FactionRel.NEUTRAL;
-		}
-		if (getFaction().equals(member.getFaction())) {
-			if (getFaction().getLeader().equals(member)) {
-				return FactionRel.LEADER;
-			}
-			return FactionRel.MEMBER;
-		}
-		return getFaction().getRel(member.getFaction());
-	}
-
-	public FactionRel getRel(FactionClaim claim) {
-		if (claim == null) {
-			return FactionRel.FREE_ZONE;
-		}
-		return getRel(claim.getFaction());
-
-	}
-
 	public void sendMessage(String message) {
 		Player player = getPlayer();
 		if (player != null)
@@ -179,7 +139,7 @@ public class FactionPlayer implements Storable {
 	}
 
 	public Player getPlayer() {
-		return player !=null?player: (player = getPlayerData().getPlayer());
+		return player != null ? player : (player = getPlayerData().getPlayer());
 	}
 
 	@Override
@@ -203,7 +163,6 @@ public class FactionPlayer implements Storable {
 
 	}
 
-
 	public boolean isLeader() {
 		return getFaction().getLeader().equals(this);
 	}
@@ -219,6 +178,7 @@ public class FactionPlayer implements Storable {
 	public String getName() {
 		return getPlayerData().getName();
 	}
+
 	public UUID getId() {
 		return getPlayerData().getUniqueId();
 	}
@@ -230,6 +190,15 @@ public class FactionPlayer implements Storable {
 	public void setLastLogin(long lastLogin) {
 		this.lastLogin = lastLogin;
 	}
-	
 
+	public FactionRel getRel(FactionPlayer player) {
+		return FactionRel.getRel(this, player);
+	}
+
+	public FactionRel getRel(FactionClaim claim) {
+		return FactionRel.getRel(this, claim);
+	}
+
+
+	
 }

@@ -8,7 +8,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import net.eduard.api.setup.game.Ability;
+import net.eduard.api.lib.storage.game.Ability;
 
 public class Reaper extends Ability {
 	public Material reaper = Material.WOOD_HOE;

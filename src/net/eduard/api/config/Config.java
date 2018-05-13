@@ -14,15 +14,16 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.StorageAPI.Storable;
-import net.eduard.api.setup.game.Sounds;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.StorageAPI.Storable;
+import net.eduard.api.lib.storage.game.Sounds;
 
 /**
- * Primeiro Sistema de Configuração proprio com suporte a 4 itens de 1 vez,
- * Lista, Mapa e Valor, Comentarios
- * 
+ * Sistema de Config usando o PARSER {@link ConfigSection}
+ * @version 2.0
+
  * @author Eduard
+
  *
  */
 public class Config implements Storable {

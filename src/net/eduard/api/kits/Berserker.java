@@ -8,9 +8,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Ability;
-import net.eduard.api.setup.game.Sounds;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Ability;
+import net.eduard.api.lib.storage.game.Sounds;
 
 public class Berserker extends Ability {
 	public ItemStack soup = Mine.newItem(Material.BROWN_MUSHROOM, "§6Sopa");

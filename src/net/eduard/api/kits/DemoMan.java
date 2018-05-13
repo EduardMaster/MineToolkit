@@ -11,9 +11,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.game.Ability;
-import net.eduard.api.setup.game.Explosion;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.game.Ability;
+import net.eduard.api.lib.storage.game.Explosion;
 
 public class DemoMan extends Ability {
 	

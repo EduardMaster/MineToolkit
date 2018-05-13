@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import net.eduard.api.setup.game.Ability;
+import net.eduard.api.lib.storage.game.Ability;
 
 public class Cultivator extends Ability {
 

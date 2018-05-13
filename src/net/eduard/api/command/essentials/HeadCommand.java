@@ -3,7 +3,7 @@ package net.eduard.api.command.essentials;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class HeadCommand extends CommandManager{
 	

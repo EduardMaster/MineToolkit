@@ -4,8 +4,8 @@ package net.eduard.api.command.essentials.staff;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.manager.CommandManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.manager.CommandManager;
 
 public class ClearChatCommand extends CommandManager {
 	public String message = "§6O $sender limpou o Chat!";

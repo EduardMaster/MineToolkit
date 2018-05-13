@@ -1,17 +1,16 @@
 package net.eduard.api.kits;
 
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import net.eduard.api.setup.click.PlayerClickEntity;
-import net.eduard.api.setup.click.PlayerClickEntityEffect;
-import net.eduard.api.setup.game.Ability;
-import net.eduard.api.setup.game.Jump;
-import net.eduard.api.setup.game.Sounds;
+import net.eduard.api.lib.storage.click.PlayerClickEntity;
+import net.eduard.api.lib.storage.click.PlayerClickEntityEffect;
+import net.eduard.api.lib.storage.game.Ability;
+import net.eduard.api.lib.storage.game.Jump;
+import net.eduard.api.lib.storage.game.Sounds;
 
 public class Hulk extends Ability {
 

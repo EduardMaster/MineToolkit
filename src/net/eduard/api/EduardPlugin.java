@@ -5,9 +5,9 @@ import java.util.List;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.eduard.api.config.Config;
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.StorageAPI;
-import net.eduard.api.setup.manager.TimeManager;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.manager.TimeManager;
 /**
  * Representa os plugins feitos pelo Eduard
  * @version 1.0

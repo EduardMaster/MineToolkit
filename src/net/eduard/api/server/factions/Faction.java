@@ -10,10 +10,10 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 
-import net.eduard.api.setup.Mine;
-import net.eduard.api.setup.StorageAPI.Reference;
-import net.eduard.api.setup.StorageAPI.Storable;
-import net.eduard.api.setup.VaultAPI;
+import net.eduard.api.lib.VaultAPI;
+import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.storage.StorageAPI.Reference;
+import net.eduard.api.lib.storage.StorageAPI.Storable;
 
 public class Faction implements Storable {
 	@Reference
@@ -295,40 +295,6 @@ public class Faction implements Storable {
 		this.suffix = suffix;
 	}
 
-	public FactionRel getRel(FactionClaim claim) {
-		Faction faction = claim.getFaction();
-		if (faction == null) {
-			return FactionRel.FREE_ZONE;
-		}
-		if (equals(faction)) {
-			if (claim.isOnAttack()) {
-				return FactionRel.WAR;
-			}
-			return FactionRel.MEMBER;
-		}
-		return getRel(claim.getFaction());
-
-	}
-
-	public FactionRel getRel(Faction faction) {
-		if (faction == null) {
-			return FactionRel.NEUTRAL;
-		}
-		if (getAllies().contains(faction)) {
-			return FactionRel.ALLY;
-		}
-		if (getRivals().contains(faction)) {
-			return FactionRel.RIVAL;
-		}
-		if (faction.equals(manager.getWarZone())) {
-			return FactionRel.WAR_ZONE;
-		}
-		if (faction.equals(manager.getProtectedZone())) {
-			return FactionRel.PROTECTED_ZONE;
-		}
-		return FactionRel.NEUTRAL;
-
-	}
 
 	public List<Faction> getRivals() {
 		return rivals;
@@ -411,5 +377,10 @@ public class Faction implements Storable {
 	public void setGenerators(Map<EntityType, Integer> generators) {
 		this.generators = generators;
 	}
+
+	public FactionRel getRel(Faction faction) {
+		return FactionRel.getRel(this, faction);
+	}
+
 
 }
