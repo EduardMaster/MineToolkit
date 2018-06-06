@@ -2,7 +2,7 @@ package net.eduard.api.server.minigame;
 
 import java.util.Map;
 
-import net.eduard.api.lib.storage.StorageAPI.Storable;
+import net.eduard.api.lib.storage.Storable;
 
 public class MinigameMode implements Storable {
 	private String name;

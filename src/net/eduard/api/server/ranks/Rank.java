@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.eduard.api.lib.storage.StorageAPI.Storable;
+import net.eduard.api.lib.storage.Storable;
 
 public class Rank implements Storable {
 

@@ -16,6 +16,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -25,6 +27,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,16 +43,78 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-
-
 /**
- * API contendo coisas relacionado a Textos e Numeros
+ * API contendo coisas relacionado a Textos, Numeros e Reflection
+ * 
  * @version 2.0
  * @since Lib v2.0
  * @author Eduard
  *
  */
 public final class Extra {
+
+	private static Map<String, String> replacers = new LinkedHashMap<>();
+
+	/**
+	 * 
+	 * @param type
+	 *            Variavel (Classe)
+	 * @return Tipo 2 de type, caso type seja um {@link ParameterizedType}
+	 * 
+	 */
+	public static Class<?> getTypeValue(Type type) {
+		if (type instanceof ParameterizedType) {
+			ParameterizedType parameterizedType = (ParameterizedType) type;
+			Type[] types = parameterizedType.getActualTypeArguments();
+			if (types.length > 1) {
+				return (Class<?>) types[1];
+			}
+
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param type
+	 *            Variavel {@link Type} (Classe/Tipo)
+	 * @return Tipo 1 de type, caso type seja um {@link ParameterizedType}
+	 * 
+	 */
+	public static Class<?> getTypeKey(Type type) {
+		if (type instanceof ParameterizedType) {
+			ParameterizedType parameterizedType = (ParameterizedType) type;
+
+			Type[] types = parameterizedType.getActualTypeArguments();
+
+			return (Class<?>) types[0];
+
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param claz
+	 *            Classe
+	 * @return Se a claz § um {@link Map} (Mapa)
+	 * 
+	 */
+	public static boolean isMap(Class<?> claz) {
+		return Map.class.isAssignableFrom(claz);
+	}
+
+	/**
+	 * 
+	 * @param claz
+	 *            Classe
+	 * @return Se a claz § uma {@link List} (Lista)
+	 * 
+	 */
+	public static boolean isList(Class<?> claz) {
+		return List.class.isAssignableFrom(claz);
+	}
+
 	/**
 	 * Pega um Objecto serializavel do Arquivo
 	 * 
@@ -77,7 +142,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Salva um Objecto no Arquivo em forma de serializaï¿½ï¿½o Java
+	 * Salva um Objecto no Arquivo em forma de serializa§§o Java
 	 * 
 	 * @param object
 	 *            Objeto (Dado)
@@ -141,7 +206,7 @@ public final class Extra {
 	 * Defaz o ZIP do Arquivo
 	 * 
 	 * @param zipIn
-	 *            Input Stream (Coneï¿½ï¿½o de Algum Arquivo)
+	 *            Input Stream (Cone§§o de Algum Arquivo)
 	 * @param filePath
 	 *            Destino Arquivo
 	 */
@@ -190,6 +255,7 @@ public final class Extra {
 		}
 		return classes;
 	}
+
 	public static List<Class<?>> getClasses(JarFile jar, String pack) {
 		List<Class<?>> lista = new ArrayList<>();
 		try {
@@ -205,9 +271,9 @@ public final class Extra {
 				if ((entryName.endsWith(".class")) && (entryName.startsWith(relPath)) && !entryName.contains("$")) {
 					String classeName = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
 					try {
-						lista.add(Extra.loadClass(classeName));						
+						lista.add(Extra.loadClass(classeName));
 					} catch (Exception e) {
-						System.out.println("Failed to load "+classeName);
+						System.out.println("Failed to load " + classeName);
 					}
 
 				}
@@ -220,53 +286,52 @@ public final class Extra {
 		return lista;
 	}
 
-	
 	public static String executePost(String targetURL, String urlParameters) {
-		  HttpURLConnection connection = null;
-		  try {
-		    //Create connection
-		    URL url = new URL(targetURL);
-		    connection = (HttpURLConnection) url.openConnection();
-		    connection.setRequestMethod("POST");
-		    connection.setRequestProperty("Content-Type", 
-		        "application/x-www-form-urlencoded");
+		HttpURLConnection connection = null;
+		try {
+			// Create connection
+			URL url = new URL(targetURL);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-		    connection.setRequestProperty("Content-Length", 
-		        Integer.toString(urlParameters.getBytes().length));
-		    connection.setRequestProperty("Content-Language", "en-US");  
+			connection.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
+			connection.setRequestProperty("Content-Language", "en-US");
 
-		    connection.setUseCaches(false);
-		    connection.setDoOutput(true);
+			connection.setUseCaches(false);
+			connection.setDoOutput(true);
 
-		    //Send request
-		    DataOutputStream wr = new DataOutputStream (
-		        connection.getOutputStream());
-		    wr.writeBytes(urlParameters);
-		    wr.close();
+			// Send request
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.close();
 
-		    //Get Response  
-		    InputStream is = connection.getInputStream();
-		    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-		    StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
-		    String line;
-		    while ((line = rd.readLine()) != null) {
-		      response.append(line);
-		      response.append('\r');
-		    }
-		    rd.close();
-		    return response.toString();
-		  } catch (Exception e) {
-		    e.printStackTrace();
-		    return null;
-		  } finally {
-		    if (connection != null) {
-		      connection.disconnect();
-		    }
-		  }
+			// Get Response
+			InputStream is = connection.getInputStream();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+			StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+			String line;
+			while ((line = rd.readLine()) != null) {
+				response.append(line);
+				response.append('\r');
+			}
+			rd.close();
+			return response.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
 		}
+	}
+
 	/**
 	 * Tenta carregar uma classe e a retorna
-	 * @param name Endereï¿½o
+	 * 
+	 * @param name
+	 *            Endere§o
 	 * @return Classe carregada
 	 */
 	public static Class<?> loadClass(String name) {
@@ -277,11 +342,6 @@ public final class Extra {
 		}
 		return claz;
 	}
-	
-	
-
-
-	private static Map<String, String> replacers = new LinkedHashMap<>();
 
 	public static String getReplacer(String key) {
 		return replacers.get(key);
@@ -289,18 +349,6 @@ public final class Extra {
 
 	public static void newReplacer(String key, String replacer) {
 		replacers.put(key, replacer);
-	}
-
-	static {
-		replacers.put("#b", "org.bukkit.");
-		replacers.put("#s", "org.spigotmc.");
-		replacers.put("#a", "net.eduard.api.");
-		replacers.put("#e", "net.eduard.eduardapi.");
-		replacers.put("#k", "net.eduard.api.kits.");
-		replacers.put("#p", "#mPacket");
-		replacers.put("#m", "net.minecraft.server.#v.");
-		replacers.put("#c", "org.bukkit.craftbukkit.#v.");
-		replacers.put("#s", "org.bukkit.");
 	}
 
 	public static void setValue(Object object, String name, Object value) throws Exception {
@@ -398,6 +446,39 @@ public final class Extra {
 
 	}
 
+	public static boolean isCloneable(Class<?> claz) {
+		return Cloneable.class.isAssignableFrom(claz);
+	}
+
+	/**
+	 * 
+	 * @param claz
+	 *            Classe
+	 * @return Se a claz § um {@link String} (Texto)
+	 * 
+	 */
+	public static boolean isString(Class<?> claz) {
+		return String.class.isAssignableFrom(claz);
+	}
+
+	/**
+	 * 
+	 * @param claz
+	 *            Classe
+	 * @return Se a claz § do tipo Primitivo ou Wrapper (Envolocro)
+	 * 
+	 */
+	public static boolean isWrapper2(Class<?> claz) {
+		if (isString(claz))
+			return true;
+		try {
+			claz.getField("TYPE").get(0);
+			return true;
+		} catch (Exception e) {
+			return claz.isPrimitive();
+		}
+	}
+
 	public static Class<?> get(Object object) throws Exception {
 		if (object instanceof Class) {
 			return (Class<?>) object;
@@ -419,7 +500,7 @@ public final class Extra {
 	}
 
 	public static String toChatMessage(String text) {
-		return text.replace("&", "ï¿½");
+		return text.replace("&", "§");
 	}
 
 	public static List<String> toMessages(List<Object> list) {
@@ -429,6 +510,7 @@ public final class Extra {
 		}
 		return lines;
 	}
+
 	public static List<String> toConfigMessages(List<String> lore) {
 		List<String> lines = new ArrayList<String>();
 		for (String line : lore) {
@@ -436,6 +518,7 @@ public final class Extra {
 		}
 		return lines;
 	}
+
 	public static Random RANDOM = new Random();
 	public static final float TNT = 4F;
 	public static final float CREEPER = 3F;
@@ -444,7 +527,7 @@ public final class Extra {
 	public static final int DAY_IN_MINUTES = DAY_IN_HOUR * 60;
 	public static final int DAY_IN_SECONDS = DAY_IN_MINUTES * 60;
 	public static final long DAY_IN_TICKS = DAY_IN_SECONDS * 20;
-	public static final long DAY_IN_LONG = DAY_IN_TICKS * 50;
+	public static final long DAY_IN_MILLIS = DAY_IN_TICKS * 50;
 
 	public static String formatTime(long time) {
 		if (time == 0L) {
@@ -472,7 +555,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Formata o resultado da subtraï¿½ï¿½o de *numero antigo - numero atual)
+	 * Formata o resultado da subtra§§o de *numero antigo - numero atual)
 	 * 
 	 * @param timestamp
 	 *            Numero Antigo
@@ -686,7 +769,7 @@ public final class Extra {
 	}
 
 	public static String toConfigMessage(String text) {
-		return text.replace("ï¿½", "&");
+		return text.replace("§", "&");
 	}
 
 	public static String toDecimal(Object number) {
@@ -1032,7 +1115,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Tipo de geraï¿½ï¿½o de Key
+	 * Tipo de gera§§o de Key
 	 * 
 	 * @author Eduard-PC
 	 *
@@ -1106,7 +1189,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Pega o Ip do Coneï¿½ï¿½o do Servidor
+	 * Pega o Ip do Cone§§o do Servidor
 	 * 
 	 * @return Ip do Servidor
 	 */
@@ -1130,4 +1213,37 @@ public final class Extra {
 		}
 	}
 
+	private static Map<Class<?>, Class<?>> wrappers = new HashMap<>();
+	static {
+
+		wrappers.put(String.class, String.class);
+		wrappers.put(int.class, Integer.class);
+		wrappers.put(double.class, Double.class);
+		wrappers.put(long.class, Long.class);
+		wrappers.put(byte.class, Byte.class);
+		wrappers.put(short.class, Short.class);
+		wrappers.put(float.class, Float.class);
+		wrappers.put(boolean.class, Boolean.class);
+
+	}
+
+	public static boolean isWrapper(Class<?> clazz) {
+		return getWrapper(clazz) != null;
+	}
+
+	public static Class<?> getWrapper(Class<?> clazz) {
+		return wrappers.get(clazz);
+	}
+
+	static {
+		replacers.put("#b", "org.bukkit.");
+		replacers.put("#s", "org.spigotmc.");
+		replacers.put("#a", "net.eduard.api.");
+		replacers.put("#e", "net.eduard.eduardapi.");
+		replacers.put("#k", "net.eduard.api.kits.");
+		replacers.put("#p", "#mPacket");
+		replacers.put("#m", "net.minecraft.server.#v.");
+		replacers.put("#c", "org.bukkit.craftbukkit.#v.");
+		replacers.put("#s", "org.bukkit.");
+	}
 }

@@ -101,6 +101,7 @@ public class SistemaKey {
 	
 
 	private static int getResult(String plugin, String host, int port) {
+		
 		try {
 			String web = "https://eduarddev.000webhostapp.com/comprou.php";
 			

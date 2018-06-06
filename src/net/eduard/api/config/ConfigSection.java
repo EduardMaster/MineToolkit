@@ -11,9 +11,9 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.game.Sounds;
 import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.game.Sounds;
 
 /**
  * Sistema de PARSER YAML e YML

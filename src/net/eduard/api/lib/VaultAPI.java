@@ -26,7 +26,6 @@ public final class VaultAPI {
 	 */
 	@SuppressWarnings("deprecation")
 	public static String getPlayerGroupPrefix(String player) {
-
 		return VaultAPI.getChat()
 				.getGroupPrefix("null",
 						VaultAPI.getPermission().getPrimaryGroup("null", Bukkit.getOfflinePlayer(player)))

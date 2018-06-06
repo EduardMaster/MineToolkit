@@ -2,13 +2,13 @@ package net.eduard.api.server.factions;
 
 import org.bukkit.Location;
 
+import net.eduard.api.lib.game.Chunk;
+import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI.Reference;
-import net.eduard.api.lib.storage.StorageAPI.Storable;
-import net.eduard.api.lib.storage.game.Chunk;
 
 public class FactionClaim implements Storable {
 
-	public boolean inline() {
+	public boolean saveInline() {
 		return true;
 	}
 
@@ -63,6 +63,13 @@ public class FactionClaim implements Storable {
 
 	public FactionClaim(Chunk chunk) {
 		setChunk(chunk);
+	}
+	public void claimBy(Faction faction) {
+		if (isDomined()) {
+			this.faction.getClaims().remove(this);
+		}
+		this.faction = faction;
+		faction.getClaims().add(this);
 	}
 
 	public FactionClaim(Location location) {

@@ -25,7 +25,7 @@ import org.bukkit.util.Vector;
 
 
 /**
- * API de controle de Entidades, Localizaï¿½ï¿½es e muito mais
+ * API de controle de Entidades, Localiza§§es e muito mais
  * @author Eduard
  * @version 1.0
  * @since Lib v1.0

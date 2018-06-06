@@ -25,7 +25,9 @@ public class Cuboid implements Cloneable, ConfigurationSerializable, Iterable<Bl
 
 	public Cuboid(Location loc) {
 		this(loc, loc);
+		
 	}
+
 
 	public Cuboid(Location loc1, Location loc2) {
 		if (loc1 != null && loc2 != null) {

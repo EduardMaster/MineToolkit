@@ -9,9 +9,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import net.eduard.api.lib.storage.Mine;
-import net.eduard.api.lib.storage.game.Kit;
-import net.eduard.api.lib.storage.manager.TimeManager;
+import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.game.Kit;
+import net.eduard.api.lib.manager.TimeManager;
 /**
  * Representa um Jogo
  * <br>MinigameSetup 1.0

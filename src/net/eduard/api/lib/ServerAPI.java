@@ -390,7 +390,7 @@ public final class ServerAPI {
 					message.setServerName(serverName);
 				}
 				// receiverName+"|"+senderName + " " +
-				log("ï¿½7" + receiverName + " << " + senderName + " " + tag + ":" + lista);
+				log("§7" + receiverName + " << " + senderName + " " + tag + ":" + lista);
 				for (ServerReceiveMessage messageReceiver : receivers) {
 					messageReceiver.onReceiveMessage(message);
 				}
@@ -420,7 +420,7 @@ public final class ServerAPI {
 
 			task = BungeeCord.getInstance().getScheduler().schedule(getPlugin(), getControl(), 1, 1, TimeUnit.SECONDS);
 			BungeeCord.getInstance().getConsole()
-					.sendMessage(new TextComponent("ï¿½b[ServerAPI] ï¿½aAtivando sistema de comunicacao com Bukkit!"));
+					.sendMessage(new TextComponent("§b[ServerAPI] §aAtivando sistema de comunicacao com Bukkit!"));
 		}
 
 		public static void unregister() {
@@ -484,7 +484,7 @@ public final class ServerAPI {
 
 		@Override
 		public void log(String message) {
-			BungeeCord.getInstance().getConsole().sendMessage(new TextComponent("ï¿½a[ServerAPI] ï¿½f" + message));
+			BungeeCord.getInstance().getConsole().sendMessage(new TextComponent("§a[ServerAPI] §f" + message));
 		}
 
 		@Override
@@ -602,7 +602,7 @@ public final class ServerAPI {
 		}
 
 		/**
-		 * Por algum motivo nï¿½o funciona
+		 * Por algum motivo n§o funciona
 		 * 
 		 * @param player
 		 * @param message
@@ -634,7 +634,7 @@ public final class ServerAPI {
 			Bukkit.getMessenger().registerIncomingPluginChannel(plugin, getChannel(), getControl());
 			registred = true;
 			ServerAPI.register(BukkitControl.getControl());
-			Bukkit.getConsoleSender().sendMessage("ï¿½b[ServerAPI] ï¿½aAtivando sistema de comunicacao com Bungeecord!");
+			Bukkit.getConsoleSender().sendMessage("§b[ServerAPI] §aAtivando sistema de comunicacao com Bungeecord!");
 		}
 
 		public static void unregister() {
@@ -675,7 +675,7 @@ public final class ServerAPI {
 			if (message.getServerName().equals("null")) {
 				message.setServerName(serverName);
 			}
-			log("ï¿½7" + playerName + " " + serverName + " " + tag + " : " + lista);
+			log("§7" + playerName + " " + serverName + " " + tag + " : " + lista);
 			for (ServerReceiveMessage messageReceiver : receivers) {
 				messageReceiver.onReceiveMessage(message);
 			}
@@ -683,7 +683,7 @@ public final class ServerAPI {
 
 		@Override
 		public void log(String message) {
-			Bukkit.getConsoleSender().sendMessage("ï¿½a[ServerAPI] ï¿½f" + message);
+			Bukkit.getConsoleSender().sendMessage("§a[ServerAPI] §f" + message);
 		}
 
 		@Override

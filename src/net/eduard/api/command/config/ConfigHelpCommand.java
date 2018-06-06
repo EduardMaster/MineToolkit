@@ -4,7 +4,7 @@ package net.eduard.api.command.config;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import net.eduard.api.lib.storage.manager.CommandManager;
+import net.eduard.api.lib.manager.CommandManager;
 
 public class ConfigHelpCommand extends CommandManager {
 

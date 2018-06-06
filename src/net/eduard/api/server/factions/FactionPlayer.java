@@ -6,8 +6,8 @@ import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI.Reference;
-import net.eduard.api.lib.storage.StorageAPI.Storable;
 import net.eduard.api.server.ranks.Rank;
 
 public class FactionPlayer implements Storable {

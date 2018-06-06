@@ -34,28 +34,24 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import net.eduard.api.command.antihack.AntiHackCommand;
 import net.eduard.api.command.api.ApiCommand;
-import net.eduard.api.command.api.lag.LagCommand;
-import net.eduard.api.command.api.permission.PermissionCommand;
 import net.eduard.api.command.config.ConfigCommand;
-import net.eduard.api.command.essentials.EnchantCommand;
-import net.eduard.api.command.essentials.GotoCommand;
-import net.eduard.api.command.essentials.SoundCommand;
 import net.eduard.api.command.map.MapCommand;
 import net.eduard.api.config.Config;
 import net.eduard.api.config.ConfigSection;
-import net.eduard.api.lib.BukkitAPI;
 import net.eduard.api.lib.VaultAPI;
-import net.eduard.api.lib.ServerAPI.BukkitControl;
-import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.core.Mine.Replacer;
+import net.eduard.api.lib.game.Drop;
+import net.eduard.api.lib.game.Schematic;
+import net.eduard.api.lib.manager.CommandManager;
+import net.eduard.api.lib.manager.DBManager;
+import net.eduard.api.lib.manager.PlayersManager;
+import net.eduard.api.lib.manager.TimeManager;
 import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.Mine.Replacer;
-import net.eduard.api.lib.storage.game.Drop;
-import net.eduard.api.lib.storage.game.Schematic;
-import net.eduard.api.lib.storage.manager.CommandManager;
-import net.eduard.api.lib.storage.manager.PlayersManager;
-import net.eduard.api.lib.storage.manager.TimeManager;
+import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables;
+import net.eduard.api.server.EduardPlugin;
+import net.eduard.api.test.SetSpawn;
 
 /**
  * Classe Principal do Plugin EduardAPI herda todas propriedades de um
@@ -118,7 +114,6 @@ public class EduardAPI extends JavaPlugin implements Listener {
 	public static void commands(ConfigSection section, CommandManager... cmds) {
 		for (CommandManager cmd : cmds) {
 			try {
-				
 
 				String name = cmd.getName();
 				if (section != null) {
@@ -141,18 +136,19 @@ public class EduardAPI extends JavaPlugin implements Listener {
 
 	public void onEnable() {
 		plugin = this;
-		Mine.registerDefaults();
-		BukkitAPI.register(this);
+		
+		// BukkitAPI.register(this);
 		config = new Config(this, "config.yml");
 		messages = new Config(this, "messages.yml");
 		time = new TimeManager(this);
-
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.command");
 		
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.storage.game");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.storage.manager");
+		DBManager.setDebug(config.getBoolean("debug-db"));
+		StorageAPI.registerPackage(getClass(), "net.eduard.api.command");
+		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.game");
+		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.manager");
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.server");
 		StorageAPI.registerClasses(Mine.class);
+		BukkitStorables.load();
 		Mine.resetScoreboards();
 		Mine.console("§bEduardAPI §fScoreboards resetadas!");
 		replacers();
@@ -163,15 +159,9 @@ public class EduardAPI extends JavaPlugin implements Listener {
 				Mine.updateTargets();
 			}
 		});
-		new GotoCommand().register();
 		new ApiCommand().register();
-		new SoundCommand().register();
-		new EnchantCommand().register();
-		new PermissionCommand().register();
 		new MapCommand().register();
 		new ConfigCommand().register();
-		new AntiHackCommand().register();
-		new LagCommand().register();
 
 		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
 		saveObjects();
@@ -202,11 +192,10 @@ public class EduardAPI extends JavaPlugin implements Listener {
 				Mine.callEvent(new PlayerJoinEvent(p, null));
 			}
 		}
-		BukkitControl.register(this);
+		// BukkitControl.register(this);
 		Mine.setPlayerManager(new PlayersManager());
 		Mine.getPlayerManager().register(this);
 		Mine.console("§bEduardAPI §acarregado!");
-
 	}
 
 	@Override
@@ -328,7 +317,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 					p.sendMessage("§bEduardAPI §6Posição 2 setada!");
 				}
 
-			} 
+			}
 		}
 	}
 
@@ -660,6 +649,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 			saveEnum(PotionType.class);
 			saveClassLikeEnum(PotionEffectType.class);
 		}
+		getCommand("setspawn").setExecutor(new SetSpawn());
 
 		if (getConfigs().getBoolean("save-worlds")) {
 			for (World world : Bukkit.getWorlds()) {

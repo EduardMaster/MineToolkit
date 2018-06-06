@@ -131,7 +131,7 @@ public final class BukkitAPI {
 	
 	public static void log(String message) {
 
-		Bukkit.getConsoleSender().sendMessage("ï¿½b[BungeeCord] ï¿½f" + message);
+		Bukkit.getConsoleSender().sendMessage("§b[BungeeCord] §f" + message);
 	}
 
 	public static boolean isServersRequest(String request) {
@@ -144,7 +144,7 @@ public final class BukkitAPI {
 
 	public static String[] getServers(ByteArrayDataInput data) {
 		String[] serversNames = data.readUTF().split(", ");
-		log("ï¿½aSERVERS: ï¿½F" + Arrays.asList(serversNames));
+		log("§aSERVERS: §F" + Arrays.asList(serversNames));
 		return serversNames;
 	}
 
@@ -152,7 +152,7 @@ public final class BukkitAPI {
 	// return JavaPlugin.getProvidingPlugin(BungeeMine.class);
 	// }
 	public static void connectServer(Player player, String server) {
-		log("CONNECT TO ï¿½E" + server + "ï¿½F PLAYER ï¿½E" + player.getName());
+		log("CONNECT TO §E" + server + "§F PLAYER §E" + player.getName());
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("Connect");
 		out.writeUTF(server);
@@ -161,7 +161,7 @@ public final class BukkitAPI {
 	}
 
 	public static void connectServer(String playerName, String server) {
-		log("CONNECT TO ï¿½E" + server + "ï¿½F PLAYER ï¿½E" + playerName);
+		log("CONNECT TO §E" + server + "§F PLAYER §E" + playerName);
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("ConnectOther");
 		out.writeUTF(playerName);
@@ -233,7 +233,7 @@ public final class BukkitAPI {
 	public static String[] getPlayerList(ByteArrayDataInput data) {
 		String server = data.readUTF();
 		String[] players = data.readUTF().split(", ");
-		log("ï¿½ASERVER PLAYERS: ï¿½F" + server + " | " + Arrays.asList(players));
+		log("§ASERVER PLAYERS: §F" + server + " | " + Arrays.asList(players));
 		return players;
 	}
 
@@ -253,14 +253,14 @@ public final class BukkitAPI {
 
 	public static UUID getPlayerId(Player p, ByteArrayDataInput data) {
 		UUID id = UUID.nameUUIDFromBytes(data.readUTF().getBytes());
-		log("ï¿½aPLAYER UUID ï¿½F" + p.getName() + " | " + id);
+		log("§aPLAYER UUID §F" + p.getName() + " | " + id);
 		return id;
 	}
 
 	public static UUID getPlayerId(ByteArrayDataInput data) {
 		String playerName = data.readUTF();
 		UUID id = UUID.nameUUIDFromBytes(data.readUTF().getBytes());
-		log("ï¿½aPLAYER NAME ID ï¿½F" + playerName + " | " + id);
+		log("§aPLAYER NAME ID §F" + playerName + " | " + id);
 		return id;
 	}
 
@@ -272,7 +272,7 @@ public final class BukkitAPI {
 	public static String getPlayerIp(Player p, ByteArrayDataInput data) {
 		String host = data.readUTF();
 		int port = data.readInt();
-		log("ï¿½aPLAYER IP ï¿½F" + p.getName() + " | " + host + ":" + port);
+		log("§aPLAYER IP §F" + p.getName() + " | " + host + ":" + port);
 		return host + ":" + port;
 	}
 
@@ -296,7 +296,7 @@ public final class BukkitAPI {
 	}
 
 	public static void updateServerIp(String server) {
-		log("? SERVER IP ï¿½e" + server);
+		log("? SERVER IP §e" + server);
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("ServerIP");
 		out.writeUTF(server);
@@ -304,7 +304,7 @@ public final class BukkitAPI {
 	}
 
 	public static void updatePlayerId(Player player) {
-		log("? PLAYER ID ï¿½e" + player.getName());
+		log("? PLAYER ID §e" + player.getName());
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("UUID");
 
@@ -312,7 +312,7 @@ public final class BukkitAPI {
 	}
 
 	public static void updatePlayerId(String playerName) {
-		log("? PLAYER NAME ID ï¿½e" + playerName);
+		log("? PLAYER NAME ID §e" + playerName);
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("UUIDOther");
 		out.writeUTF(playerName);
@@ -320,14 +320,14 @@ public final class BukkitAPI {
 	}
 
 	public static void updatePlayerIp(Player player) {
-		log("? PLAYER IP ï¿½e" + player.getName());
+		log("? PLAYER IP §e" + player.getName());
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("IP");
 		player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
 	}
 
 	public static void updatePlayerList(String server) {
-		log("? SERVER PLAYERS ï¿½E" + server);
+		log("? SERVER PLAYERS §E" + server);
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("PlayerList");
 		out.writeUTF(server);
@@ -335,14 +335,14 @@ public final class BukkitAPI {
 	}
 
 	public static void updatePlayerServer(Player player) {
-		log("? PLAYER SERVER ï¿½E" + player.getName());
+		log("? PLAYER SERVER §E" + player.getName());
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("GetServer");
 		send(player, out);
 	}
 
 	public static void sendMessageToPlayer(String playerName, String message) {
-		log("CHAT ï¿½E" + playerName + "ï¿½F MESSAGE ï¿½E" + message);
+		log("CHAT §E" + playerName + "§F MESSAGE §E" + message);
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("Message");
 		out.writeUTF(playerName);
@@ -351,7 +351,7 @@ public final class BukkitAPI {
 	}
 
 	public static void kickPlayer(String playerName, String reason) {
-		log("KICK ï¿½e" + playerName + "'ï¿½E REASON ï¿½F" + reason);
+		log("KICK §e" + playerName + "'§E REASON §F" + reason);
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("KickPlayer");
 		out.writeUTF(playerName);
@@ -480,10 +480,9 @@ public final class BukkitAPI {
 				return;
 			}
 			System.out.println("BungeeCord sent a message.");
-			ByteArrayDataInput in = ByteStreams.newDataInput(message);
-			BungeeCordMessageEvent event = new BungeeCordMessageEvent(player, in);
+			ByteArrayDataInput msg= ByteStreams.newDataInput(message);
+			BungeeCordMessageEvent event = new BungeeCordMessageEvent(player, msg);
 			Bukkit.getPluginManager().callEvent(event);
-			ByteArrayDataInput msg = ByteStreams.newDataInput(message);
 			try {
 				String request = msg.readUTF();
 				if (isPlayerCountRequest(request)) {
@@ -495,7 +494,7 @@ public final class BukkitAPI {
 					Server servidor = getServer(name);
 					servidor.setHost(msg.readUTF());
 					servidor.setPort(msg.readUnsignedShort());
-					log("ï¿½aSERVER IP ï¿½F" + servidor.getName() + " | " + servidor.getHost() + ":"
+					log("§aSERVER IP §F" + servidor.getName() + " | " + servidor.getHost() + ":"
 							+ servidor.getPort());
 
 				} else if (isServerRequest(request)) {
@@ -505,7 +504,7 @@ public final class BukkitAPI {
 					jogador.setServer(name);
 					if (!server.getPlayers().contains(player.getName()))
 						server.getPlayers().add(player.getName());
-					log("ï¿½APLAYER ï¿½F" + player.getName() + "ï¿½A CONNECTED ï¿½F" + server);
+					log("§APLAYER §F" + player.getName() + "§A CONNECTED §F" + server);
 				}
 
 			} catch (Exception e) {

@@ -6,7 +6,7 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import net.eduard.api.lib.storage.manager.CommandManager;
+import net.eduard.api.lib.manager.CommandManager;
 
 public class ApiWorldsCommand extends CommandManager {
 

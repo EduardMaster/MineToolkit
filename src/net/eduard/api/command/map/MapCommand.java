@@ -1,7 +1,7 @@
 
 package net.eduard.api.command.map;
 
-import net.eduard.api.lib.storage.manager.CommandManager;
+import net.eduard.api.lib.manager.CommandManager;
 
 public class MapCommand extends CommandManager {
 

@@ -14,9 +14,9 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import net.eduard.api.lib.storage.Mine;
-import net.eduard.api.lib.storage.StorageAPI.Storable;
-import net.eduard.api.lib.storage.game.Sounds;
+import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.game.Sounds;
+import net.eduard.api.lib.storage.Storable;
 
 /**
  * Sistema de Config usando o PARSER {@link ConfigSection}

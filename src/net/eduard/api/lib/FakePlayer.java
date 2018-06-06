@@ -1,5 +1,6 @@
 package net.eduard.api.lib;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,7 +26,16 @@ public class FakePlayer implements OfflinePlayer {
 
 	public FakePlayer(String name) {
 		this.name = name;
-		// this.id = UUID.nameUUIDFromBytes(name.getBytes());
+
+	}
+
+	public void setIdByName() {
+		try {
+			this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public FakePlayer(String name, UUID id) {
@@ -34,14 +44,12 @@ public class FakePlayer implements OfflinePlayer {
 	}
 
 	public FakePlayer(UUID id) {
-		this(null,id);
+		this(null, id);
 	}
 
 	public FakePlayer(OfflinePlayer player) {
-		this(player.getName(),player.getUniqueId());
+		this(player.getName(), player.getUniqueId());
 	}
-	
-	
 
 	@Override
 	public int hashCode() {
@@ -132,7 +140,7 @@ public class FakePlayer implements OfflinePlayer {
 
 	@Override
 	public boolean isOnline() {
-		return getPlayer()!= null;
+		return getPlayer() != null;
 	}
 
 	@Override

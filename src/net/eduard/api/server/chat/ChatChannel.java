@@ -7,9 +7,9 @@ import java.util.Map.Entry;
 
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.storage.Mine;
+import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI.Reference;
-import net.eduard.api.lib.storage.StorageAPI.Storable;
 import net.eduard.api.util.fancyful.FancyMessage;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

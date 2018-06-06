@@ -6,19 +6,24 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * API simplificada de criar configuraï¿½ï¿½o Path = Endereï¿½o = Secao
+ * API simplificada de criar Config
  * 
  * @author Eduard
  * @version 1.0
@@ -36,6 +41,26 @@ public class Configs {
 
 	public String getName() {
 		return name;
+	}
+	public Location getLocation(String path) {
+		ConfigurationSection section = getSection(path);
+		World world = Bukkit.getWorld(section.getString("world"));
+		double x = section.getDouble("x");
+		double y = section.getDouble("y");
+		double z = section.getDouble("z");
+		float yaw = (float) section.getDouble("yaw");
+		float pitch = (float) section.getDouble("pitch");
+		return new Location(world, x, y, z, yaw, pitch);
+	}
+	public void setLocation(String path, Location location) {
+		ConfigurationSection section = getSection(path);
+		section.set("x", location.getX());
+		section.set("y", location.getY());
+		section.set("z", location.getZ());
+		section.set("yaw", location.getYaw());
+		section.set("pitch", location.getPitch());
+		section.set("world", location.getWorld().getName());
+		
 	}
 
 	/**
@@ -129,7 +154,7 @@ public class Configs {
 	}
 
 	/**
-	 * Salva a Config padrï¿½o caso nï¿½o existe a Arquivo
+	 * Salva a Config padr§o caso n§o existe a Arquivo
 	 */
 	public void saveDefaultConfig() {
 		if (plugin.getResource(name) != null)
@@ -138,7 +163,7 @@ public class Configs {
 	}
 
 	/**
-	 * Salva a config padrï¿½o
+	 * Salva a config padr§o
 	 */
 	public void saveResource() {
 		plugin.saveResource(name, true);
@@ -155,7 +180,7 @@ public class Configs {
 	}
 
 	/**
-	 * Salva os padrï¿½es da Config
+	 * Salva os padr§es da Config
 	 * 
 	 * @return
 	 */
@@ -174,17 +199,63 @@ public class Configs {
 	public ItemStack getItem(String path) {
 		return (ItemStack) get(path);
 	}
-
-	public Location getLocation(String path) {
-		return (Location) get(path);
+	@SuppressWarnings("deprecation")
+	public void setItem(String path, ItemStack item) {
+		ConfigurationSection section = getSection(path);
+		section.set("id", item.getTypeId());
+		section.set("data", item.getDurability());
+		if (item.hasItemMeta()) {
+			ItemMeta meta = item.getItemMeta();
+			if (meta.hasDisplayName()) {
+				section.set("name", meta.getDisplayName());
+			}
+			if (meta.hasLore()) {
+				List<String> lines = new ArrayList<>();
+				for (String line : meta.getLore()) {
+					lines.add(line);
+				}
+				section.set("lore", lines);
+			}
+		}
+		StringBuilder text = new StringBuilder();
+		for (Entry<Enchantment, Integer> enchant : item.getEnchantments().entrySet()) {
+			text.append(enchant.getKey().getId() + "-" + enchant.getValue() + ",");
+		}
+		section.set("enchant", text.toString());
 	}
+
+
+	
+	public Location toLocation(String path) {
+		String text = getString(path);
+		String[] split = text.split(",");
+		World world = Bukkit.getWorld(split[0]);
+		double x = Double.parseDouble(split[1]);
+		double y = Double.parseDouble(split[2]);
+		double z = Double.parseDouble(split[3]);
+		float yaw = Float.parseFloat(split[4]);
+		float pitch = Float.parseFloat(split[5]);
+		return new Location(world, x, y, z, yaw, pitch);
+	}
+
+	public void saveLocation(String path,Location location) {
+		StringBuilder text = new StringBuilder();
+		text.append(location.getWorld().getName() + ",");
+		text.append(location.getX() + ",");
+		text.append(location.getY() + ",");
+		text.append(location.getZ() + ",");
+		text.append(location.getYaw() + ",");
+		text.append(location.getPitch());
+		set(path, text.toString());
+	}
+
 
 	public static String toChatMessage(String text) {
 		return ChatColor.translateAlternateColorCodes('&', text);
 	}
 
 	public static String toConfigMessage(String text) {
-		return text.replace("ï¿½", "&");
+		return text.replace("§", "&");
 	}
 
 	public boolean delete() {

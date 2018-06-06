@@ -2,6 +2,8 @@
 
 debug-plugin-messages: true
 
+debug-db: false
+
 save-worlds: true
 save-players: false
 

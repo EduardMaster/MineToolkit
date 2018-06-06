@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 
 
 /**
- * API de controle e manipulaï¿½ï¿½o de Mundos e Localizaï¿½ï¿½es e Cuboids (Uma expecie
+ * API de controle e manipula§§o de Mundos e Localiza§§es e Cuboids (Uma expecie
  * de Bloco retangular)
  * 
  * @author Eduard
@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 public final class WorldAPI {
 
 	/**
-	 * Efeito a fazer na localizaï¿½ï¿½o
+	 * Efeito a fazer na localiza§§o
 	 * 
 	 * @author Eduard
 	 *
@@ -41,7 +41,7 @@ public final class WorldAPI {
 	}
 
 	/**
-	 * Ponto de direï¿½ï¿½o usado para fazer um RADAR
+	 * Ponto de dire§§o usado para fazer um RADAR
 	 * 
 	 * @author Eduard
 	 *
@@ -128,7 +128,7 @@ public final class WorldAPI {
 							Bukkit.getWorlds().get(0).getSpawnLocation().setDirection(p.getLocation().getDirection()));
 
 				} catch (Exception e) {
-					p.kickPlayer("ï¿½cRestarting Server!");
+					p.kickPlayer("§cRestarting Server!");
 				}
 			}
 

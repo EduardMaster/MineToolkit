@@ -1,19 +1,17 @@
 name: EduardAPI
-description: A melhor API ja criada pelo Eduard
+description: API de desenvolvimento de plugins que facilita sua vida
 main: net.eduard.api.EduardAPI
-version: 2.2.3
+version: 2.3
+author: Eduard
 authors: [Eduard]
 soft-depend: [Essentials,Vault,McMMO]
 website: https://www.youtube.com/user/EduTutoriaisHD
 commands:
+  setspawn:
   map: 
     description: Controle dos Mapas da API
     aliases: [mapa]
     usage: /<command> help
-  goto:
-    description: Teleportar para um Mundo
-    aliases: [world,go,ir,irpara,mundo]
-    usage: /<command> <world>
   config:
     description: Controle das Configs da API
     aliases: [configs,config]
@@ -22,11 +20,3 @@ commands:
     description: Comando principal da API
     aliases: [eduardapi,eduard,e]
     usage: /<command> help
-  enchant:
-    description: Aplicar encantamentos nos Itens
-    aliases: [enchantment]
-    usage: /<command> [enchant] [level] [player]
-  sound:
-    description: Tocar som do Minecraft
-    aliases: [som]
-    usage: /<command> <sound> [volume] [pitch] [player] [-world]

@@ -8,8 +8,9 @@ import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import net.eduard.api.lib.storage.StorageAPI.Storable;
-import net.eduard.api.lib.storage.game.Schematic;
+import net.eduard.api.lib.Copyable;
+import net.eduard.api.lib.game.Schematic;
+import net.eduard.api.lib.storage.Storable;
 
 /**
  * Mapa da Sala
@@ -17,7 +18,7 @@ import net.eduard.api.lib.storage.game.Schematic;
  * @author Eduard-PC
  *
  */
-public class GameMap implements Storable {
+public class GameMap implements Storable ,Copyable{
 
 	private String name;
 	private int teamSize;
