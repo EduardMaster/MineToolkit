@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.eduard.api.lib.storage.Reference;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAPI.Reference;
 
 public class PlayerGroup implements  Storable {
 

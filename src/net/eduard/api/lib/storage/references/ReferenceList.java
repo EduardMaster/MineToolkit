@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReferenceList extends ReferenceAbstract{
+public class ReferenceList extends ReferenceBase{
 
 	private List<Integer> list;
 	

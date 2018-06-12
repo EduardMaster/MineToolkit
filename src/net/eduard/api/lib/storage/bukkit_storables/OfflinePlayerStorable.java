@@ -16,9 +16,11 @@ public class OfflinePlayerStorable implements Storable {
 	public Object restore(Object object) {
 		if (object instanceof String) {
 			String id = (String) object;
-			String[] split = id.split(";");
-			return new FakePlayer(split[0], UUID.fromString(split[1]));
+			if (id.contains(";")) {
+				String[] split = id.split(";");
+				return new FakePlayer(split[0], UUID.fromString(split[1]));
 
+			}
 		}
 		return null;
 	}

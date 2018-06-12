@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import net.eduard.api.lib.core.Mine;
 import net.eduard.api.lib.game.Sounds;
 import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.StorageObject;
 
 /**
  * Sistema de PARSER YAML e YML
@@ -359,8 +360,9 @@ public class ConfigSection {
 	}
 
 	public Object getValue() {
-		return StorageAPI.restoreData(isMap() ? toMap() : get(), null, null);
+		//return StorageAPI.restoreData(isMap() ? toMap() : get(), null, null);
 
+		return new StorageObject(null, false).restore(isMap() ? toMap() : get());
 	}
 
 	public Map<String, Object> toMap() {
@@ -404,8 +406,9 @@ public class ConfigSection {
 			sec.remove();
 			return sec;
 		}
-
-		sec.set(StorageAPI.storeData(value, value.getClass(), null));
+		
+		//sec.set(StorageAPI.storeData(value, value.getClass(), null));
+		sec.set(new StorageObject(value.getClass(), false).store(value));
 		sec.setComments(comments);
 		return sec;
 	}

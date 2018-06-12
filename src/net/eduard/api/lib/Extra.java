@@ -468,7 +468,7 @@ public final class Extra {
 	 * @return Se a claz § do tipo Primitivo ou Wrapper (Envolocro)
 	 * 
 	 */
-	public static boolean isWrapper2(Class<?> claz) {
+	public static boolean isWrapper(Class<?> claz) {
 		if (isString(claz))
 			return true;
 		try {
@@ -1226,13 +1226,16 @@ public final class Extra {
 		wrappers.put(boolean.class, Boolean.class);
 
 	}
+	
 
-	public static boolean isWrapper(Class<?> clazz) {
-		return getWrapper(clazz) != null;
-	}
 
 	public static Class<?> getWrapper(Class<?> clazz) {
-		return wrappers.get(clazz);
+		for (Entry<Class<?>, Class<?>> wrapperEntry : wrappers.entrySet()) {
+			if (wrapperEntry.getKey().equals(clazz)||wrapperEntry.getValue().equals(clazz)) {
+				return wrapperEntry.getValue();
+			}
+		}
+		return null;
 	}
 
 	static {

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.StorageObject;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -124,7 +124,7 @@ public class BungeeConfig {
 		if (obj instanceof Map) {
 
 		}
-		return StorageAPI.restoreValue(obj);
+		return new StorageObject(null, false).restore(obj);
 	}
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getValues(Configuration config) {
@@ -203,7 +203,7 @@ public class BungeeConfig {
 	}
 
 	public void set(String path, Object value) {
-		config.set(path, StorageAPI.storeValue(value));
+		config.set(path, new StorageObject(value.getClass(), false).store(value));
 	}
 
 	public void add(String path, Object value) {

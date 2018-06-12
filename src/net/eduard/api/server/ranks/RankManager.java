@@ -14,8 +14,8 @@ import org.bukkit.permissions.PermissionAttachment;
 import net.eduard.api.lib.FakePlayer;
 import net.eduard.api.lib.VaultAPI;
 import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.storage.Reference;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAPI.Reference;
 
 /**
  * Controlador de Ranks

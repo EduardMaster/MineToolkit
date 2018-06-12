@@ -506,6 +506,7 @@ public final class BukkitAPI {
 						server.getPlayers().add(player.getName());
 					log("§APLAYER §F" + player.getName() + "§A CONNECTED §F" + server);
 				}
+				
 
 			} catch (Exception e) {
 				e.printStackTrace();

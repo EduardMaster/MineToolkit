@@ -11,16 +11,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.game.Chunk;
+import net.eduard.api.lib.storage.Reference;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAPI.Reference;
 import net.eduard.api.server.ranks.Rank;
 import net.eduard.api.server.ranks.RankManager;
 
 public class FactionManager implements Storable {
-	private ItemStack itemMaxPower,itemInstantPower;
+
 	private int maxPlayerSize=15;
 	private int startingPower=5,startingPowerMax=5;
-	
+	private ItemStack itemMaxPower,itemInstantPower;
 	private Map<EntityType, Double> generatorsPrices = new HashMap<>();
 	private Map<String, Faction> factions = new HashMap<>();
 	private Map<UUID, FactionPlayer> members = new HashMap<>();

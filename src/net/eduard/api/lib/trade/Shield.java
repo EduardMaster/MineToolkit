@@ -1,4 +1,4 @@
-package net.eduard.api.util.trade;
+package net.eduard.api.lib.trade;
 
 import java.io.File;
 import java.net.URL;

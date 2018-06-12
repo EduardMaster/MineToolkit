@@ -1,6 +1,6 @@
 package net.eduard.api.lib.storage;
 
-public class StorageEnum extends StorageAbstract{
+public class StorageEnum extends StorageBase{
 	
 	public StorageEnum(Class<?> type) {
 		super(type, false);

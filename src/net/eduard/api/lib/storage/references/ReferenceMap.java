@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class ReferenceMap extends ReferenceAbstract{
+public class ReferenceMap extends ReferenceBase{
 	private Map<Object,Integer> map;
 	public ReferenceMap(Map<Object,Integer> map,Field field, Object instance) {
 		super(field, instance);

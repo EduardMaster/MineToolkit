@@ -177,6 +177,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		config.add("sound-teleport", Mine.SOUND_TELEPORT);
 		config.add("sound-error", Mine.SOUND_ERROR);
 		config.add("sound-success", Mine.SOUND_SUCCESS);
+		config.saveConfig();
 		Mine.AUTO_RESPAWN = config.getBoolean("auto-respawn");
 		Mine.NO_JOIN_MESSAGE = config.getBoolean("no-join-message");
 		Mine.NO_QUIT_MESSAGE = config.getBoolean("no-quit-message");

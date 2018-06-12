@@ -3,8 +3,8 @@ package net.eduard.api.server.factions;
 import org.bukkit.Location;
 
 import net.eduard.api.lib.game.Chunk;
+import net.eduard.api.lib.storage.Reference;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAPI.Reference;
 
 public class FactionClaim implements Storable {
 

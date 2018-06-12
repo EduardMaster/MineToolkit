@@ -12,8 +12,8 @@ import org.bukkit.entity.EntityType;
 
 import net.eduard.api.lib.VaultAPI;
 import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.storage.Reference;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAPI.Reference;
 
 public class Faction implements Storable {
 	@Reference
@@ -26,6 +26,11 @@ public class Faction implements Storable {
 	private FactionPlayer leader;
 	private int wins;
 	private int defeats;
+
+	@Override
+	public String toString() {
+		return "Faction [name=" + name + ", prefix=" + prefix + "]";
+	}
 
 	private List<FactionClaim> claims = new ArrayList<>();
 	@Reference
