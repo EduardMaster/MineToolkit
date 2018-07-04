@@ -13,16 +13,14 @@ import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.core.Mine;
 import net.eduard.api.lib.game.Sounds;
-import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.StorageObject;
 
 /**
- * Sistema de PARSER YAML e YML
+ * Secao da {@link Config}
  * 
  * @author Eduard
- * @version 2.0
  * 
- * @see Config
+ * 
  */
 public class ConfigSection {
 

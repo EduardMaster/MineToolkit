@@ -7,8 +7,7 @@ authors: [Eduard]
 soft-depend: [Essentials,Vault,McMMO]
 website: https://www.youtube.com/user/EduTutoriaisHD
 commands:
-  setspawn:
-  map: 
+  map:
     description: Controle dos Mapas da API
     aliases: [mapa]
     usage: /<command> help
@@ -20,3 +19,15 @@ commands:
     description: Comando principal da API
     aliases: [eduardapi,eduard,e]
     usage: /<command> help
+  goto: 
+    description: Teleporta para outro mundo
+    aliases: [ir,irpara,mundo,world]
+    usage: /<command> <world>
+  enchant: 
+    description: Encantar os itens
+    aliases: [enchant,ench]
+    usage: /<command> <enchant> <level>
+  sound: 
+    description: Tocar um som do minecraft
+    aliases: [som]
+    usage: /<command> <sound> [volume] [pitch]

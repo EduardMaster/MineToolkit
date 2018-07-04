@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,6 +13,16 @@ import net.eduard.api.lib.core.Mine;
 import net.eduard.api.lib.storage.Storable;
 
 public class ItemStackStorable implements Storable {
+	
+	@Override
+	public Object newInstance() {
+		return new ItemStack(Material.STONE);
+	}
+	@Override
+	public Class<?> type() {
+		return ItemStack.class;
+	}
+	
 	@Override
 	public Object restore(Map<String, Object> map) {
 		int id = Extra.toInt(map.get("id"));

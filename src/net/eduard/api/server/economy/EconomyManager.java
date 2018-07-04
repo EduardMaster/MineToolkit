@@ -6,19 +6,19 @@ import java.util.UUID;
 
 public class EconomyManager {
 	
-	private Map<UUID, PlayerAccount> accounts = new HashMap<>();
-	private Map<Integer, AccountTransaction> transactions = new HashMap<>();
+	private Map<UUID, EconomyPlayer> accounts = new HashMap<>();
+	private Map<Integer, EconomyTransaction> transactions = new HashMap<>();
 	
-	public Map<UUID, PlayerAccount> getAccounts() {
+	public Map<UUID, EconomyPlayer> getAccounts() {
 		return accounts;
 	}
-	public void setAccounts(Map<UUID, PlayerAccount> accounts) {
+	public void setAccounts(Map<UUID, EconomyPlayer> accounts) {
 		this.accounts = accounts;
 	}
-	public Map<Integer, AccountTransaction> getTransactions() {
+	public Map<Integer, EconomyTransaction> getTransactions() {
 		return transactions;
 	}
-	public void setTransactions(Map<Integer, AccountTransaction> transactions) {
+	public void setTransactions(Map<Integer, EconomyTransaction> transactions) {
 		this.transactions = transactions;
 	}
 	

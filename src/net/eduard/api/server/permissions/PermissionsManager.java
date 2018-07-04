@@ -13,9 +13,9 @@ import net.eduard.api.lib.storage.Storable;
  */
 public class PermissionsManager implements Storable{
 	
-	private Map<String,  PlayerGroup> groups = new HashMap<>();
+	private Map<String,  PermissionsGroup> groups = new HashMap<>();
 
-	private Map<UUID, PlayerPermissions> players = new HashMap<>();
+	private Map<UUID, PermissionsPlayer> players = new HashMap<>();
 
 	@Override
 	public Object restore(Map<String, Object> map) {
@@ -29,19 +29,19 @@ public class PermissionsManager implements Storable{
 		
 	}
 
-	public Map<String,  PlayerGroup> getGroups() {
+	public Map<String,  PermissionsGroup> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(Map<String,  PlayerGroup> groups) {
+	public void setGroups(Map<String,  PermissionsGroup> groups) {
 		this.groups = groups;
 	}
 
-	public Map<UUID, PlayerPermissions> getPlayers() {
+	public Map<UUID, PermissionsPlayer> getPlayers() {
 		return players;
 	}
 
-	public void setPlayers(Map<UUID, PlayerPermissions> players) {
+	public void setPlayers(Map<UUID, PermissionsPlayer> players) {
 		this.players = players;
 	}
 

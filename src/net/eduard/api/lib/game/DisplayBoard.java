@@ -206,6 +206,7 @@ public class DisplayBoard implements Storable ,Copyable{
 		OfflinePlayer fake = fakes.get(id);
 		scoreboard.resetScores(fake);
 		fakes.remove(id);
+		texts.remove(id);
 		return false;
 	}
 
@@ -373,6 +374,11 @@ public class DisplayBoard implements Storable ,Copyable{
 
 	public void setHealth(Objective health) {
 		this.health = health;
+	}
+
+	public void add(String line) {
+		getLines().add(line);
+		
 	}
 
 }

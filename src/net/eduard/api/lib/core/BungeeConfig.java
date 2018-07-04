@@ -50,11 +50,12 @@ public class BungeeConfig {
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-				config = getProvider().load(file);
+			config = getProvider().load(file);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 	public void saveDefaultConfig() {
 		try {
 			file.getParentFile().mkdirs();
@@ -69,6 +70,7 @@ public class BungeeConfig {
 			e.printStackTrace();
 		}
 	}
+
 	private ConfigurationProvider getProvider() {
 		return ConfigurationProvider.getProvider(YamlConfiguration.class);
 	}
@@ -84,8 +86,7 @@ public class BungeeConfig {
 	}
 
 	public String message(String path) {
-		return ChatColor.translateAlternateColorCodes('&',
-				getConfig().getString(path));
+		return ChatColor.translateAlternateColorCodes('&', getConfig().getString(path));
 	}
 
 	public void remove(String path) {
@@ -126,6 +127,7 @@ public class BungeeConfig {
 		}
 		return new StorageObject(null, false).restore(obj);
 	}
+
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getValues(Configuration config) {
 		try {
@@ -138,6 +140,7 @@ public class BungeeConfig {
 		}
 		return null;
 	}
+
 	public Map<String, Object> toMap(Configuration config) {
 		Map<String, Object> sec = getValues(config);
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
@@ -153,11 +156,13 @@ public class BungeeConfig {
 		}
 		return map;
 	}
+
 	public Map<String, Object> toMap(String path) {
 
 		return toMap(getSection(path));
 
 	}
+
 	public boolean getBoolean(String path) {
 		return config.getBoolean(path);
 	}
@@ -203,14 +208,18 @@ public class BungeeConfig {
 	}
 
 	public void set(String path, Object value) {
-		config.set(path, new StorageObject(value.getClass(), false).store(value));
+		if (value == null) {
+			remove(path);
+		} else {
+			config.set(path, new StorageObject(value.getClass(), false).store(value));
+		}
 	}
 
 	public void add(String path, Object value) {
 		if (!config.contains(path)) {
 			set(path, value);
 		}
-		
+
 	}
 
 }

@@ -30,34 +30,6 @@ import net.eduard.api.lib.manager.TimeManager;
 
 public class Testes {
 
-	public static class ExplicandoHashMap {
-		
-		public static void main(String[] args) {
-			int meuDinheiro = 100;
-			int seuDinheiro = 200;
-			// NOME "KEY"
-			// VALOR "VALUE"
-
-			System.out.println("Meu dinheiro é " + meuDinheiro);
-			System.out.println("Seu dinheiro é " + seuDinheiro);
-			HashMap<String, Integer> contas = new HashMap<>();
-			HashMap<String, String> amigoSecreto = new HashMap<>();
-
-			amigoSecreto.put("Eduard", "Gabriel");
-			amigoSecreto.put("Gabriel", "Beta");
-			amigoSecreto.put("Beta", "Eduard");
-
-			String amigoSecredoDoBeta = amigoSecreto.get("Beta");
-			System.out.println(amigoSecredoDoBeta);
-
-			contas.put("Eduard", 1000);
-			contas.put("Gabriel", 2000);
-			contas.put("Beta", 1);
-			System.out.println("O dinheiro do Eduard é " + contas.get("Eduard"));
-
-		}
-
-	}
 
 	public void teste4() {
 		@SuppressWarnings("deprecation")

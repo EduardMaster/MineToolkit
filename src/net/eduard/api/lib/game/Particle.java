@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Extra;
 import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.core.MineRex;
 import net.eduard.api.lib.storage.Storable;
 
 public class Particle implements Storable {
@@ -68,7 +69,7 @@ public Particle() {
 
 	private Object getPacket() throws Exception {
 
-		return Extra.getNew(Mine.claz_pPlayOutWorldParticles, particle.getParticleName(), (float) location.getX(),
+		return Extra.getNew(MineRex.claz_pPlayOutWorldParticles, particle.getParticleName(), (float) location.getX(),
 				(float) location.getY(), (float) location.getZ(), xRandom, yRandom, zRandom, speed, amount);
 	}
 

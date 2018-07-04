@@ -78,6 +78,8 @@ public class StorageAPI {
 			if (Modifier.isTransient(field.getModifiers())) {
 				continue;
 			}
+			if (Modifier.isStatic(field.getModifiers()))
+				continue;
 
 			try {
 				Object fieldValue = field.get(obj);
@@ -141,6 +143,8 @@ public class StorageAPI {
 			if (Modifier.isTransient(field.getModifiers())) {
 				continue;
 			}
+			if (Modifier.isStatic(field.getModifiers()))
+				continue;
 			field.setAccessible(true);
 
 			try {

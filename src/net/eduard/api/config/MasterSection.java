@@ -3,7 +3,7 @@ package net.eduard.api.config;
 import java.util.LinkedHashMap;
 import java.util.Map;
 /**
- * Sistema de PARSER de YAML e JSON simultaneo 
+ * Secao do {@link MasterConfig}
  * @author Eduard
  *
  */

@@ -19,15 +19,15 @@ import org.bukkit.plugin.Plugin;
 import net.eduard.api.lib.Copyable;
 import net.eduard.api.lib.core.Mine;
 import net.eduard.api.lib.storage.Storable;
+
 /**
  * Um Interface em um Invetario do Minecraft
- * @version 
+ * 
+ * @version
  * @author Eduard
  *
  */
-public class Menu implements Listener, Storable,Copyable {
-
-	
+public class Menu implements Listener, Storable, Copyable {
 
 	private transient ClickEffect[] clicks;
 	private transient ClickEffect click = new ClickEffect() {
@@ -180,6 +180,30 @@ public class Menu implements Listener, Storable,Copyable {
 
 	public boolean hasClick(int page, int slot) {
 		return clicks[getIndex(page, slot)] != null;
+	}
+
+	public double getPageBySlot(int slot) {
+		return slot / (lines * 9);
+	}
+
+	public double getSlotMinor(int slot) {
+		return slot % (lines * 9);
+	}
+
+	public void addSlot(ItemStack item) {
+		for (int slot = 0; slot < slots.length; slot++) {
+			ItemStack slotItem = slots[slot];
+			if (slotItem == null) {
+				double pagina = getPageBySlot(slot);
+				if (pagina == 0) {
+					pagina++;
+				}
+				double slotmenor = getSlotMinor(slot);
+				addSlot(item, (int) pagina, (int) slotmenor);
+				break;
+			}
+		}
+
 	}
 
 	public void addSlot(ItemStack item, int page, int slot) {

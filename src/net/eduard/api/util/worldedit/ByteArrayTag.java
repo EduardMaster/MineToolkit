@@ -62,6 +62,7 @@ public final class ByteArrayTag extends Tag {
 	
 	@Override
 	public String toString() {
+		
 		StringBuilder hex = new StringBuilder();
 		for(byte b : value) {
 			String hexDigits = Integer.toHexString(b).toUpperCase();

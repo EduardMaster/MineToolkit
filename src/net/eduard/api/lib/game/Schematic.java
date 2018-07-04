@@ -78,6 +78,9 @@ public class Schematic implements Storable,Copyable {
 	public boolean hasSecondLocation() {
 		return low != null;
 	}
+	public void copy(World world) {
+		copy(relative.toLocation(world), low.toLocation(world), high.toLocation(world));
+	}
 
 	public void copy(Location relativeLocation) {
 		World world = relativeLocation.getWorld();
@@ -96,6 +99,7 @@ public class Schematic implements Storable,Copyable {
 		setHigh(highLoc.toVector());
 		setLow(lowLoc.toVector());
 		setRelative(relativeLocation.toVector());
+		chests.clear();
 
 		width = (short) (highLoc.getBlockX() - lowLoc.getBlockX());
 		height = (short) (highLoc.getBlockY() - lowLoc.getBlockY());
@@ -112,6 +116,11 @@ public class Schematic implements Storable,Copyable {
 					Block block = worldUsed.getBlockAt(lowLoc.getBlockX() + x, lowLoc.getBlockY() + y,
 							lowLoc.getBlockZ() + z);
 					int id = block.getTypeId();
+					if (block.getState() instanceof Chest) {
+						Chest chest = (Chest) block.getState();
+						chests.add(chest);
+						
+					}
 					blocksId[index] = (byte) id;
 					blocksData[index] = block.getData();
 				}
@@ -197,6 +206,7 @@ public class Schematic implements Storable,Copyable {
 
 	public void save(File file) {
 		try {
+			file.getParentFile().mkdirs();
 			FileOutputStream s = new FileOutputStream(file);
 			DataOutputStream d = new DataOutputStream(new GZIPOutputStream(s));
 			

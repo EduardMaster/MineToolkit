@@ -1,9 +1,37 @@
 package net.eduard.api.test;
 
-import com.sun.org.apache.bcel.internal.generic.ALOAD;
+import java.util.HashMap;
 
 public class JavaBasico {
-	
+	public static class ExplicandoHashMap {
+		
+		public static void main(String[] args) {
+			int meuDinheiro = 100;
+			int seuDinheiro = 200;
+			// NOME "KEY"
+			// VALOR "VALUE"
+
+			System.out.println("Meu dinheiro é " + meuDinheiro);
+			System.out.println("Seu dinheiro é " + seuDinheiro);
+			HashMap<String, Integer> contas = new HashMap<>();
+			HashMap<String, String> amigoSecreto = new HashMap<>();
+
+			amigoSecreto.put("Eduard", "Gabriel");
+			amigoSecreto.put("Gabriel", "Beta");
+			amigoSecreto.put("Beta", "Eduard");
+
+			String amigoSecredoDoBeta = amigoSecreto.get("Beta");
+			System.out.println(amigoSecredoDoBeta);
+
+			contas.put("Eduard", 1000);
+			contas.put("Gabriel", 2000);
+			contas.put("Beta", 1);
+			System.out.println("O dinheiro do Eduard é " + contas.get("Eduard"));
+
+		}
+
+	}
+
 	public static void main(String[] args) {
 		
 		String texto = "textao ";

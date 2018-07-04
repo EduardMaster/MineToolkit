@@ -3,7 +3,6 @@ package net.eduard.api.lib.manager;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
-import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -23,29 +22,28 @@ import net.eduard.api.lib.storage.Storable;
  * @author Eduard-PC
  *
  */
-public class DBManager implements Storable ,Copyable{
-	
+public class DBManager implements Storable, Copyable {
+
 	private static boolean debug = true;
+
 	public static void debug(String msg) {
 		if (debug)
-		System.out.println("[DB] "+msg);
+			System.out.println("[DB] " + msg);
 	}
-	
+
 	private String user = "root";
 	private String pass = "";
 	private String host = "localhost";
 	private String port = "3306";
-	private String database = "teste";
+	private String database = "mine";
 	private String type = "jdbc:mysql://";
 	private boolean useSQLite;
 	private transient Connection connection;
 
-	
 	static {
 		hasMySQL();
 		hasSQLlite();
 	}
-
 
 	public DBManager() {
 		// TODO Auto-generated constructor stub
@@ -90,7 +88,6 @@ public class DBManager implements Storable ,Copyable{
 			}
 		}
 	}
-
 
 	/**
 	 * Cria uma connec§§o com a Database
@@ -515,33 +512,36 @@ public class DBManager implements Storable ,Copyable{
 			}
 
 			PreparedStatement state = connection.prepareStatement(query);
-			ResultSetMetaData meta = state.getMetaData();
-			ParameterMetaData para = state.getParameterMetaData();
+			// ResultSetMetaData meta = state.getMetaData();
+			// ParameterMetaData para = state.getParameterMetaData();
 
 			if (!useSQLite) {
 
 				int id = 1;
 				for (Object replacer : replacers) {
-//					if (replacer == null) {
-						state.setObject(id, replacer);
-//					} else if (replacer instanceof Date) {
-//						state.setDate(id, (Date) replacer);
-//					} else if (replacer instanceof Time) {
-//						state.setTime(id, (Time) replacer);
-//					} else if (replacer instanceof Timestamp) {
-//						state.setTimestamp(id, (Timestamp) replacer);
-//					}else if (replacer instanceof Boolean) {
-//						state.setBoolean(id, (boolean) replacer);
-//					} else {
-//						if (state.isWrapperFor(replacer.getClass())) {
-//							debug("is OBJECT");
-//							state.setObject(id, replacer);
-//						} else {
-//							debug("is STRING");
-//							state.setString(id, "" + replacer);
-//						}
-//
-//					}
+					// if (replacer == null) {
+					if (replacer instanceof UUID) {
+						replacer = replacer.toString();
+					}
+					state.setObject(id, replacer);
+					// } else if (replacer instanceof Date) {
+					// state.setDate(id, (Date) replacer);
+					// } else if (replacer instanceof Time) {
+					// state.setTime(id, (Time) replacer);
+					// } else if (replacer instanceof Timestamp) {
+					// state.setTimestamp(id, (Timestamp) replacer);
+					// }else if (replacer instanceof Boolean) {
+					// state.setBoolean(id, (boolean) replacer);
+					// } else {
+					// if (state.isWrapperFor(replacer.getClass())) {
+					// debug("is OBJECT");
+					// state.setObject(id, replacer);
+					// } else {
+					// debug("is STRING");
+					// state.setString(id, "" + replacer);
+					// }
+					//
+					// }
 					id++;
 				}
 				query = query.replaceAll("\\?", "#");
@@ -551,7 +551,7 @@ public class DBManager implements Storable ,Copyable{
 				debug("[MySQL] " + query);
 			}
 			// debug(state.get);
-			return  state;
+			return state;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -569,7 +569,7 @@ public class DBManager implements Storable ,Copyable{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	;
+		;
 		return result;
 	}
 
@@ -584,7 +584,7 @@ public class DBManager implements Storable ,Copyable{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
 
@@ -603,7 +603,7 @@ public class DBManager implements Storable ,Copyable{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
 
@@ -737,7 +737,6 @@ public class DBManager implements Storable ,Copyable{
 				+ database + ", type=" + type + "]";
 	}
 
-
 	public boolean useSQLite() {
 		return useSQLite;
 	}
@@ -826,8 +825,7 @@ public class DBManager implements Storable ,Copyable{
 		debug = d;
 	}
 
-
-	 public DBManager copy() {
+	public DBManager copy() {
 		return copy(this);
 	}
 

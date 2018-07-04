@@ -1,7 +1,6 @@
 package net.eduard.api.server.minigame;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,67 +9,93 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.game.DisplayBoard;
 import net.eduard.api.lib.game.Kit;
 import net.eduard.api.lib.manager.TimeManager;
+
 /**
- * Representa um Jogo
- * <br>MinigameSetup 1.0
+ * Representa um Jogo <br>
+ * MinigameSetup 1.0
+ * 
  * @version 2.0
  * @since EduardAPI 2.0
  * @author Eduard
  *
  */
-public abstract class Minigame extends TimeManager {
+public class Minigame extends TimeManager{
 
 	private String name;
 	private boolean enabled = true;
 	private boolean bungeecord = true;
 	private String bungeeLobby = "Lobby";
 	private Location lobby;
-	private Map<String, GameMap> maps = new HashMap<>();
-	private List<Kit> kits = new ArrayList<>();
 	private int timeIntoStart = 60;
 	private int timeIntoRestart = 20;
 	private int timeIntoGameOver = 15 * 60;
-	private int timeWithoutPvP = 2 * 60;
+	private int timeIntoPlay = 2 * 60;
+	
+	
 	private int timeOnStartTimer = 0;
 	private int timeOnRestartTimer = 40;
 	private int timeOnForceTimer = 10;
-	private List<MinigameMode> modes = new ArrayList<>();
-	public List<MinigameMode> getModes() {
-		return modes;
-	}
-
-	public void setModes(List<MinigameMode> modes) {
-		this.modes = modes;
-	}
-
-	public MinigameMode getMode(String name) {
-		for (MinigameMode mode : modes) {
-			if (mode.getName().equalsIgnoreCase(name)) {
-				return mode;
-			}
-		}
-		return null;
-	}
-
-	private transient GameMap setting;
-	private transient Map<Integer, Game> rooms = new HashMap<>();
-	private transient Map<Player, GamePlayer> players = new HashMap<>();
-
-
-
+	private int timeOnStartingToBroadcast=15;
+	private int timeOnEquipingToBroadcast=1;
+	private transient MinigameMap setting;
+	private transient List<MinigamePlayer> players = new ArrayList<>();
+	private DisplayBoard scoreboardStarting;
+	private DisplayBoard scoreboardLobby;
+	private DisplayBoard scoreboardPlaying;
+	private MinigameChest chests = new MinigameChest();
+	private MinigameChest chestsFeast = new MinigameChest();
+	private MinigameChest chestMiniFeast = new MinigameChest();
+	private List<Kit> kits = new ArrayList<>();
+	private List<MinigameMap> maps = new ArrayList<>();
+	private List<MinigameRoom> rooms = new ArrayList<>();
 	public Minigame() {
 	}
+	public int getTimeIntoPlay() {
+		return timeIntoPlay;
+	}
 
+	public void setTimeIntoPlay(int timeIntoPlay) {
+		this.timeIntoPlay = timeIntoPlay;
+	}
 
 	public Minigame(String name) {
 		setName(name);
 
 	}
+	public MinigameMap createMap(String nome) {
+		MinigameMap map = new MinigameMap(nome);
+		getMaps().add(map);
+		return map;
 
-	public Game uniqueGame() {
-		return new Game(this, new GameMap(this, getName()));
+	}
+	public void event(MinigameRoom room) {
+	}
+
+	public MinigameMap getMap(String name) {
+		for (MinigameMap map : getMaps()) {
+			if (map.getName().equalsIgnoreCase(name)) {
+				return map;
+			}
+		}
+		return null;
+	}
+	public void removeMap(MinigameMap map) {
+		getMaps().remove(map);
+	}
+
+	public boolean hasMap(String name) {
+		for (MinigameMap map : getMaps()) {
+			if (map.getName().equalsIgnoreCase(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public MinigameRoom uniqueGame() {
+		return new MinigameRoom(this, new MinigameMap(this, getName()));
 	}
 
 	public Minigame(String name, Plugin plugin) {
@@ -78,36 +103,64 @@ public abstract class Minigame extends TimeManager {
 		setPlugin(plugin);
 	}
 
-	public GameMap createMap(String nome) {
-		return new GameMap(this, nome);
-	}
 
 	public void broadcast(String message) {
-		for (Player player : players.keySet()) {
+		for (Player player : getPlaying()) {
 			player.sendMessage(Mine.getReplacers(message, player));
 		}
 	}
 
-	public abstract void event(Game room);
-
-	public boolean existsMap(String name) {
-		return this.maps.containsKey(name.toLowerCase());
-	}
 
 	public String getBungeeLobby() {
 		return bungeeLobby;
 	}
 
-	public Game getGame() {
-		return getRooms().get(1);
+	public MinigameRoom getGame() {
+		return getRooms().iterator().next();
 	}
 
-	public Game getGame(Player player) {
+	public MinigameRoom getRoom(int id) {
+		for (MinigameRoom room : rooms) {
+			if (room.getId() == id) {
+				return room;
+			}
+		}
+		return null;
+	}
+
+	public boolean hasRoom(int id) {
+		return getRoom(id) != null;
+	}
+
+	public MinigameRoom createRoom(MinigameMap map, int id) {
+		MinigameRoom room = new MinigameRoom(this, map);
+		room.setId(id);
+		return room;
+
+	}
+
+	public List<MinigameRoom> getRooms() {
+		return rooms;
+	}
+
+	public void setRooms(List<MinigameRoom> rooms) {
+		this.rooms = rooms;
+	}
+
+	public List<MinigamePlayer> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(List<MinigamePlayer> players) {
+		this.players = players;
+	}
+
+	public MinigameRoom getGame(Player player) {
 		return getPlayer(player).getGame();
 	}
 
-	public Game getGame(String name) {
-		for (Game room : rooms.values()) {
+	public MinigameRoom getGame(String name) {
+		for (MinigameRoom room : rooms) {
 			if (room.getMap().getName().equalsIgnoreCase(name)) {
 				return room;
 			}
@@ -119,58 +172,41 @@ public abstract class Minigame extends TimeManager {
 		return lobby;
 	}
 
-	public GameMap getMap() {
-		return getMaps().get(getName().toLowerCase());
-	}
-
-	public GameMap getMap(String name) {
-		return maps.get(name.toLowerCase());
-	}
-
-	public Map<String, GameMap> getMaps() {
-		return maps;
+	public MinigameMap getMap() {
+		return getMap(getName());
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public GamePlayer getPlayer(Player player) {
-		GamePlayer gamePlayer = players.get(player);
-		if (gamePlayer == null) {
-			gamePlayer = new GamePlayer(player);
-			players.put(player, gamePlayer);
+	public MinigamePlayer getPlayer(Player player) {
+		MinigamePlayer miniplayer;
+		for (MinigamePlayer p : players) {
+			if (p.getPlayer().equals(player)) {
+				return p;
+			}
 		}
+		miniplayer = new MinigamePlayer(player);
+		players.add(miniplayer);
 
-		return gamePlayer;
-	}
-
-	public Map<Player, GamePlayer> getPlayers() {
-		return players;
+		return miniplayer;
 	}
 
 	public List<Player> getPlaying() {
 		List<Player> list = new ArrayList<>();
-		for (Player player : players.keySet()) {
-			list.add(player);
+		for (MinigamePlayer player : players) {
+			list.add(player.getPlayer());
 		}
 		return list;
-	}
-
-	public Map<Integer, Game> getRooms() {
-		return rooms;
 	}
 
 	public boolean hasLobby() {
 		return lobby != null;
 	}
 
-	public boolean hasMap(String name) {
-		return maps.containsKey(name.toLowerCase());
-	}
-
 	public boolean isAdmin(Player player) {
-		return getPlayer(player).isState(GamePlayerState.ADMIN);
+		return getPlayer(player).isState(MinigamePlayerState.ADMIN);
 
 	}
 
@@ -183,7 +219,7 @@ public abstract class Minigame extends TimeManager {
 	}
 
 	public boolean isPlayer(Player player) {
-		return getPlayer(player).isState(GamePlayerState.NORMAL);
+		return getPlayer(player).isState(MinigamePlayerState.NORMAL);
 
 	}
 
@@ -192,7 +228,7 @@ public abstract class Minigame extends TimeManager {
 	}
 
 	public boolean isSpectator(Player player) {
-		return getPlayer(player).isState(GamePlayerState.SPECTATOR);
+		return getPlayer(player).isState(MinigamePlayerState.SPECTATOR);
 
 	}
 
@@ -200,24 +236,20 @@ public abstract class Minigame extends TimeManager {
 		return getGame().isState(state);
 	}
 
-	public boolean isWinner(Player player) {
-		return getPlayer(player).isState(GamePlayerState.WINNER);
 
-	}
-
-	public void joinPlayer(Game game, Player player) {
-		GamePlayer p = getPlayer(player);
+	public void joinPlayer(MinigameRoom game, Player player) {
+		MinigamePlayer p = getPlayer(player);
 		p.join(game);
 
 	}
 
-	public void joinPlayer(GameTeam team, Player player) {
-		GamePlayer p = getPlayer(player);
+	public void joinPlayer(MinigameTeam team, Player player) {
+		MinigamePlayer p = getPlayer(player);
 		p.join(team);
 	}
 
 	public void leavePlayer(Player player) {
-		GamePlayer p = getPlayer(player);
+		MinigamePlayer p = getPlayer(player);
 		if (p.isPlaying()) {
 			p.getGame().leave(p);
 		}
@@ -229,19 +261,16 @@ public abstract class Minigame extends TimeManager {
 	}
 
 	public void remove(Player player) {
-		players.remove(player);
+		players.remove(getPlayer(player));
 	}
 
-	public void removeGame(Game game) {
-		this.rooms.remove(game.getId());
+	public void removeGame(MinigameRoom game) {
+		this.rooms.remove(game);
 	}
 
 	public void removeGame(int id) {
-		this.rooms.remove(id);
-	}
-
-	public void removeMap(String name) {
-		this.maps.remove(name.toLowerCase());
+		MinigameRoom game = getRoom(id);
+		this.rooms.remove(game);
 	}
 
 	public Object restore(Map<String, Object> map) {
@@ -252,7 +281,7 @@ public abstract class Minigame extends TimeManager {
 	public void run() {
 		if (!enabled)
 			return;
-		for (Game room : rooms.values()) {
+		for (MinigameRoom room : rooms) {
 			if (!room.isEnabled())
 				continue;
 			event(room);
@@ -275,23 +304,11 @@ public abstract class Minigame extends TimeManager {
 		this.lobby = lobby;
 	}
 
-	public void setMaps(Map<String, GameMap> maps) {
-		this.maps = maps;
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public void setPlayers(Map<Player, GamePlayer> players) {
-		this.players = players;
-	}
-
-	public void setRooms(Map<Integer, Game> rooms) {
-		this.rooms = rooms;
-	}
-
-	public GameMap getSetting() {
+	public MinigameMap getSetting() {
 		return setting;
 	}
 
@@ -299,16 +316,8 @@ public abstract class Minigame extends TimeManager {
 		return setting != null;
 	}
 
-	public void setSetting(GameMap setting) {
+	public void setSetting(MinigameMap setting) {
 		this.setting = setting;
-	}
-
-	public List<Kit> getKits() {
-		return kits;
-	}
-
-	public void setKits(List<Kit> kits) {
-		this.kits = kits;
 	}
 
 	public int getTimeIntoStart() {
@@ -336,11 +345,11 @@ public abstract class Minigame extends TimeManager {
 	}
 
 	public int getTimeWithoutPvP() {
-		return timeWithoutPvP;
+		return timeIntoPlay;
 	}
 
 	public void setTimeWithoutPvP(int timeWithoutPvP) {
-		this.timeWithoutPvP = timeWithoutPvP;
+		this.timeIntoPlay = timeWithoutPvP;
 	}
 
 	public int getTimeOnStartTimer() {
@@ -365,6 +374,82 @@ public abstract class Minigame extends TimeManager {
 
 	public void setTimeOnForceTimer(int timeOnForceTimer) {
 		this.timeOnForceTimer = timeOnForceTimer;
+	}
+
+	public DisplayBoard getScoreboardLobby() {
+		return scoreboardLobby;
+	}
+
+	public void setScoreboardLobby(DisplayBoard scoreboardLobby) {
+		this.scoreboardLobby = scoreboardLobby;
+	}
+
+	public DisplayBoard getScoreboardPlaying() {
+		return scoreboardPlaying;
+	}
+
+	public void setScoreboardPlaying(DisplayBoard scoreboardPlaying) {
+		this.scoreboardPlaying = scoreboardPlaying;
+	}
+
+	public MinigameChest getChests() {
+		return chests;
+	}
+
+	public void setChests(MinigameChest chests) {
+		this.chests = chests;
+	}
+
+	public MinigameChest getChestsFeast() {
+		return chestsFeast;
+	}
+
+	public void setChestsFeast(MinigameChest chestsFeast) {
+		this.chestsFeast = chestsFeast;
+	}
+
+	public MinigameChest getChestMiniFeast() {
+		return chestMiniFeast;
+	}
+
+	public void setChestMiniFeast(MinigameChest chestMiniFeast) {
+		this.chestMiniFeast = chestMiniFeast;
+	}
+
+	public List<Kit> getKits() {
+		return kits;
+	}
+
+	public void setKits(List<Kit> kits) {
+		this.kits = kits;
+	}
+
+	public List<MinigameMap> getMaps() {
+		return maps;
+	}
+
+	public void setMaps(List<MinigameMap> maps) {
+		this.maps = maps;
+	}
+
+	public DisplayBoard getScoreboardStarting() {
+		return scoreboardStarting;
+	}
+
+	public void setScoreboardStarting(DisplayBoard scoreboardStarting) {
+		this.scoreboardStarting = scoreboardStarting;
+	}
+	public int getTimeOnStartingToBroadcast() {
+		return timeOnStartingToBroadcast;
+	}
+	public void setTimeOnStartingToBroadcast(int timeOnStartingToBroadcast) {
+		this.timeOnStartingToBroadcast = timeOnStartingToBroadcast;
+	}
+	public int getTimeOnEquipingToBroadcast() {
+		return timeOnEquipingToBroadcast;
+	}
+	public void setTimeOnEquipingToBroadcast(int timeOnEquipingToBroadcast) {
+		this.timeOnEquipingToBroadcast = timeOnEquipingToBroadcast;
 	}
 
 }

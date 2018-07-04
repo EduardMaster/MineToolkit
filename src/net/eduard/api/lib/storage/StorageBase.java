@@ -18,6 +18,9 @@ public abstract class StorageBase {
 			System.out.println("[Storage] " + msg);
 	}
 
+	public static void setDebug(boolean debug) {
+		StorageBase.debug = debug;
+	}
 	public StorageBase(Class<?> type, boolean asReference) {
 		super();
 		this.type = type;

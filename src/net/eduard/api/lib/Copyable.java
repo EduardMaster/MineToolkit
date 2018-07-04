@@ -96,14 +96,16 @@ public interface Copyable {
 					for (Field field : claz.getDeclaredFields()) {
 						if (Modifier.isStatic(field.getModifiers()))
 							continue;
-						if (field.isAnnotationPresent(NoCopyable.class))
-							continue;
 
 						field.setAccessible(true);
 						try {
 							Object value = field.get(object);
 							if (value != null) {
-								field.set(newInstance, copy(value));
+								if (field.isAnnotationPresent(NoCopyable.class)) {
+									field.set(newInstance, value);
+								} else {
+									field.set(newInstance, copy(value));
+								}
 							}
 
 						} catch (Exception e) {

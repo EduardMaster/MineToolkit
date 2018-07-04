@@ -22,6 +22,7 @@ public class StorageOld extends StorageAPI {
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Variable {
 
+		
 	}
 	public static Object restoreObject(Type type, Object value) {
 		try {

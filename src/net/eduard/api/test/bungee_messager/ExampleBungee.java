@@ -13,6 +13,7 @@ public class ExampleBungee implements Listener{
 		bungeeMessager.enable();
 	}
 	private BungeeMessager bungeeMessager;
+	
 	@EventHandler
 	public void event(BungeeReceiveMessageEvent e) {
 		String[] args = e.getArgs();

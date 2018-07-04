@@ -4,27 +4,106 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
+import net.eduard.api.lib.core.Mine;
 import net.eduard.api.lib.storage.Storable;
 
 public class Kit implements Storable {
 
 	private String name;
 	private long cooldown;
-	private double price;
-	private ItemStack icon;
-	private int level;
-	private List<Kit> levels = new ArrayList<>();
-	private List<ItemStack> items = new ArrayList<>();
-	private List<Item> extras = new ArrayList<>();
-	private ItemStack helmet;
-	private ItemStack chestplate;
-	private ItemStack boots;
-	private ItemStack leggins;
-
 	private boolean clearInventory;
 	private boolean fillSoup;
+	private boolean autoEquip = true;
+	private ItemStack icon;
+	private double price;
+	private List<ItemStack> items = new ArrayList<>();
+	private List<Item> extras = new ArrayList<>();
+	private List<KitUpgrade> upgrades = new ArrayList<>();
+
+	public void give(Player p) {
+		give(p, 1);
+	}
+
+	public void give(Player p, int level) {
+		PlayerInventory inv = p.getInventory();
+		if (clearInventory) {
+			Mine.clearInventory(p);
+		}
+		for (ItemStack item : items) {
+			String type = item.getType().name();
+			if (autoEquip) {
+				if (type.contains("LEGGINGS")) {
+					inv.setLeggings(item);
+				} else if (type.contains("CHESTPLATE")) {
+					inv.setChestplate(item);
+				} else if (type.contains("BOOTS")) {
+					inv.setBoots(item);
+				} else if (type.contains("HELMET")) {
+					inv.setHelmet(item);
+				} else {
+					inv.addItem(item);
+				}
+			} else {
+				inv.addItem(item);
+			}
+		}
+		for (int id = 2; id <= level; id++) {
+			KitUpgrade upgrade = getUpgrade(id);
+			for (ItemStack item : upgrade.getItems()) {
+				String type = item.getType().name();
+				if (autoEquip) {
+					if (type.contains("LEGGINGS")) {
+						inv.setLeggings(item);
+					} else if (type.contains("CHESTPLATE")) {
+						inv.setChestplate(item);
+					} else if (type.contains("BOOTS")) {
+						inv.setBoots(item);
+					} else if (type.contains("HELMET")) {
+						inv.setHelmet(item);
+					} else {
+						inv.addItem(item);
+					}
+				} else {
+					inv.addItem(item);
+				}
+			}
+		}
+		for (Item item : extras) {
+			inv.addItem(item.create());
+		}
+		if (fillSoup)
+			Mine.fill(inv, new ItemStack(Material.MUSHROOM_SOUP));
+	}
+
+	public KitUpgrade getUpgrade(int level) {
+		for (KitUpgrade upgrade : upgrades) {
+			if (upgrade.getLevel() == level) {
+				return upgrade;
+			}
+		}
+		return null;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public List<ItemStack> getItems() {
+		return items;
+	}
+
+	public void setItems(List<ItemStack> items) {
+		this.items = items;
+	}
 
 	public String getName() {
 		return name;
@@ -58,37 +137,12 @@ public class Kit implements Storable {
 		this.fillSoup = fillSoup;
 	}
 
-
 	public long getCooldown() {
 		return cooldown;
 	}
 
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
-
-	public double getPrice() {
-		return price;
-	}
-
-	public void setPrice(double price) {
-		this.price = price;
-	}
-
-	public List<ItemStack> getItems() {
-		return items;
-	}
-
-	public void setItems(List<ItemStack> items) {
-		this.items = items;
 	}
 
 	@Override
@@ -103,14 +157,6 @@ public class Kit implements Storable {
 
 	}
 
-	public List<Kit> getLevels() {
-		return levels;
-	}
-
-	public void setLevels(List<Kit> levels) {
-		this.levels = levels;
-	}
-
 	public List<Item> getExtras() {
 		return extras;
 	}
@@ -119,35 +165,20 @@ public class Kit implements Storable {
 		this.extras = extras;
 	}
 
-	public ItemStack getHelmet() {
-		return helmet;
+	public List<KitUpgrade> getUpgrades() {
+		return upgrades;
 	}
 
-	public void setHelmet(ItemStack helmet) {
-		this.helmet = helmet;
+	public void setUpgrades(List<KitUpgrade> upgrades) {
+		this.upgrades = upgrades;
 	}
 
-	public ItemStack getChestplate() {
-		return chestplate;
+	public boolean isAutoEquip() {
+		return autoEquip;
 	}
 
-	public void setChestplate(ItemStack chestplate) {
-		this.chestplate = chestplate;
+	public void setAutoEquip(boolean autoEquip) {
+		this.autoEquip = autoEquip;
 	}
 
-	public ItemStack getBoots() {
-		return boots;
-	}
-
-	public void setBoots(ItemStack boots) {
-		this.boots = boots;
-	}
-
-	public ItemStack getLeggins() {
-		return leggins;
-	}
-
-	public void setLeggins(ItemStack leggins) {
-		this.leggins = leggins;
-	}
 }

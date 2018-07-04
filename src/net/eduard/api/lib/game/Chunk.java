@@ -12,7 +12,6 @@ public class Chunk implements Storable, Copyable {
 	private int x, z;
 
 	public org.bukkit.Chunk getChunk() {
-	
 		return Bukkit.getWorld(world).getChunkAt(x, z);
 	}
 	@Override

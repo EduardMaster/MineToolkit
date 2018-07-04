@@ -19,8 +19,8 @@ import net.eduard.api.lib.game.Sounds;
 import net.eduard.api.lib.storage.Storable;
 
 /**
- * Sistema de Config usando o PARSER {@link ConfigSection}
- * @version 2.0
+ * Sistema Interprador de YAML usando a secao {@link ConfigSection}
+ * 
 
  * @author Eduard
 

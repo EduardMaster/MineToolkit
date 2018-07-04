@@ -11,9 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.eduard.api.lib.storage.Storable;
 
 /**
- * Controlador de Eventos (Listener)
+ * Controlador de Eventos ({@link Listener})
  * 
- * @author Eduard-PC
+ * @author Eduard
  *
  */
 public class EventsManager implements Listener, Storable {

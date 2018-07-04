@@ -14,20 +14,20 @@ import java.util.Map.Entry;
 
 import org.bukkit.plugin.Plugin;
 /**
- * Sistema de Config usando o PARSER {@link MasterSection}
+ * Sistema Interpretador de YAML e JSON simultaneo 
  * @author Eduard
  *
  */
 public class MasterConfig {
-	public static String toLine(List<String> lines) {
-		StringBuilder builder = new StringBuilder();
-		for (String line : lines) {
-			builder.append(line + "\n");
-		}
-		return builder.toString();
-	}
+//	private static String toLine(List<String> lines) {
+//		StringBuilder builder = new StringBuilder();
+//		for (String line : lines) {
+//			builder.append(line + "\n");
+//		}
+//		return builder.toString();
+//	}
 
-	public static String getSpaces(int size) {
+	private static String getSpaces(int size) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < size; i++) {
 			builder.append(SPACE);
@@ -35,34 +35,34 @@ public class MasterConfig {
 		return builder.toString();
 	}
 
-	public static List<String> toLines(String line) {
-		List<String> lines = new ArrayList<>();
-		if (line.contains("\n")) {
-			String[] split = line.split("\n");
-			for (String current : split) {
-				lines.add(current);
-			}
-		} else
-			lines.add(line);
-		return lines;
-	}
+//	private static List<String> toLines(String line) {
+//		List<String> lines = new ArrayList<>();
+//		if (line.contains("\n")) {
+//			String[] split = line.split("\n");
+//			for (String current : split) {
+//				lines.add(current);
+//			}
+//		} else
+//			lines.add(line);
+//		return lines;
+//	}
 
-	public static char COMMENT = '#';
-	public static char SAVE = '!';
-	public static char STRING_START = '\'';
-	public static char TEXT_START = '\"';
-	public static char STRING_END = '\'';
-	public static char TEXT_END = '\"';
-	public static char MAP_START = '{';
-	public static char MAP_END = '}';
-	public static char LIST_START = '[';
-	public static char LIST_END = ']';
-	public static char LIST_ITEM = '-';
-	public static char ENTRY_DELIMITER = ':';
-	public static char ITEM_DELIMITER = ',';
-	public static char SPACE = ' ';
-	public static char NEW_LINE = '\n';
-	public static int TAB_SIZE = 2;
+	static char COMMENT = '#';
+//	private static char SAVE = '!';
+	private static char STRING_START = '\'';
+	private static char TEXT_START = '\"';
+	private static char STRING_END = '\'';
+	private static char TEXT_END = '\"';
+	private static char MAP_START = '{';
+	private static char MAP_END = '}';
+	private static char LIST_START = '[';
+	private static char LIST_END = ']';
+	private static char LIST_ITEM = '-';
+	private static char ENTRY_DELIMITER = ':';
+	private static char ITEM_DELIMITER = ',';
+	private static char SPACE = ' ';
+	private static char NEW_LINE = '\n';
+	private static int TAB_SIZE = 2;
 
 	protected Object value = null;
 	protected StringBuilder text = new StringBuilder();

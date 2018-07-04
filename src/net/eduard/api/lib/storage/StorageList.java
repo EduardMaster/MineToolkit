@@ -82,7 +82,7 @@ public class StorageList extends StorageBase {
 			if (!store.saveInline() && !isReference()) {
 				Map<String, Object> map = new LinkedHashMap<>();
 				for (int index = 1; index <= newList.size(); index++) {
-					map.put("" + index, newList.get(index));
+					map.put("" + index, newList.get(index-1));
 				}
 				return map;
 			}

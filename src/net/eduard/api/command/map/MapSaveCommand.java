@@ -22,11 +22,11 @@ public class MapSaveCommand extends CommandManager {
 
 			if (Mine.onlyPlayer(sender)) {
 				Player p = (Player) sender;
-				if (!Mine.MAPS.containsKey(p)) {
+				if (!Mine.MAPS_CONFIGURING.containsKey(p)) {
 					p.sendMessage("§bEduardAPI §2Primeiro copie um Mapa:§a /e copy");
 					return true;
 				}
-				Mine.SCHEMATICS.put(args[1].toLowerCase(), Mine.MAPS.get(p));
+				Mine.MAPS.put(args[1].toLowerCase(), Mine.MAPS_CONFIGURING.get(p));
 				p.sendMessage("§bEduardAPI §6Mapa salvado com sucesso!");
 			}
 		}

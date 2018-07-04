@@ -34,6 +34,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import net.eduard.api.command.EnchantCommand;
+import net.eduard.api.command.GotoCommand;
+import net.eduard.api.command.SoundCommand;
 import net.eduard.api.command.api.ApiCommand;
 import net.eduard.api.command.config.ConfigCommand;
 import net.eduard.api.command.map.MapCommand;
@@ -49,9 +52,9 @@ import net.eduard.api.lib.manager.DBManager;
 import net.eduard.api.lib.manager.PlayersManager;
 import net.eduard.api.lib.manager.TimeManager;
 import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.StorageBase;
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables;
 import net.eduard.api.server.EduardPlugin;
-import net.eduard.api.test.SetSpawn;
 
 /**
  * Classe Principal do Plugin EduardAPI herda todas propriedades de um
@@ -141,13 +144,14 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		config = new Config(this, "config.yml");
 		messages = new Config(this, "messages.yml");
 		time = new TimeManager(this);
-		
+		StorageBase.setDebug(config.getBoolean("debug-storage"));
 		DBManager.setDebug(config.getBoolean("debug-db"));
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.command");
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.game");
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.manager");
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.server");
 		StorageAPI.registerClasses(Mine.class);
+	
 		BukkitStorables.load();
 		Mine.resetScoreboards();
 		Mine.console("§bEduardAPI §fScoreboards resetadas!");
@@ -162,6 +166,10 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		new ApiCommand().register();
 		new MapCommand().register();
 		new ConfigCommand().register();
+		new EnchantCommand().register();
+		new GotoCommand().register();
+		new SoundCommand().register();
+		
 
 		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
 		saveObjects();
@@ -174,20 +182,20 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		Mine.loadMaps();
 		Mine.console("§bEduardAPI §fMapas §acarregados!");
 
-		config.add("sound-teleport", Mine.SOUND_TELEPORT);
-		config.add("sound-error", Mine.SOUND_ERROR);
-		config.add("sound-success", Mine.SOUND_SUCCESS);
+		config.add("sound-teleport", Mine.OPT_SOUND_TELEPORT);
+		config.add("sound-error", Mine.OPT_SOUND_ERROR);
+		config.add("sound-success", Mine.OPT_SOUND_SUCCESS);
 		config.saveConfig();
-		Mine.AUTO_RESPAWN = config.getBoolean("auto-respawn");
-		Mine.NO_JOIN_MESSAGE = config.getBoolean("no-join-message");
-		Mine.NO_QUIT_MESSAGE = config.getBoolean("no-quit-message");
-		Mine.NO_DEATH_MESSAGE = config.getBoolean("no-death-message");
+		Mine.OPT_AUTO_RESPAWN = config.getBoolean("auto-respawn");
+		Mine.OPT_NO_JOIN_MESSAGE = config.getBoolean("no-join-message");
+		Mine.OPT_NO_QUIT_MESSAGE = config.getBoolean("no-quit-message");
+		Mine.OPT_NO_DEATH_MESSAGE = config.getBoolean("no-death-message");
 
-		Mine.ON_JOIN = config.message("on-join-message");
-		Mine.ON_QUIT = config.message("on-quit-message");
-		Mine.SOUND_TELEPORT = config.getSound("sound-teleport");
-		Mine.SOUND_ERROR = config.getSound("sound-error");
-		Mine.SOUND_SUCCESS = config.getSound("sound-success");
+		Mine.MSG_ON_JOIN = config.message("on-join-message");
+		Mine.MSG_ON_QUIT = config.message("on-quit-message");
+		Mine.OPT_SOUND_TELEPORT = config.getSound("sound-teleport");
+		Mine.OPT_SOUND_ERROR = config.getSound("sound-error");
+		Mine.OPT_SOUND_SUCCESS = config.getSound("sound-success");
 		if (config.getBoolean("auto-rejoin")) {
 			for (Player p : Mine.getPlayers()) {
 				Mine.callEvent(new PlayerJoinEvent(p, null));
@@ -234,7 +242,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
 		Player p = e.getEntity();
-		if (Mine.AUTO_RESPAWN) {
+		if (Mine.OPT_AUTO_RESPAWN) {
 			if (p.hasPermission("eduardAPI.autorespawn")) {
 				Mine.TIME.delay(1L, new Runnable() {
 
@@ -253,7 +261,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 			}
 
 		}
-		if (Mine.NO_DEATH_MESSAGE) {
+		if (Mine.OPT_NO_DEATH_MESSAGE) {
 			e.setDeathMessage(null);
 		}
 	}
@@ -279,8 +287,8 @@ public class EduardAPI extends JavaPlugin implements Listener {
 	public void onQuit(PlayerQuitEvent e) {
 		Player p = e.getPlayer();
 		if (config.getBoolean("custom-quit-message"))
-			e.setQuitMessage(Mine.ON_QUIT.replace("$player", p.getName()));
-		if (Mine.NO_QUIT_MESSAGE) {
+			e.setQuitMessage(Mine.MSG_ON_QUIT.replace("$player", p.getName()));
+		if (Mine.OPT_NO_QUIT_MESSAGE) {
 			e.setQuitMessage("");
 		}
 	}
@@ -292,10 +300,10 @@ public class EduardAPI extends JavaPlugin implements Listener {
 			saveObject("Players/" + p.getName() + " " + p.getUniqueId(), p);
 		}
 		if (config.getBoolean("custom-join-message")) {
-			e.setJoinMessage(Mine.ON_JOIN.replace("$player", p.getName()));
+			e.setJoinMessage(Mine.MSG_ON_JOIN.replace("$player", p.getName()));
 		}
 
-		if (Mine.NO_JOIN_MESSAGE) {
+		if (Mine.OPT_NO_JOIN_MESSAGE) {
 			e.setJoinMessage(null);
 			return;
 		}
@@ -361,6 +369,12 @@ public class EduardAPI extends JavaPlugin implements Listener {
 				if ((method.getParameterCount() == 0)
 						&& name.startsWith("get") | name.startsWith("is") | name.startsWith("can")) {
 					method.setAccessible(true);
+					if (name.equals("getLoadedChunks")) {
+						continue;
+					}
+					if (name.equals("getOfflinePlayers")) {
+						continue;
+					}
 					Object test = method.invoke(value);
 					if (test == null)
 						continue;
@@ -650,7 +664,6 @@ public class EduardAPI extends JavaPlugin implements Listener {
 			saveEnum(PotionType.class);
 			saveClassLikeEnum(PotionEffectType.class);
 		}
-		getCommand("setspawn").setExecutor(new SetSpawn());
 
 		if (getConfigs().getBoolean("save-worlds")) {
 			for (World world : Bukkit.getWorlds()) {

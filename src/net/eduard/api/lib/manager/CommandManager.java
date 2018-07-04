@@ -20,7 +20,38 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 
 	private static Map<String, CommandManager> commandsRegistred = new HashMap<>();
 
+	public static CommandManager getCommand(String name) {
+		return commandsRegistred.get(name.toLowerCase());
+	}
+
+	public static Map<String, CommandManager> getCommandsRegistred() {
+		return commandsRegistred;
+	}
+
+	public static void setCommandsRegistred(Map<String, CommandManager> commandsRegistred) {
+		CommandManager.commandsRegistred = commandsRegistred;
+	}
+
+	public String autoUsage() {
+		if (parent != null) {
+			return parent.autoUsage() + " " + name;
+		} else {
+
+			return "/" + name + "";
+		}
+	}
+
 	private Map<String, CommandManager> commands = new HashMap<>();
+
+	public String autoPermission() {
+
+		if (parent != null) {
+			return parent.autoPermission() + "." + name;
+		} else {
+			return "command." + name;
+		}
+
+	}
 
 	private String permission;
 
@@ -32,12 +63,35 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 
 	private List<String> aliases = new ArrayList<>();
 
-	private String permissionMessage="§cVocê não possui permissão para executar este comando.";
+	private String permissionMessage = Mine.MSG_NO_PERMISSION;
 
-	private String description;
+	private String description = "§bExemplo";
 
-	public void sendPermissionMessage(CommandSender sender) {
-		sender.sendMessage(permissionMessage);
+	public CommandManager() {
+		this("");
+	}
+
+	public CommandManager(String name, String... aliases) {
+		this.name = name;
+		if (name.equals("")) {
+			this.name = getCommandName();
+
+		}
+		if (aliases != null)
+			this.aliases = Arrays.asList(aliases);
+	}
+
+	public void broadcast(String message) {
+		Mine.broadcast(message, permission);
+
+	}
+
+	public List<String> getAliases() {
+		return aliases;
+	}
+
+	public PluginCommand getCommand() {
+		return Bukkit.getPluginCommand(name);
 	}
 
 	public String getCommandName() {
@@ -46,75 +100,188 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 				.replace("comando", "").replace("command", "").replace("cmd", "").replace("eduard", "");
 	}
 
+	public Map<String, CommandManager> getCommands() {
+		return commands;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public CommandManager getParent() {
+		return parent;
+	}
+
+	public String getPermission() {
+		return permission;
+	}
+
+	public String getPermissionMessage() {
+		return permissionMessage;
+	}
+
+	public String getUsage() {
+		return usage;
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+		{
+			CommandManager cmd = this;
+			for (int i = 0; i < args.length; i++) {
+				String arg = args[i].toLowerCase();
+				CommandManager sub = null;
+				for (CommandManager subcmd : cmd.getCommands().values()) {
+					if (subcmd.getName().equalsIgnoreCase(arg)) {
+						sub = subcmd;
+					}
+					for (String alias : subcmd.getAliases()) {
+						if (alias.equalsIgnoreCase(arg)) {
+							sub = subcmd;
+						}
+					}
+				}
+				if (sub == null) {
+					break;
+
+				}
+				cmd = sub;
+			}
+//			sender.sendMessage("permiscao " + cmd.getPermission());
+			if (cmd == this) {
+				if (args.length == 0) {
+					sender.sendMessage("/" + name + " help");
+				} else {
+					sendUsage(sender);
+				}
+			} else {
+
+				if (sender.hasPermission(cmd.getPermission())) {
+					cmd.onCommand(sender, command, label, args);
+				} else
+					sender.sendMessage(cmd.getPermissionMessage());
+			}
+
+		}
+		return true;
+
+	}
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-		return null;
-	}
+		ArrayList<String> vars = new ArrayList<>();
+		{
+			CommandManager cmd = this;
+			for (int i = 0; i < args.length; i++) {
+				String arg = args[i].toLowerCase();
+				vars.clear();
+				CommandManager sub = null;
+				for (CommandManager subcmd : cmd.getCommands().values()) {
+					if (sender.hasPermission(subcmd.getPermission())) {
+						if (Mine.startWith(subcmd.getName(), arg)) {
+							vars.add(subcmd.getName());
+						}
+						if (subcmd.getName().equalsIgnoreCase(arg)) {
+							sub = subcmd;
+						}
+						for (String alias : subcmd.getAliases()) {
+							if (Mine.startWith(alias, arg)) {
+								vars.add(alias);
+							}
+							if (alias.equalsIgnoreCase(arg)) {
+								sub = subcmd;
+							}
+						}
 
-	public void broadcast(String message) {
-		Mine.broadcast(message, permission);
+					}
 
-	}
+				}
+				if (sub == null) {
+					break;
+				}
+				cmd = sub;
+			}
+			if (vars.isEmpty()) {
+				return null;
+			}
+//			if (cmd == this) {
+//				if (vars.isEmpty()) {
+//					return null;
+//				}
+//				return vars;
+//			} else {
 
-	public static CommandManager getCommand(String name) {
-		return commandsRegistred.get(name.toLowerCase());
-	}
+//				if (sender.hasPermission(cmd.getPermission())) {
+//					return cmd.onTabComplete(sender, command, label, args);
+//				}
+			return vars;
+//			}
 
-	public CommandManager() {
-		this("");
-	}
-
-	public CommandManager(String name) {
-		this.name = name;
-		if (name.equals("")) {
-			this.name = getCommandName();
 		}
+
 	}
 
-	public CommandManager(String name, String... aliases) {
-		this(name);
-		this.aliases = Arrays.asList(aliases);
-	}
+	public boolean register() {
 
-	public void sendUsage(CommandSender sender) {
-		sender.sendMessage(getUsage());
-	}
+		PluginCommand command = Bukkit.getPluginCommand(name);
+		if (command == null) {
+			Mine.console("§bCommandAPI §fO comando §a" + name
+					+ " §fnao foi registrado na plugin.yml de nenhum Plugin do Servidor");
+			return false;
+		}
+		setPlugin(command.getPlugin());
+		if (command.getUsage() != null) {
+			if (!command.getUsage().isEmpty()) {
+				usage = command.getUsage().replace("<command>", name).replace('&', '§');
+			}
+		}
+		if (usage == null) {
+			usage = autoUsage();
+		}
+		if (command.getPermission() != null) {
+			permission = command.getPermission();
+		} else if (permission == null) {
+			permission = autoPermission();
+		}
+		if (command.getPermissionMessage() != null) {
+			permissionMessage = command.getPermissionMessage().replace('&', '§');
+		}
+		// alias não funciona para comandos apenas na plugin.yml ou subcomandos
+		if (command.getAliases() != null) {
+			aliases = command.getAliases();
+		}
 
-	public void sendDescription(CommandSender sender) {
-		sender.sendMessage(getDescription());
+		command.setUsage(usage);
+		command.setLabel(name);
+		command.setName(name);
+		command.setAliases(aliases);
+		command.setDescription(description);
+		command.setPermission(permission);
+		command.setExecutor(this);
+
+		Mine.console("§bCommandAPI §fO comando §a" + name + " §ffoi registrado para o Plugin §b"
+				+ command.getPlugin().getName());
+		commandsRegistred.put(name.toLowerCase(), this);
+		updateSubs();
+		register(getPlugin());
+		return true;
+
 	}
 
 	public boolean register(CommandManager sub) {
 		commands.put(sub.name, sub);
+		sub.setParent(this);
 		return true;
-	}
-
-	public void updateSubs() {
-		for (CommandManager sub : commands.values()) {
-			if (sub.permission == null)
-				sub.permission = permission + "." + sub.name;
-			if (sub.description == null) {
-				sub.description = "§fExemplo";
-			}
-
-			if (permissionMessage == null) {
-				permissionMessage = Mine.NO_PERMISSION;
-			}
-
-			if (sub.usage == null) {
-				sub.usage = Mine.USAGE + "/" + name + " " + sub.name;
-
-			}
-			if (sub.usage == null)
-				sub.usage = Mine.USAGE + "/" + name + " " + sub.name;
-			Mine.console("§bCommandAPI §fO subcomando §e" + sub.name + " §ffoi registrado no comando §a" + name);
-			if (!sub.commands.isEmpty())
-				sub.updateSubs();
-		}
 	}
 
 	public void registerCommand(Plugin plugin) {
 		setPlugin(plugin);
+
 		Command command = new Command(name) {
 
 			@Override
@@ -134,180 +301,11 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		command.setAliases(aliases);
 		command.setDescription(description);
 		command.setLabel(name);
+		command.setName(name);
 		command.setUsage(usage);
 		command.setPermissionMessage(permissionMessage);
 		command.setPermission(permission);
 		Mine.createCommand(plugin, command);
-	}
-
-	public boolean register() {
-		PluginCommand command = Bukkit.getPluginCommand(name);
-		if (command == null) {
-			Mine.console("§bCommandAPI §fO comando §a" + name
-					+ " §fnao foi registrado na plugin.yml de nenhum Plugin do Servidor");
-			return false;
-		}
-		setPlugin(command.getPlugin());
-		if (permission == null) {
-			if (command.getPermission() == null) {
-				permission = getPlugin().getName() + "." + name;
-			} else if (command.getPermission().isEmpty()) {
-				permission = getPlugin().getName() + "." + name;
-			} else
-				permission = command.getPermission();
-		}
-		if (description == null) {
-			if (command.getDescription() == null) {
-				description = "§fExemplo";
-			} else {
-				description = "§a" + command.getDescription();
-			}
-		}
-		if (permissionMessage == null) {
-			if (command.getPermissionMessage() == null) {
-				permissionMessage = Mine.NO_PERMISSION;
-			} else {
-				permissionMessage = command.getPermissionMessage();
-			}
-		}
-		if (usage == null) {
-			if (!command.getUsage().isEmpty()) {
-				usage = Mine.USAGE + command.getUsage().replace("<command>", name);
-			} else {
-				usage = Mine.USAGE + "/" + name + " help";
-			}
-		}
-
-		aliases = command.getAliases();
-		command.setUsage(usage);
-		command.setDescription(description);
-		command.setPermission(permission);
-		command.setExecutor(this);
-		Mine.console("§bCommandAPI §fO comando §a" + name + " §ffoi registrado para o Plugin §b"
-				+ command.getPlugin().getName());
-		commandsRegistred.put(name.toLowerCase(), this);
-		updateSubs();
-		register(getPlugin());
-		return true;
-
-	}
-
-	public boolean unregisterCommand() {
-		Mine.removeCommand(name);
-		return false;
-	}
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (args.length == 0) {
-			return false;
-		}
-		CommandManager cmd = this;
-		int id = 0;
-		while (true) {
-			if (args.length == id) {
-				if (sender.hasPermission(cmd.getPermission())) {
-					return cmd.onCommand(sender, command, label, args);
-				}
-				sendPermissionMessage(sender);
-				return true;
-			}
-			String arg = args[id];
-			CommandManager newCmd = null;
-			for (CommandManager sub : cmd.getCommands().values()) {
-				if (sub.getName().equalsIgnoreCase(arg)) {
-					newCmd = sub;
-					break;
-				}
-				if (sub.getAliases().contains(arg.toLowerCase())) {
-					newCmd = sub;
-					break;
-				}
-			}
-			if (newCmd == null) {
-				if (cmd == this) {
-					return false;
-				}
-				if (sender.hasPermission(cmd.getPermission())) {
-					return cmd.onCommand(sender, command, label, args);
-				}
-				sendPermissionMessage(sender);
-				return true;
-			} else {
-				cmd = newCmd;
-			}
-			id++;
-
-		}
-
-	}
-
-	public PluginCommand getCommand() {
-		return Bukkit.getPluginCommand(name);
-	}
-
-	public Map<String, CommandManager> getCommands() {
-		return commands;
-	}
-
-	protected void setCommands(Map<String, CommandManager> commands) {
-		this.commands = commands;
-	}
-
-	public String getPermission() {
-		return permission;
-	}
-
-	public void setPermission(String permission) {
-		this.permission = permission;
-	}
-
-	public List<String> getAliases() {
-		return aliases;
-	}
-
-	public void setAliases(List<String> aliases) {
-		this.aliases = aliases;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getUsage() {
-		return usage;
-	}
-
-	public void setUsage(String usage) {
-		this.usage = usage;
-	}
-
-	public String getPermissionMessage() {
-		return permissionMessage;
-	}
-
-	public void setPermissionMessage(String permissionMessage) {
-		this.permissionMessage = permissionMessage;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public static Map<String, CommandManager> getCommandsRegistred() {
-		return commandsRegistred;
-	}
-
-	public static void setCommandsRegistred(Map<String, CommandManager> commandsRegistred) {
-		CommandManager.commandsRegistred = commandsRegistred;
 	}
 
 	@Override
@@ -316,18 +314,73 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		return null;
 	}
 
+	public void sendDescription(CommandSender sender) {
+		sender.sendMessage(getDescription());
+	}
+
+	public void sendPermissionMessage(CommandSender sender) {
+		sender.sendMessage(permissionMessage);
+	}
+
+	public void sendUsage(CommandSender sender) {
+		sender.sendMessage(getUsage());
+	}
+
+	public void setAliases(List<String> aliases) {
+		this.aliases = aliases;
+	}
+
+	protected void setCommands(Map<String, CommandManager> commands) {
+		this.commands = commands;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setParent(CommandManager parent) {
+		this.parent = parent;
+	}
+
+	public void setPermission(String permission) {
+		this.permission = permission;
+	}
+
+	public void setPermissionMessage(String permissionMessage) {
+		this.permissionMessage = permissionMessage;
+	}
+
+	public void setUsage(String usage) {
+		this.usage = usage;
+	}
+
 	@Override
 	public void store(Map<String, Object> map, Object object) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public CommandManager getParent() {
-		return parent;
+	public boolean unregisterCommand() {
+		Mine.removeCommand(name);
+		return false;
 	}
 
-	public void setParent(CommandManager parent) {
-		this.parent = parent;
+	public void updateSubs() {
+		for (CommandManager sub : commands.values()) {
+			if (sub.permission == null)
+				sub.permission = sub.autoPermission();
+
+			if (sub.usage == null) {
+				sub.usage = sub.autoUsage();
+			}
+			Mine.console("§bCommandAPI §fO subcomando §e" + sub.name + " §ffoi registrado no comando §a" + name);
+			if (!sub.commands.isEmpty())
+				sub.updateSubs();
+		}
 	}
 
 }
