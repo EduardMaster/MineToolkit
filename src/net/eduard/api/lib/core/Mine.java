@@ -93,14 +93,14 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import net.eduard.api.lib.EmptyWorldGenerator;
 import net.eduard.api.lib.Extra;
-import net.eduard.api.lib.FakePlayer;
 import net.eduard.api.lib.event.PlayerTargetEvent;
 import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.game.Sounds;
 import net.eduard.api.lib.manager.PlayersManager;
 import net.eduard.api.lib.manager.TimeManager;
+import net.eduard.api.lib.modules.FakePlayer;
+import net.eduard.api.lib.utils.EmptyWorldGenerator;
 
 /**
  * API principal da Lib contendo muitos codigos bons e utilitarios
@@ -601,7 +601,7 @@ public final class Mine {
 
 	public static boolean createCommand(Plugin plugin, Command... cmds) {
 		try {
-			Class<?> serverClass = Extra.get(Bukkit.getServer());
+			Class<?> serverClass = Extra.getClassFrom(Bukkit.getServer());
 			Field field = serverClass.getDeclaredField("commandMap");
 			field.setAccessible(true);
 			CommandMap map = (CommandMap) field.get(Bukkit.getServer());
@@ -969,7 +969,7 @@ public final class Mine {
 	}
 
 	public static String getCmd(String message) {
-		return Extra.getCmd(message);
+		return Extra.getCommandName(message);
 	}
 
 	/**
@@ -2071,7 +2071,7 @@ public final class Mine {
 	}
 
 	public static boolean isFalling(Entity entity) {
-		return entity.getVelocity().getY() < Extra.WALKING_VELOCITY;
+		return entity.getVelocity().getY() < Extra.VALUE_WALKING_VELOCITY;
 	}
 
 	public static boolean isFlying(Entity entity) {

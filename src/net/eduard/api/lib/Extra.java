@@ -22,6 +22,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.CodeSource;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -57,8 +63,7 @@ public final class Extra {
 
 	/**
 	 * 
-	 * @param type
-	 *            Variavel (Classe)
+	 * @param type Variavel (Classe)
 	 * @return Tipo 2 de type, caso type seja um {@link ParameterizedType}
 	 * 
 	 */
@@ -76,8 +81,7 @@ public final class Extra {
 
 	/**
 	 * 
-	 * @param type
-	 *            Variavel {@link Type} (Classe/Tipo)
+	 * @param type Variavel {@link Type} (Classe/Tipo)
 	 * @return Tipo 1 de type, caso type seja um {@link ParameterizedType}
 	 * 
 	 */
@@ -95,8 +99,7 @@ public final class Extra {
 
 	/**
 	 * 
-	 * @param claz
-	 *            Classe
+	 * @param claz Classe
 	 * @return Se a claz § um {@link Map} (Mapa)
 	 * 
 	 */
@@ -106,8 +109,7 @@ public final class Extra {
 
 	/**
 	 * 
-	 * @param claz
-	 *            Classe
+	 * @param claz Classe
 	 * @return Se a claz § uma {@link List} (Lista)
 	 * 
 	 */
@@ -118,8 +120,7 @@ public final class Extra {
 	/**
 	 * Pega um Objecto serializavel do Arquivo
 	 * 
-	 * @param file
-	 *            Arquivo
+	 * @param file Arquivo
 	 * @return Objeto
 	 */
 	public static Object getSerializable(File file) {
@@ -144,10 +145,8 @@ public final class Extra {
 	/**
 	 * Salva um Objecto no Arquivo em forma de serializa§§o Java
 	 * 
-	 * @param object
-	 *            Objeto (Dado)
-	 * @param file
-	 *            Arquivo
+	 * @param object Objeto (Dado)
+	 * @param file   Arquivo
 	 */
 	public static void setSerializable(Object object, File file) {
 		try {
@@ -168,10 +167,8 @@ public final class Extra {
 	/**
 	 * Desfazr o ZIP do Arquivo
 	 * 
-	 * @param zipFilePath
-	 *            Arquivo
-	 * @param destDirectory
-	 *            Destino
+	 * @param zipFilePath   Arquivo
+	 * @param destDirectory Destino
 	 */
 	public static void unzip(String zipFilePath, String destDirectory)
 
@@ -205,10 +202,8 @@ public final class Extra {
 	/**
 	 * Defaz o ZIP do Arquivo
 	 * 
-	 * @param zipIn
-	 *            Input Stream (Cone§§o de Algum Arquivo)
-	 * @param filePath
-	 *            Destino Arquivo
+	 * @param zipIn    Input Stream (Cone§§o de Algum Arquivo)
+	 * @param filePath Destino Arquivo
 	 */
 	public static void extractFile(ZipInputStream zipIn, String filePath) {
 		try {
@@ -228,10 +223,8 @@ public final class Extra {
 	/**
 	 * Pega uma lista de classes de uma package
 	 * 
-	 * @param plugin
-	 *            Plugin
-	 * @param pkgname
-	 *            Package
+	 * @param plugin  Plugin
+	 * @param pkgname Package
 	 * @return Lista de Classes
 	 */
 	public static List<Class<?>> getClasses(Class<?> classe, String pkgname) {
@@ -330,8 +323,7 @@ public final class Extra {
 	/**
 	 * Tenta carregar uma classe e a retorna
 	 * 
-	 * @param name
-	 *            Endere§o
+	 * @param name Endere§o
 	 * @return Classe carregada
 	 */
 	public static Class<?> loadClass(String name) {
@@ -356,7 +348,7 @@ public final class Extra {
 	}
 
 	public static Field getField(Object object, String name) throws Exception {
-		Class<?> claz = get(object);
+		Class<?> claz = getClassFrom(object);
 		try {
 			Field field = claz.getDeclaredField(name);
 			field.setAccessible(true);
@@ -370,7 +362,7 @@ public final class Extra {
 	}
 
 	public static Method getMethod(Object object, String name, Object... parameters) throws Exception {
-		Class<?> claz = get(object);
+		Class<?> claz = getClassFrom(object);
 		try {
 			Method method = claz.getDeclaredMethod(name, getParameters(parameters));
 			method.setAccessible(true);
@@ -398,7 +390,7 @@ public final class Extra {
 	public static Class<?>[] getParameters(Object... parameters) throws Exception {
 		Class<?>[] objects = new Class<?>[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
-			objects[i] = get(parameters[i]);
+			objects[i] = getClassFrom(parameters[i]);
 		}
 		return objects;
 
@@ -406,7 +398,7 @@ public final class Extra {
 
 	public static Constructor<?> getConstructor(Object object, Object... parameters) throws Exception {
 
-		Class<?> claz = get(object);
+		Class<?> claz = getClassFrom(object);
 		try {
 			Constructor<?> cons = claz.getDeclaredConstructor(getParameters(parameters));
 			cons.setAccessible(true);
@@ -452,8 +444,7 @@ public final class Extra {
 
 	/**
 	 * 
-	 * @param claz
-	 *            Classe
+	 * @param claz Classe
 	 * @return Se a claz § um {@link String} (Texto)
 	 * 
 	 */
@@ -463,8 +454,7 @@ public final class Extra {
 
 	/**
 	 * 
-	 * @param claz
-	 *            Classe
+	 * @param claz Classe
 	 * @return Se a claz § do tipo Primitivo ou Wrapper (Envolocro)
 	 * 
 	 */
@@ -479,7 +469,7 @@ public final class Extra {
 		}
 	}
 
-	public static Class<?> get(Object object) throws Exception {
+	public static Class<?> getClassFrom(Object object) throws Exception {
 		if (object instanceof Class) {
 			return (Class<?>) object;
 		}
@@ -520,9 +510,9 @@ public final class Extra {
 	}
 
 	public static Random RANDOM = new Random();
-	public static final float TNT = 4F;
-	public static final float CREEPER = 3F;
-	public static final float WALKING_VELOCITY = -0.08F;
+	public static final float VALUE_TNT_POWER = 4F;
+	public static final float VALUE_CREEPER_POWER = 3F;
+	public static final float VALUE_WALKING_VELOCITY = -0.08F;
 	public static final int DAY_IN_HOUR = 24;
 	public static final int DAY_IN_MINUTES = DAY_IN_HOUR * 60;
 	public static final int DAY_IN_SECONDS = DAY_IN_MINUTES * 60;
@@ -557,8 +547,7 @@ public final class Extra {
 	/**
 	 * Formata o resultado da subtra§§o de *numero antigo - numero atual)
 	 * 
-	 * @param timestamp
-	 *            Numero Antigo
+	 * @param timestamp Numero Antigo
 	 * @return Texto do numero formatado
 	 */
 	public static String formatDiference(long timestamp) {
@@ -648,7 +637,7 @@ public final class Extra {
 		return Math.random() <= chance;
 	}
 
-	public static String getCmd(String message) {
+	public static String getCommandName(String message) {
 		String command = message;
 		if (message.contains(" "))
 			command = message.split(" ")[0];
@@ -658,10 +647,8 @@ public final class Extra {
 	/**
 	 * Retorna se (now < (seconds + before));
 	 * 
-	 * @param before
-	 *            (Antes)
-	 * @param seconds
-	 *            (Cooldown)
+	 * @param before  (Antes)
+	 * @param seconds (Cooldown)
 	 * @return
 	 */
 	public static boolean inCooldown(long before, long seconds) {
@@ -1142,10 +1129,8 @@ public final class Extra {
 	/**
 	 * Gera uma nova Key
 	 * 
-	 * @param type
-	 *            Tipo da Key
-	 * @param maxSize
-	 *            Tamanho da Key
+	 * @param type    Tipo da Key
+	 * @param maxSize Tamanho da Key
 	 * @return Key em forma de STRING
 	 */
 	public static String newKey(KeyType type, int maxSize) {
@@ -1224,14 +1209,13 @@ public final class Extra {
 		wrappers.put(short.class, Short.class);
 		wrappers.put(float.class, Float.class);
 		wrappers.put(boolean.class, Boolean.class);
+		wrappers.put(char.class, Character.class);
 
 	}
-	
-
 
 	public static Class<?> getWrapper(Class<?> clazz) {
 		for (Entry<Class<?>, Class<?>> wrapperEntry : wrappers.entrySet()) {
-			if (wrapperEntry.getKey().equals(clazz)||wrapperEntry.getValue().equals(clazz)) {
+			if (wrapperEntry.getKey().equals(clazz) || wrapperEntry.getValue().equals(clazz)) {
 				return wrapperEntry.getValue();
 			}
 		}
@@ -1248,5 +1232,146 @@ public final class Extra {
 		replacers.put("#m", "net.minecraft.server.#v.");
 		replacers.put("#c", "org.bukkit.craftbukkit.#v.");
 		replacers.put("#s", "org.bukkit.");
+	}
+
+	/**
+	 * Seta um valor para um determinado ? de um PreparedStatement
+	 * 
+	 * @param state State
+	 * @param param Posição
+	 * @param value Valor ser setado
+	 */
+	public static void setSQLValue(PreparedStatement state, int param, Object value) {
+		try {
+			state.setString(param, fromJavaToSQL(value));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static Object getSQLValue(ResultSet rs, Class<?> type, String column) {
+		Object result = null;
+		try {
+			Class<?> wrap = getWrapper(type);
+			if (wrap != null) {
+				type = wrap;
+			}
+			result = rs.getObject(column);
+			if (type == Boolean.class) {
+				result = rs.getBoolean(column);
+			}
+			if (type == Byte.class) {
+				result = rs.getByte(column);
+			}
+			if (type == Short.class) {
+				result = rs.getShort(column);
+			}
+
+			result = fromSQLToJava(type, result);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	public static String fromJavaToSQL(Object value) {
+		if (value == null) {
+			return "NULL";
+		}
+		Class<? extends Object> type = value.getClass();
+		if (type == java.util.Date.class) {
+			value = new Date(((java.util.Date) value).getTime());
+		} else if (value instanceof Calendar) {
+			value = new Timestamp(((Calendar) value).getTimeInMillis());
+		}
+
+		return value.toString();
+	}
+
+	public static Object fromSQLToJava(Class<?> type, Object value) {
+		if (type == UUID.class) {
+			return UUID.fromString(value.toString());
+		}
+		if (type == Character.class) {
+			return value.toString().toCharArray()[0];
+		}
+		if (type == Calendar.class) {
+			if (value instanceof Timestamp) {
+				Timestamp timestamp = (Timestamp) value;
+				Calendar calendario = Calendar.getInstance();
+				calendario.setTimeInMillis(timestamp.getTime());
+				return calendario;
+			}
+		}
+		if (type == java.util.Date.class) {
+			if (value instanceof Date) {
+				Date date = (Date) value;
+				return new java.util.Date(date.getTime());
+			}
+		}
+
+		return value;
+	}
+
+	/**
+	 * Gera um texto com "?" baseado na quantidade<br>
+	 * Exemplo 5 = "? , ?,?,?,?"
+	 * 
+	 * @param size Quantidade
+	 * @return Texto criado
+	 */
+	public static String getQuestionMarks(int size) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < size; i++) {
+			if (i != 0)
+				builder.append(",");
+			builder.append("?");
+		}
+		return builder.toString();
+	}
+
+	public static String getSQLType(Class<?> type, int size) {
+		Class<?> wrapper = Extra.getWrapper(type);
+		if (wrapper != null) {
+			type = wrapper;
+		}
+		if (String.class.isAssignableFrom(type)) {
+			return "VARCHAR" + "(" + size + ")";
+		} else if (Integer.class == type) {
+			return "INTEGER" + "(" + size + ")";
+		} else if (Boolean.class == type) {
+			return "TINYINT(1)";
+		} else if (Short.class == type) {
+			return "SMALLINT" + "(" + size + ")";
+		} else if (Byte.class == type) {
+			return "TINYINT" + "(" + size + ")";
+		} else if (Long.class == type) {
+			return "BIGINT" + "(" + size + ")";
+		} else if (Character.class == type) {
+			return "CHAR" + "(" + size + ")";
+		} else if (Float.class == type) {
+			return "FLOAT";
+		} else if (Double.class == type) {
+			return "DOUBLE";
+		} else if (Number.class.isAssignableFrom(type)) {
+			return "NUMERIC";
+		} else if (Timestamp.class.equals(type)) {
+			return "TIMESTAMP";
+		} else if (Calendar.class.equals(type)) {
+			return "DATETIME";
+		} else if (Date.class.equals(type)) {
+			return "DATE";
+		} else if (java.util.Date.class.equals(type)) {
+			return "DATE";
+		} else if (Time.class.equals(type)) {
+			return "TIME";
+		} else if (UUID.class.isAssignableFrom(type)) {
+			return "VARCHAR(40)";
+		}
+
+		return null;
 	}
 }

@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.eduard.api.lib.Copyable;
+import net.eduard.api.lib.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 /**
@@ -42,7 +44,7 @@ public class DBManager implements Storable, Copyable {
 
 	static {
 		hasMySQL();
-		hasSQLlite();
+		hasSQLite();
 	}
 
 	public DBManager() {
@@ -64,7 +66,7 @@ public class DBManager implements Storable, Copyable {
 		}
 	}
 
-	public static boolean hasSQLlite() {
+	public static boolean hasSQLite() {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			return true;
@@ -167,12 +169,9 @@ public class DBManager implements Storable, Copyable {
 	 * Construtor pedindo Usuario, Senha, Host sem conectar com nenhum database
 	 * apenas no Driver
 	 * 
-	 * @param user
-	 *            Usuario
-	 * @param pass
-	 *            Senha
-	 * @param host
-	 *            Host
+	 * @param user Usuario
+	 * @param pass Senha
+	 * @param host Host
 	 */
 	public DBManager(String user, String pass, String host) {
 		this(user, pass, host, "mine");
@@ -181,14 +180,10 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Contrutor pedindo Usuario, Senha, Host, Database
 	 * 
-	 * @param user
-	 *            Usuario
-	 * @param pass
-	 *            Senha
-	 * @param host
-	 *            Host
-	 * @param database
-	 *            Database
+	 * @param user     Usuario
+	 * @param pass     Senha
+	 * @param host     Host
+	 * @param database Database
 	 */
 	public DBManager(String user, String pass, String host, String database) {
 		this.user = user;
@@ -200,8 +195,7 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Criar uma database
 	 * 
-	 * @param database
-	 *            Database
+	 * @param database Database
 	 */
 	public void createDatabase(String database) {
 		update("create database if not exists " + database
@@ -211,8 +205,7 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Conecta com a database
 	 * 
-	 * @param database
-	 *            Database
+	 * @param database Database
 	 */
 	public void useDatabase(String database) {
 		update("USE " + database);
@@ -221,10 +214,8 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Cria uma tabela
 	 * 
-	 * @param table
-	 *            Tabela
-	 * @param values
-	 *            Valores
+	 * @param table  Tabela
+	 * @param values Valores
 	 */
 	public void createTable(String table, String values) {
 		if (useSQLite) {
@@ -239,8 +230,7 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Deleta todas tabelas da database
 	 * 
-	 * @param database
-	 *            Database
+	 * @param database Database
 	 */
 	public void clearDatabase(String database) {
 		// update("TRUNCATE DATABASE " + database);
@@ -249,8 +239,7 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Deleta database
 	 * 
-	 * @param database
-	 *            Database
+	 * @param database Database
 	 */
 	public void deleteDatabase(String database) {
 		update("DROP DATABASE " + database);
@@ -259,26 +248,24 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Insere um registro
 	 * 
-	 * @param table
-	 *            Tabela
-	 * @param objects
-	 *            Objetos
+	 * @param table   Tabela
+	 * @param objects Objetos
+	 * @return 
 	 */
-	public void insert(String table, Object... objects) {
-		if (useSQLite) {
-			update("INSERT INTO " + table + " values ( NULL , " + hashes(objects.length) + " )", objects);
-		} else {
-			update("INSERT INTO " + table + " values (default, " + inters(objects.length) + " )", objects);
-		}
+	public int insert(String table, Object... objects) {
+//		if (useSQLite) {
+			// antes era hashes
+			return update("INSERT INTO " + table + " values ( NULL , " + Extra.getQuestionMarks(objects.length) + " )", objects);
+//		} else {
+//			return update("INSERT INTO " + table + " values (default, " + inters(objects.length) + " )", objects);
+//		}
 	}
 
 	/**
 	 * Deleta um registro
 	 * 
-	 * @param table
-	 *            Tabela
-	 * @param index
-	 *            Index (ID)
+	 * @param table Tabela
+	 * @param index Index (ID)
 	 */
 	public void delete(String table, int index) {
 		update("DELETE FROM " + table + " WHERE ID = ?", index);
@@ -287,12 +274,9 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Deleta um registro
 	 * 
-	 * @param table
-	 *            Tablea
-	 * @param where
-	 *            Como
-	 * @param values
-	 *            Valores
+	 * @param table  Tablea
+	 * @param where  Como
+	 * @param values Valores
 	 */
 	public void delete(String table, String where, Object... values) {
 		update("DELETE FROM " + table + " WHERE " + where, values);
@@ -301,10 +285,8 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Deleta uma coluna
 	 * 
-	 * @param table
-	 *            Tale
-	 * @param column
-	 *            Coluna
+	 * @param table  Tale
+	 * @param column Coluna
 	 */
 	public void delete(String table, String column) {
 		alter(table, "drop column " + column);
@@ -313,10 +295,8 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Adiciona no Come§o da tabela uma coluna
 	 * 
-	 * @param table
-	 *            Tabela
-	 * @param columnComplete
-	 *            Coluna
+	 * @param table          Tabela
+	 * @param columnComplete Coluna
 	 */
 	public void addFirst(String table, String columnComplete) {
 		alter(table, "add column " + columnComplete + " first");
@@ -337,10 +317,8 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Renomeia a Tabela para uma Nova Tabela
 	 * 
-	 * @param table
-	 *            Tabela
-	 * @param newTable
-	 *            Nova tabela
+	 * @param table    Tabela
+	 * @param newTable Nova tabela
 	 */
 	public void renameTable(String table, String newTable) {
 		alter(table, "rename to " + newTable);
@@ -349,12 +327,9 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Modifica uma Coluna de uma Tabela
 	 * 
-	 * @param table
-	 *            Tabela
-	 * @param column
-	 *            Coluna
-	 * @param modification
-	 *            Modifica§§o
+	 * @param table        Tabela
+	 * @param column       Coluna
+	 * @param modification Modifica§§o
 	 */
 	public void modify(String table, String column, String modification) {
 		alter(table, "modify column " + column + " " + modification);
@@ -363,10 +338,8 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Adiciona chave primaria na tabela
 	 * 
-	 * @param table
-	 *            Tabela
-	 * @param key
-	 *            Chave
+	 * @param table Tabela
+	 * @param key   Chave
 	 */
 	public void addKey(String table, String key) {
 		alter(table, "add primary key (" + key + ")");
@@ -386,14 +359,10 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Modifica alguns registros da tabela
 	 * 
-	 * @param table
-	 *            Tabela
-	 * @param where
-	 *            Como
-	 * @param edit
-	 *            Modifica§§o
-	 * @param values
-	 *            Valores
+	 * @param table  Tabela
+	 * @param where  Como
+	 * @param edit   Modifica§§o
+	 * @param values Valores
 	 */
 	public void change(String table, String edit, String where, Object... values) {
 		update("UPDATE " + table + " SET " + edit + " WHERE " + where, values);
@@ -402,14 +371,10 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Cria um join entre as tabelas
 	 * 
-	 * @param table
-	 *            Tabela
-	 * @param joinTable
-	 *            Tabela2
-	 * @param onClause
-	 *            Comparador
-	 * @param select
-	 *            Select completo
+	 * @param table     Tabela
+	 * @param joinTable Tabela2
+	 * @param onClause  Comparador
+	 * @param select    Select completo
 	 * @return ResultSet
 	 */
 	public ResultSet join(String table, String joinTable, String onClause, String select) {
@@ -419,8 +384,7 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Deleta a tabela
 	 * 
-	 * @param table
-	 *            Tabela
+	 * @param table Tabela
 	 */
 	public void deleteTable(String table) {
 		update("DROP TABLE " + table);
@@ -449,10 +413,8 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Executa um Select e volta se tem algum registro
 	 * 
-	 * @param query
-	 *            Query
-	 * @param replacers
-	 *            Objetos
+	 * @param query     Query
+	 * @param replacers Objetos
 	 * @return Se tem ou n§o registro com esta Query
 	 */
 	public boolean contains(String query, Object... replacers) {
@@ -473,84 +435,58 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Executa uma Atualiza§§o com um Query
 	 * 
-	 * @param query
-	 *            Query Pesquisa
-	 * @param replacers
-	 *            Objetos
+	 * @param query     Query Pesquisa
+	 * @param replacers Objetos
+	 * @return 
 	 */
-	public void update(String query, Object... replacers) {
-		if (hasConnection())
+	public int update(String query, Object... replacers) {
+		int resultado = -1;
+		if (hasConnection()) {
 			try {
-				query(query, replacers).executeUpdate();
+				PreparedStatement state = query(query, replacers);
+				resultado = state.executeUpdate();
+				ResultSet keys = state.getGeneratedKeys();
+				if (keys!=null) {
+					if (keys.next()) {
+						resultado = keys.getInt(1);
+					}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 
 			}
+		}
+		return resultado;
 	}
 
 	/**
 	 * Cria um PreparedStatement com uma Query dada, e aplica os Replacers
 	 * 
-	 * @param query
-	 *            Query
-	 * @param replacers
-	 *            Objetos
+	 * @param query     Query
+	 * @param replacers Objetos
 	 * @return PreparedStatement (Estado da Query)
 	 */
 	public PreparedStatement query(String query, Object... replacers) {
 		try {
-
 			if (!query.endsWith(";")) {
 				query += ";";
 			}
-			if (useSQLite) {
-				query = query.replaceAll("\\?", "#");
-				for (Object replacer : replacers) {
-					query = query.replaceFirst("#", "'" + replacer + "'");
-				}
-				debug("[SQLite] " + query);
+
+			PreparedStatement state = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
+			
+
+			int id = 1;
+			for (Object replacer : replacers) {
+				Extra.setSQLValue(state, id,replacer);
+				query.replaceFirst("\\?", "'"+Extra.fromJavaToSQL(replacer)+"'");
+				id++;
 			}
+			
+			
+	
+			debug("[MySQL] " + query);
 
-			PreparedStatement state = connection.prepareStatement(query);
-			// ResultSetMetaData meta = state.getMetaData();
-			// ParameterMetaData para = state.getParameterMetaData();
-
-			if (!useSQLite) {
-
-				int id = 1;
-				for (Object replacer : replacers) {
-					// if (replacer == null) {
-					if (replacer instanceof UUID) {
-						replacer = replacer.toString();
-					}
-					state.setObject(id, replacer);
-					// } else if (replacer instanceof Date) {
-					// state.setDate(id, (Date) replacer);
-					// } else if (replacer instanceof Time) {
-					// state.setTime(id, (Time) replacer);
-					// } else if (replacer instanceof Timestamp) {
-					// state.setTimestamp(id, (Timestamp) replacer);
-					// }else if (replacer instanceof Boolean) {
-					// state.setBoolean(id, (boolean) replacer);
-					// } else {
-					// if (state.isWrapperFor(replacer.getClass())) {
-					// debug("is OBJECT");
-					// state.setObject(id, replacer);
-					// } else {
-					// debug("is STRING");
-					// state.setString(id, "" + replacer);
-					// }
-					//
-					// }
-					id++;
-				}
-				query = query.replaceAll("\\?", "#");
-				for (Object replacer : replacers) {
-					query = query.replaceFirst("#", "'" + replacer + "'");
-				}
-				debug("[MySQL] " + query);
-			}
-			// debug(state.get);
+		
 			return state;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -628,10 +564,8 @@ public class DBManager implements Storable, Copyable {
 	/**
 	 * Executa um Query e volta um ResultSet
 	 * 
-	 * @param query
-	 *            Pesquisa
-	 * @param replacers
-	 *            Objetos
+	 * @param query     Pesquisa
+	 * @param replacers Objetos
 	 * @return ResultSet (Resultado da Query)
 	 */
 	public ResultSet select(String query, Object... replacers) {
@@ -704,32 +638,15 @@ public class DBManager implements Storable, Copyable {
 
 	}
 
-	/**
-	 * Gera um texto com "?" baseado na quantidade<br< Exemplo 5 = "? , ?,?,?,?"
-	 * 
-	 * @param size
-	 *            Quantidade
-	 * @return Texto criado
-	 */
-	public String inters(int size) {
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < size; i++) {
-			if (i != 0)
-				builder.append(",");
-			builder.append("?");
-		}
-		return builder.toString();
-	}
-
-	public String hashes(int size) {
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < size; i++) {
-			if (i != 0)
-				builder.append(",");
-			builder.append("#");
-		}
-		return builder.toString();
-	}
+//	private String hashes(int size) {
+//		StringBuilder builder = new StringBuilder();
+//		for (int i = 0; i < size; i++) {
+//			if (i != 0)
+//				builder.append(",");
+//			builder.append("#");
+//		}
+//		return builder.toString();
+//	}
 
 	@Override
 	public String toString() {
@@ -750,22 +667,21 @@ public class DBManager implements Storable, Copyable {
 	 * Lista = Linhas<br>
 	 * Mapa = Colunas<br>
 	 * 
-	 * @param query
-	 *            Query
-	 * @param replacers
-	 *            Objetos
+	 * @param query     Query
+	 * @param replacers Objetos
 	 * @return Lista de Mapa
 	 */
-	public List<Map<String, String>> getResult(String query, Object... replacers) {
-		List<Map<String, String>> list = new ArrayList<>();
+	public List<Map<String, Object>> getResult(String query, Object... replacers) {
+		List<Map<String, Object>> list = new ArrayList<>();
 		try {
-			ResultSet rs = select(query);
+			ResultSet rs = select(query, replacers);
+
 			while (rs.next()) {
-				Map<String, String> mapa = new HashMap<>();
+				Map<String, Object> mapa = new HashMap<>();
 				ResultSetMetaData meta = rs.getMetaData();
 				for (int i = 1; i <= meta.getColumnCount(); i++) {
 					String name = meta.getColumnName(i);
-					mapa.put(name, rs.getString(name));
+					mapa.put(name, rs.getObject(name));
 				}
 				list.add(mapa);
 			}
@@ -777,44 +693,50 @@ public class DBManager implements Storable, Copyable {
 		return list;
 	}
 
-	public List<Map<String, Object>> selectAll(String table, Object... replacers) {
-		List<Map<String, Object>> lista = new ArrayList<>();
-		try {
-			ResultSet rs = select("SELECT * FROM " + table, replacers);
-			while (rs.next()) {
-				Map<String, Object> mapa = new HashMap<>();
-				ResultSetMetaData meta = rs.getMetaData();
-				for (int colunaId = 1; colunaId <= meta.getColumnCount(); colunaId++) {
-					String name = meta.getColumnName(colunaId);
-					mapa.put(name, rs.getObject(name));
-				}
-				lista.add(mapa);
-			}
-			rs.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return lista;
+	public List<Map<String, Object>> getAllResult(String table, Object... replacers) {
+		return getResult("select * from " + table, replacers);
+//		List<Map<String, Object>> lista = new ArrayList<>();
+//		try {
+//			ResultSet rs = select("SELECT * FROM " + table, replacers);
+//			while (rs.next()) {
+//				Map<String, Object> mapa = new HashMap<>();
+//				ResultSetMetaData meta = rs.getMetaData();
+//				for (int colunaId = 1; colunaId <= meta.getColumnCount(); colunaId++) {
+//					String name = meta.getColumnName(colunaId);
+//					mapa.put(name, rs.getObject(name));
+//				}
+//				lista.add(mapa);
+//			}
+//			rs.close();
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return lista;
 	}
 
-	public Map<String, Object> selectOne(String table, Object... replacers) {
-		Map<String, Object> mapa = new HashMap<>();
-		try {
-			ResultSet rs = select("SELECT * FROM " + table, replacers);
-			if (rs.next()) {
-				ResultSetMetaData meta = rs.getMetaData();
-				for (int colunaId = 1; colunaId <= meta.getColumnCount(); colunaId++) {
-					String name = meta.getColumnName(colunaId);
-					mapa.put(name, rs.getObject(name));
-				}
-			}
-			rs.getStatement().getConnection().close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
+	public Map<String, Object> getOneResult(String table, Object... replacers) {
+		List<Map<String, Object>> all = getAllResult(table, replacers);
+		if (!all.isEmpty()) {
+			return all.get(0);
 		}
-		return mapa;
+		return null;
+//		Map<String, Object> mapa = new HashMap<>();
+//		try {
+//			ResultSet rs = select("SELECT * FROM " + table, replacers);
+//			if (rs.next()) {
+//				ResultSetMetaData meta = rs.getMetaData();
+//				for (int colunaId = 1; colunaId <= meta.getColumnCount(); colunaId++) {
+//					String name = meta.getColumnName(colunaId);
+//					mapa.put(name, rs.getObject(name));
+//				}
+//			}
+//			rs.getStatement().getConnection().close();
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return mapa;
 	}
 
 	public static boolean isDebugging() {

@@ -14,7 +14,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * API para utilização de metodos do Spigot com mais facilidade
- * @version 1.2
+ * @version 1.2 §
  * @since Lib v1.0
  * @author Eduard
  *

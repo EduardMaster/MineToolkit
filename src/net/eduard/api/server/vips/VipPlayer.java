@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import net.eduard.api.lib.FakePlayer;
 import net.eduard.api.lib.VaultAPI;
+import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 
 public class VipPlayer extends FakePlayer implements Storable{
