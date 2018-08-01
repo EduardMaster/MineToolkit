@@ -1,4 +1,4 @@
-package net.eduard.api.lib.utils;
+package net.eduard.api.lib.modules;
 
 import java.util.Random;
 

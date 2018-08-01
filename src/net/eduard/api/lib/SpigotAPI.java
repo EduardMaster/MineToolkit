@@ -17,6 +17,7 @@ import net.md_5.bungee.api.chat.TextComponent;
  * @version 1.2 §
  * @since Lib v1.0
  * @author Eduard
+ * @see Mine
  *
  */
 public final class SpigotAPI {

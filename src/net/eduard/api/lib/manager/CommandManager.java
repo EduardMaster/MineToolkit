@@ -15,6 +15,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.storage.Reference;
 
 public class CommandManager extends EventsManager implements TabCompleter, CommandExecutor {
 
@@ -41,8 +42,6 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		}
 	}
 
-	private Map<String, CommandManager> commands = new HashMap<>();
-
 	public String autoPermission() {
 
 		if (parent != null) {
@@ -52,20 +51,23 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		}
 
 	}
-
+	@Reference
+	private CommandManager parent;
+	protected String name;
 	private String permission;
 
-	protected String name;
+	
 
-	private CommandManager parent;
+	
 
 	private String usage;
 
+	private String description = "§bExemplo";
 	private List<String> aliases = new ArrayList<>();
 
 	private String permissionMessage = Mine.MSG_NO_PERMISSION;
 
-	private String description = "§bExemplo";
+	private Map<String, CommandManager> commands = new HashMap<>();
 
 	public CommandManager() {
 		this("");

@@ -24,7 +24,7 @@ public class MapLoadCommand extends CommandManager {
 			if (Mine.onlyPlayer(sender)) {
 				Player p = (Player) sender;
 				if (Mine.MAPS.containsKey(args[1].toLowerCase())) {
-					Mine.MAPS_CONFIGURING.put(p, Mine.MAPS.get(args[1].toLowerCase()));
+					Mine.MAPS_CACHE.put(p, Mine.MAPS.get(args[1].toLowerCase()));
 					p.sendMessage("§bEduardAPI §6Mapa carregado com sucesso!");
 				} else {
 					p.sendMessage("§bEduardAPI §cMapa invalido: §f" + args[1]);

@@ -2,6 +2,7 @@ package net.eduard.api.lib;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +30,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -48,6 +50,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
 
 /**
  * API contendo coisas relacionado a Textos, Numeros e Reflection
@@ -1374,4 +1379,67 @@ public final class Extra {
 
 		return null;
 	}
+	
+	/**
+	 * 
+	 * 
+	 */
+	
+	
+	public static List<Object> read(byte[] message, boolean oneLine) {
+		List<Object> lista = new ArrayList<>();
+		ByteArrayDataInput in = ByteStreams.newDataInput(message);
+		if (oneLine) {
+			String text = in.readUTF();
+			if (text.contains(";")) {
+				for (String line : text.split(";")) {
+					lista.add(line);
+				}
+			} else {
+				lista.add(text);
+			}
+		} else {
+			String text = in.readUTF();
+			lista.add(text);
+			short size = in.readShort();
+			for (int id = 1; id < size + 1; id++) {
+				lista.add(in.readUTF());
+			}
+		}
+		return lista;
+	}
+
+	public static byte[] write(String tag, boolean oneLine, Object... objects) {
+		return write(tag, oneLine, Arrays.asList(objects));
+	}
+
+	public static byte[] write(String tag, boolean oneLine, List<Object> objects) {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(stream);
+		try {
+			if (oneLine) {
+				StringBuilder sb = new StringBuilder();
+				for (int id = 0; id < objects.size(); id++) {
+					if (id != 0) {
+						sb.append(";");
+					}
+					sb.append(objects.get(id));
+				}
+				out.writeUTF(sb.toString());
+			} else {
+				out.writeUTF(tag);
+				out.writeShort(objects.size());
+				for (Object value : objects) {
+					out.writeUTF("" + value);
+				}
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return stream.toByteArray();
+	}
+
+	
+	
 }

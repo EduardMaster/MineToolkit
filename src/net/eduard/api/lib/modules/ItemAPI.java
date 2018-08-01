@@ -1,4 +1,4 @@
-package net.eduard.api.lib.utils;
+package net.eduard.api.lib.modules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,13 +30,14 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 
 /**
- * API relacionada a cria§§o e manipula§§o de Itens do Minecraft
+ * API relacionada a criação e manipulação de Itens do Minecraft
  * 
  * @version 1.0
  * @since Lib v1.0 <br> EduardAPI 5.2
  * @author Eduard
- *
+ * @see Mine
  */
+
 public final class ItemAPI {
 
 	/**
@@ -863,10 +864,10 @@ public final class ItemAPI {
 	 *            Descri§§o
 	 * @return Item
 	 */
+	@SuppressWarnings("deprecation")
 	public static ItemStack newItem(int id, String name, int amount,
 			int data, String... lore) {
 
-		@SuppressWarnings("deprecation")
 		ItemStack item = new ItemStack(id,amount,(short)data);
 		ItemMeta meta = item.getItemMeta();
 		if (meta != null)
@@ -892,10 +893,10 @@ public final class ItemAPI {
 	 *            Descri§§o
 	 * @return Item
 	 */
+	@SuppressWarnings("deprecation")
 	public static ItemStack newItem(int id, String name, int amount,
 			int data, List<String> lore) {
 
-		@SuppressWarnings("deprecation")
 		ItemStack item = new ItemStack(id,amount,(short)data);
 		ItemMeta meta = item.getItemMeta();
 		if (meta != null)

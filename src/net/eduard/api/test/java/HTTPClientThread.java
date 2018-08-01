@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class HTTPClientThread extends Thread {
 
-	private JavaPlugin plugin;
+	 JavaPlugin plugin;
 
 	private Socket socket;
 

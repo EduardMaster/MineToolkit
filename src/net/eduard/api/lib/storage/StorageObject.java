@@ -30,6 +30,7 @@ public class StorageObject extends StorageBase {
 				String alias = split[0];
 				debug("Resgatando tipo pela alias: " + alias);
 				setType(StorageAPI.getClassByAlias(alias));
+			
 
 				try {
 					id = Extra.toInt(split[1]);

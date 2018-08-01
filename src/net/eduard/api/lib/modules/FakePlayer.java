@@ -51,6 +51,10 @@ public class FakePlayer implements OfflinePlayer {
 		this(player.getName(), player.getUniqueId());
 	}
 
+	public FakePlayer() {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -1,7 +1,5 @@
 package net.eduard.api.test.bukkit;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class MaquinaDropador2 extends BukkitRunnable {

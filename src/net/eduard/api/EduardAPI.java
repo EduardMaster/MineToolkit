@@ -42,7 +42,10 @@ import net.eduard.api.command.config.ConfigCommand;
 import net.eduard.api.command.map.MapCommand;
 import net.eduard.api.config.Config;
 import net.eduard.api.config.ConfigSection;
+import net.eduard.api.lib.BukkitBungeeAPI;
 import net.eduard.api.lib.VaultAPI;
+import net.eduard.api.lib.bungee.BukkitController;
+import net.eduard.api.lib.bungee.BungeeAPI;
 import net.eduard.api.lib.core.Mine;
 import net.eduard.api.lib.core.Mine.Replacer;
 import net.eduard.api.lib.game.Drop;
@@ -144,6 +147,10 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		config = new Config(this, "config.yml");
 		messages = new Config(this, "messages.yml");
 		time = new TimeManager(this);
+		BukkitBungeeAPI.requestCurrentServer();
+		BukkitController bukkit = BungeeAPI.getBukkit();
+		bukkit.setPlugin(plugin);
+		bukkit.register();
 		StorageBase.setDebug(config.getBoolean("debug-storage"));
 		DBManager.setDebug(config.getBoolean("debug-db"));
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.command");
@@ -212,6 +219,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		Mine.saveMaps();
 		Mine.console("§bEduardAPI §aMapas salvados!");
 		Mine.console("§bEduardAPI §cdesativado!");
+		BungeeAPI.getController().unregister();
 	}
 
 	@EventHandler

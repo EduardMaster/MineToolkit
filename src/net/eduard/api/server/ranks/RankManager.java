@@ -133,9 +133,12 @@ public class RankManager implements Storable {
 
 
 	public void setRank(OfflinePlayer p, String newRank) {
+		setRank(p, getRank(newRank));
+
+	}public void setRank(OfflinePlayer p, Rank newRank) {
 		FakePlayer fake = new FakePlayer(p);
 		removePermissions(fake);
-		playersRanks.put(fake, getRank(newRank));
+		playersRanks.put(fake, newRank);
 		addPermissions(fake);
 
 	}

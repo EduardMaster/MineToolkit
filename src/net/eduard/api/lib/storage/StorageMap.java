@@ -14,7 +14,7 @@ public class StorageMap extends StorageBase {
 	private Class<?> valueType;
 
 	public StorageMap(Class<?> keyType, Class<?> valueType, boolean asReference) {
-		super( Map.class, asReference);
+		super(Map.class, asReference);
 		this.keyType = keyType;
 		this.valueType = valueType;
 		// debug("KeyType "+keyType);
@@ -71,7 +71,7 @@ public class StorageMap extends StorageBase {
 		}
 		Map<Object, Object> newMap = new HashMap<>();
 		if (data instanceof Map) {
-			
+
 			Map<?, ?> map = (Map<?, ?>) data;
 			for (Entry<?, ?> entry : map.entrySet()) {
 
@@ -80,7 +80,7 @@ public class StorageMap extends StorageBase {
 				debug("put " + key + " " + value);
 				newMap.put(key, value);
 			}
-		} 
+		}
 		return newMap;
 	}
 
@@ -90,8 +90,13 @@ public class StorageMap extends StorageBase {
 		Map<String, Object> newMap = new HashMap<>();
 		Map<?, ?> map = (Map<?, ?>) data;
 		for (Entry<?, ?> entry : map.entrySet()) {
-			String key = new StorageObject(keyType, isReference()).store(entry.getKey()).toString();
-			Object value = new StorageObject(valueType, isReference()).store(entry.getValue());
+			String key = new StorageObject(keyType, false).store(entry.getKey()).toString();
+			Object value = null;
+			if (entry.getValue() != null) {
+				value = new StorageObject(entry.getValue().getClass(), isReference()).store(entry.getValue());
+			}else {
+				value = new StorageObject(valueType, isReference()).store(entry.getValue());
+			}
 			newMap.put(key, value);
 		}
 		return newMap;

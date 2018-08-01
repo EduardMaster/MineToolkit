@@ -15,7 +15,7 @@ import net.eduard.api.lib.manager.CommandManager;
 public class EnchantCommand extends CommandManager {
 
 	public EnchantCommand() {
-		super("enchant");
+		super("enchantment");
 
 	}
 	public String messageInvalid = "§cDigite o encantamento valido! §bAperte TAB";

@@ -444,6 +444,8 @@ public class DBManager implements Storable, Copyable {
 		if (hasConnection()) {
 			try {
 				PreparedStatement state = query(query, replacers);
+				
+				
 				resultado = state.executeUpdate();
 				ResultSet keys = state.getGeneratedKeys();
 				if (keys!=null) {

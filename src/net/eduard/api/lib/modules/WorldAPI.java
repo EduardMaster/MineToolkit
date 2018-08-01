@@ -1,4 +1,4 @@
-package net.eduard.api.lib.utils;
+package net.eduard.api.lib.modules;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,13 +20,14 @@ import org.bukkit.entity.Player;
 
 
 /**
- * API de controle e manipula§§o de Mundos e Localiza§§es e Cuboids (Uma expecie
+ * API de controle e manipula§§o de Mundos e Localizações e Cuboids (Uma expecie
  * de Bloco retangular)
  * 
  * @author Eduard
  * @version 1.0
  * @since Lib v1.0 <br> EduardAPI 5.2
  */
+
 public final class WorldAPI {
 
 	/**

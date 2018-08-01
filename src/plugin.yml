@@ -1,7 +1,7 @@
 name: EduardAPI
 description: API de desenvolvimento de plugins que facilita sua vida
 main: net.eduard.api.EduardAPI
-version: 2.3
+version: 2.3.6
 author: Eduard
 authors: [Eduard]
 soft-depend: [Essentials,Vault,McMMO]
@@ -23,9 +23,9 @@ commands:
     description: Teleporta para outro mundo
     aliases: [ir,irpara,mundo,world]
     usage: /<command> <world>
-  enchant: 
+  enchantment: 
     description: Encantar os itens
-    aliases: [enchant,ench]
+    aliases: [ench]
     usage: /<command> <enchant> <level>
   sound: 
     description: Tocar um som do minecraft

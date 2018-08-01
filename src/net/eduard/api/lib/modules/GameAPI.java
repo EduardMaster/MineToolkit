@@ -1,4 +1,4 @@
-package net.eduard.api.lib.utils;
+package net.eduard.api.lib.modules;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,16 +21,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import net.eduard.api.lib.Extra;
 
 
 
 
 /**
- * API de controle de Entidades, Localiza§§es e muito mais
+ * API de controle de Entidades, Localizacoes e muito mais
  * @author Eduard
  * @version 1.0
  * @since Lib v1.0
+ * @see Mine
  */
 
 public final class GameAPI {
@@ -229,7 +229,7 @@ public final class GameAPI {
 	
 
 	public static void changeTabName(Player player, String displayName) {
-		player.setPlayerListName(Extra.toText(displayName));
+		player.setPlayerListName(displayName);
 	}
 	public static String toText(int size, String text) {
 

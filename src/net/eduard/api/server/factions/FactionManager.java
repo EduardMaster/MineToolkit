@@ -49,32 +49,36 @@ public class FactionManager implements Storable {
 		protectedZone.setManager(this);
 		freeZone.setManager(this);
 
-		Rank rankLeader = new Rank("lider", 1);
-		rankLeader.setPosition(4);
+		Rank rankLeader = new Rank("leader", 4);
+		
 		rankLeader.setPrefix("#");
+		rankLeader.setHeadName("Líder");
 		rankLeader.setPreviousRank("captain");
 		ranks.getRanks().put("leader", rankLeader);
 
 		Rank rankMember = new Rank("member", 2);
-		rankMember.setPrefix("*");
-		rankMember.setPosition(1);
-		rankMember.setNextRank("recruit");
+		rankMember.setPrefix("+");
+		rankMember.setHeadName("Membro");
+	
+		rankMember.setNextRank("captain");
 		ranks.getRanks().put("member", rankMember);
 		
-		Rank rankRecruit = new Rank("recruit", 2);
-		rankRecruit.setPrefix("+");
-		rankRecruit.setNextRank("captain");
-		rankRecruit.setPosition(2);
+		Rank rankRecruit = new Rank("recruit", 1);
+		rankRecruit.setPrefix("-");
+		rankRecruit.setNextRank("member");
+		rankRecruit.setHeadName("Recruta");
+
 		ranks.getRanks().put("recruit", rankRecruit);
 		
-		Rank rankCaptain = new Rank("captain", 2);
-		rankCaptain.setPrefix("-");
+		Rank rankCaptain = new Rank("captain", 3);
+		rankCaptain.setPrefix("*");
 		rankCaptain.setNextRank("leader");
-		rankCaptain.setPosition(3);
+		rankCaptain.setHeadName("Capitão");
+	
 		ranks.getRanks().put("captain", rankCaptain);
 		
 		
-		ranks.setFirst("member");
+		ranks.setFirst("recruit");
 		ranks.setLast("leader");
 		for (EntityType e : EntityType.values()) {
 			if (e.isAlive()) {

@@ -159,6 +159,10 @@ public class Faction implements Storable {
 	public double getMoney() {
 		double money = 0;
 		for (FactionPlayer member : members) {
+			if (member==null)continue;
+			if (member.getPlayerData()==null) {
+				continue;
+			}
 			double dinheiro = VaultAPI.getEconomy().getBalance(member.getPlayerData());
 			money += dinheiro;
 		}
@@ -217,7 +221,7 @@ public class Faction implements Storable {
 		for (FactionPlayer member : getMembers()) {
 			if (member.isOnline()) {
 				list.add(member);
-				;
+			
 			}
 
 		}

@@ -1,7 +1,5 @@
 package net.eduard.api.test.java;
 
-import java.util.List;
-
 import net.eduard.api.lib.manager.DBManager;
 
 public class AutobaseTester {
@@ -16,7 +14,7 @@ public class AutobaseTester {
 		teste.updateCache(db.getConnection());
 //		teste.duplo = 10;
 		teste.updateTable(db.getConnection());
-		List<MeuObjeto> listaBolada = teste.getAll(db.getConnection(), "id", false);
+//		List<MeuObjeto> listaBolada = teste.getAll(db.getConnection(), "id", false);
 //		teste.delete(db.getConnection());
 		db.closeConnection();
 	}

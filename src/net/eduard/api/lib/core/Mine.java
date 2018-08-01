@@ -99,8 +99,8 @@ import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.game.Sounds;
 import net.eduard.api.lib.manager.PlayersManager;
 import net.eduard.api.lib.manager.TimeManager;
+import net.eduard.api.lib.modules.EmptyWorldGenerator;
 import net.eduard.api.lib.modules.FakePlayer;
-import net.eduard.api.lib.utils.EmptyWorldGenerator;
 
 /**
  * API principal da Lib contendo muitos codigos bons e utilitarios
@@ -119,7 +119,12 @@ public final class Mine {
 
 		boolean effect(Location location);
 	}
-
+	static {
+		Extra.newReplacer("#v", Mine.getVersion());
+	}
+	public static Class<?> getClassFrom(Object object) throws Exception {
+		return Extra.getClassFrom(object);
+	}
 	/**
 	 * Ponto de direção usado para fazer um RADAR
 	 * 
@@ -164,7 +169,7 @@ public final class Mine {
 	 */
 	public static Map<String, Schematic> MAPS = new HashMap<>();
 
-	public static Map<Player, Schematic> MAPS_CONFIGURING = new HashMap<>();
+	public static Map<Player, Schematic> MAPS_CACHE = new HashMap<>();
 	public static ConfigAPI MAPS_CONFIG;
 	/**
 	 * Som do rosnar do gato
@@ -580,22 +585,22 @@ public final class Mine {
 	}
 
 	public static void createCage(Location loc, Material type) {
-		loc.clone().add(0, -1, 0).getBlock().setType(type);
-		loc.clone().add(0, 3, 0).getBlock().setType(type);
-		loc.clone().add(0, 0, 1).getBlock().setType(type);
-		loc.clone().add(0, 0, -1).getBlock().setType(type);
-		loc.clone().add(1, 0, 0).getBlock().setType(type);
-		loc.clone().add(-1, 0, 0).getBlock().setType(type);
+		loc.clone().add(0, -1, 0).getBlock().setType(type,true);
+		loc.clone().add(0, 3, 0).getBlock().setType(type,true);
+		loc.clone().add(0, 0, 1).getBlock().setType(type,true);
+		loc.clone().add(0, 0, -1).getBlock().setType(type,true);
+		loc.clone().add(1, 0, 0).getBlock().setType(type,true);
+		loc.clone().add(-1, 0, 0).getBlock().setType(type,true);
 		//
-		loc.clone().add(0, 1, 1).getBlock().setType(type);
-		loc.clone().add(0, 1, -1).getBlock().setType(type);
-		loc.clone().add(1, 1, 0).getBlock().setType(type);
-		loc.clone().add(-1, 1, 0).getBlock().setType(type);
+		loc.clone().add(0, 1, 1).getBlock().setType(type,true);
+		loc.clone().add(0, 1, -1).getBlock().setType(type,true);
+		loc.clone().add(1, 1, 0).getBlock().setType(type,true);
+		loc.clone().add(-1, 1, 0).getBlock().setType(type,true);
 		//
-		loc.clone().add(0, 2, 1).getBlock().setType(type);
-		loc.clone().add(0, 2, -1).getBlock().setType(type);
-		loc.clone().add(1, 2, 0).getBlock().setType(type);
-		loc.clone().add(-1, 2, 0).getBlock().setType(type);
+		loc.clone().add(0, 2, 1).getBlock().setType(type,true);
+		loc.clone().add(0, 2, -1).getBlock().setType(type,true);
+		loc.clone().add(1, 2, 0).getBlock().setType(type,true);
+		loc.clone().add(-1, 2, 0).getBlock().setType(type,true);
 
 	}
 
@@ -1694,7 +1699,8 @@ public final class Mine {
 					text = text.replace(value.getKey(), "" + value.getValue().getText(player));
 
 				} catch (Exception e) {
-					// Mine.console("§c"+e.getMessage());
+					Mine.console("§cREPLACE ERROR: "+value.getKey());
+					e.printStackTrace();
 				}
 
 			}
@@ -1713,9 +1719,9 @@ public final class Mine {
 	}
 
 	public static Schematic getSchematic(Player player) {
-		Schematic schema = MAPS_CONFIGURING.get(player);
+		Schematic schema = MAPS_CACHE.get(player);
 		if (schema == null) {
-			MAPS_CONFIGURING.put(player, schema = new Schematic());
+			MAPS_CACHE.put(player, schema = new Schematic());
 		}
 		return schema;
 	}

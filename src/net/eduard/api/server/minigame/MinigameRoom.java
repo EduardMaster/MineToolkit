@@ -91,7 +91,7 @@ public class MinigameRoom implements Storable {
 	}
 
 	public boolean checkWinner() {
-		return players.size() == 1;
+		return getPlayers(MinigamePlayerState.NORMAL).size() == 1;
 	}
 
 	public boolean checkTeamWinner() {
@@ -99,7 +99,7 @@ public class MinigameRoom implements Storable {
 	}
 
 	public MinigamePlayer getWinner() {
-		return players.get(0);
+		return getPlayers(MinigamePlayerState.NORMAL).get(0);
 	}
 
 

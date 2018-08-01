@@ -17,7 +17,7 @@ public class HTTPServerThread extends Thread {
 	 */
     private JavaPlugin plugin;
 
-    private int port;
+     int port;
     private ServerSocket socket;
 
     public HTTPServerThread(JavaPlugin plugin) throws IOException {

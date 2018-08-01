@@ -258,7 +258,7 @@ public class StorageAPI {
 	}
 
 	public static void registerPackage(Class<?> clazzForPackage) {
-		registerPackage(clazzForPackage, clazzForPackage.getName());
+		registerPackage(clazzForPackage, clazzForPackage.getPackage().getName());
 	}
 
 	public static void registerPackage(Class<?> clazzPlugin, String pack) {
