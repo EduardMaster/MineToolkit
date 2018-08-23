@@ -1,4 +1,4 @@
-package net.eduard.api.test.bukkit;
+package net.eduard.api.test;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;

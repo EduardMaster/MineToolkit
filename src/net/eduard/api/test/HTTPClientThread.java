@@ -1,4 +1,4 @@
-package net.eduard.api.test.java;
+package net.eduard.api.test;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

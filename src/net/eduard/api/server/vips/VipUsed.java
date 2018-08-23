@@ -15,7 +15,7 @@ public class VipUsed implements Storable {
 		return vipName;
 	}
 	public long getTimeLeft() {
-		return getDuration() - Extra.getNow();
+		return getExpirationTime() - Extra.getNow();
 	}
 
 	public void setVipName(String vipName) {

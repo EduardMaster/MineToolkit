@@ -1,4 +1,4 @@
-package net.eduard.api.test.java;
+package net.eduard.api.test;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import net.eduard.api.lib.AutoBase;
 import net.eduard.api.lib.AutoBase.Info;
+import sun.net.www.http.HttpClient;
 
 @Info(name="tabela")
 public class MeuObjeto implements AutoBase<String> {

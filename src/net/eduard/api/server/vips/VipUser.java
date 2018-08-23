@@ -8,12 +8,12 @@ import net.eduard.api.lib.VaultAPI;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 
-public class VipPlayer extends FakePlayer implements Storable{
+public class VipUser extends FakePlayer implements Storable{
 
-	public VipPlayer(String name, UUID id) {
+	public VipUser(String name, UUID id) {
 		super(name, id);
 	}
-	public VipPlayer() {
+	public VipUser() {
 		super("Player");
 		// TODO Auto-generated constructor stub
 	}

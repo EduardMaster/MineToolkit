@@ -1,4 +1,4 @@
-package net.eduard.api.test.java;
+package net.eduard.api.test;
 
 
 

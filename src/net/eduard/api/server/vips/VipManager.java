@@ -15,20 +15,20 @@ public class VipManager implements Storable {
 
 	private List<Vip> vips = new ArrayList<>();
 	private List<VipKey> keys = new ArrayList<>();
-	private List<VipPlayer> users = new ArrayList<>();
+	private List<VipUser> users = new ArrayList<>();
 
-	public VipPlayer getUser(Player player) {
+	public VipUser getUser(Player player) {
 
-		for (VipPlayer user : users) {
+		for (VipUser user : users) {
 			if (user.getUniqueId().equals(player.getUniqueId())) {
 				return user;
 			}
 		}
-		VipPlayer user = new VipPlayer(player.getName(),player.getUniqueId());
+		VipUser user = new VipUser(player.getName(),player.getUniqueId());
 		users.add(user);
 		return user;
 	}
-	public void addVip(VipPlayer user,Vip vip,long duration) {
+	public void addVip(VipUser user,Vip vip,long duration) {
 		if (user.hasVip(vip.getName())) {
 			VipUsed vipUsed = user.getVip(vip.getName());
 			vipUsed.setDuration(vipUsed.getDuration()+duration);
@@ -45,18 +45,18 @@ public class VipManager implements Storable {
 			VaultAPI.getPermission().playerAddGroup(null, user.getPlayer(),vip.getName());
 		}
 	}
-	public void removeVip(VipPlayer user,Vip vip) {
+	public void removeVip(VipUser user,Vip vip) {
 		user.removeVip(vip.getName());
 	}
 
-	public VipPlayer getUser(String playerName) {
+	public VipUser getUser(String playerName) {
 
-		for (VipPlayer user : users) {
+		for (VipUser user : users) {
 			if (user.getName().equals(playerName)) {
 				return user;
 			}
 		}
-		VipPlayer user = new VipPlayer();
+		VipUser user = new VipUser();
 		user.setName(playerName);
 		user.setIdByName();
 		users.add(user);
@@ -66,9 +66,9 @@ public class VipManager implements Storable {
 		
 		return getVip(vipName)!=null;
 	}
-	public VipPlayer getUser(UUID playerId) {
+	public VipUser getUser(UUID playerId) {
 
-		for (VipPlayer user : users) {
+		for (VipUser user : users) {
 			if (user.getUniqueId().equals(playerId)) {
 				return user;
 			}
@@ -84,11 +84,11 @@ public class VipManager implements Storable {
 		return null;
 	}
 
-	public List<VipPlayer> getUsers() {
+	public List<VipUser> getUsers() {
 		return users;
 	}
 
-	public void setUsers(List<VipPlayer> users) {
+	public void setUsers(List<VipUser> users) {
 		this.users = users;
 	}
 

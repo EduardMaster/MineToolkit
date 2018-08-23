@@ -1,8 +1,6 @@
-package net.eduard.api.test.config;
+package net.eduard.api.config;
 
 import java.io.File;
-
-import net.eduard.api.config.MasterConfig;
 
 public class TestConfig {
 	public static void main(String[] args) {

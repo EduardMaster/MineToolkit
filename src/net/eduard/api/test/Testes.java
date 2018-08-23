@@ -1,4 +1,4 @@
-package net.eduard.api.test.bukkit;
+package net.eduard.api.test;
 
 import java.util.Arrays;
 import java.util.HashMap;
