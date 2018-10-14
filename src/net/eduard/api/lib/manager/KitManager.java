@@ -9,38 +9,37 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 
-import net.eduard.api.lib.VaultAPI;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.KitAbility;
-import net.eduard.api.lib.game.ClickEffect;
-import net.eduard.api.lib.game.KitType;
 import net.eduard.api.lib.game.Menu;
+import net.eduard.api.lib.game.MenuShop;
 import net.eduard.api.lib.game.Slot;
+import net.eduard.api.lib.modules.KitType;
+import net.eduard.api.lib.modules.VaultAPI;
 
 
 public class KitManager extends EventsManager {
 	
 	private transient Map<Player, KitAbility> playersKits = new HashMap<>();
-	private transient Map<Player, Menu> kitsGuis = new HashMap<>();
-	private transient Map<Player, Menu> shopsGuis = new HashMap<>();
+//	private transient Map<Player, Menu> kitsGuis = new HashMap<>();
+//	private transient Map<Player, Menu> shopsGuis = new HashMap<>();
 	private Slot openKits = new Slot(
-			Mine.newItem(Material.CHEST, "§6§lSelecionar Kit"), 0);
+			Mine.newItem(Material.CHEST, "ï¿½6ï¿½lSelecionar Kit"), 0);
 	private Slot openShop = new Slot(
-			Mine.newItem(Material.EMERALD, "§6§lComprar Kit"), 8);
-	private Menu shopGui = new Menu("§8Loja de Kits", 6);
-	private Menu kitsGui = new Menu("§8Seus  Kits", 6);;
+			Mine.newItem(Material.EMERALD, "ï¿½6ï¿½lComprar Kit"), 8);
+	private MenuShop shopGui = new MenuShop("ï¿½8Loja de Kits", 6);
+	private MenuShop kitsGui = new MenuShop("ï¿½8Seus  Kits", 6);;
 	private Map<String, KitAbility> kits = new HashMap<>();
 	private List<ItemStack> globalItems = new ArrayList<>();
-	private ItemStack soup = Mine.newItem("§6Sopa", Material.MUSHROOM_SOUP);
+	private ItemStack soup = Mine.newItem("ï¿½6Sopa", Material.MUSHROOM_SOUP);
 	private ItemStack emptySlotItem = Mine.newItem(" ",
 			Material.STAINED_GLASS_PANE, 15);
-	private ItemStack hotBarItem = Mine.newItem("§6§lKit§f§lPvP",
+	private ItemStack hotBarItem = Mine.newItem("ï¿½6ï¿½lKitï¿½fï¿½lPvP",
 			Material.STAINED_GLASS_PANE, 10);
 
 	private boolean kitsEnabled = true;
@@ -49,84 +48,84 @@ public class KitManager extends EventsManager {
 	private boolean fillHotBar = true;
 	private boolean onSelectGainKit = true;
 
-	private String noneKit = "§8Nenhum";
-	private String kitsDisabled = "§cOs kits foram desabilitados!";
-	private String kitSelected = "§6Voce escolheu o Kit §e$kit";
-	private String kitGived = "§6Voce ganhou o Kit §e$kit";
-	private String kitBuyed = "§§Voce comprou o Kit §e$kit";
-	private String noKitBuyed = "§§Voce nao tem dinheiro para comprar o kit §e$kit";
-	private String guiShopTitle = "§cKit §4§l$kit §cseu pre§o: §a§l$price";
+	private String noneKit = "ï¿½8Nenhum";
+	private String kitsDisabled = "ï¿½cOs kits foram desabilitados!";
+	private String kitSelected = "ï¿½6Voce escolheu o Kit ï¿½e$kit";
+	private String kitGived = "ï¿½6Voce ganhou o Kit ï¿½e$kit";
+	private String kitBuyed = "ï¿½ï¿½Voce comprou o Kit ï¿½e$kit";
+	private String noKitBuyed = "ï¿½ï¿½Voce nao tem dinheiro para comprar o kit ï¿½e$kit";
+	private String guiShopTitle = "ï¿½cKit ï¿½4ï¿½l$kit ï¿½cseu preï¿½o: ï¿½aï¿½l$price";
 
 	public KitManager() {
 		globalItems.add(new ItemStack(Material.STONE_SWORD));
-		kitsGui.setItem(null);
-		shopGui.setItem(null);
-		kitsGui.setHasPageSystem(false);
-		shopGui.setHasPageSystem(false);
-		kitsGui.setClick(new ClickEffect() {
-
-			@Override
-			public void onClick(InventoryClickEvent event, int page) {
-				if (event.getWhoClicked() instanceof Player) {
-					Player player = (Player) event.getWhoClicked();
-					ItemStack item = event.getCurrentItem();
-					if (kitsGui.getNextPage().equals(item)) {
-						if (page == kitsGui.getPages())
-							return;
-						openKitSelector(player, ++page);
-					} else if (kitsGui.getPreviosPage().equals(item)) {
-						if (page == 1)
-							return;
-						openKitSelector(player, --page);
-					} else {
-						for (KitAbility kit : kits.values()) {
-							if (kit.getIcon().equals(item)) {
-								selectKit(player, kit);
-								break;
-							}
-						}
-					}
-				}
-			}
-		});
-		shopGui.setClick(new ClickEffect() {
-
-			@Override
-			public void onClick(InventoryClickEvent event, int page) {
-				if (event.getWhoClicked() instanceof Player) {
-					Player player = (Player) event.getWhoClicked();
-
-					ItemStack item = event.getCurrentItem();
-
-					if (kitsGui.getNextPage().equals(item)) {
-						openKitSelector(player, ++page);
-					} else if (kitsGui.getPreviosPage().equals(item)) {
-						openKitSelector(player, --page);
-					} else {
-						for (KitAbility kit : kits.values()) {
-							if (kit.getIcon().equals(item)) {
-								buyKit(player, kit);
-								break;
-							}
-						}
-					}
-				}
-			}
-		});
+//		kitsGui.setItem(null);
+//		shopGui.setItem(null);
+//		kitsGui.setHasPageSystem(false);
+//		shopGui.setHasPageSystem(false);
+//		kitsGui.setClick(new ClickEffect() {
+//
+//			@Override
+//			public void onClick(InventoryClickEvent event, int page) {
+//				if (event.getWhoClicked() instanceof Player) {
+//					Player player = (Player) event.getWhoClicked();
+//					ItemStack item = event.getCurrentItem();
+//					if (kitsGui.getNextPage().equals(item)) {
+//						if (page == kitsGui.getPages())
+//							return;
+//						openKitSelector(player, ++page);
+//					} else if (kitsGui.getPreviosPage().equals(item)) {
+//						if (page == 1)
+//							return;
+//						openKitSelector(player, --page);
+//					} else {
+//						for (KitAbility kit : kits.values()) {
+//							if (kit.getIcon().equals(item)) {
+//								selectKit(player, kit);
+//								break;
+//							}
+//						}
+//					}
+//				}
+//			}
+//		});
+//		shopGui.setClick(new ClickEffect() {
+//
+//			@Override
+//			public void onClick(InventoryClickEvent event, int page) {
+//				if (event.getWhoClicked() instanceof Player) {
+//					Player player = (Player) event.getWhoClicked();
+//
+//					ItemStack item = event.getCurrentItem();
+//
+//					if (kitsGui.getNextPage().equals(item)) {
+//						openKitSelector(player, ++page);
+//					} else if (kitsGui.getPreviosPage().equals(item)) {
+//						openKitSelector(player, --page);
+//					} else {
+//						for (KitAbility kit : kits.values()) {
+//							if (kit.getIcon().equals(item)) {
+//								buyKit(player, kit);
+//								break;
+//							}
+//						}
+//					}
+//				}
+//			}
+//		});
 
 	}
 	public void openShop(Player player) {
 		openShop(player, 1);
 	}
 	public void openShop(Player player, int page) {
-		shopsGuis.get(player).openGui(player, page);
+//		shopsGuis.get(player).openGui(player, page);
 	}
 
 	public void openKitSelector(Player player) {
 		openKitSelector(player, 1);
 	}
 	public void openKitSelector(Player player, int page) {
-		kitsGuis.get(player).openGui(player, page);
+//		kitsGuis.get(player).openGui(player, page);
 	}
 	public void giveItems(Player player) {
 		PlayerInventory inv = player.getInventory();
@@ -163,17 +162,17 @@ public class KitManager extends EventsManager {
 		}
 		if (giveSoups) {
 			Mine.fill(inv, soup);
-			Mine.setEquip(player, Color.GREEN, "§4§lINSANE");
+			Mine.setEquip(player, Color.GREEN, "ï¿½4ï¿½lINSANE");
 		}
 		player.sendMessage(kitGived.replace("$kit", kit.getName()));
 	}
 
 	public void register(Player player) {
 
-		Menu select = kitsGui.copy();
-		Menu shop = shopGui.copy();
-		kitsGuis.put(player, select);
-		shopsGuis.put(player, shop);
+		Menu select = null;//kitsGui//.copy();
+		Menu shop = null;//shopGui//.copy();
+//		kitsGuis.put(player, select);
+//		shopsGuis.put(player, shop);
 		int kitPage = 0, shopPage = 0;
 		int kitIndex = -1, shopIndex = -1;
 		for (KitAbility kit : kits.values()) {
@@ -188,10 +187,10 @@ public class KitManager extends EventsManager {
 			}
 			if (kit.hasPermission(player)) {
 
-				select.addSlot(kit.getIcon(), kitPage, kitIndex);
+//				select.addSlot(kit.getIcon(), kitPage, kitIndex);
 				kitIndex = select.getFirstEmptySlot(kitPage);
 			} else {
-				shopGui.addSlot(kit.getIcon(), shopPage, shopIndex);
+//				shopGui.addSlot(kit.getIcon(), shopPage, shopIndex);
 				shopIndex = shopGui.getFirstEmptySlot(shopPage);
 			}
 
@@ -241,10 +240,10 @@ public class KitManager extends EventsManager {
 			selectKit(player, kit);
 		}
 	}
-	public void unregister(Player player) {
-		kitsGuis.remove(player);
-		shopsGuis.remove(player);
-	}
+//	public void unregister(Player player) {
+//		kitsGuis.remove(player);
+//		shopsGuis.remove(player);
+//	}
 
 	public Map<Player, KitAbility> getPlayersKits() {
 		return playersKits;
@@ -252,18 +251,18 @@ public class KitManager extends EventsManager {
 	public void setPlayersKits(Map<Player, KitAbility> playersKits) {
 		this.playersKits = playersKits;
 	}
-	public Map<Player, Menu> getKitsGuis() {
-		return kitsGuis;
-	}
-	public void setKitsGuis(Map<Player, Menu> kitsGuis) {
-		this.kitsGuis = kitsGuis;
-	}
-	public Map<Player, Menu> getShopsGuis() {
-		return shopsGuis;
-	}
-	public void setShopsGuis(Map<Player, Menu> shopsGuis) {
-		this.shopsGuis = shopsGuis;
-	}
+//	public Map<Player, Menu> getKitsGuis() {
+//		return kitsGuis;
+//	}
+//	public void setKitsGuis(Map<Player, Menu> kitsGuis) {
+//		this.kitsGuis = kitsGuis;
+//	}
+//	public Map<Player, Menu> getShopsGuis() {
+//		return shopsGuis;
+//	}
+//	public void setShopsGuis(Map<Player, Menu> shopsGuis) {
+//		this.shopsGuis = shopsGuis;
+//	}
 	public Slot getOpenKits() {
 		return openKits;
 	}
@@ -279,15 +278,15 @@ public class KitManager extends EventsManager {
 	public Menu getShopGui() {
 		return shopGui;
 	}
-	public void setShopGui(Menu shopGui) {
-		this.shopGui = shopGui;
-	}
+//	public void setShopGui(Menu shopGui) {
+//		this.shopGui = shopGui;
+//	}
 	public Menu getKitsGui() {
 		return kitsGui;
 	}
-	public void setKitsGui(Menu kitsGui) {
-		this.kitsGui = kitsGui;
-	}
+//	public void setKitsGui(Menu kitsGui) {
+//		this.kitsGui = kitsGui;
+//	}
 	public Map<String, KitAbility> getKits() {
 		return kits;
 	}

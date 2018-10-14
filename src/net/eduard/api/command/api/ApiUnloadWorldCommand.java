@@ -3,7 +3,7 @@ package net.eduard.api.command.api;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class ApiUnloadWorldCommand extends CommandManager {
@@ -19,7 +19,7 @@ public class ApiUnloadWorldCommand extends CommandManager {
 		} else {
 			if (Mine.existsWorld(sender, args[1])) {
 				Mine.unloadWorld(args[1]);
-				sender.sendMessage("§aVoce descarregou o mundo " + args[1]);
+				sender.sendMessage("ï¿½aVoce descarregou o mundo " + args[1]);
 			}
 		}
 

@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class MapSaveCommand extends CommandManager {
@@ -17,17 +17,17 @@ public class MapSaveCommand extends CommandManager {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length == 1) {
-			sender.sendMessage("§c/map save <name>");
+			sender.sendMessage("ï¿½c/map save <name>");
 		} else {
 
 			if (Mine.onlyPlayer(sender)) {
 				Player p = (Player) sender;
 				if (!Mine.MAPS_CACHE.containsKey(p)) {
-					p.sendMessage("§bEduardAPI §2Primeiro copie um Mapa:§a /e copy");
+					p.sendMessage("ï¿½bEduardAPI ï¿½2Primeiro copie um Mapa:ï¿½a /e copy");
 					return true;
 				}
 				Mine.MAPS.put(args[1].toLowerCase(), Mine.MAPS_CACHE.get(p));
-				p.sendMessage("§bEduardAPI §6Mapa salvado com sucesso!");
+				p.sendMessage("ï¿½bEduardAPI ï¿½6Mapa salvado com sucesso!");
 			}
 		}
 		return true;

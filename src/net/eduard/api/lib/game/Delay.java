@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.bukkit.entity.Player;
 
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.click.PlayerEffect;
-import net.eduard.api.lib.core.Mine;
 import net.eduard.api.lib.storage.Storable;
 
 public class Delay implements Storable {

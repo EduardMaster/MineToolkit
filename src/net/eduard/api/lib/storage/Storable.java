@@ -2,10 +2,10 @@ package net.eduard.api.lib.storage;
 
 import java.util.Map;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 
 /**
- * Sistema de armazenamento automatizado baseado na refleção das classes
+ * Sistema de armazenamento automatizado baseado na refleï¿½ï¿½o das classes
  * 
  * 
  * 

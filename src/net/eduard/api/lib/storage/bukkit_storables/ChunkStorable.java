@@ -3,7 +3,7 @@ package net.eduard.api.lib.storage.bukkit_storables;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 public class ChunkStorable implements Storable {

@@ -12,9 +12,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.click.PlayerInteract;
-import net.eduard.api.lib.core.Mine;
 import net.eduard.api.lib.manager.CooldownManager;
+import net.eduard.api.lib.modules.KitType;
 
 public class KitAbility extends CooldownManager {
 
@@ -23,7 +24,7 @@ public class KitAbility extends CooldownManager {
 	private ItemStack icon;
 	private boolean showOnGui = true;
 	private boolean enabled = true;
-	private String disabled = "§6Habilidade desativada temporariamente!";
+	private String disabled = "ï¿½6Habilidade desativada temporariamente!";
 	private boolean activeCooldownOnPvP;
 	private int times = 1;
 	private transient PlayerInteract click;
@@ -44,7 +45,7 @@ public class KitAbility extends CooldownManager {
 	}
 
 	public ItemStack add(ItemStack item) {
-		getItems().add(Mine.setName(item, "§b" + name));
+		getItems().add(Mine.setName(item, "ï¿½b" + name));
 		return item;
 	}
 
@@ -153,7 +154,7 @@ public class KitAbility extends CooldownManager {
 
 	public KitAbility setIcon(Material material, int data, String... lore) {
 		icon = new ItemStack(material);
-		Mine.setName(icon, "§6Kit " + name);
+		Mine.setName(icon, "ï¿½6Kit " + name);
 		Mine.setLore(icon, lore);
 		Mine.addEnchant(icon, Enchantment.DURABILITY, 10);
 		return this;

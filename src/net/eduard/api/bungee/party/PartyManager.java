@@ -2,6 +2,8 @@ package net.eduard.api.bungee.party;
 
 import java.util.ArrayList;
 
+import org.bukkit.configuration.file.FileConfiguration;
+
 public class PartyManager {
 
 	private ArrayList<Party> parties = new ArrayList<>();

@@ -6,14 +6,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class GotoCommand extends CommandManager {
 	public GotoCommand() {
 		super("goto");
 	}
-	public String message = "§6Voce foi teleportado para o Mundo §e$world";
+	public String message = "ï¿½6Voce foi teleportado para o Mundo ï¿½e$world";
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

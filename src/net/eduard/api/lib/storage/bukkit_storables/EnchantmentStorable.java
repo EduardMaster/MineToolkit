@@ -2,7 +2,7 @@ package net.eduard.api.lib.storage.bukkit_storables;
 
 import org.bukkit.enchantments.Enchantment;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 public class EnchantmentStorable implements Storable{

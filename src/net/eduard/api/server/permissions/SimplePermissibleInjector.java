@@ -34,8 +34,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.PermissionAttachment;
 
-import net.eduard.api.lib.Extra;
-import net.eduard.api.lib.core.MineRex;
+import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Extra;
 
 /**
  * Injects a {@link LPPermissible} into a {@link Player}.
@@ -61,7 +61,7 @@ public final class SimplePermissibleInjector {
     static {
         try {
         	@SuppressWarnings("unused")
-			String a = MineRex.claz_bBukkit;
+			String a = Mine.claz_bBukkit;
             // Try to load the permissible field.
             Field humanEntityPermissibleField;
             try {

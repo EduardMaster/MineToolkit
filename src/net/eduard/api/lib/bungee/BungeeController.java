@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

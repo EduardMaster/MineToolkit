@@ -11,9 +11,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
-import net.eduard.api.lib.VaultAPI;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.FakePlayer;
+import net.eduard.api.lib.modules.VaultAPI;
 import net.eduard.api.lib.storage.Reference;
 import net.eduard.api.lib.storage.Storable;
 

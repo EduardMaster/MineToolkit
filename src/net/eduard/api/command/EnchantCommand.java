@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class EnchantCommand extends CommandManager {
@@ -18,9 +18,9 @@ public class EnchantCommand extends CommandManager {
 		super("enchantment");
 
 	}
-	public String messageInvalid = "§cDigite o encantamento valido! §bAperte TAB";
-	public String message = "§aEncantamento aplicado!";
-	public String messageError = "§cVocê precisar ter um item em maos!";
+	public String messageInvalid = "ï¿½cDigite o encantamento valido! ï¿½bAperte TAB";
+	public String message = "ï¿½aEncantamento aplicado!";
+	public String messageError = "ï¿½cVocï¿½ precisar ter um item em maos!";
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command,
 			String label, String[] args) {

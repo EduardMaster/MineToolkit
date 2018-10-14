@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.storage.Reference;
 import net.eduard.api.lib.storage.Storable;
 

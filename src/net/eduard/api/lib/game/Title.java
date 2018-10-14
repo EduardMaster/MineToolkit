@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.Copyable;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;
 
 public class Title implements Storable ,Copyable {

@@ -1,0 +1,5 @@
+name: EduardAPI
+description: API de desenvolvimento de plugins que facilita sua vida
+main: net.eduard.api.bungee.EduardBungee
+version: 2.3.6
+author: Eduard

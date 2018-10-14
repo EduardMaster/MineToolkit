@@ -2,7 +2,7 @@ package net.eduard.api.lib.storage.java_storables;
 
 import java.sql.Timestamp;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 public class TimeStampStorable implements Storable {

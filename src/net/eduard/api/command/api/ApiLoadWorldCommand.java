@@ -3,7 +3,7 @@ package net.eduard.api.command.api;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class ApiLoadWorldCommand extends CommandManager {
@@ -17,7 +17,7 @@ public class ApiLoadWorldCommand extends CommandManager {
 			sendUsage(sender);
 		} else {
 			Mine.loadWorld(args[1]);
-			sender.sendMessage("§aVoce carregou o mundo " + args[1]);
+			sender.sendMessage("ï¿½aVoce carregou o mundo " + args[1]);
 		}
 		return true;
 	}

@@ -6,9 +6,9 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.Extra;
-import net.eduard.api.lib.VaultAPI;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.modules.VaultAPI;
 import net.eduard.api.lib.storage.Storable;
 
 public class VipManager implements Storable {

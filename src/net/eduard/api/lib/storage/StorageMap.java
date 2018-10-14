@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceMap;
 
 public class StorageMap extends StorageBase {

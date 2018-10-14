@@ -17,8 +17,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.util.Vector;
 
-import net.eduard.api.lib.Copyable;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;
 
 /**

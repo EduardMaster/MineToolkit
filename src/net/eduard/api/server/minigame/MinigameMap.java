@@ -9,9 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import net.eduard.api.lib.Copyable;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Schematic;
+import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;
 
 /**

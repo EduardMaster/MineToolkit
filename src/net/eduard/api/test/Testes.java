@@ -20,13 +20,13 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import net.eduard.api.EduardAPI;
-import net.eduard.api.lib.Extra;
-import net.eduard.api.lib.Extra.KeyType;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.DisplayBoard;
 import net.eduard.api.lib.manager.TimeManager;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.modules.Scoreboards;
+import net.eduard.api.lib.modules.Extra.KeyType;
 
 public class Testes {
 
@@ -215,7 +215,7 @@ public class Testes {
 		// Faction f = FPlayers.i.get(p).getFaction();
 		// if (f != null & !f.getComparisonTag().equals("ZonaLivre"))
 		// return f.getTag();
-		// return "§7Sem Facção";
+		// return "ï¿½7Sem Facï¿½ï¿½o";
 		// }
 		// });
 		// ExtraMine.addReplacer("$fac_comptag", new Replacer() {
@@ -265,7 +265,7 @@ public class Testes {
 	}
 
 	/**
-	 * oque desconbri nos teste é que a causa do flicker na scoreboard a o metodo
+	 * oque desconbri nos teste ï¿½ que a causa do flicker na scoreboard a o metodo
 	 * scoerboard.resetScore(fake) que remove o antigo fakeofflineplayer para ser
 	 * colocado o outro
 	 * 
@@ -291,16 +291,16 @@ public class Testes {
 						}
 						DisplayBoard board = boards.get(p);
 
-						// board.setLine("", "§a", "", 15);
-						board.setLine("", "§aVida: ", "" + p.getHealth(), 14);
-						// board.setLine("", "§aVida Maxima: ", ""+p.getMaxHealth(), 13);
-						board.setLine("", "§aExaultao ", "" + p.getExhaustion(), 12);
-						// board.setLine("", "§b", "", 11);
+						// board.setLine("", "ï¿½a", "", 15);
+						board.setLine("", "ï¿½aVida: ", "" + p.getHealth(), 14);
+						// board.setLine("", "ï¿½aVida Maxima: ", ""+p.getMaxHealth(), 13);
+						board.setLine("", "ï¿½aExaultao ", "" + p.getExhaustion(), 12);
+						// board.setLine("", "ï¿½b", "", 11);
 						// for (int i = 15; i > 0; i--) {
 						// board.setLine( Extra.newKey(KeyType.LETTER, 5)+" ",
 						// Extra.newKey(KeyType.LETTER, 5), " "+ Extra.newKey(KeyType.LETTER, 5), i);
 						// }
-						board.removeEntries();
+						board.removeEntriesNegatives();
 					}
 
 				}
@@ -337,7 +337,7 @@ public class Testes {
 					if (!scores.containsKey(p)) {
 						sc = Bukkit.getScoreboardManager().getNewScoreboard();
 						obj = sc.registerNewObjective("objetivo", "dummy");
-						obj.setDisplayName("§aTitulo");
+						obj.setDisplayName("ï¿½aTitulo");
 						obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 						p.setScoreboard(sc);
 						scores.put(p, sc);
@@ -377,7 +377,7 @@ public class Testes {
 							sc.resetScores(fake);
 						}
 					}
-					Mine.console("§e" + sc.getPlayers().size());
+					Mine.console("ï¿½e" + sc.getPlayers().size());
 					// obj.setDisplayName(Extra.newKey(KeyType.LETTER, 32));
 				}
 				// Mine.broadcast("Tamanho "+ Bukkit.getOfflinePlayers().length);
@@ -407,9 +407,9 @@ public class Testes {
 					}
 
 					obj = sc.registerNewObjective("objetivo", "dummy");
-					obj.setDisplayName("§aTitulo");
+					obj.setDisplayName("ï¿½aTitulo");
 					obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-					Mine.console("§c" + sc.getPlayers().size());
+					Mine.console("ï¿½c" + sc.getPlayers().size());
 					for (int i = 1; i <= 15; i++) {
 						Team team = sc.getTeam("time" + i);
 						if (team != null) {
@@ -427,7 +427,7 @@ public class Testes {
 						team.setPrefix(" " + Mine.randomInt(1000, 99999) + " ");
 						obj.getScore(fake).setScore(i);
 					}
-					Mine.console("§e" + sc.getPlayers().size());
+					Mine.console("ï¿½e" + sc.getPlayers().size());
 					// obj.setDisplayName(Extra.newKey(KeyType.LETTER, 32));
 				}
 				// Mine.broadcast("Tamanho "+ Bukkit.getOfflinePlayers().length);
@@ -445,11 +445,11 @@ public class Testes {
 
 						sc = Bukkit.getScoreboardManager().getNewScoreboard();
 						obj = sc.registerNewObjective("objetivo", "dummy");
-						obj.setDisplayName("§aTitulo");
+						obj.setDisplayName("ï¿½aTitulo");
 						obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 						for (int i = 1; i <= 15; i++) {
 							Team team = sc.registerNewTeam("time" + i);
-							FakePlayer fake = new FakePlayer(ChatColor.values()[i - 1] + "§r");
+							FakePlayer fake = new FakePlayer(ChatColor.values()[i - 1] + "ï¿½r");
 							team.addPlayer(fake);
 							team.setSuffix("1");
 
@@ -476,7 +476,7 @@ public class Testes {
 						// team.removePlayer(entrada);
 						// sc.resetScores(entrada);
 						// if (entrada instanceof FakePlayer) {
-						// Mine.broadcast("§cTeste");
+						// Mine.broadcast("ï¿½cTeste");
 						// }
 						// Score score = obj.getScore(entrada);
 						//
@@ -485,7 +485,7 @@ public class Testes {
 					}
 					// for (int i = 15; i > 0; i--) {
 					// // team =
-					// // "§aA"+Mine.randomInt(100000, 9999999);
+					// // "ï¿½aA"+Mine.randomInt(100000, 9999999);
 					// // OfflinePlayer offline =
 					// Bukkit.getOfflinePlayer(Extra.newKey(KeyType.LETTER,
 					// // 16));
@@ -496,7 +496,7 @@ public class Testes {
 					// obj.getScore(fake).setScore(i);
 					// ;
 					// }
-					// Mine.console("§cTanto " + sc.getPlayers().size());
+					// Mine.console("ï¿½cTanto " + sc.getPlayers().size());
 				}
 				// Mine.broadcast("Tamanho "+ Bukkit.getOfflinePlayers().length);
 			});
@@ -513,7 +513,7 @@ public class Testes {
 
 						sc = Bukkit.getScoreboardManager().getNewScoreboard();
 						obj = sc.registerNewObjective("objetivo", "dummy");
-						obj.setDisplayName("§aTitulo");
+						obj.setDisplayName("ï¿½aTitulo");
 						obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 						for (int i = 1; i <= 15; i++) {
 							Team team = sc.registerNewTeam("time" + i);
@@ -545,7 +545,7 @@ public class Testes {
 					}
 					for (int i = 15; i > 0; i--) {
 						// team =
-						// "§aA"+Mine.randomInt(100000, 9999999);
+						// "ï¿½aA"+Mine.randomInt(100000, 9999999);
 						// OfflinePlayer offline = Bukkit.getOfflinePlayer(Extra.newKey(KeyType.LETTER,
 						// 16));
 						Team team = sc.getTeam("time" + i);
@@ -554,7 +554,7 @@ public class Testes {
 						obj.getScore(fake).setScore(i);
 						;
 					}
-					// Mine.console("§cTanto " + sc.getPlayers().size());
+					// Mine.console("ï¿½cTanto " + sc.getPlayers().size());
 				}
 				// Mine.broadcast("Tamanho "+ Bukkit.getOfflinePlayers().length);
 			});
@@ -572,7 +572,7 @@ public class Testes {
 
 						sc = Bukkit.getScoreboardManager().getNewScoreboard();
 						obj = sc.registerNewObjective("objetivo", "dummy");
-						obj.setDisplayName("§aTitulo");
+						obj.setDisplayName("ï¿½aTitulo");
 						obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 						for (int i = 1; i <= 15; i++) {
 							sc.registerNewTeam("time" + i);
@@ -598,7 +598,7 @@ public class Testes {
 					}
 					for (int i = 15; i > 0; i--) {
 						// team =
-						// "§aA"+Mine.randomInt(100000, 9999999);
+						// "ï¿½aA"+Mine.randomInt(100000, 9999999);
 						// OfflinePlayer offline = Bukkit.getOfflinePlayer(Extra.newKey(KeyType.LETTER,
 						// 16));
 						Team team = sc.getTeam("time" + i);
@@ -607,12 +607,12 @@ public class Testes {
 						obj.getScore(fake).setScore(i);
 						;
 					}
-					Mine.console("§cTanto " + sc.getPlayers().size());
+					Mine.console("ï¿½cTanto " + sc.getPlayers().size());
 				}
 				// Mine.broadcast("Tamanho "+ Bukkit.getOfflinePlayers().length);
 			});
 
-			//// p.sendMessage("§cAtualizando");
+			//// p.sendMessage("ï¿½cAtualizando");
 			// if (scores.containsKey(p)) {
 			// Scoreboard sc = scores.get(p);
 			// Team team = sc.getTeam("linha1");
@@ -632,8 +632,8 @@ public class Testes {
 			// str.append(" ");
 			// }
 			// team.setSuffix(str.toString());
-			//// obj.setDisplayName("§aTitulo "+ Mine.randomInt(1000, 9999999));
-			// obj.setDisplayName("§aTitulo");
+			//// obj.setDisplayName("ï¿½aTitulo "+ Mine.randomInt(1000, 9999999));
+			// obj.setDisplayName("ï¿½aTitulo");
 			// obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 			//
 			// obj.getScore(new FakePlayer("Num:" )).setScore(10);

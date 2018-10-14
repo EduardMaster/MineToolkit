@@ -3,8 +3,8 @@ package net.eduard.api.lib.game;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import net.eduard.api.lib.Copyable;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;
 
 public class Chunk implements Storable, Copyable {

@@ -16,8 +16,8 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import net.eduard.api.lib.Copyable;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 
@@ -94,7 +94,7 @@ public class DisplayBoard implements Storable ,Copyable{
 
 	}
 
-	public void removeEntries() {
+	public void removeEntriesNegatives() {
 		for (OfflinePlayer fake : scoreboard.getPlayers()) {
 			if (objective.getScore(fake).getScore() == -1)
 				scoreboard.resetScores(fake);
@@ -102,7 +102,7 @@ public class DisplayBoard implements Storable ,Copyable{
 
 	}
 
-	public void clearEntries() {
+	public void removeEntries() {
 		for (OfflinePlayer fake : scoreboard.getPlayers()) {
 			scoreboard.resetScores(fake);
 		}
@@ -113,7 +113,7 @@ public class DisplayBoard implements Storable ,Copyable{
 	}
 
 	public DisplayBoard() {
-		title = "§6§lScoreboard";
+		title = "ï¿½6ï¿½lScoreboard";
 		init();
 	}
 
@@ -140,7 +140,7 @@ public class DisplayBoard implements Storable ,Copyable{
 			id--;
 		}
 		setDisplay(Mine.getReplacers(title, player));
-		removeEntries();
+		removeEntriesNegatives();
 		return this;
 	}
 
@@ -151,7 +151,7 @@ public class DisplayBoard implements Storable ,Copyable{
 			set(id, line);
 			id--;
 		}
-		removeEntries();
+		removeEntriesNegatives();
 		return this;
 	}
 

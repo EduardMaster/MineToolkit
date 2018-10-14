@@ -8,9 +8,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import net.eduard.api.lib.Extra;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Item;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 /**

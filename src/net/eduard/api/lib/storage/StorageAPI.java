@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.java_storables.TimeStampStorable;
 import net.eduard.api.lib.storage.java_storables.UUIDStorable;
 import net.eduard.api.lib.storage.references.ReferenceBase;
@@ -48,8 +48,7 @@ public class StorageAPI {
 
 	/**
 	 * 
-	 * @param object
-	 *            Objeto
+	 * @param object Objeto
 	 * @return Se o object implementa {@link Storable}
 	 * 
 	 */
@@ -59,16 +58,13 @@ public class StorageAPI {
 
 	/**
 	 * 
-	 * @param claz
-	 *            Classe
-	 * @return Se a claz § um {@link Storable}
+	 * @param claz Classe
+	 * @return Se a claz ï¿½ um {@link Storable}
 	 * 
 	 */
 	public static boolean isStorable(Class<?> claz) {
 		return Storable.class.isAssignableFrom(claz);
 	}
-
-	
 
 	public static String storeInline(Object obj) {
 		Class<? extends Object> c = obj.getClass();
@@ -111,7 +107,7 @@ public class StorageAPI {
 						b.append(getAlias(field.getType()) + REFER_KEY + getIdByObject(fieldValue));
 					} else if (isStorable(field.getType())) {
 						Storable store = getStore(field.getType());
-						if (store.saveInline() ) {
+						if (store.saveInline()) {
 							b.append(store.store(fieldValue));
 							continue;
 						} else {
@@ -187,7 +183,7 @@ public class StorageAPI {
 					StorageAPI.newReference(new ReferenceValue(id, field, resultadoFinal));
 //					System.out.println("[Tenso] "+id+" class "+field.getType());
 					fieldFinalValue = null;
-				} else if (Extra.getWrapper(field.getType())!= null) {
+				} else if (Extra.getWrapper(field.getType()) != null) {
 					fieldFinalValue = transform(fieldFinalValue, Extra.getWrapper(field.getType()));
 				} else {
 					int length = index + field.getType().getDeclaredFields().length;
@@ -214,7 +210,7 @@ public class StorageAPI {
 	}
 
 	private static int randomId() {
-		return new Random().nextInt(10000);
+		return new Random().nextInt(Integer.MAX_VALUE);
 	}
 
 	public static int newId() {
@@ -314,6 +310,44 @@ public class StorageAPI {
 		log("<- " + getAlias(object.getClass()));
 	}
 
+	public static void disolveObject(Object object) {
+		if (!isStorable(object)) {
+			return;
+		}
+//		if (object.getClass().isPrimitive())
+//			return;
+//		if (object.getClass() == String.class)
+//			return;
+//		if (Extra.isWrapper(object.getClass()))
+//			return;
+//		if (Extra.isList(object.getClass()))
+//			return;
+//		if (Extra.isMap(object.getClass()))
+//			return;
+		objects.remove(object);
+		for (Field field : object.getClass().getDeclaredFields()) {
+			try {
+				field.setAccessible(true);
+				Object fieldValue = field.get(object);
+				if (fieldValue != null) {
+					for (Entry<Integer, Object> entry : objects.entrySet()) {
+						if (entry.getValue().equals(fieldValue)) {
+							disolveObject(fieldValue);
+							break;
+						}
+					}
+
+				}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public static void unregister(Class<?> claz) {
 		storages.remove(claz);
 		log("<- " + claz.getName());
@@ -364,9 +398,10 @@ public class StorageAPI {
 	}
 
 	public static Class<?> getClassByAlias(String alias) {
-		if (alias == null )return null;
+		if (alias == null)
+			return null;
 		for (Entry<Class<?>, Storable> entry : storages.entrySet()) {
-			if (entry.getValue()==null) {
+			if (entry.getValue() == null) {
 				System.out.println(entry.getKey());
 				continue;
 			}

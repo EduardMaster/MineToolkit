@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.click.PlayerEffect;
-import net.eduard.api.lib.core.Mine;
 import net.eduard.api.lib.game.Effects;
 import net.eduard.api.lib.game.Explosion;
 import net.eduard.api.lib.game.Jump;
@@ -176,11 +176,11 @@ public class EffectManager extends TimeManager implements PlayerEffect {
 		clearItems(p);
 		clearArmours(p);
 		teleport(p);
-		;
+
 		jump(p);
 		givePotions(p);
 		giveItems(p);
-		;
+
 		displayEffect(p);
 
 	}

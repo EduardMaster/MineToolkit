@@ -3,7 +3,7 @@ package net.eduard.api.command.api;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class ApiDeleteWorldCommand extends CommandManager {
@@ -23,7 +23,7 @@ public class ApiDeleteWorldCommand extends CommandManager {
 		if (Mine.existsWorld(sender, name)) {
 			Mine.deleteWorld(name);
 			sender.sendMessage(
-					"§bEduardAPI §aO Mundo §2" + name + "§a foi deletado com sucesso!");
+					"ï¿½bEduardAPI ï¿½aO Mundo ï¿½2" + name + "ï¿½a foi deletado com sucesso!");
 		}
 		return true;
 	}

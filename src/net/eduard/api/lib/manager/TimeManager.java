@@ -6,12 +6,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 
 /**
- * Controlador de Tempo, classe que controla e ajuda na criação de
+ * Controlador de Tempo, classe que controla e ajuda na criaï¿½ï¿½o de
  * temporarizador (Timer)<br>
- * , de atrasador (Delayer) que são Tarefa de Tempo (Task ou BukkitTask)
+ * , de atrasador (Delayer) que sï¿½o Tarefa de Tempo (Task ou BukkitTask)
  * 
  * @author Eduard-PC
  *
@@ -41,7 +41,7 @@ public class TimeManager extends EventsManager implements Runnable {
 	private long time = 20;
 
 	/**
-	 * Tempo anterior para fazer a compara§§o
+	 * Tempo anterior para fazer a comparaï¿½ï¿½o
 	 */
 	private long startTime;
 
@@ -108,6 +108,20 @@ public class TimeManager extends EventsManager implements Runnable {
 	}
 
 	/**
+	 * Cria um Delay com um Plugin e um Efeito rodavel
+	 * 
+	 * @param plugin
+	 *            Plugin
+	 * @param run
+	 *            Efeito rodavel
+	 * @return Delay
+	 */
+	public BukkitTask delays(long ticks, Runnable run) {
+		setTask(Mine.delays(getPlugin(), ticks, run));
+		setStartTime(Mine.getNow());
+		return task;
+	}
+	/**
 	 * Cria um Timer com um Plugin e um Efeito rodavel
 	 * 
 	 * @param plugin
@@ -122,6 +136,20 @@ public class TimeManager extends EventsManager implements Runnable {
 		return task;
 	}
 
+	/**
+	 * Cria um Timer com um Plugin e um Efeito rodavel
+	 * 
+	 * @param plugin
+	 *            Plugin
+	 * @param run
+	 *            Efeito rodavel
+	 * @return Timer
+	 */
+	public BukkitTask timers(long ticks, Runnable run) {
+		setTask(Mine.timers(getPlugin(), ticks, run));
+		setStartTime(Mine.getNow());
+		return task;
+	}
 	/**
 	 * 
 	 * @return Tempo em ticks
@@ -210,5 +238,7 @@ public class TimeManager extends EventsManager implements Runnable {
 		// TODO Auto-generated method stub
 
 	}
+
+	
 
 }

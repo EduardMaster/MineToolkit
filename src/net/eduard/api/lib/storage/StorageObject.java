@@ -5,7 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceValue;
 
 public class StorageObject extends StorageBase {
@@ -73,6 +73,13 @@ public class StorageObject extends StorageBase {
 		}
 		if (id == 0) {
 			id = StorageAPI.newId();
+		}else {
+//			Object obj = StorageAPI.getObjectById(id);
+//			if (obj != null) {
+//				id = StorageAPI.newId();
+//			}
+			// N�o deu certo pois precisa arruma o m�todo StorageAPI.disolveObjet()
+			
 		}
 		Object instance = store.restore((Map<String, Object>) data);
 		if (instance == null) {

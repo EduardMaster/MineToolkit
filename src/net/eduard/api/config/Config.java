@@ -14,7 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Sounds;
 import net.eduard.api.lib.storage.Storable;
 
@@ -121,7 +121,7 @@ public class Config implements Storable {
 	public void saveDefaultConfig() {
 
 		if (!file.exists()) {
-			Mine.console("§bConfigAPI §a<- DEFAULT " + file.getName());
+			Mine.console("ï¿½bConfigAPI ï¿½a<- DEFAULT " + file.getName());
 			if (saveAsUTF8) {
 				try {
 					InputStream is = Mine.getResource(plugin.getClass().getClassLoader(), name);

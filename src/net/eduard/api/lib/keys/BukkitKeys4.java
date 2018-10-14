@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.eduard.api.lib.core.ConfigAPI;
+import net.eduard.api.lib.ConfigAPI;
 /**
  * sistema de verificacao de Compra do Plugin
  * @version 1.0
@@ -39,8 +39,8 @@ public class BukkitKeys4 {
 			public void run() {
 				try {
 					String nomePlugin = plugin.getName();
-					Bukkit.getConsoleSender().sendMessage("§aAutenticando o plugin "+nomePlugin);
-					ConfigAPI config = new ConfigAPI("licença.yml", plugin);
+					Bukkit.getConsoleSender().sendMessage("ï¿½aAutenticando o plugin "+nomePlugin);
+					ConfigAPI config = new ConfigAPI("licenï¿½a.yml", plugin);
 					config.add("key", "KEY_INSERE_AQUI");
 					String key = config.getString("key");
 					config.saveDefault();
@@ -58,21 +58,21 @@ public class BukkitKeys4 {
 					
 					if (b.toString().equals("key")) {
 						Bukkit.getConsoleSender().sendMessage(
-								"§cNao foi encontrado a key no nosso sistema, entre em contato com Eduard");
+								"ï¿½cNao foi encontrado a key no nosso sistema, entre em contato com Eduard");
 					} else if (b.toString().equals("ip")) {
 						Bukkit.getConsoleSender()
-								.sendMessage("§cEste servidor nao possui o Ip correto da Key do plugin.");
+								.sendMessage("ï¿½cEste servidor nao possui o Ip correto da Key do plugin.");
 					} else if (!b.toString().equals(nomePlugin)) {
-						Bukkit.getConsoleSender().sendMessage("§cEsta key não foi feita para este plugin.");
+						Bukkit.getConsoleSender().sendMessage("ï¿½cEsta key nï¿½o foi feita para este plugin.");
 					} else {
 						ativado = true;
 						ligando.run();
-						Bukkit.getConsoleSender().sendMessage("§aPlugin ativado com sucesso.");
+						Bukkit.getConsoleSender().sendMessage("ï¿½aPlugin ativado com sucesso.");
 						return;
 					}
 
 				} catch (Exception e) {
-					Bukkit.getConsoleSender().sendMessage("§cFalha no sistema.");
+					Bukkit.getConsoleSender().sendMessage("ï¿½cFalha no sistema.");
 					e.printStackTrace();
 				}
 				Bukkit.getPluginManager().disablePlugin(plugin);

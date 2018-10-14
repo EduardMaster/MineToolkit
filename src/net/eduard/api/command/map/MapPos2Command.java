@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.manager.CommandManager;
 
@@ -22,7 +22,7 @@ public class MapPos2Command extends CommandManager {
 			Player p = (Player) sender;
 			Schematic schema = Mine.getSchematic(p);
 			schema.setHigh(p.getLocation().toVector());
-			p.sendMessage("§bEduardAPI §6Posição 2 setada!");
+			p.sendMessage("ï¿½bEduardAPI ï¿½6Posiï¿½ï¿½o 2 setada!");
 		}
 		return true;
 	}

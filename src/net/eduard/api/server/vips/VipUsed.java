@@ -1,6 +1,6 @@
 package net.eduard.api.server.vips;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 public class VipUsed implements Storable {

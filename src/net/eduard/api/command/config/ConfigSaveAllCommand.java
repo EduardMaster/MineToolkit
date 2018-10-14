@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import net.eduard.api.config.Config;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class ConfigSaveAllCommand extends CommandManager {
@@ -18,7 +18,7 @@ public class ConfigSaveAllCommand extends CommandManager {
 			String label, String[] args) {
 		Config.reloadConfigs();
 		Mine.chat(sender,
-				"§aTodas configurações de todos plugins foram salvadas!");
+				"ï¿½aTodas configuraï¿½ï¿½es de todos plugins foram salvadas!");
 		
 		return true;
 	}

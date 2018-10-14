@@ -5,7 +5,7 @@ import java.util.List;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.eduard.api.config.Config;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.TimeManager;
 import net.eduard.api.lib.storage.StorageAPI;
 /**
@@ -20,12 +20,30 @@ public abstract class EduardPlugin extends JavaPlugin {
 	protected TimeManager time;
 	protected Config config;
 	protected Config messages;
+	protected boolean free;
+	
+	
+
+	public boolean isFree() {
+		
+		return free;
+	}
+
+
+
+	public void setFree(boolean free) {
+		this.free = free;
+	}
+
+
 
 	public void onLoad() {
 		config = new Config(this);
 		messages = new Config(this, "messages.yml");
 		time = new TimeManager(this);
 	}
+	
+
 
 	public void registerPackage(String packname) {
 		StorageAPI.registerPackage(getClass(), packname);

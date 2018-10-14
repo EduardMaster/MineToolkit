@@ -1,34 +1,54 @@
 package net.eduard.api.server.chat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import net.eduard.api.lib.core.Mine;
+import jdk.nashorn.internal.ir.annotations.Reference;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.EventsManager;
 
 public class ChatManager extends EventsManager  {
+	private String format = "(channel) (player): (color) (message)";
 	private String messageChatDisabled = "&cChat desabilitado tempariamente!";
-	private String messageChatPermission = "§cVocê não tem permissão para falar neste Chat!";
-	private ChatChannel chatDefault = new ChatChannel("local", "", "§e§l(L) ", "", "l");
+	private String messageChatPermission = "ï¿½cVocï¿½ nï¿½o tem permissï¿½o para falar neste Chat!";
+	@Reference
+	private ChatChannel chatDefault; 
 	private ChatType chatType = ChatType.BUKKIT;
+	
 	private boolean chatEnabled;
+	
 
-	private Map<String, ChatChannel> channels = new HashMap<>();
+	private List<ChatChannel> channels = new ArrayList<>();
+	private ArrayList<OfflinePlayer> tellDisabled = new ArrayList<>();
+	private Map<OfflinePlayer, String> colors= new HashMap<>();
 
 	public void register(ChatChannel channel) {
-		channels.put(channel.getName().toLowerCase(), channel);
+		if (channel.getFormat().isEmpty()) {
+			channel.setFormat(format);
+		}
+		channels.add(channel);
 	}
 
 	public void unregister(ChatChannel channel) {
-		channels.remove(channel.getName().toLowerCase());
+		channels.remove(channel);
 	}
 	public ChatChannel getChatDefault() {
 		return chatDefault;
+	}
+	public ChatManager() {
+		ChatChannel canal = new ChatChannel("local", "", "ï¿½eï¿½l(L) ", "", "l");
+		setChatDefault(canal);
+		register(canal);
+		register(new ChatChannel("global", "", "ï¿½6ï¿½l(G)", "", "g"));
+		
 	}
 	
 
@@ -42,7 +62,7 @@ public class ChatManager extends EventsManager  {
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		String msg = event.getMessage();
 		String cmd = Mine.getCmd(msg);
-		for (ChatChannel channel : channels.values()) {
+		for (ChatChannel channel : channels) {
 			if (Mine.startWith(cmd, "/" + channel.getName())) {
 				channel.chat(event.getPlayer(), msg.replaceFirst(cmd, ""),chatType);
 				event.setCancelled(true);
@@ -59,13 +79,7 @@ public class ChatManager extends EventsManager  {
 		this.chatDefault = chatDefault;
 	}
 
-	public Map<String, ChatChannel> getChannels() {
-		return channels;
-	}
 
-	public void setChannels(Map<String, ChatChannel> channels) {
-		this.channels = channels;
-	}
 
 	public ChatType getChatType() {
 		return chatType;
@@ -98,5 +112,30 @@ public class ChatManager extends EventsManager  {
 	public void setChatEnabled(boolean chatEnabled) {
 		this.chatEnabled = chatEnabled;
 	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	public Map<OfflinePlayer, String> getColors() {
+		return colors;
+	}
+
+	public void setColors(Map<OfflinePlayer, String> colors) {
+		this.colors = colors;
+	}
+
+	public ArrayList<OfflinePlayer> getTellDisabled() {
+		return tellDisabled;
+	}
+
+	public void setTellDisabled(ArrayList<OfflinePlayer> tellDisabled) {
+		this.tellDisabled = tellDisabled;
+	}
+
 
 }

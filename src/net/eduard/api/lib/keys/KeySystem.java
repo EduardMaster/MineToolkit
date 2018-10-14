@@ -7,8 +7,8 @@ import java.util.Scanner;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.eduard.api.lib.core.BungeeConfig;
-import net.eduard.api.lib.core.ConfigAPI;
+import net.eduard.api.lib.BungeeConfig;
+import net.eduard.api.lib.ConfigAPI;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -49,12 +49,12 @@ public class KeySystem {
 
 	private static enum PluginActivationStatus {
 
-		INVALID_KEY("§cNão foi encontrado esta Key no Sistema."), WRONG_KEY("§cEsta key não bate com a do Sistema."),
-		KEY_TO_WRONG_PLUGIN("§cA key usada não é para este plugin."),
-		KEY_TO_WRONG_OWNER("§cA key usada não é para este Dono"),
-		SITE_OFFLINE("§aSite offline portanto liberado para testes.", true),
-		INVALID_IP("§cEste IP usado não corresponde a Key"), INVALID_PORT("§cEsta Porta não correponde a Key."),
-		PLUGIN_EXPIRED("§cO plugin expirou."), PLUGIN_ACTIVATED("§aPlugin ativado com sucesso.", true);
+		INVALID_KEY("ï¿½cNï¿½o foi encontrado esta Key no Sistema."), WRONG_KEY("ï¿½cEsta key nï¿½o bate com a do Sistema."),
+		KEY_TO_WRONG_PLUGIN("ï¿½cA key usada nï¿½o ï¿½ para este plugin."),
+		KEY_TO_WRONG_OWNER("ï¿½cA key usada nï¿½o ï¿½ para este Dono"),
+		SITE_OFFLINE("ï¿½aSite offline portanto liberado para testes.", true),
+		INVALID_IP("ï¿½cEste IP usado nï¿½o corresponde a Key"), INVALID_PORT("ï¿½cEsta Porta nï¿½o correponde a Key."),
+		PLUGIN_EXPIRED("ï¿½cO plugin expirou."), PLUGIN_ACTIVATED("ï¿½aPlugin ativado com sucesso.", true);
 
 		private String message;
 		private boolean active;
@@ -94,7 +94,7 @@ public class KeySystem {
 		public static void test(JavaPlugin plugin, Runnable activation) {
 
 			String pluginName = plugin.getName();
-			Bukkit.getConsoleSender().sendMessage("§aAutenticando o plugin " + pluginName);
+			Bukkit.getConsoleSender().sendMessage("ï¿½aAutenticando o plugin " + pluginName);
 			ConfigAPI config = new ConfigAPI("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
@@ -123,7 +123,7 @@ public class KeySystem {
 		public static void test(Plugin plugin, Runnable activation) {
 			String pluginName = plugin.getDescription().getName();
 			BungeeCord.getInstance().getConsole()
-					.sendMessage(new TextComponent("§aAutenticando o plugin " + pluginName));
+					.sendMessage(new TextComponent("ï¿½aAutenticando o plugin " + pluginName));
 			BungeeConfig config = new BungeeConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");

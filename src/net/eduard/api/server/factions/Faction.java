@@ -10,8 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 
-import net.eduard.api.lib.VaultAPI;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.VaultAPI;
 import net.eduard.api.lib.storage.Reference;
 import net.eduard.api.lib.storage.Storable;
 

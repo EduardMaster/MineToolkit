@@ -11,7 +11,7 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Sounds;
 import net.eduard.api.lib.storage.StorageObject;
 
@@ -167,10 +167,11 @@ public class ConfigSection {
 
 	public ConfigSection add(String path, Object value, String... comments) {
 		ConfigSection sec = getSection(path);
+		List<String> comentarios = sec.comments;
 		if (!contains(path)) {
 			set(path, value);
 		}
-		if (sec.comments.isEmpty())
+		if (comentarios.isEmpty())
 			sec.setComments(comments);
 		return sec;
 	}
@@ -358,7 +359,7 @@ public class ConfigSection {
 	}
 
 	public Object getValue() {
-		//return StorageAPI.restoreData(isMap() ? toMap() : get(), null, null);
+		// return StorageAPI.restoreData(isMap() ? toMap() : get(), null, null);
 
 		return new StorageObject(null, false).restore(isMap() ? toMap() : get());
 	}
@@ -404,8 +405,8 @@ public class ConfigSection {
 			sec.remove();
 			return sec;
 		}
-		
-		//sec.set(StorageAPI.storeData(value, value.getClass(), null));
+
+		// sec.set(StorageAPI.storeData(value, value.getClass(), null));
 		sec.set(new StorageObject(value.getClass(), false).store(value));
 		sec.setComments(comments);
 		return sec;

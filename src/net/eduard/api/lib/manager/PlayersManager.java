@@ -15,12 +15,12 @@ import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import net.eduard.api.lib.VaultAPI;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.event.ScoreUpdateEvent;
 import net.eduard.api.lib.game.DisplayBoard;
 import net.eduard.api.lib.game.Tag;
 import net.eduard.api.lib.modules.FakePlayer;
+import net.eduard.api.lib.modules.VaultAPI;
 
 public class PlayersManager extends TimeManager {
 	private boolean tagsEnabled;

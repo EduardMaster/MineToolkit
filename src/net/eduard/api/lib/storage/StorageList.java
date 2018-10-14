@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceList;
 
 public class StorageList extends StorageBase {
@@ -74,8 +74,11 @@ public class StorageList extends StorageBase {
 		List<?> list = (List<?>) data;
 		Storable store = getStore(listType);
 		for (Object item : list) {
+			if (item != null) {
+				listType = item.getClass();
+			}
 			newList.add(new StorageObject(listType, isReference()).store(item));
-			;
+		
 		}
 		if (store != null) {
 			// String alias = getAlias(listType);

@@ -3,7 +3,7 @@ package net.eduard.api.lib.storage.bukkit_storables;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.storage.Storable;
 
 public class MaterialDataStorable implements Storable {

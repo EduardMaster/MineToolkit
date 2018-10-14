@@ -57,10 +57,18 @@ public class ChatMessageEvent extends PlayerEvent implements Cancellable {
 		for (int i = 0; i < format.length(); i++) {
 			if (format.charAt(i) == '{') {
 				String tag = format.substring(i + 1).split("}")[0].toLowerCase();
-				if ((!tag.equals("msg")) && (!this.tags.containsKey(tag)))
+				if (!this.tags.containsKey(tag))
 					this.tags.put(tag, "");
 			}
 		}
+		for (int i = 0; i < format.length(); i++) {
+			if (format.charAt(i) == '(') {
+				String tag = format.substring(i + 1).split(")")[0].toLowerCase();
+				if (!this.tags.containsKey(tag))
+					this.tags.put(tag, "");
+			}
+		}
+		
 	}
 
 	public String getMessage() {

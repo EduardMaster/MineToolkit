@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.manager.CommandManager;
 
@@ -22,15 +22,15 @@ public class MapCopyCommand extends CommandManager {
 			Schematic schema = Mine.getSchematic(p);
 			
 			if (!schema.hasFirstLocation()) {
-				p.sendMessage("§bEduardAPI §2Posição 1 não foi setada!");
+				p.sendMessage("ï¿½bEduardAPI ï¿½2Posiï¿½ï¿½o 1 nï¿½o foi setada!");
 				return true;
 			}
 			if (!schema.hasSecondLocation()) {
-				p.sendMessage("§bEduardAPI §2Posição 2 não foi setada!");
+				p.sendMessage("ï¿½bEduardAPI ï¿½2Posiï¿½ï¿½o 2 nï¿½o foi setada!");
 				return true;
 			}
 			schema.copy(p.getLocation());
-			p.sendMessage("§bEduardAPI §6Mapa copiado!");
+			p.sendMessage("ï¿½bEduardAPI ï¿½6Mapa copiado!");
 		}
 		return true;
 	}

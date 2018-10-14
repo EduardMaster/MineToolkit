@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Extra;
 @SuppressWarnings("unchecked")
 @Deprecated
 public class StorageOld extends StorageAPI {
@@ -265,7 +265,7 @@ public class StorageOld extends StorageAPI {
 			}
 			if (Extra.isWrapper(claz)) {
 				if (Extra.isString(claz)) {
-					return value.toString().replaceAll("§", "&");
+					return value.toString().replaceAll("ï¿½", "&");
 				}
 				return value;
 			}
@@ -482,7 +482,7 @@ public class StorageOld extends StorageAPI {
 			} else if (Extra.isWrapper(claz)) {
 				stored = data;
 				if (Extra.isString(claz)) {
-					stored = data.toString().replaceAll("§", "&");
+					stored = data.toString().replaceAll("ï¿½", "&");
 				}
 				log("+ (" + claz.getSimpleName() + ") " + stored);
 			} else if (claz.isArray()) {

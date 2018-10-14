@@ -2,7 +2,7 @@ package net.eduard.api.lib.game;
 
 import java.util.Map;
 
-import net.eduard.api.lib.Copyable;
+import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;
 /**
  * Representa a Importancia no servidor, Prefixo e Suffixo do Jogador

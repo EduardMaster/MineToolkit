@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.config.Config;
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class ConfigSaveCommand extends CommandManager {
@@ -27,7 +27,7 @@ public class ConfigSaveCommand extends CommandManager {
 				if (args.length == 2) {
 					Config.saveConfigs(pl);
 					Mine.chat(sender,
-							"§aSalvandos todas configurações do Plugin "
+							"ï¿½aSalvandos todas configuraï¿½ï¿½es do Plugin "
 									+ pl.getName());
 				} else {
 

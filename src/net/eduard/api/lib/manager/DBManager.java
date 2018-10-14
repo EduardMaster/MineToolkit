@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import net.eduard.api.lib.Copyable;
-import net.eduard.api.lib.Extra;
+import net.eduard.api.lib.modules.Copyable;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 /**
- * API de Controle de MySQL ou SQLite com apenas 1 conex§o
+ * API de Controle de MySQL ou SQLite com apenas 1 conexï¿½o
  * 
  * @author Eduard-PC
  *
@@ -32,13 +32,14 @@ public class DBManager implements Storable, Copyable {
 		if (debug)
 			System.out.println("[DB] " + msg);
 	}
-
+	private boolean enabled;
 	private String user = "root";
 	private String pass = "";
 	private String host = "localhost";
 	private String port = "3306";
 	private String database = "mine";
 	private String type = "jdbc:mysql://";
+	
 	private boolean useSQLite;
 	private transient Connection connection;
 
@@ -78,7 +79,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Fecha a conec§§o do Banco
+	 * Fecha a conecï¿½ï¿½o do Banco
 	 */
 	public void closeConnection() {
 		if (hasConnection()) {
@@ -92,7 +93,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Cria uma connec§§o com a Database
+	 * Cria uma connecï¿½ï¿½o com a Database
 	 * 
 	 * @return
 	 * @throws Exception
@@ -102,7 +103,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Cria uma conne§§o com o Driver
+	 * Cria uma conneï¿½ï¿½o com o Driver
 	 * 
 	 * @return
 	 * @throws Exception
@@ -125,7 +126,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Abre a cone§§o com o banco de dados caso n§o exista ainda
+	 * Abre a coneï¿½ï¿½o com o banco de dados caso nï¿½o exista ainda
 	 * 
 	 * @return Mesma instacia da classe DBManager
 	 */
@@ -148,18 +149,18 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Ve se a conec§§o n§o esta nula
+	 * Ve se a conecï¿½ï¿½o nï¿½o esta nula
 	 * 
-	 * @return Se a cone§§o existe
+	 * @return Se a coneï¿½ï¿½o existe
 	 */
 	public boolean hasConnection() {
 		return connection != null;
 	}
 
 	/**
-	 * Volta a conec§§o da variavel
+	 * Volta a conecï¿½ï¿½o da variavel
 	 * 
-	 * @return Conec§§o atual
+	 * @return Conecï¿½ï¿½o atual
 	 */
 	public Connection getConnection() {
 		return connection;
@@ -293,7 +294,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Adiciona no Come§o da tabela uma coluna
+	 * Adiciona no Comeï¿½o da tabela uma coluna
 	 * 
 	 * @param table          Tabela
 	 * @param columnComplete Coluna
@@ -329,7 +330,7 @@ public class DBManager implements Storable, Copyable {
 	 * 
 	 * @param table        Tabela
 	 * @param column       Coluna
-	 * @param modification Modifica§§o
+	 * @param modification Modificaï¿½ï¿½o
 	 */
 	public void modify(String table, String column, String modification) {
 		alter(table, "modify column " + column + " " + modification);
@@ -361,7 +362,7 @@ public class DBManager implements Storable, Copyable {
 	 * 
 	 * @param table  Tabela
 	 * @param where  Como
-	 * @param edit   Modifica§§o
+	 * @param edit   Modificaï¿½ï¿½o
 	 * @param values Valores
 	 */
 	public void change(String table, String edit, String where, Object... values) {
@@ -415,7 +416,7 @@ public class DBManager implements Storable, Copyable {
 	 * 
 	 * @param query     Query
 	 * @param replacers Objetos
-	 * @return Se tem ou n§o registro com esta Query
+	 * @return Se tem ou nï¿½o registro com esta Query
 	 */
 	public boolean contains(String query, Object... replacers) {
 		boolean has = false;
@@ -433,7 +434,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Executa uma Atualiza§§o com um Query
+	 * Executa uma Atualizaï¿½ï¿½o com um Query
 	 * 
 	 * @param query     Query Pesquisa
 	 * @param replacers Objetos
@@ -751,6 +752,14 @@ public class DBManager implements Storable, Copyable {
 
 	public DBManager copy() {
 		return copy(this);
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 }

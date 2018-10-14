@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.core.Mine;
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.storage.Reference;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.util.fancyful.FancyMessage;
@@ -94,33 +94,36 @@ public class ChatChannel implements Storable {
 				return;
 			}
 			ChatMessageEvent event = new ChatMessageEvent(player, this, message);
+			event.setTagValue("message", message);
+			event.setTagValue("channel-prefix", prefix);
+			event.setTagValue("channel-suffix", suffix);
+			event.setTagValue("player", player.getName());
 			Mine.callEvent(event);
 			if (event.isCancelled())
 				return;
 			List<Player> players = event.getPlayersInChannel();
-			String msg = event.getMessage();
-			String form = event.getFormat();
-			form = form.replace("{msg}", msg);
+		
+			String formato = event.getFormat();
+
 			
-			
-			
-//			String f = event.getFormat();
-//			
-//			for (Entry<String, String> entry : event.getTags().entrySet()) {
-//				f = f.replace(entry.getKey() , entry.getValue());
-//			}
-//			Bukkit.broadcastMessage(f);
 
 			for (Entry<String, String> entry : event.getTags().entrySet()) {
-				form = form.replace("{" + entry.getKey().toLowerCase() + "}", entry.getValue());
+				formato = formato.replace("{" + entry.getKey().toLowerCase() + "}", entry.getValue());
 			}
+			for (Entry<String, String> entry : event.getTags().entrySet()) {
+				formato = formato.replace("("+entry.getKey().toLowerCase()+")" , entry.getValue());
+			}
+//			for (Entry<String, String> entry : event.getTags().entrySet()) {
+//				formato = formato.replace(entry.getKey() , entry.getValue());
+//			}
+//			
 			
 			if (chatType == ChatType.BUKKIT) {
 				for (Player p : players) {
-					p.sendMessage(form);
+					p.sendMessage(formato);
 				}
 			} else if (chatType == ChatType.SPIGOT) {
-				TextComponent text = new TextComponent(form);
+				TextComponent text = new TextComponent(formato);
 				if (event.getOnClickCommand() != null) {
 					ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, event.getOnClickCommand());
 					text.setClickEvent(clickEvent);
@@ -140,7 +143,7 @@ public class ChatChannel implements Storable {
 				}
 			} else if (chatType == ChatType.FANCYFUL) {
 
-				FancyMessage text = new FancyMessage(form);
+				FancyMessage text = new FancyMessage(formato);
 				if (event.getOnClickCommand() != null) {
 					text.command(event.getOnClickCommand());
 				}
