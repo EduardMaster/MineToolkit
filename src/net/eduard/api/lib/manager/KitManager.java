@@ -214,8 +214,8 @@ public class KitManager extends EventsManager {
 		}
 
 		super.register(plugin);
-		Mine.event(kitsGui, getPlugin());
-		Mine.event(shopGui, getPlugin());
+		kitsGui.register(getPlugin());;
+		shopGui.register(getPlugin());
 	}
 
 	public void removeKits(Player player) {

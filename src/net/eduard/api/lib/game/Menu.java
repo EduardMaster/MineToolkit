@@ -19,6 +19,7 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.EffectManager;
 import net.eduard.api.lib.manager.EventsManager;
 import net.eduard.api.lib.modules.ClickEffect;
+import net.eduard.api.lib.modules.Extra;
 
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
@@ -35,21 +36,20 @@ public class Menu extends EventsManager {
 
 	private int pages = 1;
 
-	private String pagesPrefix = " �8P�gina: ";
-
+	private String pagesPrefix = " ";
+	private String pagesSuffix = " ($page/$max_page)";
 	private boolean autoAlignItems;
-	private boolean useButtonPositions;
 	private boolean openWithItem = true;
 	private boolean openWithCommand = true;
 	private boolean cacheInventories;
 	private String commandKey = "menugui";
-	private int slotPreviousPage = 2 * 9 + 1;
+	private int slotPreviousPage = 2 * 9 ;
 	private int slotNextPage = 3 * 9 - 1;
-	private ItemStack itemKey = Mine.newItem(Material.COMPASS, "�aMenu Exemplo", 1, 0, "�2Clique abrir o menu");
-	private ItemStack itemNextPage = Mine.newItem("�aPr�xima P�gina", Material.ARROW, 1, 0,
-			"�2Clique para ir para a proxima p�gina");
-	private ItemStack itemPreviousPage = Mine.newItem(Material.ARROW, "�aVoltar P�gina", 1, 0,
-			"�2Clique para ir para a p�gina anterior");
+	private ItemStack itemKey = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu");
+	private ItemStack itemNextPage = Mine.newItem("§aPróxima Página", Material.ARROW, 1, 0,
+			"§2Clique para ir para a próxima página");
+	private ItemStack itemPreviousPage = Mine.newItem(Material.ARROW, "§aVoltar Página", 1, 0,
+			"§2Clique para ir para a página anterior");
 
 	private ArrayList<MenuButton> buttons = new ArrayList<>();
 	private transient ClickEffect effect;
@@ -126,11 +126,6 @@ public class Menu extends EventsManager {
 	}
 
 	public Menu() {
-	}
-
-	public static int getPosition(int line, int column) {
-		int value = (line - 1) * 9;
-		return value + column - 1;
 	}
 
 	public Menu(String title, int linesAmount) {
@@ -211,12 +206,26 @@ public class Menu extends EventsManager {
 		}
 		int minSlot = (page - 1) * lines * 9;
 		int maxSlot = (page) * lines * 9;
-		Inventory menu = Bukkit.createInventory(player, 9 * lines, title);
+
+		String prefix = isPageSystem() ? pagesPrefix : "";
+		String suffix = isPageSystem() ? pagesSuffix : "";
+		if (prefix == null) {
+			prefix = "";
+		}
+		if (suffix == null) {
+			suffix = "";
+		}
+	
+		
+		prefix = prefix.replace("$page", "" + page).replace("$max_page", "" + pages);
+		suffix = suffix.replace("$page", "" + page).replace("$max_page", "" + pages);
+		String menuTitle = Extra.toText(32, prefix + title + suffix);
+		Inventory menu = Bukkit.createInventory(player, 9 * lines, menuTitle);
 		if (isPageSystem()) {
 			if (page > 1)
-				menu.setItem(minSlot + slotPreviousPage, itemPreviousPage);
+				menu.setItem(slotPreviousPage, itemPreviousPage);
 			if (page < pages)
-				menu.setItem(minSlot + slotNextPage, itemNextPage);
+				menu.setItem( slotNextPage, itemNextPage);
 		}
 		if (autoAlignItems) {
 			int slot = 0;
@@ -233,9 +242,6 @@ public class Menu extends EventsManager {
 
 			for (MenuButton button : buttons) {
 				int slot = button.getIndex();
-				if (useButtonPositions) {
-					slot = button.getPositionIndex();
-				}
 
 				if (slot < minSlot | slot > maxSlot) {
 					continue;
@@ -311,40 +317,37 @@ public class Menu extends EventsManager {
 
 			Player player = (Player) e.getWhoClicked();
 
-			if (e.getInventory().getName().equals(title)) {
+			if (e.getInventory().getName().contains(title)) {
 				e.setCancelled(true);
 				ItemStack itemClicked = e.getCurrentItem();
 				int page = pageOpened.get(player);
 
-				int minSlot = (page - 1) * lines * 9;
+//				int minSlot = (page - 1) * lines * 9;
 				int slot = e.getRawSlot();
 
 				if (isPageSystem()) {
-					if (slot == minSlot + slotNextPage) {
+					if (slot ==  slotNextPage) {
 						open(player, ++page);
 					}
-					if (slot == minSlot + slotPreviousPage) {
+					if (slot ==  slotPreviousPage) {
 						open(player, --page);
 					}
 				}
-				
+
 				MenuButton button = getButton(page, slot);
 				if (button == null) {
 					button = getButton(itemClicked);
 				}
 				if (effect != null) {
 					effect.onClick(e, page);
-					Mine.broadcast("�aEffeito ta funcionado");
-					
 				}
 				if (button != null) {
-					Mine.broadcast("�aDiferente de null "+button.getName());
 					if (button.isCategory()) {
 						button.getShop().open(player);
 						return;
 
 					}
-				
+
 					ClickEffect buttonClick = button.getClick();
 					if (buttonClick != null)
 						buttonClick.onClick(e, page);
@@ -353,7 +356,7 @@ public class Menu extends EventsManager {
 						buttonEffects.effect(player);
 					}
 				}
-				
+
 			}
 
 		}
@@ -431,14 +434,6 @@ public class Menu extends EventsManager {
 		this.autoAlignItems = autoAlignItems;
 	}
 
-	public boolean isUseButtonPositions() {
-		return useButtonPositions;
-	}
-
-	public void setUseButtonPositions(boolean useButtonPositions) {
-		this.useButtonPositions = useButtonPositions;
-	}
-
 	public String getCommandKey() {
 		return commandKey;
 	}
@@ -506,6 +501,14 @@ public class Menu extends EventsManager {
 
 	public void setPagesPrefix(String pagesPrefix) {
 		this.pagesPrefix = pagesPrefix;
+	}
+
+	public String getPagesSuffix() {
+		return pagesSuffix;
+	}
+
+	public void setPagesSuffix(String pagesSuffix) {
+		this.pagesSuffix = pagesSuffix;
 	}
 
 }

@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -43,6 +44,7 @@ import net.eduard.api.command.config.ConfigCommand;
 import net.eduard.api.command.map.MapCommand;
 import net.eduard.api.config.Config;
 import net.eduard.api.config.ConfigSection;
+import net.eduard.api.lib.ConfigAPI;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.Mine.Replacer;
 import net.eduard.api.lib.bungee.BukkitController;
@@ -62,13 +64,13 @@ import net.eduard.api.server.EduardPlugin;
 
 /**
  * Classe Principal do Plugin EduardAPI herda todas propriedades de um
- * JavaPlugin e tamb�m implementa Listener para alterar eventos. <br>
- * Padroes que v�o existir na nomeclatura dos plugins<br>
+ * JavaPlugin e tamb§m implementa Listener para alterar eventos. <br>
+ * Padroes que v§o existir na nomeclatura dos plugins<br>
  * Possiveis Prefixos: e, Edu, Eduard, Master, EduMaster, EM, <br>
- * Padr�o para Plugins iniciado no dia 02/03/2018<br>
+ * Padr§o para Plugins iniciado no dia 02/03/2018<br>
  * Prefixo+Nome exemplo MasterFactions<br>
  * <br>
- * A qualquer momento posso mudar a nomeclatura porem os plugins j� nomeados
+ * A qualquer momento posso mudar a nomeclatura porem os plugins j§ nomeados
  * anteriormente continuam com mesmo nome.<br>
  * 
  * @author Eduard
@@ -118,29 +120,6 @@ public class EduardAPI extends JavaPlugin implements Listener {
 
 	}
 
-	@SafeVarargs
-	public static void commands(ConfigSection section, CommandManager... cmds) {
-		for (CommandManager cmd : cmds) {
-			try {
-
-				String name = cmd.getName();
-				if (section != null) {
-					if (section.contains(name)) {
-						cmd = (CommandManager) section.get(name);
-
-					}
-
-				}
-				cmd.register();
-				if (section != null) {
-					section.add(name, cmd);
-
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	public void onEnable() {
 		plugin = this;
@@ -163,7 +142,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 
 		BukkitStorables.load();
 		Mine.resetScoreboards();
-		Mine.console("�bEduardAPI �fScoreboards resetadas!");
+		Mine.console("§bEduardAPI §fScoreboards resetadas!");
 		replacers();
 		time.timers(20, new Runnable() {
 
@@ -179,16 +158,16 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		new GotoCommand().register();
 		new SoundCommand().register();
 
-		Mine.console("�bEduardAPI �fCustom Tag e Scoreboard ativado!");
+		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
 		saveObjects();
-		Mine.console("�bEduardAPI �fDataBase �agerada!");
+		Mine.console("§bEduardAPI §fDataBase §agerada!");
 		new DropManager().register(this);
-		Mine.console("�bEduardAPI �fCustom drops ativado!");
-		Mine.event(this, this);
-		Mine.console("�bEduardAPI �fBase ativado!");
+		Mine.console("§bEduardAPI §fCustom drops ativado!");
+		Mine.registerEvents(this, this);
+		Mine.console("§bEduardAPI §fBase ativado!");
 
 		Mine.loadMaps();
-		Mine.console("�bEduardAPI �fMapas �acarregados!");
+		Mine.console("§bEduardAPI §fMapas §acarregados!");
 
 		config.add("sound-teleport", Mine.OPT_SOUND_TELEPORT);
 		config.add("sound-error", Mine.OPT_SOUND_ERROR);
@@ -212,14 +191,16 @@ public class EduardAPI extends JavaPlugin implements Listener {
 
 		Mine.setPlayerManager(new PlayersManager());
 		Mine.getPlayerManager().register(this);
-		Mine.console("�bEduardAPI �acarregado!");
+		Mine.console("§bEduardAPI §acarregado!");
+//		teste();
 	}
+	
 
 	@Override
 	public void onDisable() {
 		Mine.saveMaps();
-		Mine.console("�bEduardAPI �aMapas salvados!");
-		Mine.console("�bEduardAPI �cdesativado!");
+		Mine.console("§bEduardAPI §aMapas salvados!");
+		Mine.console("§bEduardAPI §cdesativado!");
 		BungeeAPI.getController().unregister();
 	}
 
@@ -228,8 +209,8 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		if (e.getPlugin() instanceof EduardPlugin) {
 
 			EduardPlugin plugin = (EduardPlugin) e.getPlugin();
-			String msg = "�b[Eduard-Dev] �f" + plugin.getName() + " �fv" + plugin.getDescription().getVersion()
-					+ "�a foi ativado com sucesso.";
+			String msg = "§b[Eduard-Dev] §f" + plugin.getName() + " §fv" + plugin.getDescription().getVersion()
+					+ "§a foi ativado com sucesso.";
 			if (plugin.isFree()) {
 				Mine.broadcast(msg);
 			} else {
@@ -252,16 +233,16 @@ public class EduardAPI extends JavaPlugin implements Listener {
 			for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 				if (plugin instanceof EduardPlugin) {
 					if (plugin.isEnabled()) {
-						p.sendMessage("�b[Eduard-Dev] �f" + plugin.getName() + " �fv"
-								+ plugin.getDescription().getVersion() + "�a esta ativado.");
+						p.sendMessage("§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
+								+ plugin.getDescription().getVersion() + "§a esta ativado.");
 					} else {
-						p.sendMessage("�b[Eduard-Dev] �f" + plugin.getName() + " �fv"
-								+ plugin.getDescription().getVersion() + "�c esta desativado.");
+						p.sendMessage("§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
+								+ plugin.getDescription().getVersion() + "§c esta desativado.");
 					}
 
 				}
 			}
-			p.sendMessage("�aCaso deseje comprar mais plugins entre em contato ou no site �bwww.eduarddev.tk");
+			p.sendMessage("§aCaso deseje comprar mais plugins entre em contato ou no site §bwww.eduarddev.tk");
 		}
 
 	}
@@ -271,7 +252,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 		if (e.getPlugin() instanceof EduardPlugin) {
 
 			EduardPlugin plugin = (EduardPlugin) e.getPlugin();
-			String msg = "�b[Eduard-Dev] �f" + plugin.getName() + " �fv" + plugin.getDescription().getVersion()
+			String msg = "§b[Eduard-Dev] §f" + plugin.getName() + " §fv" + plugin.getDescription().getVersion()
 					+ " foi desativado com sucesso.";
 			if (plugin.isFree()) {
 				Mine.broadcast(msg);
@@ -370,10 +351,10 @@ public class EduardAPI extends JavaPlugin implements Listener {
 				Schematic mapa = Mine.getSchematic(p);
 				if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
 					mapa.setHigh(e.getClickedBlock().getLocation().toVector());
-					p.sendMessage("�bEduardAPI �6Posi��o 1 setada!");
+					p.sendMessage("§bEduardAPI §6Posi§§o 1 setada!");
 				} else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					mapa.setLow(e.getClickedBlock().getLocation().toVector());
-					p.sendMessage("�bEduardAPI �6Posi��o 2 setada!");
+					p.sendMessage("§bEduardAPI §6Posi§§o 2 setada!");
 				}
 
 			}
@@ -490,7 +471,7 @@ public class EduardAPI extends JavaPlugin implements Listener {
 									section.add(method.getName(), test);
 									used = true;
 								} catch (Exception ex) {
-									Mine.console("�bDataBase �fO metodo �c" + name + "�f causou erro!");
+									Mine.console("§bDataBase §fO metodo §c" + name + "§f causou erro!");
 									ex.printStackTrace();
 									continue;
 								}

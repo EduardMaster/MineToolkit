@@ -148,34 +148,34 @@ public final class Mine {
 		return formatador.format(calendario.getTime());
 	}
 
-	public static String claz_mEntityPlayer = "#mEntityPlayer";
-	public static String claz_cCraftPlayer = "#cCraftPlayer";
-	public static String claz_sPacketTitle = "#sProtocolInjector$PacketTitle";
-	public static String claz_sAction = "#sProtocolInjector$PacketTitle$Action";
-	public static String claz_sPacketTabHeader = "#sProtocolInjector$PacketTabHeader";
-	public static String claz_pPlayOutChat = "#pPlayOutChat";
-	public static String claz_pPlayOutTitle = "#pPlayOutTitle";
-	public static String claz_pPlayOutWorldParticles = "#pPlayOutWorldParticles";
-	public static String claz_pPlayOutPlayerListHeaderFooter = "#pPlayOutPlayerListHeaderFooter";
-	public static String claz_pPlayOutNamedEntitySpawn = "#pPlayOutNamedEntitySpawn";
-	public static String claz_pPlayInClientCommand = "#pPlayInClientCommand";
-	public static String claz_cEnumTitleAction = "#cEnumTitleAction";
-	public static String claz_pEnumTitleAction2 = "#pPlayOutTitle$EnumTitleAction";
-	public static String claz_mEnumClientCommand = "#mEnumClientCommand";
-	public static String claz_mEnumClientCommand2 = "#pPlayInClientCommand$EnumClientCommand";
-	public static String claz_mChatSerializer = "#mChatSerializer";
-	public static String claz_mIChatBaseComponent = "#mIChatBaseComponent";
-	public static String claz_mEntityHuman = "#mEntityHuman";
-	public static String claz_mNBTTagCompound = "#mNBTTagCompound";
-	public static String claz_mNBTBase = "#mNBTBase";
-	public static String claz_mNBTTagList = "#mNBTTagList";
-	public static String claz_pPacket = "#p";
-	public static String claz_cItemStack = "#cinventory.CraftItemStack";
-	public static String claz_mItemStack = "#mItemStack";
-	public static String claz_bItemStack = "#bItemStack";
-	public static String claz_bBukkit = "#bBukkit";
-	public static String claz_mChatComponentText = "#mChatComponentText";
-	public static String claz_mMinecraftServer = "#mMinecraftServer";
+	public static String classMineEntityPlayer = "#mEntityPlayer";
+	public static String classCraftCraftPlayer = "#cCraftPlayer";
+	public static String classSpigotPacketTitle = "#sProtocolInjector$PacketTitle";
+	public static String classSpigotAction = "#sProtocolInjector$PacketTitle$Action";
+	public static String classSpigotPacketTabHeader = "#sProtocolInjector$PacketTabHeader";
+	public static String classPacketPlayOutChat = "#pPlayOutChat";
+	public static String classPacketPlayOutTitle = "#pPlayOutTitle";
+	public static String classPacketPlayOutWorldParticles = "#pPlayOutWorldParticles";
+	public static String classPacketPlayOutPlayerListHeaderFooter = "#pPlayOutPlayerListHeaderFooter";
+	public static String classPacketPlayOutNamedEntitySpawn = "#pPlayOutNamedEntitySpawn";
+	public static String classPacketPlayInClientCommand = "#pPlayInClientCommand";
+	public static String classCraftEnumTitleAction = "#cEnumTitleAction";
+	public static String classPacketEnumTitleAction2 = "#pPlayOutTitle$EnumTitleAction";
+	public static String classMineEnumClientCommand = "#mEnumClientCommand";
+	public static String classMineEnumClientCommand2 = "#pPlayInClientCommand$EnumClientCommand";
+	public static String classMineChatSerializer = "#mChatSerializer";
+	public static String classMineIChatBaseComponent = "#mIChatBaseComponent";
+	public static String classMineEntityHuman = "#mEntityHuman";
+	public static String classMineNBTTagCompound = "#mNBTTagCompound";
+	public static String classMineNBTBase = "#mNBTBase";
+	public static String classMineNBTTagList = "#mNBTTagList";
+	public static String classPacketPacket = "#p";
+	public static String classCraftItemStack = "#cinventory.CraftItemStack";
+	public static String classMineItemStack = "#mItemStack";
+	public static String classBukkitItemStack = "#bItemStack";
+	public static String classBukkitBukkit = "#bBukkit";
+	public static String classMineChatComponentText = "#mChatComponentText";
+	public static String classMineMinecraftServer = "#mMinecraftServer";
 	static {
 		Extra.newReplacer("#v", Mine.getVersion());
 	}
@@ -444,13 +444,13 @@ public final class Mine {
 			// PacketPlayOutSpawnEntityLiving e;
 
 			// EntityHuman b;
-			Field profileField = Extra.getField(Mine.claz_mEntityHuman, "bH");
+			Field profileField = Extra.getField(Mine.classMineEntityHuman, "bH");
 			Object gameprofile = profileField.get(entityplayer);
 			// Object before = Extra.getValue(gameprofile, "name");
 			Extra.setValue(gameprofile, "name", displayName);
 			// EntityPlayer a;
-			// Object packet = Extra.getNew(Mine.claz_pPlayOutNamedEntitySpawn,
-			// Extra.getParameters(Mine.claz_mEntityHuman),
+			// Object packet = Extra.getNew(Mine.classPacketPlayOutNamedEntitySpawn,
+			// Extra.getParameters(Mine.classMineEntityHuman),
 			// entityplayer);
 			// // Extra.setValue(Extra.getValue(packet, "b"), "name", displayName);
 			// sendPackets(packet, player);
@@ -728,7 +728,7 @@ public final class Mine {
 			// NMS.c(compound);
 			// compound.setByte("NoAI", (byte) 1);
 			// NMS.f(compound);
-			Object compound = Extra.getNew(Mine.claz_mNBTTagCompound);
+			Object compound = Extra.getNew(Mine.classMineNBTTagCompound);
 			Object getHandle = Extra.getResult(entity, "getHandle");
 			Extra.getResult(getHandle, "c", compound);
 			Extra.getResult(compound, "setByte", "NoAI", (byte) 1);
@@ -791,10 +791,6 @@ public final class Mine {
 
 	public static boolean equals2(Location location1, Location location2) {
 		return location1.getBlock().getLocation().equals(location2.getBlock().getLocation());
-	}
-
-	public static void event(Listener event, Plugin plugin) {
-		registerEvents(event, plugin);
 	}
 
 	public static boolean existsPlayer(CommandSender sender, String player) {
@@ -865,19 +861,7 @@ public final class Mine {
 	}
 
 	public static String formatColors(String str) {
-		char[] chars = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f', 'n', 'r', 'l',
-				'k', 'o', 'm' };
-		char[] array = str.toCharArray();
-		for (int t = 0; t < array.length - 1; t++) {
-			if (array[t] == '&') {
-				for (char c : chars) {
-					if (c == array[(t + 1)]) {
-						array[t] = '§';
-					}
-				}
-			}
-		}
-		return new String(array);
+		return Extra.formatColors(str);
 	}
 
 	public static String formatDiference(long timestamp) {
@@ -1044,6 +1028,10 @@ public final class Mine {
 		}
 		return (index % 9) + 1;
 	}
+	
+	public static int getLine(int index	) {
+		return (index/9)+1;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static Map<String, Command> getCommands() {
@@ -1103,7 +1091,7 @@ public final class Mine {
 	}
 
 	public static int getCurrentTick() throws Exception {
-		return (int) Extra.getValue(Mine.claz_mMinecraftServer, "currentTick");
+		return (int) Extra.getValue(Mine.classMineMinecraftServer, "currentTick");
 	}
 
 	/**
@@ -1330,7 +1318,7 @@ public final class Mine {
 	 * @return IChatBaseComponent iniciado
 	 */
 	public static Object getIChatBaseComponent(String component) throws Exception {
-		return Extra.getResult(Mine.claz_mChatSerializer, "a", component);
+		return Extra.getResult(Mine.classMineChatSerializer, "a", component);
 	}
 
 	/**
@@ -1353,7 +1341,7 @@ public final class Mine {
 	 * 
 	 */
 	public static Object getIChatText2(String text) throws Exception {
-		return Extra.getNew(Mine.claz_mChatComponentText, text);
+		return Extra.getNew(Mine.classMineChatComponentText, text);
 
 	}
 
@@ -1399,7 +1387,7 @@ public final class Mine {
 	public static int getItemsAmount(Inventory inventory) {
 		int amount = 0;
 		for (ItemStack item : inventory.getContents()) {
-			if (item != null) {
+			if (item != null&&item.getType()!=Material.AIR) {
 				amount++;
 			}
 		}
@@ -1628,7 +1616,7 @@ public final class Mine {
 		List<Player> list = new ArrayList<>();
 		try {
 
-			Object object = Extra.getResult(Mine.claz_bBukkit, "getOnlinePlayers");
+			Object object = Extra.getResult(Mine.classBukkitBukkit, "getOnlinePlayers");
 			if (object instanceof Collection) {
 				Collection<?> players = (Collection<?>) object;
 				for (Object obj : players) {
@@ -2306,14 +2294,14 @@ public final class Mine {
 	 */
 	public static void makeRespawn(Player player) {
 		try {
-			Object packet = Extra.getNew(Mine.claz_pPlayInClientCommand,
-					Extra.getValue(Mine.claz_mEnumClientCommand, "PERFORM_RESPAWN"));
+			Object packet = Extra.getNew(Mine.classPacketPlayInClientCommand,
+					Extra.getValue(Mine.classMineEnumClientCommand, "PERFORM_RESPAWN"));
 			Extra.getResult(getConnection(player), "a", packet);
 
 		} catch (Exception ex) {
 			try {
-				Object packet = Extra.getNew(Mine.claz_pPlayInClientCommand,
-						Extra.getValue(Mine.claz_mEnumClientCommand2, "PERFORM_RESPAWN"));
+				Object packet = Extra.getNew(Mine.classPacketPlayInClientCommand,
+						Extra.getValue(Mine.classMineEnumClientCommand2, "PERFORM_RESPAWN"));
 				Extra.getResult(getConnection(player), "a", packet);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -2998,16 +2986,16 @@ public final class Mine {
 	public static void sendActionBar(Player player, String text) {
 		try {
 			Object component = getIChatText(text);
-			Object packet = Extra.getNew(Mine.claz_pPlayOutChat,
-					Extra.getParameters(Mine.claz_mIChatBaseComponent, byte.class), component, (byte) 2);
+			Object packet = Extra.getNew(Mine.classPacketPlayOutChat,
+					Extra.getParameters(Mine.classMineIChatBaseComponent, byte.class), component, (byte) 2);
 			sendPacket(player, packet);
 			return;
 		} catch (Exception ex) {
 		}
 		try {
 			Object component = getIChatText2(text);
-			Object packet = Extra.getNew(Mine.claz_pPlayOutChat,
-					Extra.getParameters(Mine.claz_mIChatBaseComponent, byte.class), component, (byte) 2);
+			Object packet = Extra.getNew(Mine.classPacketPlayOutChat,
+					Extra.getParameters(Mine.classMineIChatBaseComponent, byte.class), component, (byte) 2);
 			sendPacket(player, packet);
 		} catch (Exception e) {
 			Bukkit.getConsoleSender().sendMessage(
@@ -3037,7 +3025,7 @@ public final class Mine {
 	 */
 	public static void sendPacket(Object packet, Player player) throws Exception {
 
-		Extra.getResult(getConnection(player), "sendPacket", Extra.getParameters(Mine.claz_pPacket), packet);
+		Extra.getResult(getConnection(player), "sendPacket", Extra.getParameters(Mine.classPacketPacket), packet);
 	}
 
 	/**
@@ -3101,16 +3089,16 @@ public final class Mine {
 				// sendPacket(player, getNew(PacketTitle, getParameters(Action,
 				// int.class, int.class, int.class),
 				// getValue(Action, "TIMES"), fadeIn, stay, fadeOut));
-				sendPacket(player, Extra.getNew(Mine.claz_sPacketTitle,
-						Extra.getValue(Mine.claz_sAction, "TIMES"), fadeIn, stay, fadeOut));
+				sendPacket(player, Extra.getNew(Mine.classSpigotPacketTitle,
+						Extra.getValue(Mine.classSpigotAction, "TIMES"), fadeIn, stay, fadeOut));
 				sendPacket(player,
-						Extra.getNew(Mine.claz_sPacketTitle,
-								Extra.getParameters(Mine.claz_sAction, Mine.claz_mIChatBaseComponent),
-								Extra.getValue(Mine.claz_sAction, "TITLE"), getIChatText(title)));
+						Extra.getNew(Mine.classSpigotPacketTitle,
+								Extra.getParameters(Mine.classSpigotAction, Mine.classMineIChatBaseComponent),
+								Extra.getValue(Mine.classSpigotAction, "TITLE"), getIChatText(title)));
 				sendPacket(player,
-						Extra.getNew(Mine.claz_sPacketTitle,
-								Extra.getParameters(Mine.claz_sAction, Mine.claz_mIChatBaseComponent),
-								Extra.getValue(Mine.claz_sAction, "SUBTITLE"), getIChatText(subTitle)));
+						Extra.getNew(Mine.classSpigotPacketTitle,
+								Extra.getParameters(Mine.classSpigotAction, Mine.classMineIChatBaseComponent),
+								Extra.getValue(Mine.classSpigotAction, "SUBTITLE"), getIChatText(subTitle)));
 
 				return;
 			}
@@ -3118,28 +3106,28 @@ public final class Mine {
 		} catch (Exception e) {
 		}
 		try {
-			sendPacket(player, Extra.getNew(Mine.claz_pPlayOutTitle, fadeIn, stay, fadeOut));
+			sendPacket(player, Extra.getNew(Mine.classPacketPlayOutTitle, fadeIn, stay, fadeOut));
 			sendPacket(player,
-					Extra.getNew(Mine.claz_pPlayOutTitle,
-							Extra.getParameters(Mine.claz_cEnumTitleAction, Mine.claz_mIChatBaseComponent),
-							Extra.getValue(Mine.claz_cEnumTitleAction, "TITLE"), getIChatText(title)));
+					Extra.getNew(Mine.classPacketPlayOutTitle,
+							Extra.getParameters(Mine.classCraftEnumTitleAction, Mine.classMineIChatBaseComponent),
+							Extra.getValue(Mine.classCraftEnumTitleAction, "TITLE"), getIChatText(title)));
 			sendPacket(player,
-					Extra.getNew(Mine.claz_pPlayOutTitle,
-							Extra.getParameters(Mine.claz_cEnumTitleAction, Mine.claz_mIChatBaseComponent),
-							Extra.getValue(Mine.claz_cEnumTitleAction, "SUBTITLE"), getIChatText(subTitle)));
+					Extra.getNew(Mine.classPacketPlayOutTitle,
+							Extra.getParameters(Mine.classCraftEnumTitleAction, Mine.classMineIChatBaseComponent),
+							Extra.getValue(Mine.classCraftEnumTitleAction, "SUBTITLE"), getIChatText(subTitle)));
 			return;
 		} catch (Exception e) {
 		}
 		try {
-			sendPacket(player, Extra.getNew(Mine.claz_pPlayOutTitle, fadeIn, stay, fadeOut));
+			sendPacket(player, Extra.getNew(Mine.classPacketPlayOutTitle, fadeIn, stay, fadeOut));
 			sendPacket(player,
-					Extra.getNew(Mine.claz_pPlayOutTitle,
-							Extra.getParameters(Mine.claz_pEnumTitleAction2, Mine.claz_mIChatBaseComponent),
-							Extra.getValue(Mine.claz_pEnumTitleAction2, "TITLE"), getIChatText2(title)));
+					Extra.getNew(Mine.classPacketPlayOutTitle,
+							Extra.getParameters(Mine.classPacketEnumTitleAction2, Mine.classMineIChatBaseComponent),
+							Extra.getValue(Mine.classPacketEnumTitleAction2, "TITLE"), getIChatText2(title)));
 			sendPacket(player,
-					Extra.getNew(Mine.claz_pPlayOutTitle,
-							Extra.getParameters(Mine.claz_pEnumTitleAction2, Mine.claz_mIChatBaseComponent),
-							Extra.getValue(Mine.claz_pEnumTitleAction2, "SUBTITLE"), getIChatText2(subTitle)));
+					Extra.getNew(Mine.classPacketPlayOutTitle,
+							Extra.getParameters(Mine.classPacketEnumTitleAction2, Mine.classMineIChatBaseComponent),
+							Extra.getValue(Mine.classPacketEnumTitleAction2, "SUBTITLE"), getIChatText2(subTitle)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3372,8 +3360,8 @@ public final class Mine {
 	public static void setTabList(Player player, String header, String footer) {
 		try {
 			if (isAbove1_8(player)) {
-				Object packet = Extra.getNew(Mine.claz_sPacketTabHeader,
-						Extra.getParameters(Mine.claz_mIChatBaseComponent, Mine.claz_mIChatBaseComponent),
+				Object packet = Extra.getNew(Mine.classSpigotPacketTabHeader,
+						Extra.getParameters(Mine.classMineIChatBaseComponent, Mine.classMineIChatBaseComponent),
 						getIChatText(header), getIChatText(footer));
 				sendPacket(packet, player);
 				return;
@@ -3382,16 +3370,16 @@ public final class Mine {
 		} catch (Exception e) {
 		}
 		try {
-			Object packet = Extra.getNew(Mine.claz_pPlayOutPlayerListHeaderFooter,
-					Extra.getParameters(Mine.claz_mIChatBaseComponent), getIChatText(header));
+			Object packet = Extra.getNew(Mine.classPacketPlayOutPlayerListHeaderFooter,
+					Extra.getParameters(Mine.classMineIChatBaseComponent), getIChatText(header));
 
 			Extra.setValue(packet, "b", getIChatText(footer));
 			sendPacket(packet, player);
 		} catch (Exception e) {
 		}
 		try {
-			Object packet = Extra.getNew(Mine.claz_pPlayOutPlayerListHeaderFooter,
-					Extra.getParameters(Mine.claz_mIChatBaseComponent), getIChatText2(header));
+			Object packet = Extra.getNew(Mine.classPacketPlayOutPlayerListHeaderFooter,
+					Extra.getParameters(Mine.classMineIChatBaseComponent), getIChatText2(header));
 			Extra.setValue(packet, "b", getIChatText2(footer));
 			sendPacket(packet, player);
 		} catch (Exception ex) {
@@ -3463,7 +3451,7 @@ public final class Mine {
 	}
 
 	public static String toConfigMessage(String text) {
-		return text.replace("§", "&");
+		return text.replace(ChatColor.COLOR_CHAR, '&');
 	}
 
 	public static String toDecimal(Object number) {

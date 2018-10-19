@@ -19,7 +19,7 @@ public class CurrencyManager implements Storable {
 	private Map<FakePlayer, Double> currency = new HashMap<>();
 
 	
-	public double getBalance(FakePlayer player) {
+	public synchronized double getBalance(FakePlayer player) {
 		
 //		System.out.println("Resultado "+ (currency.get(player)));
 		return currency.getOrDefault(player, inicialAmount);
@@ -70,7 +70,7 @@ public class CurrencyManager implements Storable {
 		
 	}
 
-	public void setBalance(FakePlayer player, double amount) {
+	public synchronized void setBalance(FakePlayer player, double amount) {
 
 		currency.put(player, amount);
 

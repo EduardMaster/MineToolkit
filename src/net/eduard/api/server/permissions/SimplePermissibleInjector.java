@@ -61,7 +61,7 @@ public final class SimplePermissibleInjector {
     static {
         try {
         	@SuppressWarnings("unused")
-			String a = Mine.claz_bBukkit;
+			String a = Mine.classBukkitBukkit;
             // Try to load the permissible field.
             Field humanEntityPermissibleField;
             try {

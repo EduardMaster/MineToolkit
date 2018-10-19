@@ -83,7 +83,22 @@ public final class Extra {
 		}
 		return null;
 	}
-
+	/**
+	 * Descobre qual é a coluna baseada no numero
+	 * 
+	 * @param index Numero
+	 * @return A coluna
+	 */
+	public static int getColumn(int index) {
+		if (index < 9) {
+			return index + 1;
+		}
+		return (index % 9) + 1;
+	}
+	
+	public static int getLine(int index	) {
+		return (index/9)+1;
+	}
 	/**
 	 * 
 	 * @param type Variavel {@link Type} (Classe/Tipo)
@@ -1038,7 +1053,7 @@ public final class Extra {
 			if (array[t] == '&') {
 				for (char c : chars) {
 					if (c == array[(t + 1)]) {
-						array[t] = '�';
+						array[t] = '§';
 					}
 				}
 			}

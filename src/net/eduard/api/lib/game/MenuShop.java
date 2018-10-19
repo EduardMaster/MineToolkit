@@ -15,8 +15,8 @@ public class MenuShop extends Menu {
 	private boolean useVault = true;
 	@Reference
 	private CurrencyManager currency;
-	private String messageBoughtItem = "�aVoce adquiriu um item da Loja!";
-	private String messageWithoutBalance = "�cVoce n�o tem dinheiro suficiente!";
+	private String messageBoughtItem = "§aVoce adquiriu um item da Loja!";
+	private String messageWithoutBalance = "§cVoce não tem dinheiro suficiente!";
 
 	public MenuShop() {
 		this("Menu", 1);
@@ -36,40 +36,43 @@ public class MenuShop extends Menu {
 					if (item == null)
 						return;
 					MenuProduct product = getProductByIcon(item);
-					if (product != null) {
-						if (product.isCategory()) {
-							Mine.broadcast("�a� uma categoria ");
-							return;
-						}
-						double price = product.getPrice();
+					if (product == null) {
 
-						if (useVault && VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
-
-							if (VaultAPI.getEconomy().has(player, price)) {
-								VaultAPI.getEconomy().withdrawPlayer(player, price);
-							} else {
-								player.sendMessage(messageWithoutBalance);
-								return;
-							}
-
-						} else if (currency != null) {
-							FakePlayer fake = new FakePlayer(player);
-							if (currency.getBalance(fake) >= price) {
-								currency.removeBalance(fake, price);
-							} else {
-								player.sendMessage(messageWithoutBalance);
-								return;
-							}
-						} else
-							return;
-						player.sendMessage(messageBoughtItem);
-						if (Mine.isFull(player.getInventory())) {
-							player.getWorld().dropItemNaturally(player.getLocation().add(0, 5, 0), product.getItem());
-						} else {
-							player.getInventory().addItem(product.getItem());
-						}
-
+						return;
 					}
+					if (product.isCategory()) {
+
+						return;
+					}
+					double price = product.getPrice();
+
+					if (useVault && VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
+
+						if (VaultAPI.getEconomy().has(player, price)) {
+							VaultAPI.getEconomy().withdrawPlayer(player, price);
+						} else {
+							player.sendMessage(messageWithoutBalance);
+							return;
+						}
+
+					} else if (currency != null) {
+						FakePlayer fake = new FakePlayer(player);
+						if (currency.getBalance(fake) >= price) {
+							currency.removeBalance(fake, price);
+						} else {
+							player.sendMessage(messageWithoutBalance);
+							return;
+						}
+					} else
+						return;
+					if (product.getItem()== null)return;
+					player.sendMessage(messageBoughtItem);
+					if (Mine.isFull(player.getInventory())) {
+						player.getWorld().dropItemNaturally(player.getLocation().add(0, 5, 0), product.getItem());
+					} else {
+						player.getInventory().addItem(product.getItem());
+					}
+
 				}
 			}
 		});
@@ -91,7 +94,7 @@ public class MenuShop extends Menu {
 		for (MenuButton button : getButtons()) {
 			if (button instanceof MenuProduct) {
 				MenuProduct product = (MenuProduct) button;
-				if (product.getItem().equals(item))
+				if (product.getItem().isSimilar(item))
 					return product;
 			}
 
@@ -149,7 +152,15 @@ public class MenuShop extends Menu {
 	}
 
 	public void setCurrency(CurrencyManager currency) {
+		if (currency == null)return;
+		this.useVault = false;
 		this.currency = currency;
+		for (MenuButton button : getButtons()) {
+			if (button.isCategory()) {
+				button.getShop().setCurrency(currency);
+			}
+			
+		}
 	}
 
 }

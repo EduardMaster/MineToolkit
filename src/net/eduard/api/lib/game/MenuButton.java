@@ -2,6 +2,7 @@ package net.eduard.api.lib.game;
 
 import org.bukkit.inventory.ItemStack;
 
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.EffectManager;
 import net.eduard.api.lib.modules.ClickEffect;
 import net.eduard.api.lib.storage.Storable;
@@ -12,11 +13,7 @@ public class MenuButton implements Storable{
 	private int page=1;
 	private int positionX;
 	private int positionY;
-	private int index;
 	
-	public int getPositionIndex() {
-		return Menu.getPosition(positionY, positionX);
-	}
 	private ItemStack icon;
 	private EffectManager effects;
 	private MenuShop shop;
@@ -45,10 +42,14 @@ public class MenuButton implements Storable{
 		this.icon = icon;
 	}
 	public int getIndex() {
-		return index;
+		return Mine.getPosition(positionY, positionX);
 	}
 	public void setIndex(int index) {
-		this.index = index;
+		int x = Mine.getColumn(index);
+		int y = (index/9)+1;
+		setPositionX(x);
+		setPositionY(y);
+		
 	}
 	
 	public int getPage() {
@@ -69,6 +70,7 @@ public class MenuButton implements Storable{
 	}
 	public void setPositionX(int positionX) {
 		this.positionX = positionX;
+		
 	}
 	public int getPositionY() {
 		return positionY;

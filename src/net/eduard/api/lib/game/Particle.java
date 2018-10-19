@@ -68,7 +68,7 @@ public Particle() {
 
 	private Object getPacket() throws Exception {
 
-		return Extra.getNew(Mine.claz_pPlayOutWorldParticles, particle.getParticleName(), (float) location.getX(),
+		return Extra.getNew(Mine.classPacketPlayOutWorldParticles, particle.getParticleName(), (float) location.getX(),
 				(float) location.getY(), (float) location.getZ(), xRandom, yRandom, zRandom, speed, amount);
 	}
 
