@@ -11,8 +11,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 /**
- * Jogador Off Ficticio
- * 
+ * Jogador Off Ficticio<br>
+ *  nome;id
  * @author Eduard-PC
  *
  */
@@ -20,7 +20,7 @@ public class FakePlayer implements OfflinePlayer {
 
 	private String name;
 	private UUID id;
-
+//
 	public void setName(String name) {
 		this.name = name;
 	}

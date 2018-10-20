@@ -58,7 +58,7 @@ public class SoundCommand extends CommandManager {
 				player.getWorld().playSound(location, sound, volume, pitch);
 			} else
 				player.playSound(location, sound, volume, pitch);
-			sender.sendMessage("�aEfeito sonoro criado!");
+			sender.sendMessage("§aEfeito sonoro criado!");
 		}
 
 		return true;

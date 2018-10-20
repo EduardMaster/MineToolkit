@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
@@ -26,6 +27,7 @@ public class BukkitStorables {
 		StorageAPI.register(Location.class, new LocationStorable());
 		StorageAPI.register(OfflinePlayer.class, new OfflinePlayerStorable());
 		StorageAPI.register(MaterialData.class, new MaterialDataStorable());
+		StorageAPI.register(Inventory.class, new InventoryStorable());
 	}
 
 }

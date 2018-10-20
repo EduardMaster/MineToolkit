@@ -13,7 +13,7 @@ public class GotoCommand extends CommandManager {
 	public GotoCommand() {
 		super("goto");
 	}
-	public String message = "�6Voce foi teleportado para o Mundo �e$world";
+	public String message = "§6Voce foi teleportado para o Mundo §e$world";
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

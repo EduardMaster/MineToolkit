@@ -18,9 +18,9 @@ public class EnchantCommand extends CommandManager {
 		super("enchantment");
 
 	}
-	public String messageInvalid = "�cDigite o encantamento valido! �bAperte TAB";
-	public String message = "�aEncantamento aplicado!";
-	public String messageError = "�cVoc� precisar ter um item em maos!";
+	public String messageInvalid = "§cDigite o encantamento valido! §bAperte TAB";
+	public String message = "§aEncantamento aplicado!";
+	public String messageError = "§cVoce precisar ter um item em maos!";
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command,
 			String label, String[] args) {

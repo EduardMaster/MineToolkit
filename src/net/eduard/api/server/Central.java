@@ -17,8 +17,32 @@ public class Central {
 	private static PartyManager party;
 	private static PermissionsManager permissions;
 
+	public static VipManager getVipManager() {
+		return vips;
+	}
+
+	public static ChatManager getChatManager() {
+		return chat;
+	}
+
+	public static EconomyManager getEconomyManager() {
+		return economy;
+	}
+
+	public static ClanManager getClanManager() {
+		return clans;
+	}
+
 	public static VipManager getVips() {
 		return vips;
+	}
+
+	public static PartyManager getPartyManager() {
+		return party;
+	}
+
+	public static PermissionsManager getPermissionManager() {
+		return permissions;
 	}
 
 	public static void setVips(VipManager vips) {

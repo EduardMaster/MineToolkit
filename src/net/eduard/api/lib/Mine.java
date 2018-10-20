@@ -2207,14 +2207,14 @@ public final class Mine {
 	 * @return Vetor de Itens (Lista)
 	 * 
 	 */
-	public static ItemStack[] itemFromBase64(final String data) {
+	public static ItemStack[] fromBase64toItems(final String data) {
 		try {
 			final ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
 			final BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
 			final ItemStack[] stacks = new ItemStack[dataInput.readInt()];
-			for (int i = 0; i < stacks.length; ++i) {
+			for (int slot = 0; slot < stacks.length; ++slot) {
 
-				stacks[i] = (ItemStack) dataInput.readObject();
+				stacks[slot] = (ItemStack) dataInput.readObject();
 
 			}
 			dataInput.close();
@@ -2231,7 +2231,7 @@ public final class Mine {
 	 * @param contents Vetor de Itens
 	 * @return Texto
 	 */
-	public static String itemtoBase64(final ItemStack[] contents) {
+	public static String fromItemsToBase64(final ItemStack[] contents) {
 
 		try {
 			final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

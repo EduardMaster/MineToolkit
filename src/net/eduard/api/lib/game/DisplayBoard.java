@@ -22,12 +22,12 @@ import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 
 @SuppressWarnings("deprecation")
-public class DisplayBoard implements Storable ,Copyable{
+public class DisplayBoard implements Storable, Copyable {
 
 	public static final int PLAYER_ABOVE_1_7_NAME_LIMIT = 40;
 	public static final int PLAYER_BELOW_1_8_NAME_LIMIT = 16;
 	public static final int TITLE_LIMIT = 32;
-	public static final int REGISTER_LIMIT = 16;
+	// public static final int REGISTER_LIMIT = 16;
 	public static final int PREFIX_LIMIT = 16;
 	public static final int SUFFIX_LIMIT = 16;
 	public int PLAYER_NAME_LIMIT = PLAYER_BELOW_1_8_NAME_LIMIT;
@@ -94,27 +94,29 @@ public class DisplayBoard implements Storable ,Copyable{
 
 	}
 
-	public void removeEntriesNegatives() {
-		for (OfflinePlayer fake : scoreboard.getPlayers()) {
-			if (objective.getScore(fake).getScore() == -1)
+	public void clearEntries(boolean force) {
+		scoreboard.getPlayers().stream().forEach(fake -> {
+			if (force) {
 				scoreboard.resetScores(fake);
-		}
+			} else if (objective.getScore(fake).getScore() == -1)
+				scoreboard.resetScores(fake);
+		});
+//		for (Iterator<OfflinePlayer> iterator = scoreboard.getPlayers().iterator(); iterator.hasNext();) {
+//			OfflinePlayer fake = iterator.next();
+//			if (objective.getScore(fake).getScore() == -1)
+//				scoreboard.resetScores(fake);
+//		}
 
 	}
 
-	public void removeEntries() {
-		for (OfflinePlayer fake : scoreboard.getPlayers()) {
-			scoreboard.resetScores(fake);
-		}
-	}
 
 	public DisplayBoard copy() {
 		return copy(this);
 	}
 
 	public DisplayBoard() {
-		title = "�6�lScoreboard";
-		init();
+		this("§6§lScoreboard");
+		
 	}
 
 	public DisplayBoard(String title, String... lines) {
@@ -123,15 +125,7 @@ public class DisplayBoard implements Storable ,Copyable{
 		init();
 	}
 
-	// public List<String> getDisplayLines() {
-	// List<String> list = new ArrayList<>();
-	// for (Entry<Integer, OfflinePlayer> entry : players.entrySet()) {
-	// Integer id = entry.getKey();
-	// Team team = teams.get(id);
-	// list.add(team.getPrefix() + entry.getValue().getName() + team.getSuffix());
-	// }
-	// return list;
-	// }
+	
 
 	public DisplayBoard update(Player player) {
 		int id = 15;
@@ -140,7 +134,7 @@ public class DisplayBoard implements Storable ,Copyable{
 			id--;
 		}
 		setDisplay(Mine.getReplacers(title, player));
-		removeEntriesNegatives();
+		clearEntries(false);
 		return this;
 	}
 
@@ -151,23 +145,26 @@ public class DisplayBoard implements Storable ,Copyable{
 			set(id, line);
 			id--;
 		}
-		removeEntriesNegatives();
+		clearEntries(false);
 		return this;
 	}
 
 	public DisplayBoard init() {
+		Mine.broadcast("§cinit executado"
+				+ "");
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		objective = scoreboard.registerNewObjective("scoreboard", "dummy");
+		objective = scoreboard.registerNewObjective("sc"+Mine.getRandomInt(1000, 100000), "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		health = scoreboard.registerNewObjective("HealthBar", Criterias.HEALTH);
 		health.setDisplaySlot(DisplaySlot.BELOW_NAME);
 		for (int id = 15; id > 0; id--) {
-			Team team = scoreboard.registerNewTeam("team-" + id);
-			FakePlayer fake = new FakePlayer("" + ChatColor.values()[id]);
-			team.addPlayer(fake);
-			objective.getScore(fake).setScore(id);
+			Team team = scoreboard.registerNewTeam("t" + +Mine.getRandomInt(1000, 100000));
+//			FakePlayer fake = new FakePlayer("" + ChatColor.values()[id]);
+//			team.addPlayer(fake);
+//			objective.getScore(fake).setScore(id);
 			teams.put(id, team);
-			fakes.put(id, fake);
+			
+//			fakes.put(id, fake);
 		}
 		setDisplay(title);
 		setHealthBar(Mine.getRedHeart());
@@ -204,12 +201,14 @@ public class DisplayBoard implements Storable ,Copyable{
 
 	public boolean remove(int id) {
 		OfflinePlayer fake = fakes.get(id);
-		if (fake!=null) {
+		if (fake==null)return false;
 		scoreboard.resetScores(fake);
+		Team team = teams.get(id);
+		if (team!=null) {
+			team.removePlayer(fake);
 		}
 		fakes.remove(id);
 		texts.remove(id);
-		
 		return false;
 	}
 
@@ -238,9 +237,6 @@ public class DisplayBoard implements Storable ,Copyable{
 			suffix = text.substring(PREFIX_LIMIT + PLAYER_NAME_LIMIT);
 		}
 		Team team = teams.get(id);
-		// if (center.isEmpty()) {
-		// center = ChatColor.values()[id].toString();
-		// }
 		if (perfect) {
 			prefix = Mine.cutText(text, 16);
 
@@ -251,19 +247,6 @@ public class DisplayBoard implements Storable ,Copyable{
 			team.setSuffix(suffix);
 		} else {
 			setLine(prefix, center, suffix, id);
-			// OfflinePlayer fakeBefore = fakes.get(id);
-			// if (!fakeBefore.getName().equals(center)) {
-			//
-			// team.removePlayer(fakeBefore);
-			// Bukkit.getScheduler().runTaskLaterAsynchronously(Mine.getEduard(), () -> {
-			// scoreboard.resetScores(fakeBefore);
-			// }, 1);
-			//
-			// }
-			// FakePlayer fake = new FakePlayer(center);
-			// team.setPrefix(prefix);
-			// team.setSuffix(suffix);
-			// team.addPlayer(fake);
 		}
 
 		texts.put(id, text);
@@ -323,8 +306,9 @@ public class DisplayBoard implements Storable ,Copyable{
 		return null;
 	}
 
-	@Override
+//	@Override
 	public void onCopy() {
+		Mine.broadcast("§cOn Copy edxecutado");
 		init();
 
 	}
@@ -381,7 +365,7 @@ public class DisplayBoard implements Storable ,Copyable{
 
 	public void add(String line) {
 		getLines().add(line);
-		
+
 	}
 
 }
