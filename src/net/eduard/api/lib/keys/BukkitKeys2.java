@@ -47,7 +47,7 @@ public class BukkitKeys2 {
 				shield.plugin = scanPlugin.nextLine();
 
 				Scanner scanPreco = new Scanner(System.in);
-				System.out.println("Digite Preço do Plugin");
+				System.out.println("Digite PreÂ§o do Plugin");
 				shield.price = scanPreco.nextDouble();
 
 				Scanner scanUse = new Scanner(System.in);
@@ -67,7 +67,7 @@ public class BukkitKeys2 {
 				shield.write(file);
 				break;
 			} catch (Exception e) {
-				System.out.println("Reiniciando o Programa de criação de Keys");
+				System.out.println("Reiniciando o Programa de criaÂ§Â§o de Keys");
 			}
 
 		}
@@ -179,7 +179,7 @@ public class BukkitKeys2 {
 		// }
 		if (BUKKIT_IP.equals("localhost")) {
 			Bukkit.getConsoleSender().sendMessage(
-					" §aPlugin foi liberado para testes em LocalHost");
+					" Â§aPlugin foi liberado para testes em LocalHost");
 			return false;
 		}
 
@@ -190,12 +190,12 @@ public class BukkitKeys2 {
 		//
 
 		Bukkit.getConsoleSender()
-				.sendMessage("- §eSistema de verificacao de Keys por Site §f-");
+				.sendMessage("- Â§eSistema de verificacao de Keys por Site Â§f-");
 
 		List<BukkitKeys2> keys = getShields(url);
-		Bukkit.getConsoleSender().sendMessage(" §a" + keys.size() + " §fKeys!");
+		Bukkit.getConsoleSender().sendMessage(" Â§a" + keys.size() + " Â§fKeys!");
 		Bukkit.getConsoleSender().sendMessage(
-				" §aIp: §f" + BUKKIT_IP + " §8| §aIp: §f" + SERVER_IP);
+				" Â§aIp: Â§f" + BUKKIT_IP + " Â§8| Â§aIp: Â§f" + SERVER_IP);
 
 		File file = new File(plugin.getDataFolder(), "licence.yml");
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
@@ -208,10 +208,10 @@ public class BukkitKeys2 {
 		}
 		String COMPRADOR = config.getString("COMPRADOR");
 		String KEY = config.getString("KEY");
-		Bukkit.getConsoleSender().sendMessage(" §aDono: §f" + COMPRADOR);
-		Bukkit.getConsoleSender().sendMessage(" §aKey: §f" + KEY);
+		Bukkit.getConsoleSender().sendMessage(" Â§aDono: Â§f" + COMPRADOR);
+		Bukkit.getConsoleSender().sendMessage(" Â§aKey: Â§f" + KEY);
 
-		String error = "§eProblemas: §c";
+		String error = "Â§eProblemas: Â§c";
 		String first = error;
 
 		for (BukkitKeys2 license : keys) {
@@ -240,24 +240,24 @@ public class BukkitKeys2 {
 			// Bukkit.getConsoleSender().sendMessage("N " + now);
 			boolean finish = ((before + (time * 24 * 60 * 60 * 1000)) < now);
 			Bukkit.getConsoleSender().sendMessage(
-					" §aPlugin comprado em: §f" + new Date(before));
+					" Â§aPlugin comprado em: Â§f" + new Date(before));
 			Bukkit.getConsoleSender()
-					.sendMessage(" §aTempo da compra: §f" + time + " §adias!");
+					.sendMessage(" Â§aTempo da compra: Â§f" + time + " Â§adias!");
 			if (finish) {
-				error += "Tempo da compra foi expirado! §aRenove-a!";
+				error += "Tempo da compra foi expirado! Â§aRenove-a!";
 				break;
 			} else {
 				Bukkit.getConsoleSender()
-						.sendMessage(" §aPlugin ativado com sucesso!");
+						.sendMessage(" Â§aPlugin ativado com sucesso!");
 				return true;
 			}
 
 		}
 		if (error.equals(first)) {
-			error += "Não foi encontrado nenhuma Key no Site!";
+			error += "NÂ§o foi encontrado nenhuma Key no Site!";
 		}
 		Bukkit.getConsoleSender().sendMessage(error);
-		Bukkit.getConsoleSender().sendMessage(" §cPlugin desativado!");
+		Bukkit.getConsoleSender().sendMessage(" Â§cPlugin desativado!");
 		Bukkit.getPluginManager().disablePlugin(plugin);
 		return false;
 

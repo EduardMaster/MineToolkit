@@ -4,18 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(inline = true)
 public class WorldStorable implements Storable {
-
-	@Override
-	public boolean saveInline() {
-		return true;
-	}
-
-	@Override
-	public Class<?> type() {
-		return World.class;
-	}
 
 	@Override
 	public Object restore(Object object) {

@@ -1,6 +1,6 @@
 package net.eduard.api.lib.click;
 /**
- * Tipo de Compara§§o do Clique que o jogador faz
+ * Tipo de ComparaÂ§Â§o do Clique que o jogador faz
  * @since 1.0
  * @version 1.0
  * @author Eduard

@@ -1,5 +1,8 @@
 package net.eduard.api.lib.modules;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,11 +23,11 @@ import java.util.Map.Entry;
 @SuppressWarnings("unchecked")
 public interface Copyable {
 
-//	@Target({ java.lang.annotation.ElementType.FIELD })
-//	@Retention(RetentionPolicy.RUNTIME)
-//	public @interface NoCopyable {
-//
-//	}
+	@Target({ java.lang.annotation.ElementType.FIELD })
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface NoCopyable {
+
+	}
 
 	public default Object copy() {
 		return copy(this);
@@ -52,7 +55,6 @@ public interface Copyable {
 		return object;
 	}
 
-	
 	public default <E> E copy(E object) {
 
 		Class<? extends Object> claz = object.getClass();
@@ -91,19 +93,19 @@ public interface Copyable {
 					for (Field field : claz.getDeclaredFields()) {
 						if (Modifier.isStatic(field.getModifiers()))
 							continue;
-						if (Modifier.isTransient(field.getModifiers())) {
-							continue;
-						}
-							
+//						if (field.isAnnotationPresent(NoCopyable.class)) {
+//							continue;
+//						}
+
 						field.setAccessible(true);
 						try {
 							Object value = field.get(object);
 							if (value != null) {
-//								if (field.isAnnotationPresent(NoCopyable.class)) {
-//									field.set(newInstance, value);
-//								} else {
+								if (field.isAnnotationPresent(NoCopyable.class)) {
+									field.set(newInstance, value);
+								} else {
 									field.set(newInstance, copy(value));
-//								}
+								}
 							}
 
 						} catch (Exception e) {
@@ -114,7 +116,7 @@ public interface Copyable {
 				}
 				object = newInstance;
 			} catch (Exception e) {
-				System.out.println("[Copyable] falha ao copiar "+claz);
+				System.out.println("[Copyable] falha ao copiar " + claz);
 //				e.printStackTrace();
 			}
 

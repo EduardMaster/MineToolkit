@@ -19,10 +19,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.eduard.api.lib.storage.StorageObject;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.StorageInfo;
 
 /**
- * API simplificada de criar configura��o Path = Endere�o = Secao
+ * API simplificada de criar configura§§o Path = Endere§o = Secao
  * 
  * @author Eduard
  * @version 1.1
@@ -138,7 +139,7 @@ public class ConfigAPI {
 	}
 
 	/**
-	 * Salva a Config padr�o caso n�o existe a Arquivo
+	 * Salva a Config padr§o caso n§o existe a Arquivo
 	 */
 	public void saveDefaultConfig() {
 		if (plugin.getResource(name) != null)
@@ -147,7 +148,7 @@ public class ConfigAPI {
 	}
 
 	/**
-	 * Salva a config padr�o
+	 * Salva a config padr§o
 	 */
 	public void saveResource() {
 		plugin.saveResource(name, true);
@@ -164,7 +165,7 @@ public class ConfigAPI {
 	}
 
 	/**
-	 * Salva os padr�es da Config
+	 * Salva os padr§es da Config
 	 * 
 	 * @return
 	 */
@@ -193,7 +194,7 @@ public class ConfigAPI {
 	}
 
 	public static String toConfigMessage(String text) {
-		return text.replace("�", "&");
+		return text.replace("§", "&");
 	}
 
 	public boolean delete() {
@@ -224,7 +225,7 @@ public class ConfigAPI {
 		if (obj instanceof Map) {
 
 		}
-		return new StorageObject(null, false).restore(obj);
+		return StorageAPI.restore(new StorageInfo(null, null, false, false, true), obj);
 		// return StorageAPI.restoreValue(obj);
 	}
 
@@ -307,7 +308,7 @@ public class ConfigAPI {
 		if (value == null) {
 			config.set(path, null);
 		} else {
-			config.set(path, new StorageObject(value.getClass(), false).store(value));
+			config.set(path, StorageAPI.store(new StorageInfo(null, value.getClass(), false, false, true), value));
 		}
 	}
 

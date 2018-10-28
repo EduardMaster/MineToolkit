@@ -17,14 +17,14 @@ public class Warp implements Storable {
 	private Location spawn = Bukkit.getWorlds().get(0).getSpawnLocation();
 	private int delayInSeconds = 1;
 	private boolean canMoveOnDelay = true;
-	private String message = "�6Voce foi teleportado para o Warp �e$warp";
+	private String message = "§6Voce foi teleportado para o Warp §e$warp";
 	private Sounds sound = Sounds.create("ENDERMAN_TELEPORT");
 	private boolean enableGui = true;
 	private ItemStack guiIcon;
 
 	public Warp(String name) {
 		this.name = name;
-		guiIcon = Mine.newItem(Material.ENDER_PEARL, "�bTeleporte para " + name);
+		guiIcon = Mine.newItem(Material.ENDER_PEARL, "§bTeleporte para " + name);
 
 	}
 

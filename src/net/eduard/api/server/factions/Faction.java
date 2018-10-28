@@ -12,17 +12,17 @@ import org.bukkit.entity.EntityType;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.VaultAPI;
-import net.eduard.api.lib.storage.Reference;
+import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.lib.storage.Storable;
 
 public class Faction implements Storable {
-	@Reference
+	@StorageAttributes
 	private FactionManager manager;
 	private String name;
 	private String prefix;
 	private String suffix;
 	private Location base;
-	@Reference
+	@StorageAttributes
 	private FactionPlayer leader;
 	private int wins;
 	private int defeats;
@@ -33,17 +33,17 @@ public class Faction implements Storable {
 	}
 
 	private List<FactionClaim> claims = new ArrayList<>();
-	@Reference
+	@StorageAttributes
 	private List<FactionPlayer> members = new ArrayList<>();
-	@Reference
+	@StorageAttributes
 	private List<FactionPlayer> invites = new ArrayList<>();
-	@Reference
+	@StorageAttributes
 	private List<Faction> battles = new ArrayList<>();
-	@Reference
+	@StorageAttributes
 	private List<Faction> allies = new ArrayList<>();
-	@Reference
+	@StorageAttributes
 	private List<Faction> relations = new ArrayList<>();
-	@Reference
+	@StorageAttributes
 	private List<Faction> rivals = new ArrayList<>();
 
 	private Map<EntityType, Integer> spawners = new HashMap<>();

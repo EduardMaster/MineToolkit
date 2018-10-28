@@ -2,8 +2,8 @@ package net.eduard.api.server.factions;
 
 public enum FactionRel {
 
-	RIVAL("งc", true), ALLY("งa"), NEUTRAL("งf"), MEMBER("ง8"), FREE_ZONE("ง7",
-			true), PROTECTED_ZONE("ง6"), WAR_ZONE("ง4", true), WAR("งd", true), LEADER("ง6");
+	RIVAL("ยงc", true), ALLY("ยงa"), NEUTRAL("ยงf"), MEMBER("ยง8"), FREE_ZONE("ยง7",
+			true), PROTECTED_ZONE("ยง6"), WAR_ZONE("ยง4", true), WAR("ยงd", true), LEADER("ยง6");
 
 	public static FactionRel getRel(Faction fac, Faction faction) {
 		if (faction == null) {

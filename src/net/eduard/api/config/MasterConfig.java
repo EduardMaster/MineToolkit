@@ -557,7 +557,7 @@ public class MasterConfig {
 			}
 			return str.toString();
 		} else if (getCurrentChar() == NEW_LINE) {
-			// seção
+			// seÂ§Â§o
 			toNextChar();
 			if (findEnd()) {
 				return "";

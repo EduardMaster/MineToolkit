@@ -1,6 +1,5 @@
 package net.eduard.api.lib.storage;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,32 +9,18 @@ import net.eduard.api.lib.storage.references.ReferenceMap;
 
 public class StorageMap extends StorageBase {
 
+	public StorageMap(StorageInfo info) {
+		super(info);
+		this.keyType = Extra.getTypeKey(getField().getGenericType());
+		this.valueType = Extra.getTypeValue(getField().getGenericType());
+		// TODO Auto-generated constructor stub
+	}
+
 	private Class<?> keyType;
 	private Class<?> valueType;
 
-	public StorageMap(Class<?> keyType, Class<?> valueType, boolean asReference) {
-		super(Map.class, asReference);
-		this.keyType = keyType;
-		this.valueType = valueType;
-		// debug("KeyType "+keyType);
-		// debug("ValueType "+valueType);
-	}
-
-	public StorageMap(Field field, Object instance, boolean asReference) {
-		super(field, instance, Map.class, asReference);
-		this.keyType = Extra.getTypeKey(field.getGenericType());
-		this.valueType = Extra.getTypeValue(field.getGenericType());
-		// debug("KeyType "+keyType);
-		// debug("ValueType "+valueType);
-	}
-
 	public Class<?> getKeyType() {
 		return keyType;
-	}
-
-	@Override
-	public void debug(String msg) {
-		super.debug("MAP " + msg);
 	}
 
 	public void setKeyType(Class<?> keyType) {
@@ -52,8 +37,11 @@ public class StorageMap extends StorageBase {
 
 	@Override
 	public Object restore(Object data) {
-		if (data == null)
-			return null;
+		StorageObject storeKey = new StorageObject(getInfo().clone());
+		storeKey.setType(keyType);
+		StorageObject storeValue = new StorageObject(getInfo().clone());
+		storeValue.setType(valueType);
+
 		if (isReference()) {
 			if (data instanceof Map) {
 				@SuppressWarnings("unchecked")
@@ -61,10 +49,9 @@ public class StorageMap extends StorageBase {
 				Map<Object, Integer> newMap = new HashMap<>();
 				for (Entry<String, Object> entry : oldMap.entrySet()) {
 
-					newMap.put(new StorageObject(keyType, false).restore(entry.getKey()),
-							(Integer) new StorageObject(valueType, true).restore(entry.getValue()));
+					newMap.put(storeKey.restore(entry.getKey()), (Integer) storeValue.restore(entry.getValue()));
 				}
-				StorageAPI.newReference(new ReferenceMap(newMap, getField(), getInstance()));
+				StorageAPI.newReference(new ReferenceMap(newMap, newMap));
 				debug("Restoring refereced map");
 			}
 			return null;
@@ -75,8 +62,8 @@ public class StorageMap extends StorageBase {
 			Map<?, ?> map = (Map<?, ?>) data;
 			for (Entry<?, ?> entry : map.entrySet()) {
 
-				Object key = new StorageObject(keyType, isReference()).restore(entry.getKey());
-				Object value = new StorageObject(valueType, isReference()).restore(entry.getValue());
+				Object key = storeKey.restore(entry.getKey());
+				Object value = storeValue.restore(entry.getValue());
 				debug("put " + key + " " + value);
 				newMap.put(key, value);
 			}
@@ -86,17 +73,15 @@ public class StorageMap extends StorageBase {
 
 	@Override
 	public Object store(Object data) {
-
+		StorageObject storeKey = new StorageObject(getInfo().clone());
+		storeKey.setType(keyType);
+		StorageObject storeValue = new StorageObject(getInfo().clone());
+		storeValue.setType(valueType);
 		Map<String, Object> newMap = new HashMap<>();
 		Map<?, ?> map = (Map<?, ?>) data;
 		for (Entry<?, ?> entry : map.entrySet()) {
-			String key = new StorageObject(keyType, false).store(entry.getKey()).toString();
-			Object value = null;
-			if (entry.getValue() != null) {
-				value = new StorageObject(entry.getValue().getClass(), isReference()).store(entry.getValue());
-			}else {
-				value = new StorageObject(valueType, isReference()).store(entry.getValue());
-			}
+			String key = storeKey.store(entry.getKey()).toString();
+			Object value = storeValue.store(entry.getValue());
 			newMap.put(key, value);
 		}
 		return newMap;

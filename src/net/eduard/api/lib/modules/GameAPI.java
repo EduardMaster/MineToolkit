@@ -48,7 +48,7 @@ import org.bukkit.util.Vector;
 public final class GameAPI {
 	
 	/**
-	 * API relacionada a cria��o e manipula��o de Itens do Minecraft
+	 * API relacionada a cria§§o e manipula§§o de Itens do Minecraft
 	 * 
 	 * @version 1.0
 	 * @since Lib v1.0 <br> EduardAPI 5.2
@@ -67,7 +67,7 @@ public final class GameAPI {
 		public static Map<Player, ItemStack[]> INV_ITEMS = new HashMap<>();
 
 		/**
-		 * Cria um item da Cabe�a do Jogador
+		 * Cria um item da Cabe§a do Jogador
 		 * 
 		 * @param name
 		 *            Nome
@@ -76,8 +76,8 @@ public final class GameAPI {
 		 * @param amount
 		 *            Quantidade
 		 * @param lore
-		 *            Descri��o (Lista)
-		 * @return O Item da Cabe�a do jogador criada
+		 *            Descri§§o (Lista)
+		 * @return O Item da Cabe§a do jogador criada
 		 */
 		public static ItemStack newHead(String name, String owner, int amount,
 				List<String> lore) {
@@ -93,7 +93,7 @@ public final class GameAPI {
 		}
 		
 		/**
-		 * Testa se o numero passado � da coluna expecificada
+		 * Testa se o numero passado § da coluna expecificada
 		 * 
 		 * @param index
 		 *            Numero
@@ -165,7 +165,7 @@ public final class GameAPI {
 			}
 		}
 		/**
-		 * Cria um item da cabe�a do Jogador
+		 * Cria um item da cabe§a do Jogador
 		 * 
 		 * @param name
 		 * @param skull
@@ -182,7 +182,7 @@ public final class GameAPI {
 		}
 
 		/**
-		 * Modifica um Item transformando ele na Cabe�a do Jogador
+		 * Modifica um Item transformando ele na Cabe§a do Jogador
 		 * 
 		 * @param item
 		 *            Item
@@ -274,12 +274,12 @@ public final class GameAPI {
 			}
 		}
 		/**
-		 * Modifica a Descri��o do Item
+		 * Modifica a Descri§§o do Item
 		 * 
 		 * @param item
 		 *            Item
 		 * @param lore
-		 *            Descri��o
+		 *            Descri§§o
 		 * @return Item
 		 */
 		public static ItemStack setLore(ItemStack item, List<String> lore) {
@@ -340,8 +340,8 @@ public final class GameAPI {
 		}
 		/**
 		 * Remove itens se for igual a este<br>
-		 * O inv.remove(...) tamb�m remove porem remove qualquer item n�o importanto
-		 * nome, descri��o, encantamentos
+		 * O inv.remove(...) tamb§m remove porem remove qualquer item n§o importanto
+		 * nome, descri§§o, encantamentos
 		 * 
 		 * @param inventory
 		 *            Inventario
@@ -358,8 +358,8 @@ public final class GameAPI {
 		}
 		/**
 		 * Remove itens se for igual a este tipo de Material<br>
-		 * O inv.remove(...) tamb�m remove porem remove qualquer item n�o importanto
-		 * nome, descri��o, encantamentos
+		 * O inv.remove(...) tamb§m remove porem remove qualquer item n§o importanto
+		 * nome, descri§§o, encantamentos
 		 * 
 		 * @param inventory
 		 *            Inventario
@@ -372,8 +372,8 @@ public final class GameAPI {
 		}
 		/**
 		 * Remove alguns itens se for igual a este Item<br>
-		 * O inv.remove(...) tamb�m remove porem remove qualquer item n�o importanto
-		 * nome, descri��o, encantamentos
+		 * O inv.remove(...) tamb§m remove porem remove qualquer item n§o importanto
+		 * nome, descri§§o, encantamentos
 		 * 
 		 * @param inventory
 		 *            Inventario
@@ -512,11 +512,11 @@ public final class GameAPI {
 			}
 		}
 		/**
-		 * Pega o descri��o do Item
+		 * Pega o descri§§o do Item
 		 * 
 		 * @param item
 		 *            Item
-		 * @return Descri��o
+		 * @return Descri§§o
 		 */
 		public static List<String> getLore(ItemStack item) {
 			if (item != null) {
@@ -595,7 +595,7 @@ public final class GameAPI {
 		}
 
 		/**
-		 * Cria um Item da Cabe�a do Jogador
+		 * Cria um Item da Cabe§a do Jogador
 		 * 
 		 * @param name
 		 *            Nome de Jogador
@@ -640,12 +640,12 @@ public final class GameAPI {
 			return item;
 		}
 		/**
-		 * Modifica a Descri��o do Item
+		 * Modifica a Descri§§o do Item
 		 * 
 		 * @param item
 		 *            Item
 		 * @param lore
-		 *            Descri��o
+		 *            Descri§§o
 		 * @return Item
 		 */
 		public static ItemStack setLore(ItemStack item, String... lore) {
@@ -843,7 +843,7 @@ public final class GameAPI {
 		 * @param data
 		 *            MetaData
 		 * @param lore
-		 *            Descri��o
+		 *            Descri§§o
 		 * @return Item
 		 */
 		public static ItemStack newItem(Material material, String name, int amount,
@@ -867,7 +867,7 @@ public final class GameAPI {
 		 * @param data
 		 *            MetaData
 		 * @param lore
-		 *            Descri��o
+		 *            Descri§§o
 		 * @return Item
 		 */
 		@SuppressWarnings("deprecation")
@@ -896,7 +896,7 @@ public final class GameAPI {
 		 * @param data
 		 *            MetaData
 		 * @param lore
-		 *            Descri��o
+		 *            Descri§§o
 		 * @return Item
 		 */
 		@SuppressWarnings("deprecation")
@@ -954,7 +954,7 @@ public final class GameAPI {
 		 * @param data
 		 *            Data
 		 * @param lore
-		 *            Descri��o
+		 *            Descri§§o
 		 * @return Item
 		 */
 		public static ItemStack newItem(String name, Material material, int amount,

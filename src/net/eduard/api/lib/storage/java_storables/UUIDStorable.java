@@ -3,7 +3,9 @@ package net.eduard.api.lib.storage.java_storables;
 import java.util.UUID;
 
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(inline = true)
 public class UUIDStorable implements Storable {
 
 	@Override
@@ -15,11 +17,6 @@ public class UUIDStorable implements Storable {
 	@Override
 	public Object store(Object object) {
 		return object.toString();
-	}
-
-	@Override
-	public boolean saveInline() {
-		return true;
 	}
 
 }

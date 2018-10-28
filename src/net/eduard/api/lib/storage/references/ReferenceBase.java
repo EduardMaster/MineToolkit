@@ -2,10 +2,7 @@ package net.eduard.api.lib.storage.references;
 
 import java.lang.reflect.Field;
 
-import net.eduard.api.lib.storage.StorageAPI;
-
 public abstract class ReferenceBase {
-
 	private Field field;
 	private Object instance;
 	
@@ -21,12 +18,6 @@ public abstract class ReferenceBase {
 
 
 	public abstract void update();
-	
-	
-	public Object getObjectById(int id) {
-		
-		return StorageAPI.getObjectById(id);
-	}
 	
 	
 

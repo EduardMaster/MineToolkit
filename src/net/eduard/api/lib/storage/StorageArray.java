@@ -8,8 +8,11 @@ import java.util.Map;
 
 public class StorageArray extends StorageBase {
 
-	public StorageArray(Class<?> arrayType, boolean asReference) {
-		super(arrayType, asReference);
+	private Class<?> arrayType;
+
+	public StorageArray(StorageInfo info) {
+		super(info);
+		setArrayType(getType().getComponentType());
 	}
 
 	@Override
@@ -17,12 +20,16 @@ public class StorageArray extends StorageBase {
 
 		Object array = null;
 		Class<?> arrayType = getType();
+		StorageInfo clone = getInfo().clone();
+		clone.setType(arrayType);
+		StorageObject store = new StorageObject(clone);
 		if (data instanceof List) {
 			List<?> list = (List<?>) data;
 			array = Array.newInstance(arrayType, list.size());
 			int index = 0;
+
 			for (Object item : list) {
-				Array.set(array, index, new StorageObject(arrayType, isReference()).restore(item));
+				Array.set(array, index, store.restore(item));
 				index++;
 			}
 
@@ -31,34 +38,51 @@ public class StorageArray extends StorageBase {
 			array = Array.newInstance(arrayType, mapa.size());
 			int index = 0;
 			for (Object item : mapa.values()) {
-				Array.set(array, index, new StorageObject(arrayType, isReference()).restore(item));
+				Array.set(array, index, store.restore(item));
 				index++;
 			}
-		} 
+		}
 
 		return array;
 	}
 
 	@Override
 	public Object store(Object data) {
-
-		Storable store = getStore(getType());
-		String alias = getAlias(getType());
+		StorageInfo clone = getInfo().clone();
+		clone.setType(arrayType);
+		StorageObject store = new StorageObject(clone);
+//		System.out.println("Array porra "+data);
+//		Storable store = getStore(getType());
+//		String alias = getAlias(getType());
 		int arraySize = Array.getLength(data);
 		List<Object> newList = new ArrayList<>();
+//		
 		for (int index = 0; index < arraySize; index++) {
-			newList.add(new StorageObject(getType(), isReference()).store(Array.get(data, index)));
+			newList.add(store.store(Array.get(data, index)));
 		}
-		if (store != null) {
-			if (!store.saveInline()) {
+		if (store.isStorable()) {
+			if (!store.isInline()) {
 				Map<String, Object> map = new LinkedHashMap<>();
 				for (int index = 0; index < newList.size(); index++) {
-					map.put(alias + index, newList.get(index));
+					map.put(getAlias() + index, newList.get(index));
 				}
 				return map;
 			}
 		}
-		return newList;
+//		if (store != null) {
+//			if (!isInline()) {
+//				
+//			}
+//		}
+		return null;
+	}
+
+	public Class<?> getArrayType() {
+		return arrayType;
+	}
+
+	public void setArrayType(Class<?> arrayType) {
+		this.arrayType = arrayType;
 	}
 
 }

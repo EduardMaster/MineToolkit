@@ -9,7 +9,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 /**
- * API para a utiliza��o do Vault com um formato mais simples de entender <br>
+ * API para a utiliza§§o do Vault com um formato mais simples de entender <br>
  * 
  * @author Eduard
  * @version 2.0
@@ -34,7 +34,7 @@ public final class VaultAPI {
 	}
 
 	/**
-	 * Controle de permiss�es
+	 * Controle de permiss§es
 	 */
 
 	@Deprecated
@@ -51,7 +51,7 @@ public final class VaultAPI {
 	private static Chat chat = null;
 
 	/**
-	 * Pega o Controlador das Permiss�es
+	 * Pega o Controlador das Permiss§es
 	 * 
 	 * @return Controlador
 	 */
@@ -80,7 +80,7 @@ public final class VaultAPI {
 	/**
 	 * Testa se o Vault esta instalado no Servidor
 	 * 
-	 * @return Se sim ou n�o
+	 * @return Se sim ou n§o
 	 */
 	public static boolean hasVault() {
 		return Bukkit.getPluginManager().getPlugin("Vault") != null;
@@ -89,7 +89,7 @@ public final class VaultAPI {
 	/**
 	 * Testa se tem algum plugin de Economia
 	 * 
-	 * @return Se sim ou n�o
+	 * @return Se sim ou n§o
 	 */
 	public static boolean hasEconomy() {
 		return economy != null;
@@ -98,16 +98,16 @@ public final class VaultAPI {
 	/**
 	 * Testa se tem algum plugin de Chat
 	 * 
-	 * @return Se sim ou n�o
+	 * @return Se sim ou n§o
 	 */
 	public static boolean hasChat() {
 		return chat != null;
 	}
 
 	/**
-	 * Teste se tem plugin de permiss�es
+	 * Teste se tem plugin de permiss§es
 	 * 
-	 * @return Se sim ou n�o
+	 * @return Se sim ou n§o
 	 */
 	public static boolean hasPermission() {
 		return permission != null;
@@ -116,7 +116,7 @@ public final class VaultAPI {
 	/**
 	 * Tenta Ativar o Sistema de Chat
 	 * 
-	 * @return Se ativou ou n�o
+	 * @return Se ativou ou n§o
 	 */
 	private static boolean setupChat() {
 
@@ -132,7 +132,7 @@ public final class VaultAPI {
 	/**
 	 * Tenta Ativar o Sistema de Economia
 	 * 
-	 * @return Se ativou ou n�o
+	 * @return Se ativou ou n§o
 	 */
 	private static boolean setupEconomy() {
 
@@ -146,9 +146,9 @@ public final class VaultAPI {
 	}
 
 	/**
-	 * Tenta ativar o Sistema de Permiss�es
+	 * Tenta ativar o Sistema de Permiss§es
 	 * 
-	 * @return Se Ativou ou n�o
+	 * @return Se Ativou ou n§o
 	 */
 	private static boolean setupPermissions() {
 
@@ -161,7 +161,7 @@ public final class VaultAPI {
 	}
 
 	/**
-	 * For�a o ativamento do Vault
+	 * For§a o ativamento do Vault
 	 */
 	public static void setupVault() {
 
@@ -171,7 +171,7 @@ public final class VaultAPI {
 	}
 
 	/**
-	 * Se tiver o vault ele � ativado automaticamente
+	 * Se tiver o vault ele § ativado automaticamente
 	 */
 	static {
 		if (hasVault()) {

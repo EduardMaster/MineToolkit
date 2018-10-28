@@ -49,12 +49,12 @@ public class KeySystem {
 
 	private static enum PluginActivationStatus {
 
-		INVALID_KEY("�cN�o foi encontrado esta Key no Sistema."), WRONG_KEY("�cEsta key n�o bate com a do Sistema."),
-		KEY_TO_WRONG_PLUGIN("�cA key usada n�o � para este plugin."),
-		KEY_TO_WRONG_OWNER("�cA key usada n�o � para este Dono"),
-		SITE_OFFLINE("�aSite offline portanto liberado para testes.", true),
-		INVALID_IP("�cEste IP usado n�o corresponde a Key"), INVALID_PORT("�cEsta Porta n�o correponde a Key."),
-		PLUGIN_EXPIRED("�cO plugin expirou."), PLUGIN_ACTIVATED("�aPlugin ativado com sucesso.", true);
+		INVALID_KEY("§cN§o foi encontrado esta Key no Sistema."), WRONG_KEY("§cEsta key n§o bate com a do Sistema."),
+		KEY_TO_WRONG_PLUGIN("§cA key usada n§o § para este plugin."),
+		KEY_TO_WRONG_OWNER("§cA key usada n§o § para este Dono"),
+		SITE_OFFLINE("§aSite offline portanto liberado para testes.", true),
+		INVALID_IP("§cEste IP usado n§o corresponde a Key"), INVALID_PORT("§cEsta Porta n§o correponde a Key."),
+		PLUGIN_EXPIRED("§cO plugin expirou."), PLUGIN_ACTIVATED("§aPlugin ativado com sucesso.", true);
 
 		private String message;
 		private boolean active;
@@ -94,7 +94,7 @@ public class KeySystem {
 		public static void test(JavaPlugin plugin, Runnable activation) {
 
 			String pluginName = plugin.getName();
-			Bukkit.getConsoleSender().sendMessage("�aAutenticando o plugin " + pluginName);
+			Bukkit.getConsoleSender().sendMessage("§aAutenticando o plugin " + pluginName);
 			ConfigAPI config = new ConfigAPI("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
@@ -123,7 +123,7 @@ public class KeySystem {
 		public static void test(Plugin plugin, Runnable activation) {
 			String pluginName = plugin.getDescription().getName();
 			BungeeCord.getInstance().getConsole()
-					.sendMessage(new TextComponent("�aAutenticando o plugin " + pluginName));
+					.sendMessage(new TextComponent("§aAutenticando o plugin " + pluginName));
 			BungeeConfig config = new BungeeConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");

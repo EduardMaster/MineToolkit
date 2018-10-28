@@ -16,9 +16,8 @@ import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.KitAbility;
-import net.eduard.api.lib.game.Menu;
-import net.eduard.api.lib.game.MenuShop;
-import net.eduard.api.lib.game.Slot;
+import net.eduard.api.lib.menu.Menu;
+import net.eduard.api.lib.menu.Slot;
 import net.eduard.api.lib.modules.KitType;
 import net.eduard.api.lib.modules.VaultAPI;
 
@@ -29,17 +28,17 @@ public class KitManager extends EventsManager {
 //	private transient Map<Player, Menu> kitsGuis = new HashMap<>();
 //	private transient Map<Player, Menu> shopsGuis = new HashMap<>();
 	private Slot openKits = new Slot(
-			Mine.newItem(Material.CHEST, "�6�lSelecionar Kit"), 0);
+			Mine.newItem(Material.CHEST, "§6§lSelecionar Kit"), 0);
 	private Slot openShop = new Slot(
-			Mine.newItem(Material.EMERALD, "�6�lComprar Kit"), 8);
-	private MenuShop shopGui = new MenuShop("�8Loja de Kits", 6);
-	private MenuShop kitsGui = new MenuShop("�8Seus  Kits", 6);;
+			Mine.newItem(Material.EMERALD, "§6§lComprar Kit"), 8);
+	private Menu shopGui = new Menu("§8Loja de Kits", 6);
+	private Menu kitsGui = new Menu("§8Seus  Kits", 6);;
 	private Map<String, KitAbility> kits = new HashMap<>();
 	private List<ItemStack> globalItems = new ArrayList<>();
-	private ItemStack soup = Mine.newItem("�6Sopa", Material.MUSHROOM_SOUP);
+	private ItemStack soup = Mine.newItem("§6Sopa", Material.MUSHROOM_SOUP);
 	private ItemStack emptySlotItem = Mine.newItem(" ",
 			Material.STAINED_GLASS_PANE, 15);
-	private ItemStack hotBarItem = Mine.newItem("�6�lKit�f�lPvP",
+	private ItemStack hotBarItem = Mine.newItem("§6§lKit§f§lPvP",
 			Material.STAINED_GLASS_PANE, 10);
 
 	private boolean kitsEnabled = true;
@@ -48,13 +47,13 @@ public class KitManager extends EventsManager {
 	private boolean fillHotBar = true;
 	private boolean onSelectGainKit = true;
 
-	private String noneKit = "�8Nenhum";
-	private String kitsDisabled = "�cOs kits foram desabilitados!";
-	private String kitSelected = "�6Voce escolheu o Kit �e$kit";
-	private String kitGived = "�6Voce ganhou o Kit �e$kit";
-	private String kitBuyed = "��Voce comprou o Kit �e$kit";
-	private String noKitBuyed = "��Voce nao tem dinheiro para comprar o kit �e$kit";
-	private String guiShopTitle = "�cKit �4�l$kit �cseu pre�o: �a�l$price";
+	private String noneKit = "§8Nenhum";
+	private String kitsDisabled = "§cOs kits foram desabilitados!";
+	private String kitSelected = "§6Voce escolheu o Kit §e$kit";
+	private String kitGived = "§6Voce ganhou o Kit §e$kit";
+	private String kitBuyed = "§§Voce comprou o Kit §e$kit";
+	private String noKitBuyed = "§§Voce nao tem dinheiro para comprar o kit §e$kit";
+	private String guiShopTitle = "§cKit §4§l$kit §cseu pre§o: §a§l$price";
 
 	public KitManager() {
 		globalItems.add(new ItemStack(Material.STONE_SWORD));
@@ -162,7 +161,7 @@ public class KitManager extends EventsManager {
 		}
 		if (giveSoups) {
 			Mine.fill(inv, soup);
-			Mine.setEquip(player, Color.GREEN, "�4�lINSANE");
+			Mine.setEquip(player, Color.GREEN, "§4§lINSANE");
 		}
 		player.sendMessage(kitGived.replace("$kit", kit.getName()));
 	}

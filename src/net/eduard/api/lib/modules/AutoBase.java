@@ -145,7 +145,7 @@ public interface AutoBase<E> {
 	}
 
 	/**
-	 * Criar um table com a conex�o padr�o
+	 * Criar um table com a conex§o padr§o
 	 */
 	public default void createTable() {
 		createTable(connect());
@@ -208,7 +208,7 @@ public interface AutoBase<E> {
 	}
 
 	/**
-	 * Atualiza os dados do java no banco de dados usando conexao padr�o
+	 * Atualiza os dados do java no banco de dados usando conexao padr§o
 	 */
 	public default void updateTable() {
 		updateTable(connect());
@@ -382,19 +382,19 @@ public interface AutoBase<E> {
 	}
 
 	/**
-	 * Puxa os dados para mem�ria usando conex�o padr�o
+	 * Puxa os dados para mem§ria usando conex§o padr§o
 	 * 
-	 * @return Se puxou ou n�o os dados
+	 * @return Se puxou ou n§o os dados
 	 */
 	public default boolean updateCache() {
 		return updateCache(connect());
 	}
 
 	/**
-	 * Puxa os dados para mem�ria usando uma Conex�o
+	 * Puxa os dados para mem§ria usando uma Conex§o
 	 * 
-	 * @param connection Conex�o
-	 * @return Se puxou ou n�o os dados
+	 * @param connection Conex§o
+	 * @return Se puxou ou n§o os dados
 	 */
 	public default boolean updateCache(Connection connection) {
 		boolean hasUpdateCode = false;
@@ -440,7 +440,7 @@ public interface AutoBase<E> {
 	/**
 	 * Criar uma tabela
 	 * 
-	 * @param connection Conex�o
+	 * @param connection Conex§o
 	 */
 	public default void createTable(Connection connection) {
 		StringBuilder builder = new StringBuilder();

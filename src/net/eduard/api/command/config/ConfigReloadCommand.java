@@ -27,7 +27,7 @@ public class ConfigReloadCommand extends CommandManager {
 				if (args.length == 2) {
 					Config.reloadConfigs(pl);
 					Mine.chat(sender,
-							"�aRecarregando todas configura��es do Plugin "
+							"§aRecarregando todas configura§§es do Plugin "
 									+ pl.getName());
 				} else {
 

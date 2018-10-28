@@ -12,12 +12,14 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Item;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
 /**
  * Precisa arrumar
  * @author Eduard
  *
  */
+@StorageAttributes(inline=true)
 public class ItemStorable implements Storable {
 
 	/**

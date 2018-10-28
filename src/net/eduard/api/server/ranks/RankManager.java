@@ -14,7 +14,7 @@ import org.bukkit.permissions.PermissionAttachment;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.modules.VaultAPI;
-import net.eduard.api.lib.storage.Reference;
+import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.lib.storage.Storable;
 
 /**
@@ -30,7 +30,7 @@ public class RankManager implements Storable {
 	private boolean perGroup = true;
 	private Map<String, Rank> ranks = new LinkedHashMap<>();
 	
-	@Reference
+	@StorageAttributes
 	private Map<OfflinePlayer, Rank> playersRanks = new HashMap<>();
 
 	public PermissionAttachment getPermissionControler(OfflinePlayer player) {

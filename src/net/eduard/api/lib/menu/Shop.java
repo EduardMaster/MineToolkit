@@ -1,4 +1,4 @@
-package net.eduard.api.lib.game;
+package net.eduard.api.lib.menu;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -9,41 +9,52 @@ import net.eduard.api.lib.manager.CurrencyManager;
 import net.eduard.api.lib.modules.ClickEffect;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.modules.VaultAPI;
-import net.eduard.api.lib.storage.Reference;
+import net.eduard.api.lib.storage.StorageAttributes;
 
-public class MenuShop extends Menu {
-	private boolean useVault = true;
-	@Reference
-	private CurrencyManager currency;
-	private String messageBoughtItem = "§aVoce adquiriu um item da Loja!";
-	private String messageWithoutBalance = "§cVoce não tem dinheiro suficiente!";
+public class Shop extends Menu {
+	public Product getProductByIcon(ItemStack icon) {
+		for (MenuButton button : getButtons()) {
+			if (button instanceof Product) {
 
-	public MenuShop() {
-		this("Menu", 1);
+				Product product = (Product) button;
+				if (product.getIcon().isSimilar(icon))
+					return product;
+			}
 
+		}
+		return null;
 	}
 
-	public MenuShop(String name, int lines) {
-		super(name, lines);
+	public Product getProduct(ItemStack item) {
+		for (MenuButton button : getButtons()) {
+			if (button instanceof Product) {
+
+				Product product = (Product) button;
+				if (product.getProduct().isSimilar(item))
+					return product;
+			}
+
+		}
+		return null;
+	}
+
+	public Shop() {
+		this("Menu",3);
+	}
+
+	public Shop(String name, int lineAmount) {
 		setEffect(new ClickEffect() {
 
 			@Override
 			public void onClick(InventoryClickEvent event, int page) {
+
 				if (event.getWhoClicked() instanceof Player) {
 					Player player = (Player) event.getWhoClicked();
-//					int slot = event.getRawSlot();
-					ItemStack item = event.getCurrentItem();
-					if (item == null)
+					if (event.getCurrentItem() == null)
 						return;
-					MenuProduct product = getProductByIcon(item);
-					if (product == null) {
-
+					Product product = getProductByIcon(event.getCurrentItem());
+					if (product == null)
 						return;
-					}
-					if (product.isCategory()) {
-
-						return;
-					}
 					double price = product.getPrice();
 
 					if (useVault && VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
@@ -65,63 +76,28 @@ public class MenuShop extends Menu {
 						}
 					} else
 						return;
-					if (product.getItem()== null)return;
+					if (product.getProduct() == null)
+						return;
 					player.sendMessage(messageBoughtItem);
 					if (Mine.isFull(player.getInventory())) {
-						player.getWorld().dropItemNaturally(player.getLocation().add(0, 5, 0), product.getItem());
+						player.getWorld().dropItemNaturally(player.getLocation().add(0, 5, 0), product.getProduct());
 					} else {
-						player.getInventory().addItem(product.getItem());
+						player.getInventory().addItem(product.getProduct());
 					}
-
 				}
+
 			}
+
 		});
 
+		// TODO Auto-generated constructor stub
 	}
 
-	public MenuProduct getProductByIcon(ItemStack icon) {
-		for (MenuButton button : getButtons()) {
-			if (button instanceof MenuProduct) {
-				MenuProduct product = (MenuProduct) button;
-				if (product.getIcon().equals(icon))
-					return product;
-			}
-		}
-		return null;
-	}
-
-	public MenuProduct getProductByItem(ItemStack item) {
-		for (MenuButton button : getButtons()) {
-			if (button instanceof MenuProduct) {
-				MenuProduct product = (MenuProduct) button;
-				if (product.getItem().isSimilar(item))
-					return product;
-			}
-
-		}
-		return null;
-	}
-
-	public MenuProduct getProduct(String name) {
-		for (MenuButton button : getButtons()) {
-			if (button instanceof MenuProduct) {
-				MenuProduct product = (MenuProduct) button;
-				if (product.getName().equalsIgnoreCase(name))
-					return product;
-			}
-
-		}
-		return null;
-	}
-
-	public void addProduct(MenuProduct product) {
-		addButton(product.getPage(), product);
-
-	}
-
-	public void removeProduct(MenuProduct product) {
-		removeButton(product);
-	}
+	private boolean useVault = true;
+	@StorageAttributes(reference=true)
+	private CurrencyManager currency;
+	private String messageBoughtItem = "§aVoce adquiriu um item da Loja!";
+	private String messageWithoutBalance = "§cVoce não tem dinheiro suficiente!";
 
 	public String getMessageBoughtItem() {
 		return messageBoughtItem;
@@ -152,15 +128,17 @@ public class MenuShop extends Menu {
 	}
 
 	public void setCurrency(CurrencyManager currency) {
-		if (currency == null)return;
+		if (currency == null)
+			return;
 		this.useVault = false;
 		this.currency = currency;
 		for (MenuButton button : getButtons()) {
-			if (button.isCategory()) {
-				button.getShop().setCurrency(currency);
+			if (button.getMenu() instanceof Shop) {
+				Shop shop = (Shop) button.getMenu();
+				shop.setCurrency(currency);
+
 			}
-			
+
 		}
 	}
-
 }

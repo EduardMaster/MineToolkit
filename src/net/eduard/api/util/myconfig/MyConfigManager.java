@@ -116,7 +116,7 @@ public class MyConfigManager {
 	}
 
 	/**
-	 * Transforma os comanentarios # em seções
+	 * Transforma os comanentarios # em seÂ§Â§es
 	 * 
 	 * @param file
 	 * @return

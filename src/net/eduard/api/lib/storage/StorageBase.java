@@ -2,73 +2,118 @@ package net.eduard.api.lib.storage;
 
 import java.lang.reflect.Field;
 
+import net.eduard.api.lib.Mine;
+
 public abstract class StorageBase {
-	private static boolean debug = true;
-	private Class<?> type;
-	private boolean reference;
-	private Field field;
-	private Object instance;
-	public StorageBase(Field field,Object instance,Class<?> type, boolean asReference) {
-		this(type, asReference);
-		setField(field);
-		setInstance(instance);
-	}
-	public void debug(String msg) {
-		if (debug)
-			System.out.println("[Storage] " + msg);
+
+	private StorageInfo info;
+
+	public StorageBase(StorageInfo info) {
+		setInfo(info);
 	}
 
-	public static void setDebug(boolean debug) {
-		StorageBase.debug = debug;
-	}
-	public StorageBase(Class<?> type, boolean asReference) {
-		super();
-		this.type = type;
-		this.reference = asReference;
-		
+	public static void debug(String msg) {
+		StorageAPI.debug(msg);
 	}
 
-	public Class<?> getType() {
-		return type;
+	public void update(Field field, Class<?> claz) {
+		Storable store = StorageAPI.getStore(claz);
+		setReference(false);
+		setInline(false);
+		setIndentifiable(false);
+		if (store != null) {
+			claz = store.getClass();
+		}
+		if (claz.isAnnotationPresent(StorageAttributes.class)) {
+			StorageAttributes atr = claz.getAnnotation(StorageAttributes.class);
+			setReference(atr.reference());
+			setInline(atr.inline());
+			setIndentifiable(atr.indentificate());
+//			Mine.console("§dClasse " + atr+ " §a"+claz);
+		}
+		if (field.isAnnotationPresent(StorageAttributes.class)) {
+			StorageAttributes atr = field.getAnnotation(StorageAttributes.class);
+			setReference(atr.reference());
+			setInline(atr.inline());
+			setIndentifiable(atr.indentificate());
+//			Mine.console("§eField " + atr);
+		}
 	}
 
 	public Storable getStore(Class<?> claz) {
 		return StorageAPI.getStore(claz);
 	}
 
+	public Storable getStore() {
+		return StorageAPI.getStore(getType());
+	}
+
 	public String getAlias(Class<?> claz) {
 		return StorageAPI.getAlias(claz);
 	}
 
-	public void setType(Class<?> type) {
-		this.type = type;
+	public String getAlias() {
+		return getAlias(getType());
 	}
 
 	public abstract Object restore(Object data);
 
 	public abstract Object store(Object data);
 
+	public boolean isStorable() {
+		return getStore() != null;
+	}
+
+	public StorageInfo getInfo() {
+		return info;
+	}
+
+	public void setInfo(StorageInfo info) {
+		this.info = info;
+	}
+
+	public Class<?> getType() {
+		return info.getType();
+	}
+
+	public void setType(Class<?> type) {
+		info.setType(type);
+	}
+
 	public boolean isReference() {
-		return reference;
+		return info.isReference();
 	}
 
 	public void setReference(boolean reference) {
-		this.reference = reference;
-	}
-
-	public Object getInstance() {
-		return instance;
-	}
-
-	public void setInstance(Object instance) {
-		this.instance = instance;
+		info.setReference(reference);
 	}
 
 	public Field getField() {
-		return field;
+		return info.getField();
 	}
 
 	public void setField(Field field) {
-		this.field = field;
+		info.setField(field);
 	}
+
+	public boolean isInline() {
+		return info.isInline();
+	}
+
+	public void setInline(boolean inline) {
+		info.setInline(inline);
+	}
+
+	public boolean isIndentifiable() {
+		return info.isIndentifiable();
+	}
+
+	public void setIndentifiable(boolean indentifiable) {
+		info.setIndentifiable(indentifiable);
+	}
+
+	public boolean equals(Object obj) {
+		return info.equals(obj);
+	}
+
 }

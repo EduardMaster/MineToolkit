@@ -9,9 +9,9 @@ import org.bukkit.scheduler.BukkitTask;
 import net.eduard.api.lib.Mine;
 
 /**
- * Controlador de Tempo, classe que controla e ajuda na cria��o de
+ * Controlador de Tempo, classe que controla e ajuda na cria§§o de
  * temporarizador (Timer)<br>
- * , de atrasador (Delayer) que s�o Tarefa de Tempo (Task ou BukkitTask)
+ * , de atrasador (Delayer) que s§o Tarefa de Tempo (Task ou BukkitTask)
  * 
  * @author Eduard-PC
  *
@@ -41,7 +41,7 @@ public class TimeManager extends EventsManager implements Runnable {
 	private long time = 20;
 
 	/**
-	 * Tempo anterior para fazer a compara��o
+	 * Tempo anterior para fazer a compara§§o
 	 */
 	private long startTime;
 

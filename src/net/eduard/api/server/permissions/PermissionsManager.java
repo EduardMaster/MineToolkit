@@ -7,7 +7,7 @@ import java.util.UUID;
 import net.eduard.api.lib.storage.Storable;
 
 /**
- * Controlador de Permissões e Grupos dos Jogadores
+ * Controlador de PermissÂ§es e Grupos dos Jogadores
  * @author Eduard-PC
  *
  */

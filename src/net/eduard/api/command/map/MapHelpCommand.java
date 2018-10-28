@@ -12,10 +12,10 @@ public class MapHelpCommand extends CommandManager {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		sender.sendMessage("§a/map §2help");
-		sender.sendMessage("§a/map §f<pos1|pos2>");
-		sender.sendMessage("§a/map §3<copy|paste>");
-		sender.sendMessage("§a/map §b<save|load> §3<name>");
+		sender.sendMessage("Â§a/map Â§2help");
+		sender.sendMessage("Â§a/map Â§f<pos1|pos2>");
+		sender.sendMessage("Â§a/map Â§3<copy|paste>");
+		sender.sendMessage("Â§a/map Â§b<save|load> Â§3<name>");
 		return true;
 	}
 }

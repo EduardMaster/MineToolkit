@@ -120,9 +120,6 @@ public void generateSchematic(World world, Location loc, Schematic schematic, Ar
       }
     }
 
-    Bukkit.getConsoleSender().sendMessage("");
-
-    Bukkit.getConsoleSender().sendMessage("");
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})

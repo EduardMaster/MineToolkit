@@ -10,7 +10,8 @@ import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.storage.Storable;
-
+import net.eduard.api.lib.storage.StorageAttributes;
+@StorageAttributes(inline=true)
 public class Item implements Storable {
 
 	private int id;
@@ -38,10 +39,6 @@ public class Item implements Storable {
 		return item;
 	}
 
-	@Override
-	public boolean saveInline() {
-		return true;
-	}
 
 	public int getId() {
 		return id;

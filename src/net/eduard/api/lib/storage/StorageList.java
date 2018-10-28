@@ -1,6 +1,5 @@
 package net.eduard.api.lib.storage;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,51 +9,77 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceList;
 
 public class StorageList extends StorageBase {
-
 	private Class<?> listType;
 
-	public StorageList(Class<?> listType, boolean asReference) {
-		super(null, null, List.class, asReference);
-		setListType(listType);
-	}
-
-	public StorageList(Field field, Object instance, boolean asReference) {
-		super(field, instance, List.class, asReference);
-		setListType(Extra.getTypeKey(field.getGenericType()));
+	public StorageList(StorageInfo info) {
+		super(info);
+		if (getField() != null)
+			setListType(Extra.getTypeKey(getField().getGenericType()));
+		else
+			setListType(String.class);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public Object restore(Object data) {
-
-		if (data == null)
-			return null;
-
+		StorageObject storage = new StorageObject(getInfo().clone());
+		storage.setType(listType);
+		storage.update(getField(), getListType());
+		debug(">> LIST RESTORATION");
 		if (isReference()) {
 			if (data instanceof List) {
 				List<?> oldList = (List<?>) data;
 				List<Integer> newList = new ArrayList<>();
 				for (Object item : oldList) {
-					newList.add((Integer) new StorageObject(getListType(), true).restore(item));
+					newList.add((Integer) storage.restore(item));
 				}
-				StorageAPI.newReference(new ReferenceList(newList, getField(), getInstance()));
-				debug("Restoring refereced list");
+				List<Object> list = new ArrayList<>();
+				StorageAPI.newReference(new ReferenceList(newList, list));
+				return list;
 			}
 			return null;
 
 		}
-
+//
 		List<Object> newList = new ArrayList<>();
 		if (data instanceof List) {
-			List<?> list = (List<?>) data;
-			for (Object item : list) {
-				newList.add(new StorageObject(listType, isReference()).restore(item));
+			List<?> listOld = (List<?>) data;
+			for (Object item : listOld) {
+				newList.add(storage.restore(item));
 			}
 		} else if (data instanceof Map) {
-			Map<?, ?> _map = (Map<?, ?>) data;
-			for (Object item : _map.values()) {
-				newList.add(new StorageObject(listType, isReference()).restore(item));
+			Map<?, ?> mapOld = (Map<?, ?>) data;
+			for (Object item : mapOld.values()) {
+				Object objeto = storage.restore(item);
+				newList.add(objeto);
+//				System.out.println("Restaurando lista "+objeto);
 			}
 
+		}
+		return newList;
+
+	}
+
+	@Override
+	public Object store(Object data) {
+		StorageObject storage = new StorageObject(getInfo().clone());
+		storage.setType(listType);
+		storage.update(getField(), getListType());
+		debug("<< LIST STORATION");
+		List<Object> newList = new ArrayList<>();
+		List<?> list = (List<?>) data;
+		for (Object item : list) {
+			newList.add(storage.store(item));
+
+		}
+		if (getStore(getListType()) != null) {
+			if (!isInline() && !isReference()) {
+				Map<String, Object> map = new LinkedHashMap<>();
+				for (int index = 1; index <= newList.size(); index++) {
+					map.put("" + index, newList.get(index - 1));
+				}
+				return map;
+			}
 		}
 		return newList;
 
@@ -67,31 +92,4 @@ public class StorageList extends StorageBase {
 	public void setListType(Class<?> listType) {
 		this.listType = listType;
 	}
-
-	@Override
-	public Object store(Object data) {
-		List<Object> newList = new ArrayList<>();
-		List<?> list = (List<?>) data;
-		Storable store = getStore(listType);
-		for (Object item : list) {
-			if (item != null) {
-				listType = item.getClass();
-			}
-			newList.add(new StorageObject(listType, isReference()).store(item));
-		
-		}
-		if (store != null) {
-			// String alias = getAlias(listType);
-			if (!store.saveInline() && !isReference()) {
-				Map<String, Object> map = new LinkedHashMap<>();
-				for (int index = 1; index <= newList.size(); index++) {
-					map.put("" + index, newList.get(index-1));
-				}
-				return map;
-			}
-		}
-		return newList;
-
-	}
-
 }

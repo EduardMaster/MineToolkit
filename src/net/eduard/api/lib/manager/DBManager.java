@@ -19,7 +19,7 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 /**
- * API de Controle de MySQL ou SQLite com apenas 1 conex�o
+ * API de Controle de MySQL ou SQLite com apenas 1 conex§o
  * 
  * @author Eduard-PC
  *
@@ -79,7 +79,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Fecha a conec��o do Banco
+	 * Fecha a conec§§o do Banco
 	 */
 	public void closeConnection() {
 		if (hasConnection()) {
@@ -93,7 +93,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Cria uma connec��o com a Database
+	 * Cria uma connec§§o com a Database
 	 * 
 	 * @return
 	 * @throws Exception
@@ -103,7 +103,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Cria uma conne��o com o Driver
+	 * Cria uma conne§§o com o Driver
 	 * 
 	 * @return
 	 * @throws Exception
@@ -126,7 +126,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Abre a cone��o com o banco de dados caso n�o exista ainda
+	 * Abre a cone§§o com o banco de dados caso n§o exista ainda
 	 * 
 	 * @return Mesma instacia da classe DBManager
 	 */
@@ -149,18 +149,18 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Ve se a conec��o n�o esta nula
+	 * Ve se a conec§§o n§o esta nula
 	 * 
-	 * @return Se a cone��o existe
+	 * @return Se a cone§§o existe
 	 */
 	public boolean hasConnection() {
 		return connection != null;
 	}
 
 	/**
-	 * Volta a conec��o da variavel
+	 * Volta a conec§§o da variavel
 	 * 
-	 * @return Conec��o atual
+	 * @return Conec§§o atual
 	 */
 	public Connection getConnection() {
 		return connection;
@@ -294,7 +294,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Adiciona no Come�o da tabela uma coluna
+	 * Adiciona no Come§o da tabela uma coluna
 	 * 
 	 * @param table          Tabela
 	 * @param columnComplete Coluna
@@ -330,7 +330,7 @@ public class DBManager implements Storable, Copyable {
 	 * 
 	 * @param table        Tabela
 	 * @param column       Coluna
-	 * @param modification Modifica��o
+	 * @param modification Modifica§§o
 	 */
 	public void modify(String table, String column, String modification) {
 		alter(table, "modify column " + column + " " + modification);
@@ -362,7 +362,7 @@ public class DBManager implements Storable, Copyable {
 	 * 
 	 * @param table  Tabela
 	 * @param where  Como
-	 * @param edit   Modifica��o
+	 * @param edit   Modifica§§o
 	 * @param values Valores
 	 */
 	public void change(String table, String edit, String where, Object... values) {
@@ -416,7 +416,7 @@ public class DBManager implements Storable, Copyable {
 	 * 
 	 * @param query     Query
 	 * @param replacers Objetos
-	 * @return Se tem ou n�o registro com esta Query
+	 * @return Se tem ou n§o registro com esta Query
 	 */
 	public boolean contains(String query, Object... replacers) {
 		boolean has = false;
@@ -434,7 +434,7 @@ public class DBManager implements Storable, Copyable {
 	}
 
 	/**
-	 * Executa uma Atualiza��o com um Query
+	 * Executa uma Atualiza§§o com um Query
 	 * 
 	 * @param query     Query Pesquisa
 	 * @param replacers Objetos

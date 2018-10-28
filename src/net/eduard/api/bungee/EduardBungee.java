@@ -100,7 +100,7 @@ public class EduardBungee extends Plugin implements Listener {
 			}
 
 		} else {
-			BungeeCord.getInstance().getConsole().sendMessage(new TextComponent("�cFalha ao conectar com a Database"));
+			BungeeCord.getInstance().getConsole().sendMessage(new TextComponent("§cFalha ao conectar com a Database"));
 		}
 		for (ServerInfo server : BungeeCord.getInstance().getServers().values()) {
 			config.add("servers." + server.getName() + ".enabled", true);
@@ -135,7 +135,7 @@ public class EduardBungee extends Plugin implements Listener {
 		@Override
 		public void execute(CommandSender sender, String[] args) {
 			EduardBungee.getInstance().getConfig().reloadConfig();
-			sender.sendMessage(new TextComponent("�aToda configuracao foi recarregada!"));
+			sender.sendMessage(new TextComponent("§aToda configuracao foi recarregada!"));
 			EduardBungee.getInstance().reload();
 		}
 
@@ -157,19 +157,19 @@ public class EduardBungee extends Plugin implements Listener {
 	@EventHandler
 	public void onJoin(PreLoginEvent e) {
 		// PendingConnection p = e.getConnection();
-		// info("�aPreLoginEvent", p);
+		// info("§aPreLoginEvent", p);
 	}
 
 	@EventHandler
 	public void onJoin(LoginEvent e) {
 		// PendingConnection p = e.getConnection();
-		// info("�aLoginEvent", p);
+		// info("§aLoginEvent", p);
 	}
 
 	@EventHandler
 	public void onJoin(PostLoginEvent e) {
 		ProxiedPlayer player = e.getPlayer();
-		// info("�aPostLoginEvent", player.getPendingConnection());
+		// info("§aPostLoginEvent", player.getPendingConnection());
 		if (bungeeManager.hasConnection()) {
 			if (!bungeeManager.playersContains(player.getName())) {
 				bungeeManager.insert("players", player.getName(), player.getUniqueId(), "");
@@ -211,7 +211,7 @@ public class EduardBungee extends Plugin implements Listener {
 	}
 
 	/**
-	 * � possivel alterar o sistema de permiss�o do bungee
+	 * § possivel alterar o sistema de permiss§o do bungee
 	 * 
 	 * @param e
 	 */

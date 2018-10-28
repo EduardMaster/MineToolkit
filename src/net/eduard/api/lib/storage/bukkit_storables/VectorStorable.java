@@ -18,18 +18,4 @@ public class VectorStorable implements Storable {
 
 	}
 
-	@Override
-	public boolean saveInline() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-	@Override
-	public Class<?> type() {
-		return Vector.class;
-	}
-
-	@Override
-	public String alias() {
-		return "Vector";
-	}
 }

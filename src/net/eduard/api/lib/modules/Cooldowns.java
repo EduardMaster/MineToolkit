@@ -68,7 +68,7 @@ public abstract class Cooldowns {
 	public abstract void onLeftCooldown(Player player);
 
 	/**
-	 * Metodo abstrato para oque vai acontecer quando come�ar o Cooldown
+	 * Metodo abstrato para oque vai acontecer quando come§ar o Cooldown
 	 * 
 	 * @param player
 	 *            Jogador

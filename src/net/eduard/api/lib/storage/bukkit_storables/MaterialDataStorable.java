@@ -5,9 +5,16 @@ import org.bukkit.material.MaterialData;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(inline=true)
 public class MaterialDataStorable implements Storable {
 
+	@Override
+	public Object newInstance() {
+
+		return new MaterialData(Material.STONE);
+	}
 	@SuppressWarnings("deprecation")
 	@Override
 	public Object store(Object object) {
@@ -35,9 +42,4 @@ public class MaterialDataStorable implements Storable {
 		return null;
 	}
 
-	@Override
-	public boolean saveInline() {
-		// TODO Auto-generated method stub
-		return true;
-	}
 }

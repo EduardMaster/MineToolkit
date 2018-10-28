@@ -6,16 +6,13 @@ import org.bukkit.OfflinePlayer;
 
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
-
+import net.eduard.api.lib.storage.StorageAttributes;
+@StorageAttributes(inline=true)
 public class OfflinePlayerStorable implements Storable {
 	
 	@Override
 	public Object newInstance() {
 		return new FakePlayer();
-	}
-	
-	public boolean saveInline() {
-		return true;
 	}
 
 	@Override

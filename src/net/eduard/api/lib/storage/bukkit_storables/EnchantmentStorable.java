@@ -7,10 +7,6 @@ import net.eduard.api.lib.storage.Storable;
 
 public class EnchantmentStorable implements Storable{
 
-		@Override
-		public boolean saveInline() {
-			return true;
-		}
 
 		@SuppressWarnings("deprecation")
 		@Override

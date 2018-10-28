@@ -18,7 +18,7 @@ import net.eduard.api.lib.Mine;
  */
 public class FallManager extends EventsManager {
 	/**
-	 * Lista de jogador que nao v�o levar dano de queda
+	 * Lista de jogador que nao v§o levar dano de queda
 	 */
 	private List<Player> players = new ArrayList<>();
 
@@ -38,7 +38,7 @@ public class FallManager extends EventsManager {
 		}
 	}
 	/**
-	 * Manipulador de evento, que quando o jogador estiver no ch�o e n�o estiver caindo remove da lista
+	 * Manipulador de evento, que quando o jogador estiver no ch§o e n§o estiver caindo remove da lista
 	 * @param event Jogador anda evento
 	 */
 	@EventHandler

@@ -17,17 +17,17 @@ public class MapSaveCommand extends CommandManager {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length == 1) {
-			sender.sendMessage("�c/map save <name>");
+			sender.sendMessage("§c/map save <name>");
 		} else {
 
 			if (Mine.onlyPlayer(sender)) {
 				Player p = (Player) sender;
 				if (!Mine.MAPS_CACHE.containsKey(p)) {
-					p.sendMessage("�bEduardAPI �2Primeiro copie um Mapa:�a /e copy");
+					p.sendMessage("§bEduardAPI §2Primeiro copie um Mapa:§a /e copy");
 					return true;
 				}
 				Mine.MAPS.put(args[1].toLowerCase(), Mine.MAPS_CACHE.get(p));
-				p.sendMessage("�bEduardAPI �6Mapa salvado com sucesso!");
+				p.sendMessage("§bEduardAPI §6Mapa salvado com sucesso!");
 			}
 		}
 		return true;

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.storage.Reference;
+import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.lib.storage.Storable;
 
 /**
@@ -19,9 +19,9 @@ import net.eduard.api.lib.storage.Storable;
  */
 public class MinigameRoom implements Storable {
 
-	@Reference
+	@StorageAttributes
 	private Minigame minigame;
-	@Reference
+	@StorageAttributes
 	private MinigameMap map;
 	private MinigameMode mode = MinigameMode.NORMAL;
 	private int id;

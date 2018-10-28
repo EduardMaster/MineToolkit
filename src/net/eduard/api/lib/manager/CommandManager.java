@@ -15,7 +15,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.storage.Reference;
+import net.eduard.api.lib.storage.StorageAttributes;
 
 public class CommandManager extends EventsManager implements TabCompleter, CommandExecutor {
 
@@ -51,7 +51,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		}
 
 	}
-	@Reference
+	@StorageAttributes
 	private CommandManager parent;
 	protected String name;
 	private String permission;
@@ -62,7 +62,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 
 	private String usage;
 
-	private String description = "�bExemplo";
+	private String description = "§bExemplo";
 	private List<String> aliases = new ArrayList<>();
 
 	private String permissionMessage = Mine.MSG_NO_PERMISSION;
@@ -232,14 +232,14 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 
 		PluginCommand command = Bukkit.getPluginCommand(name);
 		if (command == null) {
-			Mine.console("�bCommandAPI �fO comando �a" + name
-					+ " �fnao foi registrado na plugin.yml de nenhum Plugin do Servidor");
+			Mine.console("§bCommandAPI §fO comando §a" + name
+					+ " §fnao foi registrado na plugin.yml de nenhum Plugin do Servidor");
 			return false;
 		}
 		setPlugin(command.getPlugin());
 		if (command.getUsage() != null) {
 			if (!command.getUsage().isEmpty()) {
-				usage = command.getUsage().replace("<command>", name).replace('&', '�');
+				usage = command.getUsage().replace("<command>", name).replace('&', '§');
 			}
 		}
 		if (usage == null) {
@@ -251,9 +251,9 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 			permission = autoPermission();
 		}
 		if (command.getPermissionMessage() != null) {
-			permissionMessage = command.getPermissionMessage().replace('&', '�');
+			permissionMessage = command.getPermissionMessage().replace('&', '§');
 		}
-		// alias n�o funciona para comandos apenas na plugin.yml ou subcomandos
+		// alias n§o funciona para comandos apenas na plugin.yml ou subcomandos
 		if (command.getAliases() != null) {
 			aliases = command.getAliases();
 		}
@@ -266,7 +266,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		command.setPermission(permission);
 		command.setExecutor(this);
 
-		Mine.console("�bCommandAPI �fO comando �a" + name + " �ffoi registrado para o Plugin �b"
+		Mine.console("§bCommandAPI §fO comando §a" + name + " §ffoi registrado para o Plugin §b"
 				+ command.getPlugin().getName());
 		commandsRegistred.put(name.toLowerCase(), this);
 		updateSubs();
@@ -379,7 +379,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 			if (sub.usage == null) {
 				sub.usage = sub.autoUsage();
 			}
-			Mine.console("�bCommandAPI �fO subcomando �e" + sub.name + " �ffoi registrado no comando �a" + name);
+			Mine.console("§bCommandAPI §fO subcomando §e" + sub.name + " §ffoi registrado no comando §a" + name);
 			if (!sub.commands.isEmpty())
 				sub.updateSubs();
 		}

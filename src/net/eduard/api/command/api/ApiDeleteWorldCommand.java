@@ -23,7 +23,7 @@ public class ApiDeleteWorldCommand extends CommandManager {
 		if (Mine.existsWorld(sender, name)) {
 			Mine.deleteWorld(name);
 			sender.sendMessage(
-					"�bEduardAPI �aO Mundo �2" + name + "�a foi deletado com sucesso!");
+					"§bEduardAPI §aO Mundo §2" + name + "§a foi deletado com sucesso!");
 		}
 		return true;
 	}

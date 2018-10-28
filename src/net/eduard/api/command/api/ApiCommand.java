@@ -23,10 +23,10 @@ public class ApiCommand extends CommandManager {
 	}
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length == 0) {
-			sender.sendMessage("§f/"+label+" §bunloadworld §a<name>");
-			sender.sendMessage("§f/"+label+" §bloadworld §a<name>");
-			sender.sendMessage("§f/"+label+" §bdeleteworld §a<name>");
-			sender.sendMessage("§f/"+label+" §bworlds");
+			sender.sendMessage("Â§f/"+label+" Â§bunloadworld Â§a<name>");
+			sender.sendMessage("Â§f/"+label+" Â§bloadworld Â§a<name>");
+			sender.sendMessage("Â§f/"+label+" Â§bdeleteworld Â§a<name>");
+			sender.sendMessage("Â§f/"+label+" Â§bworlds");
 			sender.sendMessage("-=--=--=--=--=--=--=--=--=--=--=--=-");
 		}else {
 			super.onCommand(sender, command, label, args);

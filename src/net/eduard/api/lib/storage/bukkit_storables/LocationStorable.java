@@ -7,10 +7,6 @@ import net.eduard.api.lib.storage.Storable;
 
 public class LocationStorable implements Storable {
 
-	@Override
-	public Class<?> type() {
-		return Location.class;
-	}
 
 	@Override
 	public Object newInstance() {

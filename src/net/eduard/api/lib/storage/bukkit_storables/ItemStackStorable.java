@@ -12,17 +12,14 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
+
 public class ItemStackStorable implements Storable {
-	
+
 	@Override
 	public Object newInstance() {
 		return new ItemStack(Material.STONE);
 	}
-	@Override
-	public Class<?> type() {
-		return ItemStack.class;
-	}
-	
+
 	@Override
 	public Object restore(Map<String, Object> map) {
 		int id = Extra.toInt(map.get("id"));
@@ -61,11 +58,6 @@ public class ItemStackStorable implements Storable {
 			}
 		}
 		return item;
-	}
-
-	@Override
-	public String alias() {
-		return "Item";
 	}
 
 	@SuppressWarnings("deprecation")

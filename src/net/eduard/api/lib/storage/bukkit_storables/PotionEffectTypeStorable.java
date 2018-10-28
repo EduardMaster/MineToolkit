@@ -3,12 +3,11 @@ package net.eduard.api.lib.storage.bukkit_storables;
 import org.bukkit.potion.PotionEffectType;
 
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(inline=true)
 public class PotionEffectTypeStorable implements Storable {
 
-	public boolean saveInline() {
-		return true;
-	}
 
 	@Override
 	public Object restore(Object object) {

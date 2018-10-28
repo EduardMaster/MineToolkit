@@ -17,7 +17,7 @@ public class ApiLoadWorldCommand extends CommandManager {
 			sendUsage(sender);
 		} else {
 			Mine.loadWorld(args[1]);
-			sender.sendMessage("�aVoce carregou o mundo " + args[1]);
+			sender.sendMessage("§aVoce carregou o mundo " + args[1]);
 		}
 		return true;
 	}

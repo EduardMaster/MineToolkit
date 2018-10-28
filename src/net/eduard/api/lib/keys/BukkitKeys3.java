@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Sistema de Key avançado
+ * Sistema de Key avanÂ§ado
  * @version 2.0
  * @since EduardAPI 5.2
  * @author Eduard
@@ -24,10 +24,10 @@ public class BukkitKeys3 {
 		
 
 		Bukkit.getConsoleSender().sendMessage(
-				"§aIP SERVER = " + host + " | IP CONECAO = " + server + " | PORTA "+port);
+				"Â§aIP SERVER = " + host + " | IP CONECAO = " + server + " | PORTA "+port);
 		if (host.equals("localhost")) {
 			Bukkit.getConsoleSender()
-					.sendMessage("§aPlugin liberado para tester em localhost");
+					.sendMessage("Â§aPlugin liberado para tester em localhost");
 		} else {
 			int resultado = 0;
 			resultado = getResult(name, host, port);
@@ -35,31 +35,31 @@ public class BukkitKeys3 {
 				resultado = getResult(name, server, port);
 			}
 			if (resultado == -2) {
-				Bukkit.getConsoleSender().sendMessage("§eSistema de Keys Corrompido avise-o Eduard");
+				Bukkit.getConsoleSender().sendMessage("Â§eSistema de Keys Corrompido avise-o Eduard");
 				Bukkit.getPluginManager().disablePlugin(plugin);
 				throw new Error("Autenticacao falha");
 			}
 			else	if (resultado == -1) {
-				Bukkit.getConsoleSender().sendMessage("§eSistema de MySQL Corrompido avise-o Eduard");
+				Bukkit.getConsoleSender().sendMessage("Â§eSistema de MySQL Corrompido avise-o Eduard");
 				Bukkit.getPluginManager().disablePlugin(plugin);
 				throw new Error("MySQL falha");
 			}
 			else if (resultado == 0) {
 				Bukkit.getConsoleSender().sendMessage(
-						"§cVoce nao comprou este Plugin: Entre em contato com Eduard!");
+						"Â§cVoce nao comprou este Plugin: Entre em contato com Eduard!");
 				Bukkit.getPluginManager().disablePlugin(plugin);
 				throw new Error("Plugin invalido");
 			} else if (resultado == 1) {
 				Bukkit.getConsoleSender()
-						.sendMessage("§aPlugin ativado com sucesso!");
+						.sendMessage("Â§aPlugin ativado com sucesso!");
 			} else if (resultado == 2) {
 				Bukkit.getConsoleSender().sendMessage(
-						"§aPlugin expirado entre em contato com Eduard e reative o Plugin!");
+						"Â§aPlugin expirado entre em contato com Eduard e reative o Plugin!");
 				Bukkit.getPluginManager().disablePlugin(plugin);
 				throw new Error("Plugin expirado");
 			} else if (resultado == 100) {
 				Bukkit.getConsoleSender().sendMessage(
-						"§aPlugin sendo testado no Servidor do Eduard");
+						"Â§aPlugin sendo testado no Servidor do Eduard");
 			}
 		}
 	}

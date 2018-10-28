@@ -14,13 +14,13 @@ public class ConfigHelpCommand extends CommandManager {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
-		sender.sendMessage("§6§l                  AJUDA");
+		sender.sendMessage("Â§6Â§l                  AJUDA");
 		sender.sendMessage(" ");
 		sender.sendMessage(
-				"§b/" + label + " reload [plugin|all] [config-name]");
-		sender.sendMessage("  §aRecarrega a configuração dos Plugins");
-		sender.sendMessage("§b/" + label + " save [plugin|all] [config-name]");
-		sender.sendMessage("  §aSalva a configuração dos Plugins");
+				"Â§b/" + label + " reload [plugin|all] [config-name]");
+		sender.sendMessage("  Â§aRecarrega a configuraÂ§Â§o dos Plugins");
+		sender.sendMessage("Â§b/" + label + " save [plugin|all] [config-name]");
+		sender.sendMessage("  Â§aSalva a configuraÂ§Â§o dos Plugins");
 		return true;
 	}
 

@@ -18,20 +18,20 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 
-
 /**
- * API de controle e manipula§§o de Mundos e Localizações e Cuboids (Uma expecie
+ * API de controle e manipulaÂ§Â§o de Mundos e LocalizaÂ§Â§es e Cuboids (Uma expecie
  * de Bloco retangular)
  * 
  * @author Eduard
  * @version 1.0
- * @since Lib v1.0 <br> EduardAPI 5.2
+ * @since Lib v1.0 <br>
+ *        EduardAPI 5.2
  */
 
 public final class WorldAPI {
 
 	/**
-	 * Efeito a fazer na localiza§§o
+	 * Efeito a fazer na localizaÂ§Â§o
 	 * 
 	 * @author Eduard
 	 *
@@ -42,7 +42,7 @@ public final class WorldAPI {
 	}
 
 	/**
-	 * Ponto de dire§§o usado para fazer um RADAR
+	 * Ponto de direÂ§Â§o usado para fazer um RADAR
 	 * 
 	 * @author Eduard
 	 *
@@ -129,7 +129,7 @@ public final class WorldAPI {
 							Bukkit.getWorlds().get(0).getSpawnLocation().setDirection(p.getLocation().getDirection()));
 
 				} catch (Exception e) {
-					p.kickPlayer("§cRestarting Server!");
+					p.kickPlayer("Â§cRestarting Server!");
 				}
 			}
 
@@ -151,13 +151,24 @@ public final class WorldAPI {
 		}
 	}
 
-	public static void copyWorld(String worldName, String name) {
-		World world = Bukkit.getWorld(worldName);
-		world.save();
-		copyWorldFolder(world.getWorldFolder(), getWorldFolder(name));
-		WorldCreator copy = new WorldCreator(name);
-		copy.copy(world);
-		copy.createWorld();
+	public static World copyWorld(String fromWorld, String toWorld) {
+		unloadWorld(fromWorld);
+		unloadWorld(toWorld);
+		deleteWorld(toWorld);
+		copyWorldFolder(getWorldFolder(fromWorld), getWorldFolder(toWorld));
+		return loadWorld(toWorld);
+	}
+
+	public static void unloadWorld(String name) {
+		World world = Bukkit.getWorld(name);
+		if (world != null) {
+			World mundoPadrao = Bukkit.getWorlds().get(0);
+			for (Player p : world.getPlayers()) {
+				p.teleport(mundoPadrao.getSpawnLocation());
+			}
+
+		}
+		Bukkit.unloadWorld(name, true);
 	}
 
 	public static World loadWorld(String name) {
@@ -287,13 +298,6 @@ public final class WorldAPI {
 
 	}
 
-	public static void unloadWorld(String name) {
-		try {
-			unloadWorld(Bukkit.getWorld(name));
-		} catch (Exception ex) {
-		}
-	}
-
 	public static double distanceX(Location loc1, Location loc2) {
 		return loc1.getX() - loc2.getX();
 	}
@@ -310,12 +314,13 @@ public final class WorldAPI {
 		}
 
 	}
+
 	public static int getRandomInt(int minValue, int maxValue) {
 
-		int min = Math.min(minValue, maxValue),
-				max = Math.max(minValue, maxValue);
+		int min = Math.min(minValue, maxValue), max = Math.max(minValue, maxValue);
 		return min + new Random().nextInt(max - min + 1);
 	}
+
 	public static Location getRandomLocation(Location location, int xVar, int yVar, int zVar) {
 		int x = location.getBlockX();
 		int z = location.getBlockZ();

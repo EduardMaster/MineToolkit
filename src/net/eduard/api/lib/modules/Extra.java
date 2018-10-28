@@ -96,6 +96,23 @@ public final class Extra {
 		return (index % 9) + 1;
 	}
 	
+	public static int getIndex(int column, int line) {
+		if (line<=0) {
+			line = 1;
+		}
+		
+		if (column>9) {
+			column=9;
+		}
+		if (column<=0) {
+			column =1;
+		}
+				
+		int index = (line-1)*9;
+		return index+(column-1);
+	}
+	
+	
 	public static int getLine(int index	) {
 		return (index/9)+1;
 	}
@@ -120,7 +137,7 @@ public final class Extra {
 	/**
 	 * 
 	 * @param claz Classe
-	 * @return Se a claz � um {@link Map} (Mapa)
+	 * @return Se a claz § um {@link Map} (Mapa)
 	 * 
 	 */
 	public static boolean isMap(Class<?> claz) {
@@ -130,7 +147,7 @@ public final class Extra {
 	/**
 	 * 
 	 * @param claz Classe
-	 * @return Se a claz � uma {@link List} (Lista)
+	 * @return Se a claz § uma {@link List} (Lista)
 	 * 
 	 */
 	public static boolean isList(Class<?> claz) {
@@ -163,7 +180,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Salva um Objecto no Arquivo em forma de serializa��o Java
+	 * Salva um Objecto no Arquivo em forma de serializa§§o Java
 	 * 
 	 * @param object Objeto (Dado)
 	 * @param file   Arquivo
@@ -222,7 +239,7 @@ public final class Extra {
 	/**
 	 * Defaz o ZIP do Arquivo
 	 * 
-	 * @param zipIn    Input Stream (Cone��o de Algum Arquivo)
+	 * @param zipIn    Input Stream (Cone§§o de Algum Arquivo)
 	 * @param filePath Destino Arquivo
 	 */
 	public static void extractFile(ZipInputStream zipIn, String filePath) {
@@ -343,7 +360,7 @@ public final class Extra {
 	/**
 	 * Tenta carregar uma classe e a retorna
 	 * 
-	 * @param name Endere�o
+	 * @param name Endere§o
 	 * @return Classe carregada
 	 */
 	public static Class<?> loadClass(String name) {
@@ -465,7 +482,7 @@ public final class Extra {
 	/**
 	 * 
 	 * @param claz Classe
-	 * @return Se a claz � um {@link String} (Texto)
+	 * @return Se a claz § um {@link String} (Texto)
 	 * 
 	 */
 	public static boolean isString(Class<?> claz) {
@@ -475,7 +492,7 @@ public final class Extra {
 	/**
 	 * 
 	 * @param claz Classe
-	 * @return Se a claz � do tipo Primitivo ou Wrapper (Envolocro)
+	 * @return Se a claz § do tipo Primitivo ou Wrapper (Envolocro)
 	 * 
 	 */
 	public static boolean isWrapper(Class<?> claz) {
@@ -510,7 +527,7 @@ public final class Extra {
 	}
 
 	public static String toChatMessage(String text) {
-		return text.replace("&", "�");
+		return text.replace("&", "§");
 	}
 
 	public static List<String> toMessages(List<Object> list) {
@@ -565,7 +582,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Formata o resultado da subtra��o de *numero antigo - numero atual)
+	 * Formata o resultado da subtra§§o de *numero antigo - numero atual)
 	 * 
 	 * @param timestamp Numero Antigo
 	 * @return Texto do numero formatado
@@ -776,7 +793,7 @@ public final class Extra {
 	}
 
 	public static String toConfigMessage(String text) {
-		return text.replace("�", "&");
+		return text.replace("§", "&");
 	}
 
 	public static String toDecimal(Object number) {
@@ -1122,7 +1139,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Tipo de gera��o de Key
+	 * Tipo de gera§§o de Key
 	 * 
 	 * @author Eduard-PC
 	 *
@@ -1194,7 +1211,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Pega o Ip do Cone��o do Servidor
+	 * Pega o Ip do Cone§§o do Servidor
 	 * 
 	 * @return Ip do Servidor
 	 */
@@ -1258,7 +1275,7 @@ public final class Extra {
 	 * Seta um valor para um determinado ? de um PreparedStatement
 	 * 
 	 * @param state State
-	 * @param param Posi��o
+	 * @param param Posi§§o
 	 * @param value Valor ser setado
 	 */
 	public static void setSQLValue(PreparedStatement state, int param, Object value) {

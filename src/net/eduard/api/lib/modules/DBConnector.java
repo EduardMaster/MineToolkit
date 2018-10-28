@@ -21,6 +21,7 @@ public class DBConnector {
 		this.databasePath = pathName;
 	}
 
+	
 	public DBConnector(String userName, String password, String database) {
 		this.userName = userName;
 		this.password = password;
@@ -130,4 +131,75 @@ public class DBConnector {
 		return rs;
 	}
 
+
+	public String getUserName() {
+		return userName;
+	}
+
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+
+	public String getPassword() {
+		return password;
+	}
+
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+	public String getHost() {
+		return host;
+	}
+
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+
+	public int getPort() {
+		return port;
+	}
+
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+
+	public String getDatabase() {
+		return database;
+	}
+
+
+	public void setDatabase(String database) {
+		this.database = database;
+	}
+
+
+	public String getDatabasePath() {
+		return databasePath;
+	}
+
+
+	public void setDatabasePath(String databasePath) {
+		this.databasePath = databasePath;
+	}
+
+
+	public Connection getConnection() {
+		return connection;
+	}
+
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+
+	
 }

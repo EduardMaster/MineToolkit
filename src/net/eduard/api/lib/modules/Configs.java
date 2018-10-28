@@ -154,7 +154,7 @@ public class Configs {
 	}
 
 	/**
-	 * Salva a Config padr§o caso n§o existe a Arquivo
+	 * Salva a Config padrÂ§o caso nÂ§o existe a Arquivo
 	 */
 	public void saveDefaultConfig() {
 		if (plugin.getResource(name) != null)
@@ -163,7 +163,7 @@ public class Configs {
 	}
 
 	/**
-	 * Salva a config padr§o
+	 * Salva a config padrÂ§o
 	 */
 	public void saveResource() {
 		plugin.saveResource(name, true);
@@ -180,7 +180,7 @@ public class Configs {
 	}
 
 	/**
-	 * Salva os padr§es da Config
+	 * Salva os padrÂ§es da Config
 	 * 
 	 * @return
 	 */
@@ -255,7 +255,7 @@ public class Configs {
 	}
 
 	public static String toConfigMessage(String text) {
-		return text.replace("§", "&");
+		return text.replace("Â§", "&");
 	}
 
 	public boolean delete() {

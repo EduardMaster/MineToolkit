@@ -6,19 +6,15 @@ import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(inline=true)
 public class InventoryStorable implements Storable {
 
-	public Class<?> type() {
-		return Inventory.class;
-	}
 	public Object newInstance() {
 		return  Bukkit.createInventory(null, 6*9);
 	}
 
-	public boolean saveInline() {
-		return true;
-	}
 
 	@Override
 	public Object restore(Object object) {

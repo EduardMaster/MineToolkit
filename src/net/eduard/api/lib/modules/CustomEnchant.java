@@ -46,7 +46,7 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
 		item.addUnsafeEnchantment(this, level);
 		String romano = convertToRomano(level);
 		ItemMeta meta = item.getItemMeta();
-		String enchamentname = "ง7" + getName() + " " + romano;
+		String enchamentname = "ยง7" + getName() + " " + romano;
 		if (meta.getLore() == null) {
 
 			meta.setLore(Arrays.asList(enchamentname));

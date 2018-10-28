@@ -14,11 +14,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import jdk.nashorn.internal.ir.annotations.Reference;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.EventsManager;
+import net.eduard.api.lib.modules.Extra;
 
 public class ChatManager extends EventsManager  {
 	private String format = "(channel) (player): (color) (message)";
 	private String messageChatDisabled = "&cChat desabilitado tempariamente!";
-	private String messageChatPermission = "�cVoc� n�o tem permiss�o para falar neste Chat!";
+	private String messageChatPermission = "§cVoc§ n§o tem permiss§o para falar neste Chat!";
 	@Reference
 	private ChatChannel chatDefault; 
 	private ChatType chatType = ChatType.BUKKIT;
@@ -44,10 +45,10 @@ public class ChatManager extends EventsManager  {
 		return chatDefault;
 	}
 	public ChatManager() {
-		ChatChannel canal = new ChatChannel("local", "", "�e�l(L) ", "", "l");
+		ChatChannel canal = new ChatChannel("local", "", "§e§l(L) ", "", "l");
 		setChatDefault(canal);
 		register(canal);
-		register(new ChatChannel("global", "", "�6�l(G)", "", "g"));
+		register(new ChatChannel("global", "", "§6§l(G)", "", "g"));
 		
 	}
 	
@@ -61,7 +62,7 @@ public class ChatManager extends EventsManager  {
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		String msg = event.getMessage();
-		String cmd = Mine.getCmd(msg);
+		String cmd = Extra.getCommandName(msg);
 		for (ChatChannel channel : channels) {
 			if (Mine.startWith(cmd, "/" + channel.getName())) {
 				channel.chat(event.getPlayer(), msg.replaceFirst(cmd, ""),chatType);

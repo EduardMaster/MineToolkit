@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import net.eduard.api.lib.storage.Reference;
+import net.eduard.api.lib.storage.StorageAttributes;
 
 public class PermissionsPlayer {
 	
@@ -13,7 +13,7 @@ public class PermissionsPlayer {
 	private String playerName;
 
 	private List<String> permissions = new ArrayList<>();
-	@Reference
+	@StorageAttributes
 	private List<PermissionsGroup> groups = new ArrayList<>();
 	
 	

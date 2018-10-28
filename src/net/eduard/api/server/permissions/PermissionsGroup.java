@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.eduard.api.lib.storage.Reference;
+import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.lib.storage.Storable;
 
 public class PermissionsGroup implements  Storable {
 
 	private String name;
 	
-	@Reference
+	@StorageAttributes
 	private List<PermissionsGroup> childrens = new ArrayList<>();
 	private List<String> permissions = new ArrayList<>();
 	

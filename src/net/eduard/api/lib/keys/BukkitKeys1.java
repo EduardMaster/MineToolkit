@@ -167,7 +167,7 @@ public class BukkitKeys1 {
 	public static void main(String[] args) {
 
 		Scanner scan = new Scanner(System.in);
-		System.out.println("Escolha uma Opcção:");
+		System.out.println("Escolha uma OpcÂ§Â§o:");
 		System.out.println("1: Gerar um Ip ofuscado");
 		System.out.println("2: Gerar um Key nova");
 		
@@ -195,7 +195,7 @@ public class BukkitKeys1 {
 					venda.plugin = scanPlugin.nextLine();
 
 					Scanner scanPreco = new Scanner(System.in);
-					System.out.println("Digite Preço do Plugin");
+					System.out.println("Digite PreÂ§o do Plugin");
 					venda.price = scanPreco.nextDouble();
 
 					Scanner scanUse = new Scanner(System.in);
@@ -215,7 +215,7 @@ public class BukkitKeys1 {
 					System.out.println(venda.toString());
 					break;
 				} catch (Exception e) {
-					System.out.println("Reiniciando o Programa de criação de Keys");
+					System.out.println("Reiniciando o Programa de criaÂ§Â§o de Keys");
 				}
 
 			}
@@ -280,7 +280,7 @@ public class BukkitKeys1 {
 	}
 
 	public static void disablePlugin(JavaPlugin plugin, String error) {
-		console("§cErro: §e" + error);
+		console("Â§cErro: Â§e" + error);
 		Bukkit.getPluginManager().disablePlugin(plugin);
 		throw new Error("Desativando Plugin");
 	}
@@ -290,11 +290,11 @@ public class BukkitKeys1 {
 	}
 
 	public static void checkOnline(JavaPlugin plugin, String url) {
-		console("§aEduard Developer");
-		console("§bSite §fww.bit.ly/eduardsite");
-		console("§bCanal §fwww.bit.ly/eduardsubscribe");
-		console("§bSkype §flive:eduardkiller");
-		console("§bDiscord §fwww.bit.ly/eduardwebchat");
+		console("Â§aEduard Developer");
+		console("Â§bSite Â§fww.bit.ly/eduardsite");
+		console("Â§bCanal Â§fwww.bit.ly/eduardsubscribe");
+		console("Â§bSkype Â§flive:eduardkiller");
+		console("Â§bDiscord Â§fwww.bit.ly/eduardwebchat");
 
 		String SERVER_IP = getServerIp();
 		String BUKKIT_IP = Bukkit.getIp();
@@ -303,20 +303,20 @@ public class BukkitKeys1 {
 		// return true;
 		// }
 
-		// Bukkit.getConsoleSender().sendMessage("§aAutenticao do Plugin");
+		// Bukkit.getConsoleSender().sendMessage("Â§aAutenticao do Plugin");
 		Bukkit.getConsoleSender()
-				.sendMessage("§aHOST: §f" + BUKKIT_IP + " §aINTERNET: §f" + SERVER_IP + " §aPORTA: §f" + PORTA);
+				.sendMessage("Â§aHOST: Â§f" + BUKKIT_IP + " Â§aINTERNET: Â§f" + SERVER_IP + " Â§aPORTA: Â§f" + PORTA);
 		if (BUKKIT_IP.equals("localhost")) {
-			Bukkit.getConsoleSender().sendMessage("§aPlugin foi liberado para testes em 'localhost'");
+			Bukkit.getConsoleSender().sendMessage("Â§aPlugin foi liberado para testes em 'localhost'");
 			return;
 		}
 		List<BukkitKeys1> keys = getVendas(url);
 		if (keys == null) {
 			
-			Bukkit.getConsoleSender().sendMessage("§aVendas nao encontradas site esta indisponivel");
+			Bukkit.getConsoleSender().sendMessage("Â§aVendas nao encontradas site esta indisponivel");
 			return;
 		}
-		Bukkit.getConsoleSender().sendMessage("§aVendas encontradas: §f" + keys.size());
+		Bukkit.getConsoleSender().sendMessage("Â§aVendas encontradas: Â§f" + keys.size());
 
 		String error = "";
 		String first = error;
@@ -340,13 +340,13 @@ public class BukkitKeys1 {
 				// Bukkit.getConsoleSender().sendMessage("B " + before);
 				// Bukkit.getConsoleSender().sendMessage("N " + now);
 				boolean finish = ((before + (time * 24 * 60 * 60 * 1000)) < now);
-				Bukkit.getConsoleSender().sendMessage(" §aPlugin comprado em: §f" + new Date(before));
-				Bukkit.getConsoleSender().sendMessage(" §aTempo da compra: §f" + time + " §adias!");
+				Bukkit.getConsoleSender().sendMessage(" Â§aPlugin comprado em: Â§f" + new Date(before));
+				Bukkit.getConsoleSender().sendMessage(" Â§aTempo da compra: Â§f" + time + " Â§adias!");
 				if (finish) {
 					error += "Tempo da compra foi expirado! Renove-a!";
 					break;
 				} else {
-					Bukkit.getConsoleSender().sendMessage("§aPlugin ativado com sucesso!");
+					Bukkit.getConsoleSender().sendMessage("Â§aPlugin ativado com sucesso!");
 					return;
 				}
 

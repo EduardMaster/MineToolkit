@@ -18,7 +18,7 @@ public class ConfigSaveAllCommand extends CommandManager {
 			String label, String[] args) {
 		Config.reloadConfigs();
 		Mine.chat(sender,
-				"�aTodas configura��es de todos plugins foram salvadas!");
+				"§aTodas configura§§es de todos plugins foram salvadas!");
 		
 		return true;
 	}

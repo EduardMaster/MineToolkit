@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.storage.Reference;
+import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.util.fancyful.FancyMessage;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -23,7 +23,7 @@ import net.md_5.bungee.api.chat.TextComponent;
  *
  */
 public class ChatChannel implements Storable {
-	@Reference
+	@StorageAttributes
 	private ChatManager manager;
 	private String name;
 	private String format;

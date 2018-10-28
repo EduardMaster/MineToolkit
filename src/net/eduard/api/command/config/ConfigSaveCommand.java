@@ -27,7 +27,7 @@ public class ConfigSaveCommand extends CommandManager {
 				if (args.length == 2) {
 					Config.saveConfigs(pl);
 					Mine.chat(sender,
-							"�aSalvandos todas configura��es do Plugin "
+							"§aSalvandos todas configura§§es do Plugin "
 									+ pl.getName());
 				} else {
 

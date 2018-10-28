@@ -1,10 +1,9 @@
 package net.eduard.api.lib.storage;
 
-public class StorageEnum extends StorageBase{
-	
-	public StorageEnum(Class<?> type) {
-		super(type, false);
-		
+public class StorageEnum extends StorageBase {
+
+	public StorageEnum(StorageInfo info) {
+		super(info);
 	}
 
 	@Override
@@ -15,7 +14,7 @@ public class StorageEnum extends StorageBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 

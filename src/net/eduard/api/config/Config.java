@@ -121,7 +121,7 @@ public class Config implements Storable {
 	public void saveDefaultConfig() {
 
 		if (!file.exists()) {
-			Mine.console("�bConfigAPI �a<- DEFAULT " + file.getName());
+			Mine.console("§bConfigAPI §a<- DEFAULT " + file.getName());
 			if (saveAsUTF8) {
 				try {
 					InputStream is = Mine.getResource(plugin.getClass().getClassLoader(), name);

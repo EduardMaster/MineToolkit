@@ -1,10 +1,8 @@
 package net.eduard.api.lib.storage;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,7 +15,6 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.java_storables.TimeStampStorable;
 import net.eduard.api.lib.storage.java_storables.UUIDStorable;
 import net.eduard.api.lib.storage.references.ReferenceBase;
-import net.eduard.api.lib.storage.references.ReferenceValue;
 
 /**
  * Sistema automatico de Armazenamento em Mapas que podem ser usados em JSON,
@@ -31,178 +28,21 @@ import net.eduard.api.lib.storage.references.ReferenceValue;
  * @since Lib v1.0
  *
  */
-@SuppressWarnings("unchecked")
 public class StorageAPI {
 
-	private static boolean logging = false;
 	public static String STORE_KEY = "=";
 	public static String REFER_KEY = "@";
 	private static Map<Class<?>, Storable> storages = new LinkedHashMap<>();
+	private static Map<Class<?>, String> aliases = new LinkedHashMap<>();
 	private static Map<Integer, Object> objects = new LinkedHashMap<>();
 	private static List<ReferenceBase> references = new ArrayList<>();
 
-	public static void log(String msg) {
-		if (logging)
-			System.out.println("[StorageAPI] " + msg);
-	}
-
-	/**
-	 * 
-	 * @param object Objeto
-	 * @return Se o object implementa {@link Storable}
-	 * 
-	 */
 	public static boolean isStorable(Object object) {
 		return object instanceof Storable;
 	}
 
-	/**
-	 * 
-	 * @param claz Classe
-	 * @return Se a claz � um {@link Storable}
-	 * 
-	 */
 	public static boolean isStorable(Class<?> claz) {
 		return Storable.class.isAssignableFrom(claz);
-	}
-
-	public static String storeInline(Object obj) {
-		Class<? extends Object> c = obj.getClass();
-		StringBuilder b = new StringBuilder();
-		for (Field field : c.getDeclaredFields()) {
-			field.setAccessible(true);
-			if (Modifier.isTransient(field.getModifiers())) {
-				continue;
-			}
-			if (Modifier.isStatic(field.getModifiers()))
-				continue;
-
-			try {
-				Object fieldValue = field.get(obj);
-				if (fieldValue == null) {
-					b.append("-;");
-
-				} else {
-					if (Extra.isList(field.getType())) {
-						int index = 0;
-						for (Object object : (List<Object>) fieldValue) {
-							if (index > 0) {
-								b.append(",");
-							} else
-								index++;
-							b.append(object);
-						}
-
-					} else if (Extra.isMap(field.getType())) {
-						int index = 0;
-						for (Entry<Object, Object> entrada : ((Map<Object, Object>) fieldValue).entrySet()) {
-							if (index > 0) {
-								b.append(",");
-							} else
-								index++;
-							b.append(entrada.getKey() + "=" + entrada.getValue());
-						}
-					} else if (field.isAnnotationPresent(Reference.class)) {
-
-						b.append(getAlias(field.getType()) + REFER_KEY + getIdByObject(fieldValue));
-					} else if (isStorable(field.getType())) {
-						Storable store = getStore(field.getType());
-						if (store.saveInline()) {
-							b.append(store.store(fieldValue));
-							continue;
-						} else {
-							b.append(fieldValue);
-						}
-					} else {
-						b.append(fieldValue);
-					}
-					b.append(";");
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-		}
-		return b.toString();
-	}
-
-	public static <E> E restoreInline(String line, Class<E> type) {
-		String[] split = line.split(";");
-		E resultadoFinal = null;
-		try {
-			resultadoFinal = (E) type.newInstance();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		int index = 0;
-		for (Field field : type.getDeclaredFields()) {
-			if (Modifier.isTransient(field.getModifiers())) {
-				continue;
-			}
-			if (Modifier.isStatic(field.getModifiers()))
-				continue;
-			field.setAccessible(true);
-
-			try {
-				Object fieldFinalValue = split[index];
-
-				if (fieldFinalValue.equals("-")) {
-					fieldFinalValue = null;
-				} else if (fieldFinalValue.toString().isEmpty()) {
-
-					fieldFinalValue = new ArrayList<>();
-				}
-
-				else if (Extra.isList(field.getType())) {
-
-					Class<?> typeKey = Extra.getTypeKey(field.getGenericType());
-					String[] subSplit = fieldFinalValue.toString().split(",");
-					List<Object> list = new ArrayList<>();
-					for (String pedaco : subSplit) {
-						if (pedaco.isEmpty())
-							continue;
-						list.add(transform(pedaco, typeKey));
-					}
-					fieldFinalValue = list;
-				} else if (Extra.isMap(field.getType())) {
-
-					Class<?> typeKey = Extra.getTypeKey(field.getGenericType());
-					Class<?> typeValue = Extra.getTypeValue(field.getGenericType());
-					String[] subSplit = fieldFinalValue.toString().split(",");
-					Map<Object, Object> mapa = new HashMap<>();
-					for (String pedaco : subSplit) {
-						String[] corteNoPedaco = pedaco.split("=");
-						Object chave = transform(corteNoPedaco[0], typeKey);
-						Object value = transform(corteNoPedaco[1], typeValue);
-						mapa.put(chave, value);
-					}
-					fieldFinalValue = mapa;
-				} else if (field.isAnnotationPresent(Reference.class)) {
-//					System.out.println("[Tenso antes] "+fieldFinalValue);
-					int id = (int) new StorageObject(field.getType(), true).restore(fieldFinalValue);
-					StorageAPI.newReference(new ReferenceValue(id, field, resultadoFinal));
-//					System.out.println("[Tenso] "+id+" class "+field.getType());
-					fieldFinalValue = null;
-				} else if (Extra.getWrapper(field.getType()) != null) {
-					fieldFinalValue = transform(fieldFinalValue, Extra.getWrapper(field.getType()));
-				} else {
-					int length = index + field.getType().getDeclaredFields().length;
-					StringBuilder b = new StringBuilder();
-					while (index < length) {
-						b.append(split[index] + ";");
-						index++;
-					}
-					fieldFinalValue = restoreInline(b.toString(), field.getType());
-				}
-				field.set(resultadoFinal, fieldFinalValue);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			index++;
-		}
-
-		return resultadoFinal;
-
 	}
 
 	public static Object getObjectById(int id) {
@@ -210,7 +50,7 @@ public class StorageAPI {
 	}
 
 	private static int randomId() {
-		return new Random().nextInt(Integer.MAX_VALUE);
+		return new Random().nextInt(100000);
 	}
 
 	public static int newId() {
@@ -235,6 +75,7 @@ public class StorageAPI {
 
 	public static void newReference(ReferenceBase refer) {
 		references.add(refer);
+		debug("<<----->> REFERENCE LINKED");
 	}
 
 	public static int getIdByObject(Object object) {
@@ -244,13 +85,29 @@ public class StorageAPI {
 			}
 		}
 		int id = newId();
-		objects.put(id, object);
-		log("== " + object.getClass().getSimpleName() + "@" + id);
+//		objects.put(id, object);
+		debug("<<>>" + object.getClass().getSimpleName() + "@" + id);
 		return id;
+	}
+
+	public static Object store(StorageInfo store, Object object) {
+
+		return new StorageObject(store).store(object);
+	}
+
+	public static Object restore(StorageInfo store, Object object) {
+
+		return new StorageObject(store).restore(object);
+	}
+
+	public static void register(Class<?> claz) {
+		autoRegisterClass(claz);
 	}
 
 	public static void register(Class<?> claz, Storable storable) {
 		storages.put(claz, storable);
+		aliases.put(claz, claz.getSimpleName());
+		debug("++ CLASS " + claz.getSimpleName());
 	}
 
 	public static void registerPackage(Class<?> clazzForPackage) {
@@ -258,23 +115,32 @@ public class StorageAPI {
 	}
 
 	public static void registerPackage(Class<?> clazzPlugin, String pack) {
-		log("PACKAGE " + pack);
+		debug("<> PACKAGE " + pack);
 
 		List<Class<?>> classes = Extra.getClasses(clazzPlugin, pack);
 		for (Class<?> claz : classes) {
-			getStore(claz);
+			autoRegisterClass(claz);
 		}
 	}
 
-	public static Storable register(Class<? extends Storable> claz) {
+	public static Storable autoRegisterClass(Class<?> claz) {
 		Storable store = null;
 		try {
-			if (!Modifier.isAbstract(claz.getModifiers())) {
-				store = claz.newInstance();
+			if (Modifier.isAbstract(claz.getModifiers())) {
+				debug("== ABSTRACT CLASS " + claz.getSimpleName());
+			} else if (claz.isEnum()) {
+				debug("== ENUM CLASS " + claz.getSimpleName());
+			} else if (claz.isAnonymousClass()) {
+				debug("== ANONYMOUS CLASS " + claz.getSimpleName());
+			} else if (claz.isInterface()) {
+				debug("== INTERFACE " + claz.getSimpleName());
+			} else if (isStorable(claz)) {
+				store = (Storable) claz.newInstance();
+				register(claz, store);
 			} else {
+				debug("-- CLASS " + claz.getSimpleName());
 			}
-			log("CLASSE " + claz.getName());
-			register(claz, store);
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -282,75 +148,31 @@ public class StorageAPI {
 	}
 
 	public static void registerClasses(Class<?> claz) {
-		log("CLASSES OF " + claz.getName());
-		for (Class<?> clazz : claz.getDeclaredClasses()) {
-			try {
-				if (isStorable(clazz)) {
-					register((Class<? extends Storable>) clazz);
-				}
-
-			} catch (Exception e) {
-			}
-
+		debug("<> CLASSES " + claz.getName());
+		for (Class<?> anotherClass : claz.getDeclaredClasses()) {
+			autoRegisterClass(anotherClass);
 		}
 	}
 
-	public static void addObject(int id, Object object) {
+	public static void registerObject(int id, Object object) {
 		objects.put(id, object);
-		log("-> " + getAlias(object.getClass()) + "@" + id);
+		debug("+ OBJECT " + getAlias(object.getClass()) + "@" + id);
 	}
 
-	public static void removeObject(int id) {
+	public static void unregisterObjectById(int id) {
 		objects.remove(id);
-		log("<- " + id);
+		debug("- OBJECT @" + id);
 	}
 
-	public static void removeObject(Object object) {
+	public static void unregisterObject(Object object) {
 		objects.remove(object);
-		log("<- " + getAlias(object.getClass()));
+		debug("- OBJECT " + getAlias(object.getClass()));
 	}
 
-	public static void disolveObject(Object object) {
-		if (!isStorable(object)) {
-			return;
-		}
-//		if (object.getClass().isPrimitive())
-//			return;
-//		if (object.getClass() == String.class)
-//			return;
-//		if (Extra.isWrapper(object.getClass()))
-//			return;
-//		if (Extra.isList(object.getClass()))
-//			return;
-//		if (Extra.isMap(object.getClass()))
-//			return;
-		objects.remove(object);
-		for (Field field : object.getClass().getDeclaredFields()) {
-			try {
-				field.setAccessible(true);
-				Object fieldValue = field.get(object);
-				if (fieldValue != null) {
-					for (Entry<Integer, Object> entry : objects.entrySet()) {
-						if (entry.getValue().equals(fieldValue)) {
-							disolveObject(fieldValue);
-							break;
-						}
-					}
-
-				}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public static void unregister(Class<?> claz) {
+	public static void unregisterStorable(Class<?> claz) {
 		storages.remove(claz);
-		log("<- " + claz.getName());
+		debug("- CLASS " + claz.getName());
+
 	}
 
 	public static Object transform(Object object, Class<?> type) throws Exception {
@@ -367,18 +189,10 @@ public class StorageAPI {
 			return null;
 		Storable store = storages.get(claz);
 		if (store == null) {
-			for (Entry<Class<?>, Storable> loop : storages.entrySet()) {
-				if (loop.getKey().isAssignableFrom(claz)) {
-					store = loop.getValue();
+			for (Entry<Class<?>, Storable> entry : storages.entrySet()) {
+				if (entry.getKey().isAssignableFrom(claz)) {
+					store = entry.getValue();
 				}
-				if (claz.isAssignableFrom(loop.getKey())) {
-					store = loop.getValue();
-				}
-			}
-		}
-		if (store == null) {
-			if (isStorable(claz) && !claz.isAnonymousClass()) {
-				register((Class<? extends Storable>) claz);
 			}
 		}
 		return store;
@@ -386,26 +200,26 @@ public class StorageAPI {
 	}
 
 	public static String getAlias(Class<?> claz) {
-		if (claz == null) {
-			return "Empty";
+		for (Entry<Class<?>, String> entry : aliases.entrySet()) {
+			if (entry.getKey().equals(claz)) {
+				return entry.getValue();
+			}
 		}
-		Storable store = getStore(claz);
-		if (store != null) {
-			return store.alias();
+		for (Entry<Class<?>, String> entry : aliases.entrySet()) {
+			if (entry.getKey().isAssignableFrom(claz)) {
+				return entry.getValue();
+			}
+			if (claz.isAssignableFrom(entry.getKey())) {
+				return entry.getValue();
+			}
 		}
 		return claz.getSimpleName();
 
 	}
 
 	public static Class<?> getClassByAlias(String alias) {
-		if (alias == null)
-			return null;
-		for (Entry<Class<?>, Storable> entry : storages.entrySet()) {
-			if (entry.getValue() == null) {
-				System.out.println(entry.getKey());
-				continue;
-			}
-			if (alias.equals(entry.getValue().alias())) {
+		for (Entry<Class<?>, String> entry : aliases.entrySet()) {
+			if (entry.getValue().equals(alias)) {
 				return entry.getKey();
 			}
 		}
@@ -416,9 +230,29 @@ public class StorageAPI {
 		return storages.containsKey(claz);
 	}
 
+	public static Map<Class<?>, String> getAliases() {
+		return aliases;
+	}
+
+	public static void setAliases(Map<Class<?>, String> aliases) {
+		StorageAPI.aliases = aliases;
+	}
+
+//	public static Map<UUID, Object> getDatabase() {
+//		return database;
+//	}
+//
+//	public static void setDatabase(Map<UUID, Object> database) {
+//		StorageAPI.database = database;
+//	}
+
 	static {
 		StorageAPI.register(UUID.class, new UUIDStorable());
 		StorageAPI.register(Timestamp.class, new TimeStampStorable());
+	}
+
+	public static void debug(String msg) {
+		System.out.println("[Storage] " + msg);
 	}
 
 }

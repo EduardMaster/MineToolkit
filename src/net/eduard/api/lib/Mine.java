@@ -1012,26 +1012,8 @@ public final class Mine {
 		return lista;
 	}
 
-	public static String getCmd(String message) {
-		return Extra.getCommandName(message);
-	}
 
-	/**
-	 * Descobre qual é a coluna baseada no numero
-	 * 
-	 * @param index Numero
-	 * @return A coluna
-	 */
-	public static int getColumn(int index) {
-		if (index < 9) {
-			return index + 1;
-		}
-		return (index % 9) + 1;
-	}
-	
-	public static int getLine(int index	) {
-		return (index/9)+1;
-	}
+
 
 	@SuppressWarnings("unchecked")
 	public static Map<String, Command> getCommands() {
@@ -1642,8 +1624,7 @@ public final class Mine {
 	}
 
 	public static int getPosition(int line, int column) {
-		int value = (line - 1) * 9;
-		return value + column - 1;
+		return Extra.getIndex(column, line);
 	}
 
 	public static String getProgressBar(double money, double price, String concluidoCor, String faltandoCor,
@@ -1757,6 +1738,21 @@ public final class Mine {
 
 	public static Replacer getReplacer(String key) {
 		return replacers.get(key);
+	}
+	
+	public static ItemStack getReplacers(ItemStack itemOriginal, Player player) {
+		ItemStack itemCopia = itemOriginal.clone();
+		String displayName = getName(itemCopia);
+		List<String> linhas = getLore(itemCopia);
+		
+		setName(itemCopia, getReplacers(displayName, player));
+		for (int index = 0; index < linhas.size(); index++) {
+			String linha = linhas.get(index);
+			linhas.set(index, getReplacers(linha, player));
+		}
+		setLore(itemCopia, linhas);
+		return itemCopia;
+		
 	}
 
 	public static String getReplacers(String text, Player player) {
@@ -2098,7 +2094,7 @@ public final class Mine {
 	 * @return O resultado do teste
 	 */
 	public static boolean isColumn(int index, int colunm) {
-		return getColumn(index) == colunm;
+		return Extra.getColumn(index) == colunm;
 	}
 
 	public static boolean isDirectory(File file) {
@@ -2710,7 +2706,7 @@ public final class Mine {
 		if (pagina > 1) {
 			inv.setItem(voltarSlot, Mine.newItem(Material.ARROW, "§aVoltar"));
 		}
-		if (pagina < quantidadeDePaginas) {
+		if (pagina <= quantidadeDePaginas) {
 			inv.setItem(avancarSlot, Mine.newItem(Material.ARROW, "§aAvançar"));
 		}
 		player.openInventory(inv);

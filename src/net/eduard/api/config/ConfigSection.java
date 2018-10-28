@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Sounds;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.StorageInfo;
 import net.eduard.api.lib.storage.StorageObject;
 
 /**
@@ -330,6 +332,7 @@ public class ConfigSection {
 	}
 
 	public Sounds getSound() {
+//		System.out.println("Somzito "+getValue());
 		return (Sounds) getValue();
 	}
 
@@ -360,8 +363,9 @@ public class ConfigSection {
 
 	public Object getValue() {
 		// return StorageAPI.restoreData(isMap() ? toMap() : get(), null, null);
-
-		return new StorageObject(null, false).restore(isMap() ? toMap() : get());
+		Object data = isMap() ? toMap() : get();
+//		System.out.println("Suposto som "+data.getClass());
+		return StorageAPI.restore(new StorageInfo(null, null, false, false, true), data);
 	}
 
 	public Map<String, Object> toMap() {
@@ -407,7 +411,8 @@ public class ConfigSection {
 		}
 
 		// sec.set(StorageAPI.storeData(value, value.getClass(), null));
-		sec.set(new StorageObject(value.getClass(), false).store(value));
+//		System.out.println("Listinha "+value);
+		sec.set(StorageAPI.store(new StorageInfo(null, value.getClass(), false, false, true), value));
 		sec.setComments(comments);
 		return sec;
 	}

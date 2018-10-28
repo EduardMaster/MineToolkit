@@ -11,9 +11,9 @@ import net.eduard.api.lib.Mine;
 public class CooldownManager extends EffectManager {
 
 	private Map<UUID, TimeManager> playersInCooldown = new HashMap<>();
-	private String onCooldownMessage = "�6Voce esta em Cooldown!";
-	private String overCooldownMessage = "�6Voce saiu do Cooldown!";
-	private String startCooldownMessage = "�6Voce usou a Habilidade!";
+	private String onCooldownMessage = "§6Voce esta em Cooldown!";
+	private String overCooldownMessage = "§6Voce saiu do Cooldown!";
+	private String startCooldownMessage = "§6Voce usou a Habilidade!";
 	public CooldownManager() {
 		
 	}

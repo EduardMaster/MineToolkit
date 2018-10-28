@@ -20,11 +20,11 @@ public class ApiWorldsCommand extends CommandManager {
 
 		for (World world : Bukkit.getWorlds()) {
 			if (mundos.length() > 0) {
-				mundos.append("§a, §f");
+				mundos.append("Â§a, Â§f");
 			}
 			mundos.append("" + world.getName());
 		}
-		sender.sendMessage("§aOs mundo existentes são: §f" + mundos.toString());
+		sender.sendMessage("Â§aOs mundo existentes sÂ§o: Â§f" + mundos.toString());
 
 		return true;
 	}

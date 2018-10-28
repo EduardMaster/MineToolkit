@@ -441,7 +441,7 @@ BungeeControl. task = task;
         if (message.getServerName().equals("null")) {
           message.setServerName(serverName);
         }
-        log("�7" + receiverName + " << " + senderName + " " + tag + ":" + lista);
+        log("§7" + receiverName + " << " + senderName + " " + tag + ":" + lista);
         for (ServerAPI.ServerReceiveMessage messageReceiver : ServerAPI.receivers) {
           messageReceiver.onReceiveMessage(message);
         }
@@ -536,7 +536,7 @@ BungeeControl. task = task;
     
     public void log(String message)
     {
-      BungeeCord.getInstance().getConsole().sendMessage(new TextComponent("�a[ServerAPI] �f" + message));
+      BungeeCord.getInstance().getConsole().sendMessage(new TextComponent("§a[ServerAPI] §f" + message));
     }
     
     public void onReceiveMessage(ServerAPI.ServerMessage message)
@@ -685,7 +685,7 @@ BungeeControl. task = task;
       Bukkit.getMessenger().registerIncomingPluginChannel(plugin, ServerAPI.getChannel(), getControl());
       ServerAPI.registred = true;
       ServerAPI.register(getControl());
-      Bukkit.getConsoleSender().sendMessage("�b[ServerAPI] �aAtivando sistema de comunicacao com Bungeecord!");
+      Bukkit.getConsoleSender().sendMessage("§b[ServerAPI] §aAtivando sistema de comunicacao com Bungeecord!");
     }
     
     public static void unregister()
@@ -728,7 +728,7 @@ BungeeControl. task = task;
       if (message.getServerName().equals("null")) {
         message.setServerName(serverName);
       }
-      log("�7" + playerName + " " + serverName + " " + tag + " : " + lista);
+      log("§7" + playerName + " " + serverName + " " + tag + " : " + lista);
       for (ServerAPI.ServerReceiveMessage messageReceiver : ServerAPI.receivers) {
         messageReceiver.onReceiveMessage(message);
       }
@@ -736,7 +736,7 @@ BungeeControl. task = task;
     
     public void log(String message)
     {
-      Bukkit.getConsoleSender().sendMessage("�a[ServerAPI] �f" + message);
+      Bukkit.getConsoleSender().sendMessage("§a[ServerAPI] §f" + message);
     }
     
     public void sendToServer(ServerAPI.ServerMessage message)

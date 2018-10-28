@@ -2,6 +2,8 @@ package net.eduard.api.lib.storage.references;
 
 import java.lang.reflect.Field;
 
+import net.eduard.api.lib.storage.StorageAPI;
+
 public class ReferenceValue extends ReferenceBase {
 
 	private int objectId;
@@ -17,7 +19,7 @@ public class ReferenceValue extends ReferenceBase {
 		try {
 //			System.out.println(objectId);
 //			System.out.println(getObjectById(objectId));
-			getField().set(getInstance(), getObjectById(objectId));
+			getField().set(getInstance(), StorageAPI.getObjectById(objectId));
 //			System.out.println("setado "+getField().get(getInstance()));
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block

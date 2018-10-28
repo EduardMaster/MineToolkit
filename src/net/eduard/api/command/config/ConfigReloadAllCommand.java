@@ -19,7 +19,7 @@ public class ConfigReloadAllCommand extends CommandManager {
 
 		Config.reloadConfigs();
 		Mine.chat(sender,
-				"�aTodas configura��es de todos plugins foram recarregadas!");
+				"§aTodas configura§§es de todos plugins foram recarregadas!");
 		return true;
 	}
 

@@ -19,7 +19,7 @@ public class ApiUnloadWorldCommand extends CommandManager {
 		} else {
 			if (Mine.existsWorld(sender, args[1])) {
 				Mine.unloadWorld(args[1]);
-				sender.sendMessage("�aVoce descarregou o mundo " + args[1]);
+				sender.sendMessage("§aVoce descarregou o mundo " + args[1]);
 			}
 		}
 

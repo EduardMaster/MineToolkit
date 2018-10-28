@@ -96,7 +96,7 @@ public class BungeeConfigs {
 	}
 
 	public String toConfigMessage(String text) {
-		return text.replace("ง", "&");
+		return text.replace("ยง", "&");
 	}
 
 	public boolean delete() {

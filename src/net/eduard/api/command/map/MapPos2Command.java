@@ -22,7 +22,7 @@ public class MapPos2Command extends CommandManager {
 			Player p = (Player) sender;
 			Schematic schema = Mine.getSchematic(p);
 			schema.setHigh(p.getLocation().toVector());
-			p.sendMessage("�bEduardAPI �6Posi��o 2 setada!");
+			p.sendMessage("§bEduardAPI §6Posi§§o 2 setada!");
 		}
 		return true;
 	}

@@ -1,22 +1,23 @@
 package net.eduard.api.lib.storage.references;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.eduard.api.lib.storage.StorageAPI;
+
 public class ReferenceMap extends ReferenceBase{
 	private Map<Object,Integer> map;
-	public ReferenceMap(Map<Object,Integer> map,Field field, Object instance) {
-		super(field, instance);
+	public ReferenceMap(Map<Object,Integer> map, Object instance) {
+		super(null, instance);
 		setMap(map);
 	}
 
 	@Override
 	public void update() {
-		Map<Object,Object>newMap = new HashMap<>();
+		@SuppressWarnings("unchecked")
+		Map<Object,Object>newMap =  (Map<Object, Object>) getInstance();
 		for (Entry<Object, Integer> entry : map.entrySet()) {
-			newMap.put(entry.getKey(), getObjectById(entry.getValue()));
+			newMap.put(entry.getKey(), StorageAPI.getObjectById(entry.getValue()));
 		}
 		
 		try {

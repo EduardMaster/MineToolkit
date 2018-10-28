@@ -5,7 +5,9 @@ import org.bukkit.Chunk;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(inline=true)
 public class ChunkStorable implements Storable {
 
 	@Override
@@ -29,9 +31,5 @@ public class ChunkStorable implements Storable {
 		return null;
 	}
 
-	@Override
-	public boolean saveInline() {
-		return true;
-	}
 
 }
