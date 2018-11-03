@@ -39,8 +39,10 @@ public class StorageMap extends StorageBase {
 	public Object restore(Object data) {
 		StorageObject storeKey = new StorageObject(getInfo().clone());
 		storeKey.setType(keyType);
+		storeKey.update();
 		StorageObject storeValue = new StorageObject(getInfo().clone());
 		storeValue.setType(valueType);
+		storeValue.update();
 
 		if (isReference()) {
 			if (data instanceof Map) {
@@ -75,8 +77,10 @@ public class StorageMap extends StorageBase {
 	public Object store(Object data) {
 		StorageObject storeKey = new StorageObject(getInfo().clone());
 		storeKey.setType(keyType);
+		storeKey.update();
 		StorageObject storeValue = new StorageObject(getInfo().clone());
 		storeValue.setType(valueType);
+		storeValue.update();
 		Map<String, Object> newMap = new HashMap<>();
 		Map<?, ?> map = (Map<?, ?>) data;
 		for (Entry<?, ?> entry : map.entrySet()) {

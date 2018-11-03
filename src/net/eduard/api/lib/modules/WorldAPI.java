@@ -30,16 +30,7 @@ import org.bukkit.entity.Player;
 
 public final class WorldAPI {
 
-	/**
-	 * Efeito a fazer na localiza§§o
-	 * 
-	 * @author Eduard
-	 *
-	 */
-	public static interface LocationEffect {
 
-		boolean effect(Location location);
-	}
 
 	/**
 	 * Ponto de dire§§o usado para fazer um RADAR

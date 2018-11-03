@@ -85,7 +85,7 @@ public class StorageAPI {
 			}
 		}
 		int id = newId();
-//		objects.put(id, object);
+		objects.put(id, object);
 		debug("<<>>" + object.getClass().getSimpleName() + "@" + id);
 		return id;
 	}

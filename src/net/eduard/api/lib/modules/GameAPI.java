@@ -33,6 +33,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
+import net.eduard.api.lib.Mine;
+
 
 
 
@@ -88,7 +90,6 @@ public final class GameAPI {
 			meta.setDisplayName(name);
 			meta.setLore(lore);
 			item.setItemMeta(meta);
-
 			return item;
 		}
 		

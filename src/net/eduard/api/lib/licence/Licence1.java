@@ -1,4 +1,4 @@
-package net.eduard.api.lib.keys;
+package net.eduard.api.lib.licence;
 
 import java.net.URL;
 import java.net.URLConnection;
@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Eduard
  *
  */
-public class BukkitKeys1 {
+public class Licence1 {
 
 	private String owner;
 	private String plugin;
@@ -83,13 +83,13 @@ public class BukkitKeys1 {
 		this.time = time;
 	}
 
-	public BukkitKeys1() {
+	public Licence1() {
 		// TODO Auto-generated constructor stub
 	}
 
 	private static String divide = " ";
 
-	public BukkitKeys1(String line) {
+	public Licence1(String line) {
 		String[] div = line.split(divide);
 
 		this.plugin = div[0];
@@ -184,7 +184,7 @@ public class BukkitKeys1 {
 
 			while (true) {
 				try {
-					BukkitKeys1 venda = new BukkitKeys1();
+					Licence1 venda = new Licence1();
 					Scanner scanOwner = new Scanner(System.in);
 
 					System.out.println("Digite Nome do Dono do Plugin");
@@ -223,8 +223,8 @@ public class BukkitKeys1 {
 		
 	}
 
-	public static List<BukkitKeys1> getVendas(String url) {
-		List<BukkitKeys1> vendas = new ArrayList<>();
+	public static List<Licence1> getVendas(String url) {
+		List<Licence1> vendas = new ArrayList<>();
 		try {
 
 			URLConnection connect = new URL(url).openConnection();
@@ -236,7 +236,7 @@ public class BukkitKeys1 {
 				if (line.isEmpty() | line.startsWith("|")) {
 					continue;
 				}
-				vendas.add(new BukkitKeys1(line));
+				vendas.add(new Licence1(line));
 			}
 			scan.close();
 
@@ -310,7 +310,7 @@ public class BukkitKeys1 {
 			Bukkit.getConsoleSender().sendMessage("§aPlugin foi liberado para testes em 'localhost'");
 			return;
 		}
-		List<BukkitKeys1> keys = getVendas(url);
+		List<Licence1> keys = getVendas(url);
 		if (keys == null) {
 			
 			Bukkit.getConsoleSender().sendMessage("§aVendas nao encontradas site esta indisponivel");
@@ -321,7 +321,7 @@ public class BukkitKeys1 {
 		String error = "";
 		String first = error;
 
-		for (BukkitKeys1 license : keys) {
+		for (Licence1 license : keys) {
 			error = "";
 			if (!(license.getPlugin().equals(plugin.getName()))) {
 				continue;

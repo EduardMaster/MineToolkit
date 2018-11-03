@@ -16,9 +16,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import net.eduard.api.config.Config;
-import net.eduard.api.config.ConfigSection;
 import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.config.Config;
+import net.eduard.api.lib.config.ConfigSection;
 
 /**
  * Sistema que gera informações do servidor

@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(indentificate = true)
 public class Rank implements Storable {
 
 	private String name;
@@ -20,9 +22,6 @@ public class Rank implements Storable {
 
 	public Rank() {
 	}
-	
-
-	
 
 	public Rank(String name, int position) {
 		this.name = name;

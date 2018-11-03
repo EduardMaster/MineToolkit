@@ -20,12 +20,6 @@ public class ReferenceMap extends ReferenceBase{
 			newMap.put(entry.getKey(), StorageAPI.getObjectById(entry.getValue()));
 		}
 		
-		try {
-			getField().set(getInstance(), newMap);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 	}
 

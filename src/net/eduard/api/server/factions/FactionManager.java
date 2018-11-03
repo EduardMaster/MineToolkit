@@ -11,28 +11,30 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.game.Chunk;
-import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.server.ranks.Rank;
 import net.eduard.api.server.ranks.RankManager;
 
+@StorageAttributes(indentificate = true)
 public class FactionManager implements Storable {
 
-	private int maxPlayerSize=15;
-	private int startingPower=5,startingPowerMax=5;
-	private ItemStack itemMaxPower,itemInstantPower;
+	private int maxPlayerSize = 15;
+	private int startingPower = 5, startingPowerMax = 5;
+	private ItemStack itemMaxPower, itemInstantPower;
 	private Map<EntityType, Double> generatorsPrices = new HashMap<>();
 	private Map<String, Faction> factions = new HashMap<>();
-	private Map<UUID, FactionPlayer> members = new HashMap<>();
+	
+	
 	private transient FactionGeneratorManager generatorManager;
 	private RankManager ranks = new RankManager();
-	@StorageAttributes
+	@StorageAttributes(reference = true)
 	private Faction warZone;
-	@StorageAttributes
+	@StorageAttributes(reference = true)
 	private Faction protectedZone;
-	@StorageAttributes
+	@StorageAttributes(reference = true)
 	private Faction freeZone;
-
+	private Map<UUID, FactionPlayer> members = new HashMap<>();
 
 	public Rank getRank(FactionPlayer player) {
 		return ranks.getPlayerRank(player.getPlayerData());
@@ -50,7 +52,7 @@ public class FactionManager implements Storable {
 		freeZone.setManager(this);
 
 		Rank rankLeader = new Rank("leader", 4);
-		
+
 		rankLeader.setPrefix("#");
 		rankLeader.setHeadName("L§der");
 		rankLeader.setPreviousRank("captain");
@@ -59,25 +61,24 @@ public class FactionManager implements Storable {
 		Rank rankMember = new Rank("member", 2);
 		rankMember.setPrefix("+");
 		rankMember.setHeadName("Membro");
-	
+
 		rankMember.setNextRank("captain");
 		ranks.getRanks().put("member", rankMember);
-		
+
 		Rank rankRecruit = new Rank("recruit", 1);
 		rankRecruit.setPrefix("-");
 		rankRecruit.setNextRank("member");
 		rankRecruit.setHeadName("Recruta");
 
 		ranks.getRanks().put("recruit", rankRecruit);
-		
+
 		Rank rankCaptain = new Rank("captain", 3);
 		rankCaptain.setPrefix("*");
 		rankCaptain.setNextRank("leader");
 		rankCaptain.setHeadName("Capit§o");
-	
+
 		ranks.getRanks().put("captain", rankCaptain);
-		
-		
+
 		ranks.setFirst("recruit");
 		ranks.setLast("leader");
 		for (EntityType e : EntityType.values()) {

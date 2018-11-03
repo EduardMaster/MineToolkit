@@ -81,7 +81,7 @@ public class CooldownManager extends EffectManager {
 			}
 		};
 		cd.setTime(getTime());
-		cd.delay(getPlugin());
+		cd.asyncDelay();
 		playersInCooldown.put(player.getUniqueId(), cd);
 		return this;
 

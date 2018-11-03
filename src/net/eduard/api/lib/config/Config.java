@@ -1,4 +1,4 @@
-package net.eduard.api.config;
+package net.eduard.api.lib.config;
 
 import java.io.File;
 import java.io.InputStream;

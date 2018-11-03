@@ -21,7 +21,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-
+/**
+ * API de controlar o BungeeCord pelo Servidor Spigot
+ * @author Eduard
+ *
+ */
 public final class BukkitBungeeAPI {
 	public static String getCurrentServer() {
 		return currentServer;

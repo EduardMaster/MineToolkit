@@ -23,7 +23,7 @@ public class InventoryStorable implements Storable {
 			String[] split = string.split("//");
 			try {
 				Integer lines = Mine.toInt(split[0]);
-				ItemStack[] contents = Mine.fromBase64toItems(string);
+				ItemStack[] contents = Mine.fromBase64toItems(split[0]);
 				Inventory inv = Bukkit.createInventory(null, lines*9);
 				inv.setContents(contents);
 				return inv;

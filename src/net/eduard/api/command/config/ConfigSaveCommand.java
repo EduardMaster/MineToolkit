@@ -5,8 +5,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import net.eduard.api.config.Config;
 import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class ConfigSaveCommand extends CommandManager {

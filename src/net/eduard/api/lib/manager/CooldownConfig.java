@@ -3,10 +3,10 @@ package net.eduard.api.lib.manager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.eduard.api.lib.ConfigAPI;
+import net.eduard.api.lib.BukkitConfig;
 import net.eduard.api.lib.Mine;
 
-public class CooldownConfig extends ConfigAPI {
+public class CooldownConfig extends BukkitConfig {
 
 	private String tag = "Cooldowns.";
 

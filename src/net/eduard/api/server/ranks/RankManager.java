@@ -14,6 +14,7 @@ import org.bukkit.permissions.PermissionAttachment;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.modules.VaultAPI;
+import net.eduard.api.lib.modules.Copyable.NotCopyable;
 import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.lib.storage.Storable;
 
@@ -23,14 +24,19 @@ import net.eduard.api.lib.storage.Storable;
  * @author Eduard
  *
  */
+@StorageAttributes(indentificate=true)
 public class RankManager implements Storable {
+	
+	private static RankManager instance;
+	
+	@NotCopyable
 	private transient Map<UUID, PermissionAttachment> permissions = new HashMap<>();
 	private String first;
 	private String last;
 	private boolean perGroup = true;
 	private Map<String, Rank> ranks = new LinkedHashMap<>();
 	
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private Map<OfflinePlayer, Rank> playersRanks = new HashMap<>();
 
 	public PermissionAttachment getPermissionControler(OfflinePlayer player) {
@@ -266,6 +272,18 @@ public class RankManager implements Storable {
 	}
 	public void setFirstRank(OfflinePlayer player) {
 		setRank(player, getFirst());
+	}
+
+
+
+	public static RankManager getInstance() {
+		return instance;
+	}
+
+
+
+	public static void setInstance(RankManager instance) {
+		RankManager.instance = instance;
 	}
 
 }

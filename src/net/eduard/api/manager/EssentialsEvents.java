@@ -16,8 +16,8 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.EduardAPI;
-import net.eduard.api.config.Config;
 import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.manager.EventsManager;
 import net.eduard.api.server.EduardPlugin;
@@ -94,7 +94,7 @@ public class EssentialsEvents extends EventsManager {
 		Player p = e.getEntity();
 		if (Mine.OPT_AUTO_RESPAWN) {
 			if (p.hasPermission("eduardAPI.autorespawn")) {
-				Mine.TIME.delay(1L, new Runnable() {
+				Mine.TIME.syncDelay(new Runnable() {
 
 					@Override
 					public void run() {
@@ -107,7 +107,7 @@ public class EssentialsEvents extends EventsManager {
 							}
 						}
 					}
-				});
+				}, 1L);
 			}
 
 		}

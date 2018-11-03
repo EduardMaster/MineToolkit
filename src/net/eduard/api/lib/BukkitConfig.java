@@ -23,13 +23,13 @@ import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.StorageInfo;
 
 /**
- * API simplificada de criar configura§§o Path = Endere§o = Secao
+ * Armazenamento de Dados para servidores Bukkit com suporte a {@link StorageAPI}
  * 
  * @author Eduard
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
-public class ConfigAPI {
+public class BukkitConfig {
 
 	private Plugin plugin;
 
@@ -62,8 +62,8 @@ public class ConfigAPI {
 		return file;
 	}
 
-	public ConfigAPI createConfig(String name) {
-		return new ConfigAPI(name, plugin);
+	public BukkitConfig createConfig(String name) {
+		return new BukkitConfig(name, plugin);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class ConfigAPI {
 		return config;
 	}
 
-	public ConfigAPI(String name, Plugin plugin) {
+	public BukkitConfig(String name, Plugin plugin) {
 		this.plugin = plugin;
 		if (plugin == null)
 			this.plugin = JavaPlugin.getProvidingPlugin(getClass());
@@ -82,7 +82,7 @@ public class ConfigAPI {
 		reloadConfig();
 	}
 
-	public ConfigAPI(String name) {
+	public BukkitConfig(String name) {
 		this(name, null);
 	}
 
@@ -91,7 +91,7 @@ public class ConfigAPI {
 	 * 
 	 * @return Config
 	 */
-	public ConfigAPI reloadConfig() {
+	public BukkitConfig reloadConfig() {
 		file = new File(plugin.getDataFolder(), name);
 		config = YamlConfiguration.loadConfiguration(file);
 		InputStream defaults = plugin.getResource(file.getName());
@@ -108,7 +108,7 @@ public class ConfigAPI {
 	 * 
 	 * @return Config
 	 */
-	public ConfigAPI saveConfig() {
+	public BukkitConfig saveConfig() {
 		try {
 			config.save(file);
 		} catch (IOException ex) {
@@ -169,7 +169,7 @@ public class ConfigAPI {
 	 * 
 	 * @return
 	 */
-	public ConfigAPI saveDefault() {
+	public BukkitConfig saveDefault() {
 		config.options().copyDefaults(true);
 		saveConfig();
 		return this;
@@ -312,7 +312,7 @@ public class ConfigAPI {
 		}
 	}
 
-	public ConfigAPI createSubConfig(String name) {
+	public BukkitConfig createSubConfig(String name) {
 		return createConfig(getName() + name);
 	}
 

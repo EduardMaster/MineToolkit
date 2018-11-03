@@ -26,7 +26,7 @@ public class StorageList extends StorageBase {
 		storage.setType(listType);
 		storage.update(getField(), getListType());
 		debug(">> LIST RESTORATION");
-		if (isReference()) {
+		if (storage.isReference()) {
 			if (data instanceof List) {
 				List<?> oldList = (List<?>) data;
 				List<Integer> newList = new ArrayList<>();
@@ -73,7 +73,7 @@ public class StorageList extends StorageBase {
 
 		}
 		if (getStore(getListType()) != null) {
-			if (!isInline() && !isReference()) {
+			if (!storage.isInline() && !storage.isReference()) {
 				Map<String, Object> map = new LinkedHashMap<>();
 				for (int index = 1; index <= newList.size(); index++) {
 					map.put("" + index, newList.get(index - 1));

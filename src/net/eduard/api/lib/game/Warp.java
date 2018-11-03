@@ -32,7 +32,7 @@ public class Warp implements Storable {
 	}
 
 	public void teleport(Player p) {
-		Mine.TIME.delay(delayInSeconds * 20L, new Runnable() {
+		Mine.TIME.asyncDelay(new Runnable() {
 
 			@Override
 			public void run() {
@@ -42,7 +42,7 @@ public class Warp implements Storable {
 				if (sound != null)
 					sound.create(p);
 			}
-		});
+		}, delayInSeconds * 20L);
 
 	}
 

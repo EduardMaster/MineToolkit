@@ -7,26 +7,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.bukkit.OfflinePlayer;
+
 import java.util.UUID;
 
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(indentificate = true)
 public class CurrencyManager implements Storable {
 	private String name = "Money";
 	private String symbol = "$";
 	private double inicialAmount;
-	private Map<FakePlayer, Double> currency = new HashMap<>();
+	private Map<OfflinePlayer, Double> currency = new HashMap<>();
 
-	
 	public synchronized double getBalance(FakePlayer player) {
-		
+
 //		System.out.println("Resultado "+ (currency.get(player)));
 		return currency.getOrDefault(player, inicialAmount);
 	}
+
+	public CurrencyManager(String name, String symbol, double inicialAmount) {
+		super();
+		this.name = name;
+		this.symbol = symbol;
+		this.inicialAmount = inicialAmount;
+	}
+	public CurrencyManager() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void save(File file) {
 		StringBuilder b = new StringBuilder();
-		for (Entry<FakePlayer, Double> entry : currency.entrySet()) {
+		for (Entry<OfflinePlayer, Double> entry : currency.entrySet()) {
 			b.append(entry.getKey().getName());
 			b.append(";");
 			b.append(entry.getKey().getUniqueId());
@@ -35,17 +50,17 @@ public class CurrencyManager implements Storable {
 			b.append("\n");
 		}
 		try {
-			Files.write(file.toPath(),b.toString().getBytes());
+			Files.write(file.toPath(), b.toString().getBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 	}
+
 	public void load(File file) {
 		currency.clear();
-		
+
 		try {
 			List<String> lines = Files.readAllLines(file.toPath());
 			for (String line : lines) {
@@ -64,10 +79,7 @@ public class CurrencyManager implements Storable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
+
 	}
 
 	public synchronized void setBalance(FakePlayer player, double amount) {
@@ -84,11 +96,11 @@ public class CurrencyManager implements Storable {
 		setBalance(player, getBalance(player) - amount);
 	}
 
-	public Map<FakePlayer, Double> getCurrency() {
+	public Map<OfflinePlayer, Double> getCurrency() {
 		return currency;
 	}
 
-	public void setCurrency(Map<FakePlayer, Double> currency) {
+	public void setCurrency(Map<OfflinePlayer, Double> currency) {
 		this.currency = currency;
 	}
 

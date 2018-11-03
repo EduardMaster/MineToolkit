@@ -68,6 +68,7 @@ public class ItemStackStorable implements Storable {
 			map.remove("durability");
 			map.remove("meta");
 			map.remove("type");
+			map.remove("handle");
 			map.put("id", item.getTypeId());
 			map.put("data", item.getDurability());
 			map.put("amount", item.getAmount());

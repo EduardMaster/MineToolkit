@@ -1,4 +1,4 @@
-package net.eduard.api.lib.keys;
+package net.eduard.api.lib.licence;
 
 import java.net.URL;
 import java.net.URLConnection;
@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.eduard.api.lib.ConfigAPI;
+import net.eduard.api.lib.BukkitConfig;
 /**
  * sistema de verificacao de Compra do Plugin
  * @version 1.0
@@ -16,7 +16,7 @@ import net.eduard.api.lib.ConfigAPI;
  * @author Eduard
  *
  */
-public class BukkitKeys4 {
+public class Licence4 {
 
 	public static boolean ativado = false;
 
@@ -40,7 +40,7 @@ public class BukkitKeys4 {
 				try {
 					String nomePlugin = plugin.getName();
 					Bukkit.getConsoleSender().sendMessage("§aAutenticando o plugin "+nomePlugin);
-					ConfigAPI config = new ConfigAPI("licen§a.yml", plugin);
+					BukkitConfig config = new BukkitConfig("licen§a.yml", plugin);
 					config.add("key", "KEY_INSERE_AQUI");
 					String key = config.getString("key");
 					config.saveDefault();

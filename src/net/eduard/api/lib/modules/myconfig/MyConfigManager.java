@@ -1,4 +1,4 @@
-package net.eduard.api.util.myconfig;
+package net.eduard.api.lib.modules.myconfig;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,7 +13,11 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.bukkit.plugin.java.JavaPlugin;
-
+/**
+ * 
+ * Post: https://bukkit.org/threads/resource-most-easy-config-manager-ever-resource.187997
+ *
+ */
 public class MyConfigManager {
 	private JavaPlugin plugin;
 

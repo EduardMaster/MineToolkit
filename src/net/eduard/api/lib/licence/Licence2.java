@@ -1,4 +1,4 @@
-package net.eduard.api.lib.keys;
+package net.eduard.api.lib.licence;
 
 import java.io.File;
 import java.net.URL;
@@ -22,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Eduard
  *
  */
-public class BukkitKeys2 {
+public class Licence2 {
 
 	private String owner;
 	private String plugin;
@@ -36,7 +36,7 @@ public class BukkitKeys2 {
 	public static void main(String[] args) {
 		while (true) {
 			try {
-				BukkitKeys2 shield = new BukkitKeys2();
+				Licence2 shield = new Licence2();
 				Scanner scanOwner = new Scanner(System.in);
 
 				System.out.println("Digite Nome do Dono do Plugin");
@@ -99,8 +99,8 @@ public class BukkitKeys2 {
 		} catch (Exception e) {
 		}
 	}
-	private static BukkitKeys2 read(String text) {
-		BukkitKeys2 shield = new BukkitKeys2();
+	private static Licence2 read(String text) {
+		Licence2 shield = new Licence2();
 		String[] vars = text.split(" ");
 		shield.owner = vars[0].split("=")[1];
 		shield.plugin = vars[1].split("=")[1];
@@ -112,7 +112,7 @@ public class BukkitKeys2 {
 		return shield;
 	}
 	@SuppressWarnings("unused")
-	private static BukkitKeys2 read(File file) {
+	private static Licence2 read(File file) {
 		try {
 			String text = Files
 					.readAllLines(file.toPath(), Charset.defaultCharset())
@@ -123,9 +123,9 @@ public class BukkitKeys2 {
 
 		return null;
 	}
-	public static List<BukkitKeys2> getShields(String url) {
+	public static List<Licence2> getShields(String url) {
 		try {
-			List<BukkitKeys2> shields = new ArrayList<>();
+			List<Licence2> shields = new ArrayList<>();
 			URLConnection connect = new URL(url).openConnection();
 			connect.addRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
@@ -192,7 +192,7 @@ public class BukkitKeys2 {
 		Bukkit.getConsoleSender()
 				.sendMessage("- §eSistema de verificacao de Keys por Site §f-");
 
-		List<BukkitKeys2> keys = getShields(url);
+		List<Licence2> keys = getShields(url);
 		Bukkit.getConsoleSender().sendMessage(" §a" + keys.size() + " §fKeys!");
 		Bukkit.getConsoleSender().sendMessage(
 				" §aIp: §f" + BUKKIT_IP + " §8| §aIp: §f" + SERVER_IP);
@@ -214,7 +214,7 @@ public class BukkitKeys2 {
 		String error = "§eProblemas: §c";
 		String first = error;
 
-		for (BukkitKeys2 license : keys) {
+		for (Licence2 license : keys) {
 			if (!(license.getOwner().equals(COMPRADOR))) {
 				continue;
 			}

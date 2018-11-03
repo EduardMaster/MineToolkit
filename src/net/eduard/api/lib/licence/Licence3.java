@@ -1,4 +1,4 @@
-package net.eduard.api.lib.keys;
+package net.eduard.api.lib.licence;
 
 import java.net.URL;
 import java.net.URLConnection;
@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Eduard
  *
  */
-public class BukkitKeys3 {
+public class Licence3 {
 
 	public static void test(JavaPlugin plugin) {
 		int port = Bukkit.getPort();

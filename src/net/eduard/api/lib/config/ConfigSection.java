@@ -1,4 +1,4 @@
-package net.eduard.api.config;
+package net.eduard.api.lib.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +15,6 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Sounds;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.StorageInfo;
-import net.eduard.api.lib.storage.StorageObject;
 
 /**
  * Secao da {@link Config}

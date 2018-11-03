@@ -14,15 +14,15 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.VaultAPI;
 import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.lib.storage.Storable;
-
+@StorageAttributes(indentificate=true)
 public class Faction implements Storable {
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private FactionManager manager;
 	private String name;
 	private String prefix;
 	private String suffix;
 	private Location base;
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private FactionPlayer leader;
 	private int wins;
 	private int defeats;
@@ -32,23 +32,28 @@ public class Faction implements Storable {
 		return "Faction [name=" + name + ", prefix=" + prefix + "]";
 	}
 
-	private List<FactionClaim> claims = new ArrayList<>();
-	@StorageAttributes
+	
+	
+	@StorageAttributes(reference=true)
 	private List<FactionPlayer> members = new ArrayList<>();
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private List<FactionPlayer> invites = new ArrayList<>();
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private List<Faction> battles = new ArrayList<>();
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private List<Faction> allies = new ArrayList<>();
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private List<Faction> relations = new ArrayList<>();
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private List<Faction> rivals = new ArrayList<>();
-
+	
 	private Map<EntityType, Integer> spawners = new HashMap<>();
 
 	private Map<EntityType, Integer> generators = new HashMap<>();
+	private List<FactionClaim> claims = new ArrayList<>();
+	
+
+
 
 	public String getDisplayName() {
 		return "[" + this.prefix + "] " + this.name;

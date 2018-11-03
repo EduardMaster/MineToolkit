@@ -14,20 +14,11 @@ public class ReferenceList extends ReferenceBase {
 	}
 
 	@Override
-	public void update() {
+	public void update() { 
 		@SuppressWarnings("unchecked")
 		List<Object> newList = (List<Object>) getInstance();
 		for (Integer item : list) {
 			newList.add(StorageAPI.getObjectById(item));
-		}
-		try {
-			getField().set(getInstance(), newList);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

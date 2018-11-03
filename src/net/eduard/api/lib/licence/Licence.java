@@ -1,4 +1,4 @@
-package net.eduard.api.lib.keys;
+package net.eduard.api.lib.licence;
 
 import java.net.URL;
 import java.net.URLConnection;
@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.eduard.api.lib.BungeeConfig;
-import net.eduard.api.lib.ConfigAPI;
+import net.eduard.api.lib.BukkitConfig;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -20,7 +20,7 @@ import net.md_5.bungee.api.plugin.Plugin;
  * @author Eduard
  *
  */
-public class KeySystem {
+public class Licence {
 
 	private static String site = "https://eduarddev.000webhostapp.com/plugins-shop/verify.php?";
 
@@ -95,7 +95,7 @@ public class KeySystem {
 
 			String pluginName = plugin.getName();
 			Bukkit.getConsoleSender().sendMessage("§aAutenticando o plugin " + pluginName);
-			ConfigAPI config = new ConfigAPI("license.yml", plugin);
+			BukkitConfig config = new BukkitConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
 			config.saveDefault();
@@ -104,7 +104,7 @@ public class KeySystem {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, (Runnable) () ->
 
 			{
-				PluginActivationStatus result = KeySystem.test(pluginName, owner, key);
+				PluginActivationStatus result = Licence.test(pluginName, owner, key);
 				Bukkit.getConsoleSender().sendMessage(result.getMessage());
 				if (!result.isActive()) {
 					Bukkit.getPluginManager().disablePlugin(plugin);
@@ -132,7 +132,7 @@ public class KeySystem {
 			String owner = config.getString("onwer");
 			BungeeCord.getInstance().getScheduler().runAsync(plugin, () -> {
 
-				PluginActivationStatus result = KeySystem.test(pluginName, owner, key);
+				PluginActivationStatus result = Licence.test(pluginName, owner, key);
 				BungeeCord.getInstance().getConsole().sendMessage(new TextComponent(result.getMessage()));
 				if (!result.isActive()) {
 					BungeeCord.getInstance().getPluginManager().unregisterListeners(plugin);

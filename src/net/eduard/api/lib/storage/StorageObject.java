@@ -50,8 +50,7 @@ public class StorageObject extends StorageBase {
 				debug(">> ALIAS " + alias);
 				debug(">> ID " + id);
 
-			}
-			else {
+			} else {
 			}
 		}
 		if (claz == null) {
@@ -60,12 +59,12 @@ public class StorageObject extends StorageBase {
 		}
 		alias = StorageAPI.getAlias(claz);
 		Storable store = StorageAPI.getStore(claz);
-		
+
 		Class<?> wrapper = Extra.getWrapper(claz);
 
 		if (wrapper != null) {
 			try {
-				debug(">> BASIC TYPE "+data);
+				debug(">> BASIC TYPE " + data);
 				return Extra.getResult(Extra.class, "to" + wrapper.getSimpleName(), new Object[] { Object.class },
 						data);
 			} catch (Exception e) {
@@ -74,21 +73,21 @@ public class StorageObject extends StorageBase {
 			}
 		}
 		if (Extra.isList(claz)) {
-			debug(">> LIST "+data);
+			debug(">> LIST " + data);
 			return new StorageList(getInfo().clone()).restore(data);
 		}
 		if (Extra.isMap(claz)) {
-			debug(">> MAP "+data);
+			debug(">> MAP " + data);
 			return new StorageMap(getInfo().clone()).restore(data);
 		}
 		if (claz.isEnum()) {
-			debug(">> ENUM "+data);
+			debug(">> ENUM " + data);
 			return new StorageEnum(getInfo().clone()).restore(data);
 		}
 
 		if (isReference()) {
 			if (data.toString().contains(StorageAPI.REFER_KEY)) {
-				debug(">> REFERENCE "+data);
+				debug(">> REFERENCE " + data);
 				return (int) Extra.toInt(data.toString().split(StorageAPI.REFER_KEY)[1]);
 			}
 			return null;
@@ -104,11 +103,11 @@ public class StorageObject extends StorageBase {
 		if (isInline()) {
 			Object result = store.restore(data);
 			if (result == null) {
-				debug(">> INLINE  "+data);
+				debug(">> INLINE  " + data);
 				return new StorageInline(getInfo().clone()).restore(data);
 			} else {
-				
-				debug(">> INLINE CUSTOM "+result);
+
+				debug(">> INLINE CUSTOM " + result);
 				return result;
 			}
 		}
@@ -125,7 +124,7 @@ public class StorageObject extends StorageBase {
 			}
 			debug(">> NEW INSTANCE");
 
-		}else {
+		} else {
 			debug(">> RESTORED INSTANCE");
 		}
 		Map<?, ?> map = (Map<?, ?>) data;
@@ -177,9 +176,8 @@ public class StorageObject extends StorageBase {
 						if (restoredValue != null) {
 							if (restoredValue instanceof Integer) {
 								Integer indetification = (Integer) restoredValue;
-								StorageAPI.newReference(new ReferenceValue(
-										indetification, field, instance));
-								
+								StorageAPI.newReference(new ReferenceValue(indetification, field, instance));
+
 								continue;
 							}
 						}
@@ -192,7 +190,7 @@ public class StorageObject extends StorageBase {
 						field.set(instance, restoredValue);
 
 					} catch (Exception e) {
-						debug(">> FAILED TO SET VARIABLE "+field.getName()+ " TO " + restoredValue);
+						debug(">> FAILED TO SET VARIABLE " + field.getName() + " TO " + restoredValue);
 					}
 
 //					}
@@ -215,7 +213,7 @@ public class StorageObject extends StorageBase {
 		if (data == null)
 			return null;
 		Class<?> claz = data.getClass();
-		Storable store = getStore(claz);
+
 		String alias = StorageAPI.getAlias(claz);
 		if (claz.isEnum()) {
 			debug("<< ENUM " + data);
@@ -232,8 +230,14 @@ public class StorageObject extends StorageBase {
 
 			return new StorageList(getInfo().clone()).store(data);
 		}
+		if (Extra.isMap(claz)) {
+			return new StorageMap(getInfo().clone()).store(data);
+		}
+		Storable store = getStore(claz);
 		if (store == null) {
-//			debug("<< NULL STORABLE " );
+			store = getStore(getType());
+		}
+		if (store == null) {
 			return data;
 		}
 //		if (claz.equals(UUID.class)) {

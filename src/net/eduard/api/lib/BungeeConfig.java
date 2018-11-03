@@ -18,7 +18,13 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-
+/**
+ * Armazenamento de Dados para servidores BungeeCord com suporte a {@link StorageAPI}
+ * 
+ * @author Eduard
+ * @version 1.2
+ * @since 1.0
+ */
 public class BungeeConfig {
 
 	private Plugin plugin;

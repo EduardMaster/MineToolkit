@@ -2,59 +2,54 @@ package net.eduard.api.server;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
-import net.eduard.api.config.Config;
 import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.manager.TimeManager;
+import net.eduard.api.lib.modules.BukkitTimeHandler;
 import net.eduard.api.lib.storage.StorageAPI;
+
 /**
  * Representa os plugins feitos pelo Eduard
+ * 
  * @version 1.0
  * @since 4.0
  * @author Eduard
  *
  */
-public abstract class EduardPlugin extends JavaPlugin {
+public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandler{
 
-	protected TimeManager time;
 	protected Config config;
 	protected Config messages;
 	protected boolean free;
-	
-	
 
 	public boolean isFree() {
-		
+
 		return free;
 	}
-
-
 
 	public void setFree(boolean free) {
 		this.free = free;
 	}
-
-
+	public Plugin getPlugin() {
+		return this;
+	}
 
 	public void onLoad() {
 		config = new Config(this);
 		messages = new Config(this, "messages.yml");
-		time = new TimeManager(this);
 	}
-	
-
 
 	public void registerPackage(String packname) {
 		StorageAPI.registerPackage(getClass(), packname);
 	}
 
-	public List<Class<?>> getClasses(String clazzName) {
-		return Mine.getClasses(this, clazzName);
-	}
-
-	public List<Class<?>> getClasses(JavaPlugin plugin, Class<?> clazz) {
-		return Mine.getClasses(plugin, clazz);
+	public List<Class<?>> getClasses(String pack) {
+		return Mine.getClasses(this, pack);
 	}
 
 	public void save() {
@@ -63,6 +58,12 @@ public abstract class EduardPlugin extends JavaPlugin {
 
 	public void reload() {
 	}
+
+	public void configDefault() {
+
+	}
+	
+
 
 	public boolean getBoolean(String path) {
 		return config.getBoolean(path);
@@ -76,9 +77,6 @@ public abstract class EduardPlugin extends JavaPlugin {
 		return messages.getMessages(path);
 	}
 
-	public TimeManager getTime() {
-		return time;
-	}
 
 	public Config getMessages() {
 		return messages;

@@ -2,8 +2,6 @@ package net.eduard.api.lib.storage;
 
 import java.lang.reflect.Field;
 
-import net.eduard.api.lib.Mine;
-
 public abstract class StorageBase {
 
 	private StorageInfo info;
@@ -14,6 +12,9 @@ public abstract class StorageBase {
 
 	public static void debug(String msg) {
 		StorageAPI.debug(msg);
+	}
+	public void update() {
+		update(getField(),getType());
 	}
 
 	public void update(Field field, Class<?> claz) {

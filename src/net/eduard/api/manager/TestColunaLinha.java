@@ -1,4 +1,4 @@
-package net.eduard.api.test;
+package net.eduard.api.manager;
 
 import net.eduard.api.lib.modules.Extra;
 

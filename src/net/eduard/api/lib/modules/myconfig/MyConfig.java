@@ -1,4 +1,4 @@
-package net.eduard.api.util.myconfig;
+package net.eduard.api.lib.modules.myconfig;
 
 import java.io.File;
 import java.io.InputStream;
@@ -9,7 +9,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-
+/**
+ * 
+ * Post: https://bukkit.org/threads/resource-most-easy-config-manager-ever-resource.187997
+ *
+ */
 public class MyConfig {
 	private int comments;
 	private MyConfigManager manager;

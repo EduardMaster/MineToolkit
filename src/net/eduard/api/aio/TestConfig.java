@@ -1,4 +1,4 @@
-package net.eduard.api.config;
+package net.eduard.api.aio;
 
 import java.io.File;
 

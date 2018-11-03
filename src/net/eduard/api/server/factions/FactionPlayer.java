@@ -9,12 +9,12 @@ import org.bukkit.entity.Player;
 import net.eduard.api.lib.storage.StorageAttributes;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.server.ranks.Rank;
-
+@StorageAttributes(indentificate=true)
 public class FactionPlayer implements Storable {
 
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private FactionManager manager;
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private Faction faction;
 	private OfflinePlayer playerData;
 	private long lastLogin;

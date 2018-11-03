@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.eduard.api.lib.modules.Copyable.NotCopyable;
 import net.eduard.api.lib.storage.Storable;
 
 /**
@@ -24,6 +25,7 @@ public class EventsManager implements Listener, Storable {
 	/**
 	 * Plugin
 	 */
+	@NotCopyable
 	private transient Plugin plugin;
 
 	/**

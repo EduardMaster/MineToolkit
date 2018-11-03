@@ -16,7 +16,7 @@ import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.storage.StorageAttributes;
-
+@StorageAttributes(indentificate=true)
 public class CommandManager extends EventsManager implements TabCompleter, CommandExecutor {
 
 	private static Map<String, CommandManager> commandsRegistred = new HashMap<>();
@@ -51,7 +51,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		}
 
 	}
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private CommandManager parent;
 	protected String name;
 	private String permission;

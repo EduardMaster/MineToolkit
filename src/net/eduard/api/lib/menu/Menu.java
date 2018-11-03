@@ -45,8 +45,11 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 	private Slot nextPage = new Slot(
 			Mine.newItem("§aPróxima Página", Material.ARROW, 1, 0, "§2Clique para ir para a próxima página"), 9, 2);
 	private ArrayList<MenuButton> buttons = new ArrayList<>();
+	@NotCopyable
 	private transient ClickEffect effect;
+	@NotCopyable
 	private transient Map<Integer, Inventory> pagesCache = new HashMap<>();
+	@NotCopyable
 	private transient Map<Player, Integer> pageOpened = new HashMap<>();
 
 	public String getFullTitle() {
@@ -224,6 +227,9 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 			String prefix = getPagePrefix().replace("$page", "" + page).replace("$max_page", "" + pageAmount);
 			String suffix = getPageSuffix().replace("$page", "" + page).replace("$max_page", "" + pageAmount);
 			String menuTitle = Extra.toText(32, prefix + title + suffix);
+			if (!isPageSystem()) {
+				menuTitle = title;
+			}
 			Inventory menu = Bukkit.createInventory(player, 9 * lineAmount, menuTitle);
 			if (isPageSystem()) {
 				if (page > 1)
@@ -268,6 +274,7 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 				pagesCache.put(page, menu);
 			}
 			pageOpened.put(player, page);
+//			Mine.broadcast("Abrindo "+page +" tem "+pageOpened.containsKey(player));
 			return menu;
 		}
 		return Mine.newInventory("Null", 9);
@@ -358,7 +365,7 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 		if (e.getWhoClicked() instanceof Player) {
 
 			Player player = (Player) e.getWhoClicked();
-			if (e.getInventory().getName().contains(getTitle())) {
+			if (e.getInventory().getTitle().contains(getTitle())) {
 				e.setCancelled(true);
 				int slot = e.getRawSlot();
 				if (pageOpened.containsKey(player)) {
@@ -376,6 +383,7 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 					} else {
 						button = getButton(page, slot);
 					}
+				
 					if (button != null) {
 						if (button.getClick() != null) {
 							button.getClick().onClick(e, slot);
@@ -388,8 +396,10 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 						}
 					}
 					if (getEffect() != null) {
+//						System.out.println(button);
 						getEffect().onClick(e, page);
 					}
+				}else {
 				}
 
 			}

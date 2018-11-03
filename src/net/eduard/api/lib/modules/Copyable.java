@@ -25,8 +25,12 @@ public interface Copyable {
 
 	@Target({ java.lang.annotation.ElementType.FIELD })
 	@Retention(RetentionPolicy.RUNTIME)
-	public @interface NoCopyable {
+	public @interface NotCopyable {
 
+	}
+
+	public static void debug(String msg) {
+		System.out.println("[Copyable] " + msg);
 	}
 
 	public default Object copy() {
@@ -56,6 +60,8 @@ public interface Copyable {
 	}
 
 	public default <E> E copy(E object) {
+		if (object == null)
+			return null;
 
 		Class<? extends Object> claz = object.getClass();
 		// System.out.println("classe a ser copiada " + object + " e array? " +
@@ -87,36 +93,32 @@ public interface Copyable {
 
 		} else {
 			try {
-
+				debug("COPYING " + object.getClass().getSimpleName());
 				E newInstance = (E) object.getClass().newInstance();
+
 				while (!claz.equals(Object.class)) {
 					for (Field field : claz.getDeclaredFields()) {
+
 						if (Modifier.isStatic(field.getModifiers()))
 							continue;
-//						if (field.isAnnotationPresent(NoCopyable.class)) {
-//							continue;
-//						}
 
 						field.setAccessible(true);
 						try {
 							Object value = field.get(object);
-							if (value != null) {
-								if (field.isAnnotationPresent(NoCopyable.class)) {
-									field.set(newInstance, value);
-								} else {
-									field.set(newInstance, copy(value));
-								}
+							if (!field.isAnnotationPresent(NotCopyable.class)) {
+								field.set(newInstance, copy(value));
 							}
 
 						} catch (Exception e) {
-							e.printStackTrace();
+							debug("VARIABLE FAILED " + field.getName());
 						}
+
 					}
 					claz = claz.getSuperclass();
 				}
 				object = newInstance;
 			} catch (Exception e) {
-				System.out.println("[Copyable] falha ao copiar " + claz);
+				debug("FAIL " + claz.getSimpleName());
 //				e.printStackTrace();
 			}
 
