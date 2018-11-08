@@ -130,7 +130,7 @@ public class KitManager extends EventsManager {
 //	
 			for (KitAbility kit : kits) {
 
-				if (!kit.hasPermission(player)) {
+				if (!player.hasPermission(kit.getPermission())) {
 
 					kitSelector.addButton(new MenuButton(kit.getIcon()));
 
@@ -151,7 +151,7 @@ public class KitManager extends EventsManager {
 //	
 			for (KitAbility kit : kits) {
 
-				if (!kit.hasPermission(player)) {
+				if (!player.hasPermission(kit.getPermission())) {
 
 					shop.addButton(new MenuButton(kit.getIcon()));
 

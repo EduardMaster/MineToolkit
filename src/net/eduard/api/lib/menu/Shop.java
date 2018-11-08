@@ -25,7 +25,8 @@ public class Shop extends Menu {
 	public Shop() {
 		this("Menu", 3);
 	}
-	public Shop(String name, int lineAmount) {
+	public Shop(String title, int lineAmount) {
+		super(title,lineAmount);
 		setEffect(new ClickEffect() {
 
 			@Override

@@ -150,8 +150,8 @@ public class DisplayBoard implements Storable, Copyable {
 	}
 
 	public DisplayBoard init() {
-		Mine.broadcast("§cinit executado"
-				+ "");
+//		Mine.broadcast("§cinit executado"
+//				+ "");
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		objective = scoreboard.registerNewObjective("sc"+Mine.getRandomInt(1000, 100000), "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);

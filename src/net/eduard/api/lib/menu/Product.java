@@ -9,7 +9,6 @@ public class Product extends MenuButton {
 
 	public Product(ItemStack icon) {
 		super(icon);
-		// TODO Auto-generated constructor stub
 	}
 
 	public Product(String name, ItemStack icon) {

@@ -1,11 +1,7 @@
 package net.eduard.api;
 
-import java.util.List;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import net.eduard.api.command.EnchantCommand;
 import net.eduard.api.command.GotoCommand;
@@ -13,7 +9,6 @@ import net.eduard.api.command.SoundCommand;
 import net.eduard.api.command.api.ApiCommand;
 import net.eduard.api.command.config.ConfigCommand;
 import net.eduard.api.command.map.MapCommand;
-import net.eduard.api.lib.EduardLIB;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.bungee.BukkitController;
 import net.eduard.api.lib.bungee.BungeeAPI;
@@ -21,15 +16,13 @@ import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.manager.DBManager;
 import net.eduard.api.lib.manager.DropManager;
 import net.eduard.api.lib.manager.PlayersManager;
-import net.eduard.api.lib.manager.TimeManager;
-import net.eduard.api.lib.menu.Menu;
-import net.eduard.api.lib.menu.Shop;
 import net.eduard.api.lib.modules.BukkitBungeeAPI;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables;
 import net.eduard.api.manager.BukkitReplacers;
 import net.eduard.api.manager.EssentialsEvents;
 import net.eduard.api.manager.InfoGenerator;
+import net.eduard.api.manager.PluginValor;
 import net.eduard.api.server.EduardPlugin;
 
 /**
@@ -52,7 +45,6 @@ public class EduardAPI extends EduardPlugin {
 	public Config getMessages() {
 		return messages;
 	}
-
 	public Config getConfigs() {
 		return config;
 	}
@@ -72,7 +64,7 @@ public class EduardAPI extends EduardPlugin {
 		BukkitController bukkit = BungeeAPI.getBukkit();
 		bukkit.setPlugin(plugin);
 		bukkit.register();
-//		StorageAPI.set(config.getBoolean("debug-storage"));
+		StorageAPI.setDebug(config.getBoolean("debug-storage"));
 		DBManager.setDebug(config.getBoolean("debug-db"));
 
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.game");
@@ -102,10 +94,8 @@ public class EduardAPI extends EduardPlugin {
 		new EssentialsEvents().register(this);
 		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
 		InfoGenerator.saveObjects(this);
-
-		new DropManager().register(this);
 		Mine.console("§bEduardAPI §fCustom drops ativado!");
-//		Mine.registerEvents(this, this);
+		new DropManager().register(this);
 		Mine.console("§bEduardAPI §fBase ativado!");
 
 		Mine.loadMaps();
@@ -134,9 +124,8 @@ public class EduardAPI extends EduardPlugin {
 		Mine.setPlayerManager(new PlayersManager());
 		Mine.getPlayerManager().register(this);
 		Mine.console("§bEduardAPI §acarregado!");
-		Mine.console("§cTestando " + StorageAPI.getStore(Shop.class));
-		Mine.console("§cTestando " + StorageAPI.getStore(Menu.class));
-//		Mine.console("§cPreco EduardAPI: "+Mine.calculatePluginValue(this, "net.eduard.api"));
+
+		PluginValor.register();
 	}
 
 	@Override

@@ -393,6 +393,8 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 						}
 						if (button.isCategory()) {
 							button.getMenu().open(player);
+//							Mine.console("§cE uma categoria");
+							return;
 						}
 					}
 					if (getEffect() != null) {

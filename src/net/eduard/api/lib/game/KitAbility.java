@@ -16,7 +16,6 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.click.PlayerInteract;
 import net.eduard.api.lib.manager.CooldownManager;
 import net.eduard.api.lib.modules.KitType;
-import net.eduard.api.lib.modules.Copyable.NotCopyable;
 import net.eduard.api.lib.storage.StorageAttributes;
 
 public class KitAbility extends CooldownManager {
@@ -58,7 +57,7 @@ public class KitAbility extends CooldownManager {
 		} else {
 			setName(name);
 		}
-		permission(name.toLowerCase().replace(" ", ""));
+		setPermission(name.toLowerCase().replace(" ", ""));
 	}
 
 	public ItemStack add(ItemStack item) {

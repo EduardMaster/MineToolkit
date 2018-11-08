@@ -29,7 +29,7 @@ import net.eduard.api.lib.storage.references.ReferenceBase;
  *
  */
 public class StorageAPI {
-
+	private static boolean debug = true;
 	public static String STORE_KEY = "=";
 	public static String REFER_KEY = "@";
 	private static Map<Class<?>, Storable> storages = new LinkedHashMap<>();
@@ -252,7 +252,20 @@ public class StorageAPI {
 	}
 
 	public static void debug(String msg) {
-		System.out.println("[Storage] " + msg);
+		if (debug)
+			System.out.println("[Storage] " + msg);
+	}
+
+	public static void registerAlias(Class<?> claz, String alias) {
+		aliases.put(claz, alias);
+	}
+
+	public static boolean isDebug() {
+		return debug;
+	}
+
+	public static void setDebug(boolean debug) {
+		StorageAPI.debug = debug;
 	}
 
 }

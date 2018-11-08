@@ -66,7 +66,7 @@ public class StorageMap extends StorageBase {
 
 				Object key = storeKey.restore(entry.getKey());
 				Object value = storeValue.restore(entry.getValue());
-				debug("put " + key + " " + value);
+				debug("^^ " + key + " " + value);
 				newMap.put(key, value);
 			}
 		}

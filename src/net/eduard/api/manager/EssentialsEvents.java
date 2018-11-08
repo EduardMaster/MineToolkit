@@ -1,5 +1,7 @@
 package net.eduard.api.manager;
 
+import java.text.DecimalFormat;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -26,15 +28,17 @@ public class EssentialsEvents extends EventsManager {
 	@EventHandler
 	public void onEnable(PluginEnableEvent e) {
 		if (e.getPlugin() instanceof EduardPlugin) {
-
+			
 			EduardPlugin plugin = (EduardPlugin) e.getPlugin();
 			String msg = "§b[Eduard-Dev] §f" + plugin.getName() + " §fv" + plugin.getDescription().getVersion()
 					+ "§a foi ativado com sucesso.";
 			if (plugin.isFree()) {
 				Mine.broadcast(msg);
 			} else {
-
 				Mine.console(msg);
+				double valor = plugin.getPrice();
+				DecimalFormat decimalFormat = new DecimalFormat("#.##");
+				Mine.console("§bPreco: §aR$"+decimalFormat.format(valor));
 			}
 		}
 		for (Config config : Config.CONFIGS) {
@@ -93,7 +97,7 @@ public class EssentialsEvents extends EventsManager {
 	public void onDeath(PlayerDeathEvent e) {
 		Player p = e.getEntity();
 		if (Mine.OPT_AUTO_RESPAWN) {
-			if (p.hasPermission("eduardAPI.autorespawn")) {
+			if (p.hasPermission("eduard.autorespawn")) {
 				Mine.TIME.syncDelay(new Runnable() {
 
 					@Override
