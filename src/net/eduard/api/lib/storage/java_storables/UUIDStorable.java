@@ -10,8 +10,12 @@ public class UUIDStorable implements Storable {
 
 	@Override
 	public Object restore(Object object) {
+		try {
+			return UUID.fromString(object.toString());
+		} catch (Exception e) {
+			return null;
+		}
 
-		return UUID.fromString(object.toString());
 	}
 
 	@Override

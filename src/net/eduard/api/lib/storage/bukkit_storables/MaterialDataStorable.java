@@ -5,10 +5,9 @@ import org.bukkit.material.MaterialData;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.StorageAttributes;
 
-@StorageAttributes(inline=true)
+@StorageAttributes(inline = true)
 public class MaterialDataStorable implements Storable {
 
 	@Override
@@ -16,6 +15,7 @@ public class MaterialDataStorable implements Storable {
 
 		return null;
 	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public Object store(Object object) {
@@ -32,12 +32,10 @@ public class MaterialDataStorable implements Storable {
 	public Object restore(Object object) {
 		if (object instanceof String) {
 			String string = (String) object;
-			StorageAPI.debug("Foda "+string );
 			try {
 				String[] split = string.split(":");
 				return new MaterialData(Material.getMaterial(Mine.toInt(split[0])), Mine.toByte(split[1]));
 			} catch (Exception e) {
-				return new MaterialData(Material.STONE);
 			}
 
 		}

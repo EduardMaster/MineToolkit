@@ -1,8 +1,0 @@
-name: EduardLIB
-description: API de desenvolvimento de plugins que facilita sua vida
-main: net.eduard.api.lib.EduardLIB
-version: 2.4.0
-author: Eduard
-authors: [Eduard]
-soft-depend: [Essentials,Vault,McMMO]
-website: https://www.youtube.com/user/EduTutoriaisHD

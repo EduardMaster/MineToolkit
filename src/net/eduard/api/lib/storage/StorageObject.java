@@ -28,7 +28,7 @@ public class StorageObject extends StorageBase {
 			Map<?, ?> map = (Map<?, ?>) data;
 			if (map.containsKey(StorageAPI.STORE_KEY)) {
 				String text = (String) map.get(StorageAPI.STORE_KEY);
-				debug(">> RESTORING TYPE AND ALIAS FROM " + text);
+				debug(">> RESTORING INFORMATIONS: " + text);
 				if (text.contains(StorageAPI.REFER_KEY)) {
 					String[] split = text.split(StorageAPI.REFER_KEY);
 					alias = split[0];
@@ -68,8 +68,8 @@ public class StorageObject extends StorageBase {
 		if (wrapper != null) {
 			try {
 				debug(">> RESTORING DATA FROM " + data);
-				Object result = Extra.getResult(Extra.class, "to" + wrapper.getSimpleName(), new Object[] { Object.class },
-						data);
+				Object result = Extra.getResult(Extra.class, "to" + wrapper.getSimpleName(),
+						new Object[] { Object.class }, data);
 				debug(">> DATA RESTORED " + data);
 				return result;
 			} catch (Exception e) {
@@ -106,20 +106,16 @@ public class StorageObject extends StorageBase {
 //			debug("=========== "+isInline());
 //		}
 		if (isInline()) {
-			Object instancia = store.newInstance();
-			if (instancia == null) {
-				debug(">> INLINE CUSTOM BEFORE " + data);
-				Object result = store.restore(data);
 
-				debug(">> INLINE CUSTOM AFTER " + result);
-				return result;
+			Object result = store.restore(data);
+			if (result == null) {
+				debug(">> INLINE  " + data);
+				result = new StorageInline(getInfo().clone()).restore(data);
 			} else {
-				debug(">> INLINE BEFORE " + data);
-				Object result = new StorageInline(getInfo().clone()).restore(data);
-				debug(">> INLINE AFTER " + data);
-				return result;
+				debug(">> INLINE CUSTOM " + data);
 
 			}
+			return result;
 
 		}
 		if (id == 0) {
