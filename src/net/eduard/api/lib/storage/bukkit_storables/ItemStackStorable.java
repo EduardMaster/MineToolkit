@@ -12,7 +12,7 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
-
+//@StorageAttributes(auto=false)
 public class ItemStackStorable implements Storable {
 
 	@Override

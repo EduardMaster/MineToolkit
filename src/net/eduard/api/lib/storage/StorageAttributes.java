@@ -14,5 +14,7 @@ public @interface StorageAttributes {
 	boolean indentificate() default false;
 
 	boolean inline() default false;
+	
+	//boolean auto() default true;
 
 }

@@ -28,7 +28,7 @@ public class StorageObject extends StorageBase {
 			Map<?, ?> map = (Map<?, ?>) data;
 			if (map.containsKey(StorageAPI.STORE_KEY)) {
 				String text = (String) map.get(StorageAPI.STORE_KEY);
-				debug(">> DETECTION OF TYPE " + text);
+				debug(">> RESTORING TYPE AND ALIAS FROM " + text);
 				if (text.contains(StorageAPI.REFER_KEY)) {
 					String[] split = text.split(StorageAPI.REFER_KEY);
 					alias = split[0];
@@ -45,10 +45,13 @@ public class StorageObject extends StorageBase {
 
 				} else {
 					claz = StorageAPI.getClassByAlias(text);
+					alias = text;
 				}
-				debug(">> TYPE " + claz);
-				debug(">> ALIAS " + alias);
-				debug(">> ID " + id);
+				if (claz != null)
+					debug(">> RESTORED TYPE " + claz.getSimpleName());
+
+				debug(">> RESTORED ALIAS " + alias);
+				debug(">> RESTORED ID " + id);
 
 			} else {
 			}
@@ -64,9 +67,11 @@ public class StorageObject extends StorageBase {
 
 		if (wrapper != null) {
 			try {
-				debug(">> BASIC TYPE " + data);
-				return Extra.getResult(Extra.class, "to" + wrapper.getSimpleName(), new Object[] { Object.class },
+				debug(">> RESTORING DATA FROM " + data);
+				Object result = Extra.getResult(Extra.class, "to" + wrapper.getSimpleName(), new Object[] { Object.class },
 						data);
+				debug(">> DATA RESTORED " + data);
+				return result;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -101,15 +106,21 @@ public class StorageObject extends StorageBase {
 //			debug("=========== "+isInline());
 //		}
 		if (isInline()) {
-			Object result = store.restore(data);
-			if (result == null) {
-				debug(">> INLINE  " + data);
-				return new StorageInline(getInfo().clone()).restore(data);
-			} else {
+			Object instancia = store.newInstance();
+			if (instancia == null) {
+				debug(">> INLINE CUSTOM BEFORE " + data);
+				Object result = store.restore(data);
 
-				debug(">> INLINE CUSTOM " + result);
+				debug(">> INLINE CUSTOM AFTER " + result);
 				return result;
+			} else {
+				debug(">> INLINE BEFORE " + data);
+				Object result = new StorageInline(getInfo().clone()).restore(data);
+				debug(">> INLINE AFTER " + data);
+				return result;
+
 			}
+
 		}
 		if (id == 0) {
 			id = StorageAPI.newId();
@@ -170,7 +181,7 @@ public class StorageObject extends StorageBase {
 //						field.set(instance, fieldRestored);
 //
 //					} else {
-
+					debug(">> VARIABLE " + field.getName() + " " + field.getType().getSimpleName());
 					Object restoredValue = storage.restore(fieldMapValue);
 					if (storage.isReference()) {
 						if (restoredValue != null) {
@@ -182,15 +193,15 @@ public class StorageObject extends StorageBase {
 							}
 						}
 					}
-					debug(">> " + field.getName() + " " + field.getType().getSimpleName());
 
 //					if (fieldRestored == null)
 //						continue;
 					try {
-						field.set(instance, restoredValue);
+						if (restoredValue != null)
+							field.set(instance, restoredValue);
 
 					} catch (Exception e) {
-						debug(">> FAILED TO SET VARIABLE " + field.getName() + " TO " + restoredValue);
+						debug(">> FAILED TO SET VARIABLE " + field.getName() + " USING " + restoredValue);
 					}
 
 //					}
