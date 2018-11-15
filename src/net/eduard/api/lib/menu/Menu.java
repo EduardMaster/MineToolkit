@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -29,6 +30,12 @@ import net.eduard.api.lib.modules.Extra;
  *
  */
 public class Menu extends EventsManager implements Copyable, PagedMenu {
+	private static boolean debug = false;
+
+	public static void log(String msg) {
+		if (debug)
+			Mine.console("§b[Menu] §7" + msg);
+	}
 
 	private String title = "Menu";
 	private int lineAmount = 1;
@@ -361,52 +368,70 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 	}
 
 	@EventHandler
+	public void close(InventoryCloseEvent e) {
+		if (e.getPlayer() instanceof Player) {
+			Player p = (Player) e.getPlayer();
+			
+			if (pageOpened.containsKey(p)) {
+				pageOpened.remove(p);
+			}
+
+		}
+	}
+
+	@EventHandler
 	public void onClick(InventoryClickEvent e) {
 		if (e.getWhoClicked() instanceof Player) {
 
 			Player player = (Player) e.getWhoClicked();
-			if (e.getInventory().getTitle().contains(getTitle())) {
+//			if (e.getInventory().getTitle().contains(getTitle())) {
+
+			if (pageOpened.containsKey(player)) {
+				log("Menu nome "+e.getInventory().getName());
 				e.setCancelled(true);
 				int slot = e.getRawSlot();
-				if (pageOpened.containsKey(player)) {
-					Integer page = pageOpened.get(player);
-					ItemStack itemClicked = e.getCurrentItem();
-					MenuButton button = null;
-					if (itemClicked != null) {
-						if (getPreviousPage().equals(itemClicked)) {
-							open(player, ++page);
-						} else if (getNextPage().equals(itemClicked)) {
-							open(player, --page);
-						} else {
-							button = getButton(itemClicked);
-						}
+				Integer page = pageOpened.get(player);
+				ItemStack itemClicked = e.getCurrentItem();
+				MenuButton button = null;
+				if (itemClicked != null) {
+					if (getPreviousPage().equals(itemClicked)) {
+						open(player, ++page);
+					} else if (getNextPage().equals(itemClicked)) {
+						open(player, --page);
 					} else {
-						button = getButton(page, slot);
+						button = getButton(itemClicked);
+						log("Button by Item " + ((button == null) ? "is Null" : "is not null"));
 					}
-				
-					if (button != null) {
-						if (button.getClick() != null) {
-							button.getClick().onClick(e, slot);
-						}
-						if (button.getEffects() != null) {
-							button.getEffects().effect(player);
-						}
-						if (button.isCategory()) {
-							button.getMenu().open(player);
-//							Mine.console("§cE uma categoria");
-							return;
-						}
-					}
-					if (getEffect() != null) {
-//						System.out.println(button);
-						getEffect().onClick(e, page);
-					}
-				}else {
+				}
+				if (button == null) {
+					button = getButton(page, slot);
+					log("Button by Slot " + ((button == null) ? "is Null" : "is not null"));
 				}
 
+				if (button != null) {
+					if (button.getClick() != null) {
+						button.getClick().onClick(e, slot);
+					}
+					if (button.getEffects() != null) {
+						button.getEffects().effect(player);
+					}
+					if (button.isCategory()) {
+						button.getMenu().open(player);
+//							Mine.console("§cE uma categoria");
+						return;
+					}
+				}
+				if (getEffect() != null) {
+//						System.out.println(button);
+					getEffect().onClick(e, page);
+				}
+			} else {
 			}
 
+//		}
+
 		}
+
 	}
 
 	public String getTitle() {
@@ -494,6 +519,14 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 	@Override
 	public int getPageOpen(Player player) {
 		return pageOpened.getOrDefault(player, 0);
+	}
+
+	public static boolean isDebug() {
+		return debug;
+	}
+
+	public static void setDebug(boolean debug) {
+		Menu.debug = debug;
 	}
 
 }

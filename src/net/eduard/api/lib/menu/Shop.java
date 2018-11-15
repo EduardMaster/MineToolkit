@@ -11,7 +11,7 @@ import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.modules.VaultAPI;
 import net.eduard.api.lib.storage.StorageAttributes;
 
-@StorageAttributes(indentificate=true)
+@StorageAttributes(indentificate = true)
 public class Shop extends Menu {
 	private boolean useVault = true;
 
@@ -21,12 +21,14 @@ public class Shop extends Menu {
 	private String messageBoughtItem = "§aVoce adquiriu um item da Loja!";
 
 	private String messageWithoutBalance = "§cVoce não tem dinheiro suficiente!";
+	private String messageWithoutPermission = "§cVoce não tem permissão para comprar este item!";
 
 	public Shop() {
 		this("Menu", 3);
 	}
+
 	public Shop(String title, int lineAmount) {
-		super(title,lineAmount);
+		super(title, lineAmount);
 		setEffect(new ClickEffect() {
 
 			@Override
@@ -41,7 +43,12 @@ public class Shop extends Menu {
 						return;
 					}
 					double price = product.getPrice();
-
+					if (product.getPermission() != null) {
+						if (!player.hasPermission(product.getPermission())) {
+							player.sendMessage(messageWithoutPermission);
+							return;
+						}
+					}
 					if (useVault && VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
 
 						if (VaultAPI.getEconomy().has(player, price)) {
@@ -62,14 +69,17 @@ public class Shop extends Menu {
 						}
 
 					} else {
-						Mine.console("§b[Shop] §cnao funcionado pois nao tem  um sistema de economia");
-						return;
-					}
-					if (product.getProduct() == null) {
-						Mine.console("§b[Shop] §cO item do Produto");
+//						Mine.console("§b[Shop] §cnao funcionado pois nao tem  um sistema de economia");
 						return;
 					}
 					player.sendMessage(messageBoughtItem);
+					for (String cmd : product.getCommands()) {
+						Mine.runCommand(cmd.replace("$player", player.getName()));
+					}
+					if (product.getProduct() == null) {
+						return;
+					}
+
 					if (Mine.isFull(player.getInventory())) {
 						player.getWorld().dropItemNaturally(player.getLocation().add(0, 5, 0), product.getProduct());
 					} else {
@@ -83,9 +93,11 @@ public class Shop extends Menu {
 
 		// TODO Auto-generated constructor stub
 	}
+
 	public CurrencyManager getCurrency() {
 		return currency;
 	}
+
 	public String getMessageBoughtItem() {
 		return messageBoughtItem;
 	}
@@ -146,5 +158,13 @@ public class Shop extends Menu {
 
 	public boolean useVault() {
 		return useVault;
+	}
+
+	public String getMessageWithoutPermission() {
+		return messageWithoutPermission;
+	}
+
+	public void setMessageWithoutPermission(String messageWithoutPermission) {
+		this.messageWithoutPermission = messageWithoutPermission;
 	}
 }

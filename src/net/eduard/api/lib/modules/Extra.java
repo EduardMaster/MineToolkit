@@ -55,8 +55,6 @@ import java.util.zip.ZipInputStream;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
-import net.eduard.api.lib.Mine;
-
 /**
  * API contendo coisas relacionado a Textos, Numeros e Reflection
  * 

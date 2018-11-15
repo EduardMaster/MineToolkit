@@ -18,7 +18,7 @@ public class Slot implements Storable {
 	}
 
 	public int getIndex() {
-		return Extra.getIndex(positionY, positionX);
+		return Extra.getIndex(positionX, positionY);
 	}
 
 	public Slot() {

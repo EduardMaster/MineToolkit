@@ -1,10 +1,14 @@
 package net.eduard.api.lib.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.inventory.ItemStack;
 
 public class Product extends MenuButton {
 	private double price;
 	private String permission;
+	private List<String> commands =new ArrayList<>();
 	private ItemStack product;
 
 	public Product(ItemStack icon) {
@@ -47,6 +51,14 @@ public class Product extends MenuButton {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public List<String> getCommands() {
+		return commands;
+	}
+
+	public void setCommands(List<String> commands) {
+		this.commands = commands;
 	}
 
 }

@@ -100,10 +100,12 @@ public class StorageAPI {
 		return new StorageObject(store).restore(object);
 	}
 
-	public static void register(Class<?> claz) {
+	public static void register(Class<? extends Storable> claz) {
 		autoRegisterClass(claz);
 	}
-
+	public static void register(Class<? extends Storable> claz,String alias) {
+		autoRegisterClass(claz,alias);
+	}
 	public static void register(Class<?> claz, Storable storable) {
 		storages.put(claz, storable);
 		aliases.put(claz, claz.getSimpleName());
@@ -122,8 +124,10 @@ public class StorageAPI {
 			autoRegisterClass(claz);
 		}
 	}
-
 	public static Storable autoRegisterClass(Class<?> claz) {
+		return autoRegisterClass(claz, claz.getSimpleName());
+	}
+	public static Storable autoRegisterClass(Class<?> claz,String alias) {
 		Storable store = null;
 		try {
 			if (Modifier.isAbstract(claz.getModifiers())) {

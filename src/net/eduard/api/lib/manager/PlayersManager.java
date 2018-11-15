@@ -22,7 +22,7 @@ import net.eduard.api.lib.game.Tag;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.modules.VaultAPI;
 
-public class PlayersManager extends TimeManager {
+public class PlayersManager extends EventsManager {
 	private boolean tagsEnabled;
 	private boolean tagsByGroup;
 	private boolean scoresEnabled;

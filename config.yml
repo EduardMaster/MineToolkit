@@ -4,6 +4,8 @@ debug-plugin-messages: true
 
 debug-storage: false
 
+debug-menu: false
+
 debug-db: false
 
 

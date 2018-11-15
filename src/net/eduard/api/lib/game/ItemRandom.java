@@ -14,11 +14,19 @@ public class ItemRandom implements Storable {
 
 	private int maxAmount = 1;
 
-	private double chance = 1;
+	private double chance = 1.0;
 
 	private ItemStack item;
 
 	public ItemRandom() {
+	}
+
+	public ItemRandom(ItemStack item, int min, int max) {
+		this(item, min, max, 1);
+	}
+
+	public ItemRandom(ItemStack item, int min) {
+		this(item, min, min);
 	}
 
 	public ItemRandom(ItemStack item, int min, int max, double chance) {
@@ -80,7 +88,6 @@ public class ItemRandom implements Storable {
 
 	}
 
-
 	@Override
 	public Object restore(Map<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -90,7 +97,7 @@ public class ItemRandom implements Storable {
 	@Override
 	public void store(Map<String, Object> map, Object object) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -1,8 +1,8 @@
 Classe Principal do Plugin EduardAPI herda todas propriedades de um
-JavaPlugin e tamb§m implementa Listener para alterar eventos.
-Padroes que v§o existir na nomeclatura dos plugins
+JavaPlugin e tambem implementa Listener para alterar eventos.
+Padroes que vao existir na nomeclatura dos plugins
 Possiveis Prefixos: e, Edu, Eduard, Master, EduMaster, EM,
-Padr§o para Plugins iniciado no dia 02/03/2018
+Padrao para Plugins iniciado no dia 02/03/2018
 Prefixo+Nome exemplo MasterFactions
-A qualquer momento posso mudar a nomeclatura porem os plugins j§ nomeados
+A qualquer momento posso mudar a nomeclatura porem os plugins ja nomeados
 anteriormente continuam com mesmo nome.<br>

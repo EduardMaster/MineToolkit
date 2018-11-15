@@ -14,7 +14,6 @@ import net.eduard.api.lib.bungee.BukkitController;
 import net.eduard.api.lib.bungee.BungeeAPI;
 import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.manager.DBManager;
-import net.eduard.api.lib.manager.DropManager;
 import net.eduard.api.lib.manager.PlayersManager;
 import net.eduard.api.lib.modules.BukkitBungeeAPI;
 import net.eduard.api.lib.storage.StorageAPI;
@@ -94,8 +93,7 @@ public class EduardAPI extends EduardPlugin {
 		new EssentialsEvents().register(this);
 		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
 		InfoGenerator.saveObjects(this);
-		Mine.console("§bEduardAPI §fCustom drops ativado!");
-		new DropManager().register(this);
+
 		Mine.console("§bEduardAPI §fBase ativado!");
 
 		Mine.loadMaps();

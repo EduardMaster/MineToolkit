@@ -1,4 +1,4 @@
-package net.eduard.api.lib.manager;
+package net.eduard.api.lib.config;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

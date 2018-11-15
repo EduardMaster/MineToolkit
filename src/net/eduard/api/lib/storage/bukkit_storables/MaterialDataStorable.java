@@ -21,7 +21,7 @@ public class MaterialDataStorable implements Storable {
 	public Object store(Object object) {
 		if (object instanceof MaterialData) {
 			MaterialData materialData = (MaterialData) object;
-			return materialData.getItemTypeId() + ":" + materialData.getData();
+			return materialData.getItemTypeId() + ";" + materialData.getData();
 
 		}
 		return null;
@@ -33,7 +33,7 @@ public class MaterialDataStorable implements Storable {
 		if (object instanceof String) {
 			String string = (String) object;
 			try {
-				String[] split = string.split(":");
+				String[] split = string.split(";");
 				return new MaterialData(Material.getMaterial(Mine.toInt(split[0])), Mine.toByte(split[1]));
 			} catch (Exception e) {
 			}

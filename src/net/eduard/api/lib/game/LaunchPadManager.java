@@ -1,4 +1,4 @@
-package net.eduard.api.lib.manager;
+package net.eduard.api.lib.game;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.game.Jump;
+import net.eduard.api.lib.manager.EventsManager;
+import net.eduard.api.lib.manager.FallManager;
 
 public class LaunchPadManager extends EventsManager {
 
