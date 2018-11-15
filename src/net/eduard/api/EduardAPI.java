@@ -38,7 +38,7 @@ public class EduardAPI extends EduardPlugin {
 	private static EduardAPI plugin;
 
 	public static EduardAPI getInstance() {
-		return plugin;
+		 return plugin;
 	}
 
 	public Config getMessages() {
