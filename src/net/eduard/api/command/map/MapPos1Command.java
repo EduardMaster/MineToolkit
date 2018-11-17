@@ -21,7 +21,7 @@ public class MapPos1Command extends CommandManager {
 			Player p = (Player) sender;
 			Schematic schema = Mine.getSchematic(p);
 			schema.setLow(p.getLocation().toVector());
-			p.sendMessage("§bEduardAPI §6Posi§§o 1 setada!");
+			p.sendMessage("§bEduardAPI §6Posicão 1 setada!");
 		}
 		return true;
 	}

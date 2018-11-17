@@ -13,6 +13,7 @@ public class Product extends MenuButton {
 
 	public Product(ItemStack icon) {
 		super(icon);
+		setName("Produto");
 	}
 
 	public Product(String name, ItemStack icon) {

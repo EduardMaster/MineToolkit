@@ -19,9 +19,9 @@ import net.eduard.api.lib.storage.Storable;
  */
 public class MinigameRoom implements Storable {
 
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private Minigame minigame;
-	@StorageAttributes
+	@StorageAttributes(reference=true)
 	private MinigameMap map;
 	private MinigameMode mode = MinigameMode.NORMAL;
 	private int id;

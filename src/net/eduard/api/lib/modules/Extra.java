@@ -29,6 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,6 +103,7 @@ public final class Extra {
 		}
 		return null;
 	}
+
 	private static Map<Class<?>, Double> classesPrice = new HashMap<>();
 
 	public static boolean hasPrice(Class<?> claz) {

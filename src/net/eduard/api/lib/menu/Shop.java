@@ -1,6 +1,7 @@
 package net.eduard.api.lib.menu;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,10 +19,10 @@ public class Shop extends Menu {
 	@StorageAttributes(reference = true)
 	private CurrencyManager currency;
 
-	private String messageBoughtItem = "§aVoce adquiriu um item da Loja!";
+	private String messageBoughtItem = "§aVoce adquiriu $amount ($product) produto(s) da Loja!";
 
 	private String messageWithoutBalance = "§cVoce não tem dinheiro suficiente!";
-	private String messageWithoutPermission = "§cVoce não tem permissão para comprar este item!";
+	private String messageWithoutPermission = "§cVoce não tem permissão para comprar este produto!";
 
 	public Shop() {
 		this("Menu", 3);
@@ -43,12 +44,23 @@ public class Shop extends Menu {
 						return;
 					}
 					double price = product.getPrice();
+					int amount = 1;
+//					System.out.println("Preco "+price);
+					if (event.getClick() == ClickType.SHIFT_RIGHT) {
+						amount = 64;
+					}
+					if (event.getClick() == ClickType.MIDDLE) {
+						int espacoVasio = Mine.getEmptySlotsAmount(player.getInventory());
+
+						amount = espacoVasio * 64;
+					}
 					if (product.getPermission() != null) {
 						if (!player.hasPermission(product.getPermission())) {
 							player.sendMessage(messageWithoutPermission);
 							return;
 						}
 					}
+					price *= amount;
 					if (useVault && VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
 
 						if (VaultAPI.getEconomy().has(player, price)) {
@@ -72,18 +84,22 @@ public class Shop extends Menu {
 //						Mine.console("§b[Shop] §cnao funcionado pois nao tem  um sistema de economia");
 						return;
 					}
-					player.sendMessage(messageBoughtItem);
+//				
 					for (String cmd : product.getCommands()) {
 						Mine.runCommand(cmd.replace("$player", player.getName()));
 					}
 					if (product.getProduct() == null) {
 						return;
 					}
+					player.sendMessage(messageBoughtItem.replace("$amount", "" + amount).replace("$product",
+							"" + product.getName()));
 
 					if (Mine.isFull(player.getInventory())) {
 						player.getWorld().dropItemNaturally(player.getLocation().add(0, 5, 0), product.getProduct());
 					} else {
-						player.getInventory().addItem(product.getProduct());
+						ItemStack clone = product.getProduct().clone();
+						clone.setAmount(amount);
+						player.getInventory().addItem(clone);
 					}
 				}
 

@@ -21,10 +21,20 @@ public class Kit implements Storable {
 	private boolean autoEquip = true;
 	private ItemStack icon;
 	private double price;
+	private int level;
 	private List<ItemStack> items = new ArrayList<>();
 	private List<Item> extras = new ArrayList<>();
-	private List<KitUpgrade> upgrades = new ArrayList<>();
+	private List<Kit> upgrades = new ArrayList<>();
 
+	public Kit(Kit kit, int price, int level) {
+		kit.upgrades.add(this);
+		setPrice(price);
+		setLevel(level);
+
+	}
+public Kit() {
+	// TODO Auto-generated constructor stub
+}
 	public void give(Player p) {
 		give(p, 1);
 	}
@@ -53,7 +63,7 @@ public class Kit implements Storable {
 			}
 		}
 		for (int id = 2; id <= level; id++) {
-			KitUpgrade upgrade = getUpgrade(id);
+			Kit upgrade = getUpgrade(id);
 			for (ItemStack item : upgrade.getItems()) {
 				String type = item.getType().name();
 				if (autoEquip) {
@@ -80,8 +90,8 @@ public class Kit implements Storable {
 			Mine.fill(inv, new ItemStack(Material.MUSHROOM_SOUP));
 	}
 
-	public KitUpgrade getUpgrade(int level) {
-		for (KitUpgrade upgrade : upgrades) {
+	public Kit getUpgrade(int level) {
+		for (Kit upgrade : upgrades) {
 			if (upgrade.getLevel() == level) {
 				return upgrade;
 			}
@@ -165,20 +175,20 @@ public class Kit implements Storable {
 		this.extras = extras;
 	}
 
-	public List<KitUpgrade> getUpgrades() {
-		return upgrades;
-	}
-
-	public void setUpgrades(List<KitUpgrade> upgrades) {
-		this.upgrades = upgrades;
-	}
-
 	public boolean isAutoEquip() {
 		return autoEquip;
 	}
 
 	public void setAutoEquip(boolean autoEquip) {
 		this.autoEquip = autoEquip;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
 	}
 
 }

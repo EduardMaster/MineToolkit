@@ -30,7 +30,6 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	protected Config messages;
 	protected Config storage;
 	protected boolean free;
-	private long backupTime = 20 * 60 * 10;
 
 	public boolean isEditable() {
 		return !config.getKeys().isEmpty();
@@ -96,20 +95,32 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	}
 
 	public void backupStorage() {
-		asyncTimer(() -> {
-
-			try {
-				SimpleDateFormat format = new SimpleDateFormat("dd-MM-YYYY hh-mm-ss");
-				File pasta = new File(getDataFolder(), "/backup/");
-				pasta.mkdirs();
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("dd-MM-YYYY hh-mm-ss");
+			File pasta = new File(getDataFolder(), "/backup/");
+			pasta.mkdirs();
+			if (getStorage().existConfig())
 				Files.copy(getStorage().getFile().toPath(),
 						Paths.get(pasta.getPath(), "storage-" + format.format(System.currentTimeMillis()) + ".yml"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		}, backupTime, backupTime);
+	}
+
+	public void startAutoSave() {
+		startAutoSave(60);
+	}
+
+	public void startAutoSave(int seconds) {
+		asyncTimer(new Runnable() {
+
+			@Override
+			public void run() {
+				save();
+			}
+		}, seconds * 20, seconds * 20);
 	}
 
 	public void save() {
@@ -141,13 +152,5 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 
 	public Config getConfigs() {
 		return config;
-	}
-
-	public long getBackupTime() {
-		return backupTime;
-	}
-
-	public void setBackupTime(long backupTime) {
-		this.backupTime = backupTime;
 	}
 }

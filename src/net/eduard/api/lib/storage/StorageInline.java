@@ -127,6 +127,7 @@ public class StorageInline extends StorageBase {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object store(Object data) {
 		Class<? extends Object> c = getType();

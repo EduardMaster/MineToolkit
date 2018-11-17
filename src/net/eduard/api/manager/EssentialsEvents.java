@@ -19,7 +19,6 @@ import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.EduardAPI;
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.manager.EventsManager;
 import net.eduard.api.server.EduardPlugin;
@@ -41,11 +40,11 @@ public class EssentialsEvents extends EventsManager {
 				Mine.console("§bPreco: §aR$"+decimalFormat.format(valor));
 			}
 		}
-		for (Config config : Config.CONFIGS) {
-			if (e.getPlugin().equals(EduardAPI.getInstance().getConfigs().getPlugin())) {
-				config.reloadConfig();
-			}
-		}
+//		for (Config config : Config.CONFIGS) {
+//			if (e.getPlugin().equals(EduardAPI.getInstance().getConfigs().getPlugin())) {
+//				config.reloadConfig();
+//			}
+//		}
 	}
 
 	@EventHandler
@@ -84,13 +83,13 @@ public class EssentialsEvents extends EventsManager {
 			}
 
 		}
-		for (Config config : Config.CONFIGS) {
-			if (e.getPlugin().equals(EduardAPI.getInstance().getConfigs().getPlugin())) {
-				if (config.isAutoSave()) {
-					config.saveConfig();
-				}
-			}
-		}
+//		for (Config config : Config.CONFIGS) {
+//			if (e.getPlugin().equals(EduardAPI.getInstance().getConfigs().getPlugin())) {
+//				if (config.isAutoSave()) {
+//					config.saveConfig();
+//				}
+//			}
+//		}
 	}
 
 	@EventHandler
@@ -174,10 +173,10 @@ public class EssentialsEvents extends EventsManager {
 				Schematic mapa = Mine.getSchematic(p);
 				if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
 					mapa.setHigh(e.getClickedBlock().getLocation().toVector());
-					p.sendMessage("§bEduardAPI §6Posi§§o 1 setada!");
+					p.sendMessage("§bEduardAPI §6Posição 1 setada!");
 				} else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					mapa.setLow(e.getClickedBlock().getLocation().toVector());
-					p.sendMessage("§bEduardAPI §6Posi§§o 2 setada!");
+					p.sendMessage("§bEduardAPI §6Posição 2 setada!");
 				}
 
 			}

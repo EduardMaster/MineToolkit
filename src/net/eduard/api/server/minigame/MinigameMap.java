@@ -25,7 +25,7 @@ public class MinigameMap implements Storable, Copyable {
 	private String name;
 	private String displayName;
 	private String worldName;
-	private int teamSize=1;
+	private int teamSize = 1;
 	private int minPlayersAmount = 2;
 	private int maxPlayersAmount = 20;
 	private int neededPlayersAmount = 16;
@@ -35,11 +35,10 @@ public class MinigameMap implements Storable, Copyable {
 	private List<Location> spawns = new ArrayList<>();
 	private Schematic map, feast;
 	private Location feastLocation;
-	
+
 	public boolean isSolo() {
 		return teamSize == 1;
 	}
-	
 
 	public MinigameMap() {
 
@@ -51,8 +50,6 @@ public class MinigameMap implements Storable, Copyable {
 
 	}
 
-
-
 	public MinigameMap(String name) {
 		this.name = name;
 		this.displayName = name;
@@ -62,7 +59,6 @@ public class MinigameMap implements Storable, Copyable {
 		this(name);
 		minigame.getMaps().add(this);
 	}
-
 
 	@Override
 	public Object restore(Map<String, Object> map) {
@@ -219,10 +215,11 @@ public class MinigameMap implements Storable, Copyable {
 		World mundo = Bukkit.getWorld(worldName);
 		if (mundo == null) {
 			mundo = Mine.loadWorld(worldName);
-			
+
 		}
 		return mundo;
 	}
+
 	public MinigameMap fixWorld() {
 		return world(getWorld());
 	}
@@ -259,11 +256,9 @@ public class MinigameMap implements Storable, Copyable {
 		this.worldName = worldName;
 	}
 
-
 	public String getDisplayName() {
 		return displayName;
 	}
-
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
