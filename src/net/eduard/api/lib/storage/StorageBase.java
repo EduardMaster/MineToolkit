@@ -13,15 +13,22 @@ public abstract class StorageBase {
 	public static void debug(String msg) {
 		StorageAPI.debug(msg);
 	}
+
 	public void update() {
-		update(getField(),getType());
+		update(true);
+	}
+	public void update( boolean updateUsingField) {
+		update(getField(), getType(),updateUsingField);
+	}
+	public void update(Field field, Class<?> claz) {
+		update(field, claz, true);
 	}
 
-	public void update(Field field, Class<?> claz) {
+	public void update(Field field, Class<?> claz, boolean updateUsingField) {
 		Storable store = StorageAPI.getStore(claz);
-		setReference(false);
-		setInline(false);
-		setIndentifiable(false);
+//		setReference(false);
+//		setInline(false);
+//		setIndentifiable(false);
 		if (store != null) {
 			claz = store.getClass();
 		}
@@ -32,13 +39,14 @@ public abstract class StorageBase {
 			setIndentifiable(atr.indentificate());
 //			Mine.console("§dClasse " + atr+ " §a"+claz);
 		}
-		if (field.isAnnotationPresent(StorageAttributes.class)) {
-			StorageAttributes atr = field.getAnnotation(StorageAttributes.class);
-			setReference(atr.reference());
-			setInline(atr.inline());
-			setIndentifiable(atr.indentificate());
+		if (updateUsingField)
+			if (field.isAnnotationPresent(StorageAttributes.class)) {
+				StorageAttributes atr = field.getAnnotation(StorageAttributes.class);
+				setReference(atr.reference());
+				setInline(atr.inline());
+				setIndentifiable(atr.indentificate());
 //			Mine.console("§eField " + atr);
-		}
+			}
 	}
 
 	public Storable getStore(Class<?> claz) {

@@ -17,21 +17,20 @@ import net.eduard.api.lib.modules.BukkitTimeHandler;
  * @author Eduard-PC
  *
  */
-public class TimeManager extends EventsManager implements Runnable , BukkitTimeHandler{
+public class TimeManager extends EventsManager implements Runnable, BukkitTimeHandler {
 
 	/**
 	 * Construtor base automatico usando o Plugin da Mine;
 	 */
 	public TimeManager() {
 		setPlugin(defaultPlugin());
-		
+
 	}
 
 	/**
 	 * Construtor pedindo um Plugin
 	 * 
-	 * @param plugin
-	 *            Plugin
+	 * @param plugin Plugin
 	 */
 	public TimeManager(Plugin plugin) {
 		setPlugin(plugin);
@@ -59,8 +58,7 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 	/**
 	 * Cria um Delay com um Plugin
 	 * 
-	 * @param plugin
-	 *            Plugin
+	 * @param plugin Plugin
 	 * @return Delay
 	 */
 	public BukkitTask syncDelay() {
@@ -72,8 +70,7 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 	/**
 	 * Cria um Timer com um Plugin
 	 * 
-	 * @param plugin
-	 *            Plugin
+	 * @param plugin Plugin
 	 * @return Timer
 	 */
 	public BukkitTask syncTimer() {
@@ -81,11 +78,11 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 		setStartTime(Mine.getNow());
 		return task;
 	}
+
 	/**
 	 * Cria um Timer desincronizado com um Plugin
 	 * 
-	 * @param plugin
-	 *            Plugin
+	 * @param plugin Plugin
 	 * @return Timer
 	 */
 	public BukkitTask asyncTimer() {
@@ -97,10 +94,8 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 	/**
 	 * Cria um Delay com um Plugin e um Efeito rodavel
 	 * 
-	 * @param plugin
-	 *            Plugin
-	 * @param run
-	 *            Efeito rodavel
+	 * @param plugin Plugin
+	 * @param run    Efeito rodavel
 	 * @return Delay
 	 */
 	public BukkitTask asyncDelay() {
@@ -109,7 +104,6 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 		return task;
 	}
 
-	
 	/**
 	 * 
 	 * @return Tempo em ticks
@@ -125,6 +119,7 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 	public boolean existsTask() {
 		return task != null;
 	}
+
 	public boolean isRunning() {
 		return existsTask() && Bukkit.getScheduler().isCurrentlyRunning(getTask().getTaskId());
 	}
@@ -142,8 +137,7 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 	/**
 	 * Seta o Tempo
 	 * 
-	 * @param time
-	 *            Tempo em ticks
+	 * @param time Tempo em ticks
 	 */
 	public void setTime(long time) {
 		this.time = time;
@@ -152,8 +146,7 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 	/**
 	 * Define o Tempo
 	 * 
-	 * @param time
-	 *            Tempo em segundos
+	 * @param time Tempo em segundos
 	 */
 	public void setTime(int time) {
 		setTime(time * 20L);
@@ -170,8 +163,7 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 	/**
 	 * Define o Tempo de inicio
 	 * 
-	 * @param startTime
-	 *            Tempo em ticks
+	 * @param startTime Tempo em ticks
 	 */
 	public void setStartTime(long startTime) {
 		this.startTime = startTime;
@@ -179,6 +171,12 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 
 	public BukkitTask getTask() {
 		return task;
+	}
+
+	@Override
+	public Plugin getPluginInstance() {
+
+		return getPlugin();
 	}
 
 	/**
@@ -201,7 +199,5 @@ public class TimeManager extends EventsManager implements Runnable , BukkitTimeH
 		// TODO Auto-generated method stub
 
 	}
-
-	
 
 }

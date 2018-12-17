@@ -197,6 +197,11 @@ public class ConfigSection {
 		if (object.equals("{}")) {
 			return getMap();
 		}
+		if (object instanceof String)
+		{
+			String string = (String) object;
+			return removeQuotes(string);
+		}
 		return object;
 	}
 

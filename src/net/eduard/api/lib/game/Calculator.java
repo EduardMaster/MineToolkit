@@ -4,14 +4,15 @@ import java.util.Map;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(inline = true)
 public class Calculator implements Storable {
 	private double base = 10;
 	private double perLevel = 5;
 	private double limit = 0;
 	private double variationPerLevel = 0;
 	private double variation = 0;
-	
 
 	public Calculator() {
 
@@ -31,7 +32,7 @@ public class Calculator implements Storable {
 	}
 
 	public double getValue(double level) {
-		double result = (perLevel * (level + 1)) + base;
+		double result = (perLevel * (level)) + base;
 		double variationNumber = variation + (variationPerLevel * level);
 		double random = Extra.getRandomDouble(-variationNumber, variationNumber);
 		double resultFinal = result + random; // + extra;

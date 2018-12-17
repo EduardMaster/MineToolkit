@@ -32,6 +32,14 @@ public class Tag implements Storable ,Copyable{
 		// TODO Auto-generated constructor stub
 	}
 
+	public Tag(String prefix, String suffix, String name, int rank) {
+		setPrefix(prefix);
+		setSuffix(suffix);
+		setName(name);
+		setRank(rank);
+		
+	}
+
 	public Tag copy() {
 		return copy(this);
 	}

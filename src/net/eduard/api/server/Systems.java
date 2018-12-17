@@ -5,7 +5,7 @@ public class Systems {
 	private static CashSystem cashSystem;
 	private static SoulSystem soulSystem;
 	private static VipSystem vipSystem;
-
+	private static ScoreSystem scoreSystem;
 
 	public static CashSystem getCashSystem() {
 		return cashSystem;
@@ -29,6 +29,14 @@ public class Systems {
 
 	public static void setVipSystem(VipSystem vipSystem) {
 		Systems.vipSystem = vipSystem;
+	}
+
+	public static ScoreSystem getScoreSystem() {
+		return scoreSystem;
+	}
+
+	public static void setScoreSystem(ScoreSystem scoreSystem) {
+		Systems.scoreSystem = scoreSystem;
 	}
 
 }

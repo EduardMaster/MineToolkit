@@ -55,7 +55,7 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 		this.free = free;
 	}
 
-	public Plugin getPlugin() {
+	public Plugin getPluginInstance() {
 		return this;
 	}
 
@@ -78,18 +78,25 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 		double valor = 0;
 		List<Class<?>> classes = Mine.getClasses(this, getClass());
 		for (Class<?> claz : classes) {
-			valor += Extra.calculateClassValue(claz);
+			double numero = Extra.calculateClassValue(claz);
+			valor += numero;
+//			System.out.println("PRECO DA CLASSE "+ claz+ " eh "+ numero);
 		}
+//		System.out.println("NORMAL PRICE "+valor);
 		if (hasMessages()) {
 			valor += 5;
+//			System.out.println("HAVE Messages");
 		}
 		if (isEditable()) {
 			valor += 5;
+//			System.out.println("IS Editable");
 		}
 		if (hasStorage()) {
 			valor += 10;
+//			System.out.println("HAVE Storage");
 		}
-		valor += 5;
+//		System.out.println("HAVE ADICIONAL");
+//		valor += 5;
 		return valor;
 
 	}

@@ -58,7 +58,15 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 	private transient Map<Integer, Inventory> pagesCache = new HashMap<>();
 	@NotCopyable
 	private transient Map<Player, Integer> pageOpened = new HashMap<>();
-
+	public void removeButton(String name) {
+		for (MenuButton button : buttons) {
+			if (button.getName().equalsIgnoreCase(name)) {
+				buttons.remove(button);
+				break;
+			}
+		}
+		
+	}
 	public String getFullTitle() {
 		if (isPageSystem()) {
 			return pagePrefix + title + pageSuffix;

@@ -61,7 +61,10 @@ public class EventsManager implements Listener, Storable {
 		setPlugin(plugin);
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
-
+	public Plugin getPlugin() {
+		return plugin;
+	}
+	
 	public Object restore(Map<String, Object> map) {
 		return null;
 	}
@@ -92,7 +95,7 @@ public class EventsManager implements Listener, Storable {
 	 * 
 	 * @return Plugin
 	 */
-	public Plugin getPlugin() {
+	public Plugin getPluginInstance() {
 		return plugin;
 	}
 

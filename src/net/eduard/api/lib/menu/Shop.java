@@ -183,4 +183,6 @@ public class Shop extends Menu {
 	public void setMessageWithoutPermission(String messageWithoutPermission) {
 		this.messageWithoutPermission = messageWithoutPermission;
 	}
+
+
 }

@@ -1,6 +1,7 @@
 package net.eduard.api.lib.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Sounds;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 /**
@@ -125,7 +127,7 @@ public class Config implements Storable {
 			if (saveAsUTF8) {
 				try {
 					InputStream is = Mine.getResource(plugin.getClass().getClassLoader(), name);
-					Mine.copyAsUTF8(is, file);
+					Extra.copyAsUTF8(is, file);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -135,6 +137,13 @@ public class Config implements Storable {
 			} else {
 				if (plugin.getResource(name) != null) {
 					plugin.saveResource(name, true);
+				}else {
+					try {
+						file.createNewFile();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 
@@ -145,8 +154,8 @@ public class Config implements Storable {
 		lines.clear();
 		root.save(this, -1);
 		try {
-			if (!Mine.isDirectory(file)) {
-				Mine.writeLines(file, lines);
+			if (!Extra.isDirectory(file)) {
+				Extra.writeLines(file, lines);
 			}
 
 		} catch (Exception ex) {
@@ -158,7 +167,7 @@ public class Config implements Storable {
 		try {
 			file.getParentFile().mkdirs();
 			if (!file.exists()) {
-				if (Mine.isDirectory(file)) {
+				if (Extra.isDirectory(file)) {
 					file.mkdirs();
 				} else {
 					saveDefaultConfig();
@@ -166,7 +175,8 @@ public class Config implements Storable {
 
 			}
 			if (file.isFile()) {
-				lines = Mine.readLines(file);
+				lines = Extra.readLines(file);
+				root.getMap().clear();
 				root.reload(this);
 			}
 

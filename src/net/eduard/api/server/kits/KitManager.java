@@ -138,7 +138,7 @@ public class KitManager extends EventsManager {
 
 			}
 			playerKitsMenus.put(player, kitSelector);
-			kitSelector.register(getPlugin());
+			kitSelector.register(getPluginInstance());
 		}
 		return kitSelector;
 
@@ -159,7 +159,7 @@ public class KitManager extends EventsManager {
 
 			}
 			playerShops.put(player, shop);
-			shop.register(getPlugin());
+			shop.register(getPluginInstance());
 		}
 		return shop;
 

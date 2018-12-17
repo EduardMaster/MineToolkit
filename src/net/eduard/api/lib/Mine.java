@@ -1,26 +1,22 @@
 package net.eduard.api.lib;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,6 +52,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -91,10 +88,8 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import net.eduard.api.lib.event.PlayerTargetEvent;
 import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.game.Sounds;
-import net.eduard.api.lib.manager.PlayersManager;
 import net.eduard.api.lib.manager.TimeManager;
 import net.eduard.api.lib.modules.EmptyWorldGenerator;
 import net.eduard.api.lib.modules.Extra;
@@ -159,10 +154,6 @@ public final class Mine {
 		Object getText(Player p);
 	}
 
-	/**
-	 * Gerenciador dos jogadores
-	 */
-	private static PlayersManager playerManager;
 
 	/*
 	 * Mapa de Arenas registradas
@@ -171,11 +162,7 @@ public final class Mine {
 
 	public static Map<Player, Schematic> MAPS_CACHE = new HashMap<>();
 	public static BukkitConfig MAPS_CONFIG;
-	/**
-	 * Som do rosnar do gato
-	 */
-	@SuppressWarnings("unused")
-	private static final Sounds ROSNAR = Sounds.create("CAT_PURR");
+	
 
 	/**
 	 * Mensagem de quando console digita um comando
@@ -355,9 +342,6 @@ public final class Mine {
 		return board;
 	}
 
-	public static void box(String[] paragraph, String title) {
-		Extra.box(paragraph, title);
-	}
 
 	public static void broadcast(String message) {
 		Bukkit.broadcastMessage(message);
@@ -524,31 +508,9 @@ public final class Mine {
 		return getTotalAmount(inventory, item) >= amount;
 	}
 
-	public static boolean contains(String message, String text) {
-		return Extra.contains(message, text);
-	}
+	
 
-	public static void copyAsUTF8(InputStream is, File file) throws IOException {
-		if (is == null)
-			return;
-		InputStreamReader in = new InputStreamReader(is, StandardCharsets.UTF_8);
-		BufferedReader br = new BufferedReader(in);
-		List<String> lines = new ArrayList<>();
-		String line;
-		while ((line = br.readLine()) != null) {
-			lines.add(line);
-		}
-		br.close();
-		in.close();
-		is.close();
-		Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
-
-	}
-
-	public static void copyAsUTF8(Path path, File file) throws IOException {
-		List<String> lines = Files.readAllLines(path);
-		Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
-	}
+	
 
 	public static World copyWorld(String fromWorld, String toWorld) {
 		unloadWorld(fromWorld);
@@ -623,38 +585,18 @@ public final class Mine {
 		return OPT_AUTO_RESPAWN;
 	}
 
-	// public static ItemStack reloadItem(String text) {
-	// return (ItemStack) new Item().get(text);
-	// }
-	//
-	// public static String saveItem(ItemStack item) {
-	// return (String) new Item().save(item);
-	// }
-
+	
 	public static String cutText(String text, int lenght) {
 		return text.length() > lenght ? text.substring(0, lenght) : text;
 	}
 
 
 
-	public static void deleteFolder(File file) {
-		if (file.exists()) {
-			File files[] = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory()) {
-					deleteFolder(files[i]);
-					files[i].delete();
-				} else {
-					files[i].delete();
-				}
-			}
-			file.delete();
-		}
-	}
+
 
 	public static void deleteWorld(String name) {
 		unloadWorld(name);
-		deleteFolder(getWorldFolder(name));
+		Extra.deleteFolder(getWorldFolder(name));
 	}
 
 	/**
@@ -1526,9 +1468,6 @@ public final class Mine {
 		return players;
 	}
 
-	public static PlayersManager getPlayerManager() {
-		return playerManager;
-	}
 
 	/**
 	 * @return Lista de jogadores do servidor
@@ -1566,30 +1505,7 @@ public final class Mine {
 		return Extra.getIndex(column, line);
 	}
 
-	public static String getProgressBar(double money, double price, String concluidoCor, String faltandoCor,
-			String symbol) {
-		StringBuilder result = new StringBuilder();
-		double div = money / price;
-		// 10 5 2
-		// long redonde = Math.round(div * 100);
-		// long con = redonde / 10;
-		if (div > 1) {
-			div = 1;
-		}
-		double rest = 1D - div;
-		result.append(concluidoCor);
-		while (div > 0) {
-			result.append(symbol);
-			div -= 0.1;
-		}
-		result.append(faltandoCor);
-		while (rest > 0) {
-			result.append(symbol);
-			rest -= 0.1;
-		}
-		return result.toString();
-	}
-
+	
 	@SafeVarargs
 	public static <E> E getRandom(E... objects) {
 		return Extra.getRandom(objects);
@@ -2036,30 +1952,7 @@ public final class Mine {
 		return Extra.getColumn(index) == colunm;
 	}
 
-	public static boolean isDirectory(File file) {
-		try {
-			return (file.isDirectory());
-		} catch (Exception e) {
-			return isDirectory(file.getName());
-		}
 
-	}
-
-	public static boolean isDirectory(String name) {
-
-		if (name.endsWith(File.separator)) {
-			return true;
-		}
-		if (name.endsWith("/")) {
-			return true;
-		}
-		if (name.endsWith(File.pathSeparator)) {
-			return true;
-
-		}
-		return false;
-
-	}
 
 	/**
 	 * Testa se o Inventario esta vasio
@@ -2183,7 +2076,30 @@ public final class Mine {
 		}
 		return null;
 	}
+	public static YamlConfiguration loadConfig(File file) {
+		YamlConfiguration config = new YamlConfiguration();
+		FileInputStream fileinputstream;
+		try {
+			fileinputstream = new FileInputStream(file);
+			config.load(new InputStreamReader(fileinputstream, Charset.forName("UTF-8")));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return config;
+	}
 
+	public static void saveConfig(File file, YamlConfiguration config) {
+
+		try {
+			Writer fileWriter = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8")));
+			fileWriter.write(config.saveToString());
+			fileWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
 	public static void loadMaps() {
 
 		File file = MAPS_CONFIG.getFile();
@@ -2664,35 +2580,7 @@ public final class Mine {
 		return getRandomInt(minValue, maxValue);
 	}
 
-	public static List<String> readLines(File file) {
-		Path path = file.toPath();
-		try {
-			Mine.console("§bConfigAPI §a-> " + file.getName() + " §futf-8");
-			return Files.readAllLines(path);
-		} catch (Exception e) {
-			// e.printStackTrace();
-		}
-		try {
-			Mine.console("§bConfigAPI §a-> " + file.getName() + " §f" + Charset.defaultCharset().displayName());
-			return Files.readAllLines(path, Charset.defaultCharset());
-		} catch (Exception e) {
-		}
-		List<String> lines = new ArrayList<>();
-		try {
-			Mine.console("§bConfigAPI §a-> " + file.getName());
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				// System.out.println(line);
-				lines.add(line);
-			}
-			reader.close();
-
-		} catch (Exception e) {
-		}
-		return lines;
-
-	}
+	
 
 	public static void refreshAll(Player player) {
 		Mine.clearInventory(player);
@@ -3091,37 +2979,6 @@ public final class Mine {
 
 	}
 
-	/**
-	 * Seta a barra de Xp do jogador <br>
-	 * 100 = Barra cheia <br>
-	 * 0 = Barra vazia <br>
-	 * 
-	 * @param jogador
-	 * @param porcentagem
-	 */
-	public static void setarBarraXpJogador(Player jogador, int porcentagem) {
-		jogador.setExp(porcentagem == 0 ? 0F : porcentagem / 100);
-	}
-
-	/**
-	 * Seta o nivel da barra de fome do jogador
-	 * 
-	 * @param jogador
-	 * @param quantidade
-	 */
-	public static void setarNivelFomeJogador(Player jogador, int quantidade) {
-		jogador.setFoodLevel(quantidade);
-	}
-
-	/**
-	 * Seta o nivel do jogador
-	 * 
-	 * @param jogador
-	 * @param novoNivel
-	 */
-	public static void setarNivelJogador(Player jogador, int novoNivel) {
-		jogador.setLevel(novoNivel);
-	}
 
 	public static List<Location> setBox(Location playerLocation, double higher, double lower, double size,
 			Material wall, Material up, Material down, boolean clearInside) {
@@ -3258,10 +3115,6 @@ public final class Mine {
 		}
 
 		return item;
-	}
-
-	public static void setPlayerManager(PlayersManager playerManager) {
-		Mine.playerManager = playerManager;
 	}
 
 	/**
@@ -3469,15 +3322,6 @@ public final class Mine {
 		Bukkit.unloadWorld(name, true);
 	}
 
-	public static void updateTargets() {
-		for (Player p : getPlayers()) {
-
-			PlayerTargetEvent event = new PlayerTargetEvent(p,
-					Mine.getTarget(p, Mine.getPlayerAtRange(p.getLocation(), 100)));
-			Mine.callEvent(event);
-
-		}
-	}
 
 	public static String[] wordWrap(String rawString, int lineLength) {
 		if (rawString == null) {
@@ -3555,27 +3399,7 @@ public final class Mine {
 		return (lines.toArray(new String[lines.size()]));
 	}
 
-	public static void writeLines(File file, List<String> lines) {
-		Path path = file.toPath();
-		try {
-			Files.write(path, lines, StandardCharsets.UTF_8);
-			return;
-		} catch (Exception e) {
-		}
-		try {
-			Files.write(path, lines, Charset.defaultCharset());
-		} catch (Exception e) {
-		}
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			for (String line : lines) {
-				writer.write(line + "\n");
-			}
-			writer.close();
-		} catch (Exception e) {
-		}
 
-	}
 
 	public boolean isBeaconPlaced(Location loc) {
 		int yMin = loc.getBlockY();

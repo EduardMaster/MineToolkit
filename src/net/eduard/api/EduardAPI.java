@@ -15,8 +15,9 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.bungee.BukkitController;
 import net.eduard.api.lib.bungee.BungeeAPI;
 import net.eduard.api.lib.config.Config;
+import net.eduard.api.lib.event.PlayerTargetEvent;
+import net.eduard.api.lib.game.Sounds;
 import net.eduard.api.lib.manager.DBManager;
-import net.eduard.api.lib.manager.PlayersManager;
 import net.eduard.api.lib.menu.Menu;
 import net.eduard.api.lib.modules.BukkitBungeeAPI;
 import net.eduard.api.lib.modules.ServerAPI.BukkitControl;
@@ -40,7 +41,11 @@ import net.eduard.api.server.EduardPlugin;
 public class EduardAPI extends EduardPlugin {
 
 	private static EduardAPI plugin;
-
+	/**
+	 * Som do rosnar do gato
+	 */
+	@SuppressWarnings("unused")
+	private static final Sounds ROSNAR = Sounds.create("CAT_PURR");
 	public static EduardAPI getInstance() {
 		return plugin;
 	}
@@ -56,8 +61,8 @@ public class EduardAPI extends EduardPlugin {
 	public void onEnable() {
 		plugin = this;
 		setFree(true);
-		 BukkitControl.register(this);
-		 
+	
+		BukkitControl.register(this);
 		BukkitBungeeAPI.requestCurrentServer();
 		BukkitController bukkit = BungeeAPI.getBukkit();
 		bukkit.setPlugin(plugin);
@@ -73,6 +78,7 @@ public class EduardAPI extends EduardPlugin {
 		StorageAPI.registerClasses(Mine.class);
 
 		BukkitStorables.load();
+		Mine.console("§bEduardAPI §fStorables do Bukkit carregado!");
 		Mine.resetScoreboards();
 		Mine.console("§bEduardAPI §fScoreboards resetadas!");
 		BukkitReplacers.registerRplacers();
@@ -80,7 +86,15 @@ public class EduardAPI extends EduardPlugin {
 
 			@Override
 			public void run() {
-				Mine.updateTargets();
+			
+					for (Player p : Mine.getPlayers()) {
+
+						PlayerTargetEvent event = new PlayerTargetEvent(p,
+								Mine.getTarget(p, Mine.getPlayerAtRange(p.getLocation(), 100)));
+						Mine.callEvent(event);
+
+					}
+				
 			}
 		}, 20, 20);
 		new ApiCommand().register();
@@ -90,7 +104,7 @@ public class EduardAPI extends EduardPlugin {
 		new GotoCommand().register();
 		new SoundCommand().register();
 		new EssentialsEvents().register(this);
-		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
+//		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
 		InfoGenerator.saveObjects(this);
 
 		Mine.console("§bEduardAPI §fBase ativado!");
@@ -118,15 +132,13 @@ public class EduardAPI extends EduardPlugin {
 			}
 		}
 
-		Mine.setPlayerManager(new PlayersManager());
-		Mine.getPlayerManager().register(this);
-	
 		PluginValor.register();
 		int backupTime = config.getInt("backup-minutes") * 20 * 60;
 		if (backupTime <= 0) {
 			backupTime = 20 * 60 * 10;
 		}
-		Mine.console("§bEduardAPI §aBackup Automatico das 'storage.yml' ligado a cada " +(backupTime/(20*60))+ " minutos.");
+		Mine.console("§bEduardAPI §aBackup Automatico das 'storage.yml' ligado a cada " + (backupTime / (20 * 60))
+				+ " minutos.");
 		asyncTimer(new Runnable() {
 
 			@Override
@@ -139,7 +151,7 @@ public class EduardAPI extends EduardPlugin {
 				}
 			}
 		}, backupTime, backupTime);
-	
+
 		Mine.console("§bEduardAPI §acarregado!");
 
 	}

@@ -16,7 +16,7 @@ public class EnchantCommand extends CommandManager {
 
 	public EnchantCommand() {
 		super("enchantment");
-
+ 
 	}
 	public String messageInvalid = "§cDigite o encantamento valido! §bAperte TAB";
 	public String message = "§aEncantamento aplicado!";

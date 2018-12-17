@@ -35,12 +35,13 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
+
 public class EduardBungee extends Plugin implements Listener {
 	private static EduardBungee instance;
 	private DBBungee bungeeManager;
 
 	private BungeeConfig config;
-
+ 
 	private BungeeConfig getConfig() {
 		return config;
 	}
@@ -63,7 +64,6 @@ public class EduardBungee extends Plugin implements Listener {
 		BungeeCord.getInstance().getPluginManager().registerCommand(this, new BungeeConfigReloadCommand());
 	}
 
-	
 	public void reload() {
 		config.reloadConfig();
 		config.add("debug-plugin-messages", true);
@@ -81,8 +81,6 @@ public class EduardBungee extends Plugin implements Listener {
 			config.saveConfig();
 
 		}
-		
-		
 
 		bungeeManager.openConnection();
 		if (bungeeManager.hasConnection()) {
@@ -113,7 +111,7 @@ public class EduardBungee extends Plugin implements Listener {
 		for (String serverName : config.getSection("servers").getKeys()) {
 			boolean enabled = config.getBoolean("servers." + serverName + ".enabled");
 			int type = config.getInt("servers." + serverName + ".type");
-			
+
 			ServerSpigot server = BungeeAPI.getServer(serverName);
 			server.setType(type);
 			if (enabled) {
@@ -121,7 +119,7 @@ public class EduardBungee extends Plugin implements Listener {
 			} else {
 				server.setState(ServerState.DISABLED);
 			}
-			
+
 		}
 
 	}

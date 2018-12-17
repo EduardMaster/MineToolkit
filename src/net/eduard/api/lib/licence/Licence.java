@@ -57,12 +57,12 @@ public class Licence {
 
 	private static enum PluginActivationStatus {
 
-		INVALID_KEY("�cNao foi encontrado esta Licensa no Sistema."),
-		WRONG_KEY("�cEsta Licensa nao bate com a do Sistema."),
-		KEY_TO_WRONG_PLUGIN("�cA Licensa usada nao � para este plugin."),
-		KEY_TO_WRONG_OWNER("�cA Licensa usada nao � para este Dono"),
-		INVALID_IP("�cEste IP usado nao corresponde a Key"), INVALID_PORT("�cEsta Porta nao correponde a da Licensa."),
-		PLUGIN_EXPIRED("�cO plugin expirou."), PLUGIN_ACTIVATED("�aPlugin ativado com sucesso.", true);
+		INVALID_KEY("§cNao foi encontrado esta Licensa no Sistema."),
+		WRONG_KEY("§cEsta Licensa nao bate com a do Sistema."),
+		KEY_TO_WRONG_PLUGIN("§cA Licensa usada nao é para este plugin."),
+		KEY_TO_WRONG_OWNER("§cA Licensa usada nao é para este Dono"),
+		INVALID_IP("§cEste IP usado nao corresponde a Licensa"), INVALID_PORT("§cEsta Porta nao correponde a da Licensa."),
+		PLUGIN_EXPIRED("§cO plugin expirou."), PLUGIN_ACTIVATED("§aPlugin ativado com sucesso.", true);
 
 		private String message;
 		private boolean active;
@@ -102,7 +102,7 @@ public class Licence {
 		public static void test(JavaPlugin plugin, Runnable activation) {
 
 			String pluginName = plugin.getName();
-			Bukkit.getConsoleSender().sendMessage("�aAutenticando o plugin " + pluginName);
+			Bukkit.getConsoleSender().sendMessage("§aAutenticando o plugin " + pluginName);
 			BukkitConfig config = new BukkitConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
@@ -131,7 +131,7 @@ public class Licence {
 		public static void test(Plugin plugin, Runnable activation) {
 			String pluginName = plugin.getDescription().getName();
 			BungeeCord.getInstance().getConsole()
-					.sendMessage(new TextComponent("�aAutenticando o plugin " + pluginName));
+					.sendMessage(new TextComponent("§aAutenticando o plugin " + pluginName));
 			BungeeConfig config = new BungeeConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");

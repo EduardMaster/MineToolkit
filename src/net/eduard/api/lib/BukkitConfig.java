@@ -23,7 +23,8 @@ import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.StorageInfo;
 
 /**
- * Armazenamento de Dados para servidores Bukkit com suporte a {@link StorageAPI}
+ * Armazenamento de Dados para servidores Bukkit com suporte a
+ * {@link StorageAPI}
  * 
  * @author Eduard
  * @version 1.2
@@ -40,15 +41,14 @@ public class BukkitConfig {
 	private FileConfiguration config;
 
 	public String getName() {
-		
+
 		return name;
 	}
 
 	/**
 	 * Seta o Plugin da Config
 	 * 
-	 * @param plugin
-	 *            Plugin
+	 * @param plugin Plugin
 	 */
 	public void setPlugin(Plugin plugin) {
 		this.plugin = plugin;
@@ -93,7 +93,16 @@ public class BukkitConfig {
 	 */
 	public BukkitConfig reloadConfig() {
 		file = new File(plugin.getDataFolder(), name);
-		config = YamlConfiguration.loadConfiguration(file);
+		plugin.getDataFolder().mkdirs();
+		if (!file.exists())
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		if (file.isDirectory())return this;
+		config = Mine.loadConfig(file);
 		InputStream defaults = plugin.getResource(file.getName());
 		if (defaults != null) {
 			@SuppressWarnings("deprecation")
@@ -103,24 +112,21 @@ public class BukkitConfig {
 		return this;
 	}
 
+
+
 	/**
 	 * Salva Config em forma de Texto no Arquivo
 	 * 
 	 * @return Config
 	 */
 	public BukkitConfig saveConfig() {
-		try {
-			config.save(file);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+		Mine.saveConfig(file, (YamlConfiguration) config);
 		return this;
 	}
 
 	/**
 	 * 
-	 * @param path
-	 *            Path
+	 * @param path Path
 	 * @return Pega uma mensagem
 	 */
 	public String message(String path) {
@@ -157,8 +163,7 @@ public class BukkitConfig {
 	/**
 	 * Remove a Secao
 	 * 
-	 * @param path
-	 *            Secao
+	 * @param path Secao
 	 */
 	public void remove(String path) {
 		config.set(path, null);
@@ -177,8 +182,7 @@ public class BukkitConfig {
 
 	/**
 	 * 
-	 * @param path
-	 *            Secao
+	 * @param path Secao
 	 * @return Item da Secao
 	 */
 	public ItemStack getItem(String path) {

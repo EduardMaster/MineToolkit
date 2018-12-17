@@ -3,6 +3,7 @@ package net.eduard.api.lib.storage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceMap;
@@ -39,7 +40,7 @@ public class StorageMap extends StorageBase {
 	public Object restore(Object data) {
 		StorageObject storeKey = new StorageObject(getInfo().clone());
 		storeKey.setType(keyType);
-		storeKey.update();
+		storeKey.update(false);
 		StorageObject storeValue = new StorageObject(getInfo().clone());
 		storeValue.setType(valueType);
 		storeValue.update();
@@ -54,7 +55,7 @@ public class StorageMap extends StorageBase {
 					newMap.put(storeKey.restore(entry.getKey()), (Integer) storeValue.restore(entry.getValue()));
 				}
 				StorageAPI.newReference(new ReferenceMap(newMap, newMap));
-				debug("Restoring refereced map");
+				debug("Restoring referenced map");
 			}
 			return null;
 		}
@@ -77,7 +78,10 @@ public class StorageMap extends StorageBase {
 	public Object store(Object data) {
 		StorageObject storeKey = new StorageObject(getInfo().clone());
 		storeKey.setType(keyType);
-		storeKey.update();
+		if (keyType.equals(UUID.class)) {
+			
+		}
+		storeKey.update(false);
 		StorageObject storeValue = new StorageObject(getInfo().clone());
 		storeValue.setType(valueType);
 		storeValue.update();
@@ -85,6 +89,7 @@ public class StorageMap extends StorageBase {
 		Map<?, ?> map = (Map<?, ?>) data;
 		for (Entry<?, ?> entry : map.entrySet()) {
 			String key = storeKey.store(entry.getKey()).toString();
+			
 			Object value = storeValue.store(entry.getValue());
 			newMap.put(key, value);
 		}

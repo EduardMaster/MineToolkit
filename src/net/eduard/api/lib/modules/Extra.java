@@ -2,11 +2,14 @@ package net.eduard.api.lib.modules;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,6 +25,10 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.CodeSource;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -29,7 +36,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +62,8 @@ import java.util.zip.ZipInputStream;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
+import net.eduard.api.lib.Mine;
+
 /**
  * API contendo coisas relacionado a Textos, Numeros e Reflection
  * 
@@ -67,6 +75,143 @@ import com.google.common.io.ByteStreams;
 public final class Extra {
 
 	private static Map<String, String> replacers = new LinkedHashMap<>();
+
+	public static void copyAsUTF8(InputStream is, File file) throws IOException {
+		if (is == null)
+			return;
+		InputStreamReader in = new InputStreamReader(is, StandardCharsets.UTF_8);
+		BufferedReader br = new BufferedReader(in);
+		List<String> lines = new ArrayList<>();
+		String line;
+		while ((line = br.readLine()) != null) {
+			lines.add(line);
+		}
+		br.close();
+		in.close();
+		is.close();
+		Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
+
+	}
+
+	public static List<String> readLines(File file) {
+		Path path = file.toPath();
+		try {
+			Mine.console("§bConfigAPI §a-> " + file.getName() + " §futf-8");
+			return Files.readAllLines(path);
+		} catch (Exception e) {
+			// e.printStackTrace();
+		}
+		try {
+			Mine.console("§bConfigAPI §a-> " + file.getName() + " §f" + Charset.defaultCharset().displayName());
+			return Files.readAllLines(path, Charset.defaultCharset());
+		} catch (Exception e) {
+		}
+		List<String> lines = new ArrayList<>();
+		try {
+			Mine.console("§bConfigAPI §a-> " + file.getName());
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				// System.out.println(line);
+				lines.add(line);
+			}
+			reader.close();
+
+		} catch (Exception e) {
+		}
+		return lines;
+
+	}
+
+	public static void copyAsUTF8(Path path, File file) throws IOException {
+		List<String> lines = Files.readAllLines(path);
+		Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
+	}
+
+	public static void writeLines(File file, List<String> lines) {
+		Path path = file.toPath();
+		try {
+			Files.write(path, lines, StandardCharsets.UTF_8);
+			return;
+		} catch (Exception e) {
+		}
+		try {
+			Files.write(path, lines, Charset.defaultCharset());
+		} catch (Exception e) {
+		}
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+			for (String line : lines) {
+				writer.write(line + "\n");
+			}
+			writer.close();
+		} catch (Exception e) {
+		}
+
+	}
+
+	public static String getProgressBar(double money, double price, String concluidoCor, String faltandoCor,
+			String symbol) {
+		StringBuilder result = new StringBuilder();
+		double div = money / price;
+		// 10 5 2
+		// long redonde = Math.round(div * 100);
+		// long con = redonde / 10;
+		if (div > 1) {
+			div = 1;
+		}
+		double rest = 1D - div;
+		result.append(concluidoCor);
+		while (div > 0) {
+			result.append(symbol);
+			div -= 0.1;
+		}
+		result.append(faltandoCor);
+		while (rest > 0) {
+			result.append(symbol);
+			rest -= 0.1;
+		}
+		return result.toString();
+	}
+
+	public static boolean isDirectory(File file) {
+		try {
+			return (file.isDirectory());
+		} catch (Exception e) {
+			return isDirectory(file.getName());
+		}
+	}
+
+	public static boolean isDirectory(String name) {
+
+		if (name.endsWith(File.separator)) {
+			return true;
+		}
+		if (name.endsWith("/")) {
+			return true;
+		}
+		if (name.endsWith(File.pathSeparator)) {
+			return true;
+
+		}
+		return false;
+
+	}
+
+	public static void deleteFolder(File file) {
+		if (file.exists()) {
+			File files[] = file.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					deleteFolder(files[i]);
+					files[i].delete();
+				} else {
+					files[i].delete();
+				}
+			}
+			file.delete();
+		}
+	}
 
 	public static String formatDate(long date) {
 		Calendar calendario = Calendar.getInstance();

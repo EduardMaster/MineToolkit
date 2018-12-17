@@ -270,7 +270,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 				+ command.getPlugin().getName());
 		commandsRegistred.put(name.toLowerCase(), this);
 		updateSubs();
-		register(getPlugin());
+		register(getPluginInstance());
 		return true;
 
 	}
