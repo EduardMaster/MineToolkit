@@ -89,7 +89,10 @@ public class StorageInline extends StorageBase {
 						StorageObject storage = new StorageObject(getInfo().clone());
 						storage.setField(field);
 						storage.setType(field.getType());
-						storage.update();
+						storage.updateByType();
+						storage.updateByStoreClass();
+						storage.updateByField();
+
 
 						if (storage.isInline()) {
 							int length = index + field.getType().getDeclaredFields().length;
@@ -173,7 +176,10 @@ public class StorageInline extends StorageBase {
 						StorageObject storage = new StorageObject(getInfo().clone());
 						storage.setField(field);
 						storage.setType(fieldValue.getClass());
-						storage.update();
+						storage.updateByType();
+						storage.updateByStoreClass();
+						storage.updateByField();
+
 						if (storage.isInline()) {
 							b.append(store.store(fieldValue));
 						} else if (storage.isReference()) {

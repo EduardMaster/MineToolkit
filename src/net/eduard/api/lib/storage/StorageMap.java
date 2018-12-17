@@ -40,10 +40,16 @@ public class StorageMap extends StorageBase {
 	public Object restore(Object data) {
 		StorageObject storeKey = new StorageObject(getInfo().clone());
 		storeKey.setType(keyType);
-		storeKey.update(false);
+		storeKey.updateByType();
+		storeKey.updateByStoreClass();
+//		if (keyType.equals(UUID.class)) {
+//			Mine.console("§a"+storeKey);
+//		}
 		StorageObject storeValue = new StorageObject(getInfo().clone());
 		storeValue.setType(valueType);
-		storeValue.update();
+		storeValue.updateByType();
+		storeValue.updateByStoreClass();
+		storeValue.updateByField();
 
 		if (isReference()) {
 			if (data instanceof Map) {
@@ -54,8 +60,11 @@ public class StorageMap extends StorageBase {
 
 					newMap.put(storeKey.restore(entry.getKey()), (Integer) storeValue.restore(entry.getValue()));
 				}
-				StorageAPI.newReference(new ReferenceMap(newMap, newMap));
+				Map<Object,Object> mapinha = new HashMap<>();
+//				Mine.console("§e"+newMap);
+				StorageAPI.newReference(new ReferenceMap(newMap, mapinha));
 				debug("Restoring referenced map");
+				return mapinha;
 			}
 			return null;
 		}
@@ -79,17 +88,20 @@ public class StorageMap extends StorageBase {
 		StorageObject storeKey = new StorageObject(getInfo().clone());
 		storeKey.setType(keyType);
 		if (keyType.equals(UUID.class)) {
-			
+
 		}
-		storeKey.update(false);
+		storeKey.updateByType();
+		storeKey.updateByStoreClass();
 		StorageObject storeValue = new StorageObject(getInfo().clone());
 		storeValue.setType(valueType);
-		storeValue.update();
+		storeValue.updateByType();
+		storeValue.updateByStoreClass();
+		storeValue.updateByField();
 		Map<String, Object> newMap = new HashMap<>();
 		Map<?, ?> map = (Map<?, ?>) data;
 		for (Entry<?, ?> entry : map.entrySet()) {
 			String key = storeKey.store(entry.getKey()).toString();
-			
+
 			Object value = storeValue.store(entry.getValue());
 			newMap.put(key, value);
 		}

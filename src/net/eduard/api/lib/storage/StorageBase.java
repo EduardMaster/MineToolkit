@@ -14,39 +14,36 @@ public abstract class StorageBase {
 		StorageAPI.debug(msg);
 	}
 
-	public void update() {
-		update(true);
-	}
-	public void update( boolean updateUsingField) {
-		update(getField(), getType(),updateUsingField);
-	}
-	public void update(Field field, Class<?> claz) {
-		update(field, claz, true);
+	public void updateByType() {
+		if (getType().isAnnotationPresent(StorageAttributes.class)) {
+			StorageAttributes atr = getType().getAnnotation(StorageAttributes.class);
+			update(atr);
+		}
 	}
 
-	public void update(Field field, Class<?> claz, boolean updateUsingField) {
-		Storable store = StorageAPI.getStore(claz);
-//		setReference(false);
-//		setInline(false);
-//		setIndentifiable(false);
+	public void updateByStoreClass() {
+		Storable store = getStore(getType());
 		if (store != null) {
-			claz = store.getClass();
-		}
-		if (claz.isAnnotationPresent(StorageAttributes.class)) {
-			StorageAttributes atr = claz.getAnnotation(StorageAttributes.class);
-			setReference(atr.reference());
-			setInline(atr.inline());
-			setIndentifiable(atr.indentificate());
-//			Mine.console("§dClasse " + atr+ " §a"+claz);
-		}
-		if (updateUsingField)
-			if (field.isAnnotationPresent(StorageAttributes.class)) {
-				StorageAttributes atr = field.getAnnotation(StorageAttributes.class);
-				setReference(atr.reference());
-				setInline(atr.inline());
-				setIndentifiable(atr.indentificate());
-//			Mine.console("§eField " + atr);
+			if (store.getClass().isAnnotationPresent(StorageAttributes.class)) {
+				StorageAttributes atr = store.getClass().getAnnotation(StorageAttributes.class);
+				update(atr);
 			}
+		}
+	}
+
+	
+
+	public void update(StorageAttributes atr) {
+		setReference(atr.reference());
+		setInline(atr.inline());
+		setIndentifiable(atr.indentificate());
+	}
+
+	public void updateByField() {
+		if (getField().isAnnotationPresent(StorageAttributes.class)) {
+			StorageAttributes atr = getField().getAnnotation(StorageAttributes.class);
+			update(atr);
+		}
 	}
 
 	public Storable getStore(Class<?> claz) {
@@ -123,6 +120,12 @@ public abstract class StorageBase {
 
 	public boolean equals(Object obj) {
 		return info.equals(obj);
+	}
+
+	@Override
+	public String toString() {
+		return "StorageBase [isStorable()=" + isStorable() + ", getType()=" + getType() + ", isReference()="
+				+ isReference() + ", isInline()=" + isInline() + ", isIndentifiable()=" + isIndentifiable() + "]";
 	}
 
 }

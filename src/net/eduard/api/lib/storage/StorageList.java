@@ -24,7 +24,9 @@ public class StorageList extends StorageBase {
 	public Object restore(Object data) {
 		StorageObject storage = new StorageObject(getInfo().clone());
 		storage.setType(listType);
-		storage.update(getField(), getListType());
+		storage.updateByType();
+		storage.updateByStoreClass();
+		storage.updateByField();
 		debug(">> LIST RESTORATION");
 		if (storage.isReference()) {
 			if (data instanceof List) {
@@ -64,7 +66,9 @@ public class StorageList extends StorageBase {
 	public Object store(Object data) {
 		StorageObject storage = new StorageObject(getInfo().clone());
 		storage.setType(listType);
-		storage.update(getField(), getListType());
+		storage.updateByType();
+		storage.updateByStoreClass();
+		storage.updateByField();
 		debug("<< LIST STORATION");
 		List<Object> newList = new ArrayList<>();
 		List<?> list = (List<?>) data;

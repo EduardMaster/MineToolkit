@@ -165,7 +165,9 @@ public class StorageObject extends StorageBase {
 					StorageObject storage = new StorageObject(getInfo().clone());
 					storage.setField(field);
 					storage.setType(field.getType());
-					storage.update(field, field.getType());
+					storage.updateByType();
+					storage.updateByStoreClass();
+					storage.updateByField();
 
 //					
 //					if (Extra.isList(field.getType())) {
@@ -293,7 +295,10 @@ public class StorageObject extends StorageBase {
 					StorageObject storage = new StorageObject(getInfo().clone());
 					storage.setField(field);
 					storage.setType(field.getType());
-					storage.update(field, fieldValue.getClass());
+					storage.updateByType();
+					storage.updateByStoreClass();
+					storage.updateByField();
+
 //					if (fieldValue.getClass().equals(UUID.class)) {
 //						debug("********** " + storage.isInline());
 //					}
