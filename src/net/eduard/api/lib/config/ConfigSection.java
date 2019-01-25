@@ -12,7 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.game.Sounds;
+import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.StorageInfo;
 
@@ -335,12 +335,12 @@ public class ConfigSection {
 		return getMap().entrySet();
 	}
 
-	public Sounds getSound() {
+	public SoundEffect getSound() {
 //		System.out.println("Somzito "+getValue());
-		return (Sounds) getValue();
+		return (SoundEffect) getValue();
 	}
 
-	public Sounds getSound(String path) {
+	public SoundEffect getSound(String path) {
 		return getSection(path).getSound();
 	}
 

@@ -8,10 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Random;
-
+@SuppressWarnings("unused")
 public class AIOReader {
+
 	private char[] chars;
 
+	@SuppressWarnings("resource")
 	public AIOReader(File file) {
 		try {
 			file.delete();
@@ -21,6 +23,7 @@ public class AIOReader {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
+		
 			DataInputStream reader = new DataInputStream(new FileInputStream(file));
 			DataOutputStream writer = new DataOutputStream(new FileOutputStream(file));
 			int id = 0;

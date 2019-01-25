@@ -27,7 +27,7 @@ public class GotoCommand extends CommandManager {
 				World world = Bukkit.getWorld(args[0]);
 				Mine.teleport(p, world.getSpawnLocation());
 				Mine.OPT_SOUND_TELEPORT.create(p);
-				Mine.chat(p,message.replace("$world", world.getName()));
+				Mine.send(p,message.replace("$world", world.getName()));
 			}
 		}
 

@@ -3,7 +3,9 @@ package net.eduard.api.bungee;
 import java.util.UUID;
 
 import net.eduard.api.lib.manager.DBManager;
+import net.eduard.api.lib.storage.StorageAttributes;
 
+@StorageAttributes(indentificate=true)
 public class DBBungee extends DBManager {
 	
 	

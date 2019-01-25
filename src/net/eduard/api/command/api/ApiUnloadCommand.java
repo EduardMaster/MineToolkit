@@ -6,12 +6,12 @@ import org.bukkit.command.CommandSender;
 
 import net.eduard.api.lib.manager.CommandManager;
 
-public class ApiLoadCommand extends CommandManager {
+public class ApiUnloadCommand extends CommandManager {
 
-	public ApiLoadCommand() {
-		super("load","carregar");
-		setUsage("/api load <plugin>");
-		setDescription("Carrega um plugin descarregado no servidor");
+	public ApiUnloadCommand() {
+		super("unload","descarregar");
+		setUsage("/api unload <plugin>");
+		setDescription("Descarrega um plugin carregado no servidor");
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,

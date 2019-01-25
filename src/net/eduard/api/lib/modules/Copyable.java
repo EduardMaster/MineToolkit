@@ -59,6 +59,7 @@ public interface Copyable {
 		return object;
 	}
 
+	@SuppressWarnings("deprecation")
 	public default <E> E copy(E object) {
 		if (object == null)
 			return null;

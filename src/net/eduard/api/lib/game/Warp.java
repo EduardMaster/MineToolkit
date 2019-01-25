@@ -18,7 +18,7 @@ public class Warp implements Storable {
 	private int delayInSeconds = 1;
 	private boolean canMoveOnDelay = true;
 	private String message = "§6Voce foi teleportado para o Warp §e$warp";
-	private Sounds sound = Sounds.create("ENDERMAN_TELEPORT");
+	private SoundEffect sound = SoundEffect.create("ENDERMAN_TELEPORT");
 	private boolean enableGui = true;
 	private ItemStack guiIcon;
 
@@ -86,11 +86,11 @@ public class Warp implements Storable {
 		this.message = message;
 	}
 
-	public Sounds getSound() {
+	public SoundEffect getSound() {
 		return sound;
 	}
 
-	public void setSound(Sounds sound) {
+	public void setSound(SoundEffect sound) {
 		this.sound = sound;
 	}
 

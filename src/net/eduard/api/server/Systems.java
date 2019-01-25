@@ -6,6 +6,7 @@ public class Systems {
 	private static SoulSystem soulSystem;
 	private static VipSystem vipSystem;
 	private static ScoreSystem scoreSystem;
+	private static PartySystem partySystem;
 
 	public static CashSystem getCashSystem() {
 		return cashSystem;
@@ -37,6 +38,14 @@ public class Systems {
 
 	public static void setScoreSystem(ScoreSystem scoreSystem) {
 		Systems.scoreSystem = scoreSystem;
+	}
+
+	public static PartySystem getPartySystem() {
+		return partySystem;
+	}
+
+	public static void setPartySystem(PartySystem partySystem) {
+		Systems.partySystem = partySystem;
 	}
 
 }

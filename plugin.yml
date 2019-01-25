@@ -1,7 +1,7 @@
 name: EduardAPI
 description: API de desenvolvimento de plugins que facilita sua vida
 main: net.eduard.api.EduardAPI
-version: 2.4.5
+version: 2.4.6
 author: Eduard
 authors: [Eduard]
 soft-depend: [Essentials,Vault,McMMO]
@@ -10,10 +10,6 @@ commands:
   map:
     description: Controle dos Mapas da API
     aliases: [mapa]
-    usage: /<command> help
-  config:
-    description: Controle das Configs da API
-    aliases: [configs,config]
     usage: /<command> help
   api:
     description: Comando principal da API

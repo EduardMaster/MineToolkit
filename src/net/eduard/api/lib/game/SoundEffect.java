@@ -15,21 +15,21 @@ import net.eduard.api.lib.storage.Storable;
  * @since 1.0
  *
  */
-public class Sounds implements Storable {
+public class SoundEffect implements Storable {
 
 	private Sound sound;
 	private float volume;
 	private float pitch;
 
-	public Sounds() {
+	public SoundEffect() {
 		this(Sound.values()[0], 2, 1);
 	}
 
-	public Sounds(Sound sound) {
+	public SoundEffect(Sound sound) {
 		this(sound, 2, 1);
 	}
 
-	public Sounds(Sound sound, float volume, float pitch) {
+	public SoundEffect(Sound sound, float volume, float pitch) {
 		super();
 		this.sound = sound;
 		this.volume = volume;
@@ -37,18 +37,18 @@ public class Sounds implements Storable {
 	}
 
 	
-	public static Sounds create(String sound) {
+	public static SoundEffect create(String sound) {
 		try {
-			return new Sounds(Sound.valueOf(sound));
+			return new SoundEffect(Sound.valueOf(sound));
 		} catch (Exception e) {
-			return new Sounds(Sound.values()[0]);
+			return new SoundEffect(Sound.values()[0]);
 		}
 	}
-	public Sounds create(Location location) {
+	public SoundEffect create(Location location) {
 		location.getWorld().playSound(location, sound, volume, pitch);
 		return this;
 	}
-	public Sounds create(Entity entity) {
+	public SoundEffect create(Entity entity) {
 		if (entity instanceof Player){
 			Player p = (Player) entity;
 			p.playSound(p.getLocation(), sound, volume, pitch);

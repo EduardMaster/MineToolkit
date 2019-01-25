@@ -4,13 +4,23 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.manager.EffectManager;
+import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
-public class Slot implements Storable {
+public class Slot implements Storable,Copyable {
 	private int positionX, positionY;
 	private ItemStack item;
 	private EffectManager effects;
+	
+	public void setSlot(Slot slot)  {
+		setIndex(slot.getIndex());
+		setItem(slot.getItem());
+	}
+	
+	public Slot copy() {
+		return copy(this);
+	}
 
 	public Slot(ItemStack item, int index) {
 		setItem(item);
@@ -19,6 +29,9 @@ public class Slot implements Storable {
 
 	public int getIndex() {
 		return Extra.getIndex(positionX, positionY);
+	}
+	public int getSlot() {
+		return getIndex();
 	}
 
 	public Slot() {

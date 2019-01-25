@@ -337,7 +337,7 @@ public interface AutoBase<E> {
 		return getAll(connect(), collumnOrdened, decending);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public default List<E> getAll(Connection connection, String collumnOrdened, boolean decending) {
 		List<E> lista = new ArrayList<>();
 		try {

@@ -64,6 +64,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -89,7 +90,7 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import net.eduard.api.lib.game.Schematic;
-import net.eduard.api.lib.game.Sounds;
+import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.manager.TimeManager;
 import net.eduard.api.lib.modules.EmptyWorldGenerator;
 import net.eduard.api.lib.modules.Extra;
@@ -104,7 +105,65 @@ import net.eduard.api.lib.modules.Point;
  * @version 3.0
  */
 public final class Mine {
-	
+
+	public static String translate(Enchantment enchant) {
+//		if (enchant == )
+		return null;
+	}
+
+	public static String translate(DamageCause cause) {
+		switch (cause) {
+		case BLOCK_EXPLOSION:
+			return "Explosão de Blocos";
+
+		case CONTACT:
+			return "Contato";
+		case CUSTOM:
+			return "Customizado";
+
+		case DROWNING:
+			return "Nadando";
+		case ENTITY_ATTACK:
+			return "Ataque";
+		case ENTITY_EXPLOSION:
+			return "Explosão de Entidade";
+		case FALL:
+			return "Queda";
+		case FALLING_BLOCK:
+			return "Bloco Caindo";
+		case FIRE:
+			return "Fogo";
+		case FIRE_TICK:
+			return "Fogo Recorrente";
+		case LAVA:
+			return "Lava";
+		case LIGHTNING:
+			return "Raio";
+		case MAGIC:
+			return "Magia";
+		case MELTING:
+			return "Fusão";
+		case POISON:
+			return "Veneno";
+		case PROJECTILE:
+			return "Projétil";
+		case STARVATION:
+			return "Fome";
+		case SUFFOCATION:
+			return "Sufocamento";
+		case SUICIDE:
+			return "Suicidio";
+		case THORNS:
+			return "Refletido";
+		case VOID:
+			return "Vasio";
+		case WITHER:
+			return "Customizado";
+		default:
+			return "Outro";
+
+		}
+	}
 
 	static {
 		Extra.newReplacer("#v", Mine.getVersion());
@@ -113,7 +172,6 @@ public final class Mine {
 	public static Class<?> getClassFrom(Object object) throws Exception {
 		return Extra.getClassFrom(object);
 	}
-
 
 	public static String classMineEntityPlayer = "#mEntityPlayer";
 	public static String classCraftCraftPlayer = "#cCraftPlayer";
@@ -143,26 +201,23 @@ public final class Mine {
 	public static String classBukkitBukkit = "#bBukkit";
 	public static String classMineChatComponentText = "#mChatComponentText";
 	public static String classMineMinecraftServer = "#mMinecraftServer";
+
 	static {
 		Extra.newReplacer("#v", Mine.getVersion());
 	}
-
-	
 
 	public static interface Replacer {
 
 		Object getText(Player p);
 	}
 
-
 	/*
 	 * Mapa de Arenas registradas
 	 */
 	public static Map<String, Schematic> MAPS = new HashMap<>();
-
 	public static Map<Player, Schematic> MAPS_CACHE = new HashMap<>();
+
 	public static BukkitConfig MAPS_CONFIG;
-	
 
 	/**
 	 * Mensagem de quando console digita um comando
@@ -211,15 +266,15 @@ public final class Mine {
 	/**
 	 * Som para o Teleporte
 	 */
-	public static Sounds OPT_SOUND_TELEPORT = Sounds.create("ENDERMAN_TELEPORT");
+	public static SoundEffect OPT_SOUND_TELEPORT = SoundEffect.create("ENDERMAN_TELEPORT");
 	/**
 	 * Som para algum sucesso
 	 */
-	public static Sounds OPT_SOUND_SUCCESS = Sounds.create("LEVEL_UP");
+	public static SoundEffect OPT_SOUND_SUCCESS = SoundEffect.create("LEVEL_UP");
 	/**
 	 * Som para algum erro
 	 */
-	public static Sounds OPT_SOUND_ERROR = Sounds.create("NOTE_BASS_DRUM");
+	public static SoundEffect OPT_SOUND_ERROR = SoundEffect.create("NOTE_BASS_DRUM");
 	/**
 	 * Desativar mensagem de morte
 	 */
@@ -306,9 +361,6 @@ public final class Mine {
 		}
 	}
 
-
-
-
 	public static void addPermission(Player p, String permission) {
 		p.addAttachment(getMainPlugin(), permission, true);
 	}
@@ -341,7 +393,6 @@ public final class Mine {
 		player.setScoreboard(board);
 		return board;
 	}
-
 
 	public static void broadcast(String message) {
 		Bukkit.broadcastMessage(message);
@@ -407,11 +458,6 @@ public final class Mine {
 
 	public static void changeTabName(Player player, String displayName) {
 		player.setPlayerListName(Mine.getText(32, displayName));
-	}
-
-	public static void chat(CommandSender sender, String message) {
-		Mine.send(sender, message);
-
 	}
 
 	/**
@@ -508,10 +554,6 @@ public final class Mine {
 		return getTotalAmount(inventory, item) >= amount;
 	}
 
-	
-
-	
-
 	public static World copyWorld(String fromWorld, String toWorld) {
 		unloadWorld(fromWorld);
 		unloadWorld(toWorld);
@@ -584,15 +626,6 @@ public final class Mine {
 		}
 		return OPT_AUTO_RESPAWN;
 	}
-
-	
-	public static String cutText(String text, int lenght) {
-		return text.length() > lenght ? text.substring(0, lenght) : text;
-	}
-
-
-
-
 
 	public static void deleteWorld(String name) {
 		unloadWorld(name);
@@ -719,30 +752,7 @@ public final class Mine {
 		}
 	}
 
-	public static void fixDrops(List<ItemStack> drops) {
-		HashMap<ItemStack, ItemStack> itens = new HashMap<>();
-		for (ItemStack drop : drops) {
-			Material type = drop.getType();
-			if (type == Material.AIR | type == null) {
-				continue;
-			}
-			boolean find = false;
-			for (Entry<ItemStack, ItemStack> entry : itens.entrySet()) {
-				if (drop.isSimilar(entry.getKey())) {
-					ItemStack item = entry.getKey();
-					item.setAmount(item.getAmount() + drop.getAmount());
-					find = true;
-					break;
-				}
-			}
-			if (!find) {
-				itens.put(drop, drop);
-			}
 
-		}
-		drops.clear();
-		drops.addAll(itens.values());
-	}
 
 	public static String formatColors(String str) {
 		return Extra.formatColors(str);
@@ -966,55 +976,38 @@ public final class Mine {
 	public static double getDamage(ItemStack item) {
 		if (item == null)
 			return 0;
-		double damage = 0;
-		String name = item.getType().name();
-		for (int id = 0; id <= 4; id++) {
-			String value = "";
-			if (id == 0) {
-				value = "DIAMOND_";
-				damage += 3;
-			}
-			if (id == 1) {
-				value = "IRON_";
-				damage += 2;
-			}
-			if (id == 2) {
-				value = "GOLD_";
-			}
-			if (id == 3) {
-				value = "STONE_";
-				damage++;
-			}
-			if (id == 4) {
-				value = "WOOD_";
-			}
-
-			for (int x = 0; x <= 3; x++) {
-				double newDamage = damage;
-				if (x == 0) {
-					value = "SWORD";
-					newDamage += 4;
-				}
-				if (x == 1) {
-					value = "AXE";
-					newDamage += 3;
-				}
-				if (x == 2) {
-					value = "PICKAXE";
-					newDamage += 2;
-				}
-				if (x == 3) {
-					value = "SPADE";
-					newDamage++;
-				}
-
-				if (name.equals(value)) {
-					return newDamage;
-				}
-			}
-			damage = 0;
-		}
-		return damage;
+		Material type = item.getType();
+		if (type == Material.AIR)return 0;
+		if (type == Material.DIAMOND_SWORD)return 7;
+		if (type == Material.DIAMOND_AXE)return 6;
+		if (type == Material.DIAMOND_PICKAXE)return 5;
+		if (type == Material.DIAMOND_SPADE)return 4;
+		if (type == Material.DIAMOND_HOE)return 3;
+		//
+		if (type == Material.IRON_SWORD)return 6;
+		if (type == Material.IRON_AXE)return 5;
+		if (type == Material.IRON_PICKAXE)return 4;
+		if (type == Material.IRON_SPADE)return 3;
+		if (type == Material.IRON_HOE)return 2;
+		//
+		if (type == Material.GOLD_SWORD)return 5;
+		if (type == Material.GOLD_AXE)return 4;
+		if (type == Material.GOLD_PICKAXE)return 3;
+		if (type == Material.GOLD_SPADE)return 2;
+		if (type == Material.GOLD_HOE)return 1;
+		//
+		if (type == Material.STONE_SWORD)return 5;
+		if (type == Material.STONE_AXE)return 4;
+		if (type == Material.STONE_PICKAXE)return 3;
+		if (type == Material.STONE_SPADE)return 2;
+		if (type == Material.STONE_HOE)return 1;
+		//
+		if (type == Material.WOOD_SWORD)return 4;
+		if (type == Material.WOOD_AXE)return 3;
+		if (type == Material.WOOD_PICKAXE)return 2;
+		if (type == Material.WOOD_SPADE)return 1;
+		if (type == Material.WOOD_HOE)return 1;
+		return 0;
 	}
 
 	public static Vector getDiretion(Location location, Location target) {
@@ -1468,7 +1461,6 @@ public final class Mine {
 		return players;
 	}
 
-
 	/**
 	 * @return Lista de jogadores do servidor
 	 */
@@ -1505,7 +1497,6 @@ public final class Mine {
 		return Extra.getIndex(column, line);
 	}
 
-	
 	@SafeVarargs
 	public static <E> E getRandom(E... objects) {
 		return Extra.getRandom(objects);
@@ -1714,9 +1705,9 @@ public final class Mine {
 	}
 
 	public static Team getTeam(Scoreboard scoreboard, String name) {
-		Team team = scoreboard.getTeam(Mine.cutText(name, 16));
+		Team team = scoreboard.getTeam(Extra.cutText(name, 16));
 		if (team == null) {
-			team = scoreboard.registerNewTeam(cutText(name, 16));
+			team = scoreboard.registerNewTeam(Extra.cutText(name, 16));
 		}
 		return team;
 	}
@@ -1952,8 +1943,6 @@ public final class Mine {
 		return Extra.getColumn(index) == colunm;
 	}
 
-
-
 	/**
 	 * Testa se o Inventario esta vasio
 	 * 
@@ -2076,6 +2065,7 @@ public final class Mine {
 		}
 		return null;
 	}
+
 	public static YamlConfiguration loadConfig(File file) {
 		YamlConfiguration config = new YamlConfiguration();
 		FileInputStream fileinputstream;
@@ -2100,10 +2090,14 @@ public final class Mine {
 		}
 
 	}
+
 	public static void loadMaps() {
 
 		File file = MAPS_CONFIG.getFile();
 		file.mkdirs();
+
+		if (file.listFiles() == null)
+			return;
 
 		for (File subfile : file.listFiles()) {
 			while (subfile.isDirectory()) {
@@ -2580,8 +2574,6 @@ public final class Mine {
 		return getRandomInt(minValue, maxValue);
 	}
 
-	
-
 	public static void refreshAll(Player player) {
 		Mine.clearInventory(player);
 		removeEffects(player);
@@ -2979,7 +2971,6 @@ public final class Mine {
 
 	}
 
-
 	public static List<Location> setBox(Location playerLocation, double higher, double lower, double size,
 			Material wall, Material up, Material down, boolean clearInside) {
 		return getBox(playerLocation, higher, lower, size, new LocationEffect() {
@@ -3209,7 +3200,6 @@ public final class Mine {
 		entity.teleport(entity.getWorld().getSpawnLocation().setDirection(entity.getLocation().getDirection()));
 	}
 
-
 	public static Boolean toBoolean(Object obj) {
 		return Extra.toBoolean(obj);
 	}
@@ -3322,7 +3312,6 @@ public final class Mine {
 		Bukkit.unloadWorld(name, true);
 	}
 
-
 	public static String[] wordWrap(String rawString, int lineLength) {
 		if (rawString == null) {
 			return new String[] { "" };
@@ -3398,8 +3387,6 @@ public final class Mine {
 
 		return (lines.toArray(new String[lines.size()]));
 	}
-
-
 
 	public boolean isBeaconPlaced(Location loc) {
 		int yMin = loc.getBlockY();

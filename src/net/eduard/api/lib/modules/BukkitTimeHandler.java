@@ -3,7 +3,11 @@ package net.eduard.api.lib.modules;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
-
+/**
+ * Classe para criação de tarefas de tempo em tempo, ou com demora
+ * @author Eduard
+ *
+ */
 public interface BukkitTimeHandler {
 
 	public Plugin getPluginInstance();

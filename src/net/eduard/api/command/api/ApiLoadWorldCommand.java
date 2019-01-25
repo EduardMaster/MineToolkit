@@ -1,5 +1,6 @@
 package net.eduard.api.command.api;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -9,6 +10,8 @@ import net.eduard.api.lib.manager.CommandManager;
 public class ApiLoadWorldCommand extends CommandManager {
 	public ApiLoadWorldCommand() {
 		super("loadworld", "carregarmundo", "ligarmundo");
+		setUsage("/api loadworld <world>");
+		setDescription("Carrega um mundo descarregado no servidor");
 	}
 
 	@Override
@@ -16,8 +19,12 @@ public class ApiLoadWorldCommand extends CommandManager {
 		if (args.length == 1) {
 			sendUsage(sender);
 		} else {
-			Mine.loadWorld(args[1]);
-			sender.sendMessage("§aVoce carregou o mundo " + args[1]);
+			if (Bukkit.getWorld(args[1]) == null) {
+				Mine.loadWorld(args[1]);
+				sender.sendMessage("§aVoce carregou o mundo " + args[1]);
+			} else {
+				sender.sendMessage("§aEste mundo já esta carregado");
+			}
 		}
 		return true;
 	}

@@ -1,15 +1,13 @@
 
 package net.eduard.api.command.api;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-
 import net.eduard.api.lib.manager.CommandManager;
 
 public class ApiCommand extends CommandManager {
 
 	public ApiCommand() {
 		super("api");
+		register(new ApiHelpCommand());
 		register(new ApiReloadCommand());
 		register(new ApiUnloadWorldCommand());
 		register(new ApiLoadWorldCommand());
@@ -19,21 +17,12 @@ public class ApiCommand extends CommandManager {
 		register(new ApiDisableCommand());
 		register(new ApiEnableCommand());
 		register(new ApiListCommand());
-		
+		register(new ApiReloadConfigCommand());
+		register(new ApiSaveConfigCommand());
+		register(new ApiSaveCommand());
+		register(new ApiReloadCommand());
+		register(new ApiUnloadCommand());
+
 	}
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (args.length == 0) {
-			sender.sendMessage("§f/"+label+" §bunloadworld §a<name>");
-			sender.sendMessage("§f/"+label+" §bloadworld §a<name>");
-			sender.sendMessage("§f/"+label+" §bdeleteworld §a<name>");
-			sender.sendMessage("§f/"+label+" §bworlds");
-			sender.sendMessage("-=--=--=--=--=--=--=--=--=--=--=--=-");
-		}else {
-			super.onCommand(sender, command, label, args);
-		}
-		
-		return true;
-	}
-	
 
 }

@@ -10,29 +10,30 @@ import org.bukkit.potion.PotionEffect;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.click.PlayerEffect;
-import net.eduard.api.lib.game.Effects;
+import net.eduard.api.lib.game.VisualEffect;
 import net.eduard.api.lib.game.Explosion;
 import net.eduard.api.lib.game.Jump;
-import net.eduard.api.lib.game.Sounds;
+import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.modules.Copyable;
 
 public class EffectManager extends TimeManager implements PlayerEffect, Copyable {
 
 	private transient PlayerEffect effect;
-	private String permission;
-	private String message;
-	private List<String> commands = new ArrayList<>();
-	private Location teleport;
-	private List<ItemStack> items = new ArrayList<>();
-	private Effects display;
-	private List<PotionEffect> potions = new ArrayList<>();
-	private Sounds sound;
-	private Jump jump;
-	private Explosion explosion;
-	private boolean closeInventory;
-	private boolean clearInventory;
+	private String REQUIRE_PERMISSION;
+	private String SEND_MESSAGE;
+	private List<String> MAKE_COMMANDS = new ArrayList<>();
+	private Location TELEPORT_TO;
+	private List<ItemStack> GIVE_ITEMS = new ArrayList<>();
+	private VisualEffect SHOW_VISUAL_EFFECT;
+	private List<PotionEffect> APPLY_EFFECTS = new ArrayList<>();
+	private SoundEffect PLAY_SOUND;
+	private Jump JUMP_TO;
+	private Explosion MAKE_EXPLOSION;
+	private boolean CLOSE_INVENTORY;
+	private boolean CLEAR_INVENTORY;
 
 	public EffectManager() {
+		
 		// TODO Auto-generated constructor stub
 	}
 
@@ -40,33 +41,33 @@ public class EffectManager extends TimeManager implements PlayerEffect, Copyable
 	public void effect(Player p) {
 		if (effect != null)
 			effect.effect(p);
-		if (!p.hasPermission(permission))
+		if (!p.hasPermission(REQUIRE_PERMISSION))
 			return;
-		for (String cmd : commands) {
+		for (String cmd : MAKE_COMMANDS) {
 			Mine.makeCommand(cmd);
 		}
-		if (sound != null)
-			sound.create(p);
-		if (message != null) {
-			p.sendMessage(message);
+		if (PLAY_SOUND != null)
+			PLAY_SOUND.create(p);
+		if (SEND_MESSAGE != null) {
+			p.sendMessage(SEND_MESSAGE);
 		}
-		if (closeInventory)
+		if (CLOSE_INVENTORY)
 			p.closeInventory();
-		if (clearInventory) {
+		if (CLEAR_INVENTORY) {
 			Mine.clearInventory(p);
 		}
-		if (teleport != null)
-			p.teleport(teleport);
-		if (jump != null)
-			jump.create(p);
+		if (TELEPORT_TO != null)
+			p.teleport(TELEPORT_TO);
+		if (JUMP_TO != null)
+			JUMP_TO.create(p);
 
-		if (display != null) {
-			display.create(p);
+		if (SHOW_VISUAL_EFFECT != null) {
+			SHOW_VISUAL_EFFECT.create(p);
 		}
-		for (ItemStack item : items) {
+		for (ItemStack item : GIVE_ITEMS) {
 			p.getInventory().addItem(item);
 		}
-		for (PotionEffect pot : potions) {
+		for (PotionEffect pot : APPLY_EFFECTS) {
 			pot.apply(p);
 		}
 
@@ -74,11 +75,11 @@ public class EffectManager extends TimeManager implements PlayerEffect, Copyable
 
 
 	public List<String> getCommands() {
-		return commands;
+		return MAKE_COMMANDS;
 	}
 
 	public void setCommands(List<String> commands) {
-		this.commands = commands;
+		this.MAKE_COMMANDS = commands;
 	}
 
 	public PlayerEffect getEffect() {
@@ -90,91 +91,91 @@ public class EffectManager extends TimeManager implements PlayerEffect, Copyable
 	}
 
 	public String getPermission() {
-		return permission;
+		return REQUIRE_PERMISSION;
 	}
 
 	public void setPermission(String permission) {
-		this.permission = permission;
+		this.REQUIRE_PERMISSION = permission;
 	}
 
 	public Location getTeleport() {
-		return teleport;
+		return TELEPORT_TO;
 	}
 
 	public void setTeleport(Location teleport) {
-		this.teleport = teleport;
+		this.TELEPORT_TO = teleport;
 	}
 
 	public String getMessage() {
-		return message;
+		return SEND_MESSAGE;
 	}
 
 	public void setMessage(String message) {
-		this.message = message;
+		this.SEND_MESSAGE = message;
 	}
 
-	public Effects getDisplay() {
-		return display;
+	public VisualEffect getDisplay() {
+		return SHOW_VISUAL_EFFECT;
 	}
 
-	public void setDisplay(Effects display) {
-		this.display = display;
+	public void setDisplay(VisualEffect display) {
+		this.SHOW_VISUAL_EFFECT = display;
 	}
 
 	public List<PotionEffect> getPotions() {
-		return potions;
+		return APPLY_EFFECTS;
 	}
 
 	public void setPotions(List<PotionEffect> potions) {
-		this.potions = potions;
+		this.APPLY_EFFECTS = potions;
 	}
 
 	public List<ItemStack> getItems() {
-		return items;
+		return GIVE_ITEMS;
 	}
 
 	public void setItems(List<ItemStack> items) {
-		this.items = items;
+		this.GIVE_ITEMS = items;
 	}
 
-	public Sounds getSound() {
-		return sound;
+	public SoundEffect getSound() {
+		return PLAY_SOUND;
 	}
 
-	public void setSound(Sounds sound) {
-		this.sound = sound;
+	public void setSound(SoundEffect sound) {
+		this.PLAY_SOUND = sound;
 	}
 
 	public Jump getJump() {
-		return jump;
+		return JUMP_TO;
 	}
 
 	public void setJump(Jump jump) {
-		this.jump = jump;
+		this.JUMP_TO = jump;
 	}
 
 	public Explosion getExplosion() {
-		return explosion;
+		return MAKE_EXPLOSION;
 	}
 
 	public void setExplosion(Explosion explosion) {
-		this.explosion = explosion;
+		this.MAKE_EXPLOSION = explosion;
 	}
 
 	public boolean isCloseInventory() {
-		return closeInventory;
+		return CLOSE_INVENTORY;
 	}
 
 	public void setCloseInventory(boolean closeInventory) {
-		this.closeInventory = closeInventory;
+		this.CLOSE_INVENTORY = closeInventory;
 	}
 
 	public boolean isClearInventory() {
-		return clearInventory;
+		return CLEAR_INVENTORY;
 	}
 
 	public void setClearInventory(boolean clearInventory) {
-		this.clearInventory = clearInventory;
+		this.CLEAR_INVENTORY = clearInventory;
 	}
 
 }

@@ -9,6 +9,8 @@ import net.eduard.api.lib.manager.CommandManager;
 public class ApiUnloadWorldCommand extends CommandManager {
 	public ApiUnloadWorldCommand() {
 		super("unloadworld", "descarregarmundo", "desligarmundo");
+		setUsage("/api unload <world>");
+		setDescription("Descarrega um mundo carregado no servidor");
 
 	}
 

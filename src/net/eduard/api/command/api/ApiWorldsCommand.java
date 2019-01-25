@@ -12,6 +12,7 @@ public class ApiWorldsCommand extends CommandManager {
 
 	public ApiWorldsCommand() {
 		super("worlds","mundos");
+		setDescription("Mostra uma lista de mundos carregados no servidor");
 	}
 
 	@Override

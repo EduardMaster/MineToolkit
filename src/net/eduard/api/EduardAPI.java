@@ -9,14 +9,13 @@ import net.eduard.api.command.EnchantCommand;
 import net.eduard.api.command.GotoCommand;
 import net.eduard.api.command.SoundCommand;
 import net.eduard.api.command.api.ApiCommand;
-import net.eduard.api.command.config.ConfigCommand;
 import net.eduard.api.command.map.MapCommand;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.bungee.BukkitController;
 import net.eduard.api.lib.bungee.BungeeAPI;
 import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.event.PlayerTargetEvent;
-import net.eduard.api.lib.game.Sounds;
+import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.manager.DBManager;
 import net.eduard.api.lib.menu.Menu;
 import net.eduard.api.lib.modules.BukkitBungeeAPI;
@@ -37,7 +36,7 @@ import net.eduard.api.server.EduardPlugin;
  * @since 1.0
  * 
  * 
- */
+ */ 
 public class EduardAPI extends EduardPlugin {
 
 	private static EduardAPI plugin;
@@ -45,7 +44,7 @@ public class EduardAPI extends EduardPlugin {
 	 * Som do rosnar do gato
 	 */
 	@SuppressWarnings("unused")
-	private static final Sounds ROSNAR = Sounds.create("CAT_PURR");
+	private static final SoundEffect ROSNAR = SoundEffect.create("CAT_PURR");
 	public static EduardAPI getInstance() {
 		return plugin;
 	}
@@ -99,7 +98,7 @@ public class EduardAPI extends EduardPlugin {
 		}, 20, 20);
 		new ApiCommand().register();
 		new MapCommand().register();
-		new ConfigCommand().register();
+	
 		new EnchantCommand().register();
 		new GotoCommand().register();
 		new SoundCommand().register();

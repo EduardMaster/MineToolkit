@@ -77,7 +77,7 @@ public class KitAbility extends CooldownManager {
 	@Override
 	public boolean cooldown(Player player) {
 		if (!enabled) {
-			Mine.chat(player, disabled);
+			Mine.send(player, disabled);
 			return false;
 		}
 		if (onCooldown(player)) {

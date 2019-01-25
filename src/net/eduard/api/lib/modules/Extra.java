@@ -36,6 +36,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,8 +74,12 @@ import net.eduard.api.lib.Mine;
  *
  */
 public final class Extra {
-
+	public static DecimalFormat MONEY = new DecimalFormat("#,##0.00");
 	private static Map<String, String> replacers = new LinkedHashMap<>();
+
+	public static String cutText(String text, int lenght) {
+		return text.length() > lenght ? text.substring(0, lenght) : text;
+	}
 
 	public static void copyAsUTF8(InputStream is, File file) throws IOException {
 		if (is == null)

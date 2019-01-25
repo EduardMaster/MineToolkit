@@ -18,6 +18,7 @@ import org.bukkit.scoreboard.Team;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.Copyable;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 
@@ -67,9 +68,9 @@ public class DisplayBoard implements Storable, Copyable {
 		if (center.isEmpty()) {
 			center = "" + ChatColor.values()[line - 1];
 		}
-		prefix = Mine.cutText(prefix, 16);
-		center = Mine.cutText(center, 40);
-		suffix = Mine.cutText(suffix, 16);
+		prefix = Extra.cutText(prefix, 16);
+		center = Extra.cutText(center, 40);
+		suffix = Extra.cutText(suffix, 16);
 		Team team = teams.get(line);
 		if (fakes.containsKey(line)) {
 			OfflinePlayer fake = fakes.get(line);
@@ -195,7 +196,7 @@ public class DisplayBoard implements Storable, Copyable {
 	}
 
 	public DisplayBoard setDisplay(String name) {
-		objective.setDisplayName(Mine.cutText(name, TITLE_LIMIT));
+		objective.setDisplayName(Extra.cutText(name, TITLE_LIMIT));
 		return this;
 	}
 
@@ -218,12 +219,12 @@ public class DisplayBoard implements Storable, Copyable {
 		if (line != null && line.equals(text)) {
 			return true;
 		}
-		text = Mine.cutText(text, PREFIX_LIMIT + SUFFIX_LIMIT + PLAYER_NAME_LIMIT);
+		text = Extra.cutText(text, PREFIX_LIMIT + SUFFIX_LIMIT + PLAYER_NAME_LIMIT);
 		String center = "";
 		String prefix = "";
 		String suffix = "";
 		if (text.length() > PLAYER_NAME_LIMIT + PREFIX_LIMIT + SUFFIX_LIMIT) {
-			text = Mine.cutText(text, PLAYER_NAME_LIMIT + PREFIX_LIMIT + SUFFIX_LIMIT);
+			text = Extra.cutText(text, PLAYER_NAME_LIMIT + PREFIX_LIMIT + SUFFIX_LIMIT);
 		}
 		if (text.length() <= PLAYER_NAME_LIMIT) {
 			center = text;
@@ -238,7 +239,7 @@ public class DisplayBoard implements Storable, Copyable {
 		}
 		Team team = teams.get(id);
 		if (perfect) {
-			prefix = Mine.cutText(text, 16);
+			prefix = Extra.cutText(text, 16);
 
 			if (text.length() > 16) {
 				suffix = text.substring(16);

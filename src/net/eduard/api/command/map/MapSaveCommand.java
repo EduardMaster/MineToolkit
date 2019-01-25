@@ -11,7 +11,7 @@ import net.eduard.api.lib.manager.CommandManager;
 public class MapSaveCommand extends CommandManager {
 
 	public MapSaveCommand() {
-		super("save");
+		super("save","salvar");
 	}
 
 	@Override

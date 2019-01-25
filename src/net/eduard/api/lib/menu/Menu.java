@@ -58,6 +58,7 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 	private transient Map<Integer, Inventory> pagesCache = new HashMap<>();
 	@NotCopyable
 	private transient Map<Player, Integer> pageOpened = new HashMap<>();
+
 	public void removeButton(String name) {
 		for (MenuButton button : buttons) {
 			if (button.getName().equalsIgnoreCase(name)) {
@@ -65,8 +66,16 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 				break;
 			}
 		}
-		
+
 	}
+
+	public void removeAllButtons() {
+		buttons.clear();
+		clearCache();
+		pageOpened.forEach((p, a) -> p.closeInventory());
+		pageOpened.clear();
+	}
+
 	public String getFullTitle() {
 		if (isPageSystem()) {
 			return pagePrefix + title + pageSuffix;
@@ -379,7 +388,7 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 	public void close(InventoryCloseEvent e) {
 		if (e.getPlayer() instanceof Player) {
 			Player p = (Player) e.getPlayer();
-			
+
 			if (pageOpened.containsKey(p)) {
 				pageOpened.remove(p);
 			}
@@ -395,7 +404,7 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 //			if (e.getInventory().getTitle().contains(getTitle())) {
 
 			if (pageOpened.containsKey(player)) {
-				log("Menu nome "+e.getInventory().getName());
+				log("Menu nome " + e.getInventory().getName());
 				e.setCancelled(true);
 				int slot = e.getRawSlot();
 				Integer page = pageOpened.get(player);

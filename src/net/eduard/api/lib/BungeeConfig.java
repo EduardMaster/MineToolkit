@@ -218,7 +218,7 @@ public class BungeeConfig {
 		if (value == null) {
 			remove(path);
 		} else {
-			config.set(path, StorageAPI.restore(new StorageInfo(null, null, false, false, true), value));
+			config.set(path, StorageAPI.store(new StorageInfo(null, value.getClass(), false, false, true), value));
 		}
 	}
 

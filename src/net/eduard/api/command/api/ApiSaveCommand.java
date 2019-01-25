@@ -1,21 +1,20 @@
 
 package net.eduard.api.command.api;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CommandManager;
+import net.eduard.api.server.EduardPlugin;
 
-public class ApiDisableCommand extends CommandManager {
+public class ApiSaveCommand extends CommandManager {
 
-	public ApiDisableCommand() {
-		super("disable", "desabilitar");
-		setUsage("/api disable <plugin>");
-
-	setDescription("Desativa um plugin ativado no servidor");
+	public ApiSaveCommand() {
+		super("save", "salvar");
+		setUsage("/api save <plugin>");
+		setDescription("Salva um plugin feito pelo Eduard");
 	}
 
 	@Override
@@ -26,10 +25,15 @@ public class ApiDisableCommand extends CommandManager {
 			String sub = args[1];
 			if (Mine.existsPlugin(sender, sub)) {
 				Plugin pl = Mine.getPlugin(sub);
-				sender.sendMessage("§aPlugin desativado");
-				Bukkit.getPluginManager().disablePlugin(pl);
-			}
+				if (pl instanceof EduardPlugin) {
+					EduardPlugin eduardPlugin = (EduardPlugin) pl;
+					eduardPlugin.save();
+					sender.sendMessage("§cPlugin do Eduard " + pl.getName() + " foi salvado");
 
+				} else {
+					sender.sendMessage("§cEste plugin nao é um plugin do Eduard");
+				}
+			}
 		}
 
 		return true;

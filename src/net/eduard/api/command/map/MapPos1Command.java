@@ -12,7 +12,7 @@ import net.eduard.api.lib.manager.CommandManager;
 public class MapPos1Command extends CommandManager {
 
 	public MapPos1Command() {
-		super("pos1");
+		super("pos1","setpos1","setlow");
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,

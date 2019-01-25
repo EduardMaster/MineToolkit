@@ -244,6 +244,7 @@ public class EduardBungee extends Plugin implements Listener {
 
 	@EventHandler
 	public void event(ServerSwitchEvent e) {
+		
 
 	}
 
@@ -254,6 +255,7 @@ public class EduardBungee extends Plugin implements Listener {
 
 	@EventHandler
 	public void event(ProxyReloadEvent e) {
+		
 
 	}
 

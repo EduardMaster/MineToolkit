@@ -39,6 +39,7 @@ public class Tag
     }
   }
 
+@SuppressWarnings("deprecation")
 private void setField(Object packet, Field field, Object value) {
     field.setAccessible(true);
     try {

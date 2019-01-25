@@ -9,20 +9,20 @@ import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.storage.Storable;
 
-public class Effects implements Storable {
+public class VisualEffect implements Storable {
 
 	private int data;
 
 	private Effect type;
 
-	public Effects() {
+	public VisualEffect() {
 	}
 
-	public Effects(Effect type) {
+	public VisualEffect(Effect type) {
 		this(type, 0);
 	}
 
-	public Effects(Effect type, int data) {
+	public VisualEffect(Effect type, int data) {
 		this.data = data;
 		this.type = type;
 	}
@@ -40,29 +40,29 @@ public class Effects implements Storable {
 	}
 
 
-	public Effects setData(int data) {
+	public VisualEffect setData(int data) {
 
 		this.data = data;
 		return this;
 	}
 
-	public Effects setType(Effect type) {
+	public VisualEffect setType(Effect type) {
 
 		this.type = type;
 		return this;
 	}
 
-	public Effects create(Entity entity, int radius) {
+	public VisualEffect create(Entity entity, int radius) {
 		create(entity.getLocation(), radius);
 		return this;
 	}
 
-	public Effects create(Location loc) {
+	public VisualEffect create(Location loc) {
 		return create(loc, 0);
 	}
 
 	
-	public Effects create(Location loc, int radius) {
+	public VisualEffect create(Location loc, int radius) {
 		loc.getWorld().playEffect(loc, type, data, radius);
 		return this;
 	}
@@ -70,7 +70,7 @@ public class Effects implements Storable {
 	
 
 	@SuppressWarnings("deprecation")
-	public Effects create(Player p) {
+	public VisualEffect create(Player p) {
 
 		p.playEffect(p.getLocation(), type, data);
 		return this;
@@ -80,11 +80,11 @@ public class Effects implements Storable {
 	public String toString() {
 		return "Effects [data=" + data + ", type=" + type + "]";
 	}
-	public static Effects newEffects(String toString) {
+	public static VisualEffect newEffects(String toString) {
 		String[] split = toString.substring(toString.indexOf("["),toString.lastIndexOf("]")).split(", ");
 		int data = Integer.valueOf(split[0].split("=")[1]);
 		Effect effect = Effect.valueOf(split[1].split("=")[1]);
-		return new Effects(effect, data);
+		return new VisualEffect(effect, data);
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class Effects implements Storable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Effects other = (Effects) obj;
+		VisualEffect other = (VisualEffect) obj;
 		if (data != other.data)
 			return false;
 		if (type != other.type)

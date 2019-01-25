@@ -29,6 +29,8 @@ import net.eduard.api.lib.storage.references.ReferenceBase;
  *
  */
 public class StorageAPI {
+	
+	
 	private static boolean debug = true;
 	public static String STORE_KEY = "=";
 	public static String REFER_KEY = "@";
@@ -105,7 +107,7 @@ public class StorageAPI {
 	}
 	public static void register(Class<? extends Storable> claz,String alias) {
 		autoRegisterClass(claz,alias);
-	}
+	} 
 	public static void register(Class<?> claz, Storable storable) {
 		storages.put(claz, storable);
 		aliases.put(claz, claz.getSimpleName());
@@ -127,6 +129,8 @@ public class StorageAPI {
 	public static Storable autoRegisterClass(Class<?> claz) {
 		return autoRegisterClass(claz, claz.getSimpleName());
 	}
+	
+	@SuppressWarnings("deprecation")
 	public static Storable autoRegisterClass(Class<?> claz,String alias) {
 		Storable store = null;
 		try {

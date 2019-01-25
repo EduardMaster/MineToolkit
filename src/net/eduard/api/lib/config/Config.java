@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.game.Sounds;
+import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
@@ -31,36 +31,8 @@ import net.eduard.api.lib.storage.Storable;
 public class Config implements Storable {
 	private boolean saveAsUTF8 = false;
 
-	public static void saveConfigs() {
-		for (Config config : CONFIGS) {
-			config.saveConfig();
-		}
-	}
+	
 
-	public static void reloadConfigs() {
-		for (Config config : CONFIGS) {
-			config.reloadConfig();
-		}
-
-	}
-
-	public static void saveConfigs(Plugin plugin) {
-		for (Config config : CONFIGS) {
-			if (config.getPlugin().equals(plugin)) {
-				config.saveConfig();
-			}
-
-		}
-	}
-
-	public static void reloadConfigs(Plugin plugin) {
-		for (Config config : CONFIGS) {
-			if (config.getPlugin().equals(plugin)) {
-				config.reloadConfig();
-			}
-
-		}
-	}
 
 	public final static List<Config> CONFIGS = new ArrayList<>();
 
@@ -332,7 +304,7 @@ public class Config implements Storable {
 		return root.getSection(path);
 	}
 
-	public Sounds getSound(String path) {
+	public SoundEffect getSound(String path) {
 		return root.getSound(path);
 	}
 

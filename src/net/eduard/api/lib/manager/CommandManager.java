@@ -260,7 +260,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 
 		command.setUsage(usage);
 		command.setLabel(name);
-		command.setName(name);
+//		command.setName(name);
 		command.setAliases(aliases);
 		command.setDescription(description);
 		command.setPermission(permission);

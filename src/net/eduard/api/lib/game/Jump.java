@@ -12,19 +12,19 @@ public class Jump implements Storable {
 	private boolean highFirst;
 	private double force = 2;
 	private double high = 0.5;
-	private Sounds sound;
+	private SoundEffect sound;
 	private boolean useVector;
 	private Vector vector;
 	public Jump() {
 	}
 	
-	public Jump(Sounds sound, Vector vector) {
+	public Jump(SoundEffect sound, Vector vector) {
 		this.sound = sound;
 		this.useVector = true;
 		this.vector = vector;
 	}
 	public Jump(boolean highFirst, double force, double high,
-			Sounds sound) {
+			SoundEffect sound) {
 		this.highFirst = highFirst;
 		this.force = force;
 		this.high = high;
@@ -32,7 +32,7 @@ public class Jump implements Storable {
 		
 	}
 	public Jump(boolean withHigh, boolean highFirst, double force, double high,
-			Sounds sound, boolean useVector, Vector vector) {
+			SoundEffect sound, boolean useVector, Vector vector) {
 		this.withHigh = withHigh;
 		this.highFirst = highFirst;
 		this.force = force;
@@ -90,10 +90,10 @@ public class Jump implements Storable {
 	public void setHigh(double high) {
 		this.high = high;
 	}
-	public Sounds getSound() {
+	public SoundEffect getSound() {
 		return sound;
 	}
-	public void setSound(Sounds sound) {
+	public void setSound(SoundEffect sound) {
 		this.sound = sound;
 	}
 	public boolean isUseVector() {
