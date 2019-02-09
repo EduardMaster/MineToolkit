@@ -230,7 +230,7 @@ public final class BukkitBungeeAPI {
 			players.put(playerName, player);
 		}
 		return player;
-	}
+	} 
 
 	static Player getFirstPlayer() {
 		return Iterables.getFirst(Bukkit.getOnlinePlayers(), null);

@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Sistema de Key avan§ado
+ * Sistema de Key avancaado
  * @version 2.0
  * @since EduardAPI 5.2
  * @author Eduard
@@ -86,17 +86,7 @@ public class Licence3 {
 	}
 
 	
-	
-//	public class Vendas{
-//		
-//		private int id;
-//		private String nome;
-//		private String info;
-//		
-//		
-//		
-//		
-//	}
+
 	
 	
 

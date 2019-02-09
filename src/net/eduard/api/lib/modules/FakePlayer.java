@@ -13,7 +13,8 @@ import org.bukkit.entity.Player;
 /**
  * Jogador Off Ficticio<br>
  *  nome;id
- * @author Eduard-PC
+ * @author Eduard
+ * @version 1.2
  *
  */
 public class FakePlayer implements OfflinePlayer {

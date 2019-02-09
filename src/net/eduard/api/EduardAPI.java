@@ -19,12 +19,15 @@ import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.manager.DBManager;
 import net.eduard.api.lib.menu.Menu;
 import net.eduard.api.lib.modules.BukkitBungeeAPI;
+import net.eduard.api.lib.modules.Copyable.CopyDebug;
 import net.eduard.api.lib.modules.ServerAPI.BukkitControl;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables;
 import net.eduard.api.manager.BukkitReplacers;
 import net.eduard.api.manager.EssentialsEvents;
 import net.eduard.api.manager.InfoGenerator;
+import net.eduard.api.manager.MassiveFactionReplacers;
+import net.eduard.api.manager.McMMOReplacers;
 import net.eduard.api.manager.PluginValor;
 import net.eduard.api.server.EduardPlugin;
 
@@ -60,7 +63,7 @@ public class EduardAPI extends EduardPlugin {
 	public void onEnable() {
 		plugin = this;
 		setFree(true);
-	
+		Player a;
 		BukkitControl.register(this);
 		BukkitBungeeAPI.requestCurrentServer();
 		BukkitController bukkit = BungeeAPI.getBukkit();
@@ -69,6 +72,7 @@ public class EduardAPI extends EduardPlugin {
 		StorageAPI.setDebug(config.getBoolean("debug-storage"));
 		DBManager.setDebug(config.getBoolean("debug-db"));
 		Menu.setDebug(config.getBoolean("debug-menu"));
+		CopyDebug.setDebug(config.getBoolean("debug-copyable"));
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.game");
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.menu");
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.manager");
@@ -80,7 +84,8 @@ public class EduardAPI extends EduardPlugin {
 		Mine.console("§bEduardAPI §fStorables do Bukkit carregado!");
 		Mine.resetScoreboards();
 		Mine.console("§bEduardAPI §fScoreboards resetadas!");
-		BukkitReplacers.registerRplacers();
+		
+		
 		asyncTimer(new Runnable() {
 
 			@Override
@@ -152,7 +157,9 @@ public class EduardAPI extends EduardPlugin {
 		}, backupTime, backupTime);
 
 		Mine.console("§bEduardAPI §acarregado!");
-
+		new BukkitReplacers();
+		new McMMOReplacers();
+		new MassiveFactionReplacers();
 	}
 
 	@Override

@@ -17,7 +17,7 @@ import org.bukkit.plugin.Plugin;
  * Sistema Interpretador de YAML e JSON simultaneo 
  * @author Eduard
  *
- */ 
+ */  
 public class MasterConfig {
 //	private static String toLine(List<String> lines) {
 //		StringBuilder builder = new StringBuilder();

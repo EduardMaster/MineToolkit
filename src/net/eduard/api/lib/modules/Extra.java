@@ -37,6 +37,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,12 +46,15 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
@@ -74,11 +78,40 @@ import net.eduard.api.lib.Mine;
  *
  */
 public final class Extra {
-	public static DecimalFormat MONEY = new DecimalFormat("#,##0.00");
+	
+	
+	@SafeVarargs
+	public static <T> Set<T> newSet(T... array ) {
+		Set<T> set = new HashSet<>();
+
+		for (T element : array) {
+			set.add(element);
+		}
+
+		return set;
+	}
+
+	public static DecimalFormat MONEY = new DecimalFormat("###,###.##",
+			DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));
 	private static Map<String, String> replacers = new LinkedHashMap<>();
 
 	public static String cutText(String text, int lenght) {
 		return text.length() > lenght ? text.substring(0, lenght) : text;
+	}
+
+	public static String formatMoney(double numero) {
+		String formatado = Extra.MONEY.format(numero);
+		String v = formatado.split(",")[0];
+		formatado = numero >= 1000000 && numero <= 999999999 ? v + "M"
+				: numero >= 1000000000 && numero <= 999999999999L ? v + "B"
+						: numero >= 1000000000000L && numero <= 999999999999999L ? v + "T"
+								: numero >= 1000000000000000L && numero <= 999999999999999999L ? v + "Q"
+										: numero >= 1000000000000000000L && String.valueOf(numero).length() <= 21
+												? v + "QUI"
+												: String.valueOf(numero).length() > 21 ? "999QUI"
+														: String.valueOf(numero).length() < 7 ? formatado : formatado;
+
+		return formatado;
 	}
 
 	public static void copyAsUTF8(InputStream is, File file) throws IOException {
@@ -865,7 +898,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Formata o resultado da subtra§§o de *numero antigo - numero atual)
+	 * Formata o resultado da subtração de (numero antigo - numero atual)
 	 * 
 	 * @param timestamp Numero Antigo
 	 * @return Texto do numero formatado

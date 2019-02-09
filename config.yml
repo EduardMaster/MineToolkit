@@ -4,6 +4,8 @@ debug-plugin-messages: true
 
 debug-storage: false
 
+debug-copyable: false
+
 debug-menu: false
 
 debug-db: false
@@ -36,5 +38,11 @@ motd:
 
 auto-respawn: false
 auto-rejoin: false
+
+commands-blocked:
+- /comandobloqueado
+
+tab-commands-blocked: 
+- /tabbloqueado
 
 

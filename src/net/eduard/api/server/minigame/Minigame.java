@@ -11,6 +11,7 @@ import org.bukkit.plugin.Plugin;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.DisplayBoard;
 import net.eduard.api.lib.game.Kit;
+import net.eduard.api.lib.game.MinigameChest;
 import net.eduard.api.lib.manager.TimeManager;
 
 /**

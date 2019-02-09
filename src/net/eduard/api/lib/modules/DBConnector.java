@@ -5,7 +5,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+/**
+ * Conectar com MySQL ou SQLite facilmente
+ * @author Eduard
+ *
+ */
 public class DBConnector {
 
 	private String userName;

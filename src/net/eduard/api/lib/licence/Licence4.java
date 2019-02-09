@@ -63,7 +63,7 @@ public class Licence4 {
 						Bukkit.getConsoleSender()
 								.sendMessage("§cEste servidor nao possui o Ip correto da Key do plugin.");
 					} else if (!b.toString().equals(nomePlugin)) {
-						Bukkit.getConsoleSender().sendMessage("§cEsta key n§o foi feita para este plugin.");
+						Bukkit.getConsoleSender().sendMessage("§cEsta key nao foi feita para este plugin.");
 					} else {
 						ativado = true;
 						ligando.run();

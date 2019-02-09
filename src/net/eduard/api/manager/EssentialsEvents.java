@@ -1,7 +1,5 @@
 package net.eduard.api.manager;
 
-import java.text.DecimalFormat;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -9,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -21,13 +20,14 @@ import net.eduard.api.EduardAPI;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.manager.EventsManager;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.server.EduardPlugin;
 
 public class EssentialsEvents extends EventsManager {
 	@EventHandler
 	public void onEnable(PluginEnableEvent e) {
 		if (e.getPlugin() instanceof EduardPlugin) {
-			
+
 			EduardPlugin plugin = (EduardPlugin) e.getPlugin();
 			String msg = "§b[Eduard-Dev] §f" + plugin.getName() + " §fv" + plugin.getDescription().getVersion()
 					+ "§a foi ativado com sucesso.";
@@ -36,8 +36,7 @@ public class EssentialsEvents extends EventsManager {
 			} else {
 				Mine.console(msg);
 				double valor = plugin.getPrice();
-				DecimalFormat decimalFormat = new DecimalFormat("#.##");
-				Mine.console("§bPreco: §aR$"+decimalFormat.format(valor));
+				Mine.console("§bPreco: §aR$" + Extra.MONEY.format(valor));
 			}
 		}
 //		for (Config config : Config.CONFIGS) {
@@ -45,6 +44,23 @@ public class EssentialsEvents extends EventsManager {
 //				config.reloadConfig();
 //			}
 //		}
+	}
+
+//	@EventHandler
+//	public void event(AsyncPlayerChatEvent e) {
+//		e.getPlayer().sendMessage("§aA vai se fude");
+//		if (e.getMessage().startsWith("cu")) {
+//			e.setCancelled(true);
+//			MPlayer player = MPlayer.get(e.getPlayer());
+//			player.setPower(player.getPower() + 1);
+//			e.getPlayer().sendMessage("§abbb");
+//		}
+//	}
+	
+	@EventHandler
+	public void event(PlayerChatTabCompleteEvent e) {
+//		if (e.getTabCompletions())
+		
 	}
 
 	@EventHandler

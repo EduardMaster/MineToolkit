@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 /**
  * Ponto de direção usado para fazer um RADAR
  * 
- * @author Eduard
+ * 
  *
  */
 public  enum Point {

@@ -40,6 +40,7 @@ import net.md_5.bungee.event.EventHandler;
 /**
  * Sistema de controle dos servidores pelo bungee
  * @author Eduard
+ * @version 1.5
  *
  */
 public final class ServerAPI

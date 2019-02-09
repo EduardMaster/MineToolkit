@@ -106,9 +106,9 @@ import net.eduard.api.lib.modules.Point;
  */
 public final class Mine {
 
-	public static String translate(Enchantment enchant) {
-//		if (enchant == )
-		return null;
+
+	public static String formatMoney(double numero) {
+		return Extra.formatMoney(numero);
 	}
 
 	public static String translate(DamageCause cause) {
@@ -752,8 +752,6 @@ public final class Mine {
 		}
 	}
 
-
-
 	public static String formatColors(String str) {
 		return Extra.formatColors(str);
 	}
@@ -977,36 +975,62 @@ public final class Mine {
 		if (item == null)
 			return 0;
 		Material type = item.getType();
-		if (type == Material.AIR)return 0;
-		if (type == Material.DIAMOND_SWORD)return 7;
-		if (type == Material.DIAMOND_AXE)return 6;
-		if (type == Material.DIAMOND_PICKAXE)return 5;
-		if (type == Material.DIAMOND_SPADE)return 4;
-		if (type == Material.DIAMOND_HOE)return 3;
+		if (type == Material.AIR)
+			return 0;
+		if (type == Material.DIAMOND_SWORD)
+			return 7;
+		if (type == Material.DIAMOND_AXE)
+			return 6;
+		if (type == Material.DIAMOND_PICKAXE)
+			return 5;
+		if (type == Material.DIAMOND_SPADE)
+			return 4;
+		if (type == Material.DIAMOND_HOE)
+			return 3;
 		//
-		if (type == Material.IRON_SWORD)return 6;
-		if (type == Material.IRON_AXE)return 5;
-		if (type == Material.IRON_PICKAXE)return 4;
-		if (type == Material.IRON_SPADE)return 3;
-		if (type == Material.IRON_HOE)return 2;
+		if (type == Material.IRON_SWORD)
+			return 6;
+		if (type == Material.IRON_AXE)
+			return 5;
+		if (type == Material.IRON_PICKAXE)
+			return 4;
+		if (type == Material.IRON_SPADE)
+			return 3;
+		if (type == Material.IRON_HOE)
+			return 2;
 		//
-		if (type == Material.GOLD_SWORD)return 5;
-		if (type == Material.GOLD_AXE)return 4;
-		if (type == Material.GOLD_PICKAXE)return 3;
-		if (type == Material.GOLD_SPADE)return 2;
-		if (type == Material.GOLD_HOE)return 1;
+		if (type == Material.GOLD_SWORD)
+			return 5;
+		if (type == Material.GOLD_AXE)
+			return 4;
+		if (type == Material.GOLD_PICKAXE)
+			return 3;
+		if (type == Material.GOLD_SPADE)
+			return 2;
+		if (type == Material.GOLD_HOE)
+			return 1;
 		//
-		if (type == Material.STONE_SWORD)return 5;
-		if (type == Material.STONE_AXE)return 4;
-		if (type == Material.STONE_PICKAXE)return 3;
-		if (type == Material.STONE_SPADE)return 2;
-		if (type == Material.STONE_HOE)return 1;
+		if (type == Material.STONE_SWORD)
+			return 5;
+		if (type == Material.STONE_AXE)
+			return 4;
+		if (type == Material.STONE_PICKAXE)
+			return 3;
+		if (type == Material.STONE_SPADE)
+			return 2;
+		if (type == Material.STONE_HOE)
+			return 1;
 		//
-		if (type == Material.WOOD_SWORD)return 4;
-		if (type == Material.WOOD_AXE)return 3;
-		if (type == Material.WOOD_PICKAXE)return 2;
-		if (type == Material.WOOD_SPADE)return 1;
-		if (type == Material.WOOD_HOE)return 1;
+		if (type == Material.WOOD_SWORD)
+			return 4;
+		if (type == Material.WOOD_AXE)
+			return 3;
+		if (type == Material.WOOD_PICKAXE)
+			return 2;
+		if (type == Material.WOOD_SPADE)
+			return 1;
+		if (type == Material.WOOD_HOE)
+			return 1;
 		return 0;
 	}
 
@@ -1602,19 +1626,22 @@ public final class Mine {
 	}
 
 	public static String getReplacers(String text, Player player) {
+		if (player==null) {
+			return "";
+		}
 		for (Entry<String, Replacer> value : replacers.entrySet()) {
 			if (text.contains(value.getKey())) {
 				try {
 					text = text.replace(value.getKey(), "" + value.getValue().getText(player));
-
+					
 				} catch (Exception e) {
 					Mine.console("§cREPLACE ERROR: " + value.getKey());
-					e.printStackTrace();
+//					e.printStackTrace();
 				}
 
 			}
-
 		}
+		
 		return text;
 	}
 
@@ -2813,8 +2840,9 @@ public final class Mine {
 					Extra.getParameters(Mine.classMineIChatBaseComponent, byte.class), component, (byte) 2);
 			sendPacket(player, packet);
 		} catch (Exception e) {
-			Bukkit.getConsoleSender().sendMessage(
-					"§bRexMine §aNao foi possivel usar o 'setActionBar' pois o servidor esta na versao anterior a 1.8");
+//			e.printStackTrace();
+//			Bukkit.getConsoleSender().sendMessage(
+//					"§bRexMine §aNao foi possivel usar o 'setActionBar' pois o servidor esta na versao anterior a 1.8");
 
 		}
 

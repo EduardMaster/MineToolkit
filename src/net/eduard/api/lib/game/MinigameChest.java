@@ -1,4 +1,4 @@
-package net.eduard.api.server.minigame;
+package net.eduard.api.lib.game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +11,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.game.ItemRandom;
 import net.eduard.api.lib.storage.Storable;
 
 public class MinigameChest implements Storable {

@@ -11,6 +11,12 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+/**
+ * Sistema de Scoreboard simples
+ * @author Eduard
+ * @version 1.0
+ *
+ */
 @SuppressWarnings("deprecation")
 public class Scoreboards {
 	private Scoreboard scoreboard;

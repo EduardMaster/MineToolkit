@@ -36,11 +36,17 @@ public class DisplayBoard implements Storable, Copyable {
 	protected String title;
 	protected String healthBar;
 	protected boolean perfect;
+	@NotCopyable
 	protected transient Objective health;
+	@NotCopyable
 	protected transient Scoreboard scoreboard;
+	@NotCopyable
 	protected transient Objective objective;
+	@NotCopyable
 	protected transient Map<Integer, OfflinePlayer> fakes = new HashMap<>();
+	@NotCopyable
 	protected transient Map<Integer, Team> teams = new HashMap<>();
+	@NotCopyable
 	protected transient Map<Integer, String> texts = new HashMap<>();
 
 	public DisplayBoard hide() {
@@ -309,7 +315,7 @@ public class DisplayBoard implements Storable, Copyable {
 
 //	@Override
 	public void onCopy() {
-		Mine.broadcast("§cOn Copy edxecutado");
+		Mine.console("§fDisplayBoard executando onCopy()");
 		init();
 
 	}

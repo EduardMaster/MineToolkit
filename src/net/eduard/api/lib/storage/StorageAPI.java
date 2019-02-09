@@ -130,7 +130,6 @@ public class StorageAPI {
 		return autoRegisterClass(claz, claz.getSimpleName());
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static Storable autoRegisterClass(Class<?> claz,String alias) {
 		Storable store = null;
 		try {

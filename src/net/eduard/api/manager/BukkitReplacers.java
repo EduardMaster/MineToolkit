@@ -1,16 +1,15 @@
 package net.eduard.api.manager;
 
-import java.text.DecimalFormat;
-
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.Mine.Replacer;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.VaultAPI;
 
 public class BukkitReplacers {
-	public static void registerRplacers() {
+	public BukkitReplacers() {
 		if (Mine.hasPlugin("Vault")) {
 			Mine.addReplacer("$player_group", new Replacer() {
 
@@ -55,8 +54,19 @@ public class BukkitReplacers {
 				public Object getText(Player p) {
 					if (VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
 
-						DecimalFormat decimal = new DecimalFormat("#,##0.00");
-						return decimal.format(VaultAPI.getEconomy().getBalance(p));
+						return Extra.MONEY.format(VaultAPI.getEconomy().getBalance(p));
+
+					}
+					return "0.00";
+				}
+			});
+			Mine.addReplacer("$player_balance", new Replacer() {
+
+				@Override
+				public Object getText(Player p) {
+					if (VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
+
+						return Mine.formatMoney(VaultAPI.getEconomy().getBalance(p));
 
 					}
 					return "0.00";
@@ -182,18 +192,7 @@ public class BukkitReplacers {
 				return p.getLocation().getZ();
 			}
 		});
-		// if (Mine.hasPlugin("mcMMO")) {
-		// Mine.addReplacer("$mcmmo_level", new Replacer() {
-		//
-		// @Override
-		// public Object getText(Player p) {
-		// McMMOPlayer usuario = UserManager.getPlayer(p);
-		// int nivel = usuario.getPowerLevel();
-		// return nivel;
-		// }
-		// });
-		//
-		// }
+	
 
 	}
 }

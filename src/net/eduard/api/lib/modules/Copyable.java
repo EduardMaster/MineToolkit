@@ -18,6 +18,7 @@ import java.util.Map.Entry;
  * 
  * @see Extra
  * @author Eduard
+ * @version 1.3
  *
  */
 @SuppressWarnings("unchecked")
@@ -29,8 +30,21 @@ public interface Copyable {
 
 	}
 
+	public static class CopyDebug {
+		private static boolean debug=true;
+
+		public static boolean isDebug() {
+			return debug;
+		}
+
+		public static void setDebug(boolean debug) {
+			CopyDebug.debug = debug;
+		}
+	}
+
 	public static void debug(String msg) {
-		System.out.println("[Copyable] " + msg);
+		if (CopyDebug.isDebug())
+			System.out.println("[Copyable] " + msg);
 	}
 
 	public default Object copy() {
