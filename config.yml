@@ -16,6 +16,9 @@ save-worlds: true
 
 save-players: false
 
+money-format: "###,###.##"
+money-format-locale: "PT-BR"
+
 no-join-message: true
 custom-join-message: false
 on-join-message: '&6O jogador &e$player &6entrou no server'
@@ -41,8 +44,5 @@ auto-rejoin: false
 
 commands-blocked:
 - /comandobloqueado
-
-tab-commands-blocked: 
-- /tabbloqueado
 
 

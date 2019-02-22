@@ -32,6 +32,7 @@ public class ForceVillagerTrade {
     private MerchantRecipeList l = new MerchantRecipeList();
 
     /**
+     * Não pode ter espaço
      * @param invname Inventory display name, (May contain color)
      *
      */

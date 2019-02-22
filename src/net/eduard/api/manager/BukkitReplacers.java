@@ -7,7 +7,11 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.Mine.Replacer;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.VaultAPI;
-
+/**
+ * Registrando os replacers mais usados na Displayboard
+ * @author Eduard
+ *
+ */
 public class BukkitReplacers {
 	public BukkitReplacers() {
 		if (Mine.hasPlugin("Vault")) {

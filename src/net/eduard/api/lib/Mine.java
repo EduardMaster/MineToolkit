@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -67,6 +68,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -105,77 +107,26 @@ import net.eduard.api.lib.modules.Point;
  * @version 3.0
  */
 public final class Mine {
+	public static interface Replacer {
 
-
-	public static String formatMoney(double numero) {
-		return Extra.formatMoney(numero);
+		Object getText(Player p);
 	}
 
-	public static String translate(DamageCause cause) {
-		switch (cause) {
-		case BLOCK_EXPLOSION:
-			return "Explosão de Blocos";
+	public static final String uuidurl = "https://api.mojang.com/users/rofiles/minecraft/";
 
-		case CONTACT:
-			return "Contato";
-		case CUSTOM:
-			return "Customizado";
-
-		case DROWNING:
-			return "Nadando";
-		case ENTITY_ATTACK:
-			return "Ataque";
-		case ENTITY_EXPLOSION:
-			return "Explosão de Entidade";
-		case FALL:
-			return "Queda";
-		case FALLING_BLOCK:
-			return "Bloco Caindo";
-		case FIRE:
-			return "Fogo";
-		case FIRE_TICK:
-			return "Fogo Recorrente";
-		case LAVA:
-			return "Lava";
-		case LIGHTNING:
-			return "Raio";
-		case MAGIC:
-			return "Magia";
-		case MELTING:
-			return "Fusão";
-		case POISON:
-			return "Veneno";
-		case PROJECTILE:
-			return "Projétil";
-		case STARVATION:
-			return "Fome";
-		case SUFFOCATION:
-			return "Sufocamento";
-		case SUICIDE:
-			return "Suicidio";
-		case THORNS:
-			return "Refletido";
-		case VOID:
-			return "Vasio";
-		case WITHER:
-			return "Customizado";
-		default:
-			return "Outro";
-
-		}
-	}
-
+	public static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
+	public static final String altskinurl = "https://mcapi.ca/name/uuid/";
+	public static final String altuuidurl = "http://mcapi.ca/uuid/player/";
 	static {
 		Extra.newReplacer("#v", Mine.getVersion());
 	}
 
-	public static Class<?> getClassFrom(Object object) throws Exception {
-		return Extra.getClassFrom(object);
-	}
-
 	public static String classMineEntityPlayer = "#mEntityPlayer";
+
 	public static String classCraftCraftPlayer = "#cCraftPlayer";
+
 	public static String classSpigotPacketTitle = "#sProtocolInjector$PacketTitle";
+
 	public static String classSpigotAction = "#sProtocolInjector$PacketTitle$Action";
 	public static String classSpigotPacketTabHeader = "#sProtocolInjector$PacketTabHeader";
 	public static String classPacketPlayOutChat = "#pPlayOutChat";
@@ -201,16 +152,9 @@ public final class Mine {
 	public static String classBukkitBukkit = "#bBukkit";
 	public static String classMineChatComponentText = "#mChatComponentText";
 	public static String classMineMinecraftServer = "#mMinecraftServer";
-
 	static {
 		Extra.newReplacer("#v", Mine.getVersion());
 	}
-
-	public static interface Replacer {
-
-		Object getText(Player p);
-	}
-
 	/*
 	 * Mapa de Arenas registradas
 	 */
@@ -233,7 +177,6 @@ public final class Mine {
 	 * Mensagem de quando o jogador é invalido
 	 */
 	public static String MSG_PLAYER_NOT_EXISTS = "§cEste jogador $player não existe!";
-
 	/**
 	 * Mensagem de quando plugin é invalido
 	 */
@@ -243,22 +186,27 @@ public final class Mine {
 	 * Mensagem de quando não tem permissão
 	 */
 	public static String MSG_NO_PERMISSION = "§cVoce não tem permissão para usar este comando!";
+
 	/**
 	 * Mensagem de quando Entrar no Servidor
 	 */
 	public static String MSG_ON_JOIN = "§6O jogador $player entrou no Jogo!";
+
 	/**
 	 * Mensagem de quando Sair do Servidor
 	 */
 	public static String MSG_ON_QUIT = "§6O jogador $player saiu no Jogo!";
+
 	/**
 	 * Prefixo de Ajuda dos Comandos
 	 */
 	public static String MSG_USAGE = "§FDigite: §c";
+
 	/**
 	 * Lista de Comandos para efeito Positivo
 	 */
 	public static List<String> OPT_COMMANDS_ON = new ArrayList<>(Arrays.asList("on", "ativar"));
+
 	/**
 	 * Lista de Comandos para efeito Negativo
 	 */
@@ -303,7 +251,6 @@ public final class Mine {
 	 * Controlador de Tempo da Mine
 	 */
 	public static TimeManager TIME;
-
 	/**
 	 * Ligando algumas coisas
 	 */
@@ -325,7 +272,6 @@ public final class Mine {
 	 * Mapa que armazena os Itens dos jogadores tirando as Armaduras
 	 */
 	private static final Map<Player, ItemStack[]> PLAYERS_ITEMS = new HashMap<>();
-
 	private static Map<String, Replacer> replacers = new HashMap<>();
 
 	/**
@@ -369,6 +315,12 @@ public final class Mine {
 		Bukkit.getPluginManager().addPermission(new Permission(permission));
 	}
 
+	/**
+	 * Adiciona um Replacer novo
+	 * 
+	 * @param key   Chave do Replacer
+	 * @param value Replacer
+	 */
 	public static void addReplacer(String key, Replacer value) {
 		replacers.put(key, value);
 	}
@@ -394,10 +346,21 @@ public final class Mine {
 		return board;
 	}
 
+	/**
+	 * Envia mensagens para todos jogadores
+	 * 
+	 * @param message Mensagem
+	 * @see Bukkit.broadcastMessage(message)
+	 */
 	public static void broadcast(String message) {
 		Bukkit.broadcastMessage(message);
 	}
 
+	/**
+	 * Envia mensagens para todos jogadores que tiverem a Permissão
+	 * 
+	 * @param message Mensagem
+	 */
 	public static void broadcast(String message, String permission) {
 		for (Player player : Mine.getPlayers()) {
 			if (player.hasPermission(permission))
@@ -405,6 +368,12 @@ public final class Mine {
 		}
 	}
 
+	/**
+	 * Executa um Evento
+	 * 
+	 * @param event Evento
+	 * @see Bukkit.getPluginManager().callEvent(event);
+	 */
 	public static void callEvent(Event event) {
 
 		Bukkit.getPluginManager().callEvent(event);
@@ -633,25 +602,33 @@ public final class Mine {
 	}
 
 	/**
-	 * Desabilita a Inteligencia da Entidade
+	 * Desabilita a Inteligencia da Entidade<br>
+	 * 
+	 *	NMS código executado 
+	 *
+	 * <pre>
+	 * <code>
+	net.minecraft.server.v1_8_R3.Entity NMS = ((CraftEntity) entidade).getHandle();
+	NBTTagCompound compound = new NBTTagCompound();
+	NMS.c(compound);
+	compound.setByte("NoAI", (byte) 1);
+	NMS.f(compound);
+	
+	 * </code>
+	 * </pre>
 	 * 
 	 * @param entity Entidade
 	 */
 	public static void disableAI(Entity entity) {
 		try {
-			// net.minecraft.server.v1_8_R3.Entity NMS = ((CraftEntity)
-			// entidade).getHandle();
-			// NBTTagCompound compound = new NBTTagCompound();
-			// NMS.c(compound);
-			// compound.setByte("NoAI", (byte) 1);
-			// NMS.f(compound);
 			Object compound = Extra.getNew(Mine.classMineNBTTagCompound);
 			Object getHandle = Extra.getResult(entity, "getHandle");
 			Extra.getResult(getHandle, "c", compound);
 			Extra.getResult(compound, "setByte", "NoAI", (byte) 1);
 			Extra.getResult(getHandle, "f", compound);
 
-		} catch (Exception e) {
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 
 	}
@@ -760,8 +737,66 @@ public final class Mine {
 		return formatTime(timestamp - System.currentTimeMillis());
 	}
 
+	/**
+	 * 
+	 * @param numero Numero
+	 * @return numero formatado
+	 */
+	public static String formatMoney(double numero) {
+		return Extra.formatMoney(numero);
+	}
+
 	public static String formatTime(long time) {
 		return Extra.formatTime(time);
+	}
+
+	/**
+	 * Transforma um Texto em Vetor de Itens
+	 * 
+	 * @param data Texto
+	 * @return Vetor de Itens (Lista)
+	 * 
+	 */
+	public static ItemStack[] fromBase64toItems(final String data) {
+		try {
+			final ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+			final BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+			final ItemStack[] stacks = new ItemStack[dataInput.readInt()];
+			for (int slot = 0; slot < stacks.length; ++slot) {
+
+				stacks[slot] = (ItemStack) dataInput.readObject();
+
+			}
+			dataInput.close();
+			return stacks;
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Transforma um Vetor de Itens em um Texto
+	 * 
+	 * @param contents Vetor de Itens
+	 * @return Texto
+	 */
+	public static String fromItemsToBase64(final ItemStack[] contents) {
+
+		try {
+			final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			BukkitObjectOutputStream dataOutput;
+			dataOutput = new BukkitObjectOutputStream(outputStream);
+			dataOutput.writeInt(contents.length);
+			for (final ItemStack stack : contents) {
+				dataOutput.writeObject(stack);
+			}
+			dataOutput.close();
+			return Base64Coder.encodeLines(outputStream.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -902,6 +937,10 @@ public final class Mine {
 		}
 
 		return lista;
+	}
+
+	public static Class<?> getClassFrom(Object object) throws Exception {
+		return Extra.getClassFrom(object);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1626,14 +1665,14 @@ public final class Mine {
 	}
 
 	public static String getReplacers(String text, Player player) {
-		if (player==null) {
+		if (player == null) {
 			return "";
 		}
 		for (Entry<String, Replacer> value : replacers.entrySet()) {
 			if (text.contains(value.getKey())) {
 				try {
 					text = text.replace(value.getKey(), "" + value.getValue().getText(player));
-					
+
 				} catch (Exception e) {
 					Mine.console("§cREPLACE ERROR: " + value.getKey());
 //					e.printStackTrace();
@@ -1641,7 +1680,7 @@ public final class Mine {
 
 			}
 		}
-		
+
 		return text;
 	}
 
@@ -2044,55 +2083,6 @@ public final class Mine {
 		return getHandType(entity).name().toLowerCase().contains(material.toLowerCase());
 	}
 
-	/**
-	 * Transforma um Texto em Vetor de Itens
-	 * 
-	 * @param data Texto
-	 * @return Vetor de Itens (Lista)
-	 * 
-	 */
-	public static ItemStack[] fromBase64toItems(final String data) {
-		try {
-			final ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
-			final BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-			final ItemStack[] stacks = new ItemStack[dataInput.readInt()];
-			for (int slot = 0; slot < stacks.length; ++slot) {
-
-				stacks[slot] = (ItemStack) dataInput.readObject();
-
-			}
-			dataInput.close();
-			return stacks;
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	/**
-	 * Transforma um Vetor de Itens em um Texto
-	 * 
-	 * @param contents Vetor de Itens
-	 * @return Texto
-	 */
-	public static String fromItemsToBase64(final ItemStack[] contents) {
-
-		try {
-			final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			BukkitObjectOutputStream dataOutput;
-			dataOutput = new BukkitObjectOutputStream(outputStream);
-			dataOutput.writeInt(contents.length);
-			for (final ItemStack stack : contents) {
-				dataOutput.writeObject(stack);
-			}
-			dataOutput.close();
-			return Base64Coder.encodeLines(outputStream.toByteArray());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	public static YamlConfiguration loadConfig(File file) {
 		YamlConfiguration config = new YamlConfiguration();
 		FileInputStream fileinputstream;
@@ -2103,19 +2093,6 @@ public final class Mine {
 			ex.printStackTrace();
 		}
 		return config;
-	}
-
-	public static void saveConfig(File file, YamlConfiguration config) {
-
-		try {
-			Writer fileWriter = new BufferedWriter(
-					new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8")));
-			fileWriter.write(config.saveToString());
-			fileWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	public static void loadMaps() {
@@ -2720,6 +2697,20 @@ public final class Mine {
 		}
 	}
 
+	/**
+	 * Remove todas as Flags do Item
+	 * 
+	 * @param item Item
+	 * @return o item sem as Flags
+	 */
+	public static ItemStack removeFlags(ItemStack item) {
+		ItemMeta meta = item.getItemMeta();
+		for (ItemFlag flag : ItemFlag.values())
+			meta.removeItemFlags(flag);
+		item.setItemMeta(meta);
+		return item;
+	}
+
 	public static void removePermission(Player p, String permission) {
 		p.addAttachment(getMainPlugin(), permission, false);
 	}
@@ -2779,6 +2770,19 @@ public final class Mine {
 		PLAYERS_ARMOURS.put(player, player.getInventory().getArmorContents());
 	}
 
+	public static void saveConfig(File file, YamlConfiguration config) {
+
+		try {
+			Writer fileWriter = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8")));
+			fileWriter.write(config.saveToString());
+			fileWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	/**
 	 * Armazena os Itens do Jogador
 	 * 
@@ -2789,8 +2793,11 @@ public final class Mine {
 		PLAYERS_ITEMS.put(player, player.getInventory().getContents());
 	}
 
+	/**
+	 * Salva todos os mapas no sistema de armazenamento
+	 */
 	public static void saveMaps() {
-
+		MAPS_CONFIG.getFile().mkdirs();
 		for (Entry<String, Schematic> entry : MAPS.entrySet()) {
 			Schematic mapa = entry.getValue();
 			String name = entry.getKey();
@@ -2856,6 +2863,43 @@ public final class Mine {
 
 	public static void sendAll(Player p, String message) {
 		broadcast(getReplacers(message, p));
+
+	}
+
+	/**
+	 * Definir uma tag customizada
+	 * 
+	 * @param player Jogador
+	 * @param prefix Prefixo
+	 * @param suffix Suffixo
+	 * @param order  Ordem
+	 */
+	@SuppressWarnings("unused")
+	public static void sendNameTag(Player player, String prefix, String suffix, String order) {
+		String teamName = UUID.randomUUID().toString().substring(0, 15);
+
+		try {
+			Object packet = Extra.getNew("#pPlayOutScoreboardTeam");
+			Class<?> clas = packet.getClass();
+			Field team_name = Extra.getField(clas, "a");
+			Field display_name = Extra.getField(clas, "b");
+			Field prefix2 = Extra.getField(clas, "c");
+			Field suffix2 = Extra.getField(clas, "d");
+			Field members = Extra.getField(clas, "g");
+			Field param_int = Extra.getField(clas, "h");
+			Field pack_option = Extra.getField(clas, "i");
+			Extra.setValue(packet, "a", order + teamName);
+			Extra.setValue(packet, "b", player.getName());
+			Extra.setValue(packet, "c", prefix);
+			Extra.setValue(packet, "d", suffix);
+			Extra.setValue(packet, "g", Arrays.asList(new String[] { player.getName() }));
+			Extra.setValue(packet, "h", Integer.valueOf(0));
+			Extra.setValue(packet, "i", Integer.valueOf(1));
+			Mine.sendPackets(packet);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -3326,6 +3370,119 @@ public final class Mine {
 		double z = Double.parseDouble(split[2]);
 
 		return new Vector(x, y, z);
+	}
+	public static ArrayList<Location> getCircle(Location center, double radius, int amount) {
+		World world = center.getWorld();
+		double increment = (2 * Math.PI) / amount;
+		ArrayList<Location> locations = new ArrayList<Location>();
+		for (int i = 0; i < amount; i++) {
+			double angle = i * increment;
+			double x = center.getX() + (radius * Math.cos(angle));
+			double z = center.getZ() + (radius * Math.sin(angle));
+			locations.add(new Location(world, x, center.getY(), z));
+		}
+		return locations;
+	}
+	public static ArrayList<Location> getCircle2(Location center, double radius, int amount) {
+		World world = center.getWorld();
+		double increment = (2 * Math.PI) / amount;
+		ArrayList<Location> locations = new ArrayList<Location>();
+		for (int i = 0; i < amount; i++) {
+			double angle = i * increment;
+			double z = center.getZ() + (radius * Math.cos(angle));
+			double y = center.getY() + (radius * Math.sin(angle));
+			locations.add(new Location(world, center.getX(), y, z));
+		}
+	
+		return locations;
+	}
+	public  static List<Location> getCircleBlocks(Location loc, double radius, double height, boolean hollow,
+            boolean sphere) {
+        ArrayList<Location> circleblocks = new ArrayList<Location>();
+        double cx = loc.getBlockX();
+        double cy = loc.getBlockY();
+        double cz = loc.getBlockZ();
+
+        for (double y = (sphere ? cy - radius : cy); y < (sphere ? cy + radius : cy + height + 1); y++) {
+            for (double x = cx - radius; x <= cx + radius; x++) {
+                for (double z = cz - radius; z <= cz + radius; z++) {
+                    double dist = (cx - x) * (cx - x) + (cz - z) * (cz - z) + (sphere ? (cy - y) * (cy - y) : 0);
+
+                    if (dist < radius * radius && !(hollow && dist < (radius - 1) * (radius - 1))) {
+                        Location l = new Location(loc.getWorld(), x, y, z);
+                        circleblocks.add(l);
+                    }
+                }
+            }
+        }
+
+        return circleblocks;
+    }
+	public static ArrayList<Location> getCircle3(Location center, double radius, int amount) {
+		World world = center.getWorld();
+		double increment = (2 * Math.PI) / amount;
+		ArrayList<Location> locations = new ArrayList<Location>();
+		for (int i = 0; i < amount; i++) {
+			double angle = i * increment;
+			double x = center.getX() + (radius * Math.cos(angle));
+			double y = center.getY() + (radius * Math.sin(angle));
+			locations.add(new Location(world, x, y, center.getZ()));
+		}
+		return locations;
+	}
+
+	public static String translate(DamageCause cause) {
+		switch (cause) {
+		case BLOCK_EXPLOSION:
+			return "Explosão de Blocos";
+
+		case CONTACT:
+			return "Contato";
+		case CUSTOM:
+			return "Customizado";
+
+		case DROWNING:
+			return "Nadando";
+		case ENTITY_ATTACK:
+			return "Ataque";
+		case ENTITY_EXPLOSION:
+			return "Explosão de Entidade";
+		case FALL:
+			return "Queda";
+		case FALLING_BLOCK:
+			return "Bloco Caindo";
+		case FIRE:
+			return "Fogo";
+		case FIRE_TICK:
+			return "Fogo Recorrente";
+		case LAVA:
+			return "Lava";
+		case LIGHTNING:
+			return "Raio";
+		case MAGIC:
+			return "Magia";
+		case MELTING:
+			return "Fusão";
+		case POISON:
+			return "Veneno";
+		case PROJECTILE:
+			return "Projétil";
+		case STARVATION:
+			return "Fome";
+		case SUFFOCATION:
+			return "Sufocamento";
+		case SUICIDE:
+			return "Suicidio";
+		case THORNS:
+			return "Refletido";
+		case VOID:
+			return "Vasio";
+		case WITHER:
+			return "Customizado";
+		default:
+			return "Outro";
+
+		}
 	}
 
 	public static void unloadWorld(String name) {

@@ -5,7 +5,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.eduard.api.lib.modules.BukkitBungeeAPI;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables;
-
+/**
+ * Classe principal da EduardLIB
+ * @author Eduard
+ *
+ */
 public class EduardLIB extends JavaPlugin{
 
 	@Override

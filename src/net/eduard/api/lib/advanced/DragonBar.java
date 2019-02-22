@@ -11,7 +11,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
+/**
+ * Sistema de Ender Dragon virtual com nome alterado
+ * @author Internet
+ *
+ */
 public class DragonBar {
 	private static DragonBar instance;
 	private Map<String, Dragon> dragonMap = new HashMap<>();

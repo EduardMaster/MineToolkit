@@ -5,7 +5,13 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.commons.lang.Validate;
-
+/**
+ * Wrapper de Array para reflection
+ * @param <E> Qual é o Tipo da Array
+ * @author Internet
+ *
+ * 
+ */
 public final class ArrayWrapper<E>
 {
   private E[] _array;

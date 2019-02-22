@@ -24,8 +24,8 @@ public class Hologram {
 	private List<Integer> ids = new ArrayList<>();
 	private boolean showing = false;
 	private Location location;
-	
-	public Location getLocation(){
+
+	public Location getLocation() {
 		return location;
 	}
 
@@ -41,11 +41,9 @@ public class Hologram {
 				e.printStackTrace();
 			}
 		}
-		Location first = loc.clone().add(0.0D,
-				this.lines.size() / 2 * 0.23D, 0.0D);
+		Location first = loc.clone().add(0.0D, this.lines.size() / 2 * 0.23D, 0.0D);
 		for (int i = 0; i < this.lines.size(); i++) {
-			this.ids.addAll(
-					showLine(p, first.clone(), this.lines.get(i)));
+			this.ids.addAll(showLine(p, first.clone(), this.lines.get(i)));
 			first.subtract(0.0D, 0.23D, 0.0D);
 		}
 		this.showing = true;
@@ -64,39 +62,31 @@ public class Hologram {
 		for (int j = 0; j < ints.length; j++) {
 			ints[j] = this.ids.get(j).intValue();
 		}
-		PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(
-				ints);
-		for (Player player: Mine.getPlayers()) {
-			((CraftPlayer) player).getHandle().playerConnection
-					.sendPacket(packet);
+		PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(ints);
+		for (Player player : Mine.getPlayers()) {
+			((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
 		}
 		this.showing = false;
 		this.location = null;
 	}
 
-	private static List<Integer> showLine(OfflinePlayer p, Location loc,
-			String text) {
+	private static List<Integer> showLine(OfflinePlayer p, Location loc, String text) {
 		WorldServer world = ((CraftWorld) loc.getWorld()).getHandle();
 		EntityWitherSkull skull = new EntityWitherSkull(world);
-		skull.setLocation(loc.getX(), loc.getY() + 1.0D + 55.0D, loc.getZ(),
-				0.0F, 0.0F);
+		skull.setLocation(loc.getX(), loc.getY() + 1.0D + 55.0D, loc.getZ(), 0.0F, 0.0F);
 		((CraftWorld) loc.getWorld()).getHandle().addEntity(skull);
 
 		EntityHorse horse = new EntityHorse(world);
-		horse.setLocation(loc.getX(), loc.getY() + 55.0D, loc.getZ(), 0.0F,
-				0.0F);
+		horse.setLocation(loc.getX(), loc.getY() + 55.0D, loc.getZ(), 0.0F, 0.0F);
 		horse.setAge(-1700000);
 		horse.setCustomName(text);
 		horse.setCustomNameVisible(true);
-		PacketPlayOutSpawnEntityLiving packedt = new PacketPlayOutSpawnEntityLiving(
-				horse);
+		PacketPlayOutSpawnEntityLiving packedt = new PacketPlayOutSpawnEntityLiving(horse);
 		EntityPlayer nmsPlayer = ((CraftPlayer) p).getHandle();
 		nmsPlayer.playerConnection.sendPacket(packedt);
 
-		PacketPlayOutAttachEntity pa = new PacketPlayOutAttachEntity(0,
-				horse, skull);
+		PacketPlayOutAttachEntity pa = new PacketPlayOutAttachEntity(0, horse, skull);
 		nmsPlayer.playerConnection.sendPacket(pa);
-		return Arrays.asList(new Integer[]{Integer.valueOf(skull.getId()),
-				Integer.valueOf(horse.getId())});
+		return Arrays.asList(new Integer[] { Integer.valueOf(skull.getId()), Integer.valueOf(horse.getId()) });
 	}
 }

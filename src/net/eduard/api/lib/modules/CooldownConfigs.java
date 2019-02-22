@@ -1,16 +1,19 @@
-package net.eduard.api.lib.config;
+package net.eduard.api.lib.modules;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.eduard.api.lib.BukkitConfig;
 import net.eduard.api.lib.Mine;
-
-public class CooldownConfig extends BukkitConfig {
+/**
+ * Sistema de configuração focada em armazenamento de cooldowns
+ * @author Eduard
+ *
+ */
+public class CooldownConfigs extends Configs {
 
 	private String tag = "Cooldowns.";
 
-	public CooldownConfig(JavaPlugin plugin) {
+	public CooldownConfigs(JavaPlugin plugin) {
 		super("cooldowns.yml", plugin);
 
 	}

@@ -3,10 +3,12 @@ package net.eduard.api.server;
 public class Systems {
 
 	private static CashSystem cashSystem;
+	private static CoinSystem coinSystem;
 	private static SoulSystem soulSystem;
 	private static VipSystem vipSystem;
 	private static ScoreSystem scoreSystem;
 	private static PartySystem partySystem;
+	
 
 	public static CashSystem getCashSystem() {
 		return cashSystem;
@@ -46,6 +48,14 @@ public class Systems {
 
 	public static void setPartySystem(PartySystem partySystem) {
 		Systems.partySystem = partySystem;
+	}
+
+	public static CoinSystem getCoinSystem() {
+		return coinSystem;
+	}
+
+	public static void setCoinSystem(CoinSystem coinSystem) {
+		Systems.coinSystem = coinSystem;
 	}
 
 }

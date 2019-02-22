@@ -1,4 +1,4 @@
-package net.eduard.api.lib.advanced;
+package net.eduard.api.lib.modules;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,11 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.util.Vector;
-
+/**
+ * 
+ * Sistema de geração de Cuboid
+ * @author Internet
+ */
 public class Cuboid implements Cloneable, ConfigurationSerializable, Iterable<Block> {
 
 	protected String worldName;

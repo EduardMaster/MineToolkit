@@ -1,4 +1,4 @@
-package net.eduard.api.lib.modules;
+package net.eduard.api.test;
 
 import java.io.DataInputStream;
 import java.io.InputStream;

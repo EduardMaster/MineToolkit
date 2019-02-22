@@ -1,4 +1,4 @@
-package net.eduard.api.lib.modules.myconfig;
+package net.eduard.api.lib.modules;
 
 import java.io.File;
 import java.io.InputStream;
@@ -10,9 +10,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 /**
- * 
+ * Sistema de configuração simples que suporte Comentarios
  * Post: https://bukkit.org/threads/resource-most-easy-config-manager-ever-resource.187997
- *
+ * https://bukkit.org/threads/tut-custom-yaml-configurations-with-comments.142592/
+ * @author Internet
  */
 public class MyConfig {
 	private int comments;

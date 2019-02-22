@@ -1,5 +1,9 @@
 package net.eduard.api;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -20,6 +24,7 @@ import net.eduard.api.lib.manager.DBManager;
 import net.eduard.api.lib.menu.Menu;
 import net.eduard.api.lib.modules.BukkitBungeeAPI;
 import net.eduard.api.lib.modules.Copyable.CopyDebug;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.ServerAPI.BukkitControl;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables;
@@ -30,6 +35,7 @@ import net.eduard.api.manager.MassiveFactionReplacers;
 import net.eduard.api.manager.McMMOReplacers;
 import net.eduard.api.manager.PluginValor;
 import net.eduard.api.server.EduardPlugin;
+import net.eduard.api.test.TesteAnimacaoArmostand;
 
 /**
  * Classe Principal do Plugin EduardAPI
@@ -39,7 +45,7 @@ import net.eduard.api.server.EduardPlugin;
  * @since 1.0
  * 
  * 
- */ 
+ */
 public class EduardAPI extends EduardPlugin {
 
 	private static EduardAPI plugin;
@@ -48,6 +54,7 @@ public class EduardAPI extends EduardPlugin {
 	 */
 	@SuppressWarnings("unused")
 	private static final SoundEffect ROSNAR = SoundEffect.create("CAT_PURR");
+
 	public static EduardAPI getInstance() {
 		return plugin;
 	}
@@ -63,7 +70,6 @@ public class EduardAPI extends EduardPlugin {
 	public void onEnable() {
 		plugin = this;
 		setFree(true);
-		Player a;
 		BukkitControl.register(this);
 		BukkitBungeeAPI.requestCurrentServer();
 		BukkitController bukkit = BungeeAPI.getBukkit();
@@ -84,26 +90,25 @@ public class EduardAPI extends EduardPlugin {
 		Mine.console("§bEduardAPI §fStorables do Bukkit carregado!");
 		Mine.resetScoreboards();
 		Mine.console("§bEduardAPI §fScoreboards resetadas!");
-		
-		
+		new TesteAnimacaoArmostand().register(this);;
 		asyncTimer(new Runnable() {
 
 			@Override
 			public void run() {
-			
-					for (Player p : Mine.getPlayers()) {
 
-						PlayerTargetEvent event = new PlayerTargetEvent(p,
-								Mine.getTarget(p, Mine.getPlayerAtRange(p.getLocation(), 100)));
-						Mine.callEvent(event);
+				for (Player p : Mine.getPlayers()) {
 
-					}
-				
+					PlayerTargetEvent event = new PlayerTargetEvent(p,
+							Mine.getTarget(p, Mine.getPlayerAtRange(p.getLocation(), 100)));
+					Mine.callEvent(event);
+
+				}
+
 			}
 		}, 20, 20);
 		new ApiCommand().register();
 		new MapCommand().register();
-	
+
 		new EnchantCommand().register();
 		new GotoCommand().register();
 		new SoundCommand().register();
@@ -124,6 +129,12 @@ public class EduardAPI extends EduardPlugin {
 		Mine.OPT_NO_JOIN_MESSAGE = config.getBoolean("no-join-message");
 		Mine.OPT_NO_QUIT_MESSAGE = config.getBoolean("no-quit-message");
 		Mine.OPT_NO_DEATH_MESSAGE = config.getBoolean("no-death-message");
+		try {
+			Extra.MONEY = new DecimalFormat(config.getString("money-format"),
+					DecimalFormatSymbols.getInstance(Locale.forLanguageTag(config.getString("money-format-locale"))));
+		} catch (Exception e) {
+			Mine.console("§cFormato do dinheiro invalido §f" + config.getString("money-format"));
+		}
 
 		Mine.MSG_ON_JOIN = config.message("on-join-message");
 		Mine.MSG_ON_QUIT = config.message("on-quit-message");

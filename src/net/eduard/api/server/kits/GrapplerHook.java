@@ -1,4 +1,4 @@
-package net.eduard.api.lib.advanced;
+package net.eduard.api.server.kits;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

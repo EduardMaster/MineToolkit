@@ -25,7 +25,7 @@ import net.eduard.api.lib.storage.StorageAPI;
  *
  */
 public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandler {
-
+	private static final SimpleDateFormat DATE_TIME_FORMATER = new SimpleDateFormat("dd-MM-YYYY hh-mm-ss");
 	protected Config config;
 	protected Config messages;
 	protected Config storage;
@@ -103,12 +103,14 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 
 	public void backupStorage() {
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("dd-MM-YYYY hh-mm-ss");
+			
 			File pasta = new File(getDataFolder(), "/backup/");
 			pasta.mkdirs();
-			if (getStorage().existConfig())
+			if (getStorage().existConfig()&&!getStorage().getKeys().isEmpty()) {
+				
 				Files.copy(getStorage().getFile().toPath(),
-						Paths.get(pasta.getPath(), "storage-" + format.format(System.currentTimeMillis()) + ".yml"));
+						Paths.get(pasta.getPath(), "storage-" + DATE_TIME_FORMATER.format(System.currentTimeMillis()) + ".yml"));
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

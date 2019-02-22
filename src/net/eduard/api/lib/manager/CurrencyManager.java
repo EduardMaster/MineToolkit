@@ -35,6 +35,7 @@ public class CurrencyManager implements Storable {
 		this.symbol = symbol;
 		this.inicialAmount = inicialAmount;
 	}
+
 	public CurrencyManager() {
 		// TODO Auto-generated constructor stub
 	}
@@ -86,6 +87,10 @@ public class CurrencyManager implements Storable {
 
 		currency.put(player, amount);
 
+	}
+
+	public boolean containsBalance(FakePlayer player, double amount) {
+		return getBalance(player) >= amount;
 	}
 
 	public void addBalance(FakePlayer player, double amount) {

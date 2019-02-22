@@ -3,7 +3,11 @@ package net.eduard.api.server.minigame;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
-
+/**
+ * Jogador do Minigame
+ * @author Eduard
+ *
+ */
 public class MinigamePlayer {
 
 	private Player player;

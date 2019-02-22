@@ -145,7 +145,7 @@ public interface AutoBase<E> {
 	}
 
 	/**
-	 * Criar um table com a conex§o padr§o
+	 * Criar um table com a Conexão padrão
 	 */
 	public default void createTable() {
 		createTable(connect());
@@ -208,7 +208,7 @@ public interface AutoBase<E> {
 	}
 
 	/**
-	 * Atualiza os dados do java no banco de dados usando conexao padr§o
+	 * Atualiza os dados do java no banco de dados usando conexao padrão
 	 */
 	public default void updateTable() {
 		updateTable(connect());
@@ -325,6 +325,14 @@ public interface AutoBase<E> {
 		}
 	}
 
+	public default void deleteTable(Connection connection) {
+		try {
+			update(connection, "DROP TABLE " + tableName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public default List<E> getAll(Connection connection, boolean decending) {
 		return getAll(connection, primaryKey(), decending);
 	}
@@ -337,7 +345,7 @@ public interface AutoBase<E> {
 		return getAll(connect(), collumnOrdened, decending);
 	}
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({ "unchecked" })
 	public default List<E> getAll(Connection connection, String collumnOrdened, boolean decending) {
 		List<E> lista = new ArrayList<>();
 		try {
@@ -382,19 +390,19 @@ public interface AutoBase<E> {
 	}
 
 	/**
-	 * Puxa os dados para mem§ria usando conex§o padr§o
+	 * Puxa os dados para memória usando Conexão padrão
 	 * 
-	 * @return Se puxou ou n§o os dados
+	 * @return Se puxou ou não os dados
 	 */
 	public default boolean updateCache() {
 		return updateCache(connect());
 	}
 
 	/**
-	 * Puxa os dados para mem§ria usando uma Conex§o
+	 * Puxa os dados para memória usando uma Conexão
 	 * 
-	 * @param connection Conex§o
-	 * @return Se puxou ou n§o os dados
+	 * @param connection Conexão
+	 * @return Se puxou ou não os dados
 	 */
 	public default boolean updateCache(Connection connection) {
 		boolean hasUpdateCode = false;
@@ -440,7 +448,7 @@ public interface AutoBase<E> {
 	/**
 	 * Criar uma tabela
 	 * 
-	 * @param connection Conex§o
+	 * @param connection Conexão
 	 */
 	public default void createTable(Connection connection) {
 		StringBuilder builder = new StringBuilder();

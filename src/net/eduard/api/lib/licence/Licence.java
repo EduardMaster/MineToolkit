@@ -36,7 +36,7 @@ public class Licence {
 			System.out.println(link);
 			connect.addRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-			Scanner scan = new Scanner(connect.getInputStream());
+			Scanner scan = new Scanner(connect.getInputStream(),"UTF-8");
 			StringBuilder b = new StringBuilder();
 			while (scan.hasNext()) {
 				String text = scan.next();

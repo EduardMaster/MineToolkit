@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
-
+/**
+ * Time do Jogador em um Minigame
+ * @author Eduard
+ *
+ */
 public class MinigameTeam {
 
 	private MinigameRoom game;

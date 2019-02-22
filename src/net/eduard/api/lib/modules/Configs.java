@@ -1,6 +1,7 @@
 package net.eduard.api.lib.modules;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Configs {
 
 	private Plugin plugin;
+	
 
 	private String name;
 
@@ -100,6 +102,9 @@ public class Configs {
 	public Configs(String name) {
 		this(name, null);
 	}
+	public void reload() {
+		config= new YamlConfiguration();
+	}
 
 	/**
 	 * Recarrega a config pelo conteudo do Arquivo
@@ -108,9 +113,12 @@ public class Configs {
 	 */
 	public Configs reloadConfig() {
 		file = new File(plugin.getDataFolder(), name);
+		
+		
 		config = YamlConfiguration.loadConfiguration(file);
 		InputStream defaults = plugin.getResource(file.getName());
 		if (defaults != null) {
+			
 			@SuppressWarnings("deprecation")
 			YamlConfiguration loadConfig = YamlConfiguration.loadConfiguration(defaults);
 			config.setDefaults(loadConfig);
@@ -125,7 +133,9 @@ public class Configs {
 	 */
 	public Configs saveConfig() {
 		try {
-			config.save(file);
+			FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+			fileOutputStream.write(config.saveToString().getBytes("UTF-8"));
+			fileOutputStream.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

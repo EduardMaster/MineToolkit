@@ -118,6 +118,7 @@ public class MasterConfig {
 	}
 
 	public boolean isFolder() {
+		
 		return name.endsWith("/");
 	}
 

@@ -66,11 +66,13 @@ import java.util.zip.ZipInputStream;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import net.eduard.api.lib.Mine;
 
 /**
- * API contendo coisas relacionado a Textos, Numeros e Reflection
+ * API contendo coisas relacionado a Textos, Numeros, Arquivos, Metodos
+ * importantes e Reflection
  * 
  * @version 2.0
  * @since Lib v2.0
@@ -78,10 +80,9 @@ import net.eduard.api.lib.Mine;
  *
  */
 public final class Extra {
-	
-	
+
 	@SafeVarargs
-	public static <T> Set<T> newSet(T... array ) {
+	public static <T> Set<T> newSet(T... array) {
 		Set<T> set = new HashSet<>();
 
 		for (T element : array) {
@@ -91,9 +92,31 @@ public final class Extra {
 		return set;
 	}
 
+	public static void readUTF8(File file) throws Exception {
+		FileInputStream fis = new FileInputStream(file);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+
+		String line = br.readLine();
+		if (line.startsWith("\uFEFF")) {
+			// it's UTF-8, throw away the BOM character and continue
+			line = line.substring(1);
+		} else {
+			// it's not UTF-8, reopen
+			br.close(); // also closes fis
+			fis = new FileInputStream(file); // reopen from the start
+			br = new BufferedReader(new InputStreamReader(fis, "Cp1252"));
+			line = br.readLine();
+		}
+
+	}
+
 	public static DecimalFormat MONEY = new DecimalFormat("###,###.##",
 			DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));
+	public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
+	public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
+	public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd-MM-YYYY hh-mm-ss");
 	private static Map<String, String> replacers = new LinkedHashMap<>();
+	public static HashMap<String, JsonObject> SKIN_CACHE = new HashMap<>();
 
 	public static String cutText(String text, int lenght) {
 		return text.length() > lenght ? text.substring(0, lenght) : text;
@@ -114,6 +137,78 @@ public final class Extra {
 		return formatado;
 	}
 
+	/**
+	 * Valida o nome do usuario se esta certo
+	 * 
+	 * @param username Nome do usuario
+	 * @return Se esta certo
+	 */
+	public static boolean validatePlayerName(final String username) {
+		final Pattern pattern = Pattern.compile("[a-zA-Z0-9_]{1,16}");
+		final Matcher matcher = pattern.matcher(username);
+		return matcher.matches();
+	}
+
+	/**
+	 * Pega o id retornado da Mojang vindo em um JSON
+	 * 
+	 * @param playerName Nick do jogador
+	 * @return o ID retornado da Mojang
+	 */
+	public static String getPlayerUUIDByName(String playerName) {
+
+		try {
+			URL link = new URL("https://api.mojang.com/users/profiles/minecraft/" + playerName);
+			URLConnection conexao = link.openConnection();
+			InputStream stream = conexao.getInputStream();
+			byte[] array = new byte[stream.available()];
+			stream.read(array);
+			stream.close();
+			String json = new String(array);
+			JsonParser parser = new JsonParser();
+			JsonObject object = parser.parse(json).getAsJsonObject();
+			return object.get("id").getAsString();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
+	}
+
+	/**
+	 * Retorna um JsonObject com os dados mais impotantes o
+	 * 
+	 * @param playerUUID
+	 * @return
+	 */
+	public static JsonObject getSkinProperty(String playerUUID) {
+		if (SKIN_CACHE.containsKey(playerUUID)) {
+			return SKIN_CACHE.get(playerUUID);
+		}
+		try {
+			URL link = new URL(
+					"https://sessionserver.mojang.com/session/minecraft/profile/" + playerUUID + "?unsigned=false");
+			URLConnection conexao = link.openConnection();
+			conexao.setUseCaches(true);
+			InputStream stream = conexao.getInputStream();
+			byte[] array = new byte[stream.available()];
+			stream.read(array);
+			stream.close();
+			String json = new String(array);
+			JsonParser parser = new JsonParser();
+			JsonObject object = parser.parse(json).getAsJsonObject();
+			JsonObject skin = object.get("properties").getAsJsonArray().get(0).getAsJsonObject();
+			SKIN_CACHE.put(playerUUID, skin);
+			return skin;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	public static void copyAsUTF8(InputStream is, File file) throws IOException {
 		if (is == null)
 			return;
@@ -130,23 +225,27 @@ public final class Extra {
 		Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
 
 	}
-
+/**
+ * FAzer funcionar
+ * @param file
+ * @return
+ */
 	public static List<String> readLines(File file) {
 		Path path = file.toPath();
 		try {
-			Mine.console("§bConfigAPI §a-> " + file.getName() + " §futf-8");
+//			Mine.console("§bConfigAPI §a-> " + file.getName() + " §futf-8");
 			return Files.readAllLines(path);
 		} catch (Exception e) {
 			// e.printStackTrace();
 		}
 		try {
-			Mine.console("§bConfigAPI §a-> " + file.getName() + " §f" + Charset.defaultCharset().displayName());
+//			Mine.console("§bConfigAPI §a-> " + file.getName() + " §f" + Charset.defaultCharset().displayName());
 			return Files.readAllLines(path, Charset.defaultCharset());
 		} catch (Exception e) {
 		}
 		List<String> lines = new ArrayList<>();
 		try {
-			Mine.console("§bConfigAPI §a-> " + file.getName());
+//			Mine.console("§bConfigAPI §a-> " + file.getName());
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -249,24 +348,6 @@ public final class Extra {
 			}
 			file.delete();
 		}
-	}
-
-	public static String formatDate(long date) {
-		Calendar calendario = Calendar.getInstance();
-		calendario.setTimeInMillis(date);
-
-		SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");
-
-		return formatador.format(calendario.getTime());
-	}
-
-	public static String formatHours(long milisegundos) {
-		Calendar calendario = Calendar.getInstance();
-		calendario.setTimeInMillis(milisegundos);
-
-		SimpleDateFormat formatador = new SimpleDateFormat("HH:mm:ss");
-
-		return formatador.format(calendario.getTime());
 	}
 
 	/**
@@ -700,6 +781,67 @@ public final class Extra {
 		getField(object, name).set(object, value);
 	}
 
+	public static String simpleOfuscation(String str) {
+		String build = "";
+		for (int i = 0; i < str.length(); i++) {
+			build = build.equals("") ? "" + (str.charAt(i) + str.length() * str.length())
+					: build + ";" + (str.charAt(i) + str.length() * str.length());
+		}
+		return build;
+	}
+
+	public static <E> List<E> mover(int casasMovida, List<E> lista) {
+		List<E> listaCopia = new ArrayList<>();
+		if (casasMovida > lista.size()) {
+			casasMovida = 1;
+		}
+		for (int i = 0; i < lista.size(); i++) {
+			int m = i + casasMovida;
+			if (m >= lista.size()) {
+				m -= lista.size();
+			}
+			E dado = lista.get(m);
+			listaCopia.add(dado);
+		}
+		return listaCopia;
+	}
+
+	public static String simpleDeosfucation(String str) {
+		final String[] split = str.split(";");
+		final int[] parse = new int[split.length];
+		for (int i = 0; i < split.length; i++) {
+			parse[i] = Integer.parseInt(split[i]) - split.length * split.length;
+		}
+		String build = "";
+		for (int i = 0; i < split.length; i++) {
+			build = build + (char) parse[i];
+		}
+		return build;
+	}
+
+	public static String allatoriOfucation(String str) {
+		int i = str.length();
+		char[] a = new char[i];
+		int i0 = i - 1;
+		while (true) {
+			if (i0 >= 0) {
+				int i1 = str.charAt(i0);
+				int i2 = i0 + -1;
+				int i3 = (char) (i1 ^ 56);
+				a[i0] = (char) i3;
+				if (i2 >= 0) {
+					i0 = i2 + -1;
+					int i4 = str.charAt(i2);
+					int i5 = (char) (i4 ^ 70);
+					a[i2] = (char) i5;
+					continue;
+				}
+			}
+			return new String(a);
+		}
+
+	}
+
 	public static Field getField(Object object, String name) throws Exception {
 		Class<?> claz = getClassFrom(object);
 		try {
@@ -1057,6 +1199,12 @@ public final class Extra {
 		return min + RANDOM.nextInt(max - min + 1);
 	}
 
+	/**
+	 * Testa se um IP é Proxy
+	 * 
+	 * @param ip IP
+	 * @return se o IP é Proxy
+	 */
 	public static boolean isIpProxy(String ip) {
 		try {
 			String url = "http://botscout.com/test/?ip=" + ip;
@@ -1635,6 +1783,9 @@ public final class Extra {
 			return "NULL";
 		}
 		Class<? extends Object> type = value.getClass();
+		if (type == boolean.class || type == Boolean.class) {
+			value = Boolean.valueOf(value.toString()) ? 1 : 0;
+		}
 		if (type == java.util.Date.class) {
 			value = new Date(((java.util.Date) value).getTime());
 		} else if (value instanceof Calendar) {

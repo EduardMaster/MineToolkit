@@ -1,8 +1,4 @@
-/* Copyright (c) dumptruckman 2016
- *
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package net.eduard.api.lib.advanced;
 
 import java.util.HashMap;
@@ -17,7 +13,14 @@ import org.bukkit.scheduler.BukkitTask;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
-
+/**
+ *  Copyright (c) dumptruckman 2016
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+@author dumptruckman
+ */
 public class ActionBarUtil {
 
     private static final Map<Player, BukkitTask> PENDING_MESSAGES = new HashMap<>();

@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -46,22 +45,9 @@ public class EssentialsEvents extends EventsManager {
 //		}
 	}
 
-//	@EventHandler
-//	public void event(AsyncPlayerChatEvent e) {
-//		e.getPlayer().sendMessage("§aA vai se fude");
-//		if (e.getMessage().startsWith("cu")) {
-//			e.setCancelled(true);
-//			MPlayer player = MPlayer.get(e.getPlayer());
-//			player.setPower(player.getPower() + 1);
-//			e.getPlayer().sendMessage("§abbb");
-//		}
-//	}
+
 	
-	@EventHandler
-	public void event(PlayerChatTabCompleteEvent e) {
-//		if (e.getTabCompletions())
-		
-	}
+
 
 	@EventHandler
 	public void marketing(PlayerJoinEvent e) {

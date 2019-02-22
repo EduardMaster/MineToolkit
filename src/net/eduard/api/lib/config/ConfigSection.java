@@ -17,7 +17,7 @@ import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.StorageInfo;
 
 /**
- * Secao da {@link Config}
+ * Interpretador de YAML proprio, Secao da {@link Config}
  * 
  * @author Eduard
  * 

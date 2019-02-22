@@ -10,7 +10,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
+/**
+ * Sistema de verificar quem deu o ultimo Hit em você
+ * @author Eduard
+ *
+ */
 public class DamagerManager implements Listener {
 	public static Entity getLastDamager(Entity entity) {
 		Entity damager = lastPvP.get(entity);

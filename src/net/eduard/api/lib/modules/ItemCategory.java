@@ -3,7 +3,11 @@ package net.eduard.api.lib.modules;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-
+/**
+ * Sistema de categorização de Itens baseado no seu {@link Material}
+ * @author Eduard
+ *
+ */
 public enum ItemCategory {
 
 	WEAPON, ARMOUR, BLOCK, ORE, TOOL, OTHER, FARM, FOOD, SPAWNER, SKULL, POTION;

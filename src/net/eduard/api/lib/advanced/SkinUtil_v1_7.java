@@ -25,6 +25,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.VaultAPI;
 import net.minecraft.server.v1_7_R4.EntityHuman;
 import net.minecraft.server.v1_7_R4.EntityLiving;
 import net.minecraft.server.v1_7_R4.EntityPlayer;
@@ -45,9 +46,12 @@ import net.minecraft.util.com.google.gson.JsonObject;
 import net.minecraft.util.com.google.gson.JsonParser;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
-
-public final class SkinUtil {
-	
+/**
+ * 
+ * @author Internet
+ *
+ */
+public final class SkinUtil_v1_7 {
 	
 private static final BukkitNameFetcher SKIN = new BukkitNameFetcher();
 public static Optional<String> getUUID(String name) {
@@ -69,7 +73,7 @@ public static Optional<String> getUUID(String name) {
 		}
 		return Optional.of(response);
 	}
-
+	
 	return Optional.of(output.substring(7, 39));
 }
 
