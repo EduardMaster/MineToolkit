@@ -9,6 +9,7 @@ public class ProductTradeEvent extends PlayerEvent implements Cancellable {
 	private Product product;
 	private Shop shop;
 	private int amount;
+	private int newStock;
 	private TradeType type;
 	private boolean cancelled;
 	private double balance;
@@ -85,6 +86,14 @@ public class ProductTradeEvent extends PlayerEvent implements Cancellable {
 
 	public void setPriceTotal(double priceTotal) {
 		this.priceTotal = priceTotal;
+	}
+
+	public int getNewStock() {
+		return newStock;
+	}
+
+	public void setNewStock(int newStock) {
+		this.newStock = newStock;
 	}
 
 }

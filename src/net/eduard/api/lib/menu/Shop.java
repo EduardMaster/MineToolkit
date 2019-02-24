@@ -82,10 +82,14 @@ public class Shop extends Menu {
 								}
 							}
 						}
+						if (product.isLimited()&&amount>product.getStock()) {
+							amount=product.getStock();
+						}
 						double priceFinal = priceUnit * amount;
 						ProductTradeEvent evento = new ProductTradeEvent(player);
 						evento.setProduct(product);
 						evento.setAmount(amount);
+						evento.setNewStock(product.getStock()-amount);
 						if (useVault)
 							evento.setBalance(VaultAPI.getEconomy().getBalance(player));
 						else if (currency != null) {
@@ -100,6 +104,7 @@ public class Shop extends Menu {
 						if (evento.isCancelled()) {
 							return;
 						}
+					
 						if (useVault && VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
 
 							if (VaultAPI.getEconomy().has(player, evento.getPriceTotal())) {
@@ -123,6 +128,7 @@ public class Shop extends Menu {
 							log("§b[Shop] §cnao funcionado pois nao tem  um sistema de economia");
 							return;
 						}
+						product.setStock(evento.getNewStock());
 						for (String cmd : product.getCommands()) {
 							Mine.runCommand(cmd.replace("$player", player.getName()));
 						}

@@ -30,6 +30,17 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	protected Config messages;
 	protected Config storage;
 	protected boolean free;
+	protected boolean makeBackup=true;
+	
+	
+
+	public boolean isMakeBackup() {
+		return makeBackup;
+	}
+
+	public void setMakeBackup(boolean makeBackup) {
+		this.makeBackup = makeBackup;
+	}
 
 	public boolean isEditable() {
 		return !config.getKeys().isEmpty();
@@ -102,6 +113,7 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	}
 
 	public void backupStorage() {
+		if (!isMakeBackup())return;
 		try {
 			
 			File pasta = new File(getDataFolder(), "/backup/");

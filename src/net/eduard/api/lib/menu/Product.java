@@ -13,6 +13,8 @@ import net.eduard.api.lib.Mine;
 public class Product extends MenuButton {
 	private double sellPrice;
 	private double buyPrice;
+	private boolean limited = false;
+	private int stock;
 	private TradeType tradeType = TradeType.BUYABLE;
 	private String permission;
 	private List<String> commands = new ArrayList<>();
@@ -31,19 +33,33 @@ public class Product extends MenuButton {
 	}
 
 	public ItemStack getItem() {
-		DecimalFormat d = new DecimalFormat("#,###.##",new DecimalFormatSymbols(Locale.forLanguageTag("PT")));
-		
+		DecimalFormat d = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.forLanguageTag("PT")));
+
 		ItemStack clone = getProduct().clone();
 		List<String> lore = Mine.getLore(clone);
 		lore.add(" ");
 		if (getTradeType() == TradeType.BUYABLE || getTradeType() == TradeType.BOTH) {
 			lore.add("§aProduto a Venda - §7Clique com o direito para comprar");
+			if (limited) {
+				if (stock == 0) {
+					lore.add("§cSem Estoque");
+				} else {
+					lore.add("§aQuantidade Restante: §2" + stock);
+				}
+			}
 			lore.add("§aPreço por x1: §2" + d.format(getUnitBuyPrice()));
 			lore.add("§aPreço por x64: §2" + d.format(64 * getUnitBuyPrice()));
 		} else if (getTradeType() == TradeType.SELABLE || getTradeType() == TradeType.BOTH) {
 			lore.add("§aProduto sendo Comprado - §7Clique com o esquerdo para vender");
-			lore.add("§aPreço por x64: §2" + d.format(64*getUnitSellPrice()));
-			lore.add("§aPreço por x2304: §2" + d.format(64*9*4 * getUnitSellPrice()));
+			if (limited) {
+				if (stock == 0) {
+					lore.add("§cSem Estoque");
+				} else {
+					lore.add("§aQuantidade Restante: §2" + stock);
+				}
+			}
+			lore.add("§aPreço por x64: §2" + d.format(64 * getUnitSellPrice()));
+			lore.add("§aPreço por x2304: §2" + d.format(64 * 9 * 4 * getUnitSellPrice()));
 		}
 
 		Mine.setLore(clone, lore);
@@ -115,6 +131,22 @@ public class Product extends MenuButton {
 
 	public void setTradeType(TradeType tradeType) {
 		this.tradeType = tradeType;
+	}
+
+	public int getStock() {
+		return stock;
+	}
+
+	public void setStock(int stock) {
+		this.stock = stock;
+	}
+
+	public boolean isLimited() {
+		return limited;
+	}
+
+	public void setLimited(boolean limited) {
+		this.limited = limited;
 	}
 
 }
