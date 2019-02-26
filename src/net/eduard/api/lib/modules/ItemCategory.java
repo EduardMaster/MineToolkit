@@ -1,65 +1,149 @@
 package net.eduard.api.lib.modules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+
 /**
  * Sistema de categorização de Itens baseado no seu {@link Material}
+ * 
  * @author Eduard
+ * @version 1.0
  *
  */
 public enum ItemCategory {
 
-	WEAPON, ARMOUR, BLOCK, ORE, TOOL, OTHER, FARM, FOOD, SPAWNER, SKULL, POTION;
+	WEAPON, ARMOUR, BLOCK, ORE, TOOL, OTHER, FARM, FOOD, SPAWNER, SKULL, POTION, ENCHANTED_BOOK;
+
+	private ItemCategory() {
+
+	}
+
+	public static final List<Material> ARMOURS = getArmourTypes();
+	public static final List<Material> WEAPONS = getWeaponTypes();
+	public static final List<Material> ORES = getOreTypes();
+	public static final List<Material> FARM_DROPS = getFarmTypes();
+	public static final List<Material> FOODS = getFoodTypes();
+
+	public static List<Material> getArmourTypes() {
+		List<Material> types = new ArrayList<>();
+		for (Material type : Material.values()) {
+			String nome = type.name();
+			if (nome.contains("HELMET") || nome.contains("CHESTPLATE") || nome.equals("BOOTS")
+					|| nome.equals("LEGGINS")) {
+				types.add(type);
+			}
+		}
+		return types;
+
+	}
+
+	public static List<Material> getOreTypes() {
+		List<Material> types = new ArrayList<>();
+		for (Material type : Material.values()) {
+			String nome = type.name();
+
+			if (nome.contains("ORE") | type == Material.DIAMOND | type == Material.DIAMOND_BLOCK
+					| type == Material.IRON_INGOT | type == Material.IRON_BLOCK | type == Material.LAPIS_BLOCK
+					| type == Material.REDSTONE | type == Material.REDSTONE_BLOCK | type == Material.EMERALD
+					| type == Material.EMERALD_BLOCK | type == Material.GOLD_INGOT | type == Material.GOLD_BLOCK
+					| type == Material.COAL | type == Material.COAL_BLOCK) {
+				types.add(type);
+			}
+		}
+		return types;
+
+	}
+
+	public static List<Material> getToolTypes() {
+		List<Material> types = new ArrayList<>();
+		for (Material type : Material.values()) {
+			String nome = type.name();
+			if (nome.contains("AXE") | nome.contains("PICKAXE") | nome.contains("HOE") | nome.contains("SPADE")
+					| type == Material.FLINT_AND_STEEL | type == Material.COMPASS) {
+				types.add(type);
+			}
+		}
+		return types;
+
+	}
+
+	public static List<Material> getFarmTypes() {
+		List<Material> types = new ArrayList<>();
+		for (Material type : Material.values()) {
+//			String nome = type.name();
+			if (type == Material.NETHER_STAR | type == Material.SEEDS | type == Material.STRING
+					| type == Material.BLAZE_ROD | type == Material.GOLD_NUGGET | type == Material.CACTUS
+					| type == Material.ROTTEN_FLESH | type == Material.BONE | type == Material.RAW_BEEF
+					| type == Material.SLIME_BALL | type == Material.SLIME_BLOCK | type == Material.PRISMARINE_SHARD) {
+				types.add(type);
+			}
+		}
+		return types;
+
+	}
+
+	public static List<Material> getFoodTypes() {
+		List<Material> types = new ArrayList<>();
+		for (Material type : Material.values()) {
+			String nome = type.name();
+
+			if (type == Material.GOLDEN_APPLE | type == Material.BAKED_POTATO | nome.contains("COOK")
+					| nome.contains("RAW")) {
+				types.add(type);
+			}
+		}
+		return types;
+
+	}
+
+	public static List<Material> getWeaponTypes() {
+		List<Material> types = new ArrayList<>();
+		for (Material type : Material.values()) {
+			String nome = type.name();
+			if (nome.contains("SWORD") | nome.contains("BOW")) {
+				types.add(type);
+			}
+		}
+		return types;
+
+	}
 
 	public static ItemCategory getBy(ItemStack item) {
-		if (Enchantment.DAMAGE_ALL.canEnchantItem(item)) {
-			return ItemCategory.WEAPON;
-		}
-		if (item.getType() == Material.DIAMOND_ORE | item.getType() == Material.DIAMOND
-				| item.getType() == Material.DIAMOND_BLOCK | item.getType() == Material.IRON_ORE
-				| item.getType() == Material.IRON_INGOT | item.getType() == Material.IRON_BLOCK
-				| item.getType() == Material.LAPIS_BLOCK | item.getType() == Material.LAPIS_ORE
-				| item.getType() == Material.REDSTONE | item.getType() == Material.REDSTONE_BLOCK
-				| item.getType() == Material.REDSTONE_ORE | item.getType() == Material.EMERALD
-				| item.getType() == Material.EMERALD_ORE | item.getType() == Material.EMERALD_BLOCK
-				| item.getType() == Material.GOLD_INGOT | item.getType() == Material.GOLD_ORE
-				| item.getType() == Material.GOLD_BLOCK | item.getType() == Material.COAL
-				| item.getType() == Material.COAL_ORE | item.getType() == Material.COAL_BLOCK) {
-			return ItemCategory.ORE;
-		} else if (item.getType().name().contains("AXE") | item.getType().name().contains("PICKAXE")
-				| item.getType().name().contains("HOE") | item.getType().name().contains("SPADE")
-				| item.getType() == Material.FLINT_AND_STEEL | item.getType() == Material.COMPASS) {
 
-			return ItemCategory.TOOL;
-
-		}
-		if (item.getType().name().contains("CHESTPLATE") | item.getType().name().contains("HELMET")
-				| item.getType().name().contains("BOOTS") | item.getType().name().contains("LEGGINGS")) {
-			return ARMOUR;
-		} else if (item.getType() == Material.NETHER_STAR | item.getType() == Material.SEEDS
-				| item.getType() == Material.STRING | item.getType() == Material.BLAZE_ROD
-				| item.getType() == Material.GOLD_NUGGET | item.getType() == Material.CACTUS
-				| item.getType() == Material.ROTTEN_FLESH | item.getType() == Material.BONE
-				| item.getType() == Material.RAW_BEEF | item.getType() == Material.SLIME_BALL
-				| item.getType() == Material.SLIME_BLOCK | item.getType() == Material.PRISMARINE_SHARD) {
-			return ItemCategory.FARM;
-		}
-		if (item.getType() == Material.GOLDEN_APPLE) {
-			return ItemCategory.FOOD;
-		}
-		if (item.getType() == Material.SKULL_ITEM) {
+		Material type = item.getType();
+		if (type == Material.SKULL_ITEM) {
 			return ItemCategory.SKULL;
 		}
-		if (item.getType() == Material.MOB_SPAWNER) {
-			return SPAWNER;
-		}
-		if (item.getType() == Material.POTION) {
+		if (type == Material.POTION) {
 			return POTION;
 		}
+		if (type == Material.MOB_SPAWNER) {
+			return SPAWNER;
+		}
+		if (ARMOURS.contains(type)) {
+			return ItemCategory.ARMOUR;
+		}
+		if (ORES.contains(type)) {
+			return ItemCategory.ORE;
+		}
+		if (WEAPONS.contains(type)) {
+			return ItemCategory.WEAPON;
+		}
+
+		if (FARM_DROPS.contains(type))
+
+		{
+			return ItemCategory.FARM;
+		}
+		if (FOODS.contains(type)) {
+			return ItemCategory.FOOD;
+		}
+
 		return OTHER;
 
 	}
 
 }
-

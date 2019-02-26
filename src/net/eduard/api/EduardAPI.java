@@ -35,7 +35,6 @@ import net.eduard.api.manager.MassiveFactionReplacers;
 import net.eduard.api.manager.McMMOReplacers;
 import net.eduard.api.manager.PluginValor;
 import net.eduard.api.server.EduardPlugin;
-import net.eduard.api.test.TesteAnimacaoArmostand;
 
 /**
  * Classe Principal do Plugin EduardAPI
@@ -90,7 +89,6 @@ public class EduardAPI extends EduardPlugin {
 		Mine.console("§bEduardAPI §fStorables do Bukkit carregado!");
 		Mine.resetScoreboards();
 		Mine.console("§bEduardAPI §fScoreboards resetadas!");
-		new TesteAnimacaoArmostand().register(this);;
 		asyncTimer(new Runnable() {
 
 			@Override

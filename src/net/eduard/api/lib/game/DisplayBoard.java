@@ -22,28 +22,81 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 
+/**
+ * API de criação de Scoreboard feita para facilitar sua vida
+ * 
+ * @author Eduard
+ *
+ */
 @SuppressWarnings("deprecation")
 public class DisplayBoard implements Storable, Copyable {
 
+	/**
+	 * Tamanho limite do Nome do Jogador Linha Acima da 1.7
+	 */
 	public static final int PLAYER_ABOVE_1_7_NAME_LIMIT = 40;
+	/**
+	 * Tamanho limite do Nome do Jogador Abaixo da 1.8
+	 */
 	public static final int PLAYER_BELOW_1_8_NAME_LIMIT = 16;
+	/**
+	 * Tamanho máximo do Titulo da Scoreboard
+	 */
 	public static final int TITLE_LIMIT = 32;
 	// public static final int REGISTER_LIMIT = 16;
+	/**
+	 * Tamanh máximo de um Prefixo do {@link Team} da Scoreboard
+	 */
 	public static final int PREFIX_LIMIT = 16;
+	/**
+	 * Tamanh máximo de um Suffix do {@link Team} da Scoreboard
+	 */
 	public static final int SUFFIX_LIMIT = 16;
+	/**
+	 * Limite atual do nome do Jogador
+	 */
 	public int PLAYER_NAME_LIMIT = PLAYER_BELOW_1_8_NAME_LIMIT;
+	/**
+	 * Linhas da Scoreboard
+	 */
 	protected List<String> lines = new ArrayList<>();
+	/**
+	 * Titulo da scoreboard
+	 */
 	protected String title;
+	/**
+	 * Barra de vida encima da cabeça do jogador
+	 */
 	protected String healthBar;
+	/**
+	 * Se a scoreboard não irá piscar de Jeito nenhum (se ela é perfeita)
+	 */
 	protected boolean perfect;
+	/**
+	 * {@link Objective} que armazena a Vida dos jogadores
+	 */
 	@NotCopyable
 	protected transient Objective health;
+	
+	/**
+	 * {@link Scoreboard} criada 
+	 */
 	@NotCopyable
 	protected transient Scoreboard scoreboard;
+	/**
+	 * {@link Objective} que armazena as linhas da Scoreboard
+	 */
 	@NotCopyable
 	protected transient Objective objective;
+	
+	/**
+	 * HashMap armazenando os nomes dos jgoadores Fakes (As Linhas)
+	 */
 	@NotCopyable
 	protected transient Map<Integer, OfflinePlayer> fakes = new HashMap<>();
+	/**
+	 * 
+	 */
 	@NotCopyable
 	protected transient Map<Integer, Team> teams = new HashMap<>();
 	@NotCopyable
@@ -59,17 +112,33 @@ public class DisplayBoard implements Storable, Copyable {
 		return objective.getDisplaySlot() == DisplaySlot.SIDEBAR;
 	}
 
+	/**
+	 * Ativa a scoreboard
+	 * 
+	 * @return A classe
+	 */
 	public DisplayBoard show() {
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		return this;
 	}
 
+	/**
+	 * Remove todas as linhas da Scoreboard
+	 */
 	public void clear() {
 		for (int id = 15; id > 0; id--) {
 			remove(id);
 		}
 	}
 
+	/**
+	 * Seta uma linha da Scoreboard
+	 * 
+	 * @param prefix Texto antes do centro
+	 * @param center Texto que fica no meio
+	 * @param suffix Texto posterior ao Meio
+	 * @param line   Numero da Linha
+	 */
 	public void setLine(String prefix, String center, String suffix, int line) {
 		if (center.isEmpty()) {
 			center = "" + ChatColor.values()[line - 1];
@@ -101,6 +170,11 @@ public class DisplayBoard implements Storable, Copyable {
 
 	}
 
+	/**
+	 * Remove algumas Entradas da Scoreboard para reduzir o Lag
+	 * 
+	 * @param force Remover Tudo
+	 */
 	public void clearEntries(boolean force) {
 		scoreboard.getPlayers().stream().forEach(fake -> {
 			if (force) {
@@ -116,23 +190,32 @@ public class DisplayBoard implements Storable, Copyable {
 
 	}
 
-
+	/**
+	 * Returna uma Copia da Scoreboard
+	 */
 	public DisplayBoard copy() {
 		return copy(this);
 	}
 
+	/**
+	 * Construtor vazio setando o nome da Scoreboard de '§6§lScoreboard'
+	 */
 	public DisplayBoard() {
 		this("§6§lScoreboard");
-		
+
 	}
 
+	/**
+	 * Cosntrutor pedindo o Titulo e uma lista de Linhas seguida por ,
+	 * 
+	 * @param title Titulo
+	 * @param lines Linhas
+	 */
 	public DisplayBoard(String title, String... lines) {
 		setTitle(title);
 		getLines().addAll(Arrays.asList(lines));
 		init();
 	}
-
-	
 
 	public DisplayBoard update(Player player) {
 		int id = 15;
@@ -160,7 +243,7 @@ public class DisplayBoard implements Storable, Copyable {
 //		Mine.broadcast("§cinit executado"
 //				+ "");
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		objective = scoreboard.registerNewObjective("sc"+Mine.getRandomInt(1000, 100000), "dummy");
+		objective = scoreboard.registerNewObjective("sc" + Mine.getRandomInt(1000, 100000), "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		health = scoreboard.registerNewObjective("HealthBar", Criterias.HEALTH);
 		health.setDisplaySlot(DisplaySlot.BELOW_NAME);
@@ -170,7 +253,7 @@ public class DisplayBoard implements Storable, Copyable {
 //			team.addPlayer(fake);
 //			objective.getScore(fake).setScore(id);
 			teams.put(id, team);
-			
+
 //			fakes.put(id, fake);
 		}
 		setDisplay(title);
@@ -178,10 +261,21 @@ public class DisplayBoard implements Storable, Copyable {
 		return this;
 	}
 
+	/**
+	 * Coração: '\u2764'
+	 * 
+	 * @return Simbolo do Coração
+	 */
 	public char getHeart() {
 		return '\u2764';
 	}
 
+	/**
+	 * Aplica a Scoreboard no Jogador
+	 * 
+	 * @param player Jogador
+	 * @return A classe
+	 */
 	public DisplayBoard apply(Player player) {
 		player.setScoreboard(scoreboard);
 		return this;
@@ -192,10 +286,20 @@ public class DisplayBoard implements Storable, Copyable {
 		return this;
 	}
 
+	/**
+	 * Deixa a linha da Scoreboard vazia
+	 * 
+	 * @param slot Linha
+	 */
 	public void empty(int slot) {
 		set(id(slot), "");
 	}
 
+	/**
+	 * Remove a linha da Scoreboard
+	 * 
+	 * @param slot Linha
+	 */
 	public void clear(int slot) {
 		int id = id(slot);
 		remove(id);
@@ -208,10 +312,11 @@ public class DisplayBoard implements Storable, Copyable {
 
 	public boolean remove(int id) {
 		OfflinePlayer fake = fakes.get(id);
-		if (fake==null)return false;
+		if (fake == null)
+			return false;
 		scoreboard.resetScores(fake);
 		Team team = teams.get(id);
-		if (team!=null) {
+		if (team != null) {
 			team.removePlayer(fake);
 		}
 		fakes.remove(id);
