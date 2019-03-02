@@ -15,7 +15,7 @@ public class ApiEnableCommand extends CommandManager {
 		super("enable","habilitar");
 		setUsage("/api enable <plugin>");
 		setDescription("Ativa um plugin desativado no servidor");
-	
+	 
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,

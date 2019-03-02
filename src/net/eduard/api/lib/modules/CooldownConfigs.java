@@ -6,8 +6,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.eduard.api.lib.Mine;
 /**
  * Sistema de configuração focada em armazenamento de cooldowns
- * @author Eduard
  *
+ * @author Eduard
+ *	@see Configs
  */
 public class CooldownConfigs extends Configs {
 

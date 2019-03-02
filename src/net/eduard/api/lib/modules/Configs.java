@@ -33,7 +33,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Configs {
 
 	private Plugin plugin;
-	
 
 	private String name;
 
@@ -44,6 +43,7 @@ public class Configs {
 	public String getName() {
 		return name;
 	}
+
 	public Location getLocation(String path) {
 		ConfigurationSection section = getSection(path);
 		World world = Bukkit.getWorld(section.getString("world"));
@@ -54,6 +54,7 @@ public class Configs {
 		float pitch = (float) section.getDouble("pitch");
 		return new Location(world, x, y, z, yaw, pitch);
 	}
+
 	public void setLocation(String path, Location location) {
 		ConfigurationSection section = getSection(path);
 		section.set("x", location.getX());
@@ -62,14 +63,13 @@ public class Configs {
 		section.set("yaw", location.getYaw());
 		section.set("pitch", location.getPitch());
 		section.set("world", location.getWorld().getName());
-		
+
 	}
 
 	/**
 	 * Seta o Plugin da Config
 	 * 
-	 * @param plugin
-	 *            Plugin
+	 * @param plugin Plugin
 	 */
 	public void setPlugin(Plugin plugin) {
 		this.plugin = plugin;
@@ -102,8 +102,9 @@ public class Configs {
 	public Configs(String name) {
 		this(name, null);
 	}
+
 	public void reload() {
-		config= new YamlConfiguration();
+		config = new YamlConfiguration();
 	}
 
 	/**
@@ -113,12 +114,11 @@ public class Configs {
 	 */
 	public Configs reloadConfig() {
 		file = new File(plugin.getDataFolder(), name);
-		
-		
+
 		config = YamlConfiguration.loadConfiguration(file);
 		InputStream defaults = plugin.getResource(file.getName());
 		if (defaults != null) {
-			
+
 			@SuppressWarnings("deprecation")
 			YamlConfiguration loadConfig = YamlConfiguration.loadConfiguration(defaults);
 			config.setDefaults(loadConfig);
@@ -144,8 +144,7 @@ public class Configs {
 
 	/**
 	 * 
-	 * @param path
-	 *            Path
+	 * @param path Path
 	 * @return Pega uma mensagem
 	 */
 	public String message(String path) {
@@ -182,8 +181,7 @@ public class Configs {
 	/**
 	 * Remove a Secao
 	 * 
-	 * @param path
-	 *            Secao
+	 * @param path Secao
 	 */
 	public void remove(String path) {
 		config.set(path, null);
@@ -200,42 +198,6 @@ public class Configs {
 		return this;
 	}
 
-	/**
-	 * 
-	 * @param path
-	 *            Secao
-	 * @return Item da Secao
-	 */
-	public ItemStack getItem(String path) {
-		return (ItemStack) get(path);
-	}
-	@SuppressWarnings("deprecation")
-	public void setItem(String path, ItemStack item) {
-		ConfigurationSection section = getSection(path);
-		section.set("id", item.getTypeId());
-		section.set("data", item.getDurability());
-		if (item.hasItemMeta()) {
-			ItemMeta meta = item.getItemMeta();
-			if (meta.hasDisplayName()) {
-				section.set("name", meta.getDisplayName());
-			}
-			if (meta.hasLore()) {
-				List<String> lines = new ArrayList<>();
-				for (String line : meta.getLore()) {
-					lines.add(line);
-				}
-				section.set("lore", lines);
-			}
-		}
-		StringBuilder text = new StringBuilder();
-		for (Entry<Enchantment, Integer> enchant : item.getEnchantments().entrySet()) {
-			text.append(enchant.getKey().getId() + "-" + enchant.getValue() + ",");
-		}
-		section.set("enchant", text.toString());
-	}
-
-
-	
 	public Location toLocation(String path) {
 		String text = getString(path);
 		String[] split = text.split(",");
@@ -248,7 +210,7 @@ public class Configs {
 		return new Location(world, x, y, z, yaw, pitch);
 	}
 
-	public void saveLocation(String path,Location location) {
+	public void saveLocation(String path, Location location) {
 		StringBuilder text = new StringBuilder();
 		text.append(location.getWorld().getName() + ",");
 		text.append(location.getX() + ",");
@@ -258,7 +220,6 @@ public class Configs {
 		text.append(location.getPitch());
 		set(path, text.toString());
 	}
-
 
 	public static String toChatMessage(String text) {
 		return ChatColor.translateAlternateColorCodes('&', text);
@@ -317,8 +278,90 @@ public class Configs {
 		return config.getIntegerList(path);
 	}
 
-	public ItemStack getItemStack(String path) {
-		return config.getItemStack(path);
+	@SuppressWarnings("deprecation")
+	public void setItem(String path, ItemStack item) {
+		ConfigurationSection section = getSection(path);
+		section.set("id", item.getTypeId());
+		section.set("data", item.getDurability());
+		if (item.hasItemMeta()) {
+			ItemMeta meta = item.getItemMeta();
+			if (meta.hasDisplayName()) {
+				section.set("name", meta.getDisplayName());
+			}
+			if (meta.hasLore()) {
+				List<String> lines = new ArrayList<>();
+				for (String line : meta.getLore()) {
+					lines.add(line);
+				}
+				section.set("lore", lines);
+			}
+			if (meta.hasEnchants()) {
+
+				StringBuilder text = new StringBuilder();
+				for (Entry<Enchantment, Integer> enchant : item.getEnchantments().entrySet()) {
+					text.append(enchant.getKey().getId() + "-" + enchant.getValue() + ",");
+				}
+				section.set("enchants", text.toString());
+			}
+		}
+
+	}
+
+	public ItemStack getItem(String path) {
+
+		ConfigurationSection section = getSection(path);
+
+		int id = section.getInt("id");
+		int amout = section.getInt("amount");
+		int durability = section.getInt("durability");
+		@SuppressWarnings("deprecation")
+		ItemStack item = new ItemStack(id, amout, (short) durability);
+
+		ItemMeta meta = item.getItemMeta();
+
+		if (section.contains("name")) {
+			String name = section.getString("name").replace("§", "&");
+			meta.setDisplayName(name);
+		}
+
+		if (section.contains("lore")) {
+			List<String> lore = section.getStringList("lore");
+			meta.setLore(lore);
+
+		}
+		item.setItemMeta(meta);
+		if (section.contains("enchants")) {
+			String enchants = section.getString("enchants");
+			if (enchants.contains(",")) {
+
+				try {
+					String[] encantamentosSplit = enchants.split(",");
+					for (String enchantmentPart : encantamentosSplit) {
+						String[] enchInfo = enchantmentPart.split("-");
+						@SuppressWarnings("deprecation")
+						Enchantment encantamento = Enchantment.getById(Integer.parseInt(enchInfo[0]));
+						int nivel = Integer.parseInt(enchInfo[1]);
+						item.addUnsafeEnchantment(encantamento, nivel);
+					}
+				} catch (Exception e) {
+					System.out.println("§aFalha ao adicionar encanmento para o item");
+				}
+			} else {
+				try {
+					String[] enchInfo = enchants.split("-");
+					@SuppressWarnings("deprecation")
+					Enchantment encantamento = Enchantment.getById(Integer.parseInt(enchInfo[0]));
+					int nivel = Integer.parseInt(enchInfo[1]);
+					item.addUnsafeEnchantment(encantamento, nivel);
+				} catch (Exception e) {
+					System.out.println("Falha ao adicionar encantamento");
+				}
+			}
+
+		}
+
+		return item;
+
 	}
 
 	public Set<String> getKeys(boolean deep) {

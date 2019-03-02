@@ -16,7 +16,7 @@ public class ApiDisableCommand extends CommandManager {
 		setUsage("/api disable <plugin>");
 
 	setDescription("Desativa um plugin ativado no servidor");
-	}
+	} 
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

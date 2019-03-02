@@ -13,7 +13,7 @@ public class ApiDeleteWorldCommand extends CommandManager {
 		setUsage("/api deleteworld <world>");
 		setDescription("Deleta um mundo do servidor");
 
-	}
+	} 
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

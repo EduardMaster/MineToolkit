@@ -11,6 +11,10 @@ import org.bukkit.inventory.ItemStack;
 import net.eduard.api.lib.Mine;
 
 public class Product extends MenuButton {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private double sellPrice;
 	private double buyPrice;
 	private boolean limited = false;
@@ -34,8 +38,11 @@ public class Product extends MenuButton {
 
 	public ItemStack getItem() {
 		DecimalFormat d = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.forLanguageTag("PT")));
-
+//		System.out.println(getProduct());
 		ItemStack clone = getProduct().clone();
+		if (limited) {
+			clone.setAmount(stock);
+		}
 		List<String> lore = Mine.getLore(clone);
 		lore.add(" ");
 		if (getTradeType() == TradeType.BUYABLE || getTradeType() == TradeType.BOTH) {

@@ -5,7 +5,7 @@ import java.util.Map;
 import net.eduard.api.lib.modules.Extra;
 
 /**
- * Sistema de armazenamento automatizado baseado na refle§§o das classes
+ * Sistema de armazenamento automatizado baseado na reflexão das classes
  * 
  * 
  * 

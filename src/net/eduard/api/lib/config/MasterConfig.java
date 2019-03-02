@@ -1,4 +1,4 @@
-package net.eduard.api.aio;
+package net.eduard.api.lib.config;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

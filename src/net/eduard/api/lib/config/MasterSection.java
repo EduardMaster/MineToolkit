@@ -1,4 +1,4 @@
-package net.eduard.api.aio;
+package net.eduard.api.lib.config;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

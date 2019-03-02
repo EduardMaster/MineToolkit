@@ -1,5 +1,7 @@
 package net.eduard.api.lib.menu;
 
+import java.io.Serializable;
+
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -8,7 +10,11 @@ import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
-public class Slot implements Storable,Copyable {
+public class Slot implements Storable,Copyable,Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int positionX, positionY;
 	private ItemStack item;
 	private EffectManager effects;

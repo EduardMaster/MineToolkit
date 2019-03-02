@@ -5,6 +5,10 @@ import org.bukkit.inventory.ItemStack;
 import net.eduard.api.lib.modules.ClickEffect;
 
 public class MenuButton  extends Slot{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private int page = 1;
 	private Menu menu;

@@ -26,6 +26,7 @@ public enum ItemCategory {
 	public static final List<Material> ORES = getOreTypes();
 	public static final List<Material> FARM_DROPS = getFarmTypes();
 	public static final List<Material> FOODS = getFoodTypes();
+	public static final List<Material> TOOLS = getToolTypes();
 
 	public static List<Material> getArmourTypes() {
 		List<Material> types = new ArrayList<>();
@@ -122,6 +123,9 @@ public enum ItemCategory {
 		}
 		if (type == Material.MOB_SPAWNER) {
 			return SPAWNER;
+		}
+		if (TOOLS.contains(type)) {
+			return ItemCategory.TOOL;
 		}
 		if (ARMOURS.contains(type)) {
 			return ItemCategory.ARMOUR;

@@ -69,6 +69,8 @@ public class EduardAPI extends EduardPlugin {
 	public void onEnable() {
 		plugin = this;
 		setFree(true);
+		
+
 		BukkitControl.register(this);
 		BukkitBungeeAPI.requestCurrentServer();
 		BukkitController bukkit = BungeeAPI.getBukkit();

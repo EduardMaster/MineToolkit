@@ -92,23 +92,23 @@ public final class Extra {
 		return set;
 	}
 
-	public static void readUTF8(File file) throws Exception {
-		FileInputStream fis = new FileInputStream(file);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
-
-		String line = br.readLine();
-		if (line.startsWith("\uFEFF")) {
-			// it's UTF-8, throw away the BOM character and continue
-			line = line.substring(1);
-		} else {
-			// it's not UTF-8, reopen
-			br.close(); // also closes fis
-			fis = new FileInputStream(file); // reopen from the start
-			br = new BufferedReader(new InputStreamReader(fis, "Cp1252"));
-			line = br.readLine();
-		}
-
-	}
+//	public static void readUTF8(File file) throws Exception {
+//		FileInputStream fis = new FileInputStream(file);
+//		BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+//
+//		String line = br.readLine();
+//		if (line.startsWith("\uFEFF")) {
+//			// it's UTF-8, throw away the BOM character and continue
+//			line = line.substring(1);
+//		} else {
+//			// it's not UTF-8, reopen
+//			br.close(); // also closes fis
+//			fis = new FileInputStream(file); // reopen from the start
+//			br = new BufferedReader(new InputStreamReader(fis, "Cp1252"));
+//			line = br.readLine();
+//		}
+//
+//	}
 
 	public static DecimalFormat MONEY = new DecimalFormat("###,###.##",
 			DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));

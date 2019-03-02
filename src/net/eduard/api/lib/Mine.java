@@ -112,7 +112,7 @@ public final class Mine {
 		Object getText(Player p);
 	}
 
-	public static final String uuidurl = "https://api.mojang.com/users/rofiles/minecraft/";
+	public static final String MONGA = "https://api.mojang.com/users/rofiles/minecraft/";
 
 	public static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 	public static final String altskinurl = "https://mcapi.ca/name/uuid/";
@@ -604,7 +604,7 @@ public final class Mine {
 	/**
 	 * Desabilita a Inteligencia da Entidade<br>
 	 * 
-	 *	NMS código executado 
+	 * NMS código executado
 	 *
 	 * <pre>
 	 * <code>
@@ -797,6 +797,43 @@ public final class Mine {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/**
+	 * Escreve uma lista de objetos em um arquivo
+	 * 
+	 * @param list Lista de Objetos
+	 * @param file Arquivo
+	 * @throws Exception Pode causar varios Erros
+	 */
+	public static <E> void writeBukkitData(List<E> list, File file) throws Exception {
+		BukkitObjectOutputStream writer = new BukkitObjectOutputStream(new FileOutputStream(file));
+		writer.writeInt(list.size());
+		for (E item : list) {
+			writer.writeObject(item);
+		}
+		writer.close();
+	}
+
+	/**
+	 * Lê de um arquivo varios objetivos enchendo uma lista com ele
+	 * 
+	 * @param list Nova Lista
+	 * @param file Arquivo
+	 * @return A mesma lista só que cheia de dados lidos
+	 * @throws Exception Pode causar varios Erros
+	 */
+	public static <E> List<E> readBukkitData(List<E> list, File file) throws Exception {
+
+		BukkitObjectInputStream reader = new BukkitObjectInputStream(new FileInputStream(file));
+		int amount = reader.readInt();
+		for (int id = 0; id < amount; id++) {
+			@SuppressWarnings("unchecked")
+			E object = (E) reader.readObject();
+			list.add(object);
+		}
+		reader.close();
+		return list;
 	}
 
 	/**
@@ -2202,6 +2239,7 @@ public final class Mine {
 		meta.setAuthor(author);
 		meta.setTitle(title);
 		item.setItemMeta(meta);
+		
 		return item;
 	}
 
@@ -3371,6 +3409,7 @@ public final class Mine {
 
 		return new Vector(x, y, z);
 	}
+
 	public static ArrayList<Location> getCircle(Location center, double radius, int amount) {
 		World world = center.getWorld();
 		double increment = (2 * Math.PI) / amount;
@@ -3383,6 +3422,7 @@ public final class Mine {
 		}
 		return locations;
 	}
+
 	public static ArrayList<Location> getCircle2(Location center, double radius, int amount) {
 		World world = center.getWorld();
 		double increment = (2 * Math.PI) / amount;
@@ -3393,31 +3433,33 @@ public final class Mine {
 			double y = center.getY() + (radius * Math.sin(angle));
 			locations.add(new Location(world, center.getX(), y, z));
 		}
-	
+
 		return locations;
 	}
-	public  static List<Location> getCircleBlocks(Location loc, double radius, double height, boolean hollow,
-            boolean sphere) {
-        ArrayList<Location> circleblocks = new ArrayList<Location>();
-        double cx = loc.getBlockX();
-        double cy = loc.getBlockY();
-        double cz = loc.getBlockZ();
 
-        for (double y = (sphere ? cy - radius : cy); y < (sphere ? cy + radius : cy + height + 1); y++) {
-            for (double x = cx - radius; x <= cx + radius; x++) {
-                for (double z = cz - radius; z <= cz + radius; z++) {
-                    double dist = (cx - x) * (cx - x) + (cz - z) * (cz - z) + (sphere ? (cy - y) * (cy - y) : 0);
+	public static List<Location> getCircleBlocks(Location loc, double radius, double height, boolean hollow,
+			boolean sphere) {
+		ArrayList<Location> circleblocks = new ArrayList<Location>();
+		double cx = loc.getBlockX();
+		double cy = loc.getBlockY();
+		double cz = loc.getBlockZ();
 
-                    if (dist < radius * radius && !(hollow && dist < (radius - 1) * (radius - 1))) {
-                        Location l = new Location(loc.getWorld(), x, y, z);
-                        circleblocks.add(l);
-                    }
-                }
-            }
-        }
+		for (double y = (sphere ? cy - radius : cy); y < (sphere ? cy + radius : cy + height + 1); y++) {
+			for (double x = cx - radius; x <= cx + radius; x++) {
+				for (double z = cz - radius; z <= cz + radius; z++) {
+					double dist = (cx - x) * (cx - x) + (cz - z) * (cz - z) + (sphere ? (cy - y) * (cy - y) : 0);
 
-        return circleblocks;
-    }
+					if (dist < radius * radius && !(hollow && dist < (radius - 1) * (radius - 1))) {
+						Location l = new Location(loc.getWorld(), x, y, z);
+						circleblocks.add(l);
+					}
+				}
+			}
+		}
+
+		return circleblocks;
+	}
+
 	public static ArrayList<Location> getCircle3(Location center, double radius, int amount) {
 		World world = center.getWorld();
 		double increment = (2 * Math.PI) / amount;
