@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
@@ -107,26 +107,33 @@ import net.eduard.api.lib.modules.Point;
  * @version 3.0
  */
 public final class Mine {
+	/**
+	 * Interface de criar Replacer (Placeholders)
+	 * 
+	 * @author Eduard
+	 *
+	 */
 	public static interface Replacer {
-
-		Object getText(Player p);
+		/**
+		 * Retorna o valor do Placeholder
+		 * 
+		 * @param player Jogador
+		 * @return O
+		 */
+		Object getText(Player player);
 	}
 
-	public static final String MONGA = "https://api.mojang.com/users/rofiles/minecraft/";
-
-	public static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
-	public static final String altskinurl = "https://mcapi.ca/name/uuid/";
-	public static final String altuuidurl = "http://mcapi.ca/uuid/player/";
+	public static final String LINK_MOJANG_UUID = "https://api.mojang.com/users/rofiles/minecraft/";
+	public static final String LINK_MOJANG_SKIN = "https://sessionserver.mojang.com/session/minecraft/profile/";
+	public static final String LINK_MCAPI_UUID = "https://mcapi.ca/name/uuid/";
+	public static final String LINK_MCAPI_SKIN = "http://mcapi.ca/uuid/player/";
 	static {
 		Extra.newReplacer("#v", Mine.getVersion());
 	}
 
 	public static String classMineEntityPlayer = "#mEntityPlayer";
-
 	public static String classCraftCraftPlayer = "#cCraftPlayer";
-
 	public static String classSpigotPacketTitle = "#sProtocolInjector$PacketTitle";
-
 	public static String classSpigotAction = "#sProtocolInjector$PacketTitle$Action";
 	public static String classSpigotPacketTabHeader = "#sProtocolInjector$PacketTabHeader";
 	public static String classPacketPlayOutChat = "#pPlayOutChat";
@@ -264,6 +271,61 @@ public final class Mine {
 		}
 
 	}
+	
+	
+	/**
+	 * Remove uma quantidade de XP do jogador
+	 * @param player Jogador
+	 * @param amount Quantidade de XP
+	 */
+	public static void removeXP(Player player,double amount) {
+		int total = player.getTotalExperience();
+		if (amount>total) {
+			amount = total;
+		}
+		if (total<0) {
+			total = 0;
+		}
+		player.setTotalExperience(0);
+		player.setLevel(0);
+		player.setExp(0);
+		int result = (int) (total - amount);
+		player.giveExp(result);
+	}
+	/**
+	 * Retorna o numero total de XP que precisa para pegar o nivel especifico
+	 * @param level Nivel
+	 * @param percentage Portagem na barra de XP
+	 * @return o numero gerado
+	 */
+	public static int getXpTotalToGetLevel(int level, float percentage) {
+		double xplevel;
+		int xpe;
+		int result = 0;
+		if (level > 30) {
+			xplevel = 4.5D * level * level - 162.5D * level + 2220.0D;
+			xpe = 9 * level - 158;
+			xplevel += Math.round(percentage * xpe);
+			result = (int) xplevel;
+			return result;
+		}
+
+		if (level > 15) {
+			xplevel = 2.5D * level * level - 40.5D * level + 360.0D;
+			xpe = 5 * level - 38;
+			xplevel += Math.round(percentage * xpe);
+			result = (int) xplevel;
+			return result;
+		}
+		if (level <= 15) {
+			xplevel = level * level + 6 * level;
+			xpe = 2 * level + 7;
+			xplevel += Math.round(percentage * xpe);
+			result = (int) xplevel;
+			return result;
+		}
+		return result;
+	}
 	/**
 	 * Mapa que armazena as Armaduras dos jogadores
 	 */
@@ -307,10 +369,23 @@ public final class Mine {
 		}
 	}
 
-	public static void addPermission(Player p, String permission) {
-		p.addAttachment(getMainPlugin(), permission, true);
+	/**
+	 * Adiciona permissão para um Jogador
+	 * 
+	 * @param sender     Jogador
+	 * @param permission Permissão
+	 */
+
+	public static void addPermission(CommandSender sender, String permission) {
+
+		sender.addAttachment(getMainPlugin(), permission, true);
 	}
 
+	/**
+	 * Registra uma permissão no sistema
+	 * 
+	 * @param permission
+	 */
 	public static void addPermission(String permission) {
 		Bukkit.getPluginManager().addPermission(new Permission(permission));
 	}
@@ -325,6 +400,13 @@ public final class Mine {
 		replacers.put(key, value);
 	}
 
+	/**
+	 * Ativa uma scoreboard nova para o jogador
+	 * @param player Jogador
+	 * @param title Titulo
+	 * @param lines Linhas
+	 * @return a nova Scoreboard feita
+	 */
 	@SuppressWarnings("deprecation")
 	public static Scoreboard applyScoreboard(Player player, String title, String... lines) {
 		Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -369,7 +451,7 @@ public final class Mine {
 	}
 
 	/**
-	 * Executa um Evento
+	 * Executa um Evento para todos os Listeners lerem ele
 	 * 
 	 * @param event Evento
 	 * @see Bukkit.getPluginManager().callEvent(event);
@@ -424,7 +506,11 @@ public final class Mine {
 		}
 
 	}
-
+	/**
+	 * Muda o nome do jogador no TAB e já corta o texto caso passe de 32 caracteres
+	 * @param player Jogador
+	 * @param displayName Nome do TAB
+	 */
 	public static void changeTabName(Player player, String displayName) {
 		player.setPlayerListName(Mine.getText(32, displayName));
 	}
@@ -468,14 +554,25 @@ public final class Mine {
 		entity.getEquipment().clear();
 
 	}
-
+	/**
+	 * Troca quem é o executor do comando 
+	 * @param commandName Nome do comando
+	 * @param command Executor
+	 * @return o Comando
+	 */
 	public static PluginCommand command(String commandName, CommandExecutor command) {
 		PluginCommand cmd = Bukkit.getPluginCommand(commandName);
 		cmd.setExecutor(command);
 		cmd.setPermissionMessage(Mine.MSG_NO_PERMISSION.replace("$permission", cmd.getPermission()));
 		return cmd;
 	}
-
+	/**
+	 * Troca quem é o executor do comando e também troca a permissão do para poder executar o comando 
+	 * @param commandName Nome do comando
+	 * @param command Executor
+	 * @param permission Permissão
+	 * @return o Comando
+	 */
 	public static PluginCommand command(String commandName, CommandExecutor command, String permission) {
 
 		PluginCommand cmd = Bukkit.getPluginCommand(commandName);
@@ -484,7 +581,14 @@ public final class Mine {
 		cmd.setPermissionMessage(Mine.MSG_NO_PERMISSION.replace("$permission", cmd.getPermission()));
 		return cmd;
 	}
-
+	/**
+	 * Troca quem é o executor do comando, troca a permissão do para poder executar o comando e a mensagem de erro 
+	 * @param commandName Nome do comando
+	 * @param command Executor
+	 * @param permission Permissão
+	 * @param permissionMessage Mensagem de erro
+	 * @return o Comando
+	 */
 	public static PluginCommand command(String commandName, CommandExecutor command, String permission,
 			String permissionMessage) {
 
@@ -494,35 +598,45 @@ public final class Mine {
 		cmd.setPermissionMessage(permissionMessage);
 		return cmd;
 	}
-
+	/**
+	 * Envia mensagem para o console do servidor
+	 * @see Bukkit.getConsoleSender().sendMessage(message);
+	 * @
+	 * @param message
+	 */
 	public static void console(String message) {
 		Bukkit.getConsoleSender().sendMessage(message);
 	}
 
 	/**
-	 * Testa se o Inventario tem determinada quantidade do Item
+	 * Verifica se o Inventario tem determinada quantidade do Item
 	 * 
 	 * @param inventory Inventario
 	 * @param item      Item
 	 * @param amount    Quantidade
-	 * @return Teste
+	 * @return o resultado da verificação
 	 */
 	public static boolean contains(Inventory inventory, ItemStack item, int amount) {
 		return getTotalAmount(inventory, item) >= amount;
 	}
 
 	/**
-	 * Testa se o Inventario tem determinada quantidade do Tipo do Material
+	 * Verifica se o Inventario tem determinada quantidade do Tipo do Material
 	 * 
-	 * @param inventory
-	 * @param item
-	 * @param amount
-	 * @return
+	 * @param inventory Inventario
+	 * @param item Material do Item
+	 * @param amount Quantidade
+	 * @returno resultado da verificação
 	 */
 	public static boolean contains(Inventory inventory, Material item, int amount) {
 		return getTotalAmount(inventory, item) >= amount;
 	}
-
+	/**
+	 * Copia o mundo 'fromWorld' e cola por cima do 'toWorld'
+	 * @param fromWorld Mundo a ser copiado
+	 * @param toWorld Mundo a ser subistituido
+	 * @return o novo mundo gerado
+	 */
 	public static World copyWorld(String fromWorld, String toWorld) {
 		unloadWorld(fromWorld);
 		unloadWorld(toWorld);
@@ -560,42 +674,56 @@ public final class Mine {
 		}
 	}
 
-	public static void createCage(Location loc, Material type) {
-		loc.clone().add(0, -1, 0).getBlock().setType(type, true);
-		loc.clone().add(0, 3, 0).getBlock().setType(type, true);
-		loc.clone().add(0, 0, 1).getBlock().setType(type, true);
-		loc.clone().add(0, 0, -1).getBlock().setType(type, true);
-		loc.clone().add(1, 0, 0).getBlock().setType(type, true);
-		loc.clone().add(-1, 0, 0).getBlock().setType(type, true);
+	/**
+	 * Cria uma jaula em um local do mapa com os blocos escolido
+	 * @param location Local
+	 * @param type Tipo do bloco
+	 */
+	public static void createCage(Location location, Material type) {
+		location.clone().add(0, -1, 0).getBlock().setType(type, true);
+		location.clone().add(0, 3, 0).getBlock().setType(type, true);
+		location.clone().add(0, 0, 1).getBlock().setType(type, true);
+		location.clone().add(0, 0, -1).getBlock().setType(type, true);
+		location.clone().add(1, 0, 0).getBlock().setType(type, true);
+		location.clone().add(-1, 0, 0).getBlock().setType(type, true);
 		//
-		loc.clone().add(0, 1, 1).getBlock().setType(type, true);
-		loc.clone().add(0, 1, -1).getBlock().setType(type, true);
-		loc.clone().add(1, 1, 0).getBlock().setType(type, true);
-		loc.clone().add(-1, 1, 0).getBlock().setType(type, true);
+		location.clone().add(0, 1, 1).getBlock().setType(type, true);
+		location.clone().add(0, 1, -1).getBlock().setType(type, true);
+		location.clone().add(1, 1, 0).getBlock().setType(type, true);
+		location.clone().add(-1, 1, 0).getBlock().setType(type, true);
 		//
-		loc.clone().add(0, 2, 1).getBlock().setType(type, true);
-		loc.clone().add(0, 2, -1).getBlock().setType(type, true);
-		loc.clone().add(1, 2, 0).getBlock().setType(type, true);
-		loc.clone().add(-1, 2, 0).getBlock().setType(type, true);
+		location.clone().add(0, 2, 1).getBlock().setType(type, true);
+		location.clone().add(0, 2, -1).getBlock().setType(type, true);
+		location.clone().add(1, 2, 0).getBlock().setType(type, true);
+		location.clone().add(-1, 2, 0).getBlock().setType(type, true);
 
 	}
-
-	public static boolean createCommand(Plugin plugin, Command... cmds) {
+	/**
+	 * Registra um Vetor de comandos na HashMap que armazena os comandos registrados
+	 * @param plugin Plugin
+	 * @param commands Vetor de Comando
+	 * @return Se registrou com sucesso os comandos
+	 */
+	public static boolean createCommand(Plugin plugin, Command... commands) {
 		try {
 			Class<?> serverClass = Extra.getClassFrom(Bukkit.getServer());
 			Field field = serverClass.getDeclaredField("commandMap");
 			field.setAccessible(true);
 			CommandMap map = (CommandMap) field.get(Bukkit.getServer());
-			for (Command cmd : cmds) {
+			for (Command cmd : commands) {
 				map.register(plugin.getName(), cmd);
 			}
 			// }
+			return true;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return OPT_AUTO_RESPAWN;
+		return false;
 	}
-
+	/**
+	 * Deleta o mundo
+	 * @param name Nome do Mundo
+	 */
 	public static void deleteWorld(String name) {
 		unloadWorld(name);
 		Extra.deleteFolder(getWorldFolder(name));
@@ -605,17 +733,17 @@ public final class Mine {
 	 * Desabilita a Inteligencia da Entidade<br>
 	 * 
 	 * NMS código executado
-	 *
-	 * <pre>
+	 *<br>
+	 * 
 	 * <code>
-	net.minecraft.server.v1_8_R3.Entity NMS = ((CraftEntity) entidade).getHandle();
-	NBTTagCompound compound = new NBTTagCompound();
-	NMS.c(compound);
-	compound.setByte("NoAI", (byte) 1);
+	net.minecraft.server.v1_8_R3.Entity NMS = ((CraftEntity) entidade).getHandle();<br>
+	NBTTagCompound compound = new NBTTagCompound();<br>
+	NMS.c(compound);<br>
+	compound.setByte("NoAI", (byte) 1);<br>
 	NMS.f(compound);
 	
 	 * </code>
-	 * </pre>
+	 * 
 	 * 
 	 * @param entity Entidade
 	 */
@@ -632,11 +760,21 @@ public final class Mine {
 		}
 
 	}
-
+	/**
+	 * Retorna a diferença entre o X das duas localizações
+	 * @param loc1 Localização 1
+	 * @param loc2 Localização 2
+	 * @return a diferença
+	 */
 	public static double distanceX(Location loc1, Location loc2) {
 		return loc1.getX() - loc2.getX();
 	}
-
+	/**
+	 * Retorna a diferença entre o Z das duas localizações
+	 * @param loc1 Localização 1
+	 * @param loc2 Localização 2
+	 * @return a diferença
+	 */
 	public static double distanceZ(Location loc1, Location loc2) {
 		return loc1.getZ() - loc2.getZ();
 	}
@@ -655,7 +793,7 @@ public final class Mine {
 	 * Dropa o Item no Local (Joga no Local)
 	 * 
 	 * @param location Local
-	 * @param item     --------- * Item
+	 * @param item Item dropado
 	 */
 	public static void drop(Location location, ItemStack item) {
 		location.getWorld().dropItemNaturally(location, item);
@@ -664,29 +802,56 @@ public final class Mine {
 	/**
 	 * Checa se Chunk1 é igual a Chunk2
 	 * 
-	 * @param chunk1
-	 * @param chunk2
-	 * @return
+	 * @param chunk1 Terreno 1
+	 * @param chunk2 Terreno 2
+	 * @return o resultado da verificação
 	 */
 	public static boolean equals(Chunk chunk1, Chunk chunk2) {
 		return chunk1.getX() == chunk2.getX() && chunk1.getZ() == chunk2.getZ();
 	}
-
-	public static boolean equals(ItemStack item, ItemStack stack) {
-		return getLore(item).equals(getLore(stack)) && getName(item).equals(getName(stack))
-				&& item.getType() == stack.getType() && item.getAmount() == stack.getAmount()
-				&& item.getDurability() == stack.getDurability();
+	/**
+	 * Faz varias verificações<br>
+	 * Verifica se a lore dos dois items são iguais<br>
+	 * Verifica se o nome dos dois items são iguais<br>
+	 * Verifica se a quantidade dos dois items são iguais<br>
+	 * Verifica se a durabilidade dos dois items são iguais<br>
+	 * Verifica se o tipo dos dois items são iguais<br>
+	 * @param item1 Item 1
+	 * @param item2 Item 2
+	 * @return se todas as verificações são TRUE a resposta
+	 */
+	public static boolean equals(ItemStack item1, ItemStack item2) {
+		return getLore(item1).equals(getLore(item2)) && getName(item1).equals(getName(item2))
+				&& item1.getType() == item2.getType() && item1.getAmount() == item2.getAmount()
+				&& item1.getDurability() == item2.getDurability();
 	}
-
+	/**
+	 * Verifica se as duas localizações são iguais
+	 * @param location1 Localização 1
+	 * @param location2 Localização 2
+	 * @return o resultado da verificação
+	 */
 	public static boolean equals(Location location1, Location location2) {
 
 		return getBlockLocation1(location1).equals(getBlockLocation1(location2));
 	}
 
+	/**
+	 * Verifica se as duas localizações são iguais
+	 * @param location1 Localização 1
+	 * @param location2 Localização 2
+	 * @return o resultado da verificação
+	 * @see Mine.equals(location1,location2);
+	 */
 	public static boolean equals2(Location location1, Location location2) {
 		return location1.getBlock().getLocation().equals(location2.getBlock().getLocation());
 	}
-
+	/**
+	 * Verifica se existe um jogador no servidor e manda a mensagem para o Sender caso o jogador esteja offline
+	 * @param sender Sender (Quem faz o comando)
+	 * @param player Nome do jogador
+	 * @return se o jogador está online ou não
+	 */
 	public static boolean existsPlayer(CommandSender sender, String player) {
 
 		Player p = Bukkit.getPlayer(player);
@@ -2239,7 +2404,7 @@ public final class Mine {
 		meta.setAuthor(author);
 		meta.setTitle(title);
 		item.setItemMeta(meta);
-		
+
 		return item;
 	}
 
@@ -2843,7 +3008,6 @@ public final class Mine {
 			mapa.save(new File(MAPS_CONFIG.getFile(), name + ".map"));
 		}
 	}
-
 	public static String saveVector(Vector vector) {
 		StringBuilder text = new StringBuilder();
 
@@ -2852,6 +3016,17 @@ public final class Mine {
 		text.append(vector.getZ() + ",");
 		return text.toString();
 	}
+
+	public static Vector toVector(String text) {
+		String[] split = text.split(",");
+
+		double x = Double.parseDouble(split[0]);
+		double y = Double.parseDouble(split[1]);
+		double z = Double.parseDouble(split[2]);
+
+		return new Vector(x, y, z);
+	}
+
 
 	public static void send(CommandSender sender, String message) {
 		if (sender instanceof Player) {
@@ -3378,11 +3553,23 @@ public final class Mine {
 
 	}
 
+	/**
+	 * Transforma o objeto em Texto
+	 * @param object Objeto
+	 * @return a forma textual de um Objeto 
+	 */
 	public static String toString(Object object) {
 
 		return object == null ? "" : object.toString();
 	}
-
+	
+	
+	/**
+	 * Transforma uma Coleção de Texto em uma String (Texto)
+	 * @param message Mensagem
+	 * @return o texto gerado apartir da coleção
+	 * @see {@link Extra}.toText(message);
+	 */
 	public static String toText(Collection<String> message) {
 		return Extra.toText(message);
 	}
@@ -3400,15 +3587,7 @@ public final class Mine {
 		return Extra.toTitle(name, replacer);
 	}
 
-	public static Vector toVector(String text) {
-		String[] split = text.split(",");
 
-		double x = Double.parseDouble(split[0]);
-		double y = Double.parseDouble(split[1]);
-		double z = Double.parseDouble(split[2]);
-
-		return new Vector(x, y, z);
-	}
 
 	public static ArrayList<Location> getCircle(Location center, double radius, int amount) {
 		World world = center.getWorld();
@@ -3436,7 +3615,18 @@ public final class Mine {
 
 		return locations;
 	}
-
+	public static ArrayList<Location> getCircle3(Location center, double radius, int amount) {
+		World world = center.getWorld();
+		double increment = (2 * Math.PI) / amount;
+		ArrayList<Location> locations = new ArrayList<Location>();
+		for (int i = 0; i < amount; i++) {
+			double angle = i * increment;
+			double x = center.getX() + (radius * Math.cos(angle));
+			double y = center.getY() + (radius * Math.sin(angle));
+			locations.add(new Location(world, x, y, center.getZ()));
+		}
+		return locations;
+	}
 	public static List<Location> getCircleBlocks(Location loc, double radius, double height, boolean hollow,
 			boolean sphere) {
 		ArrayList<Location> circleblocks = new ArrayList<Location>();
@@ -3460,19 +3650,12 @@ public final class Mine {
 		return circleblocks;
 	}
 
-	public static ArrayList<Location> getCircle3(Location center, double radius, int amount) {
-		World world = center.getWorld();
-		double increment = (2 * Math.PI) / amount;
-		ArrayList<Location> locations = new ArrayList<Location>();
-		for (int i = 0; i < amount; i++) {
-			double angle = i * increment;
-			double x = center.getX() + (radius * Math.cos(angle));
-			double y = center.getY() + (radius * Math.sin(angle));
-			locations.add(new Location(world, x, y, center.getZ()));
-		}
-		return locations;
-	}
-
+	
+	/**
+	 * Traduz a causa de levar ao levar dano
+	 * @param cause Causa do dano
+	 * @return a forma traduzida da causa
+	 */
 	public static String translate(DamageCause cause) {
 		switch (cause) {
 		case BLOCK_EXPLOSION:
@@ -3526,7 +3709,10 @@ public final class Mine {
 
 		}
 	}
-
+	/**
+	 * Descarrega um mundo 
+	 * @param name Nome do Mundo
+	 */
 	public static void unloadWorld(String name) {
 		World world = Bukkit.getWorld(name);
 		if (world != null) {
@@ -3615,23 +3801,6 @@ public final class Mine {
 		return (lines.toArray(new String[lines.size()]));
 	}
 
-	public boolean isBeaconPlaced(Location loc) {
-		int yMin = loc.getBlockY();
-		int xMin = loc.getBlockX();
-		int zMin = loc.getBlockZ();
-		boolean is = false;
-		for (int y = yMin; y < yMin + 5; y++) {
-			for (int x = xMin - 2; x > xMin + 2; x++) {
-				for (int z = zMin - 2; x > zMin + 2; z++) {
-					Location subloc = new Location(loc.getWorld(), x, y, z);
-					if (subloc.getBlock().getType() == Material.BEACON) {
-						is = true;
-					} else
-						is = false;
-				}
-			}
-		}
-		return is;
-	}
+	
 
 }

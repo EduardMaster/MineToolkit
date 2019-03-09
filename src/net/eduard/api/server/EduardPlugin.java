@@ -32,7 +32,10 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	protected boolean free;
 	protected boolean makeBackup=true;
 	
-	
+	public String getString(String path) {
+		return config.message(path);
+	}
+
 
 	public boolean isMakeBackup() {
 		return makeBackup;
@@ -158,7 +161,12 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	public boolean getBoolean(String path) {
 		return config.getBoolean(path);
 	}
-
+	public int getInt(String path) {
+		return config.getInt(path);
+	}
+	public double getDouble(String path) {
+		return config.getDouble(path);
+	}
 	public String message(String path) {
 		return messages.message(path);
 	}

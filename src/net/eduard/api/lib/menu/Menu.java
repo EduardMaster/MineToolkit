@@ -30,11 +30,14 @@ import net.eduard.api.lib.modules.Extra;
  *
  */
 public class Menu extends EventsManager implements Copyable, PagedMenu {
-	private static boolean debug = false;
+	private static boolean debug = true;
 
-	public static void log(String msg) {
-		if (debug)
+
+	public static void debug(String msg) {
+		if (debug) {
 			Mine.console("§b[Menu] §7" + msg);
+		}
+	
 	}
 
 	private String title = "Menu";
@@ -298,7 +301,7 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 				pagesCache.put(page, menu);
 			}
 			pageOpened.put(player, page);
-//			Mine.broadcast("Abrindo "+page +" tem "+pageOpened.containsKey(player));
+//			debug("Abrindo "+page +" tem "+pageOpened.containsKey(player));
 			return menu;
 		}
 		return Mine.newInventory("Null", 9);
@@ -401,10 +404,11 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 		if (e.getWhoClicked() instanceof Player) {
 
 			Player player = (Player) e.getWhoClicked();
+			
 //			if (e.getInventory().getTitle().contains(getTitle())) {
 
 			if (pageOpened.containsKey(player)) {
-				log("Menu nome " + e.getInventory().getName());
+				debug("Nome do Menu: " + e.getInventory().getName());
 				e.setCancelled(true);
 				int slot = e.getRawSlot();
 				Integer page = pageOpened.get(player);
@@ -417,16 +421,18 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 						open(player, --page);
 					} else {
 						button = getButton(itemClicked);
-						log("Button by Item " + ((button == null) ? "is Null" : "is not null"));
+						debug("Button by Item " + ((button == null) ? "is Null" : "is not null"));
 					}
 				}
 				if (button == null) {
 					button = getButton(page, slot);
-					log("Button by Slot " + ((button == null) ? "is Null" : "is not null"));
+					debug("Button by Slot " + ((button == null) ? "is Null" : "is not null"));
 				}
 
 				if (button != null) {
+					debug("Button is not null");
 					if (button.getClick() != null) {
+						debug("Button make a Custom Effect");
 						button.getClick().onClick(e, slot);
 					}
 					if (button.getEffects() != null) {
@@ -434,12 +440,12 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 					}
 					if (button.isCategory()) {
 						button.getMenu().open(player);
-//							Mine.console("§cE uma categoria");
+						debug("Button open another menu");
 						return;
 					}
 				}
 				if (getEffect() != null) {
-//						System.out.println(button);
+					debug("Played menu effect");
 					getEffect().onClick(e, page);
 				}
 			} else {

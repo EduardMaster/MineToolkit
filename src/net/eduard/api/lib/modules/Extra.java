@@ -91,24 +91,20 @@ public final class Extra {
 
 		return set;
 	}
-
-//	public static void readUTF8(File file) throws Exception {
-//		FileInputStream fis = new FileInputStream(file);
-//		BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
-//
-//		String line = br.readLine();
-//		if (line.startsWith("\uFEFF")) {
-//			// it's UTF-8, throw away the BOM character and continue
-//			line = line.substring(1);
-//		} else {
-//			// it's not UTF-8, reopen
-//			br.close(); // also closes fis
-//			fis = new FileInputStream(file); // reopen from the start
-//			br = new BufferedReader(new InputStreamReader(fis, "Cp1252"));
-//			line = br.readLine();
-//		}
-//
-//	}
+	/**
+	 * Le um Texto de uma stream
+	 * @param stream Stream de bytes
+	 * @param charset Conjunto de caracteres
+	 * @return o texto lido da stream
+	 * @throws IOException Erro ao ler
+	 */
+	public static String readSTR(InputStream stream, Charset charset) throws IOException {
+		byte[] bytes = new byte[stream.available()];
+		stream.read(bytes);
+		return new String(bytes, charset);
+	}
+	
+	
 
 	public static DecimalFormat MONEY = new DecimalFormat("###,###.##",
 			DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));
@@ -1275,7 +1271,11 @@ public final class Extra {
 		}
 		return text;
 	}
-
+	/**
+	 * Transforma uma Coleção de Texto em uma String (Texto)
+	 * @param message Mensagem
+	 * @return o texto gerado apartir da coleção
+	 */
 	public static String toText(Collection<String> message) {
 		return message.toString().replace("[", "").replace("]", "");
 	}

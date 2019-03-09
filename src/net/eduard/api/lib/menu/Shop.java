@@ -20,7 +20,7 @@ import net.eduard.api.lib.storage.StorageAttributes;
 public class Shop extends Menu {
 	private boolean useVault = true;
 
-	private ShopSorter sortType = ShopSorter.BUY_PRICE_ASC;
+	private ShopSortType sortType = ShopSortType.BUY_PRICE_ASC;
 
 	private String messageBoughtItem = "§aVoce adquiriu $amount ($product) produto(s) da Loja!";
 
@@ -38,7 +38,7 @@ public class Shop extends Menu {
 	}
 
 	public void organize() {
-		if (sortType == ShopSorter.BUY_PRICE_ASC) {
+		if (sortType == ShopSortType.BUY_PRICE_ASC) {
 			Stream<Product> lista = getButtons().stream().filter(b -> b instanceof Product).map(b -> (Product) b)
 					.sorted(Comparator.comparing(Product::getUnitBuyPrice));
 			lista.forEach(new Consumer<Product>() {
@@ -125,7 +125,7 @@ public class Shop extends Menu {
 							}
 
 						} else {
-							log("§b[Shop] §cnao funcionado pois nao tem  um sistema de economia");
+							debug("§b[Shop] §cnao funcionado pois nao tem  um sistema de economia");
 							return;
 						}
 						product.setStock(evento.getNewStock());
@@ -272,11 +272,11 @@ public class Shop extends Menu {
 		this.messageWithoutPermission = messageWithoutPermission;
 	}
 
-	public ShopSorter getSortType() {
+	public ShopSortType getSortType() {
 		return sortType;
 	}
 
-	public void setSortType(ShopSorter sortType) {
+	public void setSortType(ShopSortType sortType) {
 		this.sortType = sortType;
 	}
 

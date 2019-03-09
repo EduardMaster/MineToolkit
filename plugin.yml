@@ -1,18 +1,18 @@
 name: EduardAPI
 description: API de desenvolvimento de plugins que facilita sua vida
 main: net.eduard.api.EduardAPI
-version: 2.5.9
+version: 2.5.10
 author: Eduard
 authors: [Eduard]
 softdepend: [HolographicDisplays,Citizens,Vault,Essentials,mcMMO,Factions]
 website: https://www.youtube.com/user/EduTutoriaisHD
 commands:
   map:
-    description: Controle dos Mapas da API
+    description: Controla a criacao de mapas
     aliases: [mapa]
     usage: /<command> help
   api:
-    description: Comando principal da API
+    description: Controla plugins feitos pelo Edu
     aliases: [eduardapi,eduard,e]
     usage: /<command> help
   goto: 
@@ -20,10 +20,14 @@ commands:
     aliases: [ir,irpara,mundo,world]
     usage: /<command> <world>
   enchantment: 
-    description: Encantar os itens
+    description: Encanta o item para um nivel
     aliases: [ench]
     usage: /<command> <enchant> <level>
   sound: 
-    description: Tocar um som do minecraft
+    description: Toca um som do minecraft
     aliases: [som]
     usage: /<command> <sound> [volume] [pitch]
+  setexperience: 
+    description: 
+    aliases: [setexp,setxp]
+    usage: /<command> <xp>

@@ -11,6 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.command.EnchantCommand;
 import net.eduard.api.command.GotoCommand;
+import net.eduard.api.command.SetXPCommand;
 import net.eduard.api.command.SoundCommand;
 import net.eduard.api.command.api.ApiCommand;
 import net.eduard.api.command.map.MapCommand;
@@ -112,6 +113,7 @@ public class EduardAPI extends EduardPlugin {
 		new EnchantCommand().register();
 		new GotoCommand().register();
 		new SoundCommand().register();
+		new SetXPCommand().register();
 		new EssentialsEvents().register(this);
 //		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
 		InfoGenerator.saveObjects(this);

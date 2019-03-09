@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 /**
  * API simplificada de criar Config
@@ -43,6 +44,8 @@ public class Configs {
 	public String getName() {
 		return name;
 	}
+
+	
 
 	public Location getLocation(String path) {
 		ConfigurationSection section = getSection(path);

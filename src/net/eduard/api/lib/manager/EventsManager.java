@@ -32,7 +32,7 @@ public class EventsManager implements Listener, Storable {
 	 * Construtor base deixando Plugin automatico
 	 */
 	public EventsManager() {
-		setPlugin(defaultPlugin());
+//		setPlugin(defaultPlugin());
 	}
 
 	public Plugin defaultPlugin() {
@@ -96,6 +96,9 @@ public class EventsManager implements Listener, Storable {
 	 * @return Plugin
 	 */
 	public Plugin getPluginInstance() {
+		if (plugin == null) {
+			plugin = defaultPlugin();
+		}
 		return plugin;
 	}
 
