@@ -26,7 +26,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
  * Classe Bukkit com comandos traduzidos para o Português
  * 
  * @author Eduard
- *
+ *	@version 0.1
  */
 public class Balde {
 

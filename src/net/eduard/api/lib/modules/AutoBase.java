@@ -28,7 +28,7 @@ import java.util.UUID;
  * @version 1.0
  * @since Lib v2.0
  */
-public interface AutoBase<E> {
+public interface AutoBase {
 
 	/**
 	 * Informacao da Coluna
@@ -333,32 +333,33 @@ public interface AutoBase<E> {
 		}
 	}
 
-	public default List<E> getAll(Connection connection, boolean decending) {
-		return getAll(connection, primaryKey(), decending);
+	public default List<? extends AutoBase> getAll(Connection connection, boolean decending) {
+		return getAll(this, connection, primaryKey(), decending);
 	}
 
-	public default List<E> getAll(boolean decending) {
+	public default List<? extends AutoBase> getAll(boolean decending) {
 		return getAll(connect(), decending);
 	}
 
-	public default List<E> getAll(String collumnOrdened, boolean decending) {
-		return getAll(connect(), collumnOrdened, decending);
+	public default List<? extends AutoBase> getAll(String collumnOrdened, boolean decending) {
+		return getAll(this, connect(), collumnOrdened, decending);
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	public default List<E> getAll(Connection connection, String collumnOrdened, boolean decending) {
+	public static <E extends AutoBase> List<E> getAll(E e, Connection connection, String collumnOrdened,
+			boolean decending) {
 		List<E> lista = new ArrayList<>();
 		try {
 			StringBuilder builder = new StringBuilder();
-			builder.append("SELECT * FROM " + getTableName() + " ORDER BY ? " + ((decending) ? "DESC" : "ASC") + ";");
-			Field var = getClass().getDeclaredField(collumnOrdened);
+			builder.append("SELECT * FROM " + e.getTableName() + " ORDER BY ? " + ((decending) ? "DESC" : "ASC") + ";");
+			Field var = e.getClass().getDeclaredField(collumnOrdened);
 			var.setAccessible(true);
-			ResultSet rs = select(connection, builder.toString(), getFieldName(var));
+			ResultSet rs = e.select(connection, builder.toString(), e.getFieldName(var));
 			while (rs.next()) {
 				E newE = null;
 				try {
 
-					newE = (E) getClass().newInstance();
+					newE = (E) e.getClass().newInstance();
 
 				} catch (Exception ex) {
 					continue;
@@ -376,7 +377,7 @@ public interface AutoBase<E> {
 						continue;
 					}
 					field.setAccessible(true);
-					Object value = Extra.getSQLValue(rs, field.getType(), getFieldName(field));
+					Object value = Extra.getSQLValue(rs, field.getType(), e.getFieldName(field));
 					field.set(newE, value);
 				}
 				lista.add(newE);

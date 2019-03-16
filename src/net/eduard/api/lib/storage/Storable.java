@@ -51,12 +51,20 @@ public interface Storable {
 		}
 		return null;
 	}
-
+	/**
+	 *  Cria um novo Objeto pelo Objeto String
+	 * @param object Objeto String
+	 * @return Objeto
+	 */
 	public default Object restore(Object object) {
 
 		return null;
 	}
-
+	/**
+	 * Gera um objeto armazenal em STRING apartir do Objeto 1
+	 * @param object Objeto
+	 * @return String Objeto
+	 */
 	public default Object store(Object object) {
 		return null;
 	}

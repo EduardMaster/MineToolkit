@@ -38,11 +38,11 @@ import net.eduard.api.manager.PluginValor;
 import net.eduard.api.server.EduardPlugin;
 
 /**
- * Classe Principal do Plugin EduardAPI
+ * Classe Principal do EduardAPI
  * 
  * @author Eduard
  * @version 1.2
- * @since 1.0
+ * @since 0.5
  * 
  * 
  */

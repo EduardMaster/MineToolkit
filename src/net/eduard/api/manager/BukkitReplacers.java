@@ -1,5 +1,7 @@
 package net.eduard.api.manager;
 
+import java.util.Set;
+
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 
@@ -13,7 +15,10 @@ import net.eduard.api.lib.modules.VaultAPI;
  *
  */
 public class BukkitReplacers {
+
 	public BukkitReplacers() {
+		Set<Integer> valores = null;
+		
 		if (Mine.hasPlugin("Vault")) {
 			Mine.addReplacer("$player_group", new Replacer() {
 
@@ -70,7 +75,7 @@ public class BukkitReplacers {
 				public Object getText(Player p) {
 					if (VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
 
-						return Mine.formatMoney(VaultAPI.getEconomy().getBalance(p));
+						return Extra.formatMoney(VaultAPI.getEconomy().getBalance(p));
 
 					}
 					return "0.00";

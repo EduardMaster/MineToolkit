@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -14,13 +15,20 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * API para utilização de metodos do Spigot com mais facilidade
- * @version 1.2 §
- * @since Lib v1.0
+ * @version 1.2 
+ * @since EduardAPI v1.0
  * @author Eduard
- * @see Mine
+ * @see EduardLIB
  *
  */
 public final class SpigotAPI {
+	/**
+	 * {@link Mine}
+	 * @param player
+	 * @param message
+	 * @param hoverMessage
+	 * @param clickCommand
+	 */
 	public static void sendMessage(Player player, String message, String hoverMessage, String clickCommand) {
 		sendMessage(Arrays.asList(player), message, hoverMessage, clickCommand);
 	}
@@ -34,7 +42,14 @@ public final class SpigotAPI {
 			String clickCommand) {
 		sendMessage(players, message, hoverMessages, clickCommand, true);
 	}
-
+	/**
+	 * Envia mensagems clicaveis para varios jogadores
+	 * @param players
+	 * @param message
+	 * @param hoverMessages
+	 * @param clickCommand
+	 * @param runCommand
+	 */
 	public static void sendMessage(Collection<Player> players, String message, List<String> hoverMessages,
 			String clickCommand, boolean runCommand) {
 

@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 /**
- * Classe para criação de tarefas de tempo em tempo, ou com demora
+ * Classe para criação de tarefas de tempos em tempos, ou com atraso
  * @author Eduard
  *
  */

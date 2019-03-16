@@ -31,8 +31,6 @@ public abstract class StorageBase {
 		}
 	}
 
-	
-
 	public void update(StorageAttributes atr) {
 		setReference(atr.reference());
 		setInline(atr.inline());
@@ -40,9 +38,11 @@ public abstract class StorageBase {
 	}
 
 	public void updateByField() {
-		if (getField().isAnnotationPresent(StorageAttributes.class)) {
-			StorageAttributes atr = getField().getAnnotation(StorageAttributes.class);
-			update(atr);
+		if (getField() != null) {
+			if (getField().isAnnotationPresent(StorageAttributes.class)) {
+				StorageAttributes atr = getField().getAnnotation(StorageAttributes.class);
+				update(atr);
+			}
 		}
 	}
 

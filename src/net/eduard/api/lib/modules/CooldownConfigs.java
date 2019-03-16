@@ -2,8 +2,6 @@ package net.eduard.api.lib.modules;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import net.eduard.api.lib.Mine;
 /**
  * Sistema de configuração focada em armazenamento de cooldowns
  *
@@ -17,7 +15,7 @@ public class CooldownConfigs extends Configs {
 	public CooldownConfigs(JavaPlugin plugin) {
 		super("cooldowns.yml", plugin);
 
-	}
+	} 
 
 	public void addCooldown(Player player, String cooldown, long timeToWait) {
 		set(tag + getId(player) + cooldown + ".before", System.currentTimeMillis());
@@ -36,7 +34,7 @@ public class CooldownConfigs extends Configs {
 	}
 
 	public String getTime(Player player, String cooldown) {
-		return Mine.formatTime(getCooldown(player, cooldown));
+		return Extra.formatTime(getCooldown(player, cooldown));
 	}
 
 	public long getCooldown(Player player, String cooldown) {

@@ -894,26 +894,6 @@ public final class Mine {
 		}
 	}
 
-	public static String formatColors(String str) {
-		return Extra.formatColors(str);
-	}
-
-	public static String formatDiference(long timestamp) {
-		return formatTime(timestamp - System.currentTimeMillis());
-	}
-
-	/**
-	 * 
-	 * @param numero Numero
-	 * @return numero formatado
-	 */
-	public static String formatMoney(double numero) {
-		return Extra.formatMoney(numero);
-	}
-
-	public static String formatTime(long time) {
-		return Extra.formatTime(time);
-	}
 
 	/**
 	 * Transforma um Texto em Vetor de Itens
@@ -964,7 +944,7 @@ public final class Mine {
 		return null;
 	}
 
-	/**
+	/**@
 	 * Escreve uma lista de objetos em um arquivo
 	 * 
 	 * @param list Lista de Objetos
