@@ -22,21 +22,28 @@ import net.eduard.api.lib.manager.EventsManager;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.server.EduardPlugin;
 
+/**
+ * Códigos que antes ficavam tudo na {@link EduardAPI} agora ficam separados
+ * 
+ * @since 2.3
+ * @version 1.0
+ * 
+ * @author Eduard
+ *
+ */
 public class EssentialsEvents extends EventsManager {
+	
 	@EventHandler
 	public void onEnable(PluginEnableEvent e) {
 		if (e.getPlugin() instanceof EduardPlugin) {
 
 			EduardPlugin plugin = (EduardPlugin) e.getPlugin();
-			String msg = "§b[Eduard-Dev] §f" + plugin.getName() + " §fv" + plugin.getDescription().getVersion()
-					+ "§a foi ativado com sucesso.";
-			if (plugin.isFree()) {
-				Mine.broadcast(msg);
-			} else {
-				Mine.console(msg);
-				double valor = plugin.getPrice();
-				Mine.console("§bPreco: §aR$" + Extra.MONEY.format(valor));
-			}
+
+			plugin.log("Foi ativado na v" + plugin.getDescription().getVersion() + " um plugin "
+					+ (plugin.isFree() ? "§aGratuito" : "§bPago")+ "§f feito pelo Eduard");
+		
+			plugin.log("Seu Valor gerado automaticamente: §aR$" + Extra.MONEY.format(plugin.getPrice()));
+
 		}
 //		for (Config config : Config.CONFIGS) {
 //			if (e.getPlugin().equals(EduardAPI.getInstance().getConfigs().getPlugin())) {
@@ -44,10 +51,6 @@ public class EssentialsEvents extends EventsManager {
 //			}
 //		}
 	}
-
-
-	
-
 
 	@EventHandler
 	public void marketing(PlayerJoinEvent e) {
@@ -66,7 +69,7 @@ public class EssentialsEvents extends EventsManager {
 
 				}
 			}
-			p.sendMessage("§aCaso deseje comprar mais plugins entre em contato ou no site §bwww.eduarddev.tk");
+			p.sendMessage("§aCaso deseje comprar mais plugins entre em contato ou no site §bwww.eduard.com.br");
 		}
 
 	}
@@ -76,13 +79,10 @@ public class EssentialsEvents extends EventsManager {
 		if (e.getPlugin() instanceof EduardPlugin) {
 
 			EduardPlugin plugin = (EduardPlugin) e.getPlugin();
-			String msg = "§b[Eduard-Dev] §f" + plugin.getName() + " §fv" + plugin.getDescription().getVersion()
-					+ " foi desativado com sucesso.";
-			if (plugin.isFree()) {
-				Mine.broadcast(msg);
-			} else {
-				Mine.console(msg);
-			}
+			
+
+			plugin.log("Foi desativado na v" + plugin.getDescription().getVersion() + " um plugin "
+					+ (plugin.isFree() ? "§aGratuito" : "§bPago"));
 
 		}
 //		for (Config config : Config.CONFIGS) {
@@ -175,13 +175,15 @@ public class EssentialsEvents extends EventsManager {
 				Schematic mapa = Mine.getSchematic(p);
 				if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
 					mapa.setHigh(e.getClickedBlock().getLocation().toVector());
-					p.sendMessage("§bEduardAPI §6Posição 1 setada!");
+					p.sendMessage("§aPosição 1 setada!");
 				} else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					mapa.setLow(e.getClickedBlock().getLocation().toVector());
-					p.sendMessage("§bEduardAPI §6Posição 2 setada!");
+					p.sendMessage("§aPosição 2 setada!");
 				}
 
 			}
 		}
 	}
+
+	
 }

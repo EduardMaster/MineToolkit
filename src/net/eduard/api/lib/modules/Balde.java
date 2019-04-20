@@ -26,14 +26,15 @@ import org.bukkit.scoreboard.ScoreboardManager;
  * Classe Bukkit com comandos traduzidos para o Português
  * 
  * @author Eduard
- *	@version 0.1
+ * @version 0.1
+ * @since 2.5
  */
 public class Balde {
 
 	public static void registrarCraft(Recipe craft) {
 		Bukkit.addRecipe(craft);
 	}
-
+ 
 	public static void banirIP(String endereçoIP) {
 
 		Bukkit.banIP(endereçoIP);

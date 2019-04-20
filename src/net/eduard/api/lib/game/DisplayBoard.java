@@ -161,6 +161,7 @@ public class DisplayBoard implements Storable, Copyable {
 		}
 		if (!fakes.containsKey(line)) {
 			FakePlayer fake = new FakePlayer(center);
+			
 			objective.getScore(fake).setScore(line);
 			fakes.put(line, fake);
 			team.addPlayer(fake);
@@ -243,7 +244,7 @@ public class DisplayBoard implements Storable, Copyable {
 //		Mine.broadcast("§cinit executado"
 //				+ "");
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		objective = scoreboard.registerNewObjective("sc" + Mine.getRandomInt(1000, 100000), "dummy");
+		objective = scoreboard.registerNewObjective("sc" + Extra.getRandomInt(1000, 100000), "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		health = scoreboard.registerNewObjective("HealthBar", Criterias.HEALTH);
 		health.setDisplaySlot(DisplaySlot.BELOW_NAME);

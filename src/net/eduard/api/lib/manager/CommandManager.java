@@ -24,7 +24,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 	public static CommandManager getCommand(String name) {
 		return commandsRegistred.get(name.toLowerCase());
 	}
-
+ 
 	public static Map<String, CommandManager> getCommandsRegistred() {
 		return commandsRegistred;
 	}

@@ -23,7 +23,12 @@ import java.util.Map.Entry;
  */
 @SuppressWarnings("unchecked")
 public interface Copyable {
-
+/**
+ * Anotação que marca que um variavel não é para ser copiada 
+ * @version 1.0
+ * @author Eduard
+ *
+ */
 	@Target({ java.lang.annotation.ElementType.FIELD })
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface NotCopyable {

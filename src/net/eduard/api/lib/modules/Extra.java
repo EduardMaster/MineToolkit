@@ -69,7 +69,6 @@ import com.google.common.io.ByteStreams;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-
 /**
  * API contendo coisas relacionado a Textos, Numeros, Arquivos, Metodos
  * importantes e Reflection
@@ -78,7 +77,7 @@ import com.google.gson.JsonParser;
  * @since Lib v2.0
  * @author Eduard
  *
- */
+ */ 
 public final class Extra {
 
 	@SafeVarargs
@@ -91,9 +90,11 @@ public final class Extra {
 
 		return set;
 	}
+
 	/**
 	 * Le um Texto de uma stream
-	 * @param stream Stream de bytes
+	 * 
+	 * @param stream  Stream de bytes
 	 * @param charset Conjunto de caracteres
 	 * @return o texto lido da stream
 	 * @throws IOException Erro ao ler
@@ -103,8 +104,6 @@ public final class Extra {
 		stream.read(bytes);
 		return new String(bytes, charset);
 	}
-	
-	
 
 	public static DecimalFormat MONEY = new DecimalFormat("###,###.##",
 			DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));
@@ -221,11 +220,13 @@ public final class Extra {
 		Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
 
 	}
-/**
- * FAzer funcionar
- * @param file
- * @return
- */
+
+	/**
+	 * FAzer funcionar
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public static List<String> readLines(File file) {
 		Path path = file.toPath();
 		try {
@@ -380,6 +381,109 @@ public final class Extra {
 		}
 		return false;
 	}
+	/**
+	 * Gera o preco da classe baseado em suas variaveis , metodos e demais coisas
+	 * 
+	 * @param claz      Classe
+	 * @param blacklist Classes que não poderam ter seu valor mais relido
+	 * @return Valor da classe
+	 */
+	public static double getValueOf(Class<?> claz, ArrayList<Class<?>> blacklist, boolean debug) {
+		double finalValue = 0.1;
+		// sem esta verificação dependo pode ultrapassar as casas da centena vale muito
+
+		if (claz.getPackage().getName().startsWith("java")) {
+			blacklist.add(claz);
+		
+			return 0;
+		}
+		if (claz.getPackage().getName().startsWith("com.google")) {
+			blacklist.add(claz);
+			return 0;
+		}
+		try {
+
+			Field[] lista = claz.getDeclaredFields();
+			for (Field variable : lista) {
+				if (debug)
+					System.out.println(claz.getSimpleName() + " Var: " + variable.getName());
+				try {
+
+					Class<?> type = variable.getType();
+					finalValue += 0.05;
+					if (debug)
+						System.out.println(claz.getSimpleName() + " +0.05");
+					if (type.isPrimitive()) {
+
+						continue;
+					}
+					if (type.isEnum()) {
+						continue;
+					}
+					if (type.isArray()) {
+						continue;
+					}
+					if (type.isAnnotation()) {
+						continue;
+					}
+
+					if (blacklist.contains(type)) {
+						if (debug)
+							System.out.println(claz.getSimpleName() + " Class in blacklist " + type.getSimpleName());
+						continue;
+					} else {
+						if (debug)
+							System.out.println(
+									claz.getSimpleName() + " Class is not in blacklist " + type.getSimpleName());
+					}
+					if (!type.isAssignableFrom(claz)) {
+						if (debug)
+							System.out.println(claz.getSimpleName() + " Reading value of " + type.getSimpleName());
+						blacklist.add(claz);
+						finalValue += getValueOf(type, blacklist, debug);
+					} else {
+						if (debug)
+							System.out
+									.println("" + claz.getSimpleName() + " is assignable from " + claz.getSimpleName());
+					}
+				} catch (Error e) {
+					if (debug)
+						System.out.println("Failed tu read this field");
+				}
+			}
+			for (Method method : claz.getDeclaredMethods()) {
+				if (debug)
+					System.out.println(claz.getSimpleName() + " Metd: " + method.getName());
+				finalValue += 0.025;
+				if (debug)
+					System.out.println(claz.getSimpleName() + " +0.025");
+				double calc = 0.005 * method.getParameterCount();
+				finalValue += calc;
+
+				if (debug)
+					System.out.println(claz.getSimpleName() + " +" + calc);
+
+			}
+			if (claz.getSuperclass() != null)
+				while (!claz.getSuperclass().equals(Object.class)) {
+					if (debug)
+						System.out.println("" + claz.getSimpleName() + " Reading class super "
+								+ claz.getSuperclass().getSimpleName());
+					blacklist.add(claz);
+					finalValue += getValueOf(claz.getSuperclass(), blacklist, debug);
+					claz = claz.getSuperclass();
+					if (claz == null)
+						break;
+				}
+			if (debug)
+				System.out.println(claz.getSimpleName() + " Final value: " + finalValue);
+		} catch (Error e) {
+			if (debug)
+				System.out.println("Failed to load this class");
+		}
+		return finalValue;
+	}
+
 
 	public static double calculateClassValue(Class<?> claz) {
 
@@ -692,11 +796,11 @@ public final class Extra {
 				if ((entryName.endsWith(".class")) && (entryName.startsWith(relPath)) && !entryName.contains("$")) {
 					String classeName = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
 					try {
-						lista.add(Class.forName(classeName));
+						Class<?> claz = Class.forName(classeName);
+
+						lista.add(claz);
 					} catch (Error e) {
 						System.out.println("Error on load " + classeName);
-					} catch (Exception e) {
-						System.out.println("Failed to load " + classeName);
 					}
 
 				}
@@ -1271,8 +1375,10 @@ public final class Extra {
 		}
 		return text;
 	}
+
 	/**
 	 * Transforma uma Coleção de Texto em uma String (Texto)
+	 * 
 	 * @param message Mensagem
 	 * @return o texto gerado apartir da coleção
 	 */

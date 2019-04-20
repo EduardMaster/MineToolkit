@@ -7,7 +7,8 @@ import org.bukkit.util.EulerAngle;
  * Sistema de animar {@link ArmorStand}
  * 
  * @author Eduard
- *
+ * @version 1.0
+ * @since 2.5
  */
 public class Animation {
 
@@ -18,6 +19,7 @@ public class Animation {
 	public ArmorStand getStand() {
 		return stand;
 	}
+
 	public Animation(ArmorStand stand) {
 		setStand(stand);
 	}
@@ -39,6 +41,7 @@ public class Animation {
 	public void moveHeadBack(int degrees) {
 		moveHead(-one_degree * degrees, 0, 0);
 	}
+
 	public void moveHeadUp(int degrees) {
 		moveHead(0, 0, one_degree * degrees);
 	}

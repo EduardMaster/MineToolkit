@@ -24,6 +24,8 @@ import com.google.common.io.ByteStreams;
 /**
  * API de controlar o BungeeCord pelo Servidor Spigot
  * @author Eduard
+ * @version 2.0
+ * @since 2.3
  *
  */
 public final class BukkitBungeeAPI {

@@ -12,22 +12,25 @@ import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.EduardAPI;
 import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.config.ConfigSection;
 
 /**
  * Sistema que gera informações do servidor
+ * 
  * @author Eduard
- *
+ * @since 1.1
+ * @version 3.0
  */
 public class InfoGenerator {
-	public static  void saveObjects(JavaPlugin plugin) {
+	private EduardAPI plugin;
 
+	public InfoGenerator(EduardAPI plugin) {
+		setPlugin(plugin);
 		if (!new File(plugin.getDataFolder(), "DataBase").exists()) {
 			saveEnum(DamageCause.class);
 			saveEnum(Material.class);
@@ -39,11 +42,11 @@ public class InfoGenerator {
 			saveEnum(Environment.class);
 			saveEnum(PotionType.class);
 			saveClassLikeEnum(PotionEffectType.class);
-			Mine.console("§bEduardAPI §fDataBase gerada!");
-		}else {
-			Mine.console("§bEduardAPI §fDataBase ja foi gerada!");
+			plugin.log("DataBase gerada!");
+		} else {
+			plugin.log("DataBase ja foi gerada!");
 		}
-	
+
 //		if (getConfigs().getBoolean("save-worlds")) {
 //			for (World world : Bukkit.getWorlds()) {
 //				saveObject("Worlds/" + world.getName(), world);
@@ -57,12 +60,12 @@ public class InfoGenerator {
 //		}
 //		saveObject("Server", Bukkit.getServer());
 	}
-	
-	public static void saveEnum(Class<?> value) {
+
+	private void saveEnum(Class<?> value) {
 		saveEnum(value, false);
 	}
 
-	public static void saveClassLikeEnum(Class<?> value) {
+	private void saveClassLikeEnum(Class<?> value) {
 		try {
 			Config config = new Config("DataBase/" + value.getSimpleName() + ".yml");
 			for (Field field : value.getFields()) {
@@ -88,7 +91,7 @@ public class InfoGenerator {
 		}
 	}
 
-	public static void saveObject(String local, Object value) {
+	static void saveObject(String local, Object value) {
 		try {
 			Config config = new Config("DataBase/" + local + ".yml");
 			ConfigSection section = config.getConfig();
@@ -103,8 +106,7 @@ public class InfoGenerator {
 					if (name.equals("getOfflinePlayers")) {
 						continue;
 					}
-					if (name.equals("getEntities")||name.equals("getLivingEntities"))
-					{
+					if (name.equals("getEntities") || name.equals("getLivingEntities")) {
 						continue;
 					}
 					Object test = method.invoke(value);
@@ -122,7 +124,7 @@ public class InfoGenerator {
 		}
 	}
 
-	public static void saveEnum(Class<?> value, boolean perConfig) {
+	private void saveEnum(Class<?> value, boolean perConfig) {
 		try {
 			if (perConfig) {
 
@@ -173,7 +175,7 @@ public class InfoGenerator {
 									section.add(method.getName(), test);
 									used = true;
 								} catch (Exception ex) {
-									Mine.console("§bDataBase §fO metodo §c" + name + "§f causou erro!");
+									getPlugin().log("O metodo §c" + name + "§f causou erro!");
 									ex.printStackTrace();
 									continue;
 								}
@@ -194,6 +196,14 @@ public class InfoGenerator {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public EduardAPI getPlugin() {
+		return plugin;
+	}
+
+	public void setPlugin(EduardAPI plugin) {
+		this.plugin = plugin;
 	}
 
 }

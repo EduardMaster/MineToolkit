@@ -27,6 +27,16 @@ public final class SpigotAPI {
 	 * @param player
 	 * @param message
 	 * @param hoverMessage
+	 * @param textToSend
+	 */
+	public static void sendMessage(Player player, String message, String hoverMessage, String textToSend, boolean runCommand) {
+		sendMessage(Arrays.asList(player), message, Arrays.asList(hoverMessage), textToSend,runCommand);
+	}
+	/**
+	 * {@link Mine}
+	 * @param player
+	 * @param message
+	 * @param hoverMessage
 	 * @param clickCommand
 	 */
 	public static void sendMessage(Player player, String message, String hoverMessage, String clickCommand) {
@@ -56,8 +66,12 @@ public final class SpigotAPI {
 		String lastColor = "";
 		String msg = message;
 		ComponentBuilder builder = new ComponentBuilder("");
+		boolean inicio = true;
 		for (String line : hoverMessages) {
-			builder.append(line + "\n");
+			if (!inicio) {
+				builder.append("\n");
+			}else inicio = false;
+			builder.append(line );
 		}
 		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, builder.create());
 		ClickEvent clickEvent = new ClickEvent(

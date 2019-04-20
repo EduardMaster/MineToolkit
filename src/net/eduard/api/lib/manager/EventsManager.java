@@ -14,6 +14,7 @@ import net.eduard.api.lib.storage.Storable;
 /**
  * Controlador de Eventos ({@link Listener})
  * 
+ * @version 2.0
  * @author Eduard
  *
  */

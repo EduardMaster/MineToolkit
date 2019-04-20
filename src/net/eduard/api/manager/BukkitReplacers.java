@@ -1,13 +1,11 @@
 package net.eduard.api.manager;
 
-import java.util.Set;
-
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.Mine.Replacer;
 import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.modules.Replacer;
 import net.eduard.api.lib.modules.VaultAPI;
 /**
  * Registrando os replacers mais usados na Displayboard
@@ -17,7 +15,7 @@ import net.eduard.api.lib.modules.VaultAPI;
 public class BukkitReplacers {
 
 	public BukkitReplacers() {
-		Set<Integer> valores = null;
+		
 		
 		if (Mine.hasPlugin("Vault")) {
 			Mine.addReplacer("$player_group", new Replacer() {

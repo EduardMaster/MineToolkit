@@ -1,13 +1,15 @@
 package net.eduard.api;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Locale;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import net.eduard.api.command.EnchantCommand;
 import net.eduard.api.command.GotoCommand;
@@ -20,9 +22,15 @@ import net.eduard.api.lib.bungee.BukkitController;
 import net.eduard.api.lib.bungee.BungeeAPI;
 import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.event.PlayerTargetEvent;
+import net.eduard.api.lib.game.DisplayBoard;
 import net.eduard.api.lib.game.SoundEffect;
+import net.eduard.api.lib.game.Tag;
+import net.eduard.api.lib.manager.CommandManager;
 import net.eduard.api.lib.manager.DBManager;
+import net.eduard.api.lib.manager.EventsManager;
+import net.eduard.api.lib.manager.TimeManager;
 import net.eduard.api.lib.menu.Menu;
+import net.eduard.api.lib.menu.Shop;
 import net.eduard.api.lib.modules.BukkitBungeeAPI;
 import net.eduard.api.lib.modules.Copyable.CopyDebug;
 import net.eduard.api.lib.modules.Extra;
@@ -34,7 +42,6 @@ import net.eduard.api.manager.EssentialsEvents;
 import net.eduard.api.manager.InfoGenerator;
 import net.eduard.api.manager.MassiveFactionReplacers;
 import net.eduard.api.manager.McMMOReplacers;
-import net.eduard.api.manager.PluginValor;
 import net.eduard.api.server.EduardPlugin;
 
 /**
@@ -81,17 +88,15 @@ public class EduardAPI extends EduardPlugin {
 		DBManager.setDebug(config.getBoolean("debug-db"));
 		Menu.setDebug(config.getBoolean("debug-menu"));
 		CopyDebug.setDebug(config.getBoolean("debug-copyable"));
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.game");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.menu");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib.manager");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.command");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.server");
-		StorageAPI.registerClasses(Mine.class);
+		
+		log("Registrando classes ");
+		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib");
+	
 
 		BukkitStorables.load();
-		Mine.console("§bEduardAPI §fStorables do Bukkit carregado!");
+		log("Storables do Bukkit carregado!");
 		Mine.resetScoreboards();
-		Mine.console("§bEduardAPI §fScoreboards resetadas!");
+		log("Scoreboards resetadas!");
 		asyncTimer(new Runnable() {
 
 			@Override
@@ -116,12 +121,12 @@ public class EduardAPI extends EduardPlugin {
 		new SetXPCommand().register();
 		new EssentialsEvents().register(this);
 //		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
-		InfoGenerator.saveObjects(this);
+		new InfoGenerator(this);
 
-		Mine.console("§bEduardAPI §fBase ativado!");
+		log("Base ativado!");
 
 		Mine.loadMaps();
-		Mine.console("§bEduardAPI §fMapas §acarregados!");
+		log("Mapas carregados!");
 
 		config.add("sound-teleport", Mine.OPT_SOUND_TELEPORT);
 		config.add("sound-error", Mine.OPT_SOUND_ERROR);
@@ -132,10 +137,12 @@ public class EduardAPI extends EduardPlugin {
 		Mine.OPT_NO_QUIT_MESSAGE = config.getBoolean("no-quit-message");
 		Mine.OPT_NO_DEATH_MESSAGE = config.getBoolean("no-death-message");
 		try {
+			log("Carregando formato de dinheiro da config");
 			Extra.MONEY = new DecimalFormat(config.getString("money-format"),
 					DecimalFormatSymbols.getInstance(Locale.forLanguageTag(config.getString("money-format-locale"))));
+			log("Formato valido");
 		} catch (Exception e) {
-			Mine.console("§cFormato do dinheiro invalido §f" + config.getString("money-format"));
+			error("Formato do dinheiro invalido " + config.getString("money-format"));
 		}
 
 		Mine.MSG_ON_JOIN = config.message("on-join-message");
@@ -149,37 +156,42 @@ public class EduardAPI extends EduardPlugin {
 			}
 		}
 
-		PluginValor.register();
-		int backupTime = config.getInt("backup-minutes") * 20 * 60;
-		if (backupTime <= 0) {
-			backupTime = 20 * 60 * 10;
-		}
-		Mine.console("§bEduardAPI §aBackup Automatico das 'storage.yml' ligado a cada " + (backupTime / (20 * 60))
-				+ " minutos.");
-		asyncTimer(new Runnable() {
+		
+		
+		log("Definindo valores das classes da API");
+		Extra.setPrice(EduardPlugin.class, 4);
+		Extra.setPrice(Menu.class, 4);
+		Extra.setPrice(Shop.class, 1);
+		Extra.setPrice(CommandManager.class, 0);
+		Extra.setPrice(TimeManager.class, 0);
+		Extra.setPrice(EventsManager.class, 1);
+		Extra.setPrice(DBManager.class, 15);
+		Extra.setPrice(Tag.class, 1);
+		Extra.setPrice(PluginMessageListener.class, 10);
+		Extra.setPrice(DisplayBoard.class, 5);
+		
 
-			@Override
-			public void run() {
-				for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-					if (plugin instanceof EduardPlugin) {
-						EduardPlugin eduardPlugin = (EduardPlugin) plugin;
-						eduardPlugin.backupStorage();
-					}
-				}
-			}
-		}, backupTime, backupTime);
-
-		Mine.console("§bEduardAPI §acarregado!");
+		log("Carregado com sucesso!");
 		new BukkitReplacers();
 		new McMMOReplacers();
 		new MassiveFactionReplacers();
+		
+//		double precoDaAPI = plugin.getPrice();
+		
+//		List<Class<?>> classes = getClasses("net.eduard.api");
+//		double valor = 0;
+//		for (Class<?> claz : classes) {
+//			valor+=EduardAPI.getValueOf(claz, new ArrayList<>(),false);
+//		}
+//		System.out.println("R$ "+valor);
 	}
-
+	
+	
 	@Override
 	public void onDisable() {
 		Mine.saveMaps();
-		Mine.console("§bEduardAPI §aMapas salvados!");
-		Mine.console("§bEduardAPI §cdesativado!");
+		log("Mapas salvados!");
+		log("desativado com sucesso!");
 		BungeeAPI.getController().unregister();
 	}
 

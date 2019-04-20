@@ -19,8 +19,8 @@ import com.gmail.nossr50.util.player.UserManager;
 
 import net.eduard.api.EduardAPI;
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.Mine.Replacer;
 import net.eduard.api.lib.manager.EventsManager;
+import net.eduard.api.lib.modules.Replacer;
 
 public class McMMOReplacers extends EventsManager {
 

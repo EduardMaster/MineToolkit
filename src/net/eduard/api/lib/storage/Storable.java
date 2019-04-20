@@ -12,6 +12,7 @@ import net.eduard.api.lib.modules.Extra;
  * @author Eduard
  * @see Extra
  * @see StorageAPI
+ * @version 3.0
  */
 public interface Storable {
 

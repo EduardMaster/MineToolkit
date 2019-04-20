@@ -40,6 +40,7 @@ public class StorageAPI {
 	private static List<ReferenceBase> references = new ArrayList<>();
 
 	public static boolean isStorable(Object object) {
+		
 		return object instanceof Storable;
 	}
 

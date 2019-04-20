@@ -10,7 +10,7 @@ import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
 
 import net.eduard.api.lib.Mine;
-import net.eduard.api.lib.Mine.Replacer;
+import net.eduard.api.lib.modules.Replacer;
 
 public class MassiveFactionReplacers {
 
