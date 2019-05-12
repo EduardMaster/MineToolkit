@@ -47,6 +47,15 @@ public class ItemRandom implements Storable {
 
 	}
 
+	public ItemStack createAmountRandom() {
+		ItemStack clone = item.clone();
+		int amount = Mine.getRandomInt(getMinAmount(), getMaxAmount());
+
+		clone.setAmount(amount);
+		return clone;
+
+	}
+
 	public double getChance() {
 
 		return chance;

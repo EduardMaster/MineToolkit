@@ -40,6 +40,7 @@ public class StorageObject extends StorageBase {
 						id = Extra.toInt(split[1]);
 //						debug("Id: " + id);
 					} catch (Exception e) {
+						// este erro nao vai influenciar em nada
 						e.printStackTrace();
 					}
 

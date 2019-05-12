@@ -78,12 +78,16 @@ public class ItemStackStorable implements Storable {
 			if (item.getItemMeta().hasEnchants()) {
 				StringBuilder str = new StringBuilder();
 				int id = 0;
-				for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
-					if (id > 0)
-						str.append(", ");
-					Enchantment enchantment = entry.getKey();
-					str.append(enchantment.getId() + "-" + entry.getValue());
-					id++;
+				try {
+					for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
+						if (id > 0)
+							str.append(", ");
+						Enchantment enchantment = entry.getKey();
+						str.append(enchantment.getId() + "-" + entry.getValue());
+						id++;
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 				enchants = str.toString();
 			}

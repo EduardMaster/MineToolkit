@@ -114,7 +114,6 @@ public final class Mine {
 	public static final String LINK_MOJANG_SKIN = "https://sessionserver.mojang.com/session/minecraft/profile/";
 	public static final String LINK_MCAPI_UUID = "https://mcapi.ca/name/uuid/";
 	public static final String LINK_MCAPI_SKIN = "http://mcapi.ca/uuid/player/";
-	
 
 	public static String classMineEntityPlayer = "#mEntityPlayer";
 	public static String classCraftCraftPlayer = "#cCraftPlayer";
@@ -250,9 +249,9 @@ public final class Mine {
 		try {
 			TIME = new TimeManager(getMainPlugin());
 			try {
-			MAPS_CONFIG = new BukkitConfig("maps/", getMainPlugin());
-			}catch(Exception e) {
-				
+				MAPS_CONFIG = new BukkitConfig("maps/", getMainPlugin());
+			} catch (Exception e) {
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1625,9 +1624,9 @@ public final class Mine {
 	 */
 	public static JavaPlugin getMainPlugin() {
 		try {
-			return JavaPlugin.getProvidingPlugin(Mine.class);			
+			return JavaPlugin.getProvidingPlugin(Mine.class);
 		} catch (Exception e) {
-return null;
+			return null;
 		}
 
 	}
@@ -2098,14 +2097,14 @@ return null;
 	 * @return Versão do Servidor
 	 */
 	public static String getVersion() {
-	
+
 		try {
 			String v = Bukkit.getServer().getClass().getPackage().getName().replace('.', ',').split(",")[3];
 			return v;
-		}catch(Exception er) {
+		} catch (Exception er) {
 			return "";
 		}
-		
+
 	}
 
 	/**
@@ -2331,17 +2330,19 @@ return null;
 		}
 
 	}
+
 	/**
 	 * Gera um Key invisivel para o chat ou menu<br>
-	 * A key consiste em § + alguma cor 
+	 * A key consiste em § + alguma cor
+	 * 
 	 * @param amount Quantidade
 	 * @return a Key Gerada
 	 */
 	public static String generateInvisibleKey(int amount) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < amount; i++) {
-			builder.append( ChatColor.values()[new Random().nextInt(ChatColor.values().length)]);
-			
+			builder.append(ChatColor.values()[new Random().nextInt(ChatColor.values().length)]);
+
 		}
 		return builder.toString();
 	}
@@ -2426,6 +2427,29 @@ return null;
 		banner.setItemMeta(meta);
 		// meta.set
 		return banner;
+	}
+
+		
+	/**
+	 * Enche a todas as laterais do inventario como Item
+	 * @param inv Inventario
+	 * @param item Item
+	 */
+	public static void fillInventoryBorders(Inventory inv, ItemStack item) {
+		for (int id = 0; id < 9; id++) {
+			inv.setItem(id, item);
+			;
+		}
+		for (int id = inv.getSize() - 9; id < inv.getSize(); id++) {
+			inv.setItem(id, item);
+			;
+		}
+		for (int id = 9; id < inv.getSize(); id += 9) {
+			inv.setItem(id, item);
+			;
+			inv.setItem(id - 1, item);
+			;
+		}
 	}
 
 	public static ItemStack newBook(String name, String title, String author, String... pages) {
@@ -3834,8 +3858,9 @@ return null;
 
 		return (lines.toArray(new String[lines.size()]));
 	}
+
 	static {
-		
+
 		Extra.newReplacer("#v", Mine.getVersion());
 	}
 }

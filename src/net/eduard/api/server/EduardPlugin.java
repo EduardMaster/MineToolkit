@@ -13,7 +13,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.eduard.api.EduardAPI;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.modules.BukkitTimeHandler;
