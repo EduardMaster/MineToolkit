@@ -7,15 +7,16 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * API para utilização de metodos do Spigot com mais facilidade
- * @version 1.2 
+ * 
+ * @version 1.3
  * @since EduardAPI v1.0
  * @author Eduard
  * @see EduardLIB
@@ -24,16 +25,20 @@ import net.md_5.bungee.api.chat.TextComponent;
 public final class SpigotAPI {
 	/**
 	 * {@link Mine}
+	 * 
 	 * @param player
 	 * @param message
 	 * @param hoverMessage
 	 * @param textToSend
 	 */
-	public static void sendMessage(Player player, String message, String hoverMessage, String textToSend, boolean runCommand) {
-		sendMessage(Arrays.asList(player), message, Arrays.asList(hoverMessage), textToSend,runCommand);
+	public static void sendMessage(Player player, String message, String hoverMessage, String textToSend,
+			boolean runCommand) {
+		sendMessage(Arrays.asList(player), message, Arrays.asList(hoverMessage), textToSend, runCommand);
 	}
+
 	/**
 	 * {@link Mine}
+	 * 
 	 * @param player
 	 * @param message
 	 * @param hoverMessage
@@ -52,8 +57,10 @@ public final class SpigotAPI {
 			String clickCommand) {
 		sendMessage(players, message, hoverMessages, clickCommand, true);
 	}
+
 	/**
 	 * Envia mensagems clicaveis para varios jogadores
+	 * 
 	 * @param players
 	 * @param message
 	 * @param hoverMessages
@@ -63,40 +70,43 @@ public final class SpigotAPI {
 	public static void sendMessage(Collection<Player> players, String message, List<String> hoverMessages,
 			String clickCommand, boolean runCommand) {
 
-		String lastColor = "";
-		String msg = message;
-		ComponentBuilder builder = new ComponentBuilder("");
-		boolean inicio = true;
-		for (String line : hoverMessages) {
-			if (!inicio) {
-				builder.append("\n");
-			}else inicio = false;
-			builder.append(line );
+		TextComponent spigotMessage = getText(message, hoverMessages, clickCommand, runCommand);
+
+		for (Player player : players) {
+			player.spigot().sendMessage(spigotMessage);
 		}
+
+	}
+
+	/**
+	 * Envia mensagems clicaveis para varios jogadores
+	 * 
+	 * @param players
+	 * @param message
+	 * @param hoverMessages
+	 * @param clickCommand
+	 * @param runCommand
+	 */
+	public static TextComponent getText(String message, List<String> hoverMessages, String clickCommand,
+			boolean runCommand) {
+
+		// String lastColor = "";
+
+		ComponentBuilder builder = new ComponentBuilder("");
+
+		for (String line : hoverMessages) {
+			builder.append(line, FormatRetention.FORMATTING);
+			// arrumar aqui
+		}
+
 		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, builder.create());
 		ClickEvent clickEvent = new ClickEvent(
 				runCommand ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND, clickCommand);
-		boolean stop = false;
-		while (!stop) {
-			String send = "";
-			if (msg.length() > 55) {
-				send = msg.substring(0, 55);
-				String color = getLastColor(send);
-				lastColor = color;
-				msg = lastColor + msg.substring(55);
-			} else {
-				send = msg;
-				stop = true;
-			}
-			TextComponent spigotMessage = new TextComponent(send);
-			spigotMessage.setClickEvent(clickEvent);
-			spigotMessage.setHoverEvent(hoverEvent);
-			for (Player player : players) {
-				player.spigot().sendMessage(spigotMessage);
-			}
+		TextComponent text = new TextComponent(message);
+		text.setHoverEvent(hoverEvent);
+		text.setClickEvent(clickEvent);
 
-		}
-
+		return text;
 	}
 
 	public static String getLastColor(String text) {
@@ -107,12 +117,13 @@ public final class SpigotAPI {
 		for (int i = 0; i < array.length; i++) {
 			char c = array[i];
 			if (lastChar == ChatColor.COLOR_CHAR) {
-				lastColor = ""+ChatColor.COLOR_CHAR + c;
+				lastColor = "" + ChatColor.COLOR_CHAR + c;
 			}
 			lastChar = c;
 		}
 		return lastColor + lastFormat;
 	}
+
 	public static ChatColor SUCCESS = ChatColor.GREEN;
 	public static ChatColor SUCCESS_ARGUMENT = ChatColor.DARK_GREEN;
 	public static ChatColor ERROR = ChatColor.RED;
