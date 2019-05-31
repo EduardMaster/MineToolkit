@@ -173,7 +173,7 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 			}
 			if (getConfigs().existConfig() && !getStorage().getKeys().isEmpty()) {
 
-				Files.copy(getStorage().getFile().toPath(), Paths.get(pasta.getPath(), config.getName()));
+				Files.copy(getConfigs().getFile().toPath(), Paths.get(pasta.getPath(), config.getName()));
 			}
 			if (databaseFile.exists()) {
 				Files.copy(databaseFile.toPath(), Paths.get(pasta.getPath(), databaseFile.getName()));
@@ -208,7 +208,7 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	}
 
 	public void startAutoBackup() {
-		startAutoSave(5 * 60);
+		startAutoBackup(5 * 60);
 	}
 
 	public void startAutoBackup(int seconds) {

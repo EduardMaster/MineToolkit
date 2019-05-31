@@ -8,12 +8,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Sistema de Key avancaado
+ * Sistema de Key avançado
  * @version 2.0
- * @since EduardAPI 5.2
+ * @since EduardAPI 2.2
  * @author Eduard
- *
+ * @see Licence
+ * @deprecated Use a versão {@link Licence}
  */
+@Deprecated
 public class Licence3 {
 
 	public static void test(JavaPlugin plugin) {

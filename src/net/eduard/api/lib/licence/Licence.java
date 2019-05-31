@@ -7,12 +7,13 @@ import java.util.Scanner;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.eduard.api.lib.modules.BungeeConfigs;
-import net.eduard.api.lib.modules.Configs;
+import net.eduard.api.lib.BukkitConfig;
+import net.eduard.api.lib.BungeeConfig;
+import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.modules.Extra.KeyType;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
-
 
 /**
  * Sistema de verificacao de Compra do Plugin para Bungee ou Bukkit
@@ -24,19 +25,20 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class Licence {
 
 	public static void main(String[] args) {
-		
+		System.out.println(Extra.newKey(KeyType.LETTER, 10));
 	}
 
-	private static String site = "https://eduarddev.000webhostapp.com/teste/verify.php?";
+	private static String site = "http://www.eduard.com.br/license?";
 
 	private static PluginActivationStatus test(String plugin, String owner, String key) {
 		try {
-			String link = site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner;
-			URLConnection connect = new URL(link).openConnection();
-			System.out.println(link);
+
+			URLConnection connect = new URL(site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner)
+					.openConnection();
+//			System.out.println(site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner);
 			connect.addRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-			Scanner scan = new Scanner(connect.getInputStream(),"UTF-8");
+			Scanner scan = new Scanner(connect.getInputStream());
 			StringBuilder b = new StringBuilder();
 			while (scan.hasNext()) {
 				String text = scan.next();
@@ -55,12 +57,12 @@ public class Licence {
 
 	private static enum PluginActivationStatus {
 
-		INVALID_KEY("§cNao foi encontrado esta Licensa no Sistema."),
-		WRONG_KEY("§cEsta Licensa nao bate com a do Sistema."),
-		KEY_TO_WRONG_PLUGIN("§cA Licensa usada nao eh para este plugin."),
-		KEY_TO_WRONG_OWNER("§cA Licensa usada nao eh para este Dono"),
-		INVALID_IP("§cEste IP usado nao corresponde a Licensa"), INVALID_PORT("§cEsta Porta nao correponde a da Licensa."),
-		PLUGIN_EXPIRED("§cO plugin expirou."), PLUGIN_ACTIVATED("§aPlugin ativado com sucesso.", true);
+		INVALID_KEY("�cNao foi encontrado esta Licensa no Sistema."),
+		WRONG_KEY("�cEsta Licensa nao bate com a do Sistema."),
+		KEY_TO_WRONG_PLUGIN("�cA Licensa usada nao � para este plugin."),
+		KEY_TO_WRONG_OWNER("�cA Licensa usada nao � para este Dono"),
+		INVALID_IP("�cEste IP usado nao corresponde a Key"), INVALID_PORT("�cEsta Porta nao correponde a da Licensa."),
+		PLUGIN_EXPIRED("�cO plugin expirou."), PLUGIN_ACTIVATED("�aPlugin ativado com sucesso.", true);
 
 		private String message;
 		private boolean active;
@@ -98,10 +100,12 @@ public class Licence {
 	public static class BukkitTester {
 
 		public static void test(JavaPlugin plugin, Runnable activation) {
-
+			
 			String pluginName = plugin.getName();
-			Bukkit.getConsoleSender().sendMessage("§aAutenticando o plugin " + pluginName);
-			Configs config = new Configs("license.yml", plugin);
+		
+			
+			Bukkit.getConsoleSender().sendMessage("�aAutenticando o plugin " + pluginName);
+			BukkitConfig config = new BukkitConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
 			config.saveDefault();
@@ -111,7 +115,8 @@ public class Licence {
 
 			{
 				PluginActivationStatus result = Licence.test(pluginName, owner, key);
-				Bukkit.getConsoleSender().sendMessage(result.getMessage());
+//				plugin.getLogger().info(result.getMessage());
+				Bukkit.getConsoleSender().sendMessage("�b"+plugin.getDescription().getFullName()+" "+result.getMessage());
 				if (!result.isActive()) {
 					Bukkit.getPluginManager().disablePlugin(plugin);
 				} else {
@@ -129,8 +134,8 @@ public class Licence {
 		public static void test(Plugin plugin, Runnable activation) {
 			String pluginName = plugin.getDescription().getName();
 			BungeeCord.getInstance().getConsole()
-					.sendMessage(new TextComponent("§aAutenticando o plugin " + pluginName));
-			BungeeConfigs config = new BungeeConfigs("license.yml", plugin);
+					.sendMessage(new TextComponent("�aAutenticando o plugin " + pluginName));
+			BungeeConfig config = new BungeeConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
 			config.saveConfig();

@@ -18,10 +18,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Shield sistema de key Automatizado
  * @version 1.0
- * @since 6.0
+ * @since 2.3
  * @author Eduard
- *
+ * @see Licence
+ * @deprecated Use a versão {@link Licence}
  */
+@Deprecated
 public class Licence2 {
 
 	private String owner;

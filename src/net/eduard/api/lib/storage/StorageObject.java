@@ -2,7 +2,9 @@ package net.eduard.api.lib.storage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.eduard.api.lib.modules.Extra;
@@ -236,7 +238,7 @@ public class StorageObject extends StorageBase {
 			return new StorageArray(getInfo().clone()).store(data);
 		}
 		if (Extra.isList(claz)) {
-			debug("<< LIST " + data);
+			debug("<< LIST " + new ArrayList<>((List<?>)data));
 
 			return new StorageList(getInfo().clone()).store(data);
 		}

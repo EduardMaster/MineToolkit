@@ -72,7 +72,8 @@ public class StorageList extends StorageBase {
 		debug("<< LIST STORATION");
 		List<Object> newList = new ArrayList<>();
 		List<?> list = (List<?>) data;
-		for (Object item : list) {
+		ArrayList<?> listaCopia = new ArrayList<>(list);
+		for (Object item : listaCopia) {
 			newList.add(storage.store(item));
 
 		}

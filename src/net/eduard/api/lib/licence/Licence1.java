@@ -13,10 +13,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Protecao do Plugin (Protection)
  * @version 1.0
- * @since EduardAPI 5.0
+ * @since EduardAPI 2.0
  * @author Eduard
- *
+ * @see Licence
+ * @deprecated Use a versão {@link Licence}
  */
+@Deprecated
 public class Licence1 {
 
 	private String owner;

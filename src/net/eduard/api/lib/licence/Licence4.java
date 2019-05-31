@@ -10,12 +10,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.eduard.api.lib.BukkitConfig;
 /**
- * sistema de verificacao de Compra do Plugin
+ * Sistema de verificacao de Compra do Plugin
  * @version 1.0
- * @since EduardAPI 6.1
+ * @since EduardAPI 2.4
  * @author Eduard
- *
+ * @see Licence
+ * @deprecated Use a versão {@link Licence}
  */
+@Deprecated
 public class Licence4 {
 
 	public static boolean ativado = false;

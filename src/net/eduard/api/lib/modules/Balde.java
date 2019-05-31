@@ -212,6 +212,8 @@ public class Balde {
 	public static Set<OfflinePlayer> pegarJogadorNaListaBranca() {
 		return Bukkit.getWhitelistedPlayers();
 	}
+	
+	
 
 	public static Inventory criarInventarioDuplo(String titulo) {
 		return criarInventario(null, InventoryType.CHEST, titulo);
