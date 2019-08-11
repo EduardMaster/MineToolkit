@@ -45,13 +45,16 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 	private int pageAmount = 1;
 	private String pagePrefix = "";
 	private String pageSuffix = "($page/$max_page)";
+	private transient Menu superiorMenu;
 	private boolean translateIcon;
 	private boolean autoAlignItems;
 	private boolean cacheInventories;
 	private ItemStack openWithItem = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu");
 	private String openWithCommand;
 	private Slot previousPage = new Slot(
-			Mine.newItem(Material.ARROW, "§aVoltar Página", 1, 0, "§2Clique para ir para a página anterior"), 1, 2);
+			Mine.newItem(Material.ARROW, "§aVoltar Página", 1, 0, "§2Clique para ir para a página anterior"), 5, 3);
+	private Slot backPage = new Slot(
+			Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal", 1, 0, "§2Clique para ir para a página superior"), 1, 2);
 	private Slot nextPage = new Slot(
 			Mine.newItem("§aPróxima Página", Material.ARROW, 1, 0, "§2Clique para ir para a próxima página"), 9, 2);
 	private ArrayList<MenuButton> buttons = new ArrayList<>();
@@ -110,7 +113,7 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 
 	public MenuButton getButton(ItemStack icon) {
 		for (MenuButton button : buttons) {
-			if (button.getIcon().equals(icon)) {
+			if (button.getIcon().isSimilar(icon)) {
 				return button;
 			}
 		}
@@ -264,6 +267,10 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 				if (page < pageAmount)
 					nextPage.give(menu);
 			}
+			if (this.superiorMenu!=null) {
+				backPage.give(menu);
+			}
+		
 			if (autoAlignItems) {
 				int slot = 0;
 				for (MenuButton button : buttons) {
@@ -417,8 +424,13 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 				if (itemClicked != null) {
 					if (getPreviousPage().equals(itemClicked)) {
 						open(player, ++page);
+						return;
 					} else if (getNextPage().equals(itemClicked)) {
 						open(player, --page);
+						return;
+					}else if (getBackPage().equals(itemClicked)) {
+						getSuperiorMenu().open(player);
+						return;
 					} else {
 						button = getButton(itemClicked);
 						debug("Button by Item " + ((button == null) ? "is Null" : "is not null"));
@@ -436,6 +448,7 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 						button.getClick().onClick(e, slot);
 					}
 					if (button.getEffects() != null) {
+						debug("Button make Editable Effects");
 						button.getEffects().effect(player);
 					}
 					if (button.isCategory()) {
@@ -550,6 +563,22 @@ public class Menu extends EventsManager implements Copyable, PagedMenu {
 
 	public static void setDebug(boolean debug) {
 		Menu.debug = debug;
+	}
+
+	public Slot getBackPage() {
+		return backPage;
+	}
+
+	public void setBackPage(Slot backPage) {
+		this.backPage = backPage;
+	}
+
+	public Menu getSuperiorMenu() {
+		return superiorMenu;
+	}
+
+	public void setSuperiorMenu(Menu superiorMenu) {
+		this.superiorMenu = superiorMenu;
 	}
 
 }

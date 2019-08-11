@@ -6,7 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,9 +32,10 @@ import net.eduard.api.lib.storage.StorageAPI;
  *
  */
 public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandler {
-	private static final SimpleDateFormat DATE_TIME_FORMATER = new SimpleDateFormat("dd-MM-YYYY hh-mm-ss");
+	private static final SimpleDateFormat DATE_TIME_FORMATER = new SimpleDateFormat("dd-MM-YYYY HH-mm-ss");
 	private boolean logEnabled = true;
 	private boolean errorLogEnabled = true;
+
 	protected Config config;
 	protected Config messages;
 	protected Config storage;
@@ -40,9 +45,10 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	public String getString(String path) {
 		return config.message(path);
 	}
-/**
- * Config padrão do spigot não funciona
- */
+
+	/**
+	 * Config padrão do spigot não funciona
+	 */
 	public FileConfiguration getConfig() {
 		return null;
 	}
@@ -94,14 +100,27 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 		return !storage.getKeys().isEmpty();
 	}
 
+	/**
+	 *
+	 * @return A {@link Config} Storage
+	 */
 	public Config getStorage() {
 		return storage;
 	}
 
+	/**
+	 * 
+	 * @return Se o Plugin é gratuito
+	 */
 	public boolean isFree() {
 		return free;
 	}
 
+	/**
+	 * Define se o Plugin é gratuito
+	 * 
+	 * @param free
+	 */
 	public void setFree(boolean free) {
 		this.free = free;
 	}
@@ -115,9 +134,43 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	 */
 	public void onLoad() {
 		config = new Config(this);
+
+		config.add("auto-save", true);
+		config.add("auto-save-seconds", 60);
+		config.add("auto-save-lasttime", Extra.getNow());
+		config.add("backup", true);
+		config.add("backup-lasttime", Extra.getNow());
+		config.add("backup-time", 1);
+		config.add("backup-timeunit-type", "MINUTES");
+
+		config.saveConfig();
 		messages = new Config(this, "messages.yml");
 		storage = new Config(this, "storage.yml");
 		databaseFile = new File(getDataFolder(), "database.db");
+	}
+
+	public long getAutoSaveSeconds() {
+		return config.getLong("auto-save-seconds");
+	}
+
+	public boolean isAutoSaving() {
+		return config.getBoolean("auto-save");
+	}
+
+	public long getBackupTime() {
+		return config.getLong("backup-time");
+	}
+
+	public long getBackupLastTime() {
+		return config.getLong("backup-lasttime");
+	}
+
+	public long getAutoSaveLastTime() {
+		return config.getLong("auto-save-lasttime");
+	}
+
+	public TimeUnit getBackupTimeUnitType() {
+		return TimeUnit.valueOf(config.getString("backup-timeunit-type").toUpperCase());
 	}
 
 	public void registerPackage(String packname) {
@@ -156,17 +209,42 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 
 	}
 
+	public void autosave() {
+		config.set("auto-save-lasttime", Extra.getNow());
+		save();
+	}
+
 	/**
+	 * Deleta os ultimos backups
+	 */
+	public void deleteLastBackups() {
+		File pasta = new File(getDataFolder(), "/backup/");
+
+		pasta.mkdirs();
+		List<File> lista = Arrays.asList(pasta.listFiles());
+		lista = lista.stream().sorted(Comparator.comparing(File::lastModified)).collect(Collectors.toList());
+		for (int i = lista.size() - 10; i >= 0; i--) {
+			File arquivo = lista.get(i);
+			Extra.deleteFolder(arquivo);
+			if (arquivo.exists())
+				arquivo.delete();
+
+		}
+	}
+
+	/**
+	 * 
 	 * Gera backup dos arquivos config.yml, storage.yml e por ultimo database.db
 	 */
 	public void backup() {
-
+		config.set("backup-lasttime", Extra.getNow());
 		try {
 
 			File pasta = new File(getDataFolder(),
 					"/backup/" + DATE_TIME_FORMATER.format(System.currentTimeMillis()) + "/");
 
 			pasta.mkdirs();
+
 			if (getStorage().existConfig() && !getStorage().getKeys().isEmpty()) {
 
 				Files.copy(getStorage().getFile().toPath(), Paths.get(pasta.getPath(), storage.getName()));
@@ -183,42 +261,6 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 			e.printStackTrace();
 		}
 
-	}
-
-	/**
-	 * Executa o metodo startAutoSave com parametro 60 segundos
-	 */
-	public void startAutoSave() {
-		startAutoSave(60);
-	}
-
-	/**
-	 * Inicia um timer que salva a cada X segundos os dados
-	 * 
-	 * @param seconds
-	 */
-	public void startAutoSave(int seconds) {
-		asyncTimer(new Runnable() {
-
-			@Override
-			public void run() {
-				save();
-			}
-		}, seconds * 20, seconds * 20);
-	}
-
-	public void startAutoBackup() {
-		startAutoBackup(5 * 60);
-	}
-
-	public void startAutoBackup(int seconds) {
-		asyncTimer(new Runnable() {
-
-			@Override
-			public void run() {
-				backup();
-			}
-		}, seconds * 20, seconds * 20);
 	}
 
 	public void save() {
@@ -283,4 +325,10 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	public void setErrorLogEnabled(boolean errorLogEnabled) {
 		this.errorLogEnabled = errorLogEnabled;
 	}
+
+	public boolean isBackup() {
+
+		return config.getBoolean("backup");
+	}
+
 }

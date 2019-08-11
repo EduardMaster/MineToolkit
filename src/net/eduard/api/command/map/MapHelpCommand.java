@@ -7,15 +7,17 @@ import net.eduard.api.lib.manager.CommandManager;
 
 public class MapHelpCommand extends CommandManager {
 	public MapHelpCommand() {
-		super("help");
+		super("help","ajuda","?");
+		setDescription("Mostra os comandos existentes");
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		sender.sendMessage("§a/map §2help");
-		sender.sendMessage("§a/map §f<pos1|pos2>");
-		sender.sendMessage("§a/map §3<copy|paste>");
-		sender.sendMessage("§a/map §b<save|load> §3<name>");
+		for (CommandManager sub : getParent().getCommands().values()) {
+			if (sender.hasPermission(sub.getPermission())) {
+				sender.sendMessage("§a"+ sub.getUsage() + " §8-§7 " + sub.getDescription());
+			}
+		}
 		return true;
 	}
 }

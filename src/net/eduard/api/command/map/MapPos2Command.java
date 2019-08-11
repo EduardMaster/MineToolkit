@@ -13,6 +13,7 @@ public class MapPos2Command extends CommandManager {
 
 	public MapPos2Command() {
 		super("pos2","sethigh","setpos2");
+		setDescription("Define a posição 2");
 
 	}
 	@Override
@@ -22,7 +23,7 @@ public class MapPos2Command extends CommandManager {
 			Player p = (Player) sender;
 			Schematic schema = Mine.getSchematic(p);
 			schema.setHigh(p.getLocation().toVector());
-			p.sendMessage("§bEduardAPI §6Posicão 2 setada!");
+			p.sendMessage("§bEduardAPI §aPosicão 2 setada!");
 		}
 		return true;
 	}

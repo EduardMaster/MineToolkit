@@ -11,9 +11,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.click.PlayerInteract;
+import net.eduard.api.lib.game.Explosion;
+import net.eduard.api.lib.game.Jump;
+import net.eduard.api.lib.game.SoundEffect;
+import net.eduard.api.lib.game.VisualEffect;
 import net.eduard.api.lib.manager.CooldownManager;
 import net.eduard.api.lib.modules.KitType;
 import net.eduard.api.lib.storage.StorageAttributes;
@@ -36,16 +41,21 @@ public class KitAbility extends CooldownManager {
 	private List<KitAbility> kits = new ArrayList<>();
 	private transient List<Player> players = new ArrayList<>();
 
+	
+
 	public List<KitAbility> getKits() {
 		return kits;
 	}
+
 	public void setKits(List<KitAbility> kits) {
 		this.kits = kits;
 	}
+
 	public KitAbility() {
 		this("", KitType.DEFAULT);
 
 	}
+
 	public KitAbility(String name) {
 		this(name, KitType.DEFAULT);
 
@@ -57,11 +67,11 @@ public class KitAbility extends CooldownManager {
 		} else {
 			setName(name);
 		}
-		setPermission(name.toLowerCase().replace(" ", ""));
+		REQUIRE_PERMISSION = name.toLowerCase().replace(" ", "");
 	}
 
 	public ItemStack add(ItemStack item) {
-		getItems().add(Mine.setName(item, "§b" + name));
+		GIVE_ITEMS.add(Mine.setName(item, "§b" + name));
 		return item;
 	}
 
@@ -72,7 +82,6 @@ public class KitAbility extends CooldownManager {
 	public ItemStack add(Material material, int data) {
 		return add(new ItemStack(material, 1, (short) data));
 	}
-
 
 	@Override
 	public boolean cooldown(Player player) {

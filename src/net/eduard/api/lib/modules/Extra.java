@@ -104,6 +104,7 @@ public final class Extra {
 		 */
 		ALPHANUMERIC;
 	}
+
 	/**
 	 * Instancia da classe DecimalFormat para o PT-BR
 	 */
@@ -112,7 +113,7 @@ public final class Extra {
 
 	public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
 	public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
-	public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd-MM-YYYY hh-mm-ss");
+	public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
 	private static Map<String, String> replacers = new LinkedHashMap<>();
 	public static HashMap<String, JsonObject> SKIN_CACHE = new HashMap<>();
 	private static Map<Class<?>, Double> classesPrice = new HashMap<>();
@@ -162,30 +163,32 @@ public final class Extra {
 		replacers.put("#c", "org.bukkit.craftbukkit.#v.");
 		replacers.put("#s", "org.bukkit.");
 	}
+
 	/**
 	 * Ofusca ou desofuca uma String
+	 * 
 	 * @param str String
 	 * @return a String alterada
 	 */
 	public static String allatoriOfucation(String str) {
-		int i = str.length();
-		char[] a = new char[i];
-		int i0 = i - 1;
+		int tamanhoDoTexto = str.length();
+		char[] umaArrayDeLetras = new char[tamanhoDoTexto];
+		int TamanhoDoTextoMenosUm = tamanhoDoTexto - 1;
 		while (true) {
-			if (i0 >= 0) {
-				int i1 = str.charAt(i0);
-				int i2 = i0 + -1;
-				int i3 = (char) (i1 ^ 56);
-				a[i0] = (char) i3;
-				if (i2 >= 0) {
-					i0 = i2 + -1;
-					int i4 = str.charAt(i2);
-					int i5 = (char) (i4 ^ 70);
-					a[i2] = (char) i5;
+			if (TamanhoDoTextoMenosUm >= 0) {
+				int PenultimoCaractere = str.charAt(TamanhoDoTextoMenosUm);
+				int TamanhoDoTextoMenusUmSomadoComMaisUm = TamanhoDoTextoMenosUm + -1;
+				int NaoSeiSeEhUmNUmeroOuUmChar = (char) (PenultimoCaractere ^ 56);
+				umaArrayDeLetras[TamanhoDoTextoMenosUm] = (char) NaoSeiSeEhUmNUmeroOuUmChar;
+				if (TamanhoDoTextoMenusUmSomadoComMaisUm >= 0) {
+					TamanhoDoTextoMenosUm = TamanhoDoTextoMenusUmSomadoComMaisUm + -1;
+					int nesteNumeroEuNaoEntendiOqueEleEh = str.charAt(TamanhoDoTextoMenusUmSomadoComMaisUm);
+					int NaoSeiSeEhUmNUmeroOuUmChar2 = (char) (nesteNumeroEuNaoEntendiOqueEleEh ^ 70);
+					umaArrayDeLetras[TamanhoDoTextoMenusUmSomadoComMaisUm] = (char) NaoSeiSeEhUmNUmeroOuUmChar2;
 					continue;
 				}
 			}
-			return new String(a);
+			return new String(umaArrayDeLetras);
 		}
 
 	}
@@ -249,8 +252,10 @@ public final class Extra {
 		}
 		System.out.println(" ");
 	}
+
 	/**
 	 * Calcula o preço da classe e suas entranhas
+	 * 
 	 * @param claz Classe
 	 * @return Valor final
 	 */
@@ -291,21 +296,26 @@ public final class Extra {
 		return valor;
 
 	}
-/**
- * Verifica se contem a Mensagem dentro do Texto (Ignora se é maiuscula ou minuscula)
- * @param message Mensagem
- * @param text Texto
- * @return a resposta
- */
+
+	/**
+	 * Verifica se contem a Mensagem dentro do Texto (Ignora se é maiuscula ou
+	 * minuscula)
+	 * 
+	 * @param message Mensagem
+	 * @param text    Texto
+	 * @return a resposta
+	 */
 	public static boolean contains(String message, String text) {
 		return message.toLowerCase().contains(text.toLowerCase());
 	}
-/**
- * Faz uma copia da Stream para UTF8 no arquivo
- * @param is Stream
- * @param file Arquivo
- * @throws IOException Erro
- */
+
+	/**
+	 * Faz uma copia da Stream para UTF8 no arquivo
+	 * 
+	 * @param is   Stream
+	 * @param file Arquivo
+	 * @throws IOException Erro
+	 */
 	public static void copyAsUTF8(InputStream is, File file) throws IOException {
 		if (is == null)
 			return;
@@ -322,8 +332,10 @@ public final class Extra {
 		Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
 
 	}
+
 	/**
 	 * Faz uma copia da Path para UTF8 no arquivo
+	 * 
 	 * @param path Path
 	 * @param file Arquivo
 	 * @throws IOException Erro
@@ -332,36 +344,44 @@ public final class Extra {
 		List<String> lines = Files.readAllLines(path);
 		Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
 	}
+
 	/**
 	 * Corta o texto em um tamanho escolhido
-	 * @param text Texto
+	 * 
+	 * @param text   Texto
 	 * @param lenght Tamanho
 	 * @return Texto cortado
 	 */
 	public static String cutText(String text, int lenght) {
 		return text.length() > lenght ? text.substring(0, lenght) : text;
 	}
+
 	/**
 	 * Detela a pasta e todos os arquivos dentro
+	 * 
 	 * @param file Pasta
 	 */
 	public static void deleteFolder(File file) {
 		if (file.exists()) {
 			File files[] = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory()) {
-					deleteFolder(files[i]);
-					files[i].delete();
-				} else {
-					files[i].delete();
+			if (files != null) {
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].isDirectory()) {
+						deleteFolder(files[i]);
+						files[i].delete();
+					} else {
+						files[i].delete();
+					}
 				}
 			}
 			file.delete();
 		}
 	}
+
 	/**
 	 * Verifica se uma Array é identica a outra
-	 * @param firstArray Array 1
+	 * 
+	 * @param firstArray  Array 1
 	 * @param secondArray Array 2
 	 * @return se são iguais
 	 */
@@ -376,9 +396,11 @@ public final class Extra {
 		}
 		return false;
 	}
+
 	/**
 	 * Envia um POST request para a URL
-	 * @param targetURL URL
+	 * 
+	 * @param targetURL     URL
 	 * @param urlParameters Parametros enviados
 	 * @return uma resposta em forma de XML ou JSON
 	 */
@@ -475,13 +497,70 @@ public final class Extra {
 	public static String formatDiference(long timestamp) {
 		return formatTime(timestamp - System.currentTimeMillis());
 	}
+
 	/**
 	 * Formata um numero grande, formatação estilo de servidores OP
+	 * 
 	 * @param numero Numero grande
 	 * @return Numero formatado
+	 * @author Eduard
 	 */
 	public static String formatMoney(double numero) {
-		String formatado = Extra.MONEY.format(numero);
+		DecimalFormat formatador = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.US));
+
+		String numeroFormatado = formatador.format(numero);
+
+		String sigla = "";
+		String[] casas = numeroFormatado.split(",");
+
+		int tamanho = casas.length;
+//		System.out.println("Tamanho: " + tamanho);
+		if (tamanho >= 12) {
+			sigla = "D";
+		} else if (tamanho >= 11) {
+			sigla = "N";
+		} else if (tamanho >= 10) {
+			sigla = "O";
+		} else if (tamanho >= 9) {
+			sigla = "SS";
+		} else if (tamanho >= 8) {
+			sigla = "S";
+		} else if (tamanho >= 7) {
+			sigla = "QQ";
+		} else if (tamanho >= 6) {
+			sigla = "Q";
+		} else if (tamanho >= 5) {
+			sigla = "T";
+		} else if (tamanho >= 4) {
+			sigla = "B";
+		} else if (tamanho >= 3) {
+			sigla = "M";
+		} else if (tamanho >= 2) {
+			sigla = "K";
+		}
+
+		if (tamanho > 10) {
+
+		}
+		if (tamanho >= 2) {
+			return casas[0] + "," + casas[1] + sigla;
+		} else {
+			return casas[0];
+		}
+	}
+
+	/**
+	 * Formata um numero grande, formatação estilo de servidores OP
+	 * 
+	 * @param numero Numero grande
+	 * @return Numero formatado
+	 * @deprecated Este método apresenta pequenos bugs
+	 * @author THG com pequenas mudanças feitas por min
+	 */
+	@Deprecated
+	public static String formatMoney2(double numero) {
+		DecimalFormat formatador = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.US));
+		String formatado = formatador.format(numero);
 		String v = formatado.split(",")[0];
 		formatado = numero >= 1000000 && numero <= 999999999 ? v + "M"
 				: numero >= 1000000000 && numero <= 999999999999L ? v + "B"
@@ -494,8 +573,10 @@ public final class Extra {
 
 		return formatado;
 	}
+
 	/**
 	 * Cria uma formação de tempo muito melhor do que a DateFormat faz
+	 * 
 	 * @param time Tempo em forma de numero
 	 * @return Tempo formatado
 	 */
@@ -542,9 +623,9 @@ public final class Extra {
 	}
 
 	/**
-	 * Pega uma lista de classes de uma package
-	 * <br>
+	 * Pega uma lista de classes de uma package <br>
 	 * metodo incompleto
+	 * 
 	 * @param plugin  Plugin
 	 * @param pkgname Package
 	 * @return Lista de Classes
@@ -720,8 +801,10 @@ public final class Extra {
 		}
 		return (index % 9) + 1;
 	}
+
 	/**
 	 * Pega o comando da string inteira
+	 * 
 	 * @param message String inteira
 	 * @return comando
 	 */
@@ -746,9 +829,11 @@ public final class Extra {
 		}
 
 	}
+
 	/**
 	 * Pega o tempo restante que podera sair do cooldown
-	 * @param before Tempo anterior
+	 * 
+	 * @param before  Tempo anterior
 	 * @param seconds Segundos de cooldown
 	 * @return Tempo restante
 	 */
@@ -993,6 +1078,7 @@ public final class Extra {
 			return ip;
 		}
 	}
+
 	/**
 	 * Retorna um JsonObject com os dados mais impotantes o
 	 * 
@@ -1025,6 +1111,7 @@ public final class Extra {
 
 		return null;
 	}
+
 	public static String getSQLType(Class<?> type, int size) {
 		Class<?> wrapper = Extra.getWrapper(type);
 		if (wrapper != null) {
@@ -1066,6 +1153,7 @@ public final class Extra {
 
 		return null;
 	}
+
 	public static Object getSQLValue(ResultSet rs, Class<?> type, String column) {
 		Object result = null;
 		try {
@@ -1092,11 +1180,13 @@ public final class Extra {
 
 		return result;
 	}
+
 	public static String getTime(int time) {
 
 		return getTime(time, " segundo(s)", " minuto(s) ");
 
 	}
+
 	public static String getTime(int time, String second, String minute) {
 		if (time >= 60) {
 			int min = time / 60;
@@ -1110,16 +1200,19 @@ public final class Extra {
 		}
 		return time + second;
 	}
+
 	public static String getTimeMid(int time) {
 
 		return getTime(time, " seg", " min ");
 
 	}
+
 	public static String getTimeSmall(int time) {
 
 		return getTime(time, "s", "m");
 
 	}
+
 	/**
 	 * 
 	 * @param type Variavel {@link Type} (Classe/Tipo)
@@ -1923,6 +2016,7 @@ public final class Extra {
 		}
 		return lines;
 	}
+
 	public static Short toShort(Object object) {
 
 		if (object == null) {

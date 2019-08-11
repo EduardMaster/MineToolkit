@@ -12,22 +12,24 @@ public class MapSaveCommand extends CommandManager {
 
 	public MapSaveCommand() {
 		super("save","salvar");
+		setUsage("/map save <name>");
+		setDescription("Salva o Schematic (Mapa) copiado");
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length == 1) {
-			sender.sendMessage("§c/map save <name>");
+			sendUsage(sender);
 		} else {
 
 			if (Mine.onlyPlayer(sender)) {
 				Player p = (Player) sender;
 				if (!Mine.MAPS_CACHE.containsKey(p)) {
-					p.sendMessage("§bEduardAPI §2Primeiro copie um Mapa:§a /e copy");
+					p.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§f /map copy");
 					return true;
 				}
 				Mine.MAPS.put(args[1].toLowerCase(), Mine.MAPS_CACHE.get(p));
-				p.sendMessage("§bEduardAPI §6Mapa salvado com sucesso!");
+				p.sendMessage("§bEduardAPI §aMapa salvado com sucesso!");
 			}
 		}
 		return true;

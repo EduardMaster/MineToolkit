@@ -10,6 +10,11 @@ import org.bukkit.scheduler.BukkitTask;
  */
 public interface BukkitTimeHandler {
 
+	/**
+	 
+	 * @return Retorna a instancia do plugin
+	 * 
+	 */
 	public Plugin getPluginInstance();
 
 	public default BukkitTask asyncTimer(Runnable runnable, long ticks, long startTicks) {
@@ -39,7 +44,10 @@ public interface BukkitTimeHandler {
 			return Bukkit.getScheduler().runTaskLaterAsynchronously(getPluginInstance(), runnable, ticks);
 		return Bukkit.getScheduler().runTaskLater(getPluginInstance(), runnable, ticks);
 	}
-
+	
+	/**
+	 * Cancela todos Repetidores e Atrasos criado nesta classe
+	 */
 	public default void cancelAllTasks() {
 		Bukkit.getScheduler().cancelTasks(getPluginInstance());
 	}

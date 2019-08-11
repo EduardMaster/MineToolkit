@@ -7,9 +7,13 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAttributes;
-
+/**
+ * Representa uma Chunk do Minecraft para ser Configuravel
+ * @author Eduard
+ *
+ */
 @StorageAttributes(inline=true)
-public class Chunk implements Storable, Copyable {
+public class Chunks implements Storable, Copyable {
 	private String world;
 	private int x, z;
 
@@ -17,12 +21,12 @@ public class Chunk implements Storable, Copyable {
 		return Bukkit.getWorld(world).getChunkAt(x, z);
 	}
 
-	public Chunk copy() {
+	public Chunks copy() {
 		return copy(this);
 	}
 
-	public Chunk newChunk(int x, int z) {
-		return new Chunk(world, x, z);
+	public Chunks newChunk(int x, int z) {
+		return new Chunks(world, x, z);
 	}
 
 	@Override
@@ -43,7 +47,7 @@ public class Chunk implements Storable, Copyable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Chunk other = (Chunk) obj;
+		Chunks other = (Chunks) obj;
 		if (world == null) {
 			if (other.world != null)
 				return false;
@@ -56,18 +60,18 @@ public class Chunk implements Storable, Copyable {
 		return true;
 	}
 
-	public Chunk() {
+	public Chunks() {
 	}
-	public Chunk(Location location) {
+	public Chunks(Location location) {
 		this(location.getChunk());
 	}
-	public Chunk(org.bukkit.Chunk chunk) {
+	public Chunks(org.bukkit.Chunk chunk) {
 		this.world = chunk.getWorld().getName();
 		this.x = chunk.getX();
 		this.z = chunk.getZ();
 	}
 
-	public Chunk(String world, int x, int z) {
+	public Chunks(String world, int x, int z) {
 		super();
 		this.world = world;
 		this.x = x;
@@ -103,7 +107,7 @@ public class Chunk implements Storable, Copyable {
 		if (object instanceof String) {
 			String string = (String) object;
 			String[] split = string.split(";");
-			return new Chunk(split[0], Mine.toInt(split[1]), Mine.toInt(split[2]));
+			return new Chunks(split[0], Mine.toInt(split[1]), Mine.toInt(split[2]));
 
 		}
 		return null;
@@ -111,8 +115,8 @@ public class Chunk implements Storable, Copyable {
 
 	@Override
 	public Object store(Object object) {
-		if (object instanceof Chunk) {
-			Chunk chunk = (Chunk) object;
+		if (object instanceof Chunks) {
+			Chunks chunk = (Chunks) object;
 			return chunk.getWorld() + ";" + chunk.getX() + ";" + chunk.getZ();
 
 		}

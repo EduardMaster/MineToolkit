@@ -49,6 +49,11 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "FakePlayer [name=" + name + ", id=" + id + "]";
+	}
+
 	public FakePlayer(String name, UUID id) {
 		this(name);
 		this.setId(id);
@@ -174,7 +179,7 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 		return false;
 	}
 
-	@Override
+	@Deprecated
 	public void setBanned(boolean arg0) {
 		// TODO Auto-generated method stub
 

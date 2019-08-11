@@ -50,7 +50,7 @@ public class MinigameRoom implements Storable {
 
 	public List<Player> getPlayersOnline() {
 
-		return players.stream().map(p -> p.getPlayer()).collect(Collectors.toList());
+		return players.stream().filter(p -> p.isOnline()).map(p -> p.getPlayer()).collect(Collectors.toList());
 	}
 
 	public List<MinigameTeam> getTeams(MinigamePlayerState state) {
@@ -144,10 +144,7 @@ public class MinigameRoom implements Storable {
 		setTime(getMinigame().getTimeIntoStart());
 	}
 
-	public void initMinigame() {
-		setState(MinigameState.STARTING);
-		setTime(getMinigame().getTimeIntoStart());
-	}
+	
 
 	public void leave(MinigamePlayer player) {
 		player.getGame().getPlayers().remove(player);

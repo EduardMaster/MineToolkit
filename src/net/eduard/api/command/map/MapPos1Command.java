@@ -13,6 +13,7 @@ public class MapPos1Command extends CommandManager {
 
 	public MapPos1Command() {
 		super("pos1","setpos1","setlow");
+		setDescription("Define a posição 1");
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
@@ -21,7 +22,7 @@ public class MapPos1Command extends CommandManager {
 			Player p = (Player) sender;
 			Schematic schema = Mine.getSchematic(p);
 			schema.setLow(p.getLocation().toVector());
-			p.sendMessage("§bEduardAPI §6Posicão 1 setada!");
+			p.sendMessage("§bEduardAPI §aPosicão 1 setada!");
 		}
 		return true;
 	}

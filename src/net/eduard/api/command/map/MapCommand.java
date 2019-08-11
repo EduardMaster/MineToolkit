@@ -7,6 +7,7 @@ public class MapCommand extends CommandManager {
 
 	public MapCommand() {
 		super("map");
+		
 		register(new MapCopyCommand());
 		register(new MapPasteCommand());
 		register(new MapPos1Command());

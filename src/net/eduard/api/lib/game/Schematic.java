@@ -24,7 +24,7 @@ import net.eduard.api.lib.storage.Storable;
 /**
  * Schematic do WorldEdit Compacto
  * 
- * @author Eduard-PC
+ * @author Eduard
  *
  */
 public class Schematic implements Storable,Copyable {

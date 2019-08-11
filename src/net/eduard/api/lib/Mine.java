@@ -19,14 +19,15 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.UUID;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -91,6 +92,9 @@ import org.bukkit.util.Vector;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.game.SoundEffect;
@@ -192,7 +196,7 @@ public final class Mine {
 	 * Prefixo de Ajuda dos Comandos
 	 */
 	public static String MSG_USAGE = "§FDigite: §c";
-
+	public static boolean OPT_DEBUG_REPLACERS = true;
 	/**
 	 * Lista de Comandos para efeito Positivo
 	 */
@@ -371,6 +375,62 @@ public final class Mine {
 		sender.addAttachment(getMainPlugin(), permission, true);
 	}
 
+	// Sistema de bordas
+	public static void setBorder(Material type, List<Chunk> chunks) {
+		Chunk chunkMin = null, chunkMax = null;
+		for (Chunk chunk : chunks) {
+			if (chunkMin == null) {
+				chunkMin = chunk;
+			}
+			if (chunkMax == null) {
+				chunkMax = chunk;
+			}
+			if (chunk.getX() < chunkMin.getX() || chunk.getZ() < chunkMin.getZ()) {
+				chunkMin = chunk;
+			}
+			if (chunk.getZ() > chunkMax.getZ() || chunk.getX() > chunkMax.getX()) {
+				chunkMax = chunk;
+			}
+
+		}
+		setBorder(type, chunkMin, chunkMax);
+
+	}
+
+	public static void setBorder(Material type, Chunk chunk) {
+
+		setBorder(type, chunk, chunk);
+
+	}
+
+	public static void setBorder(Material type, Chunk chunk, int radius) {
+		Chunk chunkMin = chunk.getWorld().getChunkAt(chunk.getX() - radius, chunk.getZ() - radius);
+		Chunk chunkMax = chunk.getWorld().getChunkAt(chunk.getX() + radius, chunk.getZ() + radius);
+		setBorder(type, chunkMax, chunkMin);
+
+	}
+
+	public static void setBorder(Material type, Chunk chunkHigh, Chunk chunkLow) {
+
+		Block low = chunkLow.getBlock(0, 10, 0);
+
+		Block high = chunkHigh.getBlock(15, 0, 15);
+
+		for (int x = low.getX(); x <= high.getX(); x++) {
+			for (int z = low.getZ(); z <= high.getZ(); z++) {
+				Block highestBlockAt = chunkHigh.getWorld().getHighestBlockAt(x, z);
+
+				if (z == low.getZ() || x == low.getX() || x == high.getX() || z == high.getZ()) {
+					highestBlockAt.setType(type);
+
+				}
+
+			}
+
+		}
+	}
+	// Sistema de bordas
+
 	/**
 	 * Registra uma permissão no sistema
 	 * 
@@ -439,13 +499,15 @@ public final class Mine {
 			if (player.hasPermission(permission))
 				player.sendMessage(message);
 		}
+
 	}
 
 	/**
 	 * Executa um Evento para todos os Listeners lerem ele
+	 * <code>Bukkit.getPluginManager().callEvent(event);</code>
 	 * 
 	 * @param event Evento
-	 * @see Bukkit.getPluginManager().callEvent(event);
+	 * @see
 	 */
 	public static void callEvent(Event event) {
 
@@ -1518,8 +1580,8 @@ public final class Mine {
 	/**
 	 * Pega classes de um plugin pela package da Classe que implementam Listener
 	 * 
-	 * @param plugin    Plugin
-	 * @param clazzName Classe
+	 * @param plugin   Plugin
+	 * @param packname Classe
 	 * @return Lista de Classes de Listener
 	 */
 	public static List<Class<?>> getListeners(JavaPlugin plugin, String packname) {
@@ -1879,9 +1941,12 @@ public final class Mine {
 				try {
 					text = text.replace(value.getKey(), "" + value.getValue().getText(player));
 
-				} catch (Exception e) {
-					Mine.console("§cREPLACE ERROR: " + value.getKey());
-//					e.printStackTrace();
+				} catch (Exception ex) {
+					if (OPT_DEBUG_REPLACERS) {
+						Mine.console("§cREPLACER ERROR: §f" + value.getKey());
+						ex.printStackTrace();
+					}
+
 				}
 
 			}
@@ -2239,6 +2304,27 @@ public final class Mine {
 		return true;
 	}
 
+	/**
+	 * Testa se o Inventario do Player esta vasio
+	 * 
+	 * @param inventory
+	 * @return Teste
+	 */
+	public static boolean isEmpty(PlayerInventory inventory) {
+		for (ItemStack item : inventory.getArmorContents()) {
+			if (item != null) {
+				return false;
+			}
+		}
+		for (ItemStack item : inventory.getContents()) {
+			if (item != null) {
+				return false;
+			}
+
+		}
+		return true;
+	}
+
 	public static boolean isFalling(Entity entity) {
 		return entity.getVelocity().getY() < Extra.VALUE_WALKING_VELOCITY;
 	}
@@ -2429,10 +2515,10 @@ public final class Mine {
 		return banner;
 	}
 
-		
 	/**
 	 * Enche a todas as laterais do inventario como Item
-	 * @param inv Inventario
+	 * 
+	 * @param inv  Inventario
 	 * @param item Item
 	 */
 	public static void fillInventoryBorders(Inventory inv, ItemStack item) {
@@ -2508,6 +2594,62 @@ public final class Mine {
 		return fire;
 	}
 
+	public static ItemStack setSkin(ItemStack item, String url) {
+		if (item.getItemMeta() instanceof SkullMeta) {
+			SkullMeta meta = (SkullMeta) item.getItemMeta();
+
+			GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+			byte[] encodedData = Base64.getEncoder()
+					.encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
+			profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
+			Field profileField = null;
+			try {
+				profileField = meta.getClass().getDeclaredField("profile");
+				profileField.setAccessible(true);
+				profileField.set(meta, profile);
+			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			item.setItemMeta(meta);
+		}
+		return item;
+	}
+
+	/**
+	 * Metodo original getSkull se tornou newHeadSkin
+	 * 
+	 * @param nome
+	 * @param qnt
+	 * @param lore
+	 * @param url
+	 * @return
+	 */
+	public static ItemStack newHeadSkin(String url, String nome, int amount, List<String> lore) {
+		ItemStack item = new ItemStack(Material.SKULL_ITEM, amount, (short) 3);
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(nome);
+		meta.setLore(lore);
+		item.setItemMeta(meta);
+		if (url.isEmpty())
+			return item;
+
+		SkullMeta itemMeta = (SkullMeta) item.getItemMeta();
+		GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+		byte[] encodedData = Base64.getEncoder()
+				.encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
+		profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
+		Field profileField = null;
+		try {
+			profileField = itemMeta.getClass().getDeclaredField("profile");
+			profileField.setAccessible(true);
+			profileField.set(itemMeta, profile);
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		item.setItemMeta(itemMeta);
+		return item;
+	}
+
 	/**
 	 * Cria um item da Cabeça do Jogador
 	 * 
@@ -2546,6 +2688,25 @@ public final class Mine {
 		item.setItemMeta(meta);
 
 		return item;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static ItemStack newHead(EntityType type, String name) {
+		return newHead(name,
+				("MHF_") + (type.getName() == null ? Mine.toTitle(type.name().replace("_", "")) : type.getName()));
+	}
+
+	/**
+	 * Cria um item da cabeça do Jogador
+	 *
+	 * @param name
+	 * @param skull
+	 * @return
+	 */
+
+	public static ItemStack newHead(String name, String skull) {
+
+		return setHead(newItem(name, Material.SKULL_ITEM, 3), skull);
 	}
 
 	public static List<ArmorStand> newHologram(Location location, List<String> lines) {
@@ -2611,11 +2772,11 @@ public final class Mine {
 	/**
 	 * Cria um Item
 	 * 
-	 * @param material Material
-	 * @param name     Nome
-	 * @param amount   Quantidade
-	 * @param data     MetaData
-	 * @param lore     Descrição
+	 * @param id     material
+	 * @param name   Nome
+	 * @param amount Quantidade
+	 * @param data   MetaData
+	 * @param lore   Descrição
 	 * @return Item
 	 */
 	public static ItemStack newItem(int id, String name, int amount, int data, List<String> lore) {
@@ -2634,11 +2795,11 @@ public final class Mine {
 	/**
 	 * Cria um Item
 	 * 
-	 * @param material Material
-	 * @param name     Nome
-	 * @param amount   Quantidade
-	 * @param data     MetaData
-	 * @param lore     Descrição
+	 * @param id     Material ID
+	 * @param name   Nome
+	 * @param amount Quantidade
+	 * @param data   MetaData
+	 * @param lore   Descrição
 	 * @return Item
 	 */
 	public static ItemStack newItem(int id, String name, int amount, int data, String... lore) {
@@ -2749,25 +2910,6 @@ public final class Mine {
 		return applyScoreboard(player, title, lines);
 	}
 
-	@SuppressWarnings("deprecation")
-	public static ItemStack newSkull(EntityType type, String name) {
-		return newSkull(name,
-				("MHF_") + (type.getName() == null ? Mine.toTitle(type.name().replace("_", "")) : type.getName()));
-	}
-
-	/**
-	 * Cria um item da cabeça do Jogador
-	 * 
-	 * @param name
-	 * @param skull
-	 * @return
-	 */
-
-	public static ItemStack newSkull(String name, String skull) {
-
-		return setSkull(newItem(name, Material.SKULL_ITEM, 3), skull);
-	}
-
 	public static void newStepSound(Location location, int blockId) {
 		location.getWorld().playEffect(location, Effect.STEP_SOUND, blockId);
 	}
@@ -2791,36 +2933,42 @@ public final class Mine {
 
 	/**
 	 * Abrir um Menu Gui paginado
+	 * 
+	 * @return
 	 *
 	 */
-	public static void openGui(Player player, List<ItemStack> lista, int pagina, int divisao, String nome, int linhas,
-			int index, int voltarSlot, int avancarSlot) {
-		int quantidadeDePaginas = lista.size() / divisao;
-		int inicial = (pagina - 1) * divisao;
-		if (inicial > lista.size()) {
-			return;
-		}
-		List<ItemStack> subLista = lista.subList(inicial, lista.size());
-		Inventory inv = Bukkit.createInventory(null, linhas * 9, nome);
-		int current = 1;
-		for (ItemStack item : subLista) {
-			while (Mine.isColumn(index, 1) || Mine.isColumn(index, 9)) {
-				index++;
+	public static Inventory openGui(Player player, List<ItemStack> items, int page, int amountPerPage, String title,
+			int lineAmount, int inicialIndex, int backSlot, int advanceSlot) {
+		int quantidadeDePaginas = items.size() / amountPerPage;
+		int inicial = (page - 1) * amountPerPage;
+		if (inicial > items.size()) {
+
+		} else {
+
+			List<ItemStack> subLista = items.subList(inicial, items.size());
+			Inventory menu = Bukkit.createInventory(null, lineAmount * 9, title);
+			int current = 1;
+			for (ItemStack item : subLista) {
+				while (Mine.isColumn(inicialIndex, 1) || Mine.isColumn(inicialIndex, 9)) {
+					inicialIndex++;
+				}
+				menu.setItem(inicialIndex, item);
+				current++;
+				inicialIndex++;
+				if (current == amountPerPage) {
+					break;
+				}
 			}
-			inv.setItem(index, item);
-			current++;
-			index++;
-			if (current == divisao) {
-				break;
+			if (page > 1) {
+				menu.setItem(backSlot, Mine.newItem(Material.ARROW, "§aVoltar"));
 			}
+			if (page <= quantidadeDePaginas) {
+				menu.setItem(advanceSlot, Mine.newItem(Material.ARROW, "§aAvançar"));
+			}
+			player.openInventory(menu);
+			return menu;
 		}
-		if (pagina > 1) {
-			inv.setItem(voltarSlot, Mine.newItem(Material.ARROW, "§aVoltar"));
-		}
-		if (pagina <= quantidadeDePaginas) {
-			inv.setItem(avancarSlot, Mine.newItem(Material.ARROW, "§aAvançar"));
-		}
-		player.openInventory(inv);
+		return null;
 
 	}
 
@@ -3409,8 +3557,10 @@ public final class Mine {
 	 */
 	public static ItemStack setLore(ItemStack item, List<String> lore) {
 		ItemMeta meta = item.getItemMeta();
-		meta.setLore(lore);
-		item.setItemMeta(meta);
+		if (meta != null) {
+			meta.setLore(lore);
+			item.setItemMeta(meta);
+		}
 		return item;
 	}
 
@@ -3455,7 +3605,7 @@ public final class Mine {
 	 * @param name
 	 * @return Nome do Jogador
 	 */
-	public static ItemStack setSkull(ItemStack item, String name) {
+	public static ItemStack setHead(ItemStack item, String name) {
 		item.setType(Material.SKULL_ITEM);
 		SkullMeta meta = (SkullMeta) item.getItemMeta();
 		meta.setOwner(name);

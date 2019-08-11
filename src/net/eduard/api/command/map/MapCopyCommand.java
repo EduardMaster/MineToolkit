@@ -13,6 +13,7 @@ public class MapCopyCommand extends CommandManager {
 
 	public MapCopyCommand() {
 		super("copy","copiar");
+		setDescription("Copia os blocos da posição 1 a posção 2");
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,

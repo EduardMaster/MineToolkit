@@ -130,7 +130,7 @@ public class KitManager extends EventsManager {
 //	
 			for (KitAbility kit : kits) {
 
-				if (!player.hasPermission(kit.getPermission())) {
+				if (!player.hasPermission(kit.REQUIRE_PERMISSION)) {
 
 					kitSelector.addButton(new MenuButton(kit.getIcon()));
 
@@ -151,7 +151,7 @@ public class KitManager extends EventsManager {
 //	
 			for (KitAbility kit : kits) {
 
-				if (!player.hasPermission(kit.getPermission())) {
+				if (!player.hasPermission(kit.REQUIRE_PERMISSION)) {
 
 					shop.addButton(new MenuButton(kit.getIcon()));
 
@@ -181,11 +181,11 @@ public class KitManager extends EventsManager {
 		removeKits(player);
 		Mine.refreshAll(player);
 		PlayerInventory inv = player.getInventory();
-		for (ItemStack item : kit.getItems()) {
+		for (ItemStack item : kit.GIVE_ITEMS) {
 			inv.addItem(item);
 		}
 		for (KitAbility subkit : kit.getKits()) {
-			for (ItemStack item : subkit.getItems()) {
+			for (ItemStack item : subkit.GIVE_ITEMS) {
 				inv.addItem(item);
 			}
 		}
@@ -395,7 +395,7 @@ public class KitManager extends EventsManager {
 		if (VaultAPI.hasVault()) {
 			if (VaultAPI.getEconomy().has(player, kit.getPrice())) {
 				VaultAPI.getEconomy().withdrawPlayer(player, kit.getPrice());
-				VaultAPI.getPermission().playerAdd(player, kit.getPermission());
+				VaultAPI.getPermission().playerAdd(player, kit.REQUIRE_PERMISSION);
 				player.sendMessage(kitBuyed.replace("$kit", kit.getName()));
 			} else {
 				player.sendMessage(noKitBuyed.replace("$kit", kit.getName()));

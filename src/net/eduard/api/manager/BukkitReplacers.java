@@ -7,16 +7,17 @@ import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.Replacer;
 import net.eduard.api.lib.modules.VaultAPI;
+
 /**
  * Registrando os replacers mais usados na Displayboard
+ * 
  * @author Eduard
  *
  */
 public class BukkitReplacers {
 
 	public BukkitReplacers() {
-		
-		
+
 		if (Mine.hasPlugin("Vault")) {
 			Mine.addReplacer("$player_group", new Replacer() {
 
@@ -79,6 +80,19 @@ public class BukkitReplacers {
 					return "0.00";
 				}
 			});
+			Mine.addReplacer("$player_op_balance", new Replacer() {
+
+				@Override
+				public Object getText(Player p) {
+					if (VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
+
+						return format(VaultAPI.getEconomy().getBalance(p), 0);
+
+					}
+					return "0.00";
+				}
+			});
+
 		}
 
 		Mine.addReplacer("$players_online", new Replacer() {
@@ -199,7 +213,24 @@ public class BukkitReplacers {
 				return p.getLocation().getZ();
 			}
 		});
-	
 
+	}
+
+	// Strings
+	private static String[] c = new String[] { "K", "M", "B", "Q", "QQ", "S", "SS", "O", "N", "D" };
+
+	/**
+	 * No dia 28/07/2019 o ViniOtaku#0666 passou este Metodo de formatacao
+	 * @param numero
+	 * @param iteration
+	 * @return Numero Formatado
+	 */
+	// Format
+	public static String format(double numero, int iteration) {
+		double d = ((long) numero / 100) / 10.0;
+		boolean isRound = (d * 10) % 10 == 0;
+
+		return (d < 1000 ? ((d > 99.9 || isRound || (!isRound && d > 9.99) ? (int) d : d + "") + " " + c[iteration])
+				: format(d, iteration + 1));
 	}
 }

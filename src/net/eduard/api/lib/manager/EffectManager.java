@@ -19,21 +19,80 @@ import net.eduard.api.lib.modules.Copyable;
 public class EffectManager extends TimeManager implements PlayerEffect, Copyable {
 
 	private transient PlayerEffect effect;
-	private String REQUIRE_PERMISSION;
-	private String SEND_MESSAGE;
-	private List<String> MAKE_COMMANDS = new ArrayList<>();
-	private Location TELEPORT_TO;
-	private List<ItemStack> GIVE_ITEMS = new ArrayList<>();
-	private VisualEffect SHOW_VISUAL_EFFECT;
-	private List<PotionEffect> APPLY_EFFECTS = new ArrayList<>();
-	private SoundEffect PLAY_SOUND;
-	private Jump JUMP_TO;
-	private Explosion MAKE_EXPLOSION;
-	private boolean CLOSE_INVENTORY;
-	private boolean CLEAR_INVENTORY;
+	public String REQUIRE_PERMISSION;
+	public String SEND_MESSAGE;
+	public List<String> MAKE_PLAYER_COMMANDS = new ArrayList<>();
+	public List<String> MAKE_CONSOLE_COMMANDS = new ArrayList<>();
+	public Location TELEPORT_TO;
+	public List<ItemStack> GIVE_ITEMS = new ArrayList<>();
+	public VisualEffect SHOW_VISUAL_EFFECT;
+	public List<PotionEffect> APPLY_EFFECTS = new ArrayList<>();
+	public SoundEffect PLAY_SOUND;
+	public Jump JUMP_TO;
+	public Explosion MAKE_EXPLOSION;
+	public boolean CLOSE_INVENTORY;
+	public boolean CLEAR_INVENTORY;
 
+	public PlayerEffect getEffect() {
+		return effect;
+	}
+
+	public void setEffect(PlayerEffect effect) {
+		this.effect = effect;
+	}
+	public void setDisplay(VisualEffect effect) {
+		SHOW_VISUAL_EFFECT = effect;
+	}
+	public VisualEffect getDisplay() {
+		return SHOW_VISUAL_EFFECT;
+	}
+	public List<ItemStack> getItems() {
+		return GIVE_ITEMS;
+	}
+	public List<PotionEffect> getPotions() {
+		return APPLY_EFFECTS;
+	}
+
+	public String getMessage() {
+		return SEND_MESSAGE;
+	}
+
+	public void setJump(Jump jump) {
+		JUMP_TO = jump;
+	}
+
+	public Jump getJump() {
+		return JUMP_TO;
+	}
+
+	public Explosion getExplosion() {
+		return MAKE_EXPLOSION;
+	}
+
+	public List<String> getPlayerCommands() {
+		return MAKE_PLAYER_COMMANDS;
+	}
+	public SoundEffect getSound() {
+		return PLAY_SOUND;
+	}
+
+	public List<String> getConsoleCommands() {
+		return MAKE_CONSOLE_COMMANDS;
+	}
+
+	public void setSound(SoundEffect effect) {
+		PLAY_SOUND = effect;
+	}
+
+	public void setExplosion(Explosion explosion) {
+		MAKE_EXPLOSION = explosion;
+	}
+
+	public void setMessage(String msg) {
+		SEND_MESSAGE = msg;
+	}
 	public EffectManager() {
-		
+
 		// TODO Auto-generated constructor stub
 	}
 
@@ -41,10 +100,14 @@ public class EffectManager extends TimeManager implements PlayerEffect, Copyable
 	public void effect(Player p) {
 		if (effect != null)
 			effect.effect(p);
-		if (!p.hasPermission(REQUIRE_PERMISSION))
-			return;
-		for (String cmd : MAKE_COMMANDS) {
-			Mine.makeCommand(cmd);
+		if (REQUIRE_PERMISSION != null)
+			if (!p.hasPermission(REQUIRE_PERMISSION))
+				return;
+		for (String cmd : MAKE_CONSOLE_COMMANDS) {
+			Mine.makeCommand(cmd.replace("$player", p.getName()));
+		}
+		for (String cmd : MAKE_PLAYER_COMMANDS) {
+			p.performCommand(cmd.replace("$player", p.getName()).replaceFirst("/", ""));
 		}
 		if (PLAY_SOUND != null)
 			PLAY_SOUND.create(p);
@@ -71,111 +134,6 @@ public class EffectManager extends TimeManager implements PlayerEffect, Copyable
 			pot.apply(p);
 		}
 
-	}
-
-
-	public List<String> getCommands() {
-		return MAKE_COMMANDS;
-	}
-
-	public void setCommands(List<String> commands) {
-		this.MAKE_COMMANDS = commands;
-	}
-
-	public PlayerEffect getEffect() {
-		return effect;
-	}
-
-	public void setEffect(PlayerEffect effect) {
-		this.effect = effect;
-	}
-
-	public String getPermission() {
-		return REQUIRE_PERMISSION;
-	}
-
-	public void setPermission(String permission) {
-		this.REQUIRE_PERMISSION = permission;
-	}
-
-	public Location getTeleport() {
-		return TELEPORT_TO;
-	}
-
-	public void setTeleport(Location teleport) {
-		this.TELEPORT_TO = teleport;
-	}
-
-	public String getMessage() {
-		return SEND_MESSAGE;
-	}
-
-	public void setMessage(String message) {
-		this.SEND_MESSAGE = message;
-	}
-
-	public VisualEffect getDisplay() {
-		return SHOW_VISUAL_EFFECT;
-	}
-
-	public void setDisplay(VisualEffect display) {
-		this.SHOW_VISUAL_EFFECT = display;
-	}
-
-	public List<PotionEffect> getPotions() {
-		return APPLY_EFFECTS;
-	}
-
-	public void setPotions(List<PotionEffect> potions) {
-		this.APPLY_EFFECTS = potions;
-	}
-
-	public List<ItemStack> getItems() {
-		return GIVE_ITEMS;
-	}
-
-	public void setItems(List<ItemStack> items) {
-		this.GIVE_ITEMS = items;
-	}
-
-	public SoundEffect getSound() {
-		return PLAY_SOUND;
-	}
-
-	public void setSound(SoundEffect sound) {
-		this.PLAY_SOUND = sound;
-	}
-
-	public Jump getJump() {
-		return JUMP_TO;
-	}
-
-	public void setJump(Jump jump) {
-		this.JUMP_TO = jump;
-	}
-
-	public Explosion getExplosion() {
-		return MAKE_EXPLOSION;
-	}
-
-	public void setExplosion(Explosion explosion) {
-		this.MAKE_EXPLOSION = explosion;
-	}
-
-	public boolean isCloseInventory() {
-		return CLOSE_INVENTORY;
-	}
-
-	public void setCloseInventory(boolean closeInventory) {
-		this.CLOSE_INVENTORY = closeInventory;
-	}
-
-	public boolean isClearInventory() {
-		return CLEAR_INVENTORY;
-	}
-
-	public void setClearInventory(boolean clearInventory) {
-		this.CLEAR_INVENTORY = clearInventory;
 	}
 
 }

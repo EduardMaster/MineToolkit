@@ -22,6 +22,7 @@ public class ApiCommand extends CommandManager {
 		register(new ApiSaveCommand());
 		register(new ApiReloadCommand());
 		register(new ApiUnloadCommand());
+		register(new ApiLoadCommand());
 
 	}
 

@@ -12,6 +12,7 @@ public class MapLoadCommand extends CommandManager {
 
 	public MapLoadCommand() {
 		super("load", "carregar");
+		setDescription("Carrega um mundo descarregado");
 	}
 
 	

@@ -1,9 +1,13 @@
 package net.eduard.api.lib.storage.bukkit_storables;
 
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.Map.Entry;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 //@StorageAttributes(auto=false)
 public class ItemStackStorable implements Storable {
@@ -57,6 +63,33 @@ public class ItemStackStorable implements Storable {
 
 			}
 		}
+		if (map.containsKey("texture")) {
+			Mine.setSkin(item, (String) map.get("texture"));
+		}
+		if ( map.containsKey("texture-value")) {
+			ItemMeta meta = item.getItemMeta();
+//
+			if (meta instanceof SkullMeta) {
+//				Bukkit.broadcastMessage("Teste2");
+				//map.containsKey("texture-signature") &&
+				GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+				profile.getProperties().put("textures",
+						new Property("textures", (String) map.get("texture-value")));
+				Field profileField = null;
+				try {
+					profileField = meta.getClass().getDeclaredField("profile");
+
+					profileField.setAccessible(true);
+					profileField.set(meta, profile);
+
+				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				item.setItemMeta(meta);
+
+			}
+
+		}
 		return item;
 	}
 
@@ -92,8 +125,33 @@ public class ItemStackStorable implements Storable {
 				enchants = str.toString();
 			}
 			map.put("enchants", enchants);
+			if (item.getItemMeta() instanceof SkullMeta) {
+				SkullMeta meta = (SkullMeta) item.getItemMeta();
+				try {
+					Field profileField = meta.getClass().getDeclaredField("profile");
+					profileField.setAccessible(true);
+					GameProfile profile = (GameProfile) profileField.get(meta);
+					if (profile == null)
+						return;
+					if (profile.getProperties() == null)
+						return;
+					Collection<Property> textures = profile.getProperties().get("textures");
+					if (textures == null)
+						return;
+					if (textures.size() >= 1) {
+						for (Property texture : textures) {
+						
+							map.put("texture-value", texture.getValue());
+							map.put("texture-signature", texture.getSignature());
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 	};
 
+	
 }

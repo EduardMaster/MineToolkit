@@ -24,7 +24,7 @@ public class Product extends MenuButton {
 	private List<String> commands = new ArrayList<>();
 	private ItemStack product;
 
-	public double getAmount() {
+	public int getAmount() {
 		return product.getAmount();
 	}
 

@@ -8,6 +8,8 @@ debug-copyable: false
 
 debug-menu: false
 
+debug-replacers: true
+
 debug-db: false
 
 

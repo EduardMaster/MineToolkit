@@ -50,6 +50,7 @@ public class ClassGetter {
 						checkJarFile((JarURLConnection) connection, pckgname,
 								classes);
 					} else if (connection instanceof FileURLConnection) {
+
 						try {
 							checkDirectory(new File(
 									URLDecoder.decode(url.getPath(), "UTF-8")),

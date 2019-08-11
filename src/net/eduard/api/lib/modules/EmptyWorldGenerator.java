@@ -15,7 +15,7 @@ import org.bukkit.generator.ChunkGenerator;
  */
 public class EmptyWorldGenerator extends ChunkGenerator {
 
-	@Override
+	@Deprecated
 	public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ,
 			ChunkGenerator.BiomeGrid biomeGrid) {
 		byte[][] result = new byte[world.getMaxHeight() / 16][];

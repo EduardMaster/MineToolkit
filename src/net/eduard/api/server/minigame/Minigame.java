@@ -117,6 +117,7 @@ public class Minigame extends TimeManager{
 	}
 
 	public MinigameRoom getGame() {
+//		getRooms().get(0);
 		return getRooms().iterator().next();
 	}
 

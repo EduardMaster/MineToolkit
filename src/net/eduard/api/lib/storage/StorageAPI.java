@@ -8,6 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.sun.swing.internal.plaf.synth.resources.synth;
+
 import java.util.Random;
 import java.util.UUID;
 
@@ -56,7 +59,7 @@ public class StorageAPI {
 		return new Random().nextInt(100000);
 	}
 
-	public static int newId() {
+	public synchronized static int newId() {
 		int id = 0;
 		do {
 			id = randomId();
@@ -76,12 +79,12 @@ public class StorageAPI {
 		}
 	}
 
-	public static void newReference(ReferenceBase refer) {
+	public synchronized static void newReference(ReferenceBase refer) {
 		references.add(refer);
 		debug("<<----->> REFERENCE LINKED");
 	}
 
-	public static int getIdByObject(Object object) {
+	public synchronized static int getIdByObject(Object object) {
 		for (Entry<Integer, Object> entry : objects.entrySet()) {
 			if (entry.getValue().equals(object)) {
 				return entry.getKey();
@@ -103,23 +106,23 @@ public class StorageAPI {
 		return new StorageObject(store).restore(object);
 	}
 
-	public static void register(Class<? extends Storable> claz) {
+	public synchronized static void register(Class<? extends Storable> claz) {
 		autoRegisterClass(claz);
 	}
-	public static void register(Class<? extends Storable> claz,String alias) {
+	public synchronized static void register(Class<? extends Storable> claz,String alias) {
 		autoRegisterClass(claz,alias);
 	} 
-	public static void register(Class<?> claz, Storable storable) {
+	public synchronized static void register(Class<?> claz, Storable storable) {
 		storages.put(claz, storable);
 		aliases.put(claz, claz.getSimpleName());
 		debug("++ CLASS " + claz.getSimpleName());
 	}
 
-	public static void registerPackage(Class<?> clazzForPackage) {
+	public synchronized static void registerPackage(Class<?> clazzForPackage) {
 		registerPackage(clazzForPackage, clazzForPackage.getPackage().getName());
 	}
 
-	public static void registerPackage(Class<?> clazzPlugin, String pack) {
+	public synchronized static void registerPackage(Class<?> clazzPlugin, String pack) {
 		debug("<> PACKAGE " + pack);
 
 		List<Class<?>> classes = Extra.getClasses(clazzPlugin, pack);
@@ -127,11 +130,11 @@ public class StorageAPI {
 			autoRegisterClass(claz);
 		}
 	}
-	public static Storable autoRegisterClass(Class<?> claz) {
+	public synchronized static Storable autoRegisterClass(Class<?> claz) {
 		return autoRegisterClass(claz, claz.getSimpleName());
 	}
 	
-	public static Storable autoRegisterClass(Class<?> claz,String alias) {
+	public synchronized static Storable autoRegisterClass(Class<?> claz,String alias) {
 		Storable store = null;
 		try {
 			if (Modifier.isAbstract(claz.getModifiers())) {
@@ -155,29 +158,29 @@ public class StorageAPI {
 		return store;
 	}
 
-	public static void registerClasses(Class<?> claz) {
+	public synchronized static void registerClasses(Class<?> claz) {
 		debug("<> CLASSES " + claz.getName());
 		for (Class<?> anotherClass : claz.getDeclaredClasses()) {
 			autoRegisterClass(anotherClass);
 		}
 	}
 
-	public static void registerObject(int id, Object object) {
+	public synchronized static void registerObject(int id, Object object) {
 		objects.put(id, object);
 		debug("+ OBJECT " + getAlias(object.getClass()) + "@" + id);
 	}
 
-	public static void unregisterObjectById(int id) {
+	public synchronized static void unregisterObjectById(int id) {
 		objects.remove(id);
 		debug("- OBJECT @" + id);
 	}
 
-	public static void unregisterObject(Object object) {
+	public synchronized static void unregisterObject(Object object) {
 		objects.remove(object);
 		debug("- OBJECT " + getAlias(object.getClass()));
 	}
 
-	public static void unregisterStorable(Class<?> claz) {
+	public synchronized static void unregisterStorable(Class<?> claz) {
 		storages.remove(claz);
 		debug("- CLASS " + claz.getName());
 
@@ -192,7 +195,7 @@ public class StorageAPI {
 		return value;
 	}
 
-	public static Storable getStore(Class<?> claz) {
+	public synchronized static Storable getStore(Class<?> claz) {
 		if (claz == null)
 			return null;
 		Storable store = storages.get(claz);
@@ -207,7 +210,7 @@ public class StorageAPI {
 
 	}
 
-	public static String getAlias(Class<?> claz) {
+	public synchronized static String getAlias(Class<?> claz) {
 		for (Entry<Class<?>, String> entry : aliases.entrySet()) {
 			if (entry.getKey().equals(claz)) {
 				return entry.getValue();
@@ -225,7 +228,7 @@ public class StorageAPI {
 
 	}
 
-	public static Class<?> getClassByAlias(String alias) {
+	public synchronized static Class<?> getClassByAlias(String alias) {
 		for (Entry<Class<?>, String> entry : aliases.entrySet()) {
 			if (entry.getValue().equals(alias)) {
 				return entry.getKey();
@@ -234,11 +237,11 @@ public class StorageAPI {
 		return null;
 	}
 
-	public static boolean isRegistred(Class<?> claz) {
+	public synchronized static boolean isRegistred(Class<?> claz) {
 		return storages.containsKey(claz);
 	}
 
-	public static Map<Class<?>, String> getAliases() {
+	public synchronized static Map<Class<?>, String> getAliases() {
 		return aliases;
 	}
 

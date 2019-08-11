@@ -37,7 +37,7 @@ public class MinigameChest implements Storable {
 				}
 			}
 			if (itemrandom != null) {
-				item = itemrandom.create();
+				item = itemrandom.createChance();
 			}
 			if (item.getType() == Material.AIR) {
 				index--;

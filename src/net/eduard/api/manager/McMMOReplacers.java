@@ -20,6 +20,7 @@ import com.gmail.nossr50.util.player.UserManager;
 import net.eduard.api.EduardAPI;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.EventsManager;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.Replacer;
 
 public class McMMOReplacers extends EventsManager {
@@ -36,19 +37,29 @@ public class McMMOReplacers extends EventsManager {
 				public Object getText(Player p) {
 					McMMOPlayer usuario = UserManager.getPlayer(p);
 					int nivel = usuario.getPowerLevel();
-					return nivel;
+					return Extra.MONEY.format(nivel);
 				}
 			});
 			Mine.addReplacer("$mcmmo_status", new Replacer() {
 
 				@Override
 				public Object getText(Player p) {
-					McMMOPlayer usuario = UserManager.getPlayer(p);
-					if (ultimoUp.containsKey(p)) {
-						SkillType ultimo = ultimoUp.get(p);
-						return "§f" + ultimo.getName() + ": §a" + usuario.getSkillLevel(ultimo);
+//					McMMOPlayer usuario = UserManager.getPlayer(p.getName());
+					for (McMMOPlayer usuario : UserManager.getPlayers()) {
+						if (usuario.getPlayer() == null)
+							continue;
+						if (usuario.getPlayer().equals(p)) {
+							if (ultimoUp.containsKey(p)) {
+								SkillType ultimo = ultimoUp.get(p);
+								return "§f" + ultimo.getName() + ": §a"
+										+ Extra.MONEY.format(usuario.getSkillLevel(ultimo));
+							}
+							return "§fNível: §a" + Extra.MONEY.format(usuario.getPowerLevel());
+						}
 					}
-					return "§fNível: §a" + usuario.getPowerLevel();
+
+					return "Sem usuario";
+
 				}
 			});
 		}
@@ -89,14 +100,14 @@ public class McMMOReplacers extends EventsManager {
 			task.cancel();
 		}
 		BukkitTask task = new BukkitRunnable() {
-			
+
 			@Override
 			public void run() {
 				ultimoUp.remove(p);
 				ultimasTasks.remove(p);
 			}
-		}.runTaskLaterAsynchronously(getPlugin(), 20*5);
-		
+		}.runTaskLaterAsynchronously(getPlugin(), 20 * 60 * 2);
+
 		ultimasTasks.put(p, task);
 	}
 

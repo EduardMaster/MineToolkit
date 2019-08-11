@@ -3,8 +3,10 @@ package net.eduard.api.server.minigame;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
+
 /**
  * Jogador do Minigame
+ * 
  * @author Eduard
  *
  */
@@ -14,13 +16,13 @@ public class MinigamePlayer {
 	private MinigamePlayerState state = MinigamePlayerState.NORMAL;
 	private MinigameTeam team;
 	private MinigameRoom game;
-	
+
 	public void leaveTeam() {
 		if (hasTeam()) {
 			getTeam().leave(this);
 		}
 	}
-	
+
 	public MinigamePlayer(Player player) {
 		this.player = player;
 	}
@@ -115,12 +117,23 @@ public class MinigamePlayer {
 	}
 
 	public boolean canBattle(MinigamePlayer player) {
-		if (hasTeam()&&player.hasTeam()) {
+		if (hasTeam() && player.hasTeam()) {
 			if (getTeam().equals(player.getTeam()))
 				return false;
 		}
 		return true;
 	}
 
+	public void leaveGame() {
+		if (isPlaying()) {
+			getGame().leave(this);
+		}
+
+	}
+
+	public boolean isOnline() {
+
+		return getPlayer() != null;
+	}
 
 }

@@ -1,14 +1,13 @@
 package net.eduard.api;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.Locale;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import net.eduard.api.command.EnchantCommand;
@@ -43,6 +42,8 @@ import net.eduard.api.manager.InfoGenerator;
 import net.eduard.api.manager.MassiveFactionReplacers;
 import net.eduard.api.manager.McMMOReplacers;
 import net.eduard.api.server.EduardPlugin;
+import net.eduard.api.server.minigame.Minigame;
+import net.eduard.api.server.minigame.MinigamePlayer;
 
 /**
  * Classe Principal do EduardAPI
@@ -78,21 +79,20 @@ public class EduardAPI extends EduardPlugin {
 		plugin = this;
 		setFree(true);
 		
-
 		BukkitControl.register(this);
 		BukkitBungeeAPI.requestCurrentServer();
 		BukkitController bukkit = BungeeAPI.getBukkit();
 		bukkit.setPlugin(plugin);
 		bukkit.register();
-		StorageAPI.setDebug(config.getBoolean("debug-storage"));
-		DBManager.setDebug(config.getBoolean("debug-db"));
-		Menu.setDebug(config.getBoolean("debug-menu"));
-		CopyDebug.setDebug(config.getBoolean("debug-copyable"));
 		
-		log("Registrando classes ");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib");
-	
+		StorageAPI.registerPackage(Minigame.class);
 
+		log("Registrando classes da EduardLIB");
+		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib");
+		
+		
+		log("Inicio do Recarregamento do EduardAPI");
+		reload();
 		BukkitStorables.load();
 		log("Storables do Bukkit carregado!");
 		Mine.resetScoreboards();
@@ -112,19 +112,100 @@ public class EduardAPI extends EduardPlugin {
 
 			}
 		}, 20, 20);
+		asyncTimer(new Runnable() {
+
+			@Override
+			public void run() {
+
+				for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+					if (plugin instanceof EduardPlugin) {
+						EduardPlugin pl = (EduardPlugin) plugin;
+						long agora = Extra.getNow();
+						if (pl.isAutoSaving()) {
+							if (pl.getAutoSaveLastTime() + pl.getAutoSaveSeconds() * 1000 < agora) {
+								log("Salvando dados do plugin §b" + pl.getName());
+								long tempo1 = Extra.getNow();
+								pl.autosave();
+								long tempo2 = Extra.getNow();
+								log("Tempo levado para salvar os dados do plugin: §a" + (tempo2 - tempo1)
+										+ " milisegundos");
+								log("§7-----");
+							}
+						}
+						if (pl.isBackup()) {
+							if (pl.getBackupLastTime()
+									+ pl.getBackupTimeUnitType().toMillis(pl.getBackupTime()) < agora) {
+								log("Iniciando sistema de backup para o plugin §b"+ pl.getName());
+								log("Deletando ultimos backups");
+								long tempo1 = Extra.getNow();
+								pl.deleteLastBackups();
+								long tempo2 = Extra.getNow();
+								log("Tempo levado para deletar os backups: §a" + (tempo2 - tempo1) + " milisegundos");
+								log("Fazendo backup ");
+								long tempo3 = Extra.getNow();
+								pl.backup();
+								long tempo4 = Extra.getNow();
+								log("Backup finalizado tempo levado para fazer: §a" + (tempo4 - tempo3)
+										+ " milisegundos");
+								log("§7-----");
+							}
+						}
+
+					}
+				}
+
+			}
+		}, 20, 20);
+		log("Ativando comandos da API");
 		new ApiCommand().register();
 		new MapCommand().register();
-
 		new EnchantCommand().register();
 		new GotoCommand().register();
 		new SoundCommand().register();
 		new SetXPCommand().register();
 		new EssentialsEvents().register(this);
-//		Mine.console("§bEduardAPI §fCustom Tag e Scoreboard ativado!");
+		log("Comandos ativado com sucesso");
+		
 		new InfoGenerator(this);
-
 		log("Base ativado!");
 
+		
+		log("Definindo valores das classes da API");
+		Extra.setPrice(EduardPlugin.class, 4);
+		Extra.setPrice(Menu.class, 4);
+		Extra.setPrice(Shop.class, 1);
+		Extra.setPrice(CommandManager.class, 0);
+		Extra.setPrice(TimeManager.class, 0);
+		Extra.setPrice(EventsManager.class, 1);
+		Extra.setPrice(DBManager.class, 15);
+		Extra.setPrice(Tag.class, 1);
+		Extra.setPrice(PluginMessageListener.class, 10);
+		Extra.setPrice(DisplayBoard.class, 5);
+
+		log("Ativando replacers");
+		new BukkitReplacers();
+		new McMMOReplacers();
+		new MassiveFactionReplacers();
+		log("Carregado com sucesso!");
+//		double precoDaAPI = plugin.getPrice();
+
+//		List<Class<?>> classes = getClasses("net.eduard.api");
+//		double valor = 0;
+//		for (Class<?> claz : classes) {
+//			valor+=EduardAPI.getValueOf(claz, new ArrayList<>(),false);
+//		}
+//		System.out.println("R$ "+valor);
+	}
+	public void reload() {
+		log("Aplicando debugs se estiverem ativados na config");
+		StorageAPI.setDebug(config.getBoolean("debug-storage"));
+		DBManager.setDebug(config.getBoolean("debug-db"));
+		Menu.setDebug(config.getBoolean("debug-menu"));
+		CopyDebug.setDebug(config.getBoolean("debug-copyable"));
+		Mine.OPT_DEBUG_REPLACERS = config.getBoolean("debug-replacers");
+		
+		
+		
 		Mine.loadMaps();
 		log("Mapas carregados!");
 
@@ -156,37 +237,8 @@ public class EduardAPI extends EduardPlugin {
 			}
 		}
 
-		
-		
-		log("Definindo valores das classes da API");
-		Extra.setPrice(EduardPlugin.class, 4);
-		Extra.setPrice(Menu.class, 4);
-		Extra.setPrice(Shop.class, 1);
-		Extra.setPrice(CommandManager.class, 0);
-		Extra.setPrice(TimeManager.class, 0);
-		Extra.setPrice(EventsManager.class, 1);
-		Extra.setPrice(DBManager.class, 15);
-		Extra.setPrice(Tag.class, 1);
-		Extra.setPrice(PluginMessageListener.class, 10);
-		Extra.setPrice(DisplayBoard.class, 5);
-		
-
-		log("Carregado com sucesso!");
-		new BukkitReplacers();
-		new McMMOReplacers();
-		new MassiveFactionReplacers();
-		
-//		double precoDaAPI = plugin.getPrice();
-		
-//		List<Class<?>> classes = getClasses("net.eduard.api");
-//		double valor = 0;
-//		for (Class<?> claz : classes) {
-//			valor+=EduardAPI.getValueOf(claz, new ArrayList<>(),false);
-//		}
-//		System.out.println("R$ "+valor);
 	}
-	
-	
+
 	@Override
 	public void onDisable() {
 		Mine.saveMaps();

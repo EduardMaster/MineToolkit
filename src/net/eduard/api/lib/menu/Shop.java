@@ -23,7 +23,8 @@ public class Shop extends Menu {
 	private ShopSortType sortType = ShopSortType.BUY_PRICE_ASC;
 
 	private String messageBoughtItem = "§aVoce adquiriu $amount ($product) produto(s) da Loja!";
-
+	private String messageSoldItem = "§aVocê vendeu $amount ($product) produtos(s) para a loja!";
+	private String messageWithoutItems = "§cVoce não tem items suficiente!";
 	private String messageWithoutBalance = "§cVoce não tem dinheiro suficiente!";
 	private String messageWithoutPermission = "§cVoce não tem permissão para comprar este produto!";
 	@StorageAttributes(reference = true)
@@ -160,10 +161,18 @@ public class Shop extends Menu {
 									amount = 64;
 								}
 							}
+							if (amount>product.getStock()) {
+								amount = product.getStock();
+							}
+							if (amount <1) {
+								player.sendMessage(messageWithoutItems);
+								return;
+							}
 							double finalPrice = amount * priceUnit;
 							ProductTradeEvent evento = new ProductTradeEvent(player);
 							evento.setProduct(product);
 							evento.setAmount(amount);
+							evento.setNewStock(product.getStock() - amount);
 							if (useVault)
 								evento.setBalance(VaultAPI.getEconomy().getBalance(player));
 							else if (currency != null) {
@@ -173,12 +182,14 @@ public class Shop extends Menu {
 							evento.setType(TradeType.SELABLE);
 							evento.setPriceTotal(finalPrice);
 							evento.setShop(Shop.this);
-
+//							
 							Mine.callEvent(evento);
 							if (evento.isCancelled()) {
 								return;
 							}
-							Mine.remove(player.getInventory(), product.getProduct());
+							Mine.remove(player.getInventory(), product.getProduct(),evento.getAmount());
+							player.sendMessage(messageSoldItem.replace("$amount", "" + amount).replace("$product",
+									"" + product.getName()));
 							if (useVault && VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
 								VaultAPI.getEconomy().depositPlayer(player, finalPrice);
 							} else if (currency != null) {
@@ -278,6 +289,22 @@ public class Shop extends Menu {
 
 	public void setSortType(ShopSortType sortType) {
 		this.sortType = sortType;
+	}
+
+	public String getMessageSoldItem() {
+		return messageSoldItem;
+	}
+
+	public void setMessageSoldItem(String messageSoldItem) {
+		this.messageSoldItem = messageSoldItem;
+	}
+
+	public String getMessageWithoutItems() {
+		return messageWithoutItems;
+	}
+
+	public void setMessageWithoutItems(String messageWithoutItems) {
+		this.messageWithoutItems = messageWithoutItems;
 	}
 
 }

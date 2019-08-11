@@ -253,7 +253,10 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		if (command.getPermissionMessage() != null) {
 			permissionMessage = command.getPermissionMessage().replace('&', '§');
 		}
-		// alias n§o funciona para comandos apenas na plugin.yml ou subcomandos
+		if (command.getDescription()!=null) {
+			description = command.getDescription().replace('&', '§');
+		}
+		// alias não funciona para comandos apenas na plugin.yml ou subcomandos
 		if (command.getAliases() != null) {
 			aliases = command.getAliases();
 		}
@@ -303,7 +306,7 @@ public class CommandManager extends EventsManager implements TabCompleter, Comma
 		command.setAliases(aliases);
 		command.setDescription(description);
 		command.setLabel(name);
-		command.setName(name);
+		//command.setName(name);
 		command.setUsage(usage);
 		command.setPermissionMessage(permissionMessage);
 		command.setPermission(permission);

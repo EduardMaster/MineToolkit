@@ -13,7 +13,7 @@ public class MapPasteCommand extends CommandManager {
 
 	public MapPasteCommand() {
 		super("paste", "colar");
-
+		setDescription("Cola o Schematic (Mapa) no local que estiver");
 	}
 
 	@Override

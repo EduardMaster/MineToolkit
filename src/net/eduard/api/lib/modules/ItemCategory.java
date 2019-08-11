@@ -32,8 +32,8 @@ public enum ItemCategory {
 		List<Material> types = new ArrayList<>();
 		for (Material type : Material.values()) {
 			String nome = type.name();
-			if (nome.contains("HELMET") || nome.contains("CHESTPLATE") || nome.equals("BOOTS")
-					|| nome.equals("LEGGINS")) {
+			if (nome.contains("HELMET") || nome.contains("CHESTPLATE") || nome.contains("BOOTS")
+					|| nome.contains("LEGGINS")) {
 				types.add(type);
 			}
 		}

@@ -124,7 +124,7 @@ public class MassiveFactionReplacers {
 						return "§eLoja";
 					}
 					if (nome.equalsIgnoreCase("vip")) {
-						return "§6Area Vip";
+						return "§6Area VIP";
 					}
 					if (nome.equalsIgnoreCase("guerra")) {
 						return "§4Evento Guerra";

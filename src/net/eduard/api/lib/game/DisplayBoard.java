@@ -77,9 +77,10 @@ public class DisplayBoard implements Storable, Copyable {
 	 */
 	@NotCopyable
 	protected transient Objective health;
-	
+
+	private boolean healthBarEnabled;
 	/**
-	 * {@link Scoreboard} criada 
+	 * {@link Scoreboard} criada
 	 */
 	@NotCopyable
 	protected transient Scoreboard scoreboard;
@@ -88,7 +89,7 @@ public class DisplayBoard implements Storable, Copyable {
 	 */
 	@NotCopyable
 	protected transient Objective objective;
-	
+
 	/**
 	 * HashMap armazenando os nomes dos jgoadores Fakes (As Linhas)
 	 */
@@ -161,7 +162,7 @@ public class DisplayBoard implements Storable, Copyable {
 		}
 		if (!fakes.containsKey(line)) {
 			FakePlayer fake = new FakePlayer(center);
-			
+
 			objective.getScore(fake).setScore(line);
 			fakes.put(line, fake);
 			team.addPlayer(fake);
@@ -246,8 +247,10 @@ public class DisplayBoard implements Storable, Copyable {
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		objective = scoreboard.registerNewObjective("sc" + Extra.getRandomInt(1000, 100000), "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		health = scoreboard.registerNewObjective("HealthBar", Criterias.HEALTH);
-		health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+		if (healthBarEnabled) {
+			health = scoreboard.registerNewObjective("HealthBar", Criterias.HEALTH);
+			health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+		}
 		for (int id = 15; id > 0; id--) {
 			Team team = scoreboard.registerNewTeam("t" + +Mine.getRandomInt(1000, 100000));
 //			FakePlayer fake = new FakePlayer("" + ChatColor.values()[id]);
@@ -377,8 +380,10 @@ public class DisplayBoard implements Storable, Copyable {
 	}
 
 	public void setHealthBar(String health) {
-		this.health.setDisplayName(health);
-		this.healthBar = health;
+		if (healthBarEnabled) {
+			this.health.setDisplayName(health);
+			this.healthBar = health;
+		}
 	}
 
 	public String getHealthBar() {
@@ -479,6 +484,14 @@ public class DisplayBoard implements Storable, Copyable {
 	public void add(String line) {
 		getLines().add(line);
 
+	}
+
+	public boolean isHealthBarEnabled() {
+		return healthBarEnabled;
+	}
+
+	public void setHealthBarEnabled(boolean healthBarEnabled) {
+		this.healthBarEnabled = healthBarEnabled;
 	}
 
 }
