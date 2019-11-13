@@ -9,7 +9,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 /**
- * API para a utiliza§§o do Vault com um formato mais simples de entender <br>
+ * API para a utilização do Vault com um formato mais simples de entender <br>
  * 
  * @author Eduard
  * @version 2.0
@@ -17,7 +17,35 @@ import net.milkbowl.vault.permission.Permission;
  *
  */
 public final class VaultAPI {
-
+	/**
+	 * Força o ativamento do Vault
+	 */
+	public static void setupVault() {
+		
+		
+		setupEconomy();
+		setupChat();
+		setupPermissions();
+	}
+	/**
+	 * Testa se o Vault esta instalado no Servidor
+	 * 
+	 * @return Se sim ou nao
+	 */
+	public static boolean hasVault() {
+		return Bukkit.getPluginManager().getPlugin("Vault") != null;
+	}
+	/**
+	 * Se tiver o vault ele  ativado automaticamente
+	 */
+	static {
+		if (hasVault()) {
+			Bukkit.getConsoleSender().sendMessage("§bVaultAPI §aAtivando o suporte ao Vault");
+			setupVault();
+		}else {
+			Bukkit.getConsoleSender().sendMessage("§bVaultAPI §aFalha ao ativar suporte ao Vault");
+		}
+	}
 	/**
 	 * Pega o prefixo no primeiro grupo do jogador
 	 * 
@@ -34,7 +62,7 @@ public final class VaultAPI {
 	}
 
 	/**
-	 * Controle de permiss§es
+	 * Controle de permissões
 	 */
 
 	@Deprecated
@@ -51,7 +79,7 @@ public final class VaultAPI {
 	private static Chat chat = null;
 
 	/**
-	 * Pega o Controlador das Permiss§es
+	 * Pega o Controlador das permissões
 	 * 
 	 * @return Controlador
 	 */
@@ -77,19 +105,12 @@ public final class VaultAPI {
 		return economy;
 	}
 
-	/**
-	 * Testa se o Vault esta instalado no Servidor
-	 * 
-	 * @return Se sim ou n§o
-	 */
-	public static boolean hasVault() {
-		return Bukkit.getPluginManager().getPlugin("Vault") != null;
-	}
+
 
 	/**
 	 * Testa se tem algum plugin de Economia
 	 * 
-	 * @return Se sim ou n§o
+	 * @return Se sim ou nao
 	 */
 	public static boolean hasEconomy() {
 		return economy != null;
@@ -98,16 +119,16 @@ public final class VaultAPI {
 	/**
 	 * Testa se tem algum plugin de Chat
 	 * 
-	 * @return Se sim ou n§o
+	 * @return Se sim ou nao
 	 */
 	public static boolean hasChat() {
 		return chat != null;
 	}
 
 	/**
-	 * Teste se tem plugin de permiss§es
+	 * Teste se tem plugin de permissões
 	 * 
-	 * @return Se sim ou n§o
+	 * @return Se sim ou nao
 	 */
 	public static boolean hasPermission() {
 		return permission != null;
@@ -116,7 +137,7 @@ public final class VaultAPI {
 	/**
 	 * Tenta Ativar o Sistema de Chat
 	 * 
-	 * @return Se ativou ou n§o
+	 * @return Se ativou ou nao
 	 */
 	private static boolean setupChat() {
 
@@ -132,7 +153,7 @@ public final class VaultAPI {
 	/**
 	 * Tenta Ativar o Sistema de Economia
 	 * 
-	 * @return Se ativou ou n§o
+	 * @return Se ativou ou nao
 	 */
 	private static boolean setupEconomy() {
 
@@ -146,9 +167,9 @@ public final class VaultAPI {
 	}
 
 	/**
-	 * Tenta ativar o Sistema de Permiss§es
+	 * Tenta ativar o Sistema de permissões
 	 * 
-	 * @return Se Ativou ou n§o
+	 * @return Se Ativou ou nao
 	 */
 	private static boolean setupPermissions() {
 
@@ -160,22 +181,5 @@ public final class VaultAPI {
 		return (permission != null);
 	}
 
-	/**
-	 * For§a o ativamento do Vault
-	 */
-	public static void setupVault() {
-
-		setupEconomy();
-		setupChat();
-		setupPermissions();
-	}
-
-	/**
-	 * Se tiver o vault ele § ativado automaticamente
-	 */
-	static {
-		if (hasVault()) {
-			setupVault();
-		}
-	}
+	
 }

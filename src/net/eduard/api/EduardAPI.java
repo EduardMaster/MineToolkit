@@ -34,16 +34,14 @@ import net.eduard.api.lib.modules.BukkitBungeeAPI;
 import net.eduard.api.lib.modules.Copyable.CopyDebug;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.ServerAPI.BukkitControl;
+import net.eduard.api.lib.modules.VaultAPI;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables;
 import net.eduard.api.manager.BukkitReplacers;
 import net.eduard.api.manager.EssentialsEvents;
 import net.eduard.api.manager.InfoGenerator;
-import net.eduard.api.manager.MassiveFactionReplacers;
-import net.eduard.api.manager.McMMOReplacers;
 import net.eduard.api.server.EduardPlugin;
 import net.eduard.api.server.minigame.Minigame;
-import net.eduard.api.server.minigame.MinigamePlayer;
 
 /**
  * Classe Principal do EduardAPI
@@ -75,26 +73,35 @@ public class EduardAPI extends EduardPlugin {
 		return config;
 	}
 
-	public void onEnable() {
+	public void onLoad() {
+		
 		plugin = this;
 		setFree(true);
+		log("Registrando classes da EduardLIB");
+		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib");
+		BukkitStorables.load();
+		super.onLoad();
+		log("Storables do Bukkit carregado!");
+	}
+	public void onEnable() {
+		
+		VaultAPI.setupVault();
 		
 		BukkitControl.register(this);
 		BukkitBungeeAPI.requestCurrentServer();
 		BukkitController bukkit = BungeeAPI.getBukkit();
+		
 		bukkit.setPlugin(plugin);
 		bukkit.register();
 		
 		StorageAPI.registerPackage(Minigame.class);
 
-		log("Registrando classes da EduardLIB");
-		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib");
+	
 		
 		
 		log("Inicio do Recarregamento do EduardAPI");
 		reload();
-		BukkitStorables.load();
-		log("Storables do Bukkit carregado!");
+	
 		Mine.resetScoreboards();
 		log("Scoreboards resetadas!");
 		asyncTimer(new Runnable() {
@@ -167,7 +174,7 @@ public class EduardAPI extends EduardPlugin {
 		log("Comandos ativado com sucesso");
 		
 		new InfoGenerator(this);
-		log("Base ativado!");
+		log("Gerando Base de dados em forma de texto nos arquivos yml!");
 
 		
 		log("Definindo valores das classes da API");
@@ -184,17 +191,13 @@ public class EduardAPI extends EduardPlugin {
 
 		log("Ativando replacers");
 		new BukkitReplacers();
-		new McMMOReplacers();
-		new MassiveFactionReplacers();
+		
+//		new McMMOReplacers();
+//		new MassiveFactionReplacers();
+		
 		log("Carregado com sucesso!");
-//		double precoDaAPI = plugin.getPrice();
+		
 
-//		List<Class<?>> classes = getClasses("net.eduard.api");
-//		double valor = 0;
-//		for (Class<?> claz : classes) {
-//			valor+=EduardAPI.getValueOf(claz, new ArrayList<>(),false);
-//		}
-//		System.out.println("R$ "+valor);
 	}
 	public void reload() {
 		log("Aplicando debugs se estiverem ativados na config");
@@ -202,9 +205,9 @@ public class EduardAPI extends EduardPlugin {
 		DBManager.setDebug(config.getBoolean("debug-db"));
 		Menu.setDebug(config.getBoolean("debug-menu"));
 		CopyDebug.setDebug(config.getBoolean("debug-copyable"));
+		BukkitBungeeAPI.setDebug(config.getBoolean("debug-bungee-bukkit"));
 		Mine.OPT_DEBUG_REPLACERS = config.getBoolean("debug-replacers");
-		
-		
+	
 		
 		Mine.loadMaps();
 		log("Mapas carregados!");

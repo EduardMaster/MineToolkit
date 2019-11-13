@@ -97,7 +97,8 @@ public final class BukkitBungeeAPI {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+		//		e.printStackTrace();
+				log("Deu erro na linha "+e.getLocalizedMessage());
 			}
 		}
 

@@ -1,14 +1,18 @@
-package net.eduard.api.bungee;
+package net.eduard.api;
 
 import java.util.UUID;
 
-import net.eduard.api.lib.BungeeConfig;
+import org.bukkit.event.EventHandler;
+
 import net.eduard.api.lib.bungee.BungeeAPI;
 import net.eduard.api.lib.bungee.BungeeController;
 import net.eduard.api.lib.bungee.ServerSpigot;
 import net.eduard.api.lib.bungee.ServerState;
+import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.manager.DBManager;
 import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.server.BungeeDB;
+import net.eduard.api.server.EduardBungeePlugin;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -32,74 +36,74 @@ import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.event.TabCompleteResponseEvent;
 import net.md_5.bungee.api.event.TargetedEvent;
 import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.event.EventHandler;
+/**
+ * Para fazer plugins usando esta dependencia , lembre-se de colocar depends: [EduardAPI] 
+ * em vez de depend: [EduardAPI na bungee.yml
+ * @author Eduard
+ *
+ */
+public class EduardBungeeAPI extends EduardBungeePlugin{
+	private static EduardBungeeAPI instance;
+	
 
-public class EduardBungee extends Plugin implements Listener {
-	private static EduardBungee instance;
-	private DBBungee bungeeManager;
-
-	private BungeeConfig config;
- 
-	private BungeeConfig getConfig() {
-		return config;
-	}
-
-	public static EduardBungee getInstance() {
+	public static EduardBungeeAPI getInstance() {
 		return instance;
 	}
-
+	private BungeeDB bungee;
+	public void onLoad() {
+		StorageAPI.register(DBManager.class);
+		super.onLoad();
+	}
 	public void onEnable() {
 		instance = this;
-		BungeeCord.getInstance().getPluginManager().registerListener(this, this);
-		StorageAPI.register(DBManager.class);
-		StorageAPI.register(DBBungee.class);
-
-		config = new BungeeConfig("control.yml", this);
+		
 		reload();
+		
+		
+		
+		registerEvents(this);
+	
 		BungeeController bungee = BungeeAPI.getBungee();
 		bungee.setPlugin(this);
 		bungee.register();
+		
+	
+		
 		BungeeCord.getInstance().getPluginManager().registerCommand(this, new BungeeConfigReloadCommand());
 	}
 
 	public void reload() {
+		
 		config.reloadConfig();
 		config.add("debug-plugin-messages", true);
 		config.add("database-debug", false);
 		config.saveConfig();
+		bungee = new BungeeDB(db);
 		DBManager.setDebug(config.getBoolean("database-debug"));
-		if (bungeeManager != null) {
-			bungeeManager.closeConnection();
-		}
-		if (config.contains("Database")) {
-			setBungeeManager((DBBungee) config.get("Database"));
-		} else {
-			setBungeeManager(new DBBungee("root", "", "localhost"));
-			config.set("Database", bungeeManager);
-			config.saveConfig();
+			
+		if (db.isEnabled()) {
+			log("MySQL Ativado iniciando conexao");
+			db.openConnection();
+			if (db.hasConnection()) {
+				bungee.createBungeeTables();
 
-		}
-
-		bungeeManager.openConnection();
-		if (bungeeManager.hasConnection()) {
-			bungeeManager.createBungeeTables();
-
-			for (ServerInfo server : BungeeCord.getInstance().getServers().values()) {
-				if (!bungeeManager.serversContains(server.getName())) {
-					bungeeManager.insert("servers", server.getName(), server.getAddress().getAddress().getHostAddress(),
-							server.getAddress().getPort(), 0, 0);
-				} else {
-					bungeeManager.change("servers", "host = ? , port = ?", "name = ?",
-							server.getAddress().getAddress().getHostAddress(), server.getAddress().getPort(),
-							server.getName());
+				for (ServerInfo server : BungeeCord.getInstance().getServers().values()) {
+					if (!bungee.serversContains(server.getName())) {
+						db.insert("servers", server.getName(),
+								server.getAddress().getAddress().getHostAddress(), server.getAddress().getPort(), 0, 0);
+					} else {
+						db.change("servers", "host = ? , port = ?", "name = ?",
+								server.getAddress().getAddress().getHostAddress(), server.getAddress().getPort(),
+								server.getName());
+					}
 				}
-			}
 
+			} else {
+				error("§cFalha ao conectar com a Database");
+			}
 		} else {
-			BungeeCord.getInstance().getConsole().sendMessage(new TextComponent("§cFalha ao conectar com a Database"));
-		}
+			log("MySQL destivado algumas coisas da EduardBungeeAPI estarao desativado");
+		} 
 		for (ServerInfo server : BungeeCord.getInstance().getServers().values()) {
 			config.add("servers." + server.getName() + ".enabled", true);
 			config.add("servers." + server.getName() + ".type", 0);
@@ -132,25 +136,19 @@ public class EduardBungee extends Plugin implements Listener {
 
 		@Override
 		public void execute(CommandSender sender, String[] args) {
-			EduardBungee.getInstance().getConfig().reloadConfig();
+			EduardBungeeAPI.getInstance().getConfig().reloadConfig();
 			sender.sendMessage(new TextComponent("§aToda configuracao foi recarregada!"));
-			EduardBungee.getInstance().reload();
+			EduardBungeeAPI.getInstance().reload();
 		}
 
 	}
 
 	public void onDisable() {
-		bungeeManager.closeConnection();
+		db.closeConnection();
 		BungeeAPI.getController().unregister();
 	}
 
-	public DBManager getBungeeManager() {
-		return bungeeManager;
-	}
-
-	public void setBungeeManager(DBBungee bungeeManager) {
-		this.bungeeManager = bungeeManager;
-	}
+	
 
 	@EventHandler
 	public void onJoin(PreLoginEvent e) {
@@ -168,9 +166,9 @@ public class EduardBungee extends Plugin implements Listener {
 	public void onJoin(PostLoginEvent e) {
 		ProxiedPlayer player = e.getPlayer();
 		// info("§aPostLoginEvent", player.getPendingConnection());
-		if (bungeeManager.hasConnection()) {
-			if (!bungeeManager.playersContains(player.getName())) {
-				bungeeManager.insert("players", player.getName(), player.getUniqueId(), "");
+		if (db.hasConnection()) {
+			if (!bungee.playersContains(player.getName())) {
+				db.insert("players", player.getName(), player.getUniqueId(), "");
 			}
 		}
 	}
@@ -180,10 +178,10 @@ public class EduardBungee extends Plugin implements Listener {
 		String serverName = e.getTarget().getName();
 		UUID playerUUID = e.getPlayer().getUniqueId();
 		int playerAmount = e.getTarget().getPlayers().size();
-		if (bungeeManager.hasConnection()) {
+		if (db.hasConnection()) {
 			BungeeCord.getInstance().getScheduler().runAsync(getInstance(), () -> {
-				bungeeManager.setPlayersAmount(serverName, playerAmount);
-				bungeeManager.setPlayerServer(playerUUID, "");
+				bungee.setPlayersAmount(serverName, playerAmount);
+				bungee.setPlayerServer(playerUUID, "");
 			});
 		}
 
@@ -199,10 +197,10 @@ public class EduardBungee extends Plugin implements Listener {
 		UUID playerUUID = e.getPlayer().getUniqueId();
 		int playerAmount = e.getServer().getInfo().getPlayers().size();
 
-		if (bungeeManager.hasConnection()) {
+		if (db.hasConnection()) {
 			BungeeCord.getInstance().getScheduler().runAsync(getInstance(), () -> {
-				bungeeManager.setPlayersAmount(serverName, playerAmount);
-				bungeeManager.setPlayerServer(playerUUID, serverName);
+				bungee.setPlayersAmount(serverName, playerAmount);
+				bungee.setPlayerServer(playerUUID, serverName);
 			});
 
 		}
@@ -244,7 +242,6 @@ public class EduardBungee extends Plugin implements Listener {
 
 	@EventHandler
 	public void event(ServerSwitchEvent e) {
-		
 
 	}
 
@@ -255,7 +252,6 @@ public class EduardBungee extends Plugin implements Listener {
 
 	@EventHandler
 	public void event(ProxyReloadEvent e) {
-		
 
 	}
 

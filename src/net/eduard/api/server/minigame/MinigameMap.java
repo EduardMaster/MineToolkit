@@ -29,6 +29,7 @@ public class MinigameMap implements Storable, Copyable {
 	private int minPlayersAmount = 2;
 	private int maxPlayersAmount = 20;
 	private int neededPlayersAmount = 16;
+	private int maxRounds=3;
 	private Location spawn, lobby;
 	private Map<String, Location> locations = new HashMap<>();
 	private List<Schematic> bases = new ArrayList<>();
@@ -262,6 +263,14 @@ public class MinigameMap implements Storable, Copyable {
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
+	}
+
+	public int getMaxRounds() {
+		return maxRounds;
+	}
+
+	public void setMaxRounds(int maxRounds) {
+		this.maxRounds = maxRounds;
 	}
 
 }

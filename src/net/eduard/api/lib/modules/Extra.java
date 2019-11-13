@@ -79,7 +79,14 @@ import com.google.gson.JsonParser;
  *
  */
 public final class Extra {
-
+	public static InputStream getResource(ClassLoader loader, String name) throws IOException {
+		URL url = loader.getResource(name);
+		if (url == null)
+			return null;
+		URLConnection connection = url.openConnection();
+		connection.setUseCaches(false);
+		return connection.getInputStream();
+	}
 	/**
 	 * Tipo de geração de Key
 	 * 
@@ -448,7 +455,7 @@ public final class Extra {
 	/**
 	 * Defaz o ZIP do Arquivo
 	 * 
-	 * @param zipIn    Input Stream (Cone§§o de Algum Arquivo)
+	 * @param zipIn    Input Stream (Conexao de Algum Arquivo)
 	 * @param filePath Destino Arquivo
 	 */
 	public static void extractFile(ZipInputStream zipIn, String filePath) {
@@ -1055,7 +1062,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Pega o Ip do Cone§§o do Servidor
+	 * Pega o Ip do Conexao do Servidor
 	 * 
 	 * @return Ip do Servidor
 	 */
@@ -1761,7 +1768,7 @@ public final class Extra {
 	}
 
 	/**
-	 * Salva um Objecto no Arquivo em forma de serializa§§o Java
+	 * Salva um Objecto no Arquivo em forma de serializaxao Java
 	 * 
 	 * @param object Objeto (Dado)
 	 * @param file   Arquivo
@@ -1786,7 +1793,7 @@ public final class Extra {
 	 * Seta um valor para um determinado ? de um PreparedStatement
 	 * 
 	 * @param state State
-	 * @param param Posi§§o
+	 * @param param Posissao
 	 * @param value Valor ser setado
 	 */
 	public static void setSQLValue(PreparedStatement state, int param, Object value) {
@@ -2192,11 +2199,12 @@ public final class Extra {
 		try {
 			Files.write(path, lines, StandardCharsets.UTF_8);
 			return;
-		} catch (Exception e) {
+		} catch (Exception ex) {
 		}
 		try {
 			Files.write(path, lines, Charset.defaultCharset());
-		} catch (Exception e) {
+			return;
+		} catch (Exception ex) {
 		}
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
@@ -2204,7 +2212,8 @@ public final class Extra {
 				writer.write(line + "\n");
 			}
 			writer.close();
-		} catch (Exception e) {
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 
 	}

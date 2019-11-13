@@ -1,10 +1,10 @@
 name: EduardAPI
 description: API de desenvolvimento de plugins que facilita sua vida
 main: net.eduard.api.EduardAPI
-version: 2.6.6
+version: 2.6.7
 author: Eduard
 authors: [Eduard]
-softdepend: [HolographicDisplays,Citizens,Vault,Essentials,mcMMO,Factions]
+softdepend: [Vault,Iconomy,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]
 website: https://www.youtube.com/user/EduTutoriaisHD
 commands:
   map:

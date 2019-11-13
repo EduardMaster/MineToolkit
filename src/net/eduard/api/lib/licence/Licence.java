@@ -32,10 +32,10 @@ public class Licence {
 
 	private static PluginActivationStatus test(String plugin, String owner, String key) {
 		try {
-
-			URLConnection connect = new URL(site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner)
-					.openConnection();
-//			System.out.println(site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner);
+			String tag = "[" + plugin + "] ";
+			String link = site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner;
+			URLConnection connect = new URL(link).openConnection();
+			System.out.println(tag + " Verificando pelo link: " + link);
 			connect.addRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
 			Scanner scan = new Scanner(connect.getInputStream());
@@ -45,24 +45,30 @@ public class Licence {
 				b.append(text);
 			}
 			scan.close();
-			if (b.toString().isEmpty()) {
-				return PluginActivationStatus.PLUGIN_ACTIVATED;
+			try {
+				return PluginActivationStatus.valueOf(b.toString().toUpperCase().replace(" ", "_"));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				return PluginActivationStatus.ERROR;
 			}
-			return PluginActivationStatus.valueOf(b.toString().toUpperCase().replace(" ", "_"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PluginActivationStatus.PLUGIN_EXPIRED;
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return PluginActivationStatus.SITE_OFF;
 		}
 	}
 
 	private static enum PluginActivationStatus {
 
-		INVALID_KEY("�cNao foi encontrado esta Licensa no Sistema."),
-		WRONG_KEY("�cEsta Licensa nao bate com a do Sistema."),
-		KEY_TO_WRONG_PLUGIN("�cA Licensa usada nao � para este plugin."),
-		KEY_TO_WRONG_OWNER("�cA Licensa usada nao � para este Dono"),
-		INVALID_IP("�cEste IP usado nao corresponde a Key"), INVALID_PORT("�cEsta Porta nao correponde a da Licensa."),
-		PLUGIN_EXPIRED("�cO plugin expirou."), PLUGIN_ACTIVATED("�aPlugin ativado com sucesso.", true);
+		INVALID_KEY("§cNao foi encontrado esta Licensa no Sistema."),
+		WRONG_KEY("§cNao possui esta Licensa no Sistema."),
+		KEY_TO_WRONG_PLUGIN("§cA Licensa usada nao serve para este plugin."),
+		KEY_TO_WRONG_OWNER("§cA Licensa usada nao serve para este Dono"),
+		INVALID_IP("§cEste IP usado nao corresponde ao IP da Licensa"),
+		ERROR("§cO plugin nao ativou pois deu algum tipo de erro ao receber a resposta do Site"),
+		SITE_OFF("§eO Sistema de licença nao respondeu, §aplugin ativado para testes", true),
+		PLUGIN_ACTIVATED("§aPlugin ativado com sucesso, Licensa permitida.", true),
+		FOR_TEST("§aO plugin foi liberado para testes no PC do Eduard", true);
 
 		private String message;
 		private boolean active;
@@ -100,11 +106,10 @@ public class Licence {
 	public static class BukkitTester {
 
 		public static void test(JavaPlugin plugin, Runnable activation) {
-			
+
 			String pluginName = plugin.getName();
-		
-			
-			Bukkit.getConsoleSender().sendMessage("�aAutenticando o plugin " + pluginName);
+			String tag = "§b[" + plugin.getName() + "] §f";
+			Bukkit.getConsoleSender().sendMessage(tag + "§eFazendo autenticacao do Plugin no site");
 			BukkitConfig config = new BukkitConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
@@ -115,8 +120,8 @@ public class Licence {
 
 			{
 				PluginActivationStatus result = Licence.test(pluginName, owner, key);
-//				plugin.getLogger().info(result.getMessage());
-				Bukkit.getConsoleSender().sendMessage("�b"+plugin.getDescription().getFullName()+" "+result.getMessage());
+
+				Bukkit.getConsoleSender().sendMessage(tag + result.getMessage());
 				if (!result.isActive()) {
 					Bukkit.getPluginManager().disablePlugin(plugin);
 				} else {
@@ -134,17 +139,18 @@ public class Licence {
 		public static void test(Plugin plugin, Runnable activation) {
 			String pluginName = plugin.getDescription().getName();
 			BungeeCord.getInstance().getConsole()
-					.sendMessage(new TextComponent("�aAutenticando o plugin " + pluginName));
+					.sendMessage(new TextComponent("§aAutenticando o plugin " + pluginName));
 			BungeeConfig config = new BungeeConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
 			config.saveConfig();
 			String key = config.getString("key");
 			String owner = config.getString("onwer");
+			String tag = "§b[" + plugin.getDescription().getName() + "] §f";
 			BungeeCord.getInstance().getScheduler().runAsync(plugin, () -> {
 
 				PluginActivationStatus result = Licence.test(pluginName, owner, key);
-				BungeeCord.getInstance().getConsole().sendMessage(new TextComponent(result.getMessage()));
+				BungeeCord.getInstance().getConsole().sendMessage(new TextComponent(tag + result.getMessage()));
 				if (!result.isActive()) {
 					BungeeCord.getInstance().getPluginManager().unregisterListeners(plugin);
 					BungeeCord.getInstance().getPluginManager().unregisterCommands(plugin);

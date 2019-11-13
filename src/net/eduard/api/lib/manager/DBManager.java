@@ -32,6 +32,7 @@ public class DBManager implements Storable, Copyable {
 		if (debug)
 			System.out.println("[DB] " + msg);
 	}
+
 	private boolean enabled;
 	private String user = "root";
 	private String pass = "";
@@ -39,7 +40,7 @@ public class DBManager implements Storable, Copyable {
 	private String port = "3306";
 	private String database = "mine";
 	private String type = "jdbc:mysql://";
-	
+
 	private boolean useSQLite;
 	private transient Connection connection;
 
@@ -99,7 +100,7 @@ public class DBManager implements Storable, Copyable {
 	 * @throws Exception
 	 */
 	public Connection connectBase() throws Exception {
-		return DriverManager.getConnection(getURL() + database, user, pass);
+		return DriverManager.getConnection(getURL() + database + "?autoReconnect=true", user, pass);
 	}
 
 	/**
@@ -112,7 +113,7 @@ public class DBManager implements Storable, Copyable {
 		if (useSQLite) {
 			return DriverManager.getConnection("jdbc:sqlite:" + database);
 		} else {
-			return DriverManager.getConnection(getURL(), user, pass);
+			return DriverManager.getConnection(getURL() + "?autoReconnect=true", user, pass);
 		}
 	}
 
@@ -201,6 +202,7 @@ public class DBManager implements Storable, Copyable {
 	public void createDatabase(String database) {
 		update("create database if not exists " + database
 				+ " default character set utf8 default collate utf8_general_ci");
+		update("create database if not exists " + database + " default character set utf8");
 	}
 
 	/**
@@ -251,12 +253,13 @@ public class DBManager implements Storable, Copyable {
 	 * 
 	 * @param table   Tabela
 	 * @param objects Objetos
-	 * @return 
+	 * @return
 	 */
 	public int insert(String table, Object... objects) {
 //		if (useSQLite) {
-			// antes era hashes
-			return update("INSERT INTO " + table + " values ( NULL , " + Extra.getQuestionMarks(objects.length) + " )", objects);
+		// antes era hashes
+		return update("INSERT INTO " + table + " values ( NULL , " + Extra.getQuestionMarks(objects.length) + " )",
+				objects);
 //		} else {
 //			return update("INSERT INTO " + table + " values (default, " + inters(objects.length) + " )", objects);
 //		}
@@ -438,18 +441,17 @@ public class DBManager implements Storable, Copyable {
 	 * 
 	 * @param query     Query Pesquisa
 	 * @param replacers Objetos
-	 * @return 
+	 * @return
 	 */
 	public int update(String query, Object... replacers) {
 		int resultado = -1;
 		if (hasConnection()) {
 			try {
 				PreparedStatement state = query(query, replacers);
-				
-				
+
 				resultado = state.executeUpdate();
 				ResultSet keys = state.getGeneratedKeys();
-				if (keys!=null) {
+				if (keys != null) {
 					if (keys.next()) {
 						resultado = keys.getInt(1);
 					}
@@ -475,21 +477,17 @@ public class DBManager implements Storable, Copyable {
 				query += ";";
 			}
 
-			PreparedStatement state = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-			
+			PreparedStatement state = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
 			int id = 1;
 			for (Object replacer : replacers) {
-				Extra.setSQLValue(state, id,replacer);
-				query.replaceFirst("\\?", "'"+Extra.fromJavaToSQL(replacer)+"'");
+				Extra.setSQLValue(state, id, replacer);
+				query.replaceFirst("\\?", "'" + Extra.fromJavaToSQL(replacer) + "'");
 				id++;
 			}
-			
-			
-	
+
 			debug("[MySQL] " + query);
 
-		
 			return state;
 		} catch (Exception e) {
 			e.printStackTrace();

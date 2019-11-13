@@ -1,22 +1,25 @@
 package net.eduard.api.lib.storage.bukkit_storables;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
+
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-
 import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.EnchantGlow;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 //@StorageAttributes(auto=false)
 public class ItemStackStorable implements Storable {
@@ -42,6 +45,7 @@ public class ItemStackStorable implements Storable {
 		if (!lore.isEmpty()) {
 			Mine.setLore(item, lore);
 		}
+
 		String enchants = (String) map.get("enchants");
 		if (!enchants.isEmpty()) {
 			if (enchants.contains(", ")) {
@@ -63,18 +67,23 @@ public class ItemStackStorable implements Storable {
 
 			}
 		}
+		if (map.containsKey("glow")) {
+			boolean glowed = Extra.toBoolean(map.get("glow"));
+			if (glowed) {
+				EnchantGlow.addGlow(item);
+			}
+		}
 		if (map.containsKey("texture")) {
 			Mine.setSkin(item, (String) map.get("texture"));
 		}
-		if ( map.containsKey("texture-value")) {
+		if (map.containsKey("texture-value")) {
 			ItemMeta meta = item.getItemMeta();
 //
 			if (meta instanceof SkullMeta) {
 //				Bukkit.broadcastMessage("Teste2");
-				//map.containsKey("texture-signature") &&
+				// map.containsKey("texture-signature") &&
 				GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-				profile.getProperties().put("textures",
-						new Property("textures", (String) map.get("texture-value")));
+				profile.getProperties().put("textures", new Property("textures", (String) map.get("texture-value")));
 				Field profileField = null;
 				try {
 					profileField = meta.getClass().getDeclaredField("profile");
@@ -107,6 +116,9 @@ public class ItemStackStorable implements Storable {
 			map.put("amount", item.getAmount());
 			map.put("name", Mine.getName(item));
 			map.put("lore", Extra.toConfigMessages(Mine.getLore(item)));
+			if (item.containsEnchantment(EnchantGlow.getGlow())) {
+				map.put("glow", true);
+			}
 			String enchants = "";
 			if (item.getItemMeta().hasEnchants()) {
 				StringBuilder str = new StringBuilder();
@@ -140,7 +152,7 @@ public class ItemStackStorable implements Storable {
 						return;
 					if (textures.size() >= 1) {
 						for (Property texture : textures) {
-						
+
 							map.put("texture-value", texture.getValue());
 							map.put("texture-signature", texture.getSignature());
 						}
@@ -153,5 +165,4 @@ public class ItemStackStorable implements Storable {
 
 	};
 
-	
 }

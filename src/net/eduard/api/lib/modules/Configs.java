@@ -41,6 +41,7 @@ public class Configs {
 	private FileConfiguration config;
 
 	public String getName() {
+	
 		return name;
 	}
 

@@ -67,7 +67,7 @@ public class InfoGenerator {
 
 	private void saveClassLikeEnum(Class<?> value) {
 		try {
-			Config config = new Config("DataBase/" + value.getSimpleName() + ".yml");
+			Config config = new Config("DataBase/" , value.getSimpleName() + ".yml");
 			for (Field field : value.getFields()) {
 				if (field.getType().equals(value)) {
 					Object obj = field.get(value);
@@ -93,7 +93,7 @@ public class InfoGenerator {
 
 	static void saveObject(String local, Object value) {
 		try {
-			Config config = new Config("DataBase/" + local + ".yml");
+			Config config = new Config("DataBase/" , local + ".yml");
 			ConfigSection section = config.getConfig();
 			for (Method method : value.getClass().getDeclaredMethods()) {
 				String name = method.getName();
@@ -132,7 +132,7 @@ public class InfoGenerator {
 
 					try {
 						Enum<?> obj = (Enum<?>) part;
-						Config config = new Config("DataBase/" + value.getSimpleName() + "/" + obj.name() + ".yml");
+						Config config = new Config("DataBase/" + value.getSimpleName() + "/" , obj.name() + ".yml");
 						ConfigSection section = config.getConfig();
 						section.set("number", obj.ordinal());
 						for (Method method : obj.getClass().getDeclaredMethods()) {
@@ -154,7 +154,7 @@ public class InfoGenerator {
 				}
 
 			} else {
-				Config config = new Config("DataBase/" + value.getSimpleName() + ".yml");
+				Config config = new Config("DataBase/" , value.getSimpleName() + ".yml");
 				boolean used = false;
 				for (Object part : value.getEnumConstants()) {
 					try {

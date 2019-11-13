@@ -13,6 +13,7 @@ import net.eduard.api.lib.game.DisplayBoard;
 import net.eduard.api.lib.game.Kit;
 import net.eduard.api.lib.game.MinigameChest;
 import net.eduard.api.lib.manager.TimeManager;
+import net.eduard.api.lib.modules.BukkitBungeeAPI;
 
 /**
  * Representa um Jogo <br>
@@ -23,24 +24,25 @@ import net.eduard.api.lib.manager.TimeManager;
  * @author Eduard
  *
  */
-public class Minigame extends TimeManager{
+public class Minigame extends TimeManager {
 
-	private String name;
+	private String name = "Minigame";
+	private String messagePrefix = "[Minigame] ";
 	private boolean enabled = true;
 	private boolean bungeecord = true;
 	private String bungeeLobby = "Lobby";
 	private Location lobby;
+	private int maxPlayersPerLobby = 20;
 	private int timeIntoStart = 60;
 	private int timeIntoRestart = 20;
 	private int timeIntoGameOver = 15 * 60;
 	private int timeIntoPlay = 2 * 60;
-	
-	
+
 	private int timeOnStartTimer = 0;
 	private int timeOnRestartTimer = 40;
 	private int timeOnForceTimer = 10;
-	private int timeOnStartingToBroadcast=15;
-	private int timeOnEquipingToBroadcast=1;
+	private int timeOnStartingToBroadcast = 15;
+	private int timeOnEquipingToBroadcast = 1;
 	private transient MinigameMap setting;
 	private transient List<MinigamePlayer> players = new ArrayList<>();
 	private DisplayBoard scoreboardStarting;
@@ -50,10 +52,34 @@ public class Minigame extends TimeManager{
 	private MinigameChest chestsFeast = new MinigameChest();
 	private MinigameChest chestMiniFeast = new MinigameChest();
 	private List<Kit> kits = new ArrayList<>();
+	private List<MinigameLobby> lobbies = new ArrayList<>();
 	private List<MinigameMap> maps = new ArrayList<>();
 	private List<MinigameRoom> rooms = new ArrayList<>();
+
+	/**
+	 * Conecta todos jogadores no servidor Lobby
+	 */
+	public void connectAllPlayersToLobby() {
+		for (MinigamePlayer player : players) {
+			BukkitBungeeAPI.connectToServer(player.getPlayer(), bungeeLobby);
+		}
+
+	}
+
+	/**
+	 * Teleporta todos os jogadores para o Local do Lobby
+	 */
+	public void teleportAllPlayersToLobby() {
+		getPlayers().forEach(p -> p.getPlayer().teleport(getLobby()));
+//		for (MinigamePlayer player : getPlayers()) {
+//			Player p = player.getPlayer();
+//			p.teleport(getLobby());
+//		}
+	}
+
 	public Minigame() {
 	}
+
 	public int getTimeIntoPlay() {
 		return timeIntoPlay;
 	}
@@ -64,17 +90,38 @@ public class Minigame extends TimeManager{
 
 	public Minigame(String name) {
 		setName(name);
-
+		setMessagePrefix("§8[§b" + name + "§8] ");
+		lobbies.add(new MinigameLobby());
 	}
+
+	/**
+	 * Cria um Mapa
+	 * 
+	 * @param nome Nome
+	 * @return Mapa Novo
+	 */
 	public MinigameMap createMap(String nome) {
 		MinigameMap map = new MinigameMap(nome);
 		getMaps().add(map);
 		return map;
 
 	}
+
+	/**
+	 * Timer do Minigame define oque acontece a cada segundo que se passa do
+	 * Minigame em cada Sala
+	 * 
+	 * @param room Sala
+	 */
 	public void event(MinigameRoom room) {
 	}
 
+	/**
+	 * Pega o mapa existente pelo seu nome
+	 * 
+	 * @param name Nome
+	 * @return Mapa
+	 */
 	public MinigameMap getMap(String name) {
 		for (MinigameMap map : getMaps()) {
 			if (map.getName().equalsIgnoreCase(name)) {
@@ -83,10 +130,22 @@ public class Minigame extends TimeManager{
 		}
 		return null;
 	}
+
+	/**
+	 * Remove o mapa da lista de mapas existentes
+	 * 
+	 * @param map
+	 */
 	public void removeMap(MinigameMap map) {
 		getMaps().remove(map);
 	}
 
+	/**
+	 * Verifica se existe este Map com este Nome
+	 * 
+	 * @param name Nome
+	 * @return
+	 */
 	public boolean hasMap(String name) {
 		for (MinigameMap map : getMaps()) {
 			if (map.getName().equalsIgnoreCase(name)) {
@@ -95,6 +154,12 @@ public class Minigame extends TimeManager{
 		}
 		return false;
 	}
+
+	/**
+	 * Cria um sala unica e um mapa unico Também usando o Nome do Minigame
+	 * 
+	 * @return Minigame criado com mapa já configurado
+	 */
 	public MinigameRoom uniqueGame() {
 		return new MinigameRoom(this, new MinigameMap(this, getName()));
 	}
@@ -104,23 +169,37 @@ public class Minigame extends TimeManager{
 		setPlugin(plugin);
 	}
 
-
+	/**
+	 * Manda mensagem para todos jogadores participando do minigame
+	 * 
+	 * @param message Mensagem
+	 */
 	public void broadcast(String message) {
-		for (Player player : getPlaying()) {
-			player.sendMessage(Mine.getReplacers(message, player));
+		for (Player player : getPlayersOnline()) {
+			player.sendMessage(messagePrefix + Mine.getReplacers(message, player));
 		}
 	}
-
 
 	public String getBungeeLobby() {
 		return bungeeLobby;
 	}
 
+	/**
+	 * Pega a primera sala existente do Minigame
+	 * 
+	 * @return Sala
+	 */
 	public MinigameRoom getGame() {
 //		getRooms().get(0);
 		return getRooms().iterator().next();
 	}
 
+	/**
+	 * Pega a sala pelo seu ID
+	 * 
+	 * @param id ID
+	 * @return Sala
+	 */
 	public MinigameRoom getRoom(int id) {
 		for (MinigameRoom room : rooms) {
 			if (room.getId() == id) {
@@ -130,10 +209,23 @@ public class Minigame extends TimeManager{
 		return null;
 	}
 
+	/**
+	 * Verifica se a sala com este ID existe
+	 * 
+	 * @param id ID
+	 * @return Sala
+	 */
 	public boolean hasRoom(int id) {
 		return getRoom(id) != null;
 	}
 
+	/**
+	 * Cria uma Sala com este ID para o Mapa expecifico
+	 * 
+	 * @param map Mapa
+	 * @param id  ID
+	 * @return Nova Sala
+	 */
 	public MinigameRoom createRoom(MinigameMap map, int id) {
 		MinigameRoom room = new MinigameRoom(this, map);
 		room.setId(id);
@@ -157,10 +249,22 @@ public class Minigame extends TimeManager{
 		this.players = players;
 	}
 
+	/**
+	 * Pega a sala que o jogador esta jogando
+	 * 
+	 * @param player Jogador
+	 * @return Sala do jogador
+	 */
 	public MinigameRoom getGame(Player player) {
 		return getPlayer(player).getGame();
 	}
 
+	/**
+	 * Pega a sala com o nome do seu mapa igual a este
+	 * 
+	 * @param name Nome
+	 * @return
+	 */
 	public MinigameRoom getGame(String name) {
 		for (MinigameRoom room : rooms) {
 			if (room.getMap().getName().equalsIgnoreCase(name)) {
@@ -174,6 +278,26 @@ public class Minigame extends TimeManager{
 		return lobby;
 	}
 
+	public MinigameLobby getMainLobby() {
+		if (lobbies.size() > 0)
+			return lobbies.get(0);
+		return newLobby(1);
+	}
+
+	public MinigameLobby newLobby(int id) {
+
+		MinigameLobby lobby = new MinigameLobby();
+		lobby.setId(id);
+		lobbies.add(lobby);
+		return lobby;
+
+	}
+
+	/**
+	 * Pega o mapa referente a sala principal do Minigame
+	 * 
+	 * @return
+	 */
 	public MinigameMap getMap() {
 		return getMap(getName());
 	}
@@ -182,10 +306,16 @@ public class Minigame extends TimeManager{
 		return name;
 	}
 
+	/**
+	 * Pega o MinigamePlayer referente ao jogador e se caso não exista cria um
+	 * 
+	 * @param player Jogador
+	 * @return Instancia de MinigamePlayer (MP)
+	 */
 	public MinigamePlayer getPlayer(Player player) {
 		MinigamePlayer miniplayer;
 		for (MinigamePlayer p : players) {
-			if (p.getPlayer().equals(player)) {
+			if (player.equals(p.getPlayer())) {
 				return p;
 			}
 		}
@@ -195,61 +325,130 @@ public class Minigame extends TimeManager{
 		return miniplayer;
 	}
 
-	public List<Player> getPlaying() {
+	/**
+	 * Pega os jogadores que estão jogando
+	 * 
+	 * @return Lista de Jogadores ({@link Player})
+	 */
+	public List<Player> getPlayersOnline() {
 		List<Player> list = new ArrayList<>();
 		for (MinigamePlayer player : players) {
 			list.add(player.getPlayer());
 		}
+
+		// List<Player> listaDoPlayers =
+		// players.stream().map(MinigamePlayer::getPlayer).collect(Collectors.toList());
 		return list;
 	}
 
+	/**
+	 * Verifica se existe o lobby
+	 * 
+	 * @return
+	 */
 	public boolean hasLobby() {
 		return lobby != null;
 	}
 
+	/**
+	 * Verifica se o jogador esta no modo Admin
+	 * 
+	 * @param player Jogador
+	 * @return
+	 */
 	public boolean isAdmin(Player player) {
 		return getPlayer(player).isState(MinigamePlayerState.ADMIN);
 
 	}
 
+	/**
+	 * Verifica se é modo Bungeecord
+	 * 
+	 * @return
+	 */
 	public boolean isBungeecord() {
 		return bungeecord;
 	}
 
+	/**
+	 * Verifica se o minigame esta ativado
+	 * 
+	 * @return
+	 */
 	public boolean isEnabled() {
 		return enabled;
 	}
 
+	/**
+	 * Verifica se o Jogador esta no modo Normal (sem ser Admin ou Spectador)
+	 * 
+	 * @param player Jogador
+	 * @return
+	 */
 	public boolean isPlayer(Player player) {
 		return getPlayer(player).isState(MinigamePlayerState.NORMAL);
 
 	}
 
+	/**
+	 * Verifica se o jogador esta no Minigame
+	 * 
+	 * @param player Jogador
+	 * @return
+	 */
 	public boolean isPlaying(Player player) {
 		return getPlayer(player).isPlaying();
 	}
 
+	/**
+	 * Verifica se o Jogador esta no modo Spectador
+	 * 
+	 * @param player Jogador
+	 * @return
+	 */
 	public boolean isSpectator(Player player) {
 		return getPlayer(player).isState(MinigamePlayerState.SPECTATOR);
 
 	}
 
+	/**
+	 * Verifica se o Estado da Sala principal é igual este estado
+	 * 
+	 * @param state Estado
+	 * @return
+	 */
 	public boolean isState(MinigameState state) {
 		return getGame().isState(state);
 	}
 
-
+	/**
+	 * Entrar em uma Sala
+	 * 
+	 * @param game   Sala
+	 * @param player Jogador
+	 */
 	public void joinPlayer(MinigameRoom game, Player player) {
 		MinigamePlayer p = getPlayer(player);
 		p.join(game);
 
 	}
 
+	/**
+	 * Entrar em um Time
+	 * 
+	 * @param team   Time
+	 * @param player Jogador
+	 */
 	public void joinPlayer(MinigameTeam team, Player player) {
 		MinigamePlayer p = getPlayer(player);
 		p.join(team);
 	}
 
+	/**
+	 * Remover o jogador da sala e do time Atual dele
+	 * 
+	 * @param player Jogador
+	 */
 	public void leavePlayer(Player player) {
 		MinigamePlayer p = getPlayer(player);
 		if (p.isPlaying()) {
@@ -262,14 +461,29 @@ public class Minigame extends TimeManager{
 
 	}
 
+	/**
+	 * Remove o jogador da Lista de jogadores {@link MinigamePlayer}
+	 * 
+	 * @param player Jogador
+	 */
 	public void remove(Player player) {
 		players.remove(getPlayer(player));
 	}
 
+	/**
+	 * Remove a Sala da lista de salas existentes
+	 * 
+	 * @param game Sala
+	 */
 	public void removeGame(MinigameRoom game) {
 		this.rooms.remove(game);
 	}
 
+	/**
+	 * Remove a sala pelo seu ID
+	 * 
+	 * @param id
+	 */
 	public void removeGame(int id) {
 		MinigameRoom game = getRoom(id);
 		this.rooms.remove(game);
@@ -280,6 +494,10 @@ public class Minigame extends TimeManager{
 		return null;
 	}
 
+	/**
+	 * Metodo que é executado a cada segundo e executa o metodo de cada sala
+	 * <code> event(room)</code>
+	 */
 	public void run() {
 		if (!enabled)
 			return;
@@ -441,17 +659,45 @@ public class Minigame extends TimeManager{
 	public void setScoreboardStarting(DisplayBoard scoreboardStarting) {
 		this.scoreboardStarting = scoreboardStarting;
 	}
+
 	public int getTimeOnStartingToBroadcast() {
 		return timeOnStartingToBroadcast;
 	}
+
 	public void setTimeOnStartingToBroadcast(int timeOnStartingToBroadcast) {
 		this.timeOnStartingToBroadcast = timeOnStartingToBroadcast;
 	}
+
 	public int getTimeOnEquipingToBroadcast() {
 		return timeOnEquipingToBroadcast;
 	}
+
 	public void setTimeOnEquipingToBroadcast(int timeOnEquipingToBroadcast) {
 		this.timeOnEquipingToBroadcast = timeOnEquipingToBroadcast;
+	}
+
+	public String getMessagePrefix() {
+		return messagePrefix;
+	}
+
+	public void setMessagePrefix(String messagePrefix) {
+		this.messagePrefix = messagePrefix;
+	}
+
+	public List<MinigameLobby> getLobbies() {
+		return lobbies;
+	}
+
+	public void setLobbies(List<MinigameLobby> lobbies) {
+		this.lobbies = lobbies;
+	}
+
+	public int getMaxPlayersPerLobby() {
+		return maxPlayersPerLobby;
+	}
+
+	public void setMaxPlayersPerLobby(int maxPlayersPerLobby) {
+		this.maxPlayersPerLobby = maxPlayersPerLobby;
 	}
 
 }

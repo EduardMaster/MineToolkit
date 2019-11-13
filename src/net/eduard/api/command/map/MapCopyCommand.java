@@ -23,15 +23,15 @@ public class MapCopyCommand extends CommandManager {
 			Schematic schema = Mine.getSchematic(p);
 			
 			if (!schema.hasFirstLocation()) {
-				p.sendMessage("§bEduardAPI §2Posicao 1 nao foi setada!");
+				p.sendMessage("§bEduardAPI §aPosicao 1 nao foi setada!");
 				return true;
 			}
 			if (!schema.hasSecondLocation()) {
-				p.sendMessage("§bEduardAPI §2Posicao 2 nao foi setada!");
+				p.sendMessage("§bEduardAPI §aPosicao 2 nao foi setada!");
 				return true;
 			}
 			schema.copy(p.getLocation());
-			p.sendMessage("§bEduardAPI §6Mapa copiado!");
+			p.sendMessage("§bEduardAPI §aMapa copiado!");
 		}
 		return true;
 	}

@@ -22,13 +22,13 @@ public class ApiReloadCommand extends CommandManager {
 		if (args.length == 1) {
 			sendUsage(sender );
 		} else {
-			String sub = args[1];
-			if (Mine.existsPlugin(sender, sub)) {
-				Plugin pl = Mine.getPlugin(sub);
-				if (pl instanceof EduardPlugin) {
-					EduardPlugin eduardPlugin = (EduardPlugin) pl;
+			String pluginName = args[1];
+			if (Mine.existsPlugin(sender, pluginName)) {
+				Plugin plugin = Mine.getPlugin(pluginName);
+				if (plugin instanceof EduardPlugin) {
+					EduardPlugin eduardPlugin = (EduardPlugin) plugin;
 					eduardPlugin.reload();
-					sender.sendMessage("§cPlugin do Eduard "+pl.getName()+" foi recarregado");
+					sender.sendMessage("§bEduardAPI §aPlugin do Eduard §2"+plugin.getName()+"§a foi recarregado");
 					
 				}else {
 					sender.sendMessage("§cEste plugin nao é um plugin do Eduard");

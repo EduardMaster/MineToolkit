@@ -11,8 +11,8 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.SoundEffect;
+import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.StorageInfo;
 
@@ -210,7 +210,7 @@ public class ConfigSection {
 	}
 
 	public boolean getBoolean() {
-		return Mine.toBoolean(object);
+		return Extra.toBoolean(object);
 	}
 
 	public boolean getBoolean(String path) {
@@ -218,7 +218,7 @@ public class ConfigSection {
 	}
 
 	public Double getDouble() {
-		return Mine.toDouble(object);
+		return Extra.toDouble(object);
 	}
 
 	public Double getDouble(String path) {
@@ -226,7 +226,7 @@ public class ConfigSection {
 	}
 
 	public Float getFloat() {
-		return Mine.toFloat(object);
+		return Extra.toFloat(object);
 	}
 
 	public Float getFloat(String path) {
@@ -238,7 +238,7 @@ public class ConfigSection {
 	}
 
 	public Integer getInt() {
-		return Mine.toInt(object);
+		return Extra.toInt(object);
 	}
 
 	public Integer getInt(String path) {
@@ -248,7 +248,7 @@ public class ConfigSection {
 	public List<Integer> getIntList() {
 		ArrayList<Integer> list = new ArrayList<>();
 		for (Object item : getList()) {
-			list.add(Mine.toInt(item));
+			list.add(Extra.toInt(item));
 		}
 		return list;
 	}
@@ -291,7 +291,7 @@ public class ConfigSection {
 	}
 
 	public Long getLong() {
-		return Mine.toLong(object);
+		return Extra.toLong(object);
 	}
 
 	public Long getLong(String path) {
@@ -300,13 +300,13 @@ public class ConfigSection {
 
 	public String getMessage() {
 
-		return Mine.toChatMessage(getString());
+		return Extra.toChatMessage(getString());
 	}
 
 	public ArrayList<String> getMessages() {
 		ArrayList<String> list = new ArrayList<>();
 		for (String text : getStringList()) {
-			list.add(Mine.toChatMessage(text));
+			list.add(Extra.toChatMessage(text));
 		}
 		return list;
 	}
@@ -345,7 +345,7 @@ public class ConfigSection {
 	}
 
 	public String getString() {
-		return removeQuotes(Mine.toString(object)).replace("/*", "\n").replace("\\n", "\n").replace("<br>", "\n")
+		return removeQuotes(Extra.toString(object)).replace("/*", "\n").replace("\\n", "\n").replace("<br>", "\n")
 				.replace("/n", "\n");
 	}
 
@@ -356,7 +356,7 @@ public class ConfigSection {
 	public List<String> getStringList() {
 		ArrayList<String> list = new ArrayList<>();
 		for (Object item : getList()) {
-			list.add(removeQuotes(Mine.toString(item)));
+			list.add(removeQuotes(Extra.toString(item)));
 		}
 		return list;
 	}
@@ -444,45 +444,46 @@ public class ConfigSection {
 		return getSection(path).getMessage();
 	}
 
-	void save(Config config, int spaceId) {
+	void save(List<String> lines, int spaceId) {
 		String space = getSpace(spaceId);
 		for (String comment : comments) {
-			config.lines.add(space + "# " + comment);
+			lines.add(space + "# " + comment);
 		}
 		if (spaceId == -1) {
-			config.lines.add("");
+			lines.add("");
 		}
 		if (isList()) {
-			config.lines.add(space + key + ": []");
+			lines.add(space + key + ": []");
 			for (Object text : getList()) {
-				config.lines.add(space + "- " + text);
+				lines.add(space + "- " + text);
 			}
 		} else if (isMap()) {
 			if (spaceId != -1) {
-				config.lines.add(space + key + ": {}");
+				lines.add(space + key + ": {}");
 			}
 			for (ConfigSection section : getMap().values()) {
-				section.save(config, spaceId + 1);
+				section.save(lines, spaceId + 1);
 				for (int i = 0; i < lineSpaces; i++) {
-					config.lines.add("");
+					lines.add("");
 				}
 			}
 		} else {
 			if (spaceId == -1)
 				return;
-			config.lines.add(space + key + ": " + object);
+			lines.add(space + key + ": " + object);
 
 		}
 
 	}
 
-	void reload(Config config) {
+	void reload(List<String> lines) {
+		
 		int spaceId = 0;
 		ConfigSection path = this;
 		boolean headerSeted = false;
 		List<String> currentComments = new ArrayList<>();
 		// int index = 0;
-		for (String line : config.lines) {
+		for (String line : lines) {
 			// System.err.println("-> " + line);
 			String space = getSpace(spaceId);
 			if (!headerSeted
@@ -551,7 +552,7 @@ public class ConfigSection {
 		if (comments != null & comments.length > 0) {
 			this.comments.clear();
 			for (Object value : comments) {
-				this.comments.add(Mine.toString(value));
+				this.comments.add(Extra.toString(value));
 			}
 		}
 	}

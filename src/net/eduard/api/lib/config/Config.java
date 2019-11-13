@@ -1,7 +1,6 @@
 package net.eduard.api.lib.config;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -10,12 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-
-import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
@@ -23,108 +16,106 @@ import net.eduard.api.lib.storage.Storable;
 /**
  * Sistema Interprador de YAML usando a secao {@link ConfigSection}
  * 
-
+ * 
  * @author Eduard
-
  *
+ * 
  */
 public class Config implements Storable {
-	private boolean saveAsUTF8 = false;
-
-	
-
-
-	public final static List<Config> CONFIGS = new ArrayList<>();
 
 	private transient ConfigSection root;
 	private transient File file;
-	private transient Plugin plugin;
+	private transient File folder;
+	private transient Object plugin;
 	private String name;
-	private boolean autoSave;
+	
 
 	transient List<String> lines;
 
 	public Config() {
-		this("config.yml");
+
 	}
 
-	public Config(String name) {
-		this(Mine.getMainPlugin(), name);
+	public Config(String folder, String name) {
+		this.name = name;
+		this.folder = new File(folder);
+		init();
 	}
 
-	public Config(Plugin plugin) {
-		this(plugin, "config.yml");
-	}
-
-	public Config(Plugin plugin, String name) {
+	public Config(Object plugin, String name) {
 		this.name = name;
 		this.plugin = plugin;
+		this.folder = getDataFolder();
 		init();
+	}
+	
+	public void init() {
+		file = new File(folder, name);
+		root = new ConfigSection("", "{}");
+		lines = new ArrayList<>();
 
+		root.lineSpaces = 1;
+		this.root.father = root;
+		reloadConfig();
 	}
 
-	public void init() {
-		boolean contains = false;
-		for (Config config : CONFIGS) {
-			if (config.equals(this)) {
-				file = config.file;
-				lines = config.lines;
-				root = config.root;
-				contains = true;
-				break;
-			}
+	public File getDataFolder() {
+		try {
+			return (File) plugin.getClass().getMethod("getDataFolder").invoke(plugin);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		if (!contains) {
-			// System.out.println("avancar");
-			file = new File(plugin.getDataFolder(), name);
-			root = new ConfigSection("", "{}");
-			lines = new ArrayList<>();
-			CONFIGS.add(this);
-			root.lineSpaces = 1;
-			this.root.father = root;
-			reloadConfig();
-		} else {
-			// System.out.println("voltar");
-		}
+		return null;
+
 	}
 
 	public List<Integer> getIntList(String path) {
 		return root.getIntList(path);
 	}
 
+	public void log(String msg) {
+		System.out.println("[Config] " + msg);
+	}
+
 	public void saveDefaultConfig() {
+		file.getParentFile().mkdirs();
 
 		if (!file.exists()) {
-			Mine.console("§bConfigAPI §a<- DEFAULT " + file.getName());
-			if (saveAsUTF8) {
+			log("<- SAVING DEFAULT " + name);
+			if (Extra.isDirectory(file)) {
+				file.mkdirs();
+			} else {
+
+			
+
 				try {
-					InputStream is = Mine.getResource(plugin.getClass().getClassLoader(), name);
+					InputStream is = Extra.getResource(plugin.getClass().getClassLoader(), name);
 					Extra.copyAsUTF8(is, file);
 
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 				// } else {
 				// plugin.saveResource(name, true);
-			} else {
-				if (plugin.getResource(name) != null) {
-					plugin.saveResource(name, true);
-				}else {
-					try {
-						file.createNewFile();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
 
+//				if (plugin.getResource(name) != null) {
+//					plugin.saveResource(name, true);
+//				} else {
+//					try {
+//						file.createNewFile();
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+			}
 		}
 	}
 
 	public void saveConfig() {
+		log("<- SAVING " + name);
 		lines.clear();
-		root.save(this, -1);
+		root.save(lines, -1);
 		try {
 			if (!Extra.isDirectory(file)) {
 				Extra.writeLines(file, lines);
@@ -137,19 +128,13 @@ public class Config implements Storable {
 
 	public void reloadConfig() {
 		try {
-			file.getParentFile().mkdirs();
-			if (!file.exists()) {
-				if (Extra.isDirectory(file)) {
-					file.mkdirs();
-				} else {
-					saveDefaultConfig();
-				}
+			log("<- RELOADING " + name);
+			saveDefaultConfig();
 
-			}
 			if (file.isFile()) {
 				lines = Extra.readLines(file);
 				root.getMap().clear();
-				root.reload(this);
+				root.reload(lines);
 			}
 
 		} catch (Exception ex) {
@@ -176,12 +161,12 @@ public class Config implements Storable {
 	}
 
 	public void copyContents(Config config) {
-		config.root.save(this, -1);
+		config.root.save(config.lines, -1);
 		// reload();
 	}
 
 	public Config createConfig(String name) {
-		return new Config(getPlugin(), name);
+		return new Config(folder.getName(), name);
 	}
 
 	public void deleteConfig() {
@@ -226,7 +211,7 @@ public class Config implements Storable {
 		return root;
 	}
 
-	public List<Config> getConfigs() {
+	public List<Config> getConfigsChildren() {
 		ArrayList<Config> list = new ArrayList<>();
 		if (Files.isDirectory(file.toPath())) {
 			for (String subFile : file.list()) {
@@ -236,16 +221,12 @@ public class Config implements Storable {
 		return list;
 	}
 
-	public List<String> getConfigsNames() {
+	public List<String> getConfigsChildrenNames() {
 		ArrayList<String> list = new ArrayList<>();
-		for (Config config : getConfigs()) {
+		for (Config config : getConfigsChildren()) {
 			list.add(config.getTitle());
 		}
 		return list;
-	}
-
-	public File getDataFolder() {
-		return plugin.getDataFolder();
 	}
 
 	public Double getDouble(String path) {
@@ -264,20 +245,12 @@ public class Config implements Storable {
 		return root.getInt(path);
 	}
 
-	public ItemStack getItem(String path) {
-		return root.getItem(path);
-	}
-
 	public Set<String> getKeys() {
 		return root.getKeys();
 	}
 
 	public Set<String> getKeys(String path) {
 		return root.getKeys(path);
-	}
-
-	public Location getLocation(String path) {
-		return root.getLocation(path);
 	}
 
 	public Long getLong(String path) {
@@ -294,10 +267,6 @@ public class Config implements Storable {
 
 	public String getNameComplete() {
 		return name;
-	}
-
-	public Plugin getPlugin() {
-		return plugin;
 	}
 
 	public ConfigSection getSection(String path) {
@@ -363,13 +332,6 @@ public class Config implements Storable {
 		return "Config [plugin=" + plugin + ", name=" + name + "]";
 	}
 
-	public boolean isAutoSave() {
-		return autoSave;
-	}
-
-	public void setAutoSave(boolean autoSave) {
-		this.autoSave = autoSave;
-	}
 
 	public void setIndent(int amount) {
 		root.setIndent(amount);
@@ -377,14 +339,14 @@ public class Config implements Storable {
 
 	@Override
 	public Object restore(Map<String, Object> map) {
-		plugin = Bukkit.getPluginManager().getPlugin(Mine.toString(map.get("folder")));
+		this.folder = new File((String) map.get("folder"));
 		init();
 		return null;
 	}
 
 	@Override
 	public void store(Map<String, Object> map, Object object) {
-		map.put("folder", plugin.getName());
+		map.put("folder", getDataFolder());
 	}
 
 }

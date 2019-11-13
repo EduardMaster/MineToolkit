@@ -1,5 +1,6 @@
 package net.eduard.api.lib.modules;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class ItemBuilder extends ItemStack {
 	public ItemBuilder() {
 		setType(Material.STONE);
 		setAmount(1);
-		
+
 	}
 
 	public ItemBuilder(Material type) {
@@ -79,7 +80,25 @@ public class ItemBuilder extends ItemStack {
 
 		ItemMeta meta = getItemMeta();
 		List<String> lore = meta.getLore();
+		if (lore == null) {
+			lore = new ArrayList<>();
+		}
+		lore.add(line);
 		meta.setLore(lore);
+		setItemMeta(meta);
+		return this;
+	}
+
+	public ItemBuilder removeLore() {
+		ItemMeta meta = getItemMeta();
+		meta.setLore(null);
+		setItemMeta(meta);
+		return this;
+	}
+
+	public ItemBuilder clearLore() {
+		ItemMeta meta = getItemMeta();
+		meta.setLore(new ArrayList<>());
 		setItemMeta(meta);
 		return this;
 	}

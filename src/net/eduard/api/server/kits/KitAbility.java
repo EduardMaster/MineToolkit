@@ -11,14 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.click.PlayerInteract;
-import net.eduard.api.lib.game.Explosion;
-import net.eduard.api.lib.game.Jump;
-import net.eduard.api.lib.game.SoundEffect;
-import net.eduard.api.lib.game.VisualEffect;
 import net.eduard.api.lib.manager.CooldownManager;
 import net.eduard.api.lib.modules.KitType;
 import net.eduard.api.lib.storage.StorageAttributes;

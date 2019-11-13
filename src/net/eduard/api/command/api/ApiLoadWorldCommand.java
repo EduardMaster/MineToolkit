@@ -21,9 +21,9 @@ public class ApiLoadWorldCommand extends CommandManager {
 		} else {
 			if (Bukkit.getWorld(args[1]) == null) {
 				Mine.loadWorld(args[1]);
-				sender.sendMessage("§aVoce carregou o mundo " + args[1]);
+				sender.sendMessage("§bEduardAPI §aVoce carregou o mundo §2" + args[1]);
 			} else {
-				sender.sendMessage("§aEste mundo já esta carregado");
+				sender.sendMessage("§bEduardAPI §aEste mundo já esta carregado");
 			}
 		}
 		return true;

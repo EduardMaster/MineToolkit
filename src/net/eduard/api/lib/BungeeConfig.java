@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.StorageInfo;
@@ -18,8 +19,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+
 /**
- * Armazenamento de Dados para servidores BungeeCord com suporte a {@link StorageAPI}
+ * Armazenamento de Dados para servidores BungeeCord com suporte a
+ * {@link StorageAPI}
  * 
  * @author Eduard
  * @version 1.2
@@ -93,7 +96,7 @@ public class BungeeConfig {
 	}
 
 	public String message(String path) {
-		return ChatColor.translateAlternateColorCodes('&', getConfig().getString(path));
+		return toChatMessage(getConfig().getString(path));
 	}
 
 	public void remove(String path) {
@@ -226,6 +229,12 @@ public class BungeeConfig {
 		if (!config.contains(path)) {
 			set(path, value);
 		}
+
+	}
+
+	public List<String> getMessages(String path) {
+
+		return getStringList(path).stream().map(BungeeConfig::toChatMessage).collect(Collectors.toList());
 
 	}
 

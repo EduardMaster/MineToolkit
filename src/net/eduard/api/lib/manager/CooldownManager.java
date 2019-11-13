@@ -2,39 +2,43 @@ package net.eduard.api.lib.manager;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.FakePlayer;
 
 public class CooldownManager extends EffectManager {
+	private String msgOnCooldown;
+	private String msgOverCooldown;
+	private String msgStartCooldown;
+	private Map<FakePlayer, TimeManager> cooldowns = new HashMap<>();
 
-	private Map<UUID, TimeManager> playersInCooldown = new HashMap<>();
-	private String onCooldownMessage = "§6Voce esta em Cooldown!";
-	private String overCooldownMessage = "§6Voce saiu do Cooldown!";
-	private String startCooldownMessage = "§6Voce usou a Habilidade!";
 	public CooldownManager() {
-		
+
 	}
+
 	public CooldownManager(int time) {
 		setTime(time);
+		msgOnCooldown = "§6Voce esta em Cooldown!";
+		msgOverCooldown = "§6Voce saiu do Cooldown!";
+		msgStartCooldown = "§6Voce usou a Habilidade!";
 	}
 
 	public String getOnCooldownMessage() {
-		return onCooldownMessage;
+		return msgOnCooldown;
 	}
 
 	public void setOnCooldownMessage(String onCooldownMessage) {
-		this.onCooldownMessage = onCooldownMessage;
+		this.msgOnCooldown = onCooldownMessage;
 	}
 
 	public String getStartCooldownMessage() {
-		return startCooldownMessage;
+		return msgStartCooldown;
 	}
 
 	public void setStartCooldownMessage(String startCooldownMessage) {
-		this.startCooldownMessage = startCooldownMessage;
+		this.msgStartCooldown = startCooldownMessage;
 	}
 
 	public boolean cooldown(Player player) {
@@ -48,9 +52,10 @@ public class CooldownManager extends EffectManager {
 	}
 
 	public CooldownManager stopCooldown(Player player) {
-		UUID id = player.getUniqueId();
-		playersInCooldown.get(id).getTask().cancel();
-		playersInCooldown.remove(id);
+		FakePlayer fake = new FakePlayer(player);
+		TimeManager cd = cooldowns.get(fake);
+		cd.stopTask();
+		cooldowns.remove(fake);
 		return this;
 	}
 
@@ -59,13 +64,15 @@ public class CooldownManager extends EffectManager {
 	}
 
 	public CooldownManager sendOnCooldown(Player player) {
-		player.sendMessage(onCooldownMessage);
+		if (msgOnCooldown != null)
+			player.sendMessage(msgOnCooldown);
 		return this;
 
 	}
 
 	public CooldownManager sendStartCooldown(Player player) {
-		player.sendMessage(startCooldownMessage);
+		if (msgStartCooldown != null)
+			player.sendMessage(msgStartCooldown);
 		return this;
 	}
 
@@ -82,20 +89,22 @@ public class CooldownManager extends EffectManager {
 		};
 		cd.setTime(getTime());
 		cd.asyncDelay();
-		playersInCooldown.put(player.getUniqueId(), cd);
+		cooldowns.put(new FakePlayer(player), cd);
 		return this;
 
 	}
 
 	public CooldownManager sendOverCooldown(Player player) {
-		player.sendMessage(overCooldownMessage);
+		if (msgOnCooldown != null)
+			player.sendMessage(msgOverCooldown);
 		return this;
 	}
 
 	public long getResult(Player player) {
-		if (playersInCooldown.containsKey(player.getUniqueId())) {
+		FakePlayer fake = new FakePlayer(player);
+		if (cooldowns.containsKey(fake)) {
 			long now = Mine.getNow();
-			TimeManager cd = playersInCooldown.get(player.getUniqueId());
+			TimeManager cd = cooldowns.get(fake);
 			Long before = cd.getStartTime();
 			long cooldown = cd.getTime() * 50;
 			long calc = before + cooldown;
@@ -114,11 +123,11 @@ public class CooldownManager extends EffectManager {
 	}
 
 	public String getOverCooldownMessage() {
-		return overCooldownMessage;
+		return msgOverCooldown;
 	}
 
 	public CooldownManager setOverCooldownMessage(String overCooldownMessage) {
-		this.overCooldownMessage = overCooldownMessage;
+		this.msgOverCooldown = overCooldownMessage;
 		return this;
 	}
 }

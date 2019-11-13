@@ -16,7 +16,7 @@ public class ApiUnloadCommand extends CommandManager {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
-		sender.sendMessage("§cNão implementado");
+		sender.sendMessage("§bEduardAPI §cNão implementado");
 		
 		return true;
 	}

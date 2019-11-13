@@ -1,6 +1,6 @@
 
 
-debug-plugin-messages: true
+debug-bungee-bukkit: false
 
 debug-storage: false
 

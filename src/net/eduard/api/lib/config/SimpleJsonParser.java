@@ -31,6 +31,7 @@ public class SimpleJsonParser {
 
 	public SimpleJsonParser(String json) {
 		this.jsonOriginal = json;
+		
 		this.chars = json.toCharArray();
 		debug("STARTING: " + json);
 	}

@@ -20,10 +20,10 @@ public class ApiDeleteWorldCommand extends CommandManager {
 		if (args.length == 1) {
 			sendUsage(sender);
 		} else {
-			String name = args[1];
-			if (Mine.existsWorld(sender, name)) {
-				Mine.deleteWorld(name);
-				sender.sendMessage("§bEduardAPI §aO Mundo §2" + name + "§a foi deletado com sucesso!");
+			String worldName = args[1];
+			if (Mine.existsWorld(sender, worldName)) {
+				Mine.deleteWorld(worldName);
+				sender.sendMessage("§bEduardAPI §aO Mundo §2" + worldName + "§a foi deletado com sucesso!");
 			}
 		}
 		return true;

@@ -25,7 +25,7 @@ public class ApiWorldsCommand extends CommandManager {
 			}
 			mundos.append("" + world.getName());
 		}
-		sender.sendMessage("§aOs mundo existentes s§o: §f" + mundos.toString());
+		sender.sendMessage("§bEduardAPI §aOs mundo existentes s§o: §2" + mundos.toString());
 
 		return true;
 	}

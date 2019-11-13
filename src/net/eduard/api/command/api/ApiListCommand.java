@@ -17,14 +17,15 @@ public class ApiListCommand extends CommandManager {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		sender.sendMessage("§bEduardAPI §aLista de Plugins no servidor");
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			String msg = "§cDISABLED";
+			String color = "§c§l";
 			if (plugin.isEnabled()) {
-				msg = "§aENABLED";
+				color = "§a§l";
 
 			}
-			sender.sendMessage(
-					"§f" + plugin.getName() + " " + msg + " §7 - " + plugin.getDescription().getDescription());
+			
+			sender.sendMessage(color + plugin.getName() + " §8- §7" + plugin.getDescription().getDescription());
 		}
 
 		return true;

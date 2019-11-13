@@ -21,13 +21,26 @@ import org.bukkit.entity.Player;
  */
 public class FakePlayer implements OfflinePlayer, Serializable {
 
+	public static void main(String[] args) {
+		try {
+			byte[] bites1 = ("OfflinePlayer:" + "EduardKillerPro").getBytes("UTF-8");
+			byte[] bites2 = ("OfflinePlayer:" + "EduardKillerPro".toLowerCase()).getBytes("UTF-8");
+			UUID id1 = UUID.nameUUIDFromBytes(bites1);
+			UUID id2 = UUID.nameUUIDFromBytes(bites2);
+			System.out.println(id1);
+			System.out.println(id2);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private UUID id;
-
 
 //
 	public void setName(String name) {
@@ -36,13 +49,21 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 
 	public FakePlayer(String name) {
 		this.name = name;
-		setIdByName();
 
 	}
 
 	public void setIdByName() {
 		try {
 			this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void setIdByNameLowerCase() {
+		try {
+			this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -89,17 +110,13 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FakePlayer other = (FakePlayer) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
+		if (other.getName() != null && getName() != null) {
+			return other.getName().equalsIgnoreCase(this.getName());
+		}
+		if (other.getId() != null && this.getId() != null) {
+			return other.getId().equals(this.getId());
+		}
+		return false;
 	}
 
 	@Override
@@ -180,13 +197,13 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 	}
 
 	@Deprecated
-	public void setBanned(boolean arg0) {
+	public void setBanned(boolean bol) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setWhitelisted(boolean arg0) {
+	public void setWhitelisted(boolean bol) {
 		// TODO Auto-generated method stub
 
 	}

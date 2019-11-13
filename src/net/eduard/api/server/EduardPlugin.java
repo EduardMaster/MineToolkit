@@ -19,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.config.Config;
+import net.eduard.api.lib.manager.DBManager;
 import net.eduard.api.lib.modules.BukkitTimeHandler;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.StorageAPI;
@@ -36,18 +37,23 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	private boolean logEnabled = true;
 	private boolean errorLogEnabled = true;
 
+	protected DBManager db;
 	protected Config config;
 	protected Config messages;
 	protected Config storage;
 	private File databaseFile;
 	private boolean free;
 
+	public DBManager getDB() {
+		return db;
+	}
+
 	public String getString(String path) {
 		return config.message(path);
 	}
 
 	/**
-	 * Config padrão do spigot não funciona
+	 * Config padrão do spigot não funciona com {@link Config}
 	 */
 	public FileConfiguration getConfig() {
 		return null;
@@ -133,20 +139,24 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 	 * Ao carregar o plugin no servidor ele inicia as as variaveis
 	 */
 	public void onLoad() {
-		config = new Config(this);
-
-		config.add("auto-save", true);
+		config = new Config(this,"config.yml");
+		db = new DBManager();
+		config.add("auto-save", false);
 		config.add("auto-save-seconds", 60);
 		config.add("auto-save-lasttime", Extra.getNow());
-		config.add("backup", true);
+		config.add("backup", false);
 		config.add("backup-lasttime", Extra.getNow());
 		config.add("backup-time", 1);
 		config.add("backup-timeunit-type", "MINUTES");
-
+		config.add("database", db);
 		config.saveConfig();
 		messages = new Config(this, "messages.yml");
 		storage = new Config(this, "storage.yml");
 		databaseFile = new File(getDataFolder(), "database.db");
+		reloadDBManager();
+	}
+	public void reloadDBManager() {
+		db = (DBManager) config.get("database");
 	}
 
 	public long getAutoSaveSeconds() {

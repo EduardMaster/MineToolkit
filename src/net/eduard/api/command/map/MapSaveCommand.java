@@ -25,7 +25,7 @@ public class MapSaveCommand extends CommandManager {
 			if (Mine.onlyPlayer(sender)) {
 				Player p = (Player) sender;
 				if (!Mine.MAPS_CACHE.containsKey(p)) {
-					p.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§f /map copy");
+					p.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy");
 					return true;
 				}
 				Mine.MAPS.put(args[1].toLowerCase(), Mine.MAPS_CACHE.get(p));

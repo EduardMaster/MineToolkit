@@ -14,8 +14,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -175,7 +173,7 @@ public final class Mine {
 	/**
 	 * Mensagem de quando plugin é invalido
 	 */
-	public static String MSG_PLUGIN_NOT_EXITS = "§cEste plugin $plugin não exite!";
+	public static String MSG_PLUGIN_NOT_EXITS = "§cEste plugin $plugin não existe!";
 
 	/**
 	 * Mensagem de quando não tem permissão
@@ -1955,14 +1953,7 @@ public final class Mine {
 		return text;
 	}
 
-	public static InputStream getResource(ClassLoader loader, String name) throws IOException {
-		URL url = loader.getResource(name);
-		if (url == null)
-			return null;
-		URLConnection connection = url.openConnection();
-		connection.setUseCaches(false);
-		return connection.getInputStream();
-	}
+	
 
 	public static Schematic getSchematic(Player player) {
 		Schematic schema = MAPS_CACHE.get(player);
@@ -2313,12 +2304,15 @@ public final class Mine {
 	public static boolean isEmpty(PlayerInventory inventory) {
 		for (ItemStack item : inventory.getArmorContents()) {
 			if (item != null) {
-				return false;
+				if (item.getType() != Material.AIR)
+					return false;
 			}
 		}
 		for (ItemStack item : inventory.getContents()) {
+
 			if (item != null) {
-				return false;
+				if (item.getType() != Material.AIR)
+					return false;
 			}
 
 		}
@@ -2976,6 +2970,12 @@ public final class Mine {
 		return Extra.parseDateDiff(time, future);
 	}
 
+	/**
+	 * Faz um teste de Chance com Porcetagem
+	 * 
+	 * @param chance Porcetagem de Chance
+	 * @return Se retornar True é porque Deu Sorte se não é um Fudido
+	 */
 	public static boolean random(double chance) {
 		return getChance(chance);
 	}
@@ -2984,6 +2984,11 @@ public final class Mine {
 		return getRandomInt(minValue, maxValue);
 	}
 
+	/**
+	 * Recupera vida, fome, deixa o cara normal
+	 * 
+	 * @param player Jogador
+	 */
 	public static void refreshAll(Player player) {
 		Mine.clearInventory(player);
 		removeEffects(player);
@@ -2993,16 +2998,32 @@ public final class Mine {
 		resetLevel(player);
 	}
 
+	/**
+	 * Retira a fome, recupera saturação e deixa sem exaustão
+	 * 
+	 * @param player
+	 */
 	public static void refreshFood(Player player) {
 		player.setFoodLevel(20);
 		player.setSaturation(20);
 		player.setExhaustion(0);
 	}
 
+	/**
+	 * Enche a vida do jogador
+	 * 
+	 * @param p Jogador
+	 */
 	public static void refreshLife(Player p) {
 		p.setHealth(p.getMaxHealth());
 	}
 
+	/**
+	 * Registra um Listener de Eventos no Plugin
+	 * 
+	 * @param event  Listener
+	 * @param plugin Plugin
+	 */
 	public static void registerEvents(Listener event, Plugin plugin) {
 		Bukkit.getPluginManager().registerEvents(event, plugin);
 	}
@@ -3163,6 +3184,31 @@ public final class Mine {
 		}
 	}
 
+	public static ItemStack setMaxStackSize(ItemStack itemOriginal, int amount) {
+		try {
+
+			Class<?> claz = Extra.getClassFrom(classCraftItemStack);
+			Method method_asNMSCopy = Extra.getMethod(claz, "asNMSCopy", ItemStack.class);
+			Method method_asBukkitCopy = Extra.getMethod(claz, "asBukkitCopy", classMineItemStack);
+			Object nmsItemStack = method_asNMSCopy.invoke(0, itemOriginal);
+
+			Method method_getItem = nmsItemStack.getClass().getDeclaredMethod("getItem");
+			Object nmsItem = method_getItem.invoke(nmsItemStack);
+			Method method_c = nmsItem.getClass().getDeclaredMethod("c", int.class);
+			method_c.invoke(nmsItem, amount);
+
+			Object newItem = method_asBukkitCopy.invoke(0, nmsItemStack);
+
+//            net.minecraft.server.v1_8_R3.ItemStack nmsIS = CraftItemStack.asNMSCopy(itemOriginal);
+//            nmsIS.getItem().c(amount);
+//            return CraftItemStack.asBukkitCopy(nmsIS);
+			return (ItemStack) newItem;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+
 	public static void runCommand(String command) {
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}
@@ -3212,15 +3258,27 @@ public final class Mine {
 		}
 	}
 
+	/**
+	 * Transforma o vector para um texto x,y,z
+	 * 
+	 * @param vector Vector
+	 * @return Texto gerado
+	 */
 	public static String saveVector(Vector vector) {
 		StringBuilder text = new StringBuilder();
 
 		text.append(vector.getX() + ",");
 		text.append(vector.getY() + ",");
-		text.append(vector.getZ() + ",");
+		text.append(vector.getZ());
 		return text.toString();
 	}
 
+	/**
+	 * Transforma o texto em vector x,y,z
+	 * 
+	 * @param text Texto
+	 * @return Vector gerado
+	 */
 	public static Vector toVector(String text) {
 		String[] split = text.split(",");
 

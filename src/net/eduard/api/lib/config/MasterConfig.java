@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.bukkit.plugin.Plugin;
 /**
- * Sistema Interpretador de YAML e JSON simultaneo 
+ * Sistema Interpretador de YAML e JSON simultaneo
+ * 
  * @author Eduard
  *
- */  
+ */
 public class MasterConfig {
 //	private static String toLine(List<String> lines) {
 //		StringBuilder builder = new StringBuilder();
@@ -67,7 +67,7 @@ public class MasterConfig {
 	protected Object value = null;
 	protected StringBuilder text = new StringBuilder();
 	private MasterSection root = new MasterSection(this, null, null);
-	private Plugin plugin;
+
 	protected File folder;
 	protected File file;
 	protected String name = "config.yml";
@@ -103,13 +103,11 @@ public class MasterConfig {
 	}
 
 	public void saveResource(boolean force) {
-		if (plugin != null) {
-			plugin.saveResource(name, force);
-		} else {
-			if (!force && file.exists())
-				return;
-			saveResourceOf(getClass());
-		}
+
+		if (!force && file.exists())
+			return;
+		saveResourceOf(getClass());
+
 	}
 
 	public void saveDefaultConfig() {
@@ -118,7 +116,7 @@ public class MasterConfig {
 	}
 
 	public boolean isFolder() {
-		
+
 		return name.endsWith("/");
 	}
 
@@ -174,7 +172,8 @@ public class MasterConfig {
 			BufferedWriter writer = Files.newBufferedWriter(file.toPath(), Charset.forName("UTF-8"));
 			writer.write(text.toString());
 			writer.close();
-		} catch (Exception e) {
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 

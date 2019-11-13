@@ -23,11 +23,11 @@ public class ApiDisableCommand extends CommandManager {
 		if (args.length == 1) {
 			sendUsage(sender);
 		} else {
-			String sub = args[1];
-			if (Mine.existsPlugin(sender, sub)) {
-				Plugin pl = Mine.getPlugin(sub);
-				sender.sendMessage("§aPlugin desativado");
-				Bukkit.getPluginManager().disablePlugin(pl);
+			String pluginName = args[1];
+			if (Mine.existsPlugin(sender, pluginName)) {
+				Plugin plugin = Mine.getPlugin(pluginName);
+				sender.sendMessage("§bEduardAPI §aPlugin §2"+pluginName+ "§a foi desativado");
+				Bukkit.getPluginManager().disablePlugin(plugin);
 			}
 
 		}

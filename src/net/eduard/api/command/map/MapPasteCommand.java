@@ -21,13 +21,13 @@ public class MapPasteCommand extends CommandManager {
 		if (Mine.onlyPlayer(sender)) {
 			Player p = (Player) sender;
 			if (!Mine.MAPS_CACHE.containsKey(p)) {
-				p.sendMessage("§bEduardAPI §2Primeiro copie um Mapa:§a /map copy");
+				p.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy");
 				return true;
 			}
 
 			Schematic map = Mine.MAPS_CACHE.get(p);
 			map.paste(p.getLocation());
-			p.sendMessage("§bEduardAPI §6Mapa colado com sucesso! ($blocks)".replace("$blocks", "" + map.getCount()));
+			p.sendMessage("§bEduardAPI §aMapa colado com sucesso! §2($blocks)".replace("$blocks", "" + map.getCount()));
 		}
 		return true;
 	}
