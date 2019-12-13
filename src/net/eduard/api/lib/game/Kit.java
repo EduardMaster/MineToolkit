@@ -20,6 +20,7 @@ public class Kit implements Storable {
 	private boolean fillSoup;
 	private boolean autoEquip = true;
 	private ItemStack icon;
+	private int menuPosition;
 	private double price;
 	private int level;
 	private List<ItemStack> items = new ArrayList<>();
@@ -191,4 +192,11 @@ public Kit() {
 		this.level = level;
 	}
 
+	public int getMenuPosition() {
+		return menuPosition;
+	}
+
+	public void setMenuPosition(int menuPosition) {
+		this.menuPosition = menuPosition;
+	}
 }

@@ -1,21 +1,6 @@
 package net.eduard.api.lib.modules;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -79,6 +64,14 @@ import com.google.gson.JsonParser;
  *
  */
 public final class Extra {
+
+	/**
+	 * Tenta ler o arquivo dentro do Jar
+	 * @param loader
+	 * @param name
+	 * @return
+	 * @throws IOException
+	 */
 	public static InputStream getResource(ClassLoader loader, String name) throws IOException {
 		URL url = loader.getResource(name);
 		if (url == null)
@@ -87,30 +80,44 @@ public final class Extra {
 		connection.setUseCaches(false);
 		return connection.getInputStream();
 	}
+
 	/**
-	 * Tipo de geração de Key
-	 * 
-	 * @author Eduard-PC
-	 *
+	 * Copia a pasta do mundo para outra pasta
+	 * @param source Pasta do Mundo
+	 * @param target Pasta destino
 	 */
-	public static enum KeyType {
-		/**
-		 * ID UNICO
-		 */
-		UUID,
-		/**
-		 * LETRAS
-		 */
-		LETTER,
-		/**
-		 * NUMEROS
-		 */
-		NUMERIC,
-		/**
-		 * NUMEROS E LETRAS
-		 */
-		ALPHANUMERIC;
+
+	public static void copyWorldFolder(File source, File target) {
+
+		try {
+			List<String> ignore = new ArrayList<String>(Arrays.asList("uid.dat", "session.dat"));
+			if (!ignore.contains(source.getName())) {
+				if (source.isDirectory()) {
+					if (!target.exists())
+						target.mkdirs();
+					String files[] = source.list();
+					for (String file : files) {
+						File srcFile = new File(source, file);
+						File destFile = new File(target, file);
+						copyWorldFolder(srcFile, destFile);
+					}
+				} else {
+					InputStream in = new FileInputStream(source);
+					OutputStream out = new FileOutputStream(target);
+					byte[] buffer = new byte[1024];
+					int length;
+					while ((length = in.read(buffer)) > 0)
+						out.write(buffer, 0, length);
+					in.close();
+					out.close();
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
+
+
 
 	/**
 	 * Instancia da classe DecimalFormat para o PT-BR
@@ -122,7 +129,7 @@ public final class Extra {
 	public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
 	public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
 	private static Map<String, String> replacers = new LinkedHashMap<>();
-	public static HashMap<String, JsonObject> SKIN_CACHE = new HashMap<>();
+
 	private static Map<Class<?>, Double> classesPrice = new HashMap<>();
 
 	public static Random RANDOM = new Random();
@@ -580,7 +587,24 @@ public final class Extra {
 
 		return formatado;
 	}
+	
+	
+	/**
+	 * No dia 28/07/2019 o ViniOtaku#0666 passou este Metodo de formatacao<br>
+	 * se usar formatMoney3(numero, 0)
+	 * @param numero
+	 * @param iteration
+	 * @return Numero Formatado
+	 */
+	// Format
+	public static String formatMoney3(double numero, int iteration) {
+		String[] letras = new String[] { "K", "M", "B", "Q", "QQ", "S", "SS", "O", "N", "D" };
+		double d = ((long) numero / 100) / 10.0;
+		boolean isRound = (d * 10) % 10 == 0;
 
+		return (d < 1000 ? ((d > 99.9 || isRound || (!isRound && d > 9.99) ? (int) d : d + "") + " " + letras[iteration])
+				: formatMoney3(d, iteration + 1));
+	}
 	/**
 	 * Cria uma formação de tempo muito melhor do que a DateFormat faz
 	 * 
@@ -633,7 +657,7 @@ public final class Extra {
 	 * Pega uma lista de classes de uma package <br>
 	 * metodo incompleto
 	 * 
-	 * @param plugin  Plugin
+	 * @param classe  Plugin
 	 * @param pkgname Package
 	 * @return Lista de Classes
 	 */
@@ -718,7 +742,7 @@ public final class Extra {
 	/**
 	 * Pega uma lista de classes de uma package
 	 * 
-	 * @param plugin  Plugin
+	 * @param classe  Plugin
 	 * @param pkgname Package
 	 * @return Lista de Classes
 	 */
@@ -945,11 +969,11 @@ public final class Extra {
 			JsonObject object = parser.parse(json).getAsJsonObject();
 			return object.get("id").getAsString();
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			//ex.printStackTrace();
 		}
 
-		return "";
+		return null;
 	}
 
 	public static String getProgressBar(double money, double price, String concluidoCor, String faltandoCor,
@@ -1093,9 +1117,7 @@ public final class Extra {
 	 * @return
 	 */
 	public static JsonObject getSkinProperty(String playerUUID) {
-		if (SKIN_CACHE.containsKey(playerUUID)) {
-			return SKIN_CACHE.get(playerUUID);
-		}
+
 		try {
 			URL link = new URL(
 					"https://sessionserver.mojang.com/session/minecraft/profile/" + playerUUID + "?unsigned=false");
@@ -1109,11 +1131,11 @@ public final class Extra {
 			JsonParser parser = new JsonParser();
 			JsonObject object = parser.parse(json).getAsJsonObject();
 			JsonObject skin = object.get("properties").getAsJsonArray().get(0).getAsJsonObject();
-			SKIN_CACHE.put(playerUUID, skin);
+
 			return skin;
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 
 		return null;

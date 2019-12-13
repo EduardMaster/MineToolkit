@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.eduard.api.lib.storage.StorageObject;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -190,7 +191,7 @@ public class ConfigSection {
 		return getSection(path).getIntList();
 	}
 
-	public Object get() {
+	private Object get() {
 		if (object.equals("[]")) {
 			return getList();
 		}
@@ -259,6 +260,10 @@ public class ConfigSection {
 
 	public ItemStack getItem(String path) {
 		return getSection(path).getItem();
+	}
+
+	public <CustomType> CustomType  get(String path, Class<CustomType> claz){
+		return (CustomType) getSection(path).getValue(claz);
 	}
 
 	public String getKey() {
@@ -366,10 +371,14 @@ public class ConfigSection {
 	}
 
 	public Object getValue() {
+
+		return getValue(null);
+	}
+	public Object getValue(Class<?> claz) {
 		// return StorageAPI.restoreData(isMap() ? toMap() : get(), null, null);
 		Object data = isMap() ? toMap() : get();
 //		System.out.println("Suposto som "+data.getClass());
-		return StorageAPI.restore(new StorageInfo(null, null, false, false, true), data);
+		return StorageAPI.restore(claz, data);
 	}
 
 	public Map<String, Object> toMap() {
@@ -416,7 +425,8 @@ public class ConfigSection {
 
 		// sec.set(StorageAPI.storeData(value, value.getClass(), null));
 //		System.out.println("Listinha "+value);
-		sec.set(StorageAPI.store(new StorageInfo(null, value.getClass(), false, false, true), value));
+
+		sec.set(StorageAPI.store(value.getClass(),value));
 		sec.setComments(comments);
 		return sec;
 	}

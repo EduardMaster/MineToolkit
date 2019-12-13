@@ -13,7 +13,7 @@ public  interface Replacer {
 	 * Retorna o valor do Placeholder
 	 * 
 	 * @param player Jogador
-	 * @return O
+	 * @return O placeholder
 	 */
 	Object getText(Player player);
 }

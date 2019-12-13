@@ -90,7 +90,9 @@ public class Config implements Storable {
 
 				try {
 					InputStream is = Extra.getResource(plugin.getClass().getClassLoader(), name);
-					Extra.copyAsUTF8(is, file);
+					if (is!=null) {
+						Extra.copyAsUTF8(is, file);
+					}
 
 				} catch (Exception ex) {
 					ex.printStackTrace();

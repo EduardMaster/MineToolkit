@@ -19,8 +19,10 @@ import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 
 /**
- * API de controle e manipula§§o de Mundos e Localiza§§es e Cuboids (Uma expecie
- * de Bloco retangular)
+ * API de controle e manipula§§o de Mundos e Localizações e Cuboids (Uma expecie
+ * de Bloco retangular)<br>
+ * Dependências: {@link LocationEffect} , {@link Point}
+ *
  * 
  * @author Eduard
  * @version 1.0
@@ -30,32 +32,6 @@ import org.bukkit.entity.Player;
 
 public final class WorldAPI {
 
-
-
-	/**
-	 * Ponto de dire§§o usado para fazer um RADAR
-	 * 
-	 * @author Eduard
-	 *
-	 */
-	public static enum Point {
-		N('N'), NE('/'), E('O'), SE('\\'), S('S'), SW('/'), W('L'), NW('\\');
-
-		public final char asciiChar;
-
-		private Point(char asciiChar) {
-			this.asciiChar = asciiChar;
-		}
-
-		@Override
-		public String toString() {
-			return String.valueOf(this.asciiChar);
-		}
-
-		public String toString(boolean isActive, ChatColor colorActive, String colorDefault) {
-			return (isActive ? colorActive : colorDefault) + String.valueOf(this.asciiChar);
-		}
-	}
 
 	public static boolean equals(Location location1, Location location2) {
 
@@ -82,34 +58,6 @@ public final class WorldAPI {
 		return loc;
 	}
 
-	public static void copyWorldFolder(File source, File target) {
-		try {
-			List<String> ignore = new ArrayList<String>(Arrays.asList("uid.dat", "session.dat"));
-			if (!ignore.contains(source.getName())) {
-				if (source.isDirectory()) {
-					if (!target.exists())
-						target.mkdirs();
-					String files[] = source.list();
-					for (String file : files) {
-						File srcFile = new File(source, file);
-						File destFile = new File(target, file);
-						copyWorldFolder(srcFile, destFile);
-					}
-				} else {
-					InputStream in = new FileInputStream(source);
-					OutputStream out = new FileOutputStream(target);
-					byte[] buffer = new byte[1024];
-					int length;
-					while ((length = in.read(buffer)) > 0)
-						out.write(buffer, 0, length);
-					in.close();
-					out.close();
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
 
 	public static void deleteWorld(String name) {
 		World world = Bukkit.getWorld(name);
@@ -126,27 +74,16 @@ public final class WorldAPI {
 
 		}
 		Bukkit.unloadWorld(name, true);
-		deleteFolder(new File(Bukkit.getWorldContainer(), name.toLowerCase()));
+		Extra.deleteFolder(new File(Bukkit.getWorldContainer(), name.toLowerCase()));
 	}
 
-	public static void deleteFolder(File file) {
-		if (file.exists()) {
-			File files[] = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory()) {
-					deleteFolder(files[i]);
-				} else {
-					files[i].delete();
-				}
-			}
-		}
-	}
+
 
 	public static World copyWorld(String fromWorld, String toWorld) {
 		unloadWorld(fromWorld);
 		unloadWorld(toWorld);
 		deleteWorld(toWorld);
-		copyWorldFolder(getWorldFolder(fromWorld), getWorldFolder(toWorld));
+		Extra.copyWorldFolder(getWorldFolder(fromWorld), getWorldFolder(toWorld));
 		return loadWorld(toWorld);
 	}
 
@@ -306,19 +243,14 @@ public final class WorldAPI {
 
 	}
 
-	public static int getRandomInt(int minValue, int maxValue) {
-
-		int min = Math.min(minValue, maxValue), max = Math.max(minValue, maxValue);
-		return min + new Random().nextInt(max - min + 1);
-	}
 
 	public static Location getRandomLocation(Location location, int xVar, int yVar, int zVar) {
 		int x = location.getBlockX();
 		int z = location.getBlockZ();
 		int y = location.getBlockY();
-		int xR = getRandomInt(x - xVar, x + xVar);
-		int zR = getRandomInt(z - zVar, z + zVar);
-		int yR = getRandomInt(y - yVar, y + zVar);
+		int xR = Extra.getRandomInt(x - xVar, x + xVar);
+		int zR = Extra.getRandomInt(z - zVar, z + zVar);
+		int yR = Extra.getRandomInt(y - yVar, y + zVar);
 		return new Location(location.getWorld(), xR, yR, zR);
 	}
 

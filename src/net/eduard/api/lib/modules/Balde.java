@@ -18,6 +18,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.map.MapView;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -64,8 +65,8 @@ public class Balde {
 		Bukkit.dispatchCommand(pegarConsoleDoServidor(), console);
 	}
 
-	public static void criarMapaDoMundo(World mundo) {
-		Bukkit.createMap(mundo);
+	public static MapView criarMapaDoMundo(World mundo) {
+		return Bukkit.createMap(mundo);
 	}
 
 	public static boolean estaPermitidoIrNoMundoFim() {
@@ -116,6 +117,10 @@ public class Balde {
 		return Bukkit.getMaxPlayers();
 	}
 
+	/**
+	 * Mensagem de Boas Vindas, mensagem que vista na hora de conectar ao servidor
+	 * @return MOTD
+	 */
 	public static String pegarMOTD() {
 		return Bukkit.getMotd();
 	}
@@ -140,7 +145,7 @@ public class Balde {
 		return Bukkit.getWorld(id);
 	}
 
-	public static int pegarRaioDaParteInicialDoMundo(UUID id) {
+	public static int pegarRaioDaParteInicialDoMundoPadrão() {
 		return Bukkit.getSpawnRadius();
 	}
 

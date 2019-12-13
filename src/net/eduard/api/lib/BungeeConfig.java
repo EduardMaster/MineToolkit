@@ -135,7 +135,7 @@ public class BungeeConfig {
 		if (obj instanceof Map) {
 
 		}
-		return StorageAPI.restore(new StorageInfo(null, null, false, false, true), obj);
+		return StorageAPI.restore(null, obj);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -221,7 +221,7 @@ public class BungeeConfig {
 		if (value == null) {
 			remove(path);
 		} else {
-			config.set(path, StorageAPI.store(new StorageInfo(null, value.getClass(), false, false, true), value));
+			config.set(path, StorageAPI.store(value.getClass(), value));
 		}
 	}
 

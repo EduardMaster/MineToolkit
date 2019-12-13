@@ -1,0 +1,37 @@
+name: EduardAPI
+description: API de desenvolvimento de plugins que facilita sua vida
+main: net.eduard.api.EduardAPI
+version: 2.7.0
+author: Eduard
+authors: [Eduard]
+softdepend: [Multiverse-Core,KotlinForBukkit,Vault,Iconomy,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]
+website: https://www.youtube.com/user/EduTutoriaisHD
+commands:
+  map:
+    description: Controla a criacao de mapas (baseado no Schematic do WorldEdit)
+    aliases: [mapa]
+    usage: /<command> help
+  api:
+    description: Controla plugins feitos pelo Edu
+    aliases: [eduardapi,eduard,e]
+    usage: /<command> help
+  goto: 
+    description: Teleporta para outro mundo
+    aliases: [ir,irpara,mundo,world]
+    usage: /<command> <world>
+  enchantment: 
+    description: Encanta o item para um nivel
+    aliases: [ench]
+    usage: /<command> <enchant> <level>
+  sound: 
+    description: Toca um som do minecraft
+    aliases: [som]
+    usage: /<command> <sound> [volume] [pitch]
+  setskin:
+    description: Define uma Skin para o jogador
+    aliases: [setplayerskin]
+    usage: /<command> <playerName>
+  setexperience: 
+    description: Define a experiencia (EXP) do jogador
+    aliases: [setexp,setxp]
+    usage: /<command> <xp>

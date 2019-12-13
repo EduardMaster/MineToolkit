@@ -22,10 +22,11 @@ public final class VaultAPI {
 	 */
 	public static void setupVault() {
 		
-		
-		setupEconomy();
-		setupChat();
-		setupPermissions();
+		if (hasVault()) {
+			setupEconomy();
+			setupChat();
+			setupPermissions();
+		}
 	}
 	/**
 	 * Testa se o Vault esta instalado no Servidor
@@ -126,7 +127,7 @@ public final class VaultAPI {
 	}
 
 	/**
-	 * Teste se tem plugin de permissões
+	 * net.eduard.api.Teste se tem plugin de permissões
 	 * 
 	 * @return Se sim ou nao
 	 */

@@ -93,14 +93,24 @@ public class StorageAPI {
 		return id;
 	}
 
-	public static Object store(StorageInfo store, Object object) {
 
-		return new StorageObject(store).store(object);
+	public static Object store(Class<?> claz, Object object) {
+
+		StorageObject storeSystem = new StorageObject(new StorageInfo(claz));
+		storeSystem.updateByType();
+		storeSystem.updateByStoreClass();
+		return storeSystem.store(object);
 	}
 
-	public static Object restore(StorageInfo store, Object object) {
-
-		return new StorageObject(store).restore(object);
+	public static Object restore(Class<?> claz, Object object) {
+		StorageObject storeSystem = new StorageObject(new StorageInfo(claz));
+		storeSystem.setIndentifiable(true);
+		
+		if (claz!=null) {
+			storeSystem.updateByType();
+			storeSystem.updateByStoreClass();
+		}
+		return storeSystem.restore(object);
 	}
 
 	public synchronized static void register(Class<? extends Storable> claz) {

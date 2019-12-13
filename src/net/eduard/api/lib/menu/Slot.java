@@ -1,7 +1,9 @@
 package net.eduard.api.lib.menu;
 
 import java.io.Serializable;
+import java.util.Map;
 
+import net.eduard.api.lib.Mine;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -76,7 +78,12 @@ public class Slot implements Storable,Copyable,Serializable {
 	public void give(Inventory inventory) {
 		inventory.setItem(getIndex(), item);
 	}
+	public void give(Inventory menu, Map<String, String> placeholders) {
+		ItemStack clone = item.clone();
+		Mine.applyPlaceholders(clone,placeholders);
+		menu.setItem(getIndex(),clone);
 
+	}
 	public int getPositionY() {
 		return positionY;
 	}
@@ -100,5 +107,6 @@ public class Slot implements Storable,Copyable,Serializable {
 	public void setEffects(EffectManager effects) {
 		this.effects = effects;
 	}
+
 
 }

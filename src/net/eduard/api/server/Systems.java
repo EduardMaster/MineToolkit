@@ -2,12 +2,14 @@ package net.eduard.api.server;
 
 public class Systems {
 
+	private static RankSystem rankSystem;
 	private static CashSystem cashSystem;
 	private static CoinSystem coinSystem;
 	private static SoulSystem soulSystem;
 	private static VipSystem vipSystem;
 	private static ScoreSystem scoreSystem;
 	private static PartySystem partySystem;
+	private static GeneratorSystem generatorSystem;
 	
 
 	public static CashSystem getCashSystem() {
@@ -58,4 +60,19 @@ public class Systems {
 		Systems.coinSystem = coinSystem;
 	}
 
+	public static GeneratorSystem getGeneratorSystem() {
+		return generatorSystem;
+	}
+
+	public static void setGeneratorSystem(GeneratorSystem generatorSystem) {
+		Systems.generatorSystem = generatorSystem;
+	}
+
+	public static RankSystem getRankSystem() {
+		return rankSystem;
+	}
+
+	public static void setRankSystem(RankSystem rankSystem) {
+		Systems.rankSystem = rankSystem;
+	}
 }

@@ -1,5 +1,6 @@
 package net.eduard.api.manager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 
@@ -85,8 +86,8 @@ public class BukkitReplacers {
 				@Override
 				public Object getText(Player p) {
 					if (VaultAPI.hasVault() && VaultAPI.hasEconomy()) {
-
-						return format(VaultAPI.getEconomy().getBalance(p), 0);
+					
+						return Extra.formatMoney2(VaultAPI.getEconomy().getBalance(p));
 
 					}
 					return "0.00";
@@ -148,7 +149,7 @@ public class BukkitReplacers {
 
 			@Override
 			public Object getText(Player p) {
-				return p.getTotalExperience();
+				return Extra.MONEY.format(p.getTotalExperience());
 			}
 		});
 		Mine.addReplacer("$player_kills", new Replacer() {
@@ -217,20 +218,7 @@ public class BukkitReplacers {
 	}
 
 	// Strings
-	private static String[] c = new String[] { "K", "M", "B", "Q", "QQ", "S", "SS", "O", "N", "D" };
+	
 
-	/**
-	 * No dia 28/07/2019 o ViniOtaku#0666 passou este Metodo de formatacao
-	 * @param numero
-	 * @param iteration
-	 * @return Numero Formatado
-	 */
-	// Format
-	public static String format(double numero, int iteration) {
-		double d = ((long) numero / 100) / 10.0;
-		boolean isRound = (d * 10) % 10 == 0;
-
-		return (d < 1000 ? ((d > 99.9 || isRound || (!isRound && d > 9.99) ? (int) d : d + "") + " " + c[iteration])
-				: format(d, iteration + 1));
-	}
+	
 }

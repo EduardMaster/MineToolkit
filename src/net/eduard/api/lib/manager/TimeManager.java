@@ -58,7 +58,7 @@ public class TimeManager extends EventsManager implements Runnable, BukkitTimeHa
 	/**
 	 * Cria um Delay com um Plugin
 	 * 
-	 * @param plugin Plugin
+
 	 * @return Delay
 	 */
 	public BukkitTask syncDelay() {
@@ -70,7 +70,7 @@ public class TimeManager extends EventsManager implements Runnable, BukkitTimeHa
 	/**
 	 * Cria um Timer com um Plugin
 	 * 
-	 * @param plugin Plugin
+
 	 * @return Timer
 	 */
 	public BukkitTask syncTimer() {
@@ -82,7 +82,7 @@ public class TimeManager extends EventsManager implements Runnable, BukkitTimeHa
 	/**
 	 * Cria um Timer desincronizado com um Plugin
 	 * 
-	 * @param plugin Plugin
+
 	 * @return Timer
 	 */
 	public BukkitTask asyncTimer() {
@@ -94,8 +94,7 @@ public class TimeManager extends EventsManager implements Runnable, BukkitTimeHa
 	/**
 	 * Cria um Delay com um Plugin e um Efeito rodavel
 	 * 
-	 * @param plugin Plugin
-	 * @param run    Efeito rodavel
+
 	 * @return Delay
 	 */
 	public BukkitTask asyncDelay() {

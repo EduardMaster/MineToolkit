@@ -2,6 +2,7 @@ package net.eduard.api.lib.menu;
 
 import org.bukkit.inventory.ItemStack;
 
+import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.ClickEffect;
 
 public class MenuButton  extends Slot{
@@ -87,6 +88,7 @@ public class MenuButton  extends Slot{
 
 
 	public String getName() {
+		
 		return name;
 	}
 

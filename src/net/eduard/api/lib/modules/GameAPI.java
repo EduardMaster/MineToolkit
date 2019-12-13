@@ -10,11 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.SkullType;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
@@ -33,30 +29,23 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import net.eduard.api.lib.Mine;
 
 
 
 
 
 /**
- * API de controle de Entidades, Localizacoes e muito mais
- * @author Eduard
- * @version 1.0
- * @since Lib v1.0
- * @see Mine
- */
+ * API de controle de Entidades, Localizacoes e muito mais<br>
+ * Depedencia {@link Extra}
 
+ * @version 1.0
+ * @since Lib v1.0 <br> EduardAPI 5.2
+ * @author Eduard
+ *
+ */
 public final class GameAPI {
-	
-	/**
-	 * API relacionada a cria§§o e manipula§§o de Itens do Minecraft
-	 * 
-	 * @version 1.0
-	 * @since Lib v1.0 <br> EduardAPI 5.2
-	 * @author Eduard
-	 * @see Mine
-	 */
+
+
 
 
 		/**
@@ -69,7 +58,7 @@ public final class GameAPI {
 		public static Map<Player, ItemStack[]> INV_ITEMS = new HashMap<>();
 
 		/**
-		 * Cria um item da Cabe§a do Jogador
+		 * Cria um item da Cabeça do Jogador
 		 * 
 		 * @param name
 		 *            Nome
@@ -114,20 +103,9 @@ public final class GameAPI {
 		 */
 		public static ItemStack getRandomItem(List<ItemStack> items) {
 
-			return getRandom(items);
+			return Extra.getRandom(items);
 		}
-		public static <E> E getRandom(List<E> objects) {
-			if (objects.size() >= 1)
-				return objects.get(getRandomInt(1, objects.size()) - 1);
-			return null;
-		}
-		
-		
-		public static int getRandomInt(int minValue, int maxValue) {
 
-			int min = Math.min(minValue, maxValue), max = Math.max(minValue, maxValue);
-			return min + new Random().nextInt(max - min + 1);
-		}
 		/**
 		 * Pega um Item aleatorio baseado no vetor
 		 * 
@@ -137,14 +115,9 @@ public final class GameAPI {
 		 */
 		public static ItemStack getRandomItem(ItemStack... items) {
 
-			return getRandom(items);
+			return Extra.getRandom(items);
 		}
-		@SafeVarargs
-		public static <E> E getRandom(E... objects) {
-			if (objects.length >= 1)
-				return objects[getRandomInt(1, objects.length) - 1];
-			return null;
-		}
+
 		/**
 		 * Limpa o Inventario da Entidade viva
 		 * 
@@ -378,8 +351,8 @@ public final class GameAPI {
 		 * 
 		 * @param inventory
 		 *            Inventario
-		 * @param material
-		 *            Tipo do Material
+		 * @param item
+		 *            Item
 		 * @param amount
 		 *            Quantidade
 		 */
@@ -410,7 +383,7 @@ public final class GameAPI {
 		 *            Item
 		 * @param amount
 		 *            Quantidade
-		 * @return Teste
+		 * @return net.eduard.api.Teste
 		 */
 		public static boolean contains(Inventory inventory, ItemStack item,
 				int amount) {
@@ -533,7 +506,7 @@ public final class GameAPI {
 		 * 
 		 * @param inventory
 		 *            Inventario
-		 * @return Teste
+		 * @return net.eduard.api.Teste
 		 */
 		public static boolean isFull(Inventory inventory) {
 			return inventory.firstEmpty() == -1;
@@ -545,7 +518,7 @@ public final class GameAPI {
 		 *            Entitade
 		 * @param material
 		 *            Tipo de Material
-		 * @return Teste
+		 * @return net.eduard.api.Teste
 		 */
 		public static boolean isUsing(LivingEntity entity, Material material) {
 			return (getHandType(entity) == material);
@@ -613,14 +586,18 @@ public final class GameAPI {
 		 * Testa se o Inventario esta vasio
 		 * 
 		 * @param inventory
-		 * @return Teste
+		 * @return net.eduard.api.Teste
 		 */
 		public static boolean isEmpty(Inventory inventory) {
 
 			for (ItemStack item : inventory.getContents()) {
 				if (item != null) {
-					return false;
+					if (item.getType()!=Material.AIR){
+						return false;
+					}
+
 				}
+
 
 			}
 			return true;
@@ -669,6 +646,7 @@ public final class GameAPI {
 		 */
 		public static ItemStack setName(ItemStack item, String name) {
 			ItemMeta meta = item.getItemMeta();
+
 			if (meta != null) {
 				meta.setDisplayName(name);
 				item.setItemMeta(meta);
@@ -859,8 +837,8 @@ public final class GameAPI {
 		/**
 		 * Cria um Item
 		 * 
-		 * @param material
-		 *            Material
+		 * @param id
+		 *            ID do Material
 		 * @param name
 		 *            Nome
 		 * @param amount
@@ -888,8 +866,8 @@ public final class GameAPI {
 		/**
 		 * Cria um Item
 		 * 
-		 * @param material
-		 *            Material
+		 * @param id
+		 *           ID do  Material
 		 * @param name
 		 *            Nome
 		 * @param amount
@@ -1033,7 +1011,9 @@ public final class GameAPI {
 		return getRandomPlayer(getPlayers());
 	}
 	public static Player getRandomPlayer(List<Player> list){
-		return list.get(getRandomInt(1, list.size())-1);
+		return Extra.getRandom(list);
+
+
 	}
 	
 	public static void setDirection(Entity entity, Entity target) {

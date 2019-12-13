@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import net.md_5.bungee.event.EventHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,7 +36,6 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
-import org.bukkit.event.EventHandler;
 
 /**
  * Sistema de controle dos servidores pelo bungee
@@ -48,7 +48,7 @@ public final class ServerAPI
   private static ServerControl control;
   private static boolean registred;
   
-  public static enum ServerState
+  public enum ServerState
   {
     RESTARTING(3),  IN_GAME(2),  ONLINE(1),  OFFLINE(0),  DISABLED(-1);
     
@@ -59,14 +59,14 @@ public final class ServerAPI
       return this.value;
     }
     
-    private ServerState(int value)
+    ServerState(int value)
     {
       this.value = value;
       ServerAPI.serverStates.put(name(), Integer.valueOf(value));
     }
   }
   
-  public static enum ServerType
+  public enum ServerType
   {
     DEFAULT(0),  LOBBY(1),  SKYWARS_LOBBY(2),  SKYWARS_ROOM(3);
     
@@ -77,7 +77,7 @@ public final class ServerAPI
       return this.value;
     }
     
-    private ServerType(int value)
+    ServerType(int value)
     {
       this.value = value;
       ServerAPI.serverStates.put(name(), Integer.valueOf(value));
@@ -140,14 +140,14 @@ public final class ServerAPI
   
   public static Server getServer(String name)
   {
-    return (Server)servers.getOrDefault(name, new Server(name));
+    return servers.getOrDefault(name, new Server(name));
   }
   
   public static Server getServer(String host, int port)
   {
     for (Map.Entry<String, Server> entry : servers.entrySet())
     {
-      Server Server = (Server)entry.getValue();
+      Server Server = entry.getValue();
       if ((Server.getHost().equals(host)) && (Server.getPort() == port)) {
         return Server;
       }
@@ -453,7 +453,7 @@ BungeeControl. task = task;
     {
       return (BungeeControl)ServerAPI.getControl();
     }
-    
+
     public static void register(Plugin plugin)
     {
       ServerAPI.registred = true;
@@ -470,8 +470,8 @@ BungeeControl. task = task;
         ServerAPI.servers.put(server.getName(), servidor);
       }
       task = BungeeCord.getInstance().getScheduler().schedule(getPlugin(), getControl(), 1L, 1L, TimeUnit.SECONDS);
-      BungeeCord.getInstance().getConsole()
-        .sendMessage(new TextComponent("§b[ServerAPI] §aAtivando sistema de comunicacao com Bukkit!"));
+      BungeeCord.getInstance().getConsole() .sendMessage(
+              new TextComponent("§b[ServerAPI] §aAtivando sistema de comunicacao com Bukkit!"));
     }
     
     public static void unregister()
@@ -549,7 +549,7 @@ BungeeControl. task = task;
       if (tag.equals("connect-to-server"))
       {
         ProxiedPlayer player = BungeeCord.getInstance().getPlayer(playerName);
-        Integer type = Integer.valueOf((String)lista.get(0));
+        Integer type = Integer.valueOf(lista.get(0));
         for (ServerAPI.Server server : ServerAPI.servers.values()) {
           if ((server.getType() == type.intValue()) && 
             (server.canReallyConnect())) {
@@ -559,7 +559,7 @@ BungeeControl. task = task;
       }
       else if (tag.equals("set-state"))
       {
-        int state = Integer.parseInt((String)lista.get(0));
+        int state = Integer.parseInt(lista.get(0));
         ServerAPI.Server server = ServerAPI.getServer(serverName);
         server.setState(state);
       }
@@ -642,7 +642,7 @@ BungeeControl. task = task;
         Collection<ProxiedPlayer> players = server.getPlayers();
         if (players.size() > 0)
         {
-          ProxiedPlayer player = (ProxiedPlayer)players.iterator().next();
+          ProxiedPlayer player = players.iterator().next();
           player.sendData(ServerAPI.getChannel(), data);
         }
       }
@@ -701,13 +701,13 @@ BungeeControl. task = task;
     
     public static void connectToServer(Player p, int type)
     {
-      ServerAPI.ServerMessage message = new ServerAPI.ServerMessage(p.getName(), null, "connect-to-server", new Object[] { Integer.valueOf(type) });
+      ServerAPI.ServerMessage message = new ServerAPI.ServerMessage(p.getName(), null, "connect-to-server", Integer.valueOf(type));
       getControl().sendToBungee(message);
     }
     
     public static void setServerStatus(int status)
     {
-      ServerAPI.ServerMessage message = new ServerAPI.ServerMessage(null, null, "set-state", new Object[] { Integer.valueOf(status) });
+      ServerAPI.ServerMessage message = new ServerAPI.ServerMessage(null, null, "set-state", Integer.valueOf(status));
       getControl().sendToBungee(message);
     }
     
@@ -777,7 +777,7 @@ BungeeControl. task = task;
     
     public void sendOnceTime(byte[] data)
     {
-      Player player = (Player)Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+      Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
       if (player != null) {
         player.sendPluginMessage(getInstance(), ServerAPI.getChannel(), data);
       }
@@ -1057,29 +1057,29 @@ BungeeControl. task = task;
     }
   }
   
-  public static abstract interface ServerControl
+  public interface ServerControl
   {
-    public abstract void log(String paramString);
+    void log(String paramString);
     
-    public abstract void sendToServer(ServerAPI.ServerMessage paramServerMessage);
+    void sendToServer(ServerAPI.ServerMessage paramServerMessage);
     
-    public abstract void sendToServers(ServerAPI.ServerMessage paramServerMessage);
+    void sendToServers(ServerAPI.ServerMessage paramServerMessage);
     
-    public abstract void sendToPlayer(ServerAPI.ServerMessage paramServerMessage);
+    void sendToPlayer(ServerAPI.ServerMessage paramServerMessage);
     
-    public abstract void sendToNetwork(ServerAPI.ServerMessage paramServerMessage);
+    void sendToNetwork(ServerAPI.ServerMessage paramServerMessage);
     
-    public abstract void sendToPlayers(ServerAPI.ServerMessage paramServerMessage);
+    void sendToPlayers(ServerAPI.ServerMessage paramServerMessage);
     
-    public abstract void sendToBungee(ServerAPI.ServerMessage paramServerMessage);
+    void sendToBungee(ServerAPI.ServerMessage paramServerMessage);
     
-    public abstract void sendOnceTime(byte[] paramArrayOfByte);
+    void sendOnceTime(byte[] paramArrayOfByte);
     
-    public abstract void sendForEveryone(byte[] paramArrayOfByte);
+    void sendForEveryone(byte[] paramArrayOfByte);
   }
   
-  public static abstract interface ServerReceiveMessage
+  public interface ServerReceiveMessage
   {
-    public abstract void onReceiveMessage(ServerAPI.ServerMessage paramServerMessage);
+    void onReceiveMessage(ServerAPI.ServerMessage paramServerMessage);
   }
 }

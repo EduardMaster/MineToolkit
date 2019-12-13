@@ -7,9 +7,10 @@ import org.bukkit.OfflinePlayer;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAttributes;
-@StorageAttributes(inline=true)
+
+@StorageAttributes(inline = true)
 public class OfflinePlayerStorable implements Storable {
-	
+
 	@Override
 	public Object newInstance() {
 		return new FakePlayer();
@@ -21,7 +22,10 @@ public class OfflinePlayerStorable implements Storable {
 			String id = (String) object;
 			if (id.contains(";")) {
 				String[] split = id.split(";");
-				return new FakePlayer(split[0], UUID.fromString(split[1]));
+				if (split[1].equals("null")) {
+					return new FakePlayer(split[0]);
+				} else
+					return new FakePlayer(split[0], UUID.fromString(split[1]));
 
 			}
 		}
@@ -32,7 +36,7 @@ public class OfflinePlayerStorable implements Storable {
 	public Object store(Object object) {
 		if (object instanceof OfflinePlayer) {
 			OfflinePlayer p = (OfflinePlayer) object;
-			return p.getName() + ";" + p.getUniqueId().toString();
+			return p.getName() + ";" + p.getUniqueId();
 
 		}
 		return null;

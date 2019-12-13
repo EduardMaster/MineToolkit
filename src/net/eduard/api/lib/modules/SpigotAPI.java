@@ -19,12 +19,11 @@ import net.md_5.bungee.api.chat.TextComponent;
  * @version 1.3
  * @since EduardAPI v1.0
  * @author Eduard
- * @see EduardLIB
  *
  */
 public final class SpigotAPI {
 	/**
-	 * {@link Mine}
+	 *
 	 * 
 	 * @param player
 	 * @param message
@@ -37,7 +36,7 @@ public final class SpigotAPI {
 	}
 
 	/**
-	 * {@link Mine}
+	 *
 	 * 
 	 * @param player
 	 * @param message
@@ -81,7 +80,7 @@ public final class SpigotAPI {
 	/**
 	 * Envia mensagems clicaveis para varios jogadores
 	 * 
-	 * @param players
+	 *
 	 * @param message
 	 * @param hoverMessages
 	 * @param clickCommand

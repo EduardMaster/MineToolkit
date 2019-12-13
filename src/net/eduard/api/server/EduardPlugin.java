@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -135,11 +136,14 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 		return this;
 	}
 
+	protected void initConfig(){
+		config = new Config(this,"config.yml");
+	}
 	/**
 	 * Ao carregar o plugin no servidor ele inicia as as variaveis
 	 */
 	public void onLoad() {
-		config = new Config(this,"config.yml");
+		initConfig();
 		db = new DBManager();
 		config.add("auto-save", false);
 		config.add("auto-save-seconds", 60);
@@ -340,5 +344,6 @@ public abstract class EduardPlugin extends JavaPlugin implements BukkitTimeHandl
 
 		return config.getBoolean("backup");
 	}
+
 
 }

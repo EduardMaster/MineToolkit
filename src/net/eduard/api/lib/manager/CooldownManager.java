@@ -3,6 +3,7 @@ package net.eduard.api.lib.manager;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.eduard.api.lib.storage.StorageAttributes;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
@@ -12,6 +13,7 @@ public class CooldownManager extends EffectManager {
 	private String msgOnCooldown;
 	private String msgOverCooldown;
 	private String msgStartCooldown;
+	@StorageAttributes(reference = true)
 	private Map<FakePlayer, TimeManager> cooldowns = new HashMap<>();
 
 	public CooldownManager() {

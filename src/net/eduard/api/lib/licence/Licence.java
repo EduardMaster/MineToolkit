@@ -4,13 +4,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
+import net.eduard.api.lib.modules.KeyType;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.eduard.api.lib.BukkitConfig;
 import net.eduard.api.lib.BungeeConfig;
 import net.eduard.api.lib.modules.Extra;
-import net.eduard.api.lib.modules.Extra.KeyType;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -35,7 +35,7 @@ public class Licence {
 			String tag = "[" + plugin + "] ";
 			String link = site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner;
 			URLConnection connect = new URL(link).openConnection();
-			System.out.println(tag + " Verificando pelo link: " + link);
+			System.out.println(tag + "Verificando pelo link: " + link);
 			connect.addRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
 			Scanner scan = new Scanner(connect.getInputStream());
@@ -138,15 +138,15 @@ public class Licence {
 
 		public static void test(Plugin plugin, Runnable activation) {
 			String pluginName = plugin.getDescription().getName();
+			String tag = "§b[" + pluginName + "] §f";
 			BungeeCord.getInstance().getConsole()
-					.sendMessage(new TextComponent("§aAutenticando o plugin " + pluginName));
+					.sendMessage(new TextComponent(tag+"§eFazendo autenticacao do Plugin no site"));
 			BungeeConfig config = new BungeeConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
 			config.saveConfig();
 			String key = config.getString("key");
 			String owner = config.getString("onwer");
-			String tag = "§b[" + plugin.getDescription().getName() + "] §f";
 			BungeeCord.getInstance().getScheduler().runAsync(plugin, () -> {
 
 				PluginActivationStatus result = Licence.test(pluginName, owner, key);

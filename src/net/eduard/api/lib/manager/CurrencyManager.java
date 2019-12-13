@@ -2,22 +2,36 @@ package net.eduard.api.lib.manager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAttributes;
 
-@StorageAttributes(indentificate = true)
+
 public class CurrencyManager implements Storable {
 	private String name = "Money";
 	private String symbol = "$";
 	private double inicialAmount;
+	@StorageAttributes(inline = true)
 	private Map<FakePlayer, Double> currency = new HashMap<>();
+	
+	
 
 	public synchronized double getBalance(FakePlayer player) {
-
-		return currency.getOrDefault(player, inicialAmount);
+//		
+//		System.out.println(currency);
+		for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
+			if (entry.getKey().equals(player)) {
+				return entry.getValue();
+			}
+			
+		}
+	
+		return inicialAmount;
+//		return currency.getOrDefault(player, inicialAmount);
 	}
+	
 
 	public CurrencyManager(String name, String symbol, double inicialAmount) {
 		super();
@@ -33,7 +47,12 @@ public class CurrencyManager implements Storable {
 
 
 	public synchronized void setBalance(FakePlayer player, double amount) {
-
+		for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
+			if (entry.getKey().equals(player)) {
+				entry.setValue(amount);
+				return;
+			}
+		}
 		currency.put(player, amount);
 
 	}
@@ -52,7 +71,7 @@ public class CurrencyManager implements Storable {
 
 
 
-	public Map<FakePlayer, Double> getCurrency() {
+	public synchronized Map<FakePlayer, Double> getCurrency() {
 		return currency;
 	}
 

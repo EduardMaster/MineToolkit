@@ -1,5 +1,7 @@
 package net.eduard.api.manager;
 
+import net.eduard.api.lib.event.PlayerTargetEvent;
+import net.eduard.api.lib.manager.CommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -22,6 +24,8 @@ import net.eduard.api.lib.manager.EventsManager;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.server.EduardPlugin;
 
+import java.util.Map;
+
 /**
  * Códigos que antes ficavam tudo na {@link EduardAPI} agora ficam separados
  * 
@@ -32,7 +36,16 @@ import net.eduard.api.server.EduardPlugin;
  *
  */
 public class EssentialsEvents extends EventsManager {
-	
+
+
+	@EventHandler
+	public void onTarget(PlayerTargetEvent e) {
+		if (e.getEntity() instanceof Player) {
+			Player player = (Player) e.getEntity();
+			Mine.sendActionBar(e.getPlayer(), Mine.getReplacers(EduardAPI.getInstance().message("player information"), player));
+		}
+	}
+
 	@EventHandler
 	public void onEnable(PluginEnableEvent e) {
 		if (e.getPlugin() instanceof EduardPlugin) {
@@ -42,7 +55,7 @@ public class EssentialsEvents extends EventsManager {
 			plugin.log("Foi ativado na v" + plugin.getDescription().getVersion() + " um plugin "
 					+ (plugin.isFree() ? "§aGratuito" : "§bPago")+ "§f feito pelo Eduard");
 		
-			plugin.log("Seu Valor gerado automaticamente: §aR$" + Extra.MONEY.format(plugin.getPrice()));
+//			plugin.log("Seu Valor gerado automaticamente: §aR$" + Extra.MONEY.format(plugin.getPrice()));
 
 		}
 //		for (Config config : Config.CONFIGS) {
@@ -52,10 +65,42 @@ public class EssentialsEvents extends EventsManager {
 //		}
 	}
 
+	
+
+	@EventHandler
+	public void onDisable(PluginDisableEvent e) {
+		if (e.getPlugin() instanceof EduardPlugin) {
+
+			EduardPlugin plugin = (EduardPlugin) e.getPlugin();
+			for (Map.Entry<String,CommandManager> entry  : CommandManager.getCommandsRegistred().entrySet()){
+
+				CommandManager cmd = entry.getValue();
+
+				if (entry.getValue().getPlugin().equals(plugin)) {
+					if (cmd.getCustomCommand()!=null){
+						cmd.unregisterCommand();
+					}
+				}
+			}
+
+			plugin.log("Foi desativado na v" + plugin.getDescription().getVersion() + " um plugin "
+					+ (plugin.isFree() ? "§aGratuito" : "§bPago"));
+
+		}
+//		for (Config config : Config.CONFIGS) {
+//			if (e.getPlugin().equals(EduardAPI.getInstance().getConfigs().getPlugin())) {
+//				if (config.isAutoSave()) {
+//					config.saveConfig();
+//				}
+//			}
+//		}
+	}
 	@EventHandler
 	public void marketing(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
-
+		if (EduardAPI.getInstance().getBoolean("skins")) {
+			PlayerSkin.change(p, p.getName());
+		}
 		if (p.hasPermission("eduard.plugins")) {
 			for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 				if (plugin instanceof EduardPlugin) {
@@ -73,43 +118,20 @@ public class EssentialsEvents extends EventsManager {
 		}
 
 	}
-
-	@EventHandler
-	public void onDisable(PluginDisableEvent e) {
-		if (e.getPlugin() instanceof EduardPlugin) {
-
-			EduardPlugin plugin = (EduardPlugin) e.getPlugin();
-			
-
-			plugin.log("Foi desativado na v" + plugin.getDescription().getVersion() + " um plugin "
-					+ (plugin.isFree() ? "§aGratuito" : "§bPago"));
-
-		}
-//		for (Config config : Config.CONFIGS) {
-//			if (e.getPlugin().equals(EduardAPI.getInstance().getConfigs().getPlugin())) {
-//				if (config.isAutoSave()) {
-//					config.saveConfig();
-//				}
-//			}
-//		}
-	}
-
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
 		Player p = e.getEntity();
+
+
 		if (Mine.OPT_AUTO_RESPAWN) {
 			if (p.hasPermission("eduard.autorespawn")) {
-				Mine.TIME.syncDelay(new Runnable() {
-
-					@Override
-					public void run() {
-						if (p.isDead()) {
-							p.setFireTicks(0);
-							try {
-								Mine.makeRespawn(p);
-							} catch (Exception ex) {
-								ex.printStackTrace();
-							}
+				Mine.TIME.syncDelay(() -> {
+					if (p.isDead()) {
+						p.setFireTicks(0);
+						try {
+							Mine.makeRespawn(p);
+						} catch (Exception ex) {
+							ex.printStackTrace();
 						}
 					}
 				}, 1L);
@@ -154,9 +176,15 @@ public class EssentialsEvents extends EventsManager {
 		if (EduardAPI.getInstance().getConfigs().getBoolean("save-players")) {
 			InfoGenerator.saveObject("Players/" + p.getName() + " " + p.getUniqueId(), p);
 		}
-		if (EduardAPI.getInstance().getConfigs().getBoolean("custom-join-message")) {
+		if (EduardAPI.getInstance().getBoolean("custom-first-join-message")){
+			if (!p.hasPlayedBefore()){
+				e.setJoinMessage(EduardAPI.getInstance().message("first-join-message").replace("$player",p.getName()));
+			}
+		}
+		else if (EduardAPI.getInstance().getConfigs().getBoolean("custom-join-message")) {
 			e.setJoinMessage(Mine.MSG_ON_JOIN.replace("$player", p.getName()));
 		}
+
 
 		if (Mine.OPT_NO_JOIN_MESSAGE) {
 			e.setJoinMessage(null);

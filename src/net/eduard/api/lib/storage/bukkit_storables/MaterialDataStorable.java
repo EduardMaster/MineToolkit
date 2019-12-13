@@ -1,19 +1,20 @@
 package net.eduard.api.lib.storage.bukkit_storables;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAttributes;
 
-@StorageAttributes(inline = true)
+@StorageAttributes(inline = true,indentificate = false)
 public class MaterialDataStorable implements Storable {
 
 	@Override
 	public Object newInstance() {
 
-		return null;
+		return new MaterialData(1);
 	}
 
 	@SuppressWarnings("deprecation")

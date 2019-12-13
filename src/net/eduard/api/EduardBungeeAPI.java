@@ -2,13 +2,11 @@ package net.eduard.api;
 
 import java.util.UUID;
 
-import org.bukkit.event.EventHandler;
 
 import net.eduard.api.lib.bungee.BungeeAPI;
 import net.eduard.api.lib.bungee.BungeeController;
 import net.eduard.api.lib.bungee.ServerSpigot;
 import net.eduard.api.lib.bungee.ServerState;
-import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.manager.DBManager;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.server.BungeeDB;
@@ -36,6 +34,8 @@ import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.event.TabCompleteResponseEvent;
 import net.md_5.bungee.api.event.TargetedEvent;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.event.EventHandler;
+
 /**
  * Para fazer plugins usando esta dependencia , lembre-se de colocar depends: [EduardAPI] 
  * em vez de depend: [EduardAPI na bungee.yml

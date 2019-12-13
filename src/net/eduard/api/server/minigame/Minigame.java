@@ -496,7 +496,7 @@ public class Minigame extends TimeManager {
 
 	/**
 	 * Metodo que é executado a cada segundo e executa o metodo de cada sala
-	 * <code> event(room)</code>
+	 * <code> events(room)</code>
 	 */
 	public void run() {
 		if (!enabled)

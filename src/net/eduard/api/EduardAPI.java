@@ -4,16 +4,16 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import net.eduard.api.command.*;
+import net.eduard.api.lib.modules.EnchantGlow;
+import net.eduard.api.manager.PlayerSkin;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import net.eduard.api.command.EnchantCommand;
-import net.eduard.api.command.GotoCommand;
-import net.eduard.api.command.SetXPCommand;
-import net.eduard.api.command.SoundCommand;
 import net.eduard.api.command.api.ApiCommand;
 import net.eduard.api.command.map.MapCommand;
 import net.eduard.api.lib.Mine;
@@ -77,6 +77,8 @@ public class EduardAPI extends EduardPlugin {
 		
 		plugin = this;
 		setFree(true);
+		initConfig();
+		StorageAPI.setDebug(config.getBoolean("debug-storage"));
 		log("Registrando classes da EduardLIB");
 		StorageAPI.registerPackage(getClass(), "net.eduard.api.lib");
 		BukkitStorables.load();
@@ -93,7 +95,8 @@ public class EduardAPI extends EduardPlugin {
 		
 		bukkit.setPlugin(plugin);
 		bukkit.register();
-		
+		EnchantGlow.getGlow();
+		StorageAPI.setDebug(config.getBoolean("debug-storage"));
 		StorageAPI.registerPackage(Minigame.class);
 
 	
@@ -170,6 +173,9 @@ public class EduardAPI extends EduardPlugin {
 		new GotoCommand().register();
 		new SoundCommand().register();
 		new SetXPCommand().register();
+		new SetSkinCommand().register();
+
+
 		new EssentialsEvents().register(this);
 		log("Comandos ativado com sucesso");
 		
@@ -204,10 +210,12 @@ public class EduardAPI extends EduardPlugin {
 		StorageAPI.setDebug(config.getBoolean("debug-storage"));
 		DBManager.setDebug(config.getBoolean("debug-db"));
 		Menu.setDebug(config.getBoolean("debug-menu"));
+		CommandManager.setDebug(config.getBoolean("debug-commands"));
 		CopyDebug.setDebug(config.getBoolean("debug-copyable"));
 		BukkitBungeeAPI.setDebug(config.getBoolean("debug-bungee-bukkit"));
 		Mine.OPT_DEBUG_REPLACERS = config.getBoolean("debug-replacers");
-	
+		PlayerSkin.reloadSkins();
+
 		
 		Mine.loadMaps();
 		log("Mapas carregados!");
@@ -244,6 +252,7 @@ public class EduardAPI extends EduardPlugin {
 
 	@Override
 	public void onDisable() {
+		PlayerSkin.saveSkins();
 		Mine.saveMaps();
 		log("Mapas salvados!");
 		log("desativado com sucesso!");

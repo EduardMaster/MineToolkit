@@ -5,7 +5,7 @@ import com.google.common.io.ByteStreams;
 
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
-import org.bukkit.event.EventHandler;
+import net.md_5.bungee.event.EventHandler;
 
 public class BungeeMessageListener  implements Listener{
 	private BungeeController controller;

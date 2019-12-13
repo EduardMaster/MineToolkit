@@ -229,7 +229,7 @@ public class BukkitConfig {
 		if (obj instanceof Map) {
 
 		}
-		return StorageAPI.restore(new StorageInfo(null, null, false, false, true), obj);
+		return StorageAPI.restore(null, obj);
 		// return StorageAPI.restoreValue(obj);
 	}
 
@@ -312,7 +312,7 @@ public class BukkitConfig {
 		if (value == null) {
 			config.set(path, null);
 		} else {
-			config.set(path, StorageAPI.store(new StorageInfo(null, value.getClass(), false, false, true), value));
+			config.set(path, StorageAPI.store(value.getClass(), value));
 		}
 	}
 

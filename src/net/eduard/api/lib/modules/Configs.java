@@ -99,16 +99,14 @@ public class Configs {
 		if (plugin == null)
 			this.plugin = JavaPlugin.getProvidingPlugin(getClass());
 		this.name = name;
-		reloadConfig();
+		saveDefaultConfig();
 	}
 
 	public Configs(String name) {
 		this(name, null);
 	}
 
-	public void reload() {
-		config = new YamlConfiguration();
-	}
+
 
 	/**
 	 * Recarrega a config pelo conteudo do Arquivo
@@ -119,6 +117,7 @@ public class Configs {
 		file = new File(plugin.getDataFolder(), name);
 
 		config = YamlConfiguration.loadConfiguration(file);
+
 		InputStream defaults = plugin.getResource(file.getName());
 		if (defaults != null) {
 
@@ -166,7 +165,7 @@ public class Configs {
 	}
 
 	/**
-	 * Salva a Config padr§o caso n§o existe a Arquivo
+	 * Salva a Config padrao caso n§o existe a Arquivo
 	 */
 	public void saveDefaultConfig() {
 		if (plugin.getResource(name) != null)

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import net.eduard.api.lib.storage.StorageAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -42,14 +43,21 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 	private String name;
 	private UUID id;
 
-//
+    public static FakePlayer parse(String fakePlaneText) {
+    	return (FakePlayer) StorageAPI.restore(FakePlayer.class,fakePlaneText);
+    }
+    public String store(){
+		return (String) StorageAPI.store(FakePlayer.class,this);
+	}
+
+    //
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	public FakePlayer(String name) {
 		this.name = name;
-
+		fixUUID();
 	}
 
 	public void setIdByName() {
@@ -60,6 +68,7 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 			e.printStackTrace();
 		}
 	}
+	
 
 	public void setIdByNameLowerCase() {
 		try {
@@ -67,6 +76,14 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	public void fixUUID(){
+		Player player = getPlayer();
+		if (player!=null){
+			this.id = player.getUniqueId();
+		}else{
+		 setIdByName();
 		}
 	}
 
@@ -91,9 +108,13 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 	public FakePlayer() {
 		// TODO Auto-generated constructor stub
 	}
+	public void log(String msg) {
+//		System.out.println(msg);
+	}
 
 	@Override
 	public int hashCode() {
+		log("Metodo Hashcode sendo feito");
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -103,6 +124,7 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
+		log("Metodo equals sendo feito");
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -110,6 +132,7 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FakePlayer other = (FakePlayer) obj;
+	
 		if (other.getName() != null && getName() != null) {
 			return other.getName().equalsIgnoreCase(this.getName());
 		}
@@ -118,7 +141,6 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 		}
 		return false;
 	}
-
 	@Override
 	public boolean isOp() {
 		return false;
@@ -154,7 +176,7 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 
 	@Override
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	@Override
@@ -172,7 +194,7 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 
 	@Override
 	public UUID getUniqueId() {
-		return id;
+		return this.id;
 	}
 
 	@Override

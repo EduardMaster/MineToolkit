@@ -20,6 +20,9 @@ public class StorageInfo implements Cloneable {
 	}
 	
 
+	public StorageInfo( Class<?> claz) {
+		setType(claz);
+	}
 	public StorageInfo(Field field, Class<?> type, boolean asReference, boolean inline,boolean indentifiable) {
 		setField(field);
 		setInline(inline);
@@ -27,7 +30,6 @@ public class StorageInfo implements Cloneable {
 		this.reference = asReference;
 		setIndentifiable(indentifiable);
 	}
-
 
 	public Class<?> getType() {
 		return type;

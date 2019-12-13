@@ -22,8 +22,8 @@ public class BungeeDB {
 	 * 
 	 * @param table
 	 *            Tabela
-	 * @param player
-	 *            Jogador
+	 * @param playerId
+	 *            Jogador UUID
 	 */
 	public void addCooldown(String table, String playerId) {
 		getDB().createTable(table, "uuid varchar not null, time long not null");
