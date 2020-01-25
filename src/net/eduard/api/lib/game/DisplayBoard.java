@@ -244,24 +244,26 @@ public class DisplayBoard implements Storable, Copyable {
 	public DisplayBoard init() {
 //		Mine.broadcast("§cinit executado"
 //				+ "");
-		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		objective = scoreboard.registerNewObjective("sc" + Extra.getRandomInt(1000, 100000), "dummy");
-		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		if (healthBarEnabled) {
-			health = scoreboard.registerNewObjective("HealthBar", Criterias.HEALTH);
-			health.setDisplaySlot(DisplaySlot.BELOW_NAME);
-		}
-		for (int id = 15; id > 0; id--) {
-			Team team = scoreboard.registerNewTeam("t" + +Mine.getRandomInt(1000, 100000));
+		if (Bukkit.getScoreboardManager()!=null) {
+			scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+			objective = scoreboard.registerNewObjective("sc" + Extra.getRandomInt(1000, 100000), "dummy");
+			objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+			if (healthBarEnabled) {
+				health = scoreboard.registerNewObjective("HealthBar", Criterias.HEALTH);
+				health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+			}
+			for (int id = 15; id > 0; id--) {
+				Team team = scoreboard.registerNewTeam("t" + +Mine.getRandomInt(1000, 100000));
 //			FakePlayer fake = new FakePlayer("" + ChatColor.values()[id]);
 //			team.addPlayer(fake);
 //			objective.getScore(fake).setScore(id);
-			teams.put(id, team);
+				teams.put(id, team);
 
 //			fakes.put(id, fake);
+			}
+			setDisplay(title);
+			setHealthBar(Mine.getRedHeart());
 		}
-		setDisplay(title);
-		setHealthBar(Mine.getRedHeart());
 		return this;
 	}
 

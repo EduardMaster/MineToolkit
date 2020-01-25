@@ -19,7 +19,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Plugins APIs" level="application" />
     <orderEntry type="jdk" jdkName="java11" jdkType="JavaSDK" />
-    <orderEntry type="module-library" scope="PROVIDED">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../plugins-apis/Spigot/spigot 1.7-1.8.jar!/" />

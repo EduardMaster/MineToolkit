@@ -14,7 +14,7 @@ public class DBConnector {
 
 	private String userName;
 	private String password;
-	private String host = "locahost";
+	private String host = "localhost";
 	private int port = 3306;
 	private String database;
 	private String databasePath;

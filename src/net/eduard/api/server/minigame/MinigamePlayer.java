@@ -1,5 +1,6 @@
 package net.eduard.api.server.minigame;
 
+import net.eduard.api.lib.storage.StorageAttributes;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
@@ -10,6 +11,7 @@ import net.eduard.api.lib.Mine;
  * @author Eduard
  *
  */
+@StorageAttributes(indentificate = true)
 public class MinigamePlayer {
 
 	private Player player;

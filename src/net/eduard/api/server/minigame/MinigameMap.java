@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.eduard.api.lib.storage.StorageAttributes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,6 +21,7 @@ import net.eduard.api.lib.storage.Storable;
  * @author Eduard-PC
  *
  */
+@StorageAttributes(indentificate = true)
 public class MinigameMap implements Storable, Copyable {
 
 	private String name;

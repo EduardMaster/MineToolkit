@@ -65,6 +65,47 @@ import com.google.gson.JsonParser;
  */
 public final class Extra {
 
+
+	/**
+	 * Tipo de geração de Key
+	 *
+	 * @author Eduard-PC
+	 *
+	 */
+	public enum KeyType {
+		/**
+		 * ID UNICO
+		 */
+		UUID,
+		/**
+		 * LETRAS
+		 */
+		LETTER,
+		/**
+		 * NUMEROS
+		 */
+		NUMERIC,
+		/**
+		 * NUMEROS E LETRAS
+		 */
+		ALPHANUMERIC;
+	}
+
+
+
+	public static String getText(int init, String... args) {
+		StringBuilder text = new StringBuilder();
+		int id = 0;
+		for (String arg : args) {
+			if (id < init) {
+				id++;
+				continue;
+			}
+			text.append(" " + toChatMessage(arg));
+			id++;
+		}
+		return text.toString();
+	}
 	/**
 	 * Tenta ler o arquivo dentro do Jar
 	 * @param loader

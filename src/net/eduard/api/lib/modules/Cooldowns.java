@@ -13,7 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * 
  * @author Eduard
  * @version 1.0
- * @see Lib v1.0
+ * @since Lib v1.0
  *
  */
 public abstract class Cooldowns {

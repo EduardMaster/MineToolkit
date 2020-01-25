@@ -3,6 +3,7 @@ package net.eduard.api.server.kits;
 import java.util.HashMap;
 import java.util.List;
 
+import net.eduard.api.lib.modules.Game;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -16,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.click.PlayerClickEntity;
 import net.eduard.api.lib.click.PlayerClickEntityEffect;
-import net.eduard.api.lib.modules.LocationEffect;
 import net.eduard.api.server.kit.KitAbility;
 
 public class Infernor extends KitAbility {
@@ -77,28 +77,19 @@ public class Infernor extends KitAbility {
 	}
 	public List<Location> createArena(Player p){
 		Location x = p.getLocation().add(0, 100, 0);
-		List<Location> locs = Mine.getBox(x, size, size, size, new LocationEffect() {
-			
-			@SuppressWarnings("deprecation")
-			@Override
-			public boolean effect(Location location) {
-				location.getBlock().setType(mat);
-				location.getBlock().setData((byte) data);
+		List<Location> locs = Mine.getBox(x, size, size, size, location -> {
+			location.getBlock().setType(mat);
+			location.getBlock().setData((byte) data);
 //				location.getBlock().getRelative(BlockFace.UP).setType(Material.FIRE);
-				return true;
-			}
+			return true;
 		});
-		Mine.getBox(p.getLocation().add(0, 100, 0), size-1, size-1, size-1, new LocationEffect() {
-			
-			@Override
-			public boolean effect(Location location) {
-				location.getBlock().setType(Material.AIR);
-				if (Mine.getChance(chance)){
-					location.getBlock().setType(Material.FIRE);
-				}
-				
-				return false;
+		Mine.getBox(p.getLocation().add(0, 100, 0), size-1, size-1, size-1, location -> {
+			location.getBlock().setType(Material.AIR);
+			if (Mine.getChance(chance)){
+				location.getBlock().setType(Material.FIRE);
 			}
+
+			return false;
 		});
 		return locs;
 	}

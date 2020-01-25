@@ -1,19 +1,17 @@
 package net.eduard.api.lib.licence;
 
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Scanner;
-
-import net.eduard.api.lib.modules.KeyType;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import net.eduard.api.lib.BukkitConfig;
 import net.eduard.api.lib.BungeeConfig;
-import net.eduard.api.lib.modules.Extra;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Scanner;
 
 /**
  * Sistema de verificacao de Compra do Plugin para Bungee ou Bukkit
@@ -24,10 +22,6 @@ import net.md_5.bungee.api.plugin.Plugin;
  */
 public class Licence {
 
-	public static void main(String[] args) {
-		System.out.println(Extra.newKey(KeyType.LETTER, 10));
-	}
-
 	private static String site = "http://www.eduard.com.br/license?";
 
 	private static PluginActivationStatus test(String plugin, String owner, String key) {
@@ -35,6 +29,8 @@ public class Licence {
 			String tag = "[" + plugin + "] ";
 			String link = site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner;
 			URLConnection connect = new URL(link).openConnection();
+			connect.setConnectTimeout(5000);
+			connect.setReadTimeout(5000);
 			System.out.println(tag + "Verificando pelo link: " + link);
 			connect.addRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
@@ -51,10 +47,12 @@ public class Licence {
 				ex.printStackTrace();
 				return PluginActivationStatus.ERROR;
 			}
-
-		} catch (Exception ex) {
+		}catch(IOException ex){
 			ex.printStackTrace();
 			return PluginActivationStatus.SITE_OFF;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PluginActivationStatus.ERROR;
 		}
 	}
 
@@ -69,6 +67,7 @@ public class Licence {
 		SITE_OFF("§eO Sistema de licença nao respondeu, §aplugin ativado para testes", true),
 		PLUGIN_ACTIVATED("§aPlugin ativado com sucesso, Licensa permitida.", true),
 		FOR_TEST("§aO plugin foi liberado para testes no PC do Eduard", true);
+
 
 		private String message;
 		private boolean active;
@@ -138,15 +137,15 @@ public class Licence {
 
 		public static void test(Plugin plugin, Runnable activation) {
 			String pluginName = plugin.getDescription().getName();
-			String tag = "§b[" + pluginName + "] §f";
 			BungeeCord.getInstance().getConsole()
-					.sendMessage(new TextComponent(tag+"§eFazendo autenticacao do Plugin no site"));
+					.sendMessage(new TextComponent("§aAutenticando o plugin " + pluginName));
 			BungeeConfig config = new BungeeConfig("license.yml", plugin);
 			config.add("key", "INSIRA_KEY");
 			config.add("owner", "INSIRA_Dono");
 			config.saveConfig();
 			String key = config.getString("key");
 			String owner = config.getString("onwer");
+			String tag = "§b[" + plugin.getDescription().getName() + "] §f";
 			BungeeCord.getInstance().getScheduler().runAsync(plugin, () -> {
 
 				PluginActivationStatus result = Licence.test(pluginName, owner, key);

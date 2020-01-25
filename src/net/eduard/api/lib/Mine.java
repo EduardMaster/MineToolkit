@@ -29,7 +29,8 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
-
+import net.eduard.api.lib.modules.Game.*;
+import net.eduard.api.lib.modules.Game;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.Block;
@@ -90,9 +91,7 @@ import net.eduard.api.lib.manager.TimeManager;
 import net.eduard.api.lib.modules.EmptyWorldGenerator;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.FakePlayer;
-import net.eduard.api.lib.modules.LocationEffect;
-import net.eduard.api.lib.modules.Point;
-import net.eduard.api.lib.modules.Replacer;
+
 
 /**
  * API principal da Lib contendo muitos codigos bons e utilitarios
@@ -269,6 +268,7 @@ public final class Mine {
         player.setExp(0);
         int result = (int) (total - amount);
         player.giveExp(result);
+
     }
 
     /**
@@ -315,7 +315,7 @@ public final class Mine {
      * Mapa que armazena os Itens dos jogadores tirando as Armaduras
      */
     private static final Map<Player, ItemStack[]> PLAYERS_ITEMS = new HashMap<>();
-    private static Map<String, Replacer> replacers = new HashMap<>();
+    private static Map<String, Game.Replacer> replacers = new HashMap<>();
 
     /**
      * Adiciona um Encantamento no Item
@@ -488,7 +488,7 @@ public final class Mine {
      * Envia mensagens para todos jogadores
      *
      * @param message Mensagem
-     * @see Bukkit.broadcastMessage(message)
+     *  <code>Bukkit.broadcastMessage(message)</code>
      */
     public static void broadcast(String message) {
         Bukkit.broadcastMessage(message);
@@ -572,7 +572,7 @@ public final class Mine {
      * @param displayName Nome do TAB
      */
     public static void changeTabName(Player player, String displayName) {
-        player.setPlayerListName(Mine.getText(32, displayName));
+        player.setPlayerListName(Extra.toText(32, displayName));
     }
 
     /**
@@ -671,7 +671,7 @@ public final class Mine {
      * Envia mensagem para o console do servidor
      *
      * @ @param message
-     * @see Bukkit.getConsoleSender().sendMessage(message);
+     * @see   <code>Bukkit.getConsoleSender().sendMessage(message)</code> ;
      */
     public static void console(String message) {
         Bukkit.getConsoleSender().sendMessage(message);
@@ -2043,19 +2043,7 @@ public final class Mine {
         return team;
     }
 
-    public static String getText(int init, String... args) {
-        StringBuilder text = new StringBuilder();
-        int id = 0;
-        for (String arg : args) {
-            if (id < init) {
-                id++;
-                continue;
-            }
-            text.append(" " + toChatMessage(arg));
-            id++;
-        }
-        return text.toString();
-    }
+
 
     public static String getTime(int time) {
 
@@ -2172,7 +2160,7 @@ public final class Mine {
      */
     @Deprecated
     public static String getVersion2() {
-        return Bukkit.getServer().getClass().getPackage().getName().split("\\")[3];
+        return Bukkit.getServer().getClass().getPackage().getName().split("\\\\")[3];
     }
 
     public static World getWorld(String name) {
@@ -3077,7 +3065,7 @@ public final class Mine {
      * nome, descrição, encantamentos
      *
      * @param inventory Inventario
-     * @param material  Tipo do Material
+     * @param item  Tipo do Material
      * @param amount    Quantidade
      */
     public static void remove(Inventory inventory, ItemStack item, int amount) {

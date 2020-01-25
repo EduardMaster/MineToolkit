@@ -22,19 +22,6 @@ import org.bukkit.entity.Player;
  */
 public class FakePlayer implements OfflinePlayer, Serializable {
 
-	public static void main(String[] args) {
-		try {
-			byte[] bites1 = ("OfflinePlayer:" + "EduardKillerPro").getBytes("UTF-8");
-			byte[] bites2 = ("OfflinePlayer:" + "EduardKillerPro".toLowerCase()).getBytes("UTF-8");
-			UUID id1 = UUID.nameUUIDFromBytes(bites1);
-			UUID id2 = UUID.nameUUIDFromBytes(bites2);
-			System.out.println(id1);
-			System.out.println(id2);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * 
@@ -58,6 +45,19 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 	public FakePlayer(String name) {
 		this.name = name;
 		fixUUID();
+	}
+	public static void main(String[] args) {
+		try {
+			byte[] bites1 = ("OfflinePlayer:" + "EduardKillerPro").getBytes("UTF-8");
+			byte[] bites2 = ("OfflinePlayer:" + "EduardKillerPro".toLowerCase()).getBytes("UTF-8");
+			UUID id1 = UUID.nameUUIDFromBytes(bites1);
+			UUID id2 = UUID.nameUUIDFromBytes(bites2);
+			System.out.println(id1);
+			System.out.println(id2);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setIdByName() {

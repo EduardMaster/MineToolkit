@@ -40,7 +40,7 @@ public interface Storable {
 	/**
 	 * Gera uma nova instancia do objeto
 	 * 
-	 * @param map Mapa
+	 *
 	 * @return Nova Instancia
 	 */
 	public default Object newInstance() {

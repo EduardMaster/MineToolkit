@@ -12,6 +12,7 @@ public class BungeeStatusUpdater implements Runnable{
 	public static void updateServers() {
 		for (ServerSpigot server : BungeeAPI.getServers()) {
 			ServerInfo servidor = BungeeCord.getInstance().getServerInfo(server.getName());
+			if (servidor==null)continue;
 			if ((!server.isDisabled())
 					&& ((server.isOffline()) || ((servidor.getPlayers().size() == 0) && (server.isRestarting())))) {
 				servidor.ping(new Callback<ServerPing>() {

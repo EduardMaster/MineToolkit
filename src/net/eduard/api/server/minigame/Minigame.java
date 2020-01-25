@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.eduard.api.lib.storage.StorageAttributes;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -24,6 +25,7 @@ import net.eduard.api.lib.modules.BukkitBungeeAPI;
  * @author Eduard
  *
  */
+@StorageAttributes(indentificate = true)
 public class Minigame extends TimeManager {
 
 	private String name = "Minigame";

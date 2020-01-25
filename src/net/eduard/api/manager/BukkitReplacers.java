@@ -1,12 +1,13 @@
 package net.eduard.api.manager;
 
+import net.eduard.api.lib.modules.Game;
+import net.eduard.api.lib.modules.Game.Replacer;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.modules.Extra;
-import net.eduard.api.lib.modules.Replacer;
 import net.eduard.api.lib.modules.VaultAPI;
 
 /**

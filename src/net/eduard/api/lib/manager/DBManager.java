@@ -236,7 +236,7 @@ public class DBManager implements Storable, Copyable {
 	 * @param database Database
 	 */
 	public void clearDatabase(String database) {
-		// update("TRUNCATE DATABASE " + database);
+		 update("TRUNCATE DATABASE " + database);
 	}
 
 	/**
@@ -627,15 +627,15 @@ public class DBManager implements Storable, Copyable {
 		this.type = type;
 	}
 
-	@Override
+
 	public Object restore(Map<String, Object> map) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+
 	public void store(Map<String, Object> map, Object object) {
-		// TODO Auto-generated method stub
+
 
 	}
 

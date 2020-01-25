@@ -3,6 +3,7 @@ package net.eduard.api.server.kits;
 import java.util.HashMap;
 import java.util.List;
 
+import net.eduard.api.lib.modules.Game;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -17,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.click.PlayerClickEntity;
 import net.eduard.api.lib.click.PlayerClickEntityEffect;
-import net.eduard.api.lib.modules.LocationEffect;
 import net.eduard.api.server.kit.KitAbility;
 
 public class Gladiator extends KitAbility {
@@ -72,23 +72,14 @@ public class Gladiator extends KitAbility {
 		
 	}
 	public List<Location> createArena(Player p){
-		List<Location> locs = Mine.getBox(p.getLocation().add(0, 100, 0), size, size, size, new LocationEffect() {
-			
-			@SuppressWarnings("deprecation")
-			@Override
-			public boolean effect(Location location) {
-				location.getBlock().setType(mat);
-				location.getBlock().setData((byte) data);
-				return true;
-			}
+		List<Location> locs = Mine.getBox(p.getLocation().add(0, 100, 0), size, size, size, location -> {
+			location.getBlock().setType(mat);
+			location.getBlock().setData((byte) data);
+			return true;
 		});
-		Mine.getBox(p.getLocation().add(0, 100, 0), size-1, size-1, size-1, new LocationEffect() {
-			
-			@Override
-			public boolean effect(Location location) {
-				location.getBlock().setType(Material.AIR);
-				return false;
-			}
+		Mine.getBox(p.getLocation().add(0, 100, 0), size-1, size-1, size-1, location -> {
+			location.getBlock().setType(Material.AIR);
+			return false;
 		});
 		return locs;
 	}
