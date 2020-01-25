@@ -8,8 +8,8 @@ import org.bukkit.event.player.PlayerEvent;
 public class ProductTradeEvent extends PlayerEvent implements Cancellable {
 	private Product product;
 	private Shop shop;
-	private int amount;
-	private int newStock;
+	private double amount;
+	private double newStock;
 	private TradeType type;
 	private boolean cancelled;
 	private double balance;
@@ -45,11 +45,11 @@ public class ProductTradeEvent extends PlayerEvent implements Cancellable {
 		this.shop = shop;
 	}
 
-	public int getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(int amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 
@@ -88,11 +88,11 @@ public class ProductTradeEvent extends PlayerEvent implements Cancellable {
 		this.priceTotal = priceTotal;
 	}
 
-	public int getNewStock() {
+	public double getNewStock() {
 		return newStock;
 	}
 
-	public void setNewStock(int newStock) {
+	public void setNewStock(double newStock) {
 		this.newStock = newStock;
 	}
 

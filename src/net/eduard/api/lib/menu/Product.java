@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import net.eduard.api.lib.modules.Extra;
 import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.Mine;
@@ -18,7 +19,7 @@ public class Product extends MenuButton {
 	private double sellPrice;
 	private double buyPrice;
 	private boolean limited = false;
-	private int stock;
+	private double stock;
 	private TradeType tradeType = TradeType.BUYABLE;
 	private String permission;
 	private List<String> commands = new ArrayList<>();
@@ -37,7 +38,7 @@ public class Product extends MenuButton {
 	}
 
 	public ItemStack getItem() {
-		DecimalFormat d = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.forLanguageTag("PT")));
+		DecimalFormat d = Extra.MONEY;
 //		System.out.println(getProduct());
 		ItemStack clone = super.getItem();
 		if (clone == null) {
@@ -45,7 +46,7 @@ public class Product extends MenuButton {
 		}
 		clone = clone.clone();
 		if (limited) {
-			clone.setAmount(stock);
+			clone.setAmount(64);
 		}
 		List<String> lore = Mine.getLore(clone);
 		lore.add(" ");
@@ -149,11 +150,11 @@ public class Product extends MenuButton {
 		this.tradeType = tradeType;
 	}
 
-	public int getStock() {
+	public double getStock() {
 		return stock;
 	}
 
-	public void setStock(int stock) {
+	public void setStock(double stock) {
 		this.stock = stock;
 	}
 

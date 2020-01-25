@@ -4,6 +4,7 @@ import net.eduard.api.lib.modules.Extra;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Sistema para guardar dados extras nos {@link ItemStack}
@@ -12,11 +13,21 @@ import java.lang.reflect.Method;
  * @since 24/01/2020
  */
 public class Items {
+    public static ItemStack toStack(ItemStack original, double amount) {
+
+        List<String> lore = Mine.getLore(original);
+        lore.add(Mine.MSG_ITEM_STACK.replace("$stack",Extra.MONEY.format( amount)));
+        Mine.setLore(original, lore);
+        Items.ItemExtraData data = Items.getData(original);
+        data.setCustomStack(amount);
+        original = Items.setData(original, data);
+        return original;
+    }
 
     public static class ItemExtraData {
 
         private ItemExtraData() {
-           // net.minecraft.server.v1_8_R3.ItemStack
+            // net.minecraft.server.v1_8_R3.ItemStack
 
         }
 
@@ -161,7 +172,7 @@ public class Items {
             Object itemModified = asCraftMirror.invoke(0, itemCopia);
 
             Method asBukkitCopy = Extra.getMethod(Mine.classCraftItemStack, "asBukkitCopy", Mine.classMineItemStack);
-            itemModified = asBukkitCopy.invoke(0,itemCopia);
+            itemModified = asBukkitCopy.invoke(0, itemCopia);
             return (ItemStack) itemModified;
 
         } catch (Exception e) {

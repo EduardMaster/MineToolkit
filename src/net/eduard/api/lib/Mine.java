@@ -101,6 +101,7 @@ import net.eduard.api.lib.modules.FakePlayer;
  */
 public final class Mine {
 
+    public static  String MSG_ITEM_STACK = "§aStacks: §2$stack";
     public static String classMineEntityPlayer = "#mEntityPlayer";
     public static String classCraftCraftPlayer = "#cCraftPlayer";
     public static String classSpigotPacketTitle = "#sProtocolInjector$PacketTitle";
