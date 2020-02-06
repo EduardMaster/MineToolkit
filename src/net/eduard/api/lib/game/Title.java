@@ -2,9 +2,10 @@ package net.eduard.api.lib.game;
 
 import java.util.Map;
 
+import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;
 
@@ -49,7 +50,7 @@ public class Title implements Storable ,Copyable {
 	}
 
 	public Title create(Player player) {
-		Mine.sendTitle(player, title, subTitle, fadeIn, stay, fadeOut);
+		MineReflect.sendTitle(player, title, subTitle, fadeIn, stay, fadeOut);
 		return this;
 	}
 

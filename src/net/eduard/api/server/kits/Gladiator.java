@@ -3,7 +3,6 @@ package net.eduard.api.server.kits;
 import java.util.HashMap;
 import java.util.List;
 
-import net.eduard.api.lib.modules.Game;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -15,7 +14,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.click.PlayerClickEntity;
 import net.eduard.api.lib.click.PlayerClickEntityEffect;
 import net.eduard.api.server.kit.KitAbility;

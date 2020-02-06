@@ -8,7 +8,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.game.Item;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
@@ -33,10 +33,10 @@ public class ItemStorable implements Storable {
 			try {
 				String[] split = text.split(";");
 				String[] splitData = split[0].split("-");
-				Integer qnt = Mine.toInt(splitData[1]);
+				Integer qnt = Extra.toInt(splitData[1]);
 				String[] splitInfo = splitData[0].split(":");
-				Integer id = Mine.toInt(splitInfo[0]);
-				short data = Mine.toShort(splitInfo[1]);
+				Integer id = Extra.toInt(splitInfo[0]);
+				short data = Extra.toShort(splitInfo[1]);
 				Item item = new Item();
 				item.setId(id);
 				item.setData(data);
@@ -46,15 +46,15 @@ public class ItemStorable implements Storable {
 						String[] enchs = split[1].split(",");
 						for (String enchant : enchs) {
 							String[] ench = enchant.split("-");
-							Integer ench_id = Mine.toInt(ench[0]);
-							Integer ench_level = Mine.toInt(ench[1]);
+							Integer ench_id = Extra.toInt(ench[0]);
+							Integer ench_level = Extra.toInt(ench[1]);
 							item.getEnchants().put(ench_id, ench_level);
 						}
 					} else {
 						if (!split[1].equals(" ")) {
 							String[] ench = split[1].split("-");
-							Integer ench_id = Mine.toInt(ench[0]);
-							Integer ench_level = Mine.toInt(ench[1]);
+							Integer ench_id = Extra.toInt(ench[0]);
+							Integer ench_level = Extra.toInt(ench[1]);
 							item.getEnchants().put(ench_id, ench_level);
 						}
 

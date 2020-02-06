@@ -8,7 +8,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.server.kit.KitAbility;
 
 public class DarkMage extends KitAbility {
@@ -27,7 +27,7 @@ public class DarkMage extends KitAbility {
 			if (hasKit(p)) {
 				if (p.getItemInHand() == null)
 					return;
-				if (Mine.getChance(chance)) 
+				if (Mine.getChance(chance))
 					if (e.getEntity() instanceof LivingEntity) {
 						LivingEntity livingEntity = (LivingEntity) e.getEntity();
 						for (PotionEffect pot : getPotions()) {

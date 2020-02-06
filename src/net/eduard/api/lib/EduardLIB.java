@@ -1,5 +1,6 @@
 package net.eduard.api.lib;
 
+import net.eduard.api.lib.modules.Mine;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.eduard.api.lib.modules.BukkitBungeeAPI;

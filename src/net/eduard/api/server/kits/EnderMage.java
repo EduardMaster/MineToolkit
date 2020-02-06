@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.click.ClickComparationType;
 import net.eduard.api.lib.click.PlayerClick;
 import net.eduard.api.lib.click.PlayerClickEffect;
@@ -44,7 +44,7 @@ public class EnderMage extends KitAbility {
 					state.getBlock().setType(Material.ENDER_PORTAL_FRAME);
 					// e.setCanceled(false);
 					player.setItemInHand(null);
-					Mine.TIME.asyncTimer(new BukkitRunnable() {
+					new BukkitRunnable() {
 						int x = effectSeconds;
 						@Override
 						public void run() {
@@ -60,7 +60,7 @@ public class EnderMage extends KitAbility {
 								cancel();
 							}
 						}
-					},20, 20);
+					}.runTaskTimer(getPlugin(),20,20);
 
 				}
 			}

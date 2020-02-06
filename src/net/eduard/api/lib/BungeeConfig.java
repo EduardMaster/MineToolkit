@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.StorageInfo;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;

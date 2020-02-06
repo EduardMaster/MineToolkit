@@ -2,22 +2,18 @@ package net.eduard.api.lib.menu;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import net.eduard.api.lib.Items;
+import net.eduard.api.lib.modules.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.Mine;
 import net.eduard.api.lib.manager.CurrencyManager;
-import net.eduard.api.lib.modules.FakePlayer;
-import net.eduard.api.lib.modules.VaultAPI;
 import net.eduard.api.lib.storage.StorageAttributes;
 
 @StorageAttributes(indentificate = true)
@@ -65,7 +61,7 @@ public class Shop extends Menu {
 		Player p = e.getPlayer();
 		if (selectingAmount.containsKey(p)){
 			Product product = selectingAmount.get(p);
-			Double amount = Mine.toDouble(e.getMessage());
+			Double amount = Extra.toDouble(e.getMessage());
 			selectingAmount.remove(p);
 			TradeType trade = trading.get(p);
 			if(trade==TradeType.BUYABLE) {
@@ -214,7 +210,7 @@ public class Shop extends Menu {
 				"" + product.getName()));
 		ItemStack clone = product.getProduct().clone();
 		if (evento.getAmount() > PLAYER_INVENTORY_LIMIT){
-			clone = Items.toStack(clone,evento.getAmount());
+			clone = MineReflect.toStack(clone,evento.getAmount());
 
 
 

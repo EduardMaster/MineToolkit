@@ -1,147 +1,144 @@
-package net.eduard.api.lib;
+package net.eduard.api.lib.modules;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.UUID;
-import java.util.jar.JarFile;
-import java.util.stream.Collectors;
-import net.eduard.api.lib.modules.Game.*;
-import net.eduard.api.lib.modules.Game;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import org.bukkit.*;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandMap;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.LightningStrike;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.FireworkEffectMeta;
-import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.*;
 import org.bukkit.material.Crops;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
+
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import org.bukkit.util.Vector;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+import org.bukkit.util.Vector;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-
-import net.eduard.api.lib.game.Schematic;
-import net.eduard.api.lib.game.SoundEffect;
-import net.eduard.api.lib.manager.TimeManager;
-import net.eduard.api.lib.modules.EmptyWorldGenerator;
-import net.eduard.api.lib.modules.Extra;
-import net.eduard.api.lib.modules.FakePlayer;
 
 
 /**
  * API principal da Lib contendo muitos codigos bons e utilitarios
- *
+ *<br>Sistema para guardar dados extras nos{@link ItemStack}
  * @author Eduard
  * @version 3.0
+
+        **
+        **
+        **@author Eduard
+        **@since 24/01/2020
+
  */
 public final class Mine {
 
-    public static  String MSG_ITEM_STACK = "§aStacks: §2$stack";
-    public static String classMineEntityPlayer = "#mEntityPlayer";
-    public static String classCraftCraftPlayer = "#cCraftPlayer";
-    public static String classSpigotPacketTitle = "#sProtocolInjector$PacketTitle";
-    public static String classSpigotAction = "#sProtocolInjector$PacketTitle$Action";
-    public static String classSpigotPacketTabHeader = "#sProtocolInjector$PacketTabHeader";
-    public static String classPacketPlayOutChat = "#pPlayOutChat";
-    public static String classPacketPlayOutTitle = "#pPlayOutTitle";
-    public static String classPacketPlayOutWorldParticles = "#pPlayOutWorldParticles";
-    public static String classPacketPlayOutPlayerListHeaderFooter = "#pPlayOutPlayerListHeaderFooter";
-    public static String classPacketPlayOutNamedEntitySpawn = "#pPlayOutNamedEntitySpawn";
-    public static String classPacketPlayInClientCommand = "#pPlayInClientCommand";
-    public static String classCraftEnumTitleAction = "#cEnumTitleAction";
-    public static String classPacketEnumTitleAction2 = "#pPlayOutTitle$EnumTitleAction";
-    public static String classMineEnumClientCommand = "#mEnumClientCommand";
-    public static String classMineEnumClientCommand2 = "#pPlayInClientCommand$EnumClientCommand";
-    public static String classMineChatSerializer = "#mChatSerializer";
-    public static String classMineIChatBaseComponent = "#mIChatBaseComponent";
-    public static String classMineEntityHuman = "#mEntityHuman";
-    public static String classMineNBTTagCompound = "#mNBTTagCompound";
-    public static String classMineNBTBase = "#mNBTBase";
-    public static String classMineNBTTagList = "#mNBTTagList";
-    public static String classPacketPacket = "#p";
-    public static String classCraftItemStack = "#cinventory.CraftItemStack";
-    public static String classMineItemStack = "#mItemStack";
-    public static String classBukkitItemStack = "#bItemStack";
-    public static String classBukkitBukkit = "#bBukkit";
-    public static String classMineChatComponentText = "#mChatComponentText";
-    public static String classMineMinecraftServer = "#mMinecraftServer";
 
-    static {
-        Extra.newReplacer("#v", Mine.getVersion());
+
+
+
+
+    	/*
+
+	----------------------------- ClASSES DEPENDECIAS ABAIXO ---------------------------
+
+	 */
+
+    /**
+     * Efeito a fazer na Localização
+     *
+     * @author Eduard
+     *
+     */
+    public interface LocationEffect {
+
+        boolean effect(Location location);
     }
 
-    /*
-     * Mapa de Arenas registradas
+    /**
+     * Interface de criar Replacer (Placeholders)
+     *
+     * @author Eduard
+     *
      */
-    public static Map<String, Schematic> MAPS = new HashMap<>();
-    public static Map<Player, Schematic> MAPS_CACHE = new HashMap<>();
+    public  interface Replacer {
+        /**
+         * Retorna o valor do Placeholder
+         *
+         * @param player Jogador
+         * @return O placeholder
+         */
+        Object getText(Player player);
+    }
 
-    public static BukkitConfig MAPS_CONFIG;
+
+    /**
+     * Ponto de direção usado para fazer um RADAR
+     *  @author Internet
+     *
+     *
+     */
+    public  enum Point {
+        N('N'), NE('/'), E('O'), SE('\\'), S('S'), SW('/'), W('L'), NW('\\');
+
+        public final char asciiChar;
+
+        private Point(char asciiChar) {
+            this.asciiChar = asciiChar;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(this.asciiChar);
+        }
+
+        public String toString(boolean isActive, ChatColor colorActive, String colorDefault) {
+            return (isActive ? colorActive : colorDefault) + String.valueOf(this.asciiChar);
+        }
+
+        public String toString(boolean isActive, String colorActive, String colorDefault) {
+            return (isActive ? colorActive : colorDefault) + String.valueOf(this.asciiChar);
+        }
+    }
+
+
+
+
+    /**
+     * Mapa que armazena as Armaduras dos jogadores
+     */
+    private static final Map<Player, ItemStack[]> PLAYERS_ARMOURS = new HashMap<>();
+    /**
+     * Mapa que armazena os Itens dos jogadores tirando as Armaduras
+     */
+    private static final Map<Player, ItemStack[]> PLAYERS_ITEMS = new HashMap<>();
+    private static Map<String, Replacer> replacers = new HashMap<>();
+
+
+
 
     /**
      * Mensagem de quando console digita um comando
@@ -192,18 +189,7 @@ public final class Mine {
      * Lista de Comandos para efeito Negativo
      */
     public static List<String> OPT_COMMANDS_OFF = new ArrayList<>(Arrays.asList("off", "desativar"));
-    /**
-     * Som para o Teleporte
-     */
-    public static SoundEffect OPT_SOUND_TELEPORT = SoundEffect.create("ENDERMAN_TELEPORT");
-    /**
-     * Som para algum sucesso
-     */
-    public static SoundEffect OPT_SOUND_SUCCESS = SoundEffect.create("LEVEL_UP");
-    /**
-     * Som para algum erro
-     */
-    public static SoundEffect OPT_SOUND_ERROR = SoundEffect.create("NOTE_BASS_DRUM");
+
     /**
      * Desativar mensagem de morte
      */
@@ -228,27 +214,9 @@ public final class Mine {
      * Ligar sistema de Respawn Automatico
      */
     public static boolean OPT_AUTO_RESPAWN = true;
-    /**
-     * Controlador de Tempo da Mine
-     */
-    public static TimeManager TIME;
 
-    /**
-     * Ligando algumas coisas
-     */
-    static {
-        try {
-            TIME = new TimeManager(getMainPlugin());
-            try {
-                MAPS_CONFIG = new BukkitConfig("maps/", getMainPlugin());
-            } catch (Exception e) {
 
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-    }
 
     /**
      * Remove uma quantidade de XP do jogador
@@ -308,15 +276,6 @@ public final class Mine {
         return result;
     }
 
-    /**
-     * Mapa que armazena as Armaduras dos jogadores
-     */
-    private static final Map<Player, ItemStack[]> PLAYERS_ARMOURS = new HashMap<>();
-    /**
-     * Mapa que armazena os Itens dos jogadores tirando as Armaduras
-     */
-    private static final Map<Player, ItemStack[]> PLAYERS_ITEMS = new HashMap<>();
-    private static Map<String, Game.Replacer> replacers = new HashMap<>();
 
     /**
      * Adiciona um Encantamento no Item
@@ -520,51 +479,6 @@ public final class Mine {
         Bukkit.getPluginManager().callEvent(event);
     }
 
-    /**
-     * Modifica o nome do Jogador para um Novo Nome e<br>
-     * Envia para Todos os outros Jogadores a alteração (Packet)
-     *
-     * @param player      Jogador
-     * @param displayName Novo Nome
-     */
-    public static void changeName(Player player, String displayName) {
-
-        try {
-            Object entityplayer = getHandle(player);
-            // PacketPlayOutNamedEntitySpawn a;
-            // EntityPlayer c;
-            // PacketPlayOutEntity d;
-            // PacketPlayOutSpawnEntityLiving e;
-
-            // EntityHuman b;
-            Field profileField = Extra.getField(Mine.classMineEntityHuman, "bH");
-            Object gameprofile = profileField.get(entityplayer);
-            // Object before = Extra.getValue(gameprofile, "name");
-            Extra.setValue(gameprofile, "name", displayName);
-            // EntityPlayer a;
-            // Object packet = Extra.getNew(Mine.classPacketPlayOutNamedEntitySpawn,
-            // Extra.getParameters(Mine.classMineEntityHuman),
-            // entityplayer);
-            // // Extra.setValue(Extra.getValue(packet, "b"), "name", displayName);
-            // sendPackets(packet, player);
-            for (Player p : getPlayers()) {
-                if (p.equals(player))
-                    continue;
-                p.hidePlayer(player);
-            }
-            for (Player p : getPlayers()) {
-                if (p.equals(player))
-                    continue;
-                p.showPlayer(player);
-            }
-            // Extra.setValue(gameprofile, "name", before);
-            // System.out.println(Bukkit.getPlayer(displayName));
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-    }
 
     /**
      * Muda o nome do jogador no TAB e já corta o texto caso passe de 32 caracteres
@@ -782,35 +696,7 @@ public final class Mine {
         Extra.deleteFolder(getWorldFolder(name));
     }
 
-    /**
-     * Desabilita a Inteligencia da Entidade<br>
-     * <p>
-     * NMS código executado <br>
-     *
-     * <code>
-     * net.minecraft.server.v1_8_R3.Entity NMS = ((CraftEntity) entidade).getHandle();<br>
-     * NBTTagCompound compound = new NBTTagCompound();<br>
-     * NMS.c(compound);<br>
-     * compound.setByte("NoAI", (byte) 1);<br>
-     * NMS.f(compound);
-     *
-     * </code>
-     *
-     * @param entity Entidade
-     */
-    public static void disableAI(Entity entity) {
-        try {
-            Object compound = Extra.getNew(Mine.classMineNBTTagCompound);
-            Object getHandle = Extra.getResult(entity, "getHandle");
-            Extra.getResult(getHandle, "c", compound);
-            Extra.getResult(compound, "setByte", "NoAI", (byte) 1);
-            Extra.getResult(getHandle, "f", compound);
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-    }
 
     /**
      * Retorna a diferença entre o X das duas localizações
@@ -1225,26 +1111,12 @@ public final class Mine {
         return null;
     }
 
-    /**
-     * Retorna Um PlayerConnection pela variavel playerConnection da classe
-     * EntityPlayer <Br>
-     * Pega o EntityPlayer pelo metodo getHandle(player)
-     *
-     * @param player Jogador (CraftPlayer)
-     * @return Conexão do jogador
-     */
-    public static Object getConnection(Player player) throws Exception {
-        return Extra.getValue(getHandle(player), "playerConnection");
-    }
 
     public static long getCooldown(long before, long seconds) {
         return Extra.getCooldown(before, seconds);
 
     }
 
-    public static int getCurrentTick() throws Exception {
-        return (int) Extra.getValue(Mine.classMineMinecraftServer, "currentTick");
-    }
 
 
     /**
@@ -1436,14 +1308,7 @@ public final class Mine {
         return null;
     }
 
-    /**
-     * @param player Jogador (CraftPlayer)
-     * @return EntityPlayer pelo metodo getHandle da classe CraftPlayer(Player)
-     * @throws Exception
-     */
-    public static Object getHandle(Player player) throws Exception {
-        return Extra.getResult(player, "getHandle");
-    }
+
 
     /**
      * Pega o tipo do material da mao da Entidade viva
@@ -1496,47 +1361,6 @@ public final class Mine {
         return location.getWorld().getHighestBlockAt(location).getLocation();
     }
 
-    /**
-     * Inicia um IChatBaseComponent pelo metodo a(String) da classe ChatSerializer
-     *
-     * @param component Componente (Texto)
-     * @return IChatBaseComponent iniciado
-     */
-    public static Object getIChatBaseComponent(String component) throws Exception {
-        return Extra.getResult(Mine.classMineChatSerializer, "a", component);
-    }
-
-    /**
-     * Inicia um IChatBaseComponent pelo metodo a(String) da classe ChatSerializer
-     * adicionando componente texto
-     *
-     * @param text Texto
-     * @return IChatBaseComponent iniciado
-     */
-    public static Object getIChatText(String text) throws Exception {
-        return getIChatBaseComponent(getIComponentText(text));
-    }
-
-    /**
-     * Inicia um ChatComponentText"IChatBaseComponent" pelo cons(String) da classe
-     * ChatComponentText
-     *
-     * @param text Texto
-     * @return ChatComponentText iniciado
-     */
-    public static Object getIChatText2(String text) throws Exception {
-        return Extra.getNew(Mine.classMineChatComponentText, text);
-
-    }
-
-    /**
-     * @param text Texto
-     * @return "{\"text\":\"" + text + "\"}"
-     */
-    public static String getIComponentText(String text) {
-        return ("{\"text\":\"" + text + "\"}");
-
-    }
 
     /**
      * Pega o Ip do Jogador atual
@@ -1760,22 +1584,9 @@ public final class Mine {
         return Extra.getNow();
     }
 
-    public static List<Player> getOnlinePlayers() {
-        return getPlayers();
-    }
 
-    /**
-     * @param player Jogador
-     * @return Ping do jogador
-     */
-    public static String getPing(Player player) {
-        try {
-            return Extra.getValue(getHandle(player), "ping").toString();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return "";
-    }
+
+
 
     public static Player getPlayer(String name) {
         return Bukkit.getPlayerExact(name);
@@ -1794,33 +1605,6 @@ public final class Mine {
         return players;
     }
 
-    /**
-     * @return Lista de jogadores do servidor
-     */
-    public static List<Player> getPlayers() {
-        List<Player> list = new ArrayList<>();
-        try {
-
-            Object object = Extra.getResult(Mine.classBukkitBukkit, "getOnlinePlayers");
-            if (object instanceof Collection) {
-                Collection<?> players = (Collection<?>) object;
-                for (Object obj : players) {
-                    if (obj instanceof Player) {
-                        Player p = (Player) obj;
-                        list.add(p);
-                    }
-                }
-            } else if (object instanceof Player[]) {
-                Player[] players = (Player[]) object;
-                for (Player p : players) {
-                    list.add(p);
-                }
-            }
-        } catch (Exception e) {
-        }
-
-        return list;
-    }
 
     public static Plugin getPlugin(String plugin) {
 
@@ -1959,13 +1743,7 @@ public final class Mine {
     }
 
 
-    public static Schematic getSchematic(Player player) {
-        Schematic schema = MAPS_CACHE.get(player);
-        if (schema == null) {
-            MAPS_CACHE.put(player, schema = new Schematic());
-        }
-        return schema;
-    }
+
 
     /**
      * Pega um Som baseado num Objeto (Texto)
@@ -2116,19 +1894,7 @@ public final class Mine {
         return amount;
     }
 
-    /**
-     * Pega o TPS do servidor uma expecie de calculador de LAG
-     *
-     * @return TPS em forma de DOUBLE
-     */
-    public static Double getTPS() {
-        try {
-            return Double.valueOf(Math.min(20.0D, Math.round(getCurrentTick() * 10) / 10.0D));
-        } catch (Exception e) {
-        }
 
-        return 0D;
-    }
 
     public static Vector getVelocity(Location entity, Location target, double staticX, double staticY, double staticZ,
                                      double addX, double addY, double addZ) {
@@ -2140,29 +1906,6 @@ public final class Mine {
 
     }
 
-    /**
-     * @return Versão do Servidor
-     */
-    public static String getVersion() {
-
-        try {
-            String v = Bukkit.getServer().getClass().getPackage().getName().replace('.', ',').split(",")[3];
-            return v;
-        } catch (Exception er) {
-            return "";
-        }
-
-    }
-
-    /**
-     * (Não funciona)
-     *
-     * @return Versão do Servidor
-     */
-    @Deprecated
-    public static String getVersion2() {
-        return Bukkit.getServer().getClass().getPackage().getName().split("\\\\")[3];
-    }
 
     public static World getWorld(String name) {
         return Bukkit.getWorld(name);
@@ -2245,18 +1988,7 @@ public final class Mine {
 
     }
 
-    /**
-     * @param player Jogador
-     * @return Se o Jogador esta na versão 1.8 ou pra cima
-     */
-    public static boolean isAbove1_8(Player player) {
-        try {
-            return (int) Extra.getResult(Extra.getValue(getConnection(player), "networkManager"), "getVersion") == 47;
 
-        } catch (Exception ex) {
-        }
-        return false;
-    }
 
     /**
      * Testa se o numero passado é da coluna expecificada
@@ -2379,28 +2111,7 @@ public final class Mine {
         return config;
     }
 
-    public static void loadMaps() {
 
-        File file = MAPS_CONFIG.getFile();
-        file.mkdirs();
-
-        if (file.listFiles() == null)
-            return;
-
-        for (File subfile : file.listFiles()) {
-            while (subfile.isDirectory()) {
-//				File[] files = subfile.listFiles();
-//				for (File myfile : files) {
-//
-//				}
-                return;
-            }
-            if (!subfile.isDirectory()) {
-                MAPS.put(subfile.getName().replace(".map", ""), Schematic.load(subfile));
-            }
-        }
-
-    }
 
     /**
      * Gera um Key invisivel para o chat ou menu<br>
@@ -2442,28 +2153,7 @@ public final class Mine {
 
     }
 
-    /**
-     * Força o Respawn do Jogador (Respawn Automatico)
-     *
-     * @param player Jogador
-     */
-    public static void makeRespawn(Player player) {
-        try {
-            Object packet = Extra.getNew(Mine.classPacketPlayInClientCommand,
-                    Extra.getValue(Mine.classMineEnumClientCommand, "PERFORM_RESPAWN"));
-            Extra.getResult(getConnection(player), "a", packet);
 
-        } catch (Exception ex) {
-            try {
-                Object packet = Extra.getNew(Mine.classPacketPlayInClientCommand,
-                        Extra.getValue(Mine.classMineEnumClientCommand2, "PERFORM_RESPAWN"));
-                Extra.getResult(getConnection(player), "a", packet);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
 
     public static void makeVulnerable(Player player) {
 
@@ -2575,7 +2265,7 @@ public final class Mine {
     public static ItemStack newFireworkCharge() {
         ItemStack fire = new ItemStack(Material.FIREWORK_CHARGE);
         FireworkEffectMeta meta = (FireworkEffectMeta) fire.getItemMeta();
-        meta.setEffect(FireworkEffect.builder().withColor(Color.RED).with(Type.STAR).build());
+        meta.setEffect(FireworkEffect.builder().withColor(Color.RED).with(FireworkEffect.Type.STAR).build());
         fire.setItemMeta(meta);
         return fire;
     }
@@ -2889,13 +2579,7 @@ public final class Mine {
         return newItem(material, name, amount, data, lore);
     }
 
-    public static Villager newNPCVillager(Location location, String name) {
-        Villager npc = location.getWorld().spawn(location, Villager.class);
-        npc.setCustomName(name);
-        npc.setCustomNameVisible(true);
-        Mine.disableAI(npc);
-        return npc;
-    }
+
 
     public static Scoreboard newScoreboard(Player player, String title, String... lines) {
         return applyScoreboard(player, title, lines);
@@ -2962,9 +2646,6 @@ public final class Mine {
 
     }
 
-    public static long parseDateDiff(String time, boolean future) throws Exception {
-        return Extra.parseDateDiff(time, future);
-    }
 
     /**
      * Faz um teste de Chance com Porcetagem
@@ -3200,30 +2881,7 @@ public final class Mine {
         }
     }
 
-    public static ItemStack setMaxStackSize(ItemStack itemOriginal, int amount) {
-        try {
 
-            Class<?> claz = Extra.getClassFrom(classCraftItemStack);
-            Method method_asNMSCopy = Extra.getMethod(claz, "asNMSCopy", ItemStack.class);
-            Method method_asBukkitCopy = Extra.getMethod(claz, "asBukkitCopy", classMineItemStack);
-            Object nmsItemStack = method_asNMSCopy.invoke(0, itemOriginal);
-
-            Method method_getItem = nmsItemStack.getClass().getDeclaredMethod("getItem");
-            Object nmsItem = method_getItem.invoke(nmsItemStack);
-            Method method_c = nmsItem.getClass().getDeclaredMethod("c", int.class);
-            method_c.invoke(nmsItem, amount);
-
-            Object newItem = method_asBukkitCopy.invoke(0, nmsItemStack);
-
-//            net.minecraft.server.v1_8_R3.ItemStack nmsIS = CraftItemStack.asNMSCopy(itemOriginal);
-//            nmsIS.getItem().c(amount);
-//            return CraftItemStack.asBukkitCopy(nmsIS);
-            return (ItemStack) newItem;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
 
     public static void runCommand(String command) {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
@@ -3261,18 +2919,7 @@ public final class Mine {
         PLAYERS_ITEMS.put(player, player.getInventory().getContents());
     }
 
-    /**
-     * Salva todos os mapas no sistema de armazenamento
-     */
-    public static void saveMaps() {
-        MAPS_CONFIG.getFile().mkdirs();
-        for (Entry<String, Schematic> entry : MAPS.entrySet()) {
-            Schematic mapa = entry.getValue();
-            String name = entry.getKey();
 
-            mapa.save(new File(MAPS_CONFIG.getFile(), name + ".map"));
-        }
-    }
 
     /**
      * Transforma o vector para um texto x,y,z
@@ -3316,214 +2963,16 @@ public final class Mine {
 
     }
 
-    /**
-     * Modifica a Action Bar do Jogador
-     *
-     * @param player Jogador
-     * @param text   Texto
-     */
-    public static void sendActionBar(Player player, String text) {
-        try {
-            Object component = getIChatText(text);
-            Object packet = Extra.getNew(Mine.classPacketPlayOutChat,
-                    Extra.getParameters(Mine.classMineIChatBaseComponent, byte.class), component, (byte) 2);
-            sendPacket(player, packet);
-            return;
-        } catch (Exception ex) {
-        }
-        try {
-            Object component = getIChatText2(text);
-            Object packet = Extra.getNew(Mine.classPacketPlayOutChat,
-                    Extra.getParameters(Mine.classMineIChatBaseComponent, byte.class), component, (byte) 2);
-            sendPacket(player, packet);
-        } catch (Exception e) {
-//			e.printStackTrace();
-//			Bukkit.getConsoleSender().sendMessage(
-//					"§bRexMine §aNao foi possivel usar o 'setActionBar' pois o servidor esta na versao anterior a 1.8");
 
-        }
-
-    }
-
-    public static void sendActionBar(String message) {
-        for (Player player : Mine.getPlayers()) {
-            Mine.sendActionBar(player, message);
-        }
-    }
 
     public static void sendAll(Player p, String message) {
         broadcast(getReplacers(message, p));
 
     }
 
-    /**
-     * Definir uma tag customizada
-     *
-     * @param player Jogador
-     * @param prefix Prefixo
-     * @param suffix Suffixo
-     * @param order  Ordem
-     */
-    @SuppressWarnings("unused")
-    public static void sendNameTag(Player player, String prefix, String suffix, String order) {
-        String teamName = UUID.randomUUID().toString().substring(0, 15);
 
-        try {
-            Object packet = Extra.getNew("#pPlayOutScoreboardTeam");
-            Class<?> clas = packet.getClass();
-            Field team_name = Extra.getField(clas, "a");
-            Field display_name = Extra.getField(clas, "b");
-            Field prefix2 = Extra.getField(clas, "c");
-            Field suffix2 = Extra.getField(clas, "d");
-            Field members = Extra.getField(clas, "g");
-            Field param_int = Extra.getField(clas, "h");
-            Field pack_option = Extra.getField(clas, "i");
-            Extra.setValue(packet, "a", order + teamName);
-            Extra.setValue(packet, "b", player.getName());
-            Extra.setValue(packet, "c", prefix);
-            Extra.setValue(packet, "d", suffix);
-            Extra.setValue(packet, "g", Arrays.asList(new String[]{player.getName()}));
-            Extra.setValue(packet, "h", Integer.valueOf(0));
-            Extra.setValue(packet, "i", Integer.valueOf(1));
-            Mine.sendPackets(packet);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
 
-    }
 
-    /**
-     * Envia o pacote para o jogador
-     *
-     * @param player Jogador
-     * @param packet Pacote
-     * @throws Exception
-     */
-    public static void sendPacket(Object packet, Player player) throws Exception {
-
-        Extra.getResult(getConnection(player), "sendPacket", Extra.getParameters(Mine.classPacketPacket), packet);
-    }
-
-    /**
-     * Envia o pacote para o jogador
-     *
-     * @param player Jogador
-     * @param packet Pacote
-     * @throws Exception
-     */
-    public static void sendPacket(Player player, Object packet) throws Exception {
-        sendPacket(packet, player);
-    }
-
-    /**
-     * Envia o pacote para todos jogadores
-     *
-     * @param packet Pacote
-     */
-    public static void sendPackets(Object packet) {
-        for (Player p : getPlayers()) {
-            try {
-                sendPacket(packet, p);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Envia o pacote para todos menos para o jogador
-     *
-     * @param packet Pacote
-     * @param target Jogador
-     */
-    public static void sendPackets(Object packet, Player target) {
-        for (Player player : getPlayers()) {
-            if (player.equals(target))
-                continue;
-            try {
-                sendPacket(packet, player);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Envia um Title para o Jogador
-     *
-     * @param player   Jogador
-     * @param title    Titulo
-     * @param subTitle SubTitulo
-     * @param fadeIn   Tempo de Aparececimento (Ticks)
-     * @param stay     Tempo de Passagem (Ticks)
-     * @param fadeOut  Tempo de Desaparecimento (Ticks)
-     */
-    public static void sendTitle(Player player, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
-        try {
-            if (isAbove1_8(player)) {
-
-                // sendPacket(player, getNew(PacketTitle, getParameters(Action,
-                // int.class, int.class, int.class),
-                // getValue(Action, "TIMES"), fadeIn, stay, fadeOut));
-                sendPacket(player, Extra.getNew(Mine.classSpigotPacketTitle,
-                        Extra.getValue(Mine.classSpigotAction, "TIMES"), fadeIn, stay, fadeOut));
-                sendPacket(player,
-                        Extra.getNew(Mine.classSpigotPacketTitle,
-                                Extra.getParameters(Mine.classSpigotAction, Mine.classMineIChatBaseComponent),
-                                Extra.getValue(Mine.classSpigotAction, "TITLE"), getIChatText(title)));
-                sendPacket(player,
-                        Extra.getNew(Mine.classSpigotPacketTitle,
-                                Extra.getParameters(Mine.classSpigotAction, Mine.classMineIChatBaseComponent),
-                                Extra.getValue(Mine.classSpigotAction, "SUBTITLE"), getIChatText(subTitle)));
-
-                return;
-            }
-
-        } catch (Exception e) {
-        }
-        try {
-            sendPacket(player, Extra.getNew(Mine.classPacketPlayOutTitle, fadeIn, stay, fadeOut));
-            sendPacket(player,
-                    Extra.getNew(Mine.classPacketPlayOutTitle,
-                            Extra.getParameters(Mine.classCraftEnumTitleAction, Mine.classMineIChatBaseComponent),
-                            Extra.getValue(Mine.classCraftEnumTitleAction, "TITLE"), getIChatText(title)));
-            sendPacket(player,
-                    Extra.getNew(Mine.classPacketPlayOutTitle,
-                            Extra.getParameters(Mine.classCraftEnumTitleAction, Mine.classMineIChatBaseComponent),
-                            Extra.getValue(Mine.classCraftEnumTitleAction, "SUBTITLE"), getIChatText(subTitle)));
-            return;
-        } catch (Exception e) {
-        }
-        try {
-            sendPacket(player, Extra.getNew(Mine.classPacketPlayOutTitle, fadeIn, stay, fadeOut));
-            sendPacket(player,
-                    Extra.getNew(Mine.classPacketPlayOutTitle,
-                            Extra.getParameters(Mine.classPacketEnumTitleAction2, Mine.classMineIChatBaseComponent),
-                            Extra.getValue(Mine.classPacketEnumTitleAction2, "TITLE"), getIChatText2(title)));
-            sendPacket(player,
-                    Extra.getNew(Mine.classPacketPlayOutTitle,
-                            Extra.getParameters(Mine.classPacketEnumTitleAction2, Mine.classMineIChatBaseComponent),
-                            Extra.getValue(Mine.classPacketEnumTitleAction2, "SUBTITLE"), getIChatText2(subTitle)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Envia um Title para os Jogadores
-     *
-     * @param title    Titulo
-     * @param subTitle SubTitulo
-     * @param fadeIn   Tempo de Aparececimento (Ticks)
-     * @param stay     Tempo de Passagem (Ticks)
-     * @param fadeOut  Tempo de Desaparecimento (Ticks)
-     */
-    public static void sendTitle(String title, String subTitle, int fadeIn, int stay, int fadeOut) {
-        for (Player player : Mine.getPlayers()) {
-            sendTitle(player, title, subTitle, fadeIn, stay, fadeOut);
-        }
-    }
 
     public static void sendTo(Collection<Player> players, String message) {
         for (Player player : players) {
@@ -3536,7 +2985,7 @@ public final class Mine {
                                         Material wall, Material up, Material down, boolean clearInside) {
         return getBox(playerLocation, higher, lower, size, new LocationEffect() {
 
-            @Override
+
             public boolean effect(Location location) {
 
                 if (location.getBlockY() == playerLocation.getBlockY() + higher) {
@@ -3692,41 +3141,9 @@ public final class Mine {
                 (int) entity.getLocation().getZ());
     }
 
-    /**
-     * Modifica a TabList do Jogador
-     *
-     * @param player Jogador
-     * @param header Cabeçalho
-     * @param footer Rodapé
-     */
-    public static void setTabList(Player player, String header, String footer) {
-        try {
-            if (isAbove1_8(player)) {
-                Object packet = Extra.getNew(Mine.classSpigotPacketTabHeader,
-                        Extra.getParameters(Mine.classMineIChatBaseComponent, Mine.classMineIChatBaseComponent),
-                        getIChatText(header), getIChatText(footer));
-                sendPacket(packet, player);
-                return;
-            }
 
-        } catch (Exception e) {
-        }
-        try {
-            Object packet = Extra.getNew(Mine.classPacketPlayOutPlayerListHeaderFooter,
-                    Extra.getParameters(Mine.classMineIChatBaseComponent), getIChatText(header));
-
-            Extra.setValue(packet, "b", getIChatText(footer));
-            sendPacket(packet, player);
-        } catch (Exception e) {
-        }
-        try {
-            Object packet = Extra.getNew(Mine.classPacketPlayOutPlayerListHeaderFooter,
-                    Extra.getParameters(Mine.classMineIChatBaseComponent), getIChatText2(header));
-            Extra.setValue(packet, "b", getIChatText2(footer));
-            sendPacket(packet, player);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static List<Player> getPlayers(){
+        return new ArrayList<>(Bukkit.getOnlinePlayers());
 
     }
 
@@ -3763,14 +3180,6 @@ public final class Mine {
         entity.teleport(entity.getWorld().getSpawnLocation().setDirection(entity.getLocation().getDirection()));
     }
 
-    public static Boolean toBoolean(Object obj) {
-        return Extra.toBoolean(obj);
-    }
-
-    public static Byte toByte(Object object) {
-        return Extra.toByte(object);
-
-    }
 
     public static String toChatMessage(String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
@@ -3780,43 +3189,6 @@ public final class Mine {
         return text.replace(ChatColor.COLOR_CHAR, '&');
     }
 
-    public static String toDecimal(Object number) {
-        return toDecimal(number, 2);
-    }
-
-    public static String toDecimal(Object number, int max) {
-        return Extra.toDecimal(number, max);
-    }
-
-    public static Double toDouble(Object object) {
-
-        return Extra.toDouble(object);
-
-    }
-
-    public static Float toFloat(Object object) {
-        return Extra.toFloat(object);
-
-    }
-
-    public static Integer toInt(Object object) {
-
-        return Extra.toInt(object);
-
-    }
-
-    public static Integer toInteger(Object object) {
-        return Extra.toInt(object);
-    }
-
-    public static List<String> toLines(String text, int size) {
-        return Extra.toLines(text, size);
-
-    }
-
-    public static Long toLong(Object object) {
-        return Extra.toLong(object);
-    }
 
     public static List<String> toMessages(List<Object> list) {
         List<String> lines = new ArrayList<String>();
@@ -3826,10 +3198,6 @@ public final class Mine {
         return lines;
     }
 
-    public static Short toShort(Object object) {
-        return Extra.toShort(object);
-
-    }
 
     /**
      * Transforma o objeto em Texto
@@ -3842,20 +3210,7 @@ public final class Mine {
         return object == null ? "" : object.toString();
     }
 
-    /**
-     * Transforma uma Coleção de Texto em uma String (Texto)
-     *
-     * @param message Mensagem
-     * @return o texto gerado apartir da coleção
-     * @see {@link Extra}.toText(message);
-     */
-    public static String toText(Collection<String> message) {
-        return Extra.toText(message);
-    }
 
-    public static String toText(int size, String text) {
-        return Extra.toText(size, text);
-    }
 
     public static String toTitle(String name) {
         return Extra.toTitle(name);
@@ -3935,7 +3290,7 @@ public final class Mine {
      * @param cause Causa do dano
      * @return a forma traduzida da causa
      */
-    public static String translate(DamageCause cause) {
+    public static String translate(EntityDamageEvent.DamageCause cause) {
         switch (cause) {
             case BLOCK_EXPLOSION:
                 return "Explosão de Blocos";
@@ -4082,8 +3437,5 @@ public final class Mine {
         return (lines.toArray(new String[lines.size()]));
     }
 
-    static {
 
-        Extra.newReplacer("#v", Mine.getVersion());
-    }
 }

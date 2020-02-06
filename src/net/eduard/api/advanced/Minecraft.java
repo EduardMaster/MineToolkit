@@ -1,9 +1,11 @@
 package net.eduard.api.advanced;
 
+import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 
 /**
  * @author  Eduard
@@ -30,7 +32,7 @@ public interface Minecraft {
 	 */
 	public static Minecraft newInstance() {
 		try {
-			return (Minecraft) Class.forName("net.eduard.api.lib.advanced.Minecraft_" + Mine.getVersion())
+			return (Minecraft) Class.forName("net.eduard.api.lib.advanced.Minecraft_" + MineReflect.getVersion())
 					.newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block

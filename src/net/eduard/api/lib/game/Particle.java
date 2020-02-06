@@ -2,10 +2,11 @@ package net.eduard.api.lib.game;
 
 import java.util.Map;
 
+import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
@@ -58,7 +59,7 @@ public Particle() {
 
 	public Particle create() {
 		try {
-			Mine.sendPackets(getPacket());
+			MineReflect.sendPackets(getPacket());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -68,14 +69,14 @@ public Particle() {
 
 	private Object getPacket() throws Exception {
 
-		return Extra.getNew(Mine.classPacketPlayOutWorldParticles, particle.getParticleName(), (float) location.getX(),
+		return Extra.getNew(MineReflect.classPacketPlayOutWorldParticles, particle.getParticleName(), (float) location.getX(),
 				(float) location.getY(), (float) location.getZ(), xRandom, yRandom, zRandom, speed, amount);
 	}
 
 	public Particle create(Player p) {
 
 		try {
-			Mine.sendPacket(getPacket(), p);
+			MineReflect.sendPacket(getPacket(), p);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

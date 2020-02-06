@@ -2,13 +2,14 @@ package net.eduard.api.command;
 
 import java.util.List;
 
+import net.eduard.api.lib.modules.Extra;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class SoundCommand extends CommandManager {
@@ -31,10 +32,10 @@ public class SoundCommand extends CommandManager {
 			float volume = 2;
 			float pitch = 1;
 			if (args.length >= 2) {
-				volume = Mine.toFloat(args[1]);
+				volume = Extra.toFloat(args[1]);
 			}
 			if (args.length >= 3) {
-				pitch = Mine.toFloat(args[2]);
+				pitch = Extra.toFloat(args[2]);
 			}
 			Player player = null;
 			if (sender instanceof Player) {

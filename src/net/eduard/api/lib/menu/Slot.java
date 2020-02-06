@@ -3,7 +3,7 @@ package net.eduard.api.lib.menu;
 import java.io.Serializable;
 import java.util.Map;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 

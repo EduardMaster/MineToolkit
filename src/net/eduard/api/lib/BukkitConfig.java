@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.eduard.api.lib.modules.Mine;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -20,7 +21,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.StorageInfo;
 
 /**
  * Armazenamento de Dados para servidores Bukkit com suporte a

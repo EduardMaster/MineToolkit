@@ -1,6 +1,6 @@
 package net.eduard.api.command;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 import net.eduard.api.manager.PlayerSkin;
 import org.bukkit.command.Command;

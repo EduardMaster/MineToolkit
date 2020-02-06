@@ -1,12 +1,13 @@
 package net.eduard.api.command;
 
+import net.eduard.api.EduardAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class GotoCommand extends CommandManager {
@@ -26,7 +27,7 @@ public class GotoCommand extends CommandManager {
 			if (Mine.existsWorld(sender, args[0])) {
 				World world = Bukkit.getWorld(args[0]);
 				Mine.teleport(p, world.getSpawnLocation());
-				Mine.OPT_SOUND_TELEPORT.create(p);
+				EduardAPI.OPT_SOUND_TELEPORT.create(p);
 				Mine.send(p,message.replace("$world", world.getName()));
 			}
 		}

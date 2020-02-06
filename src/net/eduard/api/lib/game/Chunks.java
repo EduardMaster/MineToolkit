@@ -1,9 +1,10 @@
 package net.eduard.api.lib.game;
 
+import net.eduard.api.lib.modules.Extra;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAttributes;
@@ -107,7 +108,7 @@ public class Chunks implements Storable, Copyable {
 		if (object instanceof String) {
 			String string = (String) object;
 			String[] split = string.split(";");
-			return new Chunks(split[0], Mine.toInt(split[1]), Mine.toInt(split[2]));
+			return new Chunks(split[0], Extra.toInt(split[1]), Extra.toInt(split[2]));
 
 		}
 		return null;

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.eduard.api.lib.storage.StorageAPI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -31,10 +31,16 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 	private UUID id;
 
     public static FakePlayer parse(String fakePlaneText) {
-    	return (FakePlayer) StorageAPI.restore(FakePlayer.class,fakePlaneText);
+    	//return (FakePlayer) StorageAPI.restore(FakePlayer.class,fakePlaneText);
+		return new FakePlayer();
     }
     public String store(){
-		return (String) StorageAPI.store(FakePlayer.class,this);
+
+
+
+    	//return (String) StorageAPI.store(FakePlayer.class,this);
+
+		return "";
 	}
 
     //

@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -12,7 +13,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.server.kit.KitAbility;
 
 
@@ -42,7 +43,7 @@ public class MadMan extends KitAbility{
 		                this.madman.put((Player)e, Double.valueOf(0.01D));
 		                ((Player)e).sendMessage("\u00A7bTem um madman por perto!");
 		              }
-		              Mine.sendActionBar((Player)e, dm.format(this.madman.get(e).doubleValue() * 100.0D) + "% \u00A76<< \u00A7bEfeito do madman");
+		              MineReflect.sendActionBar((Player)e, dm.format(this.madman.get(e).doubleValue() * 100.0D) + "% \u00A76<< \u00A7bEfeito do madman");
 		            }
 		          }
 		        }
@@ -64,13 +65,13 @@ public class MadMan extends KitAbility{
 		            if (this.madman.get(p).doubleValue() - 0.2D <= 0.0D)
 		            {
 		              this.madman.remove(p);
-		              Mine.sendActionBar(p, "\u00A73Efeito do madman passou!");
+		              MineReflect.sendActionBar(p, "\u00A73Efeito do madman passou!");
 		              
 		            }
 		            else
 		            {
 		              this.madman.put(p, Double.valueOf(this.madman.get(p).doubleValue() - 0.2D));
-		              Mine.sendActionBar(p, dm.format(this.madman.get(p).doubleValue() * 100.0D) + "% \u00A76<< \u00A7bEfeito do madman");
+		              MineReflect.sendActionBar(p, dm.format(this.madman.get(p).doubleValue() * 100.0D) + "% \u00A76<< \u00A7bEfeito do madman");
 		            }
 		        }
 		      }

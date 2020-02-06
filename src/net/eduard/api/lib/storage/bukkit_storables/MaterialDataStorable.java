@@ -1,10 +1,10 @@
 package net.eduard.api.lib.storage.bukkit_storables;
 
+import net.eduard.api.lib.modules.Extra;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAttributes;
 
@@ -35,7 +35,7 @@ public class MaterialDataStorable implements Storable {
 			String string = (String) object;
 			try {
 				String[] split = string.split(";");
-				return new MaterialData(Material.getMaterial(Mine.toInt(split[0])), Mine.toByte(split[1]));
+				return new MaterialData(Material.getMaterial(Extra.toInt(split[0])), Extra.toByte(split[1]));
 			} catch (Exception e) {
 			}
 

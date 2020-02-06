@@ -3,7 +3,7 @@ package net.eduard.api.server.kits;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.server.kit.KitAbility;
 
 public class Grandpa extends KitAbility{

@@ -9,11 +9,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.click.PlayerClickEntity;
 import net.eduard.api.lib.click.PlayerClickEntityEffect;
 import net.eduard.api.lib.game.Explosion;
 import net.eduard.api.server.kit.KitAbility;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class HotPotato extends KitAbility {
 
@@ -23,33 +24,28 @@ public class HotPotato extends KitAbility {
 		add(new ItemStack(Material.BAKED_POTATO));
 		setTime(30);
 		setExplosion( new Explosion(6, true, false));
-		setMessage("�6");
-		setClick(new PlayerClickEntity(Material.BAKED_POTATO,new PlayerClickEntityEffect() {
-			
-			@Override
-			public void onClickAtEntity(Player player, Entity entity, ItemStack item) {
-				// TODO Auto-generated method stub
-				if (hasKit(player)) {
-					if (entity instanceof Player) {
-						Player target = (Player) entity;
-						PlayerInventory inv = target.getInventory();
-						inv.setHelmet(new ItemStack(Material.TNT));
-						target.sendMessage(getMessage());
-						
-						Mine.TIME.asyncDelay( new Runnable() {
+		setMessage("§6");
+		setClick(new PlayerClickEntity(Material.BAKED_POTATO, (player, entity, item) -> {
+			// TODO Auto-generated method stub
+			if (hasKit(player)) {
+				if (entity instanceof Player) {
+					Player target = (Player) entity;
+					PlayerInventory inv = target.getInventory();
+					inv.setHelmet(new ItemStack(Material.TNT));
+					target.sendMessage(getMessage());
+					new BukkitRunnable(){
 
-							@Override
-							public void run() {
-								if (inv.getHelmet() != null) {
-									if (inv.getHelmet()
-											.getType() == Material.TNT) {
-										getExplosion().create(target);
-									}
+						@Override
+						public void run() {
+							if (inv.getHelmet() != null) {
+								if (inv.getHelmet()
+										.getType() == Material.TNT) {
+									getExplosion().create(target);
 								}
-
 							}
-						},effectSeconds);
-					}
+						}
+					}.runTaskLater(getPlugin(),effectSeconds* 20);
+
 				}
 			}
 		}));

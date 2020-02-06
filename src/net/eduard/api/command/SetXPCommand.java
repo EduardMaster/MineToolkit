@@ -1,11 +1,12 @@
 
 package net.eduard.api.command;
 
+import net.eduard.api.lib.modules.Extra;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class SetXPCommand extends CommandManager {
@@ -24,7 +25,7 @@ public class SetXPCommand extends CommandManager {
 			if (args.length == 0) {
 				return false;
 			} else {
-				Integer amount = Mine.toInt(args[0]);
+				Integer amount = Extra.toInt(args[0]);
 				p.setTotalExperience(0);
 				p.setExp(0);
 				p.setLevel(0);

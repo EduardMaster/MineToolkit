@@ -2,6 +2,7 @@ package net.eduard.api.manager;
 
 import net.eduard.api.lib.event.PlayerTargetEvent;
 import net.eduard.api.lib.manager.CommandManager;
+import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -18,11 +19,11 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.Plugin;
 
 import net.eduard.api.EduardAPI;
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.manager.EventsManager;
-import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.server.EduardPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class EssentialsEvents extends EventsManager {
 	public void onTarget(PlayerTargetEvent e) {
 		if (e.getEntity() instanceof Player) {
 			Player player = (Player) e.getEntity();
-			Mine.sendActionBar(e.getPlayer(), Mine.getReplacers(EduardAPI.getInstance().message("player information"), player));
+			MineReflect.sendActionBar(e.getPlayer(), Mine.getReplacers(EduardAPI.getInstance().message("player information"), player));
 		}
 	}
 
@@ -125,16 +126,22 @@ public class EssentialsEvents extends EventsManager {
 
 		if (Mine.OPT_AUTO_RESPAWN) {
 			if (p.hasPermission("eduard.autorespawn")) {
-				Mine.TIME.syncDelay(() -> {
-					if (p.isDead()) {
-						p.setFireTicks(0);
-						try {
-							Mine.makeRespawn(p);
-						} catch (Exception ex) {
-							ex.printStackTrace();
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (p.isDead()) {
+							p.setFireTicks(0);
+							try {
+								MineReflect.makeRespawn(p);
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
 						}
 					}
-				}, 1L);
+				}.runTask(getPlugin());
+
+
+
 			}
 
 		}
@@ -200,7 +207,7 @@ public class EssentialsEvents extends EventsManager {
 			if (e.getItem() == null)
 				return;
 			if (e.getItem().getType() == Material.WOOD_AXE) {
-				Schematic mapa = Mine.getSchematic(p);
+				Schematic mapa = EduardAPI.getSchematic(p);
 				if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
 					mapa.setHigh(e.getClickedBlock().getLocation().toVector());
 					p.sendMessage("§aPosição 1 setada!");

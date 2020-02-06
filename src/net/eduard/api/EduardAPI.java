@@ -1,14 +1,18 @@
 package net.eduard.api;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import net.eduard.api.command.*;
+import net.eduard.api.lib.BukkitConfig;
+import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.modules.EnchantGlow;
 import net.eduard.api.manager.PlayerSkin;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
@@ -16,7 +20,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import net.eduard.api.command.api.ApiCommand;
 import net.eduard.api.command.map.MapCommand;
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.bungee.BukkitController;
 import net.eduard.api.lib.bungee.BungeeAPI;
 import net.eduard.api.lib.config.Config;
@@ -64,7 +68,18 @@ public class EduardAPI extends EduardPlugin {
 	public static EduardAPI getInstance() {
 		return plugin;
 	}
-
+	/**
+	 * Som para o Teleporte
+	 */
+	public static SoundEffect OPT_SOUND_TELEPORT = SoundEffect.create("ENDERMAN_TELEPORT");
+	/**
+	 * Som para algum sucesso
+	 */
+	public static SoundEffect OPT_SOUND_SUCCESS = SoundEffect.create("LEVEL_UP");
+	/**
+	 * Som para algum erro
+	 */
+	public static SoundEffect OPT_SOUND_ERROR = SoundEffect.create("NOTE_BASS_DRUM");
 	public Config getMessages() {
 		return messages;
 	}
@@ -76,6 +91,7 @@ public class EduardAPI extends EduardPlugin {
 	public void onLoad() {
 		
 		plugin = this;
+
 		setFree(true);
 		initConfig();
 		StorageAPI.setDebug(config.getBoolean("debug-storage"));
@@ -84,6 +100,55 @@ public class EduardAPI extends EduardPlugin {
 		BukkitStorables.load();
 		super.onLoad();
 		log("Storables do Bukkit carregado!");
+		MAPS_CONFIG = new BukkitConfig("maps/", this);
+	}
+	public static Schematic getSchematic(Player player) {
+		Schematic schema = MAPS_CACHE.get(player);
+		if (schema == null) {
+			MAPS_CACHE.put(player, schema = new Schematic());
+		}
+		return schema;
+	}
+	public static void loadMaps() {
+
+		File file = MAPS_CONFIG.getFile();
+		file.mkdirs();
+
+		if (file.listFiles() == null)
+			return;
+
+		for (File subfile : file.listFiles()) {
+			while (subfile.isDirectory()) {
+//				File[] files = subfile.listFiles();
+//				for (File myfile : files) {
+//
+//				}
+				return;
+			}
+			if (!subfile.isDirectory()) {
+				MAPS.put(subfile.getName().replace(".map", ""), Schematic.load(subfile));
+			}
+		}
+
+	}
+	/*
+	 * Mapa de Arenas registradas
+	 */
+	public static Map<String, Schematic> MAPS = new HashMap<>();
+	public static Map<Player, Schematic> MAPS_CACHE = new HashMap<>();
+
+	public static BukkitConfig MAPS_CONFIG;
+	/**
+	 * Salva todos os mapas no sistema de armazenamento
+	 */
+	public static void saveMaps() {
+		MAPS_CONFIG.getFile().mkdirs();
+		for (Map.Entry<String, Schematic> entry : MAPS.entrySet()) {
+			Schematic mapa = entry.getValue();
+			String name = entry.getKey();
+
+			mapa.save(new File(MAPS_CONFIG.getFile(), name + ".map"));
+		}
 	}
 	public void onEnable() {
 		
@@ -216,13 +281,13 @@ public class EduardAPI extends EduardPlugin {
 		Mine.OPT_DEBUG_REPLACERS = config.getBoolean("debug-replacers");
 		PlayerSkin.reloadSkins();
 
-		
-		Mine.loadMaps();
+
+		EduardAPI.loadMaps();
 		log("Mapas carregados!");
 
-		config.add("sound-teleport", Mine.OPT_SOUND_TELEPORT);
-		config.add("sound-error", Mine.OPT_SOUND_ERROR);
-		config.add("sound-success", Mine.OPT_SOUND_SUCCESS);
+		config.add("sound-teleport", EduardAPI.OPT_SOUND_TELEPORT);
+		config.add("sound-error", EduardAPI.OPT_SOUND_ERROR);
+		config.add("sound-success", EduardAPI.OPT_SOUND_SUCCESS);
 		config.saveConfig();
 		Mine.OPT_AUTO_RESPAWN = config.getBoolean("auto-respawn");
 		Mine.OPT_NO_JOIN_MESSAGE = config.getBoolean("no-join-message");
@@ -239,9 +304,9 @@ public class EduardAPI extends EduardPlugin {
 
 		Mine.MSG_ON_JOIN = config.message("on-join-message");
 		Mine.MSG_ON_QUIT = config.message("on-quit-message");
-		Mine.OPT_SOUND_TELEPORT = config.getSound("sound-teleport");
-		Mine.OPT_SOUND_ERROR = config.getSound("sound-error");
-		Mine.OPT_SOUND_SUCCESS = config.getSound("sound-success");
+		EduardAPI.OPT_SOUND_TELEPORT = config.getSound("sound-teleport");
+		EduardAPI.OPT_SOUND_ERROR = config.getSound("sound-error");
+		EduardAPI.OPT_SOUND_SUCCESS = config.getSound("sound-success");
 		if (config.getBoolean("auto-rejoin")) {
 			for (Player p : Mine.getPlayers()) {
 				Mine.callEvent(new PlayerJoinEvent(p, null));
@@ -253,7 +318,7 @@ public class EduardAPI extends EduardPlugin {
 	@Override
 	public void onDisable() {
 		PlayerSkin.saveSkins();
-		Mine.saveMaps();
+		EduardAPI.saveMaps();
 		log("Mapas salvados!");
 		log("desativado com sucesso!");
 		BungeeAPI.getController().unregister();

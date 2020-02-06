@@ -1,10 +1,11 @@
 package net.eduard.api.lib.storage.bukkit_storables;
 
+import net.eduard.api.lib.modules.Extra;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAttributes;
 
@@ -22,7 +23,7 @@ public class InventoryStorable implements Storable {
 			String string = (String) object;
 			String[] split = string.split("//");
 			try {
-				Integer lines = Mine.toInt(split[0]);
+				Integer lines = Extra.toInt(split[0]);
 				ItemStack[] contents = Mine.fromBase64toItems(split[0]);
 				Inventory inv = Bukkit.createInventory(null, lines*9);
 				inv.setContents(contents);

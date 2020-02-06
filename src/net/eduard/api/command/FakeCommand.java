@@ -1,11 +1,13 @@
 
 package net.eduard.api.command;
 
+import net.eduard.api.EduardAPI;
+import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.manager.CommandManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -108,7 +110,7 @@ public class FakeCommand extends CommandManager {
 //			if (p == player)continue;
 //			p.showPlayer(player);
 //		}
-		Mine.changeName(player, name);
+		MineReflect.changeName(player, name);
 	}
 
 	public static void reset(Player player) {
@@ -116,7 +118,7 @@ public class FakeCommand extends CommandManager {
 		String name = fake.getOriginal();
 		fake.setFake(name);
 
-		Mine.changeName(player, name );
+		MineReflect.changeName(player, name );
 		player.setDisplayName(name);
 		player.setPlayerListName(name);
 	}

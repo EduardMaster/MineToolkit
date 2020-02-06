@@ -1,15 +1,13 @@
 package net.eduard.api.lib.menu;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import net.eduard.api.lib.modules.Extra;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.Mine;
+import net.eduard.api.lib.modules.Mine;
 
 public class Product extends MenuButton {
 	/**
