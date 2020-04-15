@@ -126,6 +126,7 @@ public class Config implements Storable {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		lines.clear();
 	}
 
 	public void reloadConfig() {

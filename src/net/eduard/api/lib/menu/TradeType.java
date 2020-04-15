@@ -7,7 +7,7 @@ public enum TradeType {
 	private TradeType(String name, String description) {
 		setName(name);
 		setDescription(description);
-		
+
 	}
 	private String description;
 
@@ -26,5 +26,5 @@ public enum TradeType {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 }

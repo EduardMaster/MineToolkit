@@ -16,6 +16,7 @@ public class ApiCommand extends CommandManager {
 		register(new ApiListCommand());
 		register(new ApiDisableCommand());
 		register(new ApiEnableCommand());
+		register(new ApiRestartEduardAPICommand());
 		register(new ApiListCommand());
 //		register(new ApiReloadConfigCommand());
 //		register(new ApiSaveConfigCommand());

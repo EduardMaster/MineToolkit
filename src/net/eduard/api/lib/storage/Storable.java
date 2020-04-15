@@ -1,8 +1,12 @@
 package net.eduard.api.lib.storage;
 
-import java.util.Map;
-
 import net.eduard.api.lib.modules.Extra;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Map;
 
 /**
  * Sistema de armazenamento automatizado baseado na reflexão das classes
@@ -11,10 +15,24 @@ import net.eduard.api.lib.modules.Extra;
  * 
  * @author Eduard
  * @see Extra
- * @see StorageAPI
  * @version 3.0
  */
 public interface Storable {
+
+
+	@Target({ java.lang.annotation.ElementType.FIELD, ElementType.TYPE, })
+	@Retention(RetentionPolicy.RUNTIME)
+	 @interface StorageAttributes {
+
+		boolean reference() default false;
+
+		boolean indentificate() default false;
+
+		boolean inline() default false;
+
+		//boolean auto() default true;
+
+	}
 
 	/**
 	 * Cria um Objeto pelo Mapa
@@ -22,7 +40,7 @@ public interface Storable {
 	 * @param map Mapa
 	 * @return Objeto
 	 */
-	public default Object restore(Map<String, Object> map) {
+	 default Object restore(Map<String, Object> map) {
 
 		return null;
 	}
@@ -33,7 +51,7 @@ public interface Storable {
 	 * @param map    Mapa
 	 * @param object Objeto
 	 */
-	public default void store(Map<String, Object> map, Object object) {
+	 default void store(Map<String, Object> map, Object object) {
 
 	}
 
@@ -43,7 +61,7 @@ public interface Storable {
 	 *
 	 * @return Nova Instancia
 	 */
-	public default Object newInstance() {
+	 default Object newInstance() {
 		try {
 			return Extra.getNew(getClass());
 		} catch (Exception e) {
@@ -57,7 +75,7 @@ public interface Storable {
 	 * @param object Objeto String
 	 * @return Objeto
 	 */
-	public default Object restore(Object object) {
+	 default Object restore(Object object) {
 
 		return null;
 	}
@@ -66,7 +84,7 @@ public interface Storable {
 	 * @param object Objeto
 	 * @return String Objeto
 	 */
-	public default Object store(Object object) {
+	 default Object store(Object object) {
 		return null;
 	}
 

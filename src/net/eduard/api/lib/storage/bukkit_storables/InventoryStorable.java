@@ -5,9 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAttributes;
+import net.eduard.api.lib.modules.Mine;import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(inline=true)
 public class InventoryStorable implements Storable {

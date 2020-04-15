@@ -25,11 +25,11 @@ public class MapSaveCommand extends CommandManager {
 
 			if (Mine.onlyPlayer(sender)) {
 				Player p = (Player) sender;
-				if (!EduardAPI.MAPS_CACHE.containsKey(p)) {
+				if (!EduardAPI.Companion.getMAPS_CACHE().containsKey(p)) {
 					p.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy");
 					return true;
 				}
-				EduardAPI.MAPS.put(args[1].toLowerCase(), EduardAPI.MAPS_CACHE.get(p));
+				EduardAPI.Companion.getMAPS().put(args[1].toLowerCase(), EduardAPI.Companion.getMAPS_CACHE().get(p));
 				p.sendMessage("§bEduardAPI §aMapa salvado com sucesso!");
 			}
 		}

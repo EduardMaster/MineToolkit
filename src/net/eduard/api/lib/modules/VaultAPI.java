@@ -2,11 +2,16 @@ package net.eduard.api.lib.modules;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * API para a utilização do Vault com um formato mais simples de entender <br>
@@ -27,6 +32,26 @@ public final class VaultAPI {
 			setupChat();
 			setupPermissions();
 		}
+	}
+
+	/**
+	 *
+	 * @param groups Lista de grupos
+	 * @return Lista de Players com este grupo
+	 */
+	public static List<OfflinePlayer> getPlayersWithGroups(String... groups) {
+		List<OfflinePlayer> newlist = new ArrayList<>();
+
+		List<String> lista = Arrays.asList(groups);
+		for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+
+			for (String group : VaultAPI.getPermission().getPlayerGroups(null,player)){
+				if (lista.contains(group)){
+					newlist.add(player);
+				}
+			}
+		}
+		return newlist;
 	}
 	/**
 	 * Testa se o Vault esta instalado no Servidor
@@ -127,7 +152,7 @@ public final class VaultAPI {
 	}
 
 	/**
-	 * net.eduard.api.Teste se tem plugin de permissões
+	 * net.eduard.curso.mongodb.MongoDBTeste se tem plugin de permissões
 	 * 
 	 * @return Se sim ou nao
 	 */

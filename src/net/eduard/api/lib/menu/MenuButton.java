@@ -2,34 +2,40 @@ package net.eduard.api.lib.menu;
 
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.modules.ClickEffect;
+import net.eduard.api.lib.inventory.ClickEffect;
 
 public class MenuButton  extends Slot{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String name;
+	private String name="Botao";
 	private int page = 1;
 	private Menu menu;
+	private transient Menu parentMenu;
+
+
+
+
 
 	public MenuButton() {
-		// TODO Auto-generated constructor stub
-	}
 
-
-	public Menu getMenu() {
-		return menu;
 	}
-	public Shop getShop() {
-		return (Shop) menu;
-	}
-
 	public void setMenu(Menu menu) {
 		this.menu = menu;
 	}
+	public MenuButton(Menu parent) {
+		setParentMenu(parent);
+		getParentMenu().addButton(this);
+
+	}
 	public MenuButton(String name) {
 		setName(name);
+		// TODO Auto-generated constructor stub
+	}
+	public MenuButton(ItemStack icon) {
+
+		setIcon(icon);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -39,12 +45,12 @@ public class MenuButton  extends Slot{
 		// TODO Auto-generated constructor stub
 	}
 
-	public MenuButton(ItemStack icon) {
-
-		setIcon(icon);
-		// TODO Auto-generated constructor stub
+	public Menu getMenu() {
+		return menu;
 	}
-
+	public Shop getShop() {
+		return (Shop) menu;
+	}
 	private transient ClickEffect click;
 
 	public ClickEffect getClick() {
@@ -96,5 +102,11 @@ public class MenuButton  extends Slot{
 	}
 
 
-	
+	public Menu getParentMenu() {
+		return parentMenu;
+	}
+
+	public void setParentMenu(Menu parentMenu) {
+		this.parentMenu = parentMenu;
+	}
 }

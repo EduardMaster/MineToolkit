@@ -7,7 +7,7 @@ import net.eduard.api.lib.bungee.BungeeAPI;
 import net.eduard.api.lib.bungee.BungeeController;
 import net.eduard.api.lib.bungee.ServerSpigot;
 import net.eduard.api.lib.bungee.ServerState;
-import net.eduard.api.lib.manager.DBManager;
+import net.eduard.api.lib.database.DBManager;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.server.BungeeDB;
 import net.eduard.api.server.EduardBungeePlugin;
@@ -74,25 +74,25 @@ public class EduardBungeeAPI extends EduardBungeePlugin{
 
 	public void reload() {
 		
-		config.reloadConfig();
-		config.add("debug-plugin-messages", true);
-		config.add("database-debug", false);
-		config.saveConfig();
-		bungee = new BungeeDB(db);
-		DBManager.setDebug(config.getBoolean("database-debug"));
+		getConfig().reloadConfig();
+		getConfig().add("debug-plugin-messages", true);
+		getConfig().add("database-debug", false);
+		getConfig().saveConfig();
+		bungee = new BungeeDB(getDb());
+		DBManager.setDebug(getConfig().getBoolean("database-debug"));
 			
-		if (db.isEnabled()) {
+		if (getDb().isEnabled()) {
 			log("MySQL Ativado iniciando conexao");
-			db.openConnection();
-			if (db.hasConnection()) {
+			getDb().openConnection();
+			if (getDb().hasConnection()) {
 				bungee.createBungeeTables();
 
 				for (ServerInfo server : BungeeCord.getInstance().getServers().values()) {
 					if (!bungee.serversContains(server.getName())) {
-						db.insert("servers", server.getName(),
+						getDb().insert("servers", server.getName(),
 								server.getAddress().getAddress().getHostAddress(), server.getAddress().getPort(), 0, 0);
 					} else {
-						db.change("servers", "host = ? , port = ?", "name = ?",
+						getDb().change("servers", "host = ? , port = ?", "name = ?",
 								server.getAddress().getAddress().getHostAddress(), server.getAddress().getPort(),
 								server.getName());
 					}
@@ -105,16 +105,16 @@ public class EduardBungeeAPI extends EduardBungeePlugin{
 			log("MySQL destivado algumas coisas da EduardBungeeAPI estarao desativado");
 		} 
 		for (ServerInfo server : BungeeCord.getInstance().getServers().values()) {
-			config.add("servers." + server.getName() + ".enabled", true);
-			config.add("servers." + server.getName() + ".type", 0);
+			getConfig().add("servers." + server.getName() + ".enabled", true);
+			getConfig().add("servers." + server.getName() + ".type", 0);
 		}
-		config.saveConfig();
+		getConfig().saveConfig();
 		BungeeController bungee = BungeeAPI.getBungee();
 		bungee.setPlugin(this);
 		bungee.register();
-		for (String serverName : config.getSection("servers").getKeys()) {
-			boolean enabled = config.getBoolean("servers." + serverName + ".enabled");
-			int type = config.getInt("servers." + serverName + ".type");
+		for (String serverName : getConfig().getSection("servers").getKeys()) {
+			boolean enabled = getConfig().getBoolean("servers." + serverName + ".enabled");
+			int type = getConfig().getInt("servers." + serverName + ".type");
 
 			ServerSpigot server = BungeeAPI.getServer(serverName);
 			server.setType(type);
@@ -144,7 +144,7 @@ public class EduardBungeeAPI extends EduardBungeePlugin{
 	}
 
 	public void onDisable() {
-		db.closeConnection();
+		getDb().closeConnection();
 		BungeeAPI.getController().unregister();
 	}
 
@@ -166,9 +166,9 @@ public class EduardBungeeAPI extends EduardBungeePlugin{
 	public void onJoin(PostLoginEvent e) {
 		ProxiedPlayer player = e.getPlayer();
 		// info("§aPostLoginEvent", player.getPendingConnection());
-		if (db.hasConnection()) {
+		if (getDb().hasConnection()) {
 			if (!bungee.playersContains(player.getName())) {
-				db.insert("players", player.getName(), player.getUniqueId(), "");
+				getDb().insert("players", player.getName(), player.getUniqueId(), "");
 			}
 		}
 	}
@@ -178,7 +178,7 @@ public class EduardBungeeAPI extends EduardBungeePlugin{
 		String serverName = e.getTarget().getName();
 		UUID playerUUID = e.getPlayer().getUniqueId();
 		int playerAmount = e.getTarget().getPlayers().size();
-		if (db.hasConnection()) {
+		if (getDb().hasConnection()) {
 			BungeeCord.getInstance().getScheduler().runAsync(getInstance(), () -> {
 				bungee.setPlayersAmount(serverName, playerAmount);
 				bungee.setPlayerServer(playerUUID, "");
@@ -197,7 +197,7 @@ public class EduardBungeeAPI extends EduardBungeePlugin{
 		UUID playerUUID = e.getPlayer().getUniqueId();
 		int playerAmount = e.getServer().getInfo().getPlayers().size();
 
-		if (db.hasConnection()) {
+		if (getDb().hasConnection()) {
 			BungeeCord.getInstance().getScheduler().runAsync(getInstance(), () -> {
 				bungee.setPlayersAmount(serverName, playerAmount);
 				bungee.setPlayerServer(playerUUID, serverName);

@@ -1,7 +1,7 @@
 package net.eduard.api.lib.licence;
 
-import net.eduard.api.lib.BukkitConfig;
-import net.eduard.api.lib.BungeeConfig;
+import net.eduard.api.lib.config.BukkitConfig;
+import net.eduard.api.lib.config.BungeeConfig;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -31,7 +31,7 @@ public class Licence {
 			URLConnection connect = new URL(link).openConnection();
 			connect.setConnectTimeout(5000);
 			connect.setReadTimeout(5000);
-			System.out.println(tag + "Verificando pelo link: " + link);
+			//System.out.println(tag + "Verificando pelo link: " + link);
 			connect.addRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
 			Scanner scan = new Scanner(connect.getInputStream());

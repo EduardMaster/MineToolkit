@@ -2,7 +2,7 @@ package net.eduard.api.command;
 
 import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.manager.CommandManager;
-import net.eduard.api.manager.PlayerSkin;
+import net.eduard.api.core.PlayerSkin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

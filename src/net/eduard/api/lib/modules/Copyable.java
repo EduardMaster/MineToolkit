@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 @SuppressWarnings("unchecked")
 public interface Copyable {
 /**
- * Anotação que marca que um variavel não é para ser copiada 
+ * Anotação que marca que uma variavel não é para ser copiada
  * @version 1.0
  * @author Eduard
  *

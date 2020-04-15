@@ -4,7 +4,7 @@ import org.bukkit.enchantments.Enchantment;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAttributes;
+import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(inline=true)
 public class EnchantmentStorable implements Storable{

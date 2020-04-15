@@ -1,7 +1,6 @@
 
 package net.eduard.api.command;
 
-import net.eduard.api.EduardAPI;
 import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

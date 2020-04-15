@@ -73,6 +73,9 @@ public class StorageObject extends StorageBase {
 				debug(">> RESTORING DATA FROM " + data);
 				Object result = Extra.getResult(Extra.class, "to" + wrapper.getSimpleName(),
 						new Object[] { Object.class }, data);
+				if (result instanceof String){
+					result = ((String) result).replace("&","§");
+				}
 				debug(">> DATA RESTORED " + data);
 				return result;
 			} catch (Exception e) {
@@ -125,6 +128,7 @@ public class StorageObject extends StorageBase {
 			id = StorageAPI.newId();
 		}
 		Object instance = store.restore((Map<String, Object>) data);
+		//debug("** RESTORED STORABLE "+store);
 		if (instance == null) {
 			try {
 				instance = store.newInstance();

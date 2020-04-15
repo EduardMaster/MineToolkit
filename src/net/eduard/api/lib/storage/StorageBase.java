@@ -1,5 +1,7 @@
 package net.eduard.api.lib.storage;
 
+import net.eduard.api.lib.storage.Storable.*;
+
 import java.lang.reflect.Field;
 
 public abstract class StorageBase {

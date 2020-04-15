@@ -14,14 +14,12 @@ debug-replacers: false
 
 debug-db: false
 
-save-worlds: true
 
-save-players: false
-
-skins: true
+skins: false
 custom-skin: "EduardKillerPro"
 
 player target: "$player_name - $player_level"
+stack-design: "§aQuantidade: §f$stack"
 
 money-format: "###,###.##"
 money-format-locale: "PT-BR"

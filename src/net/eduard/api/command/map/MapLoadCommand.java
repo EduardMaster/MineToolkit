@@ -25,8 +25,8 @@ public class MapLoadCommand extends CommandManager {
 		} else {
 			if (Mine.onlyPlayer(sender)) {
 				Player p = (Player) sender;
-				if (EduardAPI.MAPS.containsKey(args[1].toLowerCase())) {
-					EduardAPI.MAPS_CACHE.put(p, EduardAPI.MAPS.get(args[1].toLowerCase()));
+				if (EduardAPI.Companion.getMAPS().containsKey(args[1].toLowerCase())) {
+					EduardAPI.Companion.getMAPS_CACHE().put(p, EduardAPI.Companion.getMAPS().get(args[1].toLowerCase()));
 					p.sendMessage("§bEduardAPI §aMapa carregado com sucesso!");
 				} else {
 					p.sendMessage("§bEduardAPI §aMapa invalido: §2" + args[1]);

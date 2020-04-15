@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAttributes;
+import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(inline=true)
 public class TimeStampStorable implements Storable {

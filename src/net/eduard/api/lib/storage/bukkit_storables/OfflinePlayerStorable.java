@@ -4,9 +4,9 @@ import java.util.UUID;
 
 import org.bukkit.OfflinePlayer;
 
-import net.eduard.api.lib.modules.FakePlayer;
+import net.eduard.api.lib.player.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAttributes;
+import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(inline = true)
 public class OfflinePlayerStorable implements Storable {

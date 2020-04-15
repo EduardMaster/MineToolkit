@@ -1,9 +1,22 @@
 2.6.8:
   - Os debugs de tudo é ativavel pela config.yml
 2.6.9:
-  - Removendo arquivos da pasta lib/advanced para api/advanced
+  - Removendo arquivos da pasta lib/advanced_testing para api/advanced_testing
 2.7.0:
   - Colocando lista de classes de todos os Kits conhecidos de HG e KitPvP na pasta api/server/kits
   - Antes estas classes ficavam nos dois projetos pagos, EduHG e EduKitPvP,
   - resolvi que como os kits são os mesmos é melhor ficam em um lugar só
-  - Movi 3 classes da pasta api/server/kits para api/server/kit
+  - Movi 3 classes da pasta api/server/kits para api/server/net.eduard.hg.kit
+2.8:
+  - Removido métodos da Extra relacionados a contagem de Valor de Projeto pois agora sigo o padrão do Site que calcula o projeto dependendo de coisas que os propríos compradores podem avaliar
+  - Método removido calculateClassValue(class)->double que calcula o valor da Classe com base em um HashMap de valores levando em consideração até suas variaveis
+  - Método removido setPrice(class,double) que define o valor da Classe dentro do HashMap
+  - Método removido getPrice(class)->double que retorna o valor da Classe vinda do HashMap e 0 caso não tenha esta classe no Mapa
+  - Método removido InfoGenerator.saveObject(path,player) porque não tem porque salva infos dos jogadores se não vou controlar
+  - Colocando a maioria dos códigos que estavam na EduardAPI em varias outras classes
+  - Tranfesferindo Constantes da classe Mine e Extra para a EduardAPI pois não será usado por ninguem é apenas informativo
+  - Comecei a criar Storage v2 (Storation) só para ver se conseguia ainda, tem como Objetivo ser mais compacto e mais simples
+  - Comecei a transformar as classes Java para Kotlin
+  - Reformulando onde fica as classe em qual package, muitas refatorações
+  - Removendo classe EduardLIB que extendia JavaPlugin
+  - Retirando lista de classes de todos os Kits conhecidos de HG e KitPvP e colocando no projeto HG

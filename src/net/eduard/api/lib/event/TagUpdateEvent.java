@@ -5,7 +5,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-import net.eduard.api.lib.game.Tag;
+import net.eduard.api.lib.player.Tag;
 
 public  class TagUpdateEvent extends PlayerEvent implements Cancellable
 	 {

@@ -11,7 +11,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import net.eduard.api.lib.game.Item;
+import net.eduard.api.lib.inventory.Item;
 import net.eduard.api.lib.storage.StorageAPI;
 
 public class BukkitStorables {

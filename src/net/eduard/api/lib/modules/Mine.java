@@ -2,6 +2,8 @@ package net.eduard.api.lib.modules;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import net.eduard.api.lib.player.FakePlayer;
+import net.eduard.api.lib.world.EmptyWorldGenerator;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -37,6 +39,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
@@ -469,7 +472,7 @@ public final class Mine {
 
     /**
      * Executa um Evento para todos os Listeners lerem ele
-     * <code>Bukkit.getPluginManager().callEvent(events);</code>
+     * <code>Bukkit.getPluginManager().callEvent(listener);</code>
      *
      * @param event Evento
      * @see
@@ -1896,15 +1899,7 @@ public final class Mine {
 
 
 
-    public static Vector getVelocity(Location entity, Location target, double staticX, double staticY, double staticZ,
-                                     double addX, double addY, double addZ) {
-        double distance = target.distance(entity);
-        double x = (staticX + (addX * distance)) * ((target.getX() - entity.getX()) / distance);
-        double y = (staticY + (addY * distance)) * ((target.getY() - entity.getY()) / distance);
-        double z = (staticZ + (addZ * distance)) * ((target.getZ() - entity.getZ()) / distance);
-        return new Vector(x, y, z);
 
-    }
 
 
     public static World getWorld(String name) {
@@ -2005,7 +2000,7 @@ public final class Mine {
      * Testa se o Inventario esta vasio
      *
      * @param inventory
-     * @return net.eduard.api.Teste
+     * @return net.eduard.curso.mongodb.MongoDBTeste
      */
     public static boolean isEmpty(Inventory inventory) {
 
@@ -2022,7 +2017,7 @@ public final class Mine {
      * Testa se o Inventario do Player esta vasio
      *
      * @param inventory
-     * @return net.eduard.api.Teste
+     * @return net.eduard.curso.mongodb.MongoDBTeste
      */
     public static boolean isEmpty(PlayerInventory inventory) {
         for (ItemStack item : inventory.getArmorContents()) {
@@ -2043,7 +2038,8 @@ public final class Mine {
     }
 
     public static boolean isFalling(Entity entity) {
-        return entity.getVelocity().getY() < Extra.VALUE_WALKING_VELOCITY;
+        final double  VALUE_WALKING_VELOCITY = -0.08f;
+        return entity.getVelocity().getY() < VALUE_WALKING_VELOCITY;
     }
 
     public static boolean isFlying(Entity entity) {
@@ -2051,18 +2047,16 @@ public final class Mine {
     }
 
     /**
-     * Testa se o Inventario esta cheio
+     * Verifica
      *
      * @param inventory Inventario
-     * @return net.eduard.api.Teste
+     * @return Se o Inventario esta cheio
      */
     public static boolean isFull(Inventory inventory) {
         return inventory.firstEmpty() == -1;
     }
 
-    public static boolean isInvulnerable(Player player) {
-        return player.getNoDamageTicks() > 1;
-    }
+
 
     public static boolean isIpProxy(String ip) {
         return Extra.isIpProxy(ip);
@@ -2082,7 +2076,7 @@ public final class Mine {
      *
      * @param entity   Entitade
      * @param material Tipo de Material
-     * @return net.eduard.api.Teste
+     * @return net.eduard.curso.mongodb.MongoDBTeste
      */
     public static boolean isUsing(LivingEntity entity, Material material) {
         return (getHandType(entity) == material);
@@ -2143,23 +2137,51 @@ public final class Mine {
         runCommand(command);
     }
 
+    /**
+     * Deixa o jogador com a Flag NoDamageTicks setada para um Dia<br>
+     *     Isto Significa que na teoria não pode levar Hit até acabar este tempo
+     * @param player
+     */
     public static void makeInvunerable(Player player) {
-        player.setNoDamageTicks(Extra.DAY_IN_SECONDS * 20);
+        player.setNoDamageTicks((int) (TimeUnit.DAYS.toSeconds(1) * 20));
 
     }
 
+    /**
+     *
+      * @param player
+     * @return Se o jogador esta com a Flag NoDamageTicks maior que 1
+     */
+    public static boolean isInvulnerable(Player player) {
+        return player.getNoDamageTicks() > 1;
+    }
+    /**
+     * Deixa o jogador com a Flag NoDamageTicks setada para um Tempo<br>
+     *     Isto Significa que na teoria não pode levar Hit até acabar este tempo
+     * @param seconds Tempo (em segundos)
+     * @param player
+     */
     public static void makeInvunerable(Player player, int seconds) {
         player.setNoDamageTicks(seconds * 20);
 
     }
 
 
-
+    /**
+     * Remove a Flag NoDamageTicks colocando para 0 assim o jogador vai tomar dano normalmente
+     * @param player
+     */
     public static void makeVulnerable(Player player) {
 
         player.setNoDamageTicks(0);
     }
 
+    /**
+     * Cria um Vector forçando a entidade a ser jogado na direção do Alvo
+     * @param entity Entidade
+     * @param target Alvo
+     * @param gravity Gravidade
+     */
     public static void moveTo(Entity entity, Location target, double gravity) {
         Location location = entity.getLocation().clone();
         double distance = target.distance(location);
@@ -2170,6 +2192,39 @@ public final class Mine {
         entity.setVelocity(vector);
     }
 
+    /**
+     * Gera um Vector novo que terá a inteção de forçar um movimento até o Alvo (Local)
+     * @param entity
+     * @param target
+     * @param staticX
+     * @param staticY
+     * @param staticZ
+     * @param addX
+     * @param addY
+     * @param addZ
+     * @return
+     */
+    public static Vector getVelocity(Location entity, Location target, double staticX, double staticY, double staticZ,
+                                     double addX, double addY, double addZ) {
+        double distance = target.distance(entity);
+        double x = (staticX + (addX * distance)) * ((target.getX() - entity.getX()) / distance);
+        double y = (staticY + (addY * distance)) * ((target.getY() - entity.getY()) / distance);
+        double z = (staticZ + (addZ * distance)) * ((target.getZ() - entity.getZ()) / distance);
+        return new Vector(x, y, z);
+
+    }
+    /**
+     * Cria um Vector forçando a entidade a ser jogado na direção do Alvo <br>
+     *     Este método tem a variação de ser bem mais configuravel
+     * @param entity
+     * @param target
+     * @param staticX
+     * @param staticY
+     * @param staticZ
+     * @param addX
+     * @param addY
+     * @param addZ
+     */
     public static void moveTo(Entity entity, Location target, double staticX, double staticY, double staticZ,
                               double addX, double addY, double addZ) {
         Location location = entity.getLocation();
@@ -2180,6 +2235,10 @@ public final class Mine {
         entity.setVelocity(getVelocity(location, target, staticX, staticY, staticZ, addX, addY, addZ));
     }
 
+    /**
+     * Gera um Banner padrão para poder ser Editado
+     * @return Banner como ItemStack
+     */
     public static ItemStack newBanner() {
         ItemStack banner = new ItemStack(Material.BANNER);
         BannerMeta meta = (BannerMeta) banner.getItemMeta();

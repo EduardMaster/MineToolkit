@@ -8,11 +8,10 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.game.Item;
+import net.eduard.api.lib.inventory.Item;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAttributes;
+import net.eduard.api.lib.storage.Storable.*;
 
 /**
  * Precisa arrumar

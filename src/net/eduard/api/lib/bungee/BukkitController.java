@@ -9,7 +9,8 @@ import com.google.common.io.ByteStreams;
 public class BukkitController implements ServerController{
 	
 	private Plugin plugin;
-	private String channel="BukkitBungee";
+	// na versão 1.15 do minecraft precisa ter : e precisa ser minusculo
+	private String channel="bukkit:bungee";
 	private BukkitMessageListener listener = new BukkitMessageListener(this);
 
 	@Override

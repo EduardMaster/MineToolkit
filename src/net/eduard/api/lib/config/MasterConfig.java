@@ -329,6 +329,7 @@ public class MasterConfig {
 	public void saveConfig() {
 		saveYaml();
 		writeContentToFile();
+		
 	}
 
 	protected void saveAsYaml(Object value) {
