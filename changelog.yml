@@ -13,8 +13,8 @@
   - Método removido setPrice(class,double) que define o valor da Classe dentro do HashMap
   - Método removido getPrice(class)->double que retorna o valor da Classe vinda do HashMap e 0 caso não tenha esta classe no Mapa
   - Método removido InfoGenerator.saveObject(path,player) porque não tem porque salva infos dos jogadores se não vou controlar
-  - Colocando a maioria dos códigos que estavam na EduardAPI em varias outras classes
-  - Tranfesferindo Constantes da classe Mine e Extra para a EduardAPI pois não será usado por ninguem é apenas informativo
+  - Colocando a maioria dos códigos que estavam na classe EduardAPI em varias outras classes
+  - Transferindo Constantes da classe Mine e Extra para a EduardAPI pois não será usado por ninguem é apenas informativo
   - Comecei a criar Storage v2 (Storation) só para ver se conseguia ainda, tem como Objetivo ser mais compacto e mais simples
   - Comecei a transformar as classes Java para Kotlin
   - Reformulando onde fica as classe em qual package, muitas refatorações
