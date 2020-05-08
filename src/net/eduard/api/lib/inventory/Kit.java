@@ -14,189 +14,180 @@ import net.eduard.api.lib.storage.Storable;
 
 public class Kit implements Storable {
 
-	private String name;
-	private long cooldown;
-	private boolean clearInventory;
-	private boolean fillSoup;
-	private boolean autoEquip = true;
-	private ItemStack icon;
-	private int menuPosition;
-	private double price;
-	private int level;
-	private List<ItemStack> items = new ArrayList<>();
-	private List<Item> extras = new ArrayList<>();
-	private List<Kit> upgrades = new ArrayList<>();
+    private String name;
+    private long cooldown;
+    private boolean clearInventory;
+    private boolean fillSoup;
+    private boolean autoEquip = true;
+    private ItemStack icon;
+    private int menuPosition;
+    private double price;
+    private int level;
+    private List<ItemStack> items = new ArrayList<>();
+    private List<Item> extras = new ArrayList<>();
+    private List<Kit> upgrades = new ArrayList<>();
 
-	public Kit(Kit kit, int price, int level) {
-		kit.upgrades.add(this);
-		setPrice(price);
-		setLevel(level);
+    public Kit(Kit kit, int price, int level) {
+        kit.upgrades.add(this);
+        setPrice(price);
+        setLevel(level);
 
-	}
-public Kit() {
-	// TODO Auto-generated constructor stub
-}
-	public void give(Player p) {
-		give(p, 1);
-	}
+    }
 
-	public void give(Player p, int level) {
-		PlayerInventory inv = p.getInventory();
-		if (clearInventory) {
-			Mine.clearInventory(p);
-		}
-		for (ItemStack item : items) {
-			String type = item.getType().name();
-			if (autoEquip) {
-				if (type.contains("LEGGINGS")) {
-					inv.setLeggings(item);
-				} else if (type.contains("CHESTPLATE")) {
-					inv.setChestplate(item);
-				} else if (type.contains("BOOTS")) {
-					inv.setBoots(item);
-				} else if (type.contains("HELMET")) {
-					inv.setHelmet(item);
-				} else {
-					inv.addItem(item);
-				}
-			} else {
-				inv.addItem(item);
-			}
-		}
-		for (int id = 2; id <= level; id++) {
-			Kit upgrade = getUpgrade(id);
-			for (ItemStack item : upgrade.getItems()) {
-				String type = item.getType().name();
-				if (autoEquip) {
-					if (type.contains("LEGGINGS")) {
-						inv.setLeggings(item);
-					} else if (type.contains("CHESTPLATE")) {
-						inv.setChestplate(item);
-					} else if (type.contains("BOOTS")) {
-						inv.setBoots(item);
-					} else if (type.contains("HELMET")) {
-						inv.setHelmet(item);
-					} else {
-						inv.addItem(item);
-					}
-				} else {
-					inv.addItem(item);
-				}
-			}
-		}
-		for (Item item : extras) {
-			inv.addItem(item.create());
-		}
-		if (fillSoup)
-			Mine.fill(inv, new ItemStack(Material.MUSHROOM_SOUP));
-	}
+    public Kit() {
 
-	public Kit getUpgrade(int level) {
-		for (Kit upgrade : upgrades) {
-			if (upgrade.getLevel() == level) {
-				return upgrade;
-			}
-		}
-		return null;
-	}
+    }
 
-	public double getPrice() {
-		return price;
-	}
+    public void give(Player p) {
+        give(p, 1);
+    }
 
-	public void setPrice(double price) {
-		this.price = price;
-	}
+    public void give(Player p, int level) {
+        PlayerInventory inv = p.getInventory();
+        if (clearInventory) {
+            Mine.clearInventory(p);
+        }
+        for (ItemStack item : items) {
+            String type = item.getType().name();
+            if (autoEquip) {
+                if (type.contains("LEGGINGS")) {
+                    inv.setLeggings(item);
+                } else if (type.contains("CHESTPLATE")) {
+                    inv.setChestplate(item);
+                } else if (type.contains("BOOTS")) {
+                    inv.setBoots(item);
+                } else if (type.contains("HELMET")) {
+                    inv.setHelmet(item);
+                } else {
+                    inv.addItem(item);
+                }
+            } else {
+                inv.addItem(item);
+            }
+        }
+        for (int id = 2; id <= level; id++) {
+            Kit upgrade = getUpgrade(id);
+            for (ItemStack item : upgrade.getItems()) {
+                String type = item.getType().name();
+                if (autoEquip) {
+                    if (type.contains("LEGGINGS")) {
+                        inv.setLeggings(item);
+                    } else if (type.contains("CHESTPLATE")) {
+                        inv.setChestplate(item);
+                    } else if (type.contains("BOOTS")) {
+                        inv.setBoots(item);
+                    } else if (type.contains("HELMET")) {
+                        inv.setHelmet(item);
+                    } else {
+                        inv.addItem(item);
+                    }
+                } else {
+                    inv.addItem(item);
+                }
+            }
+        }
+        for (Item item : extras) {
+            inv.addItem(item.create());
+        }
+        if (fillSoup)
+            Mine.fill(inv, new ItemStack(Material.MUSHROOM_SOUP));
+    }
 
-	public List<ItemStack> getItems() {
-		return items;
-	}
+    public Kit getUpgrade(int level) {
+        for (Kit upgrade : upgrades) {
+            if (upgrade.getLevel() == level) {
+                return upgrade;
+            }
+        }
+        return null;
+    }
 
-	public void setItems(List<ItemStack> items) {
-		this.items = items;
-	}
+    public double getPrice() {
+        return price;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public List<ItemStack> getItems() {
+        return items;
+    }
 
-	public ItemStack getIcon() {
-		return icon;
-	}
+    public void setItems(List<ItemStack> items) {
+        this.items = items;
+    }
 
-	public void setIcon(ItemStack icon) {
-		this.icon = icon;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public boolean isClearInventory() {
-		return clearInventory;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setClearInventory(boolean clearInventory) {
-		this.clearInventory = clearInventory;
-	}
+    public ItemStack getIcon() {
+        return icon;
+    }
 
-	public boolean isFillSoup() {
-		return fillSoup;
-	}
+    public void setIcon(ItemStack icon) {
+        this.icon = icon;
+    }
 
-	public void setFillSoup(boolean fillSoup) {
-		this.fillSoup = fillSoup;
-	}
+    public boolean isClearInventory() {
+        return clearInventory;
+    }
 
-	public long getCooldown() {
-		return cooldown;
-	}
+    public void setClearInventory(boolean clearInventory) {
+        this.clearInventory = clearInventory;
+    }
 
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
-	}
+    public boolean isFillSoup() {
+        return fillSoup;
+    }
 
-	@Override
-	public Object restore(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public void setFillSoup(boolean fillSoup) {
+        this.fillSoup = fillSoup;
+    }
 
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-		// TODO Auto-generated method stub
+    public long getCooldown() {
+        return cooldown;
+    }
 
-	}
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
+    }
 
-	public List<Item> getExtras() {
-		return extras;
-	}
 
-	public void setExtras(List<Item> extras) {
-		this.extras = extras;
-	}
+    public List<Item> getExtras() {
+        return extras;
+    }
 
-	public boolean isAutoEquip() {
-		return autoEquip;
-	}
+    public void setExtras(List<Item> extras) {
+        this.extras = extras;
+    }
 
-	public void setAutoEquip(boolean autoEquip) {
-		this.autoEquip = autoEquip;
-	}
+    public boolean isAutoEquip() {
+        return autoEquip;
+    }
 
-	public int getLevel() {
-		return level;
-	}
+    public void setAutoEquip(boolean autoEquip) {
+        this.autoEquip = autoEquip;
+    }
 
-	public void setLevel(int level) {
-		this.level = level;
-	}
+    public int getLevel() {
+        return level;
+    }
 
-	public int getMenuPosition() {
-		return menuPosition;
-	}
+    public void setLevel(int level) {
+        this.level = level;
+    }
 
-	public void setMenuPosition(int menuPosition) {
-		this.menuPosition = menuPosition;
-	}
+    public int getMenuPosition() {
+        return menuPosition;
+    }
+
+    public void setMenuPosition(int menuPosition) {
+        this.menuPosition = menuPosition;
+    }
 }

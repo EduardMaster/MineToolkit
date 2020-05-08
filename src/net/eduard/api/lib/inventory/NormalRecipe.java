@@ -81,14 +81,7 @@ public class NormalRecipe implements Storable {
 		return Character.forDigit(slot, 10);
 	}
 
-	@Override
-	public Object restore(Map<String, Object> map) {
-		return null;
-	}
 
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-	}
 
 	public Map<Integer, ItemStack> getItems() {
 		return items;

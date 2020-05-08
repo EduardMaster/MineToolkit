@@ -9,18 +9,18 @@ import net.eduard.api.lib.storage.Storable.*;
 @StorageAttributes(inline = true)
 public class UUIDStorable implements Storable {
 
-	@Override
-	public Object restore(Object object) {
+
+	public UUID restore(String object) {
 		try {
-			return UUID.fromString(object.toString());
+			return UUID.fromString(object);
 		} catch (Exception e) {
 			return null;
 		}
 
 	}
 
-	@Override
-	public Object store(Object object) {
+
+	public String store(Object object) {
 		return object.toString();
 	}
 

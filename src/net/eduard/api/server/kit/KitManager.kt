@@ -35,9 +35,9 @@ class KitManager : EventsManager() {
     var msgNoKitBuyed = "§§Voce nao tem dinheiro para comprar o kit §e\$kit"
     var msgShopTitle = "§cKit §4§l\$kit §cseu pre§o: §a§l\$price"
     var msgKitDisabled = "§cHabilidade \$kit desativada temporariamente!"
-    var itemSoup = Mine.newItem("§6Sopa", Material.MUSHROOM_SOUP)
-    var itemEmptySlot = Mine.newItem(" ", Material.STAINED_GLASS_PANE, 15)
-    var itemHotBar = Mine.newItem("§6§lKit§f§lPvP", Material.STAINED_GLASS_PANE, 10)
+    var itemSoup = Mine.newItem( Material.MUSHROOM_SOUP,"§6Sopa")
+    var itemEmptySlot = Mine.newItem( Material.STAINED_GLASS_PANE," ", 15)
+    var itemHotBar = Mine.newItem( Material.STAINED_GLASS_PANE,"§6§lKit§f§lPvP", 10)
     var globalItems: MutableList<ItemStack> = ArrayList()
     var openKits = Slot(Mine.newItem(Material.CHEST, "§6§lSelecionar Kit"), 0)
     var openShop = Slot(Mine.newItem(Material.EMERALD, "§6§lComprar Kit"), 8)
@@ -56,7 +56,7 @@ class KitManager : EventsManager() {
                 val item = event.currentItem
 
                 for (kit in kits) {
-                    if (kit.getIcon() == item) {
+                    if (kit.icon == item) {
                         selectKit(player, kit)
                         break
                     }
@@ -71,7 +71,7 @@ class KitManager : EventsManager() {
                 val item = event.currentItem
 
                 for (kit in kits) {
-                    if (kit.getIcon() == item) {
+                    if (kit.icon == item) {
                         buyKit(player, kit)
                         break
                     }
@@ -92,7 +92,7 @@ class KitManager : EventsManager() {
             if (!kit.isShowOnGui) continue
             if (!player.hasPermission(kit.REQUIRE_PERMISSION)) {
 
-                menu.setItem(posicao, kit.getIcon())
+                menu.setItem(posicao, kit.icon)
                 posicao++
             }
 
@@ -110,7 +110,7 @@ class KitManager : EventsManager() {
 
             if (player.hasPermission(kit.REQUIRE_PERMISSION)) {
                 player.sendMessage("§cAbrindo menu com kit " + kit.name)
-                menu.setItem(posicao, kit.getIcon())
+                menu.setItem(posicao, kit.icon)
                 posicao++
             }
 

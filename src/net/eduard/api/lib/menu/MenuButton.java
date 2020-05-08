@@ -5,10 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import net.eduard.api.lib.inventory.ClickEffect;
 
 public class MenuButton  extends Slot{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
 	private String name="Botao";
 	private int page = 1;
 	private Menu menu;
@@ -31,18 +28,18 @@ public class MenuButton  extends Slot{
 	}
 	public MenuButton(String name) {
 		setName(name);
-		// TODO Auto-generated constructor stub
+
 	}
 	public MenuButton(ItemStack icon) {
 
 		setIcon(icon);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public MenuButton(String name, ItemStack icon) {
 		setName(name);
 		setIcon(icon);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public Menu getMenu() {

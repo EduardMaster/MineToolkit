@@ -18,7 +18,7 @@ import net.eduard.api.lib.modules.Copyable
  * @author Eduard-PC
  */
 @StorageAttributes(indentificate = true)
-class MinigameMap : Storable, Copyable {
+class MinigameMap : Storable<MinigameMap>, Copyable {
 
     var name: String? = null
     var displayName: String? = null
@@ -30,9 +30,9 @@ class MinigameMap : Storable, Copyable {
     var maxRounds = 3
     var spawn: Location? = null
     var lobby: Location? = null
-    var locations: Map<String, Location> = HashMap()
-    var bases: List<Schematic> = ArrayList()
-    var spawns: List<Location> = ArrayList()
+    var locations: MutableMap<String, Location> = HashMap()
+    var bases: MutableList<Schematic> = ArrayList()
+    var spawns: MutableList<Location> = ArrayList()
     var map: Schematic? = null
     var feast: Schematic? = null
     var feastLocation: Location? = null

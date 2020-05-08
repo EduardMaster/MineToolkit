@@ -19,7 +19,8 @@ import org.bukkit.plugin.java.JavaPlugin
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
-import net.eduard.api.lib.task.BukkitTimeHandler
+import net.eduard.api.lib.database.autobase.AutoBaseEngine
+import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.StorageAPI
 
@@ -36,6 +37,8 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     var db = DBManager()
         @JvmName("getDB")
         get
+
+    lateinit var autoBase : AutoBaseEngine
 
     lateinit var configs: Config
         protected set
@@ -90,8 +93,9 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         return configs.message(path)
     }
 
+
     /**
-     * Config padrão do spigot não funciona com [Config]
+     * Config padrão do spigot não funciona com Config
      */
     override fun getConfig(): FileConfiguration? {
         return null
@@ -116,7 +120,6 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         if (isErrorLogEnabled)
             Bukkit.getConsoleSender().sendMessage("§b[$name] §c$msg")
     }
-
 
 
     override fun getPluginConnected(): Plugin {
@@ -180,7 +183,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     /**
      * Deleta os ultimos backups
      */
-    fun deleteLastBackups() {
+    private fun deleteLastBackups() {
         val pasta = File(dataFolder, "/backup/")
 
         pasta.mkdirs()
@@ -194,6 +197,21 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
             if (arquivo.exists())
                 arquivo.delete()
 
+        }
+    }
+
+    /**
+     * Deleta os backups dos dias anteriores
+     */
+    fun deleteOldBackups() {
+        val pasta = File(dataFolder, "/backup/")
+        pasta.mkdirs()
+        var lista = Arrays.asList(*pasta.listFiles()!!)
+        lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
+                .forEach {
+            Extra.deleteFolder(it)
+            if (it.exists())
+                it.delete()
         }
     }
 

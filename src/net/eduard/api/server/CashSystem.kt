@@ -1,4 +1,4 @@
-package net.eduard.api.server.currency
+package net.eduard.api.server
 
 import net.eduard.api.lib.player.FakePlayer
 

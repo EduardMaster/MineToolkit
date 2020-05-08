@@ -4,7 +4,7 @@ import java.util.ArrayList
 
 import net.eduard.api.lib.storage.Storable
 
-class MinigameLobby : Storable {
+class MinigameLobby : Storable<MinigameLobby> {
 
     var id = 1
 

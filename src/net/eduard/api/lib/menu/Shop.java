@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import net.eduard.api.lib.player.FakePlayer;
+import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.server.currency.Currency;
 import net.eduard.api.lib.modules.*;
 import org.bukkit.entity.Player;
@@ -18,7 +19,8 @@ import net.eduard.api.lib.manager.CurrencyManager;
 import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(indentificate = true)
-public class Shop extends Menu {
+public class Shop extends Menu  {
+
 
     public static String MESSAGE_CHOICE_AMOUNT = "§aEscolha uma quantidade para $trader este produto $product";
     public static String MESSAGE_BOUGHT_ITEM = "§aVoce adquiriu $amount ($product) produto(s) da Loja!";
@@ -85,6 +87,7 @@ public class Shop extends Menu {
         if (selectingAmount.containsKey(p)) {
             Product product = selectingAmount.get(p);
             Double amount = Extra.fromMoneyToDouble(e.getMessage());
+            amount = Math.abs(amount);
             selectingAmount.remove(p);
             TradeType trade = trading.get(p);
             trading.remove(p);

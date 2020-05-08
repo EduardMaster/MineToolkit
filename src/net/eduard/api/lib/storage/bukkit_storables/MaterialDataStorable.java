@@ -7,39 +7,33 @@ import org.bukkit.material.MaterialData;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.Storable.*;
 
-@StorageAttributes(inline = true,indentificate = false)
-public class MaterialDataStorable implements Storable {
+@StorageAttributes(inline = true)
+public class MaterialDataStorable implements Storable<MaterialData> {
 
-	@Override
-	public Object newInstance() {
+    @Override
+    public MaterialData newInstance() {
 
-		return new MaterialData(1);
-	}
+        return new MaterialData(1);
+    }
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public Object store(Object object) {
-		if (object instanceof MaterialData) {
-			MaterialData materialData = (MaterialData) object;
-			return materialData.getItemTypeId() + ";" + materialData.getData();
 
-		}
-		return null;
-	}
+    @Override
+    public String store(MaterialData materialData) {
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public Object restore(Object object) {
-		if (object instanceof String) {
-			String string = (String) object;
-			try {
-				String[] split = string.split(";");
-				return new MaterialData(Material.getMaterial(Extra.toInt(split[0])), Extra.toByte(split[1]));
-			} catch (Exception e) {
-			}
+        return materialData.getItemTypeId() + ";" + materialData.getData();
 
-		}
-		return null;
-	}
+
+    }
+
+
+    public MaterialData restore(String string) {
+
+        try {
+            String[] split = string.split(";");
+            return new MaterialData(Material.getMaterial(Extra.toInt(split[0])), Extra.toByte(split[1]));
+        } catch (Exception e) {
+        }
+        return null;
+    }
 
 }

@@ -30,9 +30,9 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
                     if (plugin.isBackup) {
                         if (plugin.backupLastTime + plugin.backupTimeUnitType.toMillis(plugin.backupTime) < agora) {
                             log("Iniciando sistema de backup para o plugin §b" + plugin.name)
-                            log("Deletando ultimos backups")
+                            log("Deletando backups dos dias anteriores")
                             val tempo1 = Extra.getNow()
-                            plugin.deleteLastBackups()
+                            plugin.deleteOldBackups()
                             val tempo2 = Extra.getNow()
                             log("Tempo levado para deletar os backups: §a" + (tempo2 - tempo1) + " milisegundos")
                             log("Fazendo backup ")

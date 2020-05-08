@@ -22,7 +22,7 @@ import java.util.Scanner;
  */
 public class Licence {
 
-	private static String site = "http://www.eduard.com.br/license?";
+	private static String site = "link";
 
 	private static PluginActivationStatus test(String plugin, String owner, String key) {
 		try {

@@ -4,13 +4,19 @@ import net.eduard.api.lib.storage.Storable.*;
 
 import java.lang.reflect.Field;
 
-public abstract class StorageBase {
+public abstract class StorageBase<T> {
 
 	private StorageInfo info;
 
 	public StorageBase(StorageInfo info) {
 		setInfo(info);
 	}
+
+	public abstract T restore(Object data);
+
+	public abstract Object store(T data);
+
+
 
 	public static void debug(String msg) {
 		StorageAPI.debug(msg);
@@ -64,9 +70,6 @@ public abstract class StorageBase {
 		return getAlias(getType());
 	}
 
-	public abstract Object restore(Object data);
-
-	public abstract Object store(Object data);
 
 	public boolean isStorable() {
 		return getStore() != null;

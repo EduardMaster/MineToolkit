@@ -33,6 +33,7 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import org.bukkit.util.Vector;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -40,23 +41,25 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 
-
 /**
  * API principal da Lib contendo muitos codigos bons e utilitarios
- *<br>Sistema para guardar dados extras nos{@link ItemStack}
+ * <br>Sistema para guardar dados extras nos{@link ItemStack}
+ *
  * @author Eduard
  * @version 3.0
-
-        **
-        **
-        **@author Eduard
-        **@since 24/01/2020
-
+ * <p>
+ * *
+ * *
+ * *@author Eduard
+ * *@since 24/01/2020
  */
+@SuppressWarnings("unused")
 public final class Mine {
 
 
@@ -74,37 +77,51 @@ public final class Mine {
      * Efeito a fazer na Localização
      *
      * @author Eduard
-     *
      */
-    public interface LocationEffect {
+    public interface LocationEffect extends Function<Location, Boolean> {
 
-        boolean effect(Location location);
+        /**
+         * @deprecated Use Lambda ao invez deste método
+         */
+        @Deprecated
+        default boolean effect(Location location) {
+            return this.apply(location);
+        }
+
+
     }
 
     /**
      * Interface de criar Replacer (Placeholders)
      *
      * @author Eduard
-     *
      */
-    public  interface Replacer {
+    public interface Replacer extends Function<Player, Object> {
         /**
          * Retorna o valor do Placeholder
          *
          * @param player Jogador
          * @return O placeholder
+         * @deprecated Use Lambda da classe {@link Function}
          */
-        Object getText(Player player);
+        @Deprecated
+        default Object getText(Player player) {
+            return this.apply(player);
+        }
+
+
     }
 
+    public static void main(String[] args) {
+        Replacer r = (p) -> null;
+    }
 
     /**
      * Ponto de direção usado para fazer um RADAR
-     *  @author Internet
      *
-     *
+     * @author Internet
      */
-    public  enum Point {
+    public enum Point {
         N('N'), NE('/'), E('O'), SE('\\'), S('S'), SW('/'), W('L'), NW('\\');
 
         public final char asciiChar;
@@ -128,8 +145,6 @@ public final class Mine {
     }
 
 
-
-
     /**
      * Mapa que armazena as Armaduras dos jogadores
      */
@@ -139,8 +154,6 @@ public final class Mine {
      */
     private static final Map<Player, ItemStack[]> PLAYERS_ITEMS = new HashMap<>();
     private static Map<String, Replacer> replacers = new HashMap<>();
-
-
 
 
     /**
@@ -217,8 +230,6 @@ public final class Mine {
      * Ligar sistema de Respawn Automatico
      */
     public static boolean OPT_AUTO_RESPAWN = true;
-
-
 
 
     /**
@@ -451,7 +462,7 @@ public final class Mine {
      * Envia mensagens para todos jogadores
      *
      * @param message Mensagem
-     *  <code>Bukkit.broadcastMessage(message)</code>
+     *                <code>Bukkit.broadcastMessage(message)</code>
      */
     public static void broadcast(String message) {
         Bukkit.broadcastMessage(message);
@@ -589,7 +600,7 @@ public final class Mine {
      * Envia mensagem para o console do servidor
      *
      * @ @param message
-     * @see   <code>Bukkit.getConsoleSender().sendMessage(message)</code> ;
+     * @see <code>Bukkit.getConsoleSender().sendMessage(message)</code> ;
      */
     public static void console(String message) {
         Bukkit.getConsoleSender().sendMessage(message);
@@ -698,7 +709,6 @@ public final class Mine {
         unloadWorld(name);
         Extra.deleteFolder(getWorldFolder(name));
     }
-
 
 
     /**
@@ -990,13 +1000,7 @@ public final class Mine {
     }
 
     public static List<Location> getBox(Location playerLocation, double higher, double lower, double size) {
-        return getBox(playerLocation, higher, lower, size, new LocationEffect() {
-
-            @Override
-            public boolean effect(Location location) {
-                return true;
-            }
-        });
+        return getBox(playerLocation, higher, lower, size, location -> true);
     }
 
     public static List<Location> getBox(Location playerLocation, double xHigh, double xLow, double zHigh, double zLow,
@@ -1086,6 +1090,12 @@ public final class Mine {
         return null;
     }
 
+    /**
+     * Pega a direção apartir de um Gráu
+     *
+     * @param inDegrees gráu
+     * @return A direção do gráu
+     */
     public static Point getCompassPointForDirection(double inDegrees) {
         double degrees = (inDegrees - 180.0D) % 360.0D;
         if (degrees < 0.0D) {
@@ -1119,7 +1129,6 @@ public final class Mine {
         return Extra.getCooldown(before, seconds);
 
     }
-
 
 
     /**
@@ -1202,6 +1211,12 @@ public final class Mine {
         return new Vector(x, y, z);
     }
 
+    /**
+     * Pega a quantidade de slot vazios
+     *
+     * @param inv Inventario
+     * @return quantidade somada
+     */
     public static int getEmptySlotsAmount(Inventory inv) {
         int amount = 0;
         for (ItemStack item : inv.getContents()) {
@@ -1283,7 +1298,7 @@ public final class Mine {
         List<String> list = new ArrayList<>();
 
         for (Enchantment enchant : Enchantment.values()) {
-            String text = Mine.toTitle(enchant.getName(), "");
+            String text = Extra.toTitle(enchant.getName(), "");
             String line = enchant.getName().trim().replace("_", "");
             if (startWith(line, argument)) {
                 list.add(text);
@@ -1310,7 +1325,6 @@ public final class Mine {
         }
         return null;
     }
-
 
 
     /**
@@ -1432,7 +1446,7 @@ public final class Mine {
             if (type == EntityType.PLAYER)
                 continue;
             if (type.isAlive() & type.isSpawnable()) {
-                String text = Mine.toTitle(type.name(), "");
+                String text = Extra.toTitle(type.name(), "");
                 String line = type.name().trim().replace("_", "");
                 if (startWith(line, argument)) {
                     list.add(text);
@@ -1444,13 +1458,7 @@ public final class Mine {
     }
 
     public static List<Location> getLocations(Location location1, Location location2) {
-        return getLocations(location1, location2, new LocationEffect() {
-
-            @Override
-            public boolean effect(Location location) {
-                return true;
-            }
-        });
+        return getLocations(location1, location2, location -> true);
     }
 
     public static List<Location> getLocations(Location location1, Location location2, LocationEffect effect) {
@@ -1588,9 +1596,6 @@ public final class Mine {
     }
 
 
-
-
-
     public static Player getPlayer(String name) {
         return Bukkit.getPlayerExact(name);
     }
@@ -1611,25 +1616,15 @@ public final class Mine {
 
     public static Plugin getPlugin(String plugin) {
 
-        return Arrays.stream(Bukkit.getPluginManager().getPlugins()).filter(pl->pl.getName().equalsIgnoreCase(plugin)).findAny().orElse(null);
+        return Arrays.stream(Bukkit.getPluginManager().getPlugins()).filter(pl -> pl.getName().equalsIgnoreCase(plugin)).findAny().orElse(null);
     }
 
     public static int getPosition(int line, int column) {
         return Extra.getIndex(column, line);
     }
 
-    @SafeVarargs
-    public static <E> E getRandom(E... objects) {
-        return Extra.getRandom(objects);
-    }
 
-    public static <E> E getRandom(List<E> objects) {
-        return Extra.getRandom(objects);
-    }
 
-    public static double getRandomDouble(double minValue, double maxValue) {
-        return Extra.getRandomDouble(minValue, maxValue);
-    }
 
     public static int getRandomEmptySlot(Inventory inv) {
         if (Mine.isFull(inv)) {
@@ -1657,7 +1652,7 @@ public final class Mine {
      */
     public static ItemStack getRandomItem(ItemStack... items) {
 
-        return Mine.getRandom(items);
+        return Extra.getRandom(items);
     }
 
     /**
@@ -1668,7 +1663,7 @@ public final class Mine {
      */
     public static ItemStack getRandomItem(List<ItemStack> items) {
 
-        return Mine.getRandom(items);
+        return Extra.getRandom(items);
     }
 
     public static Location getRandomLocation(Location location, int xVar, int yVar, int zVar) {
@@ -1746,8 +1741,6 @@ public final class Mine {
     }
 
 
-
-
     /**
      * Pega um Som baseado num Objeto (Texto)
      *
@@ -1776,7 +1769,7 @@ public final class Mine {
         List<String> list = new ArrayList<>();
 
         for (Sound enchant : Sound.values()) {
-            String text = Mine.toTitle(enchant.name(), "");
+            String text = Extra.toTitle(enchant.name(), "");
             String line = enchant.name().trim().replace("_", "");
             if (startWith(line, argument)) {
                 list.add(text);
@@ -1827,27 +1820,6 @@ public final class Mine {
 
 
 
-    public static String getTime(int time) {
-
-        return getTime(time, " segundo(s)", " minuto(s) ");
-
-    }
-
-    public static String getTime(int time, String second, String minute) {
-        return Extra.getTime(time, second, minute);
-    }
-
-    public static String getTimeMid(int time) {
-
-        return getTime(time, " seg", " min ");
-
-    }
-
-    public static String getTimeSmall(int time) {
-
-        return getTime(time, "s", "m");
-
-    }
 
     /**
      * Pega a quantidade total dos itens do Inventario
@@ -1896,10 +1868,6 @@ public final class Mine {
         }
         return amount;
     }
-
-
-
-
 
 
     public static World getWorld(String name) {
@@ -1984,7 +1952,6 @@ public final class Mine {
     }
 
 
-
     /**
      * Testa se o numero passado é da coluna expecificada
      *
@@ -2038,7 +2005,7 @@ public final class Mine {
     }
 
     public static boolean isFalling(Entity entity) {
-        final double  VALUE_WALKING_VELOCITY = -0.08f;
+        final double VALUE_WALKING_VELOCITY = -0.08f;
         return entity.getVelocity().getY() < VALUE_WALKING_VELOCITY;
     }
 
@@ -2055,7 +2022,6 @@ public final class Mine {
     public static boolean isFull(Inventory inventory) {
         return inventory.firstEmpty() == -1;
     }
-
 
 
     public static boolean isIpProxy(String ip) {
@@ -2093,6 +2059,12 @@ public final class Mine {
         return getHandType(entity).name().toLowerCase().contains(material.toLowerCase());
     }
 
+    /**
+     * Carrega um {@link YamlConfiguration} apartir de um {@link File} em UTF-8
+     *
+     * @param file Arquivo
+     * @return YamlConfiguration carregada
+     */
     public static YamlConfiguration loadConfig(File file) {
         YamlConfiguration config = new YamlConfiguration();
         FileInputStream fileinputstream;
@@ -2106,14 +2078,15 @@ public final class Mine {
     }
 
 
-
     /**
      * Gera um Key invisivel para o chat ou menu<br>
      * A key consiste em § + alguma cor
      *
      * @param amount Quantidade
      * @return a Key Gerada
+     * @deprecated Não há necessidade mais deste método
      */
+    @Deprecated
     public static String generateInvisibleKey(int amount) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < amount; i++) {
@@ -2124,6 +2097,12 @@ public final class Mine {
         return builder.toString();
     }
 
+    /**
+     * Carrega o mundo especificado
+     *
+     * @param name Nome
+     * @return Mundo carregado
+     */
     public static World loadWorld(String name) {
         return new WorldCreator(name).generator(new EmptyWorldGenerator()).createWorld();
     }
@@ -2131,7 +2110,7 @@ public final class Mine {
     /**
      * Executa o runCommand()
      *
-     * @param command
+     * @param command Comando
      */
     public static void makeCommand(String command) {
         runCommand(command);
@@ -2139,8 +2118,9 @@ public final class Mine {
 
     /**
      * Deixa o jogador com a Flag NoDamageTicks setada para um Dia<br>
-     *     Isto Significa que na teoria não pode levar Hit até acabar este tempo
-     * @param player
+     * Isto Significa que na teoria não pode levar Hit até acabar este tempo
+     *
+     * @param player Jogador
      */
     public static void makeInvunerable(Player player) {
         player.setNoDamageTicks((int) (TimeUnit.DAYS.toSeconds(1) * 20));
@@ -2148,16 +2128,17 @@ public final class Mine {
     }
 
     /**
-     *
-      * @param player
+     * @param player
      * @return Se o jogador esta com a Flag NoDamageTicks maior que 1
      */
     public static boolean isInvulnerable(Player player) {
         return player.getNoDamageTicks() > 1;
     }
+
     /**
      * Deixa o jogador com a Flag NoDamageTicks setada para um Tempo<br>
-     *     Isto Significa que na teoria não pode levar Hit até acabar este tempo
+     * Isto Significa que na teoria não pode levar Hit até acabar este tempo
+     *
      * @param seconds Tempo (em segundos)
      * @param player
      */
@@ -2169,6 +2150,7 @@ public final class Mine {
 
     /**
      * Remove a Flag NoDamageTicks colocando para 0 assim o jogador vai tomar dano normalmente
+     *
      * @param player
      */
     public static void makeVulnerable(Player player) {
@@ -2178,8 +2160,9 @@ public final class Mine {
 
     /**
      * Cria um Vector forçando a entidade a ser jogado na direção do Alvo
-     * @param entity Entidade
-     * @param target Alvo
+     *
+     * @param entity  Entidade
+     * @param target  Alvo
      * @param gravity Gravidade
      */
     public static void moveTo(Entity entity, Location target, double gravity) {
@@ -2194,6 +2177,7 @@ public final class Mine {
 
     /**
      * Gera um Vector novo que terá a inteção de forçar um movimento até o Alvo (Local)
+     *
      * @param entity
      * @param target
      * @param staticX
@@ -2213,9 +2197,11 @@ public final class Mine {
         return new Vector(x, y, z);
 
     }
+
     /**
      * Cria um Vector forçando a entidade a ser jogado na direção do Alvo <br>
-     *     Este método tem a variação de ser bem mais configuravel
+     * Este método tem a variação de ser bem mais configuravel
+     *
      * @param entity
      * @param target
      * @param staticX
@@ -2237,6 +2223,7 @@ public final class Mine {
 
     /**
      * Gera um Banner padrão para poder ser Editado
+     *
      * @return Banner como ItemStack
      */
     public static ItemStack newBanner() {
@@ -2357,7 +2344,7 @@ public final class Mine {
      * @param amount
      * @param lore
      * @param url
-     * @return
+     * @return Nova cabeça com nova skin
      */
     public static ItemStack newHeadSkin(String url, String nome, int amount, List<String> lore) {
         ItemStack item = new ItemStack(Material.SKULL_ITEM, amount, (short) 3);
@@ -2430,9 +2417,9 @@ public final class Mine {
 
         return newHead(name,
                 ("MHF_") + (type.getName() == null ?
-                 Mine.toTitle(type.name().
-                 replace("_", "")):
-                 type.getName()));
+                        Extra.toTitle(type.name().
+                                replace("_", "")) :
+                        type.getName()));
     }
 
     /**
@@ -2443,9 +2430,78 @@ public final class Mine {
      * @return
      */
 
-    public static ItemStack newHead(String name, String skull,String... lore) {
+    public static ItemStack newHead(String name, String skull, String... lore) {
 
-        return setHead(newItem(name, Material.SKULL_ITEM, 1,3,lore), skull);
+        return setHead(newItem(Material.SKULL_ITEM, name, 1, 3, lore), skull);
+    }
+
+    /**
+     * Cria um Item
+     *
+     * @param material Material
+     * @param name     Nome
+     * @return Novo Item
+     */
+    public static ItemStack newItem(Material material, String name) {
+        return newItem(material, name, 1, 0);
+    }
+
+    /**
+     * Cria um Item
+     *
+     * @param material Material
+     * @param name     Nome
+     * @param data     MetaData
+     * @return Novo Item
+     */
+    public static ItemStack newItem(Material material, String name, int data) {
+        return newItem(material, name, 1, data);
+    }
+
+    /**
+     * Cria um Item
+     *
+     * @param material Material
+     * @param name     Nome
+     * @param lore     Descrição
+     * @return Item
+     */
+    public static ItemStack newItem(Material material, String name, String... lore) {
+        return newItem(material, name, 1, 0, Arrays.asList(lore));
+    }
+
+    /**
+     * Cria um Item
+     *
+     * @param material Material
+     * @param name     Nome
+     * @param amount   Quantidade
+     * @param data     MetaData
+     * @param lore     Descrição
+     * @return Item
+     */
+    public static ItemStack newItem(Material material, String name, int amount, int data, String... lore) {
+        return newItem(material, name, amount, data, Arrays.asList(lore));
+    }
+
+    /**
+     * Cria um Item
+     *
+     * @param material Material
+     * @param name     Nome
+     * @param amount   Quantidade
+     * @param data     MetaData
+     * @param lore     Descrição
+     * @return Item
+     */
+    public static ItemStack newItem(Material material, String name, int amount, int data, Collection<String> lore) {
+
+        ItemStack item = new ItemStack(material, amount, (short) data);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(new ArrayList<>(lore));
+        item.setItemMeta(meta);
+        return item;
     }
 
     public static List<ArmorStand> newHologram(Location location, List<String> lines) {
@@ -2506,138 +2562,8 @@ public final class Mine {
      */
     public static Inventory newInventory(String name, int size) {
 
-        return Bukkit.createInventory(null, size, Extra.toText(32, name));
+        return Bukkit.createInventory(null, size, Extra.cutText(name,32 ));
     }
-
-    /**
-     * Cria um Item
-     *
-     * @param id     material
-     * @param name   Nome
-     * @param amount Quantidade
-     * @param data   MetaData
-     * @param lore   Descrição
-     * @return Item
-     */
-    public static ItemStack newItem(int id, String name, int amount, int data, List<String> lore) {
-
-        @SuppressWarnings("deprecation")
-        ItemStack item = new ItemStack(id, amount, (short) data);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            meta.setLore(lore);
-            item.setItemMeta(meta);
-        }
-        return item;
-    }
-
-    /**
-     * Cria um Item
-     *
-     * @param id     Material ID
-     * @param name   Nome
-     * @param amount Quantidade
-     * @param data   MetaData
-     * @param lore   Descrição
-     * @return Item
-     */
-    public static ItemStack newItem(int id, String name, int amount, int data, String... lore) {
-
-        @SuppressWarnings("deprecation")
-        ItemStack item = new ItemStack(id, amount, (short) data);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            meta.setLore(Arrays.asList(lore));
-            item.setItemMeta(meta);
-        }
-        return item;
-    }
-
-    /**
-     * Cria um Item
-     *
-     * @param material
-     * @param name
-     * @return
-     */
-    public static ItemStack newItem(Material material, String name) {
-        ItemStack item = new ItemStack(material);
-        setName(item, name);
-        return item;
-    }
-
-    /**
-     * Cria um Item
-     *
-     * @param material Material
-     * @param name     Nome
-     * @param amount   Quantidade
-     * @return Item
-     */
-    public static ItemStack newItem(Material material, String name, int amount) {
-        return newItem(material, name, amount, 0);
-    }
-
-    /**
-     * Cria um Item
-     *
-     * @param material Material
-     * @param name     Nome
-     * @param amount   Quantidade
-     * @param data     MetaData
-     * @param lore     Descrição
-     * @return Item
-     */
-    public static ItemStack newItem(Material material, String name, int amount, int data, String... lore) {
-
-        ItemStack item = newItem(material, name);
-        setLore(item, lore);
-        item.setAmount(amount);
-        item.setDurability((short) data);
-        return item;
-    }
-
-    /**
-     * Cria um Item
-     *
-     * @param name     Nome
-     * @param material Material
-     * @return
-     */
-    public static ItemStack newItem(String name, Material material) {
-        ItemStack item = new ItemStack(material);
-        setName(item, name);
-        return item;
-    }
-
-    /**
-     * Cria um Item
-     *
-     * @param name     Nome
-     * @param material Material
-     * @param data     MetaData
-     * @return Item
-     */
-    public static ItemStack newItem(String name, Material material, int data) {
-        return newItem(material, name, 1, data);
-    }
-
-    /**
-     * Cria um Item
-     *
-     * @param name     Nome
-     * @param material Material
-     * @param amount   Quantidade
-     * @param data     Data
-     * @param lore     Descrição
-     * @return Item
-     */
-    public static ItemStack newItem(String name, Material material, int amount, int data, String... lore) {
-        return newItem(material, name, amount, data, lore);
-    }
-
 
 
     public static Scoreboard newScoreboard(Player player, String title, String... lines) {
@@ -2806,7 +2732,7 @@ public final class Mine {
      * nome, descrição, encantamentos
      *
      * @param inventory Inventario
-     * @param item  Tipo do Material
+     * @param item      Tipo do Material
      * @param amount    Quantidade
      */
     public static void remove(Inventory inventory, ItemStack item, int amount) {
@@ -2941,7 +2867,6 @@ public final class Mine {
     }
 
 
-
     public static void runCommand(String command) {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
     }
@@ -2977,7 +2902,6 @@ public final class Mine {
         saveArmours(player);
         PLAYERS_ITEMS.put(player, player.getInventory().getContents());
     }
-
 
 
     /**
@@ -3023,14 +2947,10 @@ public final class Mine {
     }
 
 
-
     public static void sendAll(Player p, String message) {
         broadcast(getReplacers(message, p));
 
     }
-
-
-
 
 
     public static void sendTo(Collection<Player> players, String message) {
@@ -3042,33 +2962,29 @@ public final class Mine {
 
     public static List<Location> setBox(Location playerLocation, double higher, double lower, double size,
                                         Material wall, Material up, Material down, boolean clearInside) {
-        return getBox(playerLocation, higher, lower, size, new LocationEffect() {
+        return getBox(playerLocation, higher, lower, size, location -> {
 
-
-            public boolean effect(Location location) {
-
-                if (location.getBlockY() == playerLocation.getBlockY() + higher) {
-                    location.getBlock().setType(up);
-                    return true;
-                }
-                if (location.getBlockY() == playerLocation.getBlockY() - lower) {
-                    location.getBlock().setType(down);
-                    return true;
-                }
-
-                if (location.getBlockX() == playerLocation.getBlockX() + size
-                        || location.getBlockZ() == playerLocation.getBlockZ() + size
-                        || location.getBlockX() == playerLocation.getBlockX() - size
-                        || location.getBlockZ() == playerLocation.getBlockZ() - size) {
-                    location.getBlock().setType(wall);
-                    return true;
-                }
-                if (clearInside) {
-                    if (location.getBlock().getType() != Material.AIR)
-                        location.getBlock().setType(Material.AIR);
-                }
-                return false;
+            if (location.getBlockY() == playerLocation.getBlockY() + higher) {
+                location.getBlock().setType(up);
+                return true;
             }
+            if (location.getBlockY() == playerLocation.getBlockY() - lower) {
+                location.getBlock().setType(down);
+                return true;
+            }
+
+            if (location.getBlockX() == playerLocation.getBlockX() + size
+                    || location.getBlockZ() == playerLocation.getBlockZ() + size
+                    || location.getBlockX() == playerLocation.getBlockX() - size
+                    || location.getBlockZ() == playerLocation.getBlockZ() - size) {
+                location.getBlock().setType(wall);
+                return true;
+            }
+            if (clearInside) {
+                if (location.getBlock().getType() != Material.AIR)
+                    location.getBlock().setType(Material.AIR);
+            }
+            return false;
         });
     }
 
@@ -3201,7 +3117,7 @@ public final class Mine {
     }
 
 
-    public static List<Player> getPlayers(){
+    public static List<Player> getPlayers() {
         return new ArrayList<>(Bukkit.getOnlinePlayers());
 
     }
@@ -3269,16 +3185,6 @@ public final class Mine {
         return object == null ? "" : object.toString();
     }
 
-
-
-    public static String toTitle(String name) {
-        return Extra.toTitle(name);
-
-    }
-
-    public static String toTitle(String name, String replacer) {
-        return Extra.toTitle(name, replacer);
-    }
 
     public static ArrayList<Location> getCircle(Location center, double radius, int amount) {
         World world = center.getWorld();

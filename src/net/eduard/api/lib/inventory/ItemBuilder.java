@@ -2,6 +2,7 @@ package net.eduard.api.lib.inventory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -10,113 +11,123 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- * Sistema de contruir o Item e o item é a mesma classe que o Builder
- * 
- * @author Eduard
+ * Builder de Item que extende {@link ItemStack}
+ * <br>Não é um padrão comum de Java
+ * <br>
+ * Método build() gerá um instancia nova de ItemStack
  *
+ * @author Eduard
  */
 public class ItemBuilder extends ItemStack {
-	public ItemBuilder() {
-		setType(Material.STONE);
-		setAmount(1);
+    public ItemBuilder() {
+        this(Material.STONE, 1);
 
-	}
+    }
 
-	public ItemBuilder(Material type) {
-		setType(type);
-	}
+    public ItemBuilder(Material type) {
+        this(type, 1);
+    }
 
-	public ItemBuilder(Material type, int amount) {
-		setType(type);
-		setAmount(amount);
-	}
+    public ItemBuilder(Material type, int amount) {
+        setType(type);
+        setAmount(amount);
+    }
 
-	public ItemBuilder(String name) {
-		setType(Material.STONE);
-		setName(name);
-	}
+    public ItemBuilder(String name) {
+        this();
+        name(name);
+    }
 
-	public ItemBuilder amount(int amount) {
-		setAmount(amount);
-		return this;
-	}
+    public ItemBuilder amount(int amount) {
+        setAmount(amount);
+        return this;
+    }
 
-	public ItemBuilder setData(int data) {
-		setDurability((short) data);
-		return this;
-	}
+    public ItemBuilder data(int data) {
+        setDurability((short) data);
+        return this;
+    }
 
-	public ItemBuilder type(Material type) {
+    public ItemBuilder type(Material type) {
 
-		setType(type);
+        setType(type);
 
-		return this;
-	}
+        return this;
+    }
 
-	public ItemBuilder clearEnchants() {
+    public ItemBuilder clearEnchants() {
 
-		for (Enchantment enchant : getEnchantments().keySet()) {
-			removeEnchantment(enchant);
-		}
+        for (Enchantment enchant : getEnchantments().keySet()) {
+            removeEnchantment(enchant);
+        }
 
-		return this;
+        return this;
 
-	}
+    }
 
-	public ItemBuilder setLore(String... lore) {
+    public ItemBuilder lore(String... lore) {
+        return lore(Arrays.asList(lore));
+    }
 
-		ItemMeta meta = getItemMeta();
-		meta.setLore(Arrays.asList(lore));
-		setItemMeta(meta);
-		return this;
-	}
+    public ItemBuilder lore(Collection<String> lore) {
 
-	public List<String> getLore() {
-		ItemMeta meta = getItemMeta();
-		return meta.getLore();
-	}
+        ItemMeta meta = getItemMeta();
+        meta.setLore(new ArrayList<>(lore));
+        setItemMeta(meta);
+        return this;
+    }
 
-	public ItemBuilder addLore(String line) {
+    public List<String> getLore() {
+        ItemMeta meta = getItemMeta();
+        if (meta != null) {
+            return meta.getLore();
+        }
+        return new ArrayList<>();
+    }
 
-		ItemMeta meta = getItemMeta();
-		List<String> lore = meta.getLore();
-		if (lore == null) {
-			lore = new ArrayList<>();
-		}
-		lore.add(line);
-		meta.setLore(lore);
-		setItemMeta(meta);
-		return this;
-	}
+    public ItemBuilder addLore(String line) {
+        List<String> lore = getLore();
+        lore.add(line);
+        return lore(lore);
+    }
 
-	public ItemBuilder removeLore() {
-		ItemMeta meta = getItemMeta();
-		meta.setLore(null);
-		setItemMeta(meta);
-		return this;
-	}
+    public ItemBuilder removeLore() {
 
-	public ItemBuilder clearLore() {
-		ItemMeta meta = getItemMeta();
-		meta.setLore(new ArrayList<>());
-		setItemMeta(meta);
-		return this;
-	}
+        return lore();
+    }
 
-	public ItemBuilder addEnchant(Enchantment enchant, int level) {
+    public ItemBuilder clearLore() {
+        ItemMeta meta = getItemMeta();
+        meta.setLore(new ArrayList<>());
+        setItemMeta(meta);
+        return this;
+    }
 
-		addUnsafeEnchantment(enchant, level);
+    public ItemBuilder glowed() {
+        addEnchant(EnchantGlow.getGlow(), 1);
+        return this;
+    }
 
-		return this;
-	}
+    public ItemBuilder addEnchant(Enchantment enchant, int level) {
 
-	public ItemBuilder setName(String name) {
+        addUnsafeEnchantment(enchant, level);
 
-		ItemMeta meta = this.getItemMeta();
-		meta.setDisplayName(name);
-		setItemMeta(meta);
-		return this;
+        return this;
+    }
 
-	}
+    public ItemBuilder name(String name) {
+
+        ItemMeta meta = this.getItemMeta();
+        meta.setDisplayName(name);
+        setItemMeta(meta);
+        return this;
+
+    }
+
+
+    public ItemStack builder() {
+        return this.clone();
+    }
+
 
 }

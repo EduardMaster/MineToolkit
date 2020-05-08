@@ -31,6 +31,7 @@ import net.eduard.api.listener.PlayerTargetAtEntityListener
 import net.eduard.api.core.InfoGenerator
 import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.eduard.api.lib.database.DBManager
+import net.eduard.api.listener.LinkadorDeItem
 import net.eduard.api.server.EduardPlugin
 import net.eduard.api.server.currency.Currency
 import net.eduard.api.server.minigame.Minigame
@@ -69,11 +70,13 @@ class EduardAPI : EduardPlugin() {
         instance = this
 
         isFree = true
+
         reloadVars()
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
         StorageAPI.registerPackage(this::javaClass.get(), "net.eduard.api.lib")
         BukkitStorables.load()
+        StorageAPI.startGson();
         log("Storables do Bukkit carregado!")
         mainConfig()
         MAPS_CONFIG = Config(this,"maps/")
@@ -114,12 +117,14 @@ class EduardAPI : EduardPlugin() {
         SoundCommand().register()
         SetXPCommand().register()
         SetSkinCommand().register()
+
         log("Comandos ativados com sucesso")
 
         log("Ativando listeners dos Eventos")
         EduardAPIEvents().register(this)
         EduWorldEditListener().register(this)
         PlayerTargetAtEntityListener().register(this)
+        LinkadorDeItem().register(this)
         log("Listeners dos Eventos ativados com sucesso")
 
         log("Gerando Base de dados de Enums do Bukkit")

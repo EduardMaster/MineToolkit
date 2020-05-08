@@ -51,9 +51,9 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
 	public ItemStack enchant(ItemStack item, int level) {
 
 		item.addUnsafeEnchantment(this, level);
-		String romano = convertToRomano(level);
+
 		ItemMeta meta = item.getItemMeta();
-		String enchamentname = "§7" + getName() + " " + romano;
+		String enchamentname = "§7" + getName() + " " + level;
 		if (meta.getLore() == null) {
 
 			meta.setLore(Arrays.asList(enchamentname));
@@ -66,24 +66,7 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
 		return item;
 	}
 
-	public static String convertToRomano(int level) {
-		String romano = "I";
-		switch (level) {
-		case 2:
-			romano = "II";
-			break;
-		case 3:
-			romano = "III";
-			break;
-		case 4:
-			romano = "IV";
-			break;
-		case 5:
-			romano = "V";
-			break;
-		}
-		return romano;
-	}
+
 
 	public CustomEnchant register() {
 		setRegistred(true);

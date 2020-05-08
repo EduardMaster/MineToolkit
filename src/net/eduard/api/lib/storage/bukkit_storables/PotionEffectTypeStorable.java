@@ -5,11 +5,11 @@ import org.bukkit.potion.PotionEffectType;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.Storable.*;
 @StorageAttributes(inline=true)
-public class PotionEffectTypeStorable implements Storable {
+public class PotionEffectTypeStorable implements Storable<PotionEffectType> {
 
 
-	@Override
-	public Object restore(Object object) {
+
+	public PotionEffectType restore(String object) {
 		if (object instanceof String) {
 
 			String string = (String) object;
@@ -19,9 +19,8 @@ public class PotionEffectTypeStorable implements Storable {
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public Object store(Object object) {
+
+	public String store(PotionEffectType object) {
 		if (object instanceof PotionEffectType) {
 			PotionEffectType potionEffectType = (PotionEffectType) object;
 			return potionEffectType.getName() + ";" + potionEffectType.getId();

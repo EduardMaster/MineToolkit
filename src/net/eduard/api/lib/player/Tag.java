@@ -77,17 +77,7 @@ public class Tag implements Storable ,Copyable{
 		this.rank = rank;
 	}
 
-	@Override
-	public Object restore(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public String toString() {

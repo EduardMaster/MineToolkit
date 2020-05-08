@@ -12,9 +12,9 @@ import net.eduard.api.lib.game.Explosion
 import net.eduard.api.lib.game.Jump
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.modules.Copyable
-import net.eduard.api.lib.task.TimeManager
 
 open class EffectManager : TimeManager(), PlayerEffect, Copyable {
+
 
     @Transient
     open var CUSTOM_EFFECT: PlayerEffect? = null
@@ -44,9 +44,9 @@ open class EffectManager : TimeManager(), PlayerEffect, Copyable {
         for (cmd in MAKE_PLAYER_COMMANDS) {
             p.performCommand(cmd.replace("\$player", p.name).replaceFirst("/".toRegex(), ""))
         }
-        PLAY_SOUND?.create(p)
+
         if (PLAY_SOUND != null)
-            PLAY_SOUND!!.create(p)
+            PLAY_SOUND?.create(p)
         if (SEND_MESSAGE != null) {
             p.sendMessage(SEND_MESSAGE)
         }

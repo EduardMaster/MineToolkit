@@ -1,6 +1,9 @@
 package net.eduard.api.lib.storage;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,6 +14,10 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSerializer;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.java_storables.TimeStampStorable;
 import net.eduard.api.lib.storage.java_storables.UUIDStorable;
@@ -246,7 +253,7 @@ public class StorageAPI {
                 if (entry.getKey().isAssignableFrom(claz)) {
                     //System.out.println("Entry key "+entry.getKey());
                     store = entry.getValue();
-                }else if (claz.isAssignableFrom(entry.getKey())){
+                } else if (claz.isAssignableFrom(entry.getKey())) {
                     store = entry.getValue();
                 }
 
@@ -325,4 +332,39 @@ public class StorageAPI {
         StorageAPI.debug = debug;
     }
 
+    private static Gson gson;
+
+    public static void startGson() {
+        GsonBuilder b = new GsonBuilder()
+                .serializeSpecialFloatingPointValues()
+                .enableComplexMapKeySerialization();
+        storages.entrySet().forEach(entry -> {
+            Class<?> key = entry.getKey();
+            Storable value = entry.getValue();
+            if (value instanceof JsonSerializer && value instanceof JsonDeserializer) {
+                b.registerTypeAdapter(key, value);
+            }
+        });
+        gson = b.create();
+
+
+    }
+
+    public static <E> E loadGson(File arquivo, Class<E> clz) {
+        try {
+            return gson.fromJson(new String(Files.readAllBytes(arquivo.toPath())), clz);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void saveGson(File arquivo, Object data) {
+        try {
+            Files.write(arquivo.toPath(), gson.toJson(data).getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

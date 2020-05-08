@@ -3,5 +3,6 @@ description: API de desenvolvimento de plugins que facilita sua vida
 main: net.eduard.api.EduardBungeeAPI
 version: 1.0-Versao-Completa-na-Plugin-yml
 author: Eduard
+solfdepend: [KotlinForBungee]
 authors: [Eduard]
 website: https://www.youtube.com/user/EduTutoriaisHD

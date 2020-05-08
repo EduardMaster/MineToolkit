@@ -13,10 +13,7 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 public class Slot implements Storable,Copyable,Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
 	private int positionX, positionY;
 	private ItemStack item;
 	private EffectManager effects;
@@ -43,7 +40,7 @@ public class Slot implements Storable,Copyable,Serializable {
 	}
 
 	public Slot() {
-		// TODO Auto-generated constructor stub
+
 	}
 	public boolean equals(ItemStack item) {
 		return this.item.equals(item);
@@ -53,7 +50,7 @@ public class Slot implements Storable,Copyable,Serializable {
 		setPositionX(positionX);
 		setPositionY(positionY);
 		setItem(item);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public void setIndex(int index) {

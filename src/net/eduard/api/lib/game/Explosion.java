@@ -56,16 +56,7 @@ public class Explosion implements Storable{
 		location.getWorld().createExplosion(location.getX(), location.getY(), location.getZ(), power, makeFire, breakBlocks);
 		return this;
 	}
-	@Override
-	public Object restore(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-		// TODO Auto-generated method stub
-		
-	}
+
 	
 	
 }

@@ -6,30 +6,23 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.Storable.*;
 
-@StorageAttributes(inline=true)
-public class EnchantmentStorable implements Storable{
+@StorageAttributes(inline = true)
+public class EnchantmentStorable implements Storable<Enchantment> {
 
 
-		@SuppressWarnings("deprecation")
-		@Override
-		public Object store(Object object) {
-			if (object instanceof Enchantment) {
-				Enchantment enchantment = (Enchantment) object;
-				return enchantment.getId();
+    public String store(Enchantment enchantment) {
 
-			}
-			return null;
-		}
+        return "" + enchantment.getId();
 
-		@SuppressWarnings("deprecation")
-		@Override
-		public Object restore(Object object) {
-			if (object instanceof String) {
-				String string = (String) object;
-				return Enchantment.getById(Extra.toInt(string));
 
-			}
-			return null;
-		}
+    }
+
+
+    public Enchantment restore(String string) {
+
+        return Enchantment.getById(Extra.toInt(string));
+
+    }
+
 
 }

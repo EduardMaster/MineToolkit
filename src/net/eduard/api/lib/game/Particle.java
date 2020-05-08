@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
-public class Particle implements Storable {
+public class Particle implements Storable<Particle> {
 
 	private Location location;
 
@@ -153,16 +153,6 @@ public Particle() {
 	}
 
 
-	@Override
-	public Object restore(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }

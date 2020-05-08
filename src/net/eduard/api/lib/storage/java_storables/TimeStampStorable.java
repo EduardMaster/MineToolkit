@@ -1,36 +1,37 @@
 package net.eduard.api.lib.storage.java_storables;
 
+import java.lang.reflect.Type;
 import java.sql.Timestamp;
 
+import com.google.gson.*;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.Storable.*;
 
-@StorageAttributes(inline=true)
-public class TimeStampStorable implements Storable {
+@StorageAttributes(inline = true)
+public class TimeStampStorable implements Storable<Timestamp>  , JsonDeserializer<Timestamp>, JsonSerializer<Timestamp> {
 
-	@Override
-	public Object store(Object object) {
-		if (object instanceof Timestamp) {
-			Timestamp timestamp = (Timestamp) object;
-			return timestamp.getTime();
+    public String store(Timestamp timestamp) {
 
-		}
-		return null;
-	}
+        return "" + timestamp.getTime();
 
-	@Override
-	public Object restore(Object object) {
-		if (object instanceof Long) {
-			Long long1 = (Long) object;
-			return new Timestamp(long1);
-		}
-		if (object instanceof String) {
-			String string = (String) object;
-			return new Timestamp(Extra.toLong(string));
+    }
 
-		}
-		return null;
-	}
+
+    public Timestamp restore(Object string) {
+        return new Timestamp(Extra.toLong(string));
+
+
+    }
+    @Override
+    public Timestamp deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+
+        return new Timestamp(jsonElement.getAsLong());
+    }
+
+    @Override
+    public JsonElement serialize(Timestamp timestamp, Type type, JsonSerializationContext jsonSerializationContext) {
+        return jsonSerializationContext.serialize(timestamp.getTime());
+    }
 
 }

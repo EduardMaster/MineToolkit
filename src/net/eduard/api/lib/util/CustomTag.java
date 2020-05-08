@@ -1,4 +1,4 @@
-package net.eduard.api.lib.player;
+package net.eduard.api.lib.util;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

@@ -17,10 +17,10 @@ import net.eduard.api.lib.modules.Mine
 
 
 @Storable.StorageAttributes(indentificate = true)
-open class CommandManager(name: String, vararg aliases: String) : EventsManager(), TabCompleter, CommandExecutor {
+open class CommandManager(name: String, vararg aliases: String) : EventsManager(), TabCompleter, CommandExecutor, Storable<CommandManager> {
 
     @Storable.StorageAttributes(reference = true)
-     var parent: CommandManager? = null
+    var parent: CommandManager? = null
     var name: String
     var permission: String? = null
     @Transient

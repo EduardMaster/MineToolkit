@@ -1,5 +1,6 @@
 package net.eduard.api.server.minigame
 
+import net.eduard.api.lib.modules.Extra
 import java.util.ArrayList
 
 import org.bukkit.entity.Player
@@ -14,7 +15,7 @@ import kotlin.streams.toList
  *
  * @author Eduard-PC
  */
-class MinigameRoom : Storable {
+class MinigameRoom : Storable<MinigameRoom> {
 
     @StorageAttributes(reference = true)
     lateinit var minigame: Minigame
@@ -59,7 +60,8 @@ class MinigameRoom : Storable {
      */
     fun broadcast(message: String) {
         for (player in players) {
-            player.send(minigame!!.messagePrefix + message.replace("\$time", Mine.getTime(time)).replace("\$max", "" + map!!.maxPlayersAmount)
+
+            player.send(minigame!!.messagePrefix + message.replace("\$time", Extra.formatSeconds1(time)).replace("\$max", "" + map!!.maxPlayersAmount)
                     .replace("\$players", "" + players.size))
         }
     }

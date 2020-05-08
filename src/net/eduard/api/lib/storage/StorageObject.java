@@ -113,7 +113,7 @@ public class StorageObject extends StorageBase {
 //		}
 		if (isInline()) {
 
-			Object result = store.restore(data);
+			Object result = store.restore(data.toString());
 			if (result == null) {
 				debug(">> INLINE  " + data);
 				result = new StorageInline(getInfo().clone()).restore(data);
@@ -134,7 +134,7 @@ public class StorageObject extends StorageBase {
 				instance = store.newInstance();
 			} catch (Exception e) {
 				e.printStackTrace();
-				// TODO: handle exception
+
 			}
 			debug(">> NEW INSTANCE");
 
@@ -244,7 +244,7 @@ public class StorageObject extends StorageBase {
 		if (Extra.isList(claz)) {
 			debug("<< LIST " + new ArrayList<>((List<?>)data));
 
-			return new StorageList(getInfo().clone()).store(data);
+			return new StorageList(getInfo().clone()).store((List) data);
 		}
 		if (Extra.isMap(claz)) {
 			return new StorageMap(getInfo().clone()).store(data);

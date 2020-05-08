@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.click.PlayerInteract
-import net.eduard.api.lib.task.CooldownManager
+import net.eduard.api.lib.manager.CooldownManager
 import net.eduard.api.lib.modules.Copyable.*
 import net.eduard.api.lib.storage.Storable
 
@@ -37,7 +37,7 @@ open class KitAbility : CooldownManager() {
     protected val potions
         get() = APPLY_POTIONS
 
-    protected fun setTime(n : Int){
+    protected fun setTime(n: Int) {
 
         super.time = n.toLong()
     }
@@ -45,13 +45,13 @@ open class KitAbility : CooldownManager() {
 
     protected var jump
         get() = PLAY_JUMP
-        set(value){
+        set(value) {
             PLAY_JUMP = value
         }
 
     protected var sound
         get() = PLAY_SOUND
-        set(value){
+        set(value) {
             PLAY_SOUND = value
         }
 
@@ -76,17 +76,22 @@ open class KitAbility : CooldownManager() {
             SEND_MESSAGE = value
         }
 
-    fun getIcon(): ItemStack {
+    val icon: ItemStack
+        get() {
 
-        var item = ItemStack(itemType, 1)
-        var meta = item.itemMeta
-        meta.displayName = "§6Kit: §e$name"
-        meta.lore = lore
-        item.itemMeta = meta
+            var item = ItemStack(itemType, 1)
+            var meta = item.itemMeta
+            meta.displayName = "§e$name"
+            val list = mutableListOf<String>()
+            for (line in lore){
+                list.add("§f$line")
+            }
+            meta.lore = list
+            item.itemMeta = meta
 
 
-        return item
-    }
+            return item
+        }
 
     @Storable.StorageAttributes(reference = true)
     var kits: List<KitAbility> = ArrayList()
@@ -109,7 +114,7 @@ open class KitAbility : CooldownManager() {
     }
 
     fun add(type: Material) {
-        ITEMS_TO_GIVE.add(Mine.newItem("§b" + name, type))
+        ITEMS_TO_GIVE.add(Mine.newItem(type,"§b" + name))
 
     }
 

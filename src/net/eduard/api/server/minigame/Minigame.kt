@@ -9,7 +9,7 @@ import org.bukkit.plugin.Plugin
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.player.DisplayBoard
 import net.eduard.api.lib.inventory.Kit
-import net.eduard.api.lib.task.TimeManager
+import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.bungee.BukkitBungeeAPI
 
 /**
@@ -51,7 +51,7 @@ open class Minigame : TimeManager {
     var chests = MinigameChest()
     var chestsFeast = MinigameChest()
     var chestMiniFeast = MinigameChest()
-    var kits: List<Kit> = ArrayList()
+    var kits: MutableList<Kit> = ArrayList()
     var lobbies: MutableList<MinigameLobby> = ArrayList()
     var maps: MutableList<MinigameMap> = ArrayList()
     var rooms: MutableList<MinigameRoom> = ArrayList()
@@ -431,10 +431,7 @@ open class Minigame : TimeManager {
         this.rooms.remove(game)
     }
 
-    override fun restore(map: Map<String, Any>): Any? {
 
-        return null
-    }
 
     /**
      * Metodo que é executado a cada segundo e executa o metodo de cada sala

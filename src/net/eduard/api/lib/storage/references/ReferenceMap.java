@@ -5,30 +5,23 @@ import java.util.Map.Entry;
 
 import net.eduard.api.lib.storage.StorageAPI;
 
-public class ReferenceMap extends ReferenceBase{
-	private Map<Object,Integer> map;
+public class ReferenceMap extends ReferenceBase<Map<Object,Integer>>{
+
 	public ReferenceMap(Map<Object,Integer> map, Object instance) {
-		super(null, instance);
-		setMap(map);
+		super(map,null, instance);
+
 	}
 
-	@Override
+
 	public void update() {
 		@SuppressWarnings("unchecked")
 		Map<Object,Object>newMap =  (Map<Object, Object>) getInstance();
-		for (Entry<Object, Integer> entry : map.entrySet()) {
+		for (Entry<Object, Integer> entry : getRestore().entrySet()) {
 			newMap.put(entry.getKey(), StorageAPI.getObjectById(entry.getValue()));
 		}
 		
 		
 	}
 
-	public Map<Object,Integer> getMap() {
-		return map;
-	}
-
-	public void setMap(Map<Object,Integer> map) {
-		this.map = map;
-	}
 
 }

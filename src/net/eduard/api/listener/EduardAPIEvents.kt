@@ -7,8 +7,11 @@ import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.server.ServerListPingEvent
@@ -24,6 +27,13 @@ import org.bukkit.scheduler.BukkitRunnable
  */
 class EduardAPIEvents : EventsManager() {
 
+    @EventHandler
+    fun onChat(e : AsyncPlayerChatEvent){
+        val p = e.player
+        if (p.hasPermission("chat.color")){
+            e.message = ChatColor.translateAlternateColorCodes('&',e.message)
+        }
+    }
 
     @EventHandler
     fun marketing(e: PlayerJoinEvent) {

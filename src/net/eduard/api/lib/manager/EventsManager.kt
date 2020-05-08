@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 import net.eduard.api.lib.modules.Copyable.NotCopyable
 import net.eduard.api.lib.storage.Storable
+import java.util.*
 
 /**
  * Controlador de Eventos ([Listener])
@@ -16,7 +17,7 @@ import net.eduard.api.lib.storage.Storable
  * @author Eduard
  * @version 2.0
  */
-open class EventsManager : Listener, Storable {
+open class EventsManager : Listener {
     /**
      * Se o Listener esta registrado
      */

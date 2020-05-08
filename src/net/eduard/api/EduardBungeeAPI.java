@@ -58,8 +58,7 @@ public class EduardBungeeAPI extends EduardBungeePlugin{
 		instance = this;
 		
 		reload();
-		
-		
+
 		
 		registerEvents(this);
 	

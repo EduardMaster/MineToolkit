@@ -3,6 +3,7 @@ package net.eduard.api.lib.player;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.eduard.api.lib.player.FakePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;

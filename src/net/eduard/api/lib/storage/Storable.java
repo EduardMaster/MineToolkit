@@ -17,10 +17,10 @@ import java.util.Map;
  * @see Extra
  * @version 3.0
  */
-public interface Storable {
+public interface Storable<T> {
 
 
-	@Target({ java.lang.annotation.ElementType.FIELD, ElementType.TYPE, })
+	@Target({ java.lang.annotation.ElementType.FIELD, ElementType.TYPE })
 	@Retention(RetentionPolicy.RUNTIME)
 	 @interface StorageAttributes {
 
@@ -30,8 +30,6 @@ public interface Storable {
 
 		boolean inline() default false;
 
-		//boolean auto() default true;
-
 	}
 
 	/**
@@ -40,7 +38,7 @@ public interface Storable {
 	 * @param map Mapa
 	 * @return Objeto
 	 */
-	 default Object restore(Map<String, Object> map) {
+	 default T restore(Map<String, Object> map) {
 
 		return null;
 	}
@@ -51,9 +49,10 @@ public interface Storable {
 	 * @param map    Mapa
 	 * @param object Objeto
 	 */
-	 default void store(Map<String, Object> map, Object object) {
+	 default void store(Map<String, Object> map, T object) {
 
 	}
+
 
 	/**
 	 * Gera uma nova instancia do objeto
@@ -61,9 +60,9 @@ public interface Storable {
 	 *
 	 * @return Nova Instancia
 	 */
-	 default Object newInstance() {
+	 default T newInstance() {
 		try {
-			return Extra.getNew(getClass());
+			return (T) Extra.getNew(getClass());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -71,20 +70,20 @@ public interface Storable {
 		return null;
 	}
 	/**
-	 *  Cria um novo Objeto pelo Objeto String
-	 * @param object Objeto String
+	 *  Deserializa o Objeto apartir de uma String
+	 * @param string String
 	 * @return Objeto
 	 */
-	 default Object restore(Object object) {
+	 default T restore(String string) {
 
 		return null;
 	}
 	/**
-	 * Gera um objeto armazenal em STRING apartir do Objeto 1
+	 * Serializa o Objeto em uma String
 	 * @param object Objeto
-	 * @return String Objeto
+	 * @return String
 	 */
-	 default Object store(Object object) {
+	 default String store(T object) {
 		return null;
 	}
 

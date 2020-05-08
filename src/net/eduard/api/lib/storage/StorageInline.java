@@ -96,12 +96,13 @@ public class StorageInline extends StorageBase {
 
 						if (storage.isInline()) {
 							int length = index + field.getType().getDeclaredFields().length;
+
 							StringBuilder b = new StringBuilder();
 							while (index < length) {
 								b.append(split[index] + ";");
 								index++;
 							}
-							fieldFinalValue = store.restore(b.toString());
+							fieldFinalValue = storage.restore(b.toString());
 						} else if (storage.isReference()) {
 							if (fieldFinalValue.toString().contains(StorageAPI.REFER_KEY)) {
 								StorageAPI.newReference(new ReferenceValue(
@@ -181,7 +182,12 @@ public class StorageInline extends StorageBase {
 						storage.updateByField();
 
 						if (storage.isInline()) {
-							b.append(store.store(fieldValue));
+							debug("salvando inline dentro de inline " +fieldValue);
+
+							Object r =   storage.store(fieldValue);
+							debug("resultado inline "+r);
+							b.append(r);
+							continue;
 						} else if (storage.isReference()) {
 							b.append(getAlias(fieldValue.getClass()) + StorageAPI.REFER_KEY
 									+ StorageAPI.getIdByObject(fieldValue));

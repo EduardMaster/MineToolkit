@@ -4,30 +4,25 @@ import java.util.List;
 
 import net.eduard.api.lib.storage.StorageAPI;
 
-public class ReferenceList extends ReferenceBase {
+public class ReferenceList extends ReferenceBase<List<Integer>> {
 
-	private List<Integer> list;
 
-	public ReferenceList(List<Integer> list,Object result) {
-		super(null, result);
-		setList(list);
+
+	public ReferenceList(List<Integer> listOfReferences, Object listOriginal) {
+		super(listOfReferences, null, listOriginal);
+
 	}
 
 	@Override
 	public void update() { 
 		@SuppressWarnings("unchecked")
 		List<Object> newList = (List<Object>) getInstance();
-		for (Integer item : list) {
+		for (Integer item : getRestore()) {
 			newList.add(StorageAPI.getObjectById(item));
 		}
+
 	}
 
-	public List<Integer> getList() {
-		return list;
-	}
 
-	public void setList(List<Integer> list) {
-		this.list = list;
-	}
 
 }

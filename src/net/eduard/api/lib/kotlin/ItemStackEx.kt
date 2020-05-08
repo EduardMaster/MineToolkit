@@ -32,7 +32,7 @@ var ItemStack.lore: List<String>
     }
 
 
-fun ItemStack.setLore(vararg lore: String) : ItemStack {
+fun ItemStack.lore(vararg lore: String) : ItemStack {
 
     this.lore = lore.toList()
     return this
@@ -65,7 +65,7 @@ fun ItemStack.addEnchant(ench: Enchantment, level: Int): ItemStack {
     return this
 }
 
-fun ItemStack.setColor(color: Color): ItemStack {
+fun ItemStack.color(color: Color): ItemStack {
 
     if (!type.name.contains("LEATHER"))
         type = Material.LEATHER_CHESTPLATE

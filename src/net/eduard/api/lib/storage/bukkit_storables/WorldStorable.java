@@ -7,26 +7,21 @@ import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(inline = true)
-public class WorldStorable implements Storable {
+public class WorldStorable implements Storable<World> {
 
-	@Override
-	public Object restore(Object object) {
-		if (object instanceof String) {
-			String world = (String) object;
-			return Bukkit.getWorld(world);
 
-		}
-		return null;
-	}
+    public World restore(String str) {
 
-	@Override
-	public Object store(Object object) {
-		if (object instanceof World) {
-			World world = (World) object;
-			return world.getName();
+        return Bukkit.getWorld(str);
 
-		}
-		return null;
-	}
+
+    }
+
+
+    public String store(World world) {
+
+        return world.getName();
+
+    }
 
 }

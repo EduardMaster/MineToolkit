@@ -20,6 +20,7 @@ import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.inventory.ClickEffect
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.storage.Storable
 
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
@@ -27,7 +28,7 @@ import net.eduard.api.lib.modules.Extra
  *
  * @author Eduard
  */
-open class Menu : EventsManager, Copyable, PagedMenu {
+open class Menu : EventsManager, Copyable, PagedMenu,  Storable<Menu>  {
     @Transient
     var superiorMenu: Menu? = null
     var title = "Menu"
@@ -46,7 +47,7 @@ open class Menu : EventsManager, Copyable, PagedMenu {
     var backPage = Slot(
             Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal", 1, 0, "§2Clique para ir para a página superior"), 1, 2)
     var nextPage = Slot(
-            Mine.newItem("§aPróxima Página", Material.ARROW, 1, 0, "§2Clique para ir para a próxima página"), 9, 2)
+            Mine.newItem( Material.ARROW,"§aPróxima Página", 1, 0, "§2Clique para ir para a próxima página"), 9, 2)
     var buttons = ArrayList<MenuButton>()
     @Copyable.NotCopyable
     @Transient

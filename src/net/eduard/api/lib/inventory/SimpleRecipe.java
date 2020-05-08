@@ -2,14 +2,13 @@ package net.eduard.api.lib.inventory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import net.eduard.api.lib.storage.Storable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 
-import net.eduard.api.lib.storage.Storable;
 /**
  * Craft simples
  * <br><br>
@@ -82,14 +81,7 @@ public class SimpleRecipe implements Storable {
 		return recipe;
 	}
 
-	@Override
-	public Object restore(Map<String, Object> map) {
-		return null;
-	}
 
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-	}
 
 	public void setResult(ItemStack result) {
 		this.result = result;

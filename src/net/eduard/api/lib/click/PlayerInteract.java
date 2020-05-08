@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import net.eduard.api.lib.manager.EventsManager;
 import net.eduard.api.lib.storage.Storable;
 
-public abstract class PlayerInteract extends EventsManager implements  Storable{
+public abstract class PlayerInteract extends EventsManager implements  Storable<PlayerInteract>{
 	
 	private ItemStack item;
 	

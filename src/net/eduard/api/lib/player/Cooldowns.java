@@ -1,4 +1,4 @@
-package net.eduard.api.lib.task;
+package net.eduard.api.lib.player;
 
 import java.util.HashMap;
 import java.util.Map;

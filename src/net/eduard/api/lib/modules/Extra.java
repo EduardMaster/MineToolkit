@@ -15,12 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.CodeSource;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -89,7 +84,13 @@ public final class Extra {
         ALPHANUMERIC;
     }
 
-
+    /**
+     * Pega o texto escrito no command
+     *
+     * @param init Inicio do texto
+     * @param args Argumentos
+     * @return Texto criado
+     */
     public static String getText(int init, String... args) {
         StringBuilder text = new StringBuilder();
         int id = 0;
@@ -169,7 +170,6 @@ public final class Extra {
     public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
     public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
     private static Map<String, String> replacers = new LinkedHashMap<>();
-
 
 
     public static Random RANDOM = new Random();
@@ -291,7 +291,6 @@ public final class Extra {
         }
         System.out.println(" ");
     }
-
 
 
     /**
@@ -516,7 +515,7 @@ public final class Extra {
                 text = text.replace(sigla, "");
 
                 double valor = Extra.toDouble(text);
-               valor = fixDouble(valor);
+                valor = fixDouble(valor);
                 double potencia = Math.pow(10, (i + 1) * 3);
 
                 return valor * potencia;
@@ -527,9 +526,10 @@ public final class Extra {
 
         return fixDouble(Extra.toDouble(text));
     }
-    public static double fixDouble(double number){
-        if (Double.isInfinite(number)||Double.isNaN(number)){
-           return 1;
+
+    public static double fixDouble(double number) {
+        if (Double.isInfinite(number) || Double.isNaN(number)) {
+            return 1;
         }
         return number;
     }
@@ -537,7 +537,7 @@ public final class Extra {
     /**
      * Formata um numero grande, formatação estilo de servidores OP
      * <br>
-     *     Método concertado dia 22/03/2020
+     * Método concertado dia 22/03/2020
      *
      * @param numero Numero grande
      * @return Numero formatado
@@ -553,7 +553,7 @@ public final class Extra {
 
         char separador = formatador.getDecimalFormatSymbols().getGroupingSeparator();
 
-        String[] conjuntoDeTresCasas = numeroFormatado.split( ""+separador);
+        String[] conjuntoDeTresCasas = numeroFormatado.split("" + separador);
         int tamanho = conjuntoDeTresCasas.length;
         if (tamanho <= 1) {
 
@@ -650,22 +650,6 @@ public final class Extra {
         return diff.isEmpty() ? "agora" : diff;
     }
 
-    public static String fromJavaToSQL(Object value) {
-        if (value == null) {
-            return "NULL";
-        }
-        Class<? extends Object> type = value.getClass();
-        if (type == boolean.class || type == Boolean.class) {
-            value = Boolean.valueOf(value.toString()) ? 1 : 0;
-        }
-        if (type == java.util.Date.class) {
-            value = new Date(((java.util.Date) value).getTime());
-        } else if (value instanceof Calendar) {
-            value = new Timestamp(((Calendar) value).getTimeInMillis());
-        }
-
-        return value.toString();
-    }
 
     /**
      * Pega uma lista de classes de uma package <br>
@@ -697,30 +681,6 @@ public final class Extra {
         return classes;
     }
 
-    public static Object fromSQLToJava(Class<?> type, Object value) {
-        if (type == UUID.class) {
-            return UUID.fromString(value.toString());
-        }
-        if (type == Character.class) {
-            return value.toString().toCharArray()[0];
-        }
-        if (type == Calendar.class) {
-            if (value instanceof Timestamp) {
-                Timestamp timestamp = (Timestamp) value;
-                Calendar calendario = Calendar.getInstance();
-                calendario.setTimeInMillis(timestamp.getTime());
-                return calendario;
-            }
-        }
-        if (type == java.util.Date.class) {
-            if (value instanceof Date) {
-                Date date = (Date) value;
-                return new java.util.Date(date.getTime());
-            }
-        }
-
-        return value;
-    }
 
     public static List<String> getClassesName(JarFile jar, String pack) {
         List<String> lista = new ArrayList<>();
@@ -860,20 +820,7 @@ public final class Extra {
         return command;
     }
 
-    public static Constructor<?> getConstructor(Object object, Object... parameters) throws Exception {
 
-        Class<?> claz = getClassFrom(object);
-        try {
-            Constructor<?> cons = claz.getDeclaredConstructor(getParameters(parameters));
-            cons.setAccessible(true);
-            return cons;
-        } catch (Exception e) {
-            Constructor<?> cons = claz.getConstructor(getParameters(parameters));
-            cons.setAccessible(true);
-            return cons;
-        }
-
-    }
 
     /**
      * Pega o tempo restante que podera sair do cooldown
@@ -893,19 +840,7 @@ public final class Extra {
 
     }
 
-    public static Field getField(Object object, String name) throws Exception {
-        Class<?> claz = getClassFrom(object);
-        try {
-            Field field = claz.getDeclaredField(name);
-            field.setAccessible(true);
-            return field;
-        } catch (Exception e) {
-            Field field = claz.getField(name);
-            field.setAccessible(true);
-            return field;
-        }
 
-    }
 
     public static int getIndex(int column, int line) {
         if (line <= 0) {
@@ -927,41 +862,13 @@ public final class Extra {
         return (index / 9) + 1;
     }
 
-    public static Method getMethod(Object object, String name, Object... parameters) throws Exception {
-        Class<?> claz = getClassFrom(object);
-        try {
-            Method method = claz.getDeclaredMethod(name, getParameters(parameters));
-            method.setAccessible(true);
-            return method;
-        } catch (Exception e) {
-            Method method = claz.getMethod(name, getParameters(parameters));
-            method.setAccessible(true);
-            return method;
-        }
 
-    }
-
-    public static Object getNew(Object object, Object... values) throws Exception {
-        return getConstructor(object, values).newInstance(values);
-
-    }
-
-    public static Object getNew(Object object, Object[] parameters, Object... values) throws Exception {
-        return getConstructor(object, parameters).newInstance(values);
-    }
 
     public static long getNow() {
         return System.currentTimeMillis();
     }
 
-    public static Class<?>[] getParameters(Object... parameters) throws Exception {
-        Class<?>[] objects = new Class<?>[parameters.length];
-        for (int i = 0; i < parameters.length; i++) {
-            objects[i] = getClassFrom(parameters[i]);
-        }
-        return objects;
 
-    }
 
     /**
      * Pega o id retornado da Mojang vindo em um JSON
@@ -1014,50 +921,62 @@ public final class Extra {
         return result.toString();
     }
 
-    /**
-     * Gera um texto com "?" baseado na quantidade<br>
-     * Exemplo 5 = "? , ?,?,?,?"
+
+    /*
+     * INICIO DA AREA DE REFLECTION
      *
-     * @param size Quantidade
-     * @return Texto criado
      */
-    public static String getQuestionMarks(int size) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < size; i++) {
-            if (i != 0)
-                builder.append(",");
-            builder.append("?");
+    public static Constructor<?> getConstructor(Object object, Object... parameters) throws Exception {
+
+        Class<?> claz = getClassFrom(object);
+        try {
+            Constructor<?> cons = claz.getDeclaredConstructor(getParameters(parameters));
+            cons.setAccessible(true);
+            return cons;
+        } catch (Exception e) {
+            Constructor<?> cons = claz.getConstructor(getParameters(parameters));
+            cons.setAccessible(true);
+            return cons;
         }
-        return builder.toString();
+
     }
 
-    @SafeVarargs
-    public static <E> E getRandom(E... objects) {
-        if (objects.length >= 1)
-            return objects[getRandomInt(1, objects.length) - 1];
-        return null;
+    public static Method getMethod(Object object, String name, Object... parameters) throws Exception {
+        Class<?> claz = getClassFrom(object);
+        try {
+            Method method = claz.getDeclaredMethod(name, getParameters(parameters));
+            method.setAccessible(true);
+            return method;
+        } catch (Exception e) {
+            Method method = claz.getMethod(name, getParameters(parameters));
+            method.setAccessible(true);
+            return method;
+        }
+
     }
 
-    public static <E> E getRandom(List<E> objects) {
-        if (objects.size() >= 1)
-            return objects.get(getRandomInt(0, objects.size()));
-        return null;
+    public static Object getNew(Object object, Object... values) throws Exception {
+        return getConstructor(object, values).newInstance(values);
+
     }
 
-    public static double getRandomDouble(double minValue, double maxValue) {
-
-        double min = Math.min(minValue, maxValue), max = Math.max(minValue, maxValue);
-        return min + (max - min) * RANDOM.nextDouble();
+    public static Object getValue(Object object, String name) throws Exception {
+        return getField(object, name).get(object);
     }
 
-    public static int getRandomInt(int minValue, int maxValue) {
-
-        int min = Math.min(minValue, maxValue), max = Math.max(minValue, maxValue);
-        return min + RANDOM.nextInt(max - min + 1);
+    public static void setValue(Object object, String name, Object value) throws Exception {
+        getField(object, name).set(object, value);
     }
+    public static Object getNew(Object object, Object[] parameters, Object... values) throws Exception {
+        return getConstructor(object, parameters).newInstance(values);
+    }
+    public static Class<?>[] getParameters(Object... parameters) throws Exception {
+        Class<?>[] objects = new Class<?>[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            objects[i] = getClassFrom(parameters[i]);
+        }
+        return objects;
 
-    public static String getReplacer(String key) {
-        return replacers.get(key);
     }
 
     public static Object getResult(Object object, String name, Object... values) throws Exception {
@@ -1072,6 +991,55 @@ public final class Extra {
             return null;
         }
 
+    }
+    public static Field getField(Object object, String name) throws Exception {
+        Class<?> claz = getClassFrom(object);
+        try {
+            Field field = claz.getDeclaredField(name);
+            field.setAccessible(true);
+            return field;
+        } catch (Exception e) {
+            Field field = claz.getField(name);
+            field.setAccessible(true);
+            return field;
+        }
+
+    }
+
+    /*
+
+    FIM DA AREA DE REFLECTION
+
+     */
+
+    public static <E> E getRandom(List<E> objects) {
+        if (objects.size() >= 1)
+            return objects.get(getRandomInt(0, objects.size()));
+        return null;
+    }
+
+    @SafeVarargs
+    public static <E> E getRandom(E... objects) {
+        if (objects.length >= 1)
+            return objects[getRandomInt(1, objects.length) - 1];
+        return null;
+    }
+
+    public static double getRandomDouble(double minValue, double maxValue) {
+
+        double min = Math.min(minValue, maxValue), max = Math.max(minValue, maxValue);
+        return min + (max - min) * RANDOM.nextDouble();
+    }
+
+
+    public static int getRandomInt(int minValue, int maxValue) {
+
+        int min = Math.min(minValue, maxValue), max = Math.max(minValue, maxValue);
+        return min + RANDOM.nextInt(max - min + 1);
+    }
+
+    public static String getReplacer(String key) {
+        return replacers.get(key);
     }
 
     /**
@@ -1105,23 +1073,24 @@ public final class Extra {
      * @return Ip do Servidor
      */
     public static String getServerIp() {
+        String ip = null;
         try {
             URLConnection connect = new URL("http://checkip.amazonaws.com/").openConnection();
             connect.addRequestProperty("User-Agent",
                     "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
             Scanner scan = new Scanner(connect.getInputStream());
-            StringBuilder sb = new StringBuilder();
-            while (scan.hasNext()) {
-                sb.append(scan.next());
+
+            if (scan.hasNext()) {
+                ip = scan.nextLine();
             }
             scan.close();
-            return sb.toString();
 
         } catch (Exception ex) {
+            ex.printStackTrace();
 
-            String ip = null;
-            return ip;
+
         }
+        return ip;
     }
 
     /**
@@ -1155,104 +1124,37 @@ public final class Extra {
         return null;
     }
 
-    public static String getSQLType(Class<?> type, int size) {
-        Class<?> wrapper = Extra.getWrapper(type);
-        if (wrapper != null) {
-            type = wrapper;
-        }
-        if (String.class.isAssignableFrom(type)) {
-            return "VARCHAR" + "(" + size + ")";
-        } else if (Integer.class == type) {
-            return "INTEGER" + "(" + size + ")";
-        } else if (Boolean.class == type) {
-            return "TINYINT(1)";
-        } else if (Short.class == type) {
-            return "SMALLINT" + "(" + size + ")";
-        } else if (Byte.class == type) {
-            return "TINYINT" + "(" + size + ")";
-        } else if (Long.class == type) {
-            return "BIGINT" + "(" + size + ")";
-        } else if (Character.class == type) {
-            return "CHAR" + "(" + size + ")";
-        } else if (Float.class == type) {
-            return "FLOAT";
-        } else if (Double.class == type) {
-            return "DOUBLE";
-        } else if (Number.class.isAssignableFrom(type)) {
-            return "NUMERIC";
-        } else if (Timestamp.class.equals(type)) {
-            return "TIMESTAMP";
-        } else if (Calendar.class.equals(type)) {
-            return "DATETIME";
-        } else if (Date.class.equals(type)) {
-            return "DATE";
-        } else if (java.util.Date.class.equals(type)) {
-            return "DATE";
-        } else if (Time.class.equals(type)) {
-            return "TIME";
-        } else if (UUID.class.isAssignableFrom(type)) {
-            return "VARCHAR(40)";
-        }
 
-        return null;
-    }
-
-    public static Object getSQLValue(ResultSet rs, Class<?> type, String column) {
-        Object result = null;
-        try {
-            Class<?> wrap = getWrapper(type);
-            if (wrap != null) {
-                type = wrap;
-            }
-            result = rs.getObject(column);
-            if (type == Boolean.class) {
-                result = rs.getBoolean(column);
-            }
-            if (type == Byte.class) {
-                result = rs.getByte(column);
-            }
-            if (type == Short.class) {
-                result = rs.getShort(column);
-            }
-
-            result = fromSQLToJava(type, result);
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
-    public static String getTime(int time) {
-
-        return getTime(time, " segundo(s)", " minuto(s) ");
-
-    }
-
-    public static String getTime(int time, String second, String minute) {
+    public static String formatSeconds(int time, String secondDisplay, String minuteDisplay) {
         if (time >= 60) {
             int min = time / 60;
             int sec = time % 60;
             if (sec == 0) {
-                return min + minute;
+                return min + minuteDisplay;
             } else {
-                return min + minute + sec + second;
+                return min + minuteDisplay + sec + secondDisplay;
             }
 
         }
-        return time + second;
+        return time + secondDisplay;
     }
 
-    public static String getTimeMid(int time) {
 
-        return getTime(time, " seg", " min ");
+    public static String formatSeconds1(int seconds) {
+
+        return formatSeconds(seconds, "s", "m");
 
     }
 
-    public static String getTimeSmall(int time) {
+    public static String formatSeconds2(int seconds) {
 
-        return getTime(time, "s", "m");
+        return formatSeconds(seconds, " seg", " min ");
+
+    }
+
+    public static String formatSeconds3(int seconds) {
+
+        return formatSeconds(seconds, " segundo(s)", " minuto(s) ");
 
     }
 
@@ -1288,9 +1190,6 @@ public final class Extra {
         return null;
     }
 
-    public static Object getValue(Object object, String name) throws Exception {
-        return getField(object, name).get(object);
-    }
 
     /**
      * Gera o preco da classe baseado em suas variaveis , metodos e demais coisas
@@ -1403,7 +1302,6 @@ public final class Extra {
         }
         return null;
     }
-
 
 
     /**
@@ -1600,6 +1498,7 @@ public final class Extra {
     public static <T> Set<T> newSet(T... array) {
         Set<T> set = new HashSet<>();
 
+
         for (T element : array) {
             set.add(element);
         }
@@ -1685,10 +1584,14 @@ public final class Extra {
         return c.getTimeInMillis();
     }
 
-    /**
-     *
-     */
 
+    /**
+     * Lê um lista de Objetos apartir de uma Array de byte
+     *
+     * @param message array de byte
+     * @param oneLine se foi salvo os objetos na mesma linha do arquivo
+     * @return lista de objetos restaurados dos bytes
+     */
     public static List<Object> read(byte[] message, boolean oneLine) {
         List<Object> lista = new ArrayList<>();
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
@@ -1768,7 +1671,6 @@ public final class Extra {
     }
 
 
-
     /**
      * Salva um Objecto no Arquivo em forma de serialização Java
      *
@@ -1791,25 +1693,6 @@ public final class Extra {
 
     }
 
-    /**
-     * Seta um valor para um determinado ? de um PreparedStatement
-     *
-     * @param state State
-     * @param param Posissao
-     * @param value Valor ser setado
-     */
-    public static void setSQLValue(PreparedStatement state, int param, Object value) {
-        try {
-            state.setString(param, fromJavaToSQL(value));
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public static void setValue(Object object, String name, Object value) throws Exception {
-        getField(object, name).set(object, value);
-    }
 
     public static String simpleDeosfucation(String str) {
         final String[] split = str.split(";");
@@ -2060,16 +1943,11 @@ public final class Extra {
     /**
      * Transforma uma Coleção de Texto em uma String (Texto)
      *
-     * @param message Mensagem
+     * @param text Mensagem
      * @return o texto gerado apartir da coleção
      */
-    public static String toText(Collection<String> message) {
-        return message.toString().replace("[", "").replace("]", "");
-    }
-
-    public static String toText(int size, String text) {
-
-        return text.length() > size ? text.substring(0, size) : text;
+    public static String removeBrackets(Collection<String> text) {
+        return text.toString().replace("[", "").replace("]", "");
     }
 
     /**
@@ -2088,11 +1966,13 @@ public final class Extra {
         return builder.toString();
     }
 
-    public static String toText(String text) {
 
-        return toText(16, text);
-    }
-
+    /**
+     * Captaliza uma String
+     *
+     * @param name Nome (String)
+     * @return String capitalizada
+     */
     public static String toTitle(String name) {
         if (name == null)
             return "";
@@ -2102,6 +1982,13 @@ public final class Extra {
 
     }
 
+    /**
+     * capitaliza uma Frase
+     *
+     * @param name     Frase
+     * @param replacer O que será colocado entre as palavras
+     * @return Frase capitalizada
+     */
     public static String toTitle(String name, String replacer) {
         if (name.contains("_")) {
             String customName = "";

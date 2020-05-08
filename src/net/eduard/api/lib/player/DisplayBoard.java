@@ -28,7 +28,7 @@ import net.eduard.api.lib.storage.Storable;
  *
  */
 
-public class DisplayBoard implements Storable, Copyable {
+public class DisplayBoard implements Storable<DisplayBoard>, Copyable {
 
 	/**
 	 * Tamanho limite do Nome do Jogador Linha Acima da 1.7
@@ -420,23 +420,22 @@ public class DisplayBoard implements Storable, Copyable {
 	}
 
 	@Override
-	public Object restore(Map<String, Object> map) {
+	public DisplayBoard restore(Map<String, Object> map) {
 		update();
 		return null;
 	}
 
-//	@Override
+	/*
 	public void onCopy() {
+
 		Mine.console("§fDisplayBoard executando onCopy()");
 		init();
 
 	}
 
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-		// TODO Auto-generated method stub
+	 */
 
-	}
+
 
 	public boolean isPerfect() {
 		return perfect;

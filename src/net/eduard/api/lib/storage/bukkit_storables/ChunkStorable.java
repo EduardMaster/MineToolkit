@@ -7,29 +7,24 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.Storable.*;
 
-@StorageAttributes(inline=true)
-public class ChunkStorable implements Storable {
+@StorageAttributes(inline = true)
+public class ChunkStorable implements Storable<Chunk> {
 
-	@Override
-	public Object restore(Object object) {
-		if (object instanceof String) {
-			String string = (String) object;
-			String[] split = string.split(";");
-			return Bukkit.getWorld(split[0]).getChunkAt(Extra.toInt(split[1]), Extra.toInt(split[2]));
 
-		}
-		return null;
-	}
+    public Chunk restore(String string) {
 
-	@Override
-	public Object store(Object object) {
-		if (object instanceof Chunk) {
-			Chunk chunk = (Chunk) object;
-			return chunk.getWorld().getName() + ";" + chunk.getX() + ";" + chunk.getZ();
-		}
+        String[] split = string.split(";");
+        return Bukkit.getWorld(split[0]).getChunkAt(Extra.toInt(split[1]), Extra.toInt(split[2]));
 
-		return null;
-	}
+    }
+
+
+    public String store(Chunk chunk) {
+
+
+        return chunk.getWorld().getName() + ";" + chunk.getX() + ";" + chunk.getZ();
+
+    }
 
 
 }

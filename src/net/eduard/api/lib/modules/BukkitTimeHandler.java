@@ -1,4 +1,4 @@
-package net.eduard.api.lib.task;
+package net.eduard.api.lib.modules;
 
 
 import org.bukkit.Bukkit;
@@ -18,7 +18,22 @@ public interface BukkitTimeHandler {
      */
     Plugin getPluginConnected();
 
+    default BukkitTask newTask(long time, boolean repeat, boolean async, Runnable task) {
+        if (repeat) {
+            if (async) {
+                return getScheduler().runTaskTimerAsynchronously(getPluginConnected(), task, time, time);
+            } return getScheduler().runTaskTimer(getPluginConnected(), task, time, time);
+        }else{
+            if (async){
+                return getScheduler().runTaskLaterAsynchronously(getPluginConnected(), task, time);
+            }else{
+                return getScheduler().runTaskLater(getPluginConnected(), task, time);
+            }
+        }
+    }
+
     default BukkitTask asyncTimer(Runnable runnable, long ticks, long startTicks) {
+
         return newTimer(runnable, ticks, startTicks, true);
     }
 
@@ -44,7 +59,7 @@ public interface BukkitTimeHandler {
     }
 
     default BukkitTask newTimer(Runnable runnable, long ticks, long startTicks, boolean async) {
-       
+
         if (async)
             return getScheduler().runTaskTimerAsynchronously(getPluginConnected(), runnable, startTicks, ticks);
         return getScheduler().runTaskTimer(getPluginConnected(), runnable, startTicks, ticks);
@@ -64,7 +79,8 @@ public interface BukkitTimeHandler {
             return getScheduler().runTaskLaterAsynchronously(getPluginConnected(), runnable, ticks);
         return getScheduler().runTaskLater(getPluginConnected(), runnable, ticks);
     }
-    default BukkitScheduler getScheduler(){
+
+    default BukkitScheduler getScheduler() {
         return Bukkit.getScheduler();
     }
 

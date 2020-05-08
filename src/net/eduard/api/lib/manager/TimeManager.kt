@@ -1,11 +1,11 @@
-package net.eduard.api.lib.task
+package net.eduard.api.lib.manager
 
-import net.eduard.api.lib.manager.EventsManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitTask
 
 import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.modules.BukkitTimeHandler
 
 /**
  * Controlador de Tempo, classe que controla e ajuda na criação de

@@ -95,16 +95,5 @@ public class ItemRandom implements Storable {
 
 	}
 
-	@Override
-	public Object restore(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-		// TODO Auto-generated method stub
-
-	}
 
 }

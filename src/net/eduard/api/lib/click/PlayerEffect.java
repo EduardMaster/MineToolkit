@@ -2,7 +2,13 @@ package net.eduard.api.lib.click;
 
 import org.bukkit.entity.Player;
 
-public interface PlayerEffect{
-	
-	public void effect(Player player);
+
+
+public interface PlayerEffect  {
+
+
+	default void effect(Player player){
+
+	}
+
 }
