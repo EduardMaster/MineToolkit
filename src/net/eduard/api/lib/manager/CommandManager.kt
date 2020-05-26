@@ -1,5 +1,6 @@
 package net.eduard.api.lib.manager
 
+import net.eduard.api.lib.modules.Extra
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.HashMap
@@ -138,14 +139,14 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
                 var sub: CommandManager? = null
                 for (subcmd in cmd.getCommands().values) {
                     if (sender.hasPermission(subcmd.permission)) {
-                        if (Mine.startWith(subcmd.name, arg)) {
+                        if (Extra.startWith(subcmd.name, arg)) {
                             vars.add(subcmd.name)
                         }
                         if (subcmd.name.equals(arg, ignoreCase = true)) {
                             sub = subcmd
                         }
                         for (alias in subcmd.aliases) {
-                            if (Mine.startWith(alias, arg)) {
+                            if (Extra.startWith(alias, arg)) {
                                 vars.add(alias)
                             }
                             if (alias.equals(arg, ignoreCase = true)) {

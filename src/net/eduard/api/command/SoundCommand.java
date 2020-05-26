@@ -1,5 +1,6 @@
 package net.eduard.api.command;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.eduard.api.lib.modules.Extra;
@@ -17,7 +18,23 @@ public class SoundCommand extends CommandManager {
 	public SoundCommand() {
 		super("sound");
 	}
+	public static List<String> getSounds(String argument) {
+		if (argument == null) {
+			argument = "";
+		}
+		argument = argument.trim().replace("_", "");
+		List<String> list = new ArrayList<>();
 
+		for (Sound enchant : Sound.values()) {
+			String text = Extra.toTitle(enchant.name(), "");
+			String line = enchant.name().trim().replace("_", "");
+			if (Extra.startWith(line, argument)) {
+				list.add(text);
+			}
+		}
+		return list;
+
+	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
@@ -69,7 +86,7 @@ public class SoundCommand extends CommandManager {
 			String label, String[] args) {
 		if (args.length == 1) {
 
-			return Mine.getSounds(args[0]);
+			return SoundCommand.getSounds(args[0]);
 		}
 
 		return null;

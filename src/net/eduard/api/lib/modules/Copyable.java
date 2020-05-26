@@ -22,17 +22,6 @@ import java.util.Map.Entry;
  */
 @SuppressWarnings("unchecked")
 public interface Copyable {
-    /**
-     * Anotação que marca que uma variavel não é para ser copiada
-     *
-     * @author Eduard
-     * @version 1.0
-     */
-    @Target({java.lang.annotation.ElementType.FIELD})
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface NotCopyable {
-
-    }
 
     class CopyDebug {
         private static boolean debug = true;
@@ -77,7 +66,7 @@ public interface Copyable {
         return object;
     }
 
-     default <E> E copy(E object) {
+    default <E> E copy(E object) {
         if (object == null)
             return null;
 
@@ -119,13 +108,14 @@ public interface Copyable {
 
                         if (Modifier.isStatic(field.getModifiers()))
                             continue;
-
+                        if (Modifier.isTransient(field.getModifiers()))
+                            continue;
                         field.setAccessible(true);
                         try {
                             Object value = field.get(object);
-                            if (!field.isAnnotationPresent(NotCopyable.class)) {
-                                field.set(newInstance, copy(value));
-                            }
+
+                            field.set(newInstance, copy(value));
+
 
                         } catch (Exception e) {
                             debug("VARIABLE FAILED " + field.getName());
@@ -137,7 +127,7 @@ public interface Copyable {
                 object = newInstance;
             } catch (Exception e) {
                 debug("FAIL " + claz.getSimpleName());
-//				e.printStackTrace();
+
             }
 
         }

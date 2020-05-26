@@ -7,9 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 
-import net.eduard.api.lib.modules.Copyable.NotCopyable
-import net.eduard.api.lib.storage.Storable
-import java.util.*
+
 
 /**
  * Controlador de Eventos ([Listener])
@@ -35,7 +33,7 @@ open class EventsManager : Listener {
      *
      * @param plugin Plugin
      */
-    @NotCopyable
+
     @Transient
     var plugin: Plugin? = null
 

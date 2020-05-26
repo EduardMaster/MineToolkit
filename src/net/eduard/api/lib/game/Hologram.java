@@ -1,4 +1,4 @@
-package net.eduard.api.lib.advanced_testing;
+package net.eduard.api.lib.game;
 
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
@@ -14,9 +14,9 @@ import java.util.List;
 /**
  * Criado em 28/11/2019
  * Atualizado em 07/05/2020
- * @version 1.1
  *
  * @author Eduard
+ * @version 1.1
  */
 public class Hologram {
     private Location location;
@@ -36,6 +36,7 @@ public class Hologram {
     }
 
     public void updateAll(int distance) {
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getWorld().equals(location.getWorld())) {
                 if (player.getLocation().distance(location) <= distance) {
@@ -43,6 +44,7 @@ public class Hologram {
                 } else {
                     if (seeingHolo.contains(player.getName())) {
                         hide(player);
+
                     }
                 }
             }
@@ -75,12 +77,17 @@ public class Hologram {
 
     }
 
+    public boolean exists() {
+        return holo != null;
+    }
 
     public void hide(Player p) {
         log("§cEscondendo holograma1");
         seeingHolo.remove(p.getName());
-        PacketPlayOutEntityDestroy pacote = new PacketPlayOutEntityDestroy(holo.getId());
-        sendPacket(p, pacote);
+        if (exists()) {
+            PacketPlayOutEntityDestroy pacote = new PacketPlayOutEntityDestroy(getHolo().getId());
+            sendPacket(p, pacote);
+        }
 
 
     }
@@ -95,6 +102,8 @@ public class Hologram {
         PacketPlayOutEntityMetadata updateMetadata = new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), false);
 
 
+        // PacketPlayOutTitle a = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, IChatBaseComponent.ChatSerializer.a("title linha 1"));
+        // PacketPlayOutTitle a = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, IChatBaseComponent.ChatSerializer.a("action bar"));
         if (seeingHolo.contains(p.getName())) {
             log("§bAtualizando holograma2");
             //sendPacket(p, pacote);
@@ -116,12 +125,13 @@ public class Hologram {
 
     private EntityArmorStand getHolo() {
         if (holo == null) {
-            if (holo != null) {
+            if (location != null) {
                 World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
                 holo = new EntityArmorStand(nmsWorld, location.getX(), location.getY(), location.getZ());
                 holo.setInvisible(true);
                 holo.setSmall(true);
             }
+
         }
 
         return holo;
@@ -131,6 +141,7 @@ public class Hologram {
         setLocation(location);
         spawn();
     }
+
     public void spawn() {
 
         getHolo();

@@ -95,6 +95,7 @@ class KitManager : EventsManager() {
                 menu.setItem(posicao, kit.icon)
                 posicao++
             }
+            if (posicao>=menu.size)break
 
         }
         player.updateInventory()
@@ -109,11 +110,11 @@ class KitManager : EventsManager() {
             if (!kit.isShowOnGui) continue
 
             if (player.hasPermission(kit.REQUIRE_PERMISSION)) {
-                player.sendMessage("§cAbrindo menu com kit " + kit.name)
+               // player.sendMessage("§cAbrindo menu com kit " + kit.name)
                 menu.setItem(posicao, kit.icon)
                 posicao++
             }
-
+            if (posicao>=menu.size)break
         }
         player.updateInventory()
     }

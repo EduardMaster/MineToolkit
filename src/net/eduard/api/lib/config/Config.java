@@ -6,12 +6,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.modules.Extra;
-import net.eduard.api.lib.storage.Storable;
 
 /**
  * Sistema Interprador de YAML usando a secao {@link ConfigSection}
@@ -139,6 +137,9 @@ public class Config {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+    public <ClasseRetorno> ClasseRetorno get(String path, Class<ClasseRetorno> clazz){
+        return root.get(path,clazz);
     }
 
     public ConfigSection add(String path, Object value, String... comments) {
@@ -336,20 +337,4 @@ public class Config {
         root.setIndent(amount);
     }
 
-	/*
-	@Override
-	public Object restore(Map<String, Object> map) {
-		this.folder = new File((String) map.get("folder"));
-		init();
-		return null;
-	}
-
-
-
-
-	@Override
-	public void store(Map<String, Object> map, Object object) {
-		map.put("folder", getDataFolder());
-	}
- */
 }

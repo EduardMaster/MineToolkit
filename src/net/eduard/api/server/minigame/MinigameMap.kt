@@ -20,9 +20,10 @@ import net.eduard.api.lib.modules.Copyable
 @StorageAttributes(indentificate = true)
 class MinigameMap : Storable<MinigameMap>, Copyable {
 
-    var name: String? = null
-    var displayName: String? = null
-    var worldName: String? = null
+
+    var name: String = "mapa"
+    var displayName: String = "mapinha"
+    var worldName: String = "mapa"
     var teamSize = 1
     var minPlayersAmount = 2
     var maxPlayersAmount = 20
@@ -47,6 +48,7 @@ class MinigameMap : Storable<MinigameMap>, Copyable {
                 mundo = Mine.loadWorld(worldName)
 
             }
+
             return mundo
         }
 

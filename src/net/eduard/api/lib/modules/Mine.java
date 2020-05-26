@@ -112,9 +112,7 @@ public final class Mine {
 
     }
 
-    public static void main(String[] args) {
-        Replacer r = (p) -> null;
-    }
+
 
     /**
      * Ponto de direção usado para fazer um RADAR
@@ -292,19 +290,6 @@ public final class Mine {
 
 
     /**
-     * Adiciona um Encantamento no Item
-     *
-     * @param item  Item
-     * @param type  Tipo do Material
-     * @param level Nivel do Entamento
-     * @return Item
-     */
-    public static ItemStack addEnchant(ItemStack item, Enchantment type, int level) {
-        item.addUnsafeEnchantment(type, level);
-        return item;
-    }
-
-    /**
      * Adiciona itens na HotBar do Jogador
      *
      * @param player Jogador
@@ -429,34 +414,6 @@ public final class Mine {
         replacers.put(key, value);
     }
 
-    /**
-     * Ativa uma scoreboard nova para o jogador
-     *
-     * @param player Jogador
-     * @param title  Titulo
-     * @param lines  Linhas
-     * @return a nova Scoreboard feita
-     */
-    @SuppressWarnings("deprecation")
-    public static Scoreboard applyScoreboard(Player player, String title, String... lines) {
-        Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
-        Objective obj = board.registerNewObjective("score", "dummy");
-        obj.setDisplayName(title);
-        obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-        int id = 15;
-        for (String line : lines) {
-            String empty = ChatColor.values()[id - 1].toString();
-            obj.getScore(new FakePlayer(line.isEmpty() ? empty : line)).setScore(id);
-            ;
-            id--;
-            if (id == 0) {
-                break;
-            }
-        }
-
-        player.setScoreboard(board);
-        return board;
-    }
 
     /**
      * Envia mensagens para todos jogadores
@@ -1066,6 +1023,7 @@ public final class Mine {
             Method fileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
             fileMethod.setAccessible(true);
             File file = (File) fileMethod.invoke(plugin);
+            //System.out.println("Arquivo "+file.getName());
             return Extra.getClasses(new JarFile(file), pkgname);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1290,27 +1248,15 @@ public final class Mine {
         return null;
     }
 
-    public static List<String> getEnchants(String argument) {
-        if (argument == null) {
-            argument = "";
-        }
-        argument = argument.trim().replace("_", "");
-        List<String> list = new ArrayList<>();
 
-        for (Enchantment enchant : Enchantment.values()) {
-            String text = Extra.toTitle(enchant.getName(), "");
-            String line = enchant.getName().trim().replace("_", "");
-            if (startWith(line, argument)) {
-                list.add(text);
-            }
-        }
-        return list;
 
-    }
-
-    @SuppressWarnings("deprecation")
-    public static EntityType getEntity(Object object) {
-        String str = object.toString().replace("_", "").trim();
+    /**
+     * Tenta interpretar um Tipo de Entidade apartir de um texto
+     * @param entityType Tipo de Entidade
+     * @return o Dado ou nulo
+     */
+    public static EntityType parseEntityType(String entityType) {
+        String str = entityType.replace("_", "").trim();
         for (EntityType type : EntityType.values()) {
             if (str.equals("" + type.getTypeId())) {
                 return type;
@@ -1346,19 +1292,6 @@ public final class Mine {
         return item.getType();
     }
 
-    /**
-     * Cria um Item da Cabeça do Jogador
-     *
-     * @param name Nome de Jogador
-     * @return Item
-     */
-    public static ItemStack getHead(String name) {
-        ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
-        meta.setOwner(name);
-        item.setItemMeta(meta);
-        return item;
-    }
 
     public static Location getHighLocation(Location loc, double high, double size) {
 
@@ -1448,7 +1381,7 @@ public final class Mine {
             if (type.isAlive() & type.isSpawnable()) {
                 String text = Extra.toTitle(type.name(), "");
                 String line = type.name().trim().replace("_", "");
-                if (startWith(line, argument)) {
+                if (Extra.startWith(line, argument)) {
                     list.add(text);
                 }
             }
@@ -1500,7 +1433,7 @@ public final class Mine {
                 return item.getItemMeta().getLore();
             }
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     public static Location getLowLocation(Location loc, double low, double size) {
@@ -1761,23 +1694,7 @@ public final class Mine {
         return null;
     }
 
-    public static List<String> getSounds(String argument) {
-        if (argument == null) {
-            argument = "";
-        }
-        argument = argument.trim().replace("_", "");
-        List<String> list = new ArrayList<>();
 
-        for (Sound enchant : Sound.values()) {
-            String text = Extra.toTitle(enchant.name(), "");
-            String line = enchant.name().trim().replace("_", "");
-            if (startWith(line, argument)) {
-                list.add(text);
-            }
-        }
-        return list;
-
-    }
 
     public static Location getSpawn() {
         return Bukkit.getWorlds().get(0).getSpawnLocation();
@@ -1952,16 +1869,7 @@ public final class Mine {
     }
 
 
-    /**
-     * Testa se o numero passado é da coluna expecificada
-     *
-     * @param index  Numero
-     * @param colunm Coluna
-     * @return O resultado do teste
-     */
-    public static boolean isColumn(int index, int colunm) {
-        return Extra.getColumn(index) == colunm;
-    }
+
 
     /**
      * Testa se o Inventario esta vasio
@@ -2565,9 +2473,36 @@ public final class Mine {
         return Bukkit.createInventory(null, size, Extra.cutText(name,32 ));
     }
 
-
+    /**
+     * Ativa uma scoreboard nova para o jogador
+     *
+     * @param player Jogador
+     * @param title  Titulo
+     * @param lines  Linhas
+     * @return a nova Scoreboard feita
+     */
     public static Scoreboard newScoreboard(Player player, String title, String... lines) {
-        return applyScoreboard(player, title, lines);
+
+
+            Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
+            Objective obj = board.registerNewObjective("score", "dummy");
+            obj.setDisplayName(title);
+            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+            int id = 15;
+            for (String line : lines) {
+                String empty = ChatColor.values()[id - 1].toString();
+                obj.getScore(new FakePlayer(line.isEmpty() ? empty : line)).setScore(id);
+                ;
+                id--;
+                if (id == 0) {
+                    break;
+                }
+            }
+
+            player.setScoreboard(board);
+            return board;
+
+
     }
 
     public static void newStepSound(Location location, int blockId) {
@@ -2586,7 +2521,16 @@ public final class Mine {
         }
         return true;
     }
-
+    /**
+     * Testa se o numero passado é da coluna expecificada
+     *
+     * @param index  Numero
+     * @param colunm Coluna
+     * @return O resultado do teste
+     */
+    public static boolean isColumn(int index, int colunm) {
+        return Extra.isColumn(index,colunm);
+    }
     public static boolean onlyPlayer(CommandSender sender) {
         return noConsole(sender);
     }
@@ -2596,7 +2540,7 @@ public final class Mine {
      *
      * @return
      */
-    public static Inventory openGui(Player player, List<ItemStack> items, int page, int amountPerPage, String title,
+    public static Inventory newMenu(Player player, List<ItemStack> items, int page, int amountPerPage, String title,
                                     int lineAmount, int inicialIndex, int backSlot, int advanceSlot) {
         int quantidadeDePaginas = items.size() / amountPerPage;
         int inicial = (page - 1) * amountPerPage;
@@ -2608,7 +2552,7 @@ public final class Mine {
             Inventory menu = Bukkit.createInventory(null, lineAmount * 9, title);
             int current = 1;
             for (ItemStack item : subLista) {
-                while (Mine.isColumn(inicialIndex, 1) || Mine.isColumn(inicialIndex, 9)) {
+                while (Extra.isColumn(inicialIndex, 1) || Extra.isColumn(inicialIndex, 9)) {
                     inicialIndex++;
                 }
                 menu.setItem(inicialIndex, item);
@@ -3118,7 +3062,11 @@ public final class Mine {
 
 
     public static List<Player> getPlayers() {
-        return new ArrayList<>(Bukkit.getOnlinePlayers());
+        Object obj = Bukkit.getOnlinePlayers();
+        if (obj instanceof  List){
+            return (List<Player>) obj;
+        }
+        return Arrays.asList((Player[]) obj);
 
     }
 
@@ -3130,9 +3078,7 @@ public final class Mine {
         }
     }
 
-    public static boolean startWith(String message, String text) {
-        return message.toLowerCase().startsWith(text.toLowerCase());
-    }
+
 
     public static LightningStrike strike(LivingEntity living, int maxDistance) {
         return strike(getTargetLoc(living, maxDistance));

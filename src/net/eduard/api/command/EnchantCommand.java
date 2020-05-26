@@ -1,8 +1,10 @@
 
 package net.eduard.api.command;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import net.eduard.api.lib.modules.Extra;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,11 +23,29 @@ public class EnchantCommand extends CommandManager {
 	public String messageInvalid = "§cDigite o encantamento valido! §bAperte TAB";
 	public String message = "§aEncantamento aplicado!";
 	public String messageError = "§cVoce precisar ter um item em maos!";
+
+	public static List<String> getEnchants(String argument) {
+		if (argument == null) {
+			argument = "";
+		}
+		argument = argument.trim().replace("_", "");
+		List<String> list = new ArrayList<>();
+
+		for (Enchantment enchant : Enchantment.values()) {
+			String text = Extra.toTitle(enchant.getName(), "");
+			String line = enchant.getName().trim().replace("_", "");
+			if (Extra.startWith(line, argument)) {
+				list.add(text);
+			}
+		}
+		return list;
+
+	}
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command,
 			String label, String[] args) {
 		if (args.length == 1) {
-			return Mine.getEnchants(args[0]);
+			return EnchantCommand.getEnchants(args[0]);
 		}
 
 		return null;

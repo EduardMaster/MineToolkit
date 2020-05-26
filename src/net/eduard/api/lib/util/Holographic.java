@@ -14,7 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 /**
- * Dono Internet
+ * @author Internet
  */
 public class Holographic
 {

@@ -49,13 +49,13 @@ open class Menu : EventsManager, Copyable, PagedMenu,  Storable<Menu>  {
     var nextPage = Slot(
             Mine.newItem( Material.ARROW,"§aPróxima Página", 1, 0, "§2Clique para ir para a próxima página"), 9, 2)
     var buttons = ArrayList<MenuButton>()
-    @Copyable.NotCopyable
+
     @Transient
     var effect: ClickEffect? = null
-    @Copyable.NotCopyable
+
     @Transient
     private var pagesCache: MutableMap<Int, Inventory> = HashMap()
-    @Copyable.NotCopyable
+
     @Transient
     private val pageOpened = HashMap<Player, Int>()
 

@@ -1,7 +1,5 @@
 package net.eduard.api.lib.inventory;
 
-import java.util.Map;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

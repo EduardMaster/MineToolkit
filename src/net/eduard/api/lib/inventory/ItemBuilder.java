@@ -6,9 +6,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 /**
  * Builder de Item que extende {@link ItemStack}
@@ -36,6 +38,16 @@ public class ItemBuilder extends ItemStack {
     public ItemBuilder(String name) {
         this();
         name(name);
+    }
+
+    public ItemBuilder skull(String skullName) {
+        type(Material.SKULL_ITEM);
+        data(SkullType.PLAYER.ordinal());
+        SkullMeta meta = (SkullMeta) getItemMeta();
+        meta.setOwner(skullName);
+        setItemMeta(meta);
+        return this;
+
     }
 
     public ItemBuilder amount(int amount) {

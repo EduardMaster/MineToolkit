@@ -17,10 +17,10 @@ import net.eduard.api.lib.storage.Storable
 
 open class KitAbility : CooldownManager() {
 
-    @NotCopyable
+
     @Transient
     var click: PlayerInteract? = null
-    @NotCopyable
+
     @Transient
     val timesUsed = HashMap<Player, Int>()
     var name = "Kit"
@@ -101,7 +101,7 @@ open class KitAbility : CooldownManager() {
 
     init {
 
-        if (name.isEmpty())
+        if (name.isEmpty()||name == "Kit")
             name = (javaClass.simpleName)
 
 

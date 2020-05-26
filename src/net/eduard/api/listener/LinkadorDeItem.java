@@ -97,7 +97,7 @@ public class LinkadorDeItem extends EventsManager {
 
         // Prepare a BaseComponent array with the itemJson as a text component
         BaseComponent[] hoverEventComponents = new BaseComponent[]{
-                new TextComponent(itemJson) // The only element of the hover events basecomponents is the item json
+                new TextComponent(itemJson) // The only element of the hover listener basecomponents is the item json
         };
 
         // Create the hover event

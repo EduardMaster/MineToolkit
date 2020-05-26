@@ -58,7 +58,16 @@ import com.google.gson.JsonParser;
  * @since Lib v2.0
  */
 public final class Extra {
-
+    /**
+     * Testa se o numero passado é da coluna expecificada
+     *
+     * @param index  Numero
+     * @param colunm Coluna
+     * @return O resultado do teste
+     */
+    public static boolean isColumn(int index, int colunm) {
+        return Extra.getColumn(index) == colunm;
+    }
 
     /**
      * Tipo de geração de Key
@@ -754,7 +763,9 @@ public final class Extra {
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
+               // System.out.println("Entrada "+entryName);
                 if ((entryName.endsWith(".class")) && (entryName.startsWith(relPath)) && !entryName.contains("$")) {
+
                     String classeName = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
                     try {
                         Class<?> claz = Class.forName(classeName);

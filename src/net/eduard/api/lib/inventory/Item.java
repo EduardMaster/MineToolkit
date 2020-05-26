@@ -45,7 +45,7 @@ public class Item implements Storable {
         Mine.setName(item, name);
         Mine.setLore(item, lore);
         enchants.entrySet().forEach(e -> {
-            Mine.addEnchant(item, Enchantment.getById(e.getKey()), e.getValue());
+           item.addUnsafeEnchantment(Enchantment.getById(e.getKey()), e.getValue());
         });
         if (item.getItemMeta() instanceof BookMeta) {
             BookMeta meta = (BookMeta) item.getItemMeta();
@@ -56,15 +56,7 @@ public class Item implements Storable {
         }
         return item;
     }
-    // public Item storeEnchant(Enchantment enchant, int level ) {
-    // if (this.getType()!= Material.ENCHANTED_BOOK) {
-    // setType(Material.ENCHANTED_BOOK);
-    // }
-    // EnchantmentStorageMeta meta = (EnchantmentStorageMeta) getItemMeta();
-    // meta.addStoredEnchant(enchant, level, true);
-    // setItemMeta(meta);
-    // return this;
-    // }
+
 
     public int getId() {
         return id;
