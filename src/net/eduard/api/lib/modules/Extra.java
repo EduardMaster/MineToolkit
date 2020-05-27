@@ -907,11 +907,16 @@ public final class Extra {
 
         return null;
     }
+    public static String getProgressBar(double money, double price, String completedColor, String needColor,
+                                        String symbol) {
+       return getProgressBar(money/price,completedColor,needColor,symbol);
+    }
 
-    public static String getProgressBar(double money, double price, String concluidoCor, String faltandoCor,
+
+    public static String getProgressBar(double percent, String completedColor, String needColor,
                                         String symbol) {
         StringBuilder result = new StringBuilder();
-        double div = money / price;
+        double div = percent;
         // 10 5 2
         // long redonde = Math.round(div * 100);
         // long con = redonde / 10;
@@ -919,12 +924,12 @@ public final class Extra {
             div = 1;
         }
         double rest = 1D - div;
-        result.append(concluidoCor);
+        result.append(completedColor);
         while (div > 0) {
             result.append(symbol);
             div -= 0.1;
         }
-        result.append(faltandoCor);
+        result.append(needColor);
         while (rest > 0) {
             result.append(symbol);
             rest -= 0.1;

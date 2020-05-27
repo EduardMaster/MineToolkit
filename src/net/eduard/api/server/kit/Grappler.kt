@@ -1,4 +1,4 @@
-package net.eduard.kitpvp.kits
+package net.eduard.api.server.kit
 
 import java.util.HashMap
 
@@ -11,8 +11,6 @@ import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.server.PluginDisableEvent
 
 import net.eduard.api.lib.modules.Mine
-import net.eduard.api.server.kit.GrapplerHook
-import net.eduard.api.server.kit.KitAbility
 
 class Grappler : KitAbility() {
     @EventHandler
