@@ -1,42 +1,41 @@
 package net.eduard.api
 
-import java.io.File
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.HashMap
-import java.util.Locale
-
 import net.eduard.api.command.*
-import net.eduard.api.lib.world.Schematic
-import net.eduard.api.lib.manager.*
-import net.eduard.api.core.PlayerSkin
-import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerJoinEvent
-
 import net.eduard.api.command.api.ApiCommand
 import net.eduard.api.command.map.MapCommand
+import net.eduard.api.core.BukkitReplacers
+import net.eduard.api.core.InfoGenerator
+import net.eduard.api.core.PlayerSkin
+import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.eduard.api.lib.bungee.BungeeAPI
-import net.eduard.api.lib.config.Config
-import net.eduard.api.lib.game.SoundEffect
-import net.eduard.api.lib.menu.Menu
-import net.eduard.api.lib.modules.*
-import net.eduard.api.lib.modules.Copyable.CopyDebug
 import net.eduard.api.lib.bungee.ServerAPI.BukkitControl
+import net.eduard.api.lib.config.Config
+import net.eduard.api.lib.database.DBManager
+import net.eduard.api.lib.game.SoundEffect
+import net.eduard.api.lib.manager.CommandManager
+import net.eduard.api.lib.menu.Menu
+import net.eduard.api.lib.modules.Copyable.CopyDebug
+import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.modules.MineReflect
+import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
+import net.eduard.api.lib.world.Schematic
 import net.eduard.api.listener.EduWorldEditListener
-import net.eduard.api.core.BukkitReplacers
 import net.eduard.api.listener.EduardAPIEvents
-import net.eduard.api.listener.PlayerTargetAtEntityListener
-import net.eduard.api.core.InfoGenerator
-import net.eduard.api.lib.bungee.BukkitBungeeAPI
-import net.eduard.api.lib.database.DBManager
 import net.eduard.api.listener.LinkadorDeItem
-import net.eduard.api.server.EduardPlugin
+import net.eduard.api.listener.PlayerTargetAtEntityListener
 import net.eduard.api.server.currency.Currency
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetTask
+import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerJoinEvent
+import java.io.File
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
 
 /**
  * Classe Principal do EduardAPI
@@ -45,7 +44,12 @@ import net.eduard.api.task.PlayerTargetTask
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI : EduardPlugin() {
+class EduardAPI(val api : EduAPI )  {
+    init{
+        instance = api
+    }
+
+
 
     /*
     private val VALUE_TNT_POWER = 4f
@@ -65,32 +69,32 @@ class EduardAPI : EduardPlugin() {
     private val DAY_IN_MILLIS = DAY_IN_TICKS * 50
 
      */
+    fun log(msg :String){
+        api.log(msg)
+    }
+    val configs
+    get() = api.configs
 
-    override fun onEnable() {
-        instance = this
+    val plugin = api
 
-        isFree = true
+     fun onEnable() {
 
-        reloadVars()
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
-        StorageAPI.registerPackage(this::javaClass.get(), "net.eduard.api.lib")
+        StorageAPI.registerPackage(EduAPI::class.java, "net.eduard.api.lib")
         BukkitStorables.load()
-        StorageAPI.startGson();
+        StorageAPI.startGson()
         log("Storables do Bukkit carregado!")
-        mainConfig()
-        MAPS_CONFIG = Config(this,"maps/")
+
+        MAPS_CONFIG = Config(plugin, "maps/")
 
         VaultAPI.setupVault()
 
-        BukkitControl.register(this)
+        BukkitControl.register(plugin)
 
         BukkitBungeeAPI.requestCurrentServer()
-
-        val bukkit = BungeeAPI.getBukkit()
-
-        bukkit.plugin = instance
-        bukkit.register()
+        BungeeAPI.getBukkit().plugin = api
+        BungeeAPI.getBukkit().register()
 
 
 
@@ -106,8 +110,9 @@ class EduardAPI : EduardPlugin() {
 
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
-        PlayerTargetTask().runTaskTimerAsynchronously(this, 20, 20)
-        AutoSaveAndBackupTask().runTaskTimerAsynchronously(this, 58, 58)
+        // Na versão 1.16 precisa ser em Sync não pode ser Async
+        PlayerTargetTask().runTaskTimerAsynchronously(plugin, 20, 20)
+        AutoSaveAndBackupTask().runTaskTimerAsynchronously(plugin, 58, 58)
 
         log("Ativando comandos")
         ApiCommand().register()
@@ -121,10 +126,10 @@ class EduardAPI : EduardPlugin() {
         log("Comandos ativados com sucesso")
 
         log("Ativando listeners dos Eventos")
-        EduardAPIEvents().register(this)
-        EduWorldEditListener().register(this)
-        PlayerTargetAtEntityListener().register(this)
-        LinkadorDeItem().register(this)
+        EduardAPIEvents().register(plugin)
+        EduWorldEditListener().register(plugin)
+        PlayerTargetAtEntityListener().register(plugin)
+        LinkadorDeItem().register(plugin)
         log("Listeners dos Eventos ativados com sucesso")
 
         log("Gerando Base de dados de Enums do Bukkit")
@@ -138,12 +143,17 @@ class EduardAPI : EduardPlugin() {
         //		new McMMOReplacers();
         //		new MassiveFactionReplacers();
 
+
+        //		new McMMOReplacers();
+        //		new MassiveFactionReplacers();
         log("Carregado com sucesso!")
 
 
     }
+    val messages
+    get() = api.messages
 
-    override fun reload() {
+     fun reload() {
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
@@ -197,8 +207,10 @@ class EduardAPI : EduardPlugin() {
         }
 
     }
+    val dataFolder
+    get() = api.dataFolder
 
-    override fun onDisable() {
+     fun onDisable() {
         PlayerSkin.saveSkins()
         EduardAPI.saveMaps()
         log("Mapas salvados!")
@@ -208,7 +220,7 @@ class EduardAPI : EduardPlugin() {
 
     companion object {
 
-        lateinit var instance: EduardAPI
+        lateinit var instance: EduAPI
             private set
             @JvmStatic
             get
