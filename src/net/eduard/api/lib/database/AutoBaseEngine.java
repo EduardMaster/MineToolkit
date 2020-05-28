@@ -8,6 +8,8 @@ import java.sql.*;
 import java.util.*;
 
 public class AutoBaseEngine {
+
+    /*
     private static boolean DEBUG = true;
     private static boolean LOG = true;
 
@@ -45,11 +47,7 @@ public class AutoBaseEngine {
         return null;
     }
 
-    /**
-     * Puxa os dados para memória
-     *
-     * @return Se puxou ou não os dados
-     */
+
     public <E> boolean updateCache(E cache) {
         boolean hasUpdateCode = false;
         Class<?> type = cache.getClass();
@@ -92,9 +90,6 @@ public class AutoBaseEngine {
         return hasUpdateCode;
     }
 
-    /**
-     * SELECT * FROM 'TABLE'
-     */
     public <E> List<E> fetchAll(Class<E> type) {
         List<E> list = new ArrayList<>();
 
@@ -142,9 +137,7 @@ public class AutoBaseEngine {
         return list;
     }
 
-    /**
-     * CREATE TABLE IF NOT EXISTS 'TABLE'
-     */
+
     public <E> void createTable(Class<E> type) {
         String tableName = AutoBaseUtil.getTableName(type);
 
@@ -191,9 +184,6 @@ public class AutoBaseEngine {
     }
 
 
-    /**
-     * DROP TABLE 'TABLE'
-     */
     public <E> void deleteTable(Class<E> type) {
 
         try {
@@ -206,9 +196,7 @@ public class AutoBaseEngine {
 
     }
 
-    /**
-     * TRUNCATE TABLE 'TABLE'
-     */
+
     public void clearTable(Class<?> type) {
         try {
             String tableName = AutoBaseUtil.getTableName(type);
@@ -370,51 +358,7 @@ public class AutoBaseEngine {
     }
 
 
-    public List<Map<String, ColumnInfo>> getVariablesFrom(Class<?> clz, String where) {
-        List<Map<String, ColumnInfo>> lista = new LinkedList<>();
 
-        if (!where.isEmpty()) {
-            where = " WHERE " + where;
-        }
-        try {
-            ResultSet rs = connection.prepareStatement("SELECT * FROM " + AutoBaseUtil.getName(clz) + where).executeQuery();
-            ResultSetMetaData meta = rs.getMetaData();
-
-            while (rs.next()) {
-                Map<String, ColumnInfo> mapa = new LinkedHashMap<>();
-                lista.add(mapa);
-                for (int colunaID = 1; colunaID <= meta.getColumnCount(); colunaID++) {
-                    String coluna = meta.getColumnName(colunaID);
-                    String classe = meta.getColumnClassName(colunaID);
-                    int type = meta.getColumnType(colunaID);
-                    String typeName = meta.getColumnTypeName(colunaID);
-                    Object valor = rs.getObject(colunaID);
-                    String texto = rs.getString(colunaID);
-                    // String calalog = meta.getCatalogName(colunaID);
-                    // String label = meta.getColumnLabel(colunaID);
-                    // int displaySize = meta.getColumnDisplaySize(colunaID);
-                    // int precision = meta.getPrecision(colunaID);
-                    // int scale = meta.getScale(colunaID);
-                    ColumnInfo campo = new ColumnInfo();
-                    campo.setText(texto);
-                    campo.setValue(valor);
-                    campo.setTypeName(typeName);
-                    campo.setType(type);
-                    campo.setClassName(classe);
-                    campo.setName(coluna);
-                    campo.setId(colunaID);
-                    mapa.put(coluna, campo);
-                }
-            }
-            rs.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return lista;
-
-    }
 
 
     public Connection getConection() {
@@ -424,5 +368,5 @@ public class AutoBaseEngine {
     public void setConection(Connection conection) {
         this.connection = conection;
     }
-
+*/
 }

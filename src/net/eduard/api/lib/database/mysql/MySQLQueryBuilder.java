@@ -16,4 +16,10 @@ public class MySQLQueryBuilder implements SQLQueryBuilder {
     public StringBuilder builder() {
         return builder;
     }
+
+    @Override
+    public StringBuilder newQuery() {
+        this.builder = new StringBuilder();
+        return builder;
+    }
 }

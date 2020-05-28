@@ -32,6 +32,15 @@ public interface SQLOption {
         return "DROP TABLE ";
     }
 
+
+    default String clearTable() {
+        return "TRUNCATE TABLE ";
+    };
+
+    default String insertData(){
+        return "INSERT INTO ";
+    }
+
     default String unique() {
         return "UNIQUE";
     }
@@ -43,10 +52,20 @@ public interface SQLOption {
     default String data(String data) {
         return "'" + data + "'";
     }
+    default String convertToSQL(Object javaObject){
+
+        return javaObject.toString();
+    }
+    default Object convertToJava(String sqlData){
+        return sqlData;
+    }
 
     default String name(String name) {
         return "`" + name + "`";
     }
 
 
+    default String defaults(){
+        return "DEFAULT ";
+    }
 }

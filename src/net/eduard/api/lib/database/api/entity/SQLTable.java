@@ -1,8 +1,9 @@
-package net.eduard.api.lib.database.api;
+package net.eduard.api.lib.database.api.entity;
 
 import net.eduard.api.lib.database.annotations.TableName;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,15 @@ public class SQLTable {
         }
         columns.clear();
         for (Field field : tableClass.getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())){
+                continue;
+            }
+            if (Modifier.isFinal(field.getModifiers())){
+                continue;
+            }
+            if (Modifier.isTransient(field.getModifiers())){
+                continue;
+            }
             columns.add(new SQLColumn(field));
         }
     }
@@ -30,6 +40,7 @@ public class SQLTable {
     private String charset;
     private Class<?> classBased;
     private List<SQLColumn> columns = new ArrayList<>();
+    private List<SQLRecord> records = new ArrayList<>();
 
     public String getTableName() {
         return tableName;
@@ -62,5 +73,13 @@ public class SQLTable {
 
     public void setClassBased(Class<?> classBased) {
         this.classBased = classBased;
+    }
+
+    public List<SQLRecord> getRecords() {
+        return records;
+    }
+
+    public void setRecords(List<SQLRecord> records) {
+        this.records = records;
     }
 }

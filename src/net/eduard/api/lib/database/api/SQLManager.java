@@ -1,5 +1,6 @@
 package net.eduard.api.lib.database.api;
 
+import net.eduard.api.lib.database.api.entity.SQLTable;
 import net.eduard.api.lib.database.mysql.MySQLQueryBuilder;
 import net.eduard.api.lib.database.sqlite.SQLiteQueryBuilder;
 
@@ -33,6 +34,7 @@ public class SQLManager {
     }
 
 
+
     protected SQLTable getTableData(Class<?> dataClass) {
         SQLTable tableData = cacheTables.get(dataClass);
         if (tableData == null) {
@@ -51,7 +53,10 @@ public class SQLManager {
         SQLTable table = getTableData(dataClass);
         executeUpdate(builder.deleteTable(table));
     }
-
+    public void clearTable(Class<?> dataClass) {
+        SQLTable table = getTableData(dataClass);
+        executeUpdate(builder.clearTable(table));
+    }
     protected void executeUpdate(String query) {
         try {
             connection.prepareStatement(query).executeUpdate();

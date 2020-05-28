@@ -5,7 +5,7 @@ import net.eduard.api.lib.database.api.SQLQueryBuilder;
 import net.eduard.api.lib.database.mysql.MySQLOption;
 
 public class SQLiteQueryBuilder implements SQLQueryBuilder {
-    private SQLiteOption option= new SQLiteOption();
+    private SQLiteOption option = new SQLiteOption();
     private StringBuilder builder = new StringBuilder();
 
     @Override
@@ -15,6 +15,12 @@ public class SQLiteQueryBuilder implements SQLQueryBuilder {
 
     @Override
     public StringBuilder builder() {
+        return builder;
+    }
+
+    @Override
+    public StringBuilder newQuery() {
+        this.builder = new StringBuilder();
         return builder;
     }
 }

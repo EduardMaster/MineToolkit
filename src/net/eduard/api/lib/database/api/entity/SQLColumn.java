@@ -1,11 +1,15 @@
-package net.eduard.api.lib.database.api;
+package net.eduard.api.lib.database.api.entity;
 
+import net.eduard.api.lib.database.annotations.*;
+
+import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 public class SQLColumn {
 
     private String name;
+    private Field field;
     private String sqlType;
     private Class<?> javaType;
     private Type javaGenericType;
@@ -13,11 +17,34 @@ public class SQLColumn {
     private boolean isPrimary;
     private boolean isNullable;
     private boolean isUnique;
+    private int size;
 
-    public SQLColumn(Field field){
+    public SQLColumn(Field field) {
+        reload(field);
+
+
+    }
+    public void reload(Field field){
+        setField(field);
+        name = field.getName();
+        if (field.isAnnotationPresent(ColumnName.class)) {
+            name = field.getAnnotation(ColumnName.class).value();
+        }
         javaType = field.getType();
         javaGenericType = field.getGenericType();
 
+        if (field.isAnnotationPresent(ColumnValue.class)) {
+            defaultValue = field.getAnnotation(ColumnValue.class).value();
+        }
+        if (field.isAnnotationPresent(ColumnType.class)) {
+            sqlType = field.getAnnotation(ColumnType.class).value();
+        }
+        if (field.isAnnotationPresent(ColumnSize.class)) {
+            size = field.getAnnotation(ColumnSize.class).value();
+        }
+        isUnique = field.isAnnotationPresent(ColumnUnique.class);
+        isPrimary = field.isAnnotationPresent(ColumnPrimary.class);
+        isNullable = field.isAnnotationPresent(ColumnNullable.class);
     }
 
     public String getName() {
@@ -83,5 +110,21 @@ public class SQLColumn {
 
     public void setJavaGenericType(Type javaGenericType) {
         this.javaGenericType = javaGenericType;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
     }
 }

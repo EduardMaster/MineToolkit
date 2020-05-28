@@ -1,14 +1,9 @@
 package net.eduard.api.lib.database;
 
 import java.io.File;
-import java.sql.Connection;
+import java.sql.*;
 import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.UUID;
+import java.util.*;
 
 import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;
@@ -647,5 +642,173 @@ public class DBManager implements Storable, Copyable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     */
+
+    public List<Map<String, ColumnInfo>> getVariablesFrom(String tableName, String where) {
+        List<Map<String, ColumnInfo>> lista = new LinkedList<>();
+
+        if (!where.isEmpty()) {
+            where = " WHERE " + where;
+        }
+        try {
+            ResultSet rs = connection.prepareStatement("SELECT * FROM " + tableName + where).executeQuery();
+            ResultSetMetaData meta = rs.getMetaData();
+
+            while (rs.next()) {
+                Map<String, ColumnInfo> mapa = new LinkedHashMap<>();
+                lista.add(mapa);
+                for (int colunaID = 1; colunaID <= meta.getColumnCount(); colunaID++) {
+                    String coluna = meta.getColumnName(colunaID);
+                    String classe = meta.getColumnClassName(colunaID);
+                    int type = meta.getColumnType(colunaID);
+                    String typeName = meta.getColumnTypeName(colunaID);
+                    Object valor = rs.getObject(colunaID);
+                    String texto = rs.getString(colunaID);
+                    // String calalog = meta.getCatalogName(colunaID);
+                    // String label = meta.getColumnLabel(colunaID);
+                    // int displaySize = meta.getColumnDisplaySize(colunaID);
+                    // int precision = meta.getPrecision(colunaID);
+                    // int scale = meta.getScale(colunaID);
+                    ColumnInfo campo = new ColumnInfo();
+                    campo.setText(texto);
+                    campo.setValue(valor);
+                    campo.setTypeName(typeName);
+                    campo.setType(type);
+                    campo.setClassName(classe);
+                    campo.setName(coluna);
+                    campo.setId(colunaID);
+                    mapa.put(coluna, campo);
+                }
+            }
+            rs.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+
+    }
+
+
+    /**
+     * Informações de uma Coluna de uma Tabela
+     * @author Eduard
+
+     */
+    public class ColumnInfo {
+        private int id;
+        private String name;
+        private String text;
+        private Object value;
+        private int type;
+        private String typeName;
+        private String className;
+
+        public Object get()  {
+            return getValue();
+        }
+
+        public String getString() {
+            return text;
+        }
+
+        public Date getDate() {
+            return (Date) getValue();
+        }
+
+        public int getInt() {
+            return (int) getValue();
+        }
+
+        public double getDouble() {
+            return (double) getValue();
+        }
+
+        public long getLong() {
+            return (long) getValue();
+        }
+
+        public UUID getUUID() {
+            return UUID.fromString(text);
+        }
+
+        public Class<?> getClassType() throws ClassNotFoundException {
+            return Class.forName(className);
+        }
+
+        @Override
+        public String toString() {
+            return "" + value;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(Object value) {
+            this.value = value;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
+
+        public String getTypeName() {
+            return typeName;
+        }
+
+        public void setTypeName(String typeName) {
+            this.typeName = typeName;
+        }
+
+        public String getClassName() {
+            return className;
+        }
+
+        public void setClassName(String className) {
+            this.className = className;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+    }
+
 
 }
