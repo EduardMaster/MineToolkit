@@ -1,4 +1,4 @@
-package net.eduard.api.lib.database.autobase;
+package net.eduard.api.lib.database.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,15 +16,7 @@ import java.lang.annotation.Target;
  */
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ColumnOption {
+public @interface ColumnSize {
 
-    int size() default 11;
-
-    boolean unique() default false;
-
-    boolean nullable() default false;
-
-    String type() default "";
-
-    String defValue() default  "";
+    int value();
 }

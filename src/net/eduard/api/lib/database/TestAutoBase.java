@@ -1,9 +1,8 @@
 package net.eduard.api.lib.database;
 
-import net.eduard.api.lib.database.autobase.AutoBaseEngine;
-import net.eduard.api.lib.database.autobase.ColumnName;
-import net.eduard.api.lib.database.autobase.ColumnOption;
-import net.eduard.api.lib.database.autobase.TableName;
+import net.eduard.api.lib.database.annotations.ColumnName;
+import net.eduard.api.lib.database.annotations.ColumnSize;
+import net.eduard.api.lib.database.annotations.TableName;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI;
 
@@ -57,7 +56,7 @@ public class TestAutoBase {
 
         @ColumnName("saldo de cash")
         int cash;
-        @ColumnOption(unique = true, size = 16)
+        @ColumnSize(unique = true, size = 16)
         String nome;
         UUID playerID = UUID.randomUUID();
         Date dia = new Date(System.currentTimeMillis());

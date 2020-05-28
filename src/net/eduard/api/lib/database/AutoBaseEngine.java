@@ -1,6 +1,6 @@
-package net.eduard.api.lib.database.autobase;
+package net.eduard.api.lib.database;
 
-import net.eduard.api.lib.database.DatabaseSQLUtil;
+import net.eduard.api.lib.database.annotations.ColumnSize;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -269,8 +269,8 @@ public class AutoBaseEngine {
 
                 field.setAccessible(true);
                 Object valor = field.get(data);
-                if (field.isAnnotationPresent(ColumnOption.class)) {
-                    ColumnOption options = field.getAnnotation(ColumnOption.class);
+                if (field.isAnnotationPresent(ColumnSize.class)) {
+                    ColumnSize options = field.getAnnotation(ColumnSize.class);
                     // Class<?> type = field.getType();
                     if (!options.nullable() && valor == null) {
                         continue;
@@ -334,8 +334,8 @@ public class AutoBaseEngine {
                 builder.append("`" + AutoBaseUtil.getFieldName(field) + "`");
                 field.setAccessible(true);
                 Object valor = field.get(data);
-                if (field.isAnnotationPresent(ColumnOption.class)) {
-                    ColumnOption options = field.getAnnotation(ColumnOption.class);
+                if (field.isAnnotationPresent(ColumnSize.class)) {
+                    ColumnSize options = field.getAnnotation(ColumnSize.class);
 
 
                     if (!options.nullable() && valor == null) {

@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.eduard.api.lib.modules.Copyable;
-import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
 /**

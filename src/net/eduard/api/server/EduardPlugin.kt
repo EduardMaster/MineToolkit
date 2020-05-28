@@ -19,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
-import net.eduard.api.lib.database.autobase.AutoBaseEngine
+import net.eduard.api.lib.database.AutoBaseEngine
 import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.StorageAPI

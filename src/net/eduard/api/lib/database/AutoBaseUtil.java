@@ -1,10 +1,10 @@
-package net.eduard.api.lib.database.autobase;
+package net.eduard.api.lib.database;
 
-import net.eduard.api.lib.database.DatabaseSQLUtil;
+import net.eduard.api.lib.database.annotations.ColumnName;
+import net.eduard.api.lib.database.annotations.ColumnSize;
+import net.eduard.api.lib.database.annotations.TableName;
 
 import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 public final class AutoBaseUtil {
     /**
@@ -23,8 +23,8 @@ public final class AutoBaseUtil {
             boolean nullable = false;
             //create table a (nome teste default 'oi')
             String type = DatabaseSQLUtil.getSQLType(typeClass, 11);
-            if (field.isAnnotationPresent(ColumnOption.class)) {
-                ColumnOption options = field.getAnnotation(ColumnOption.class);
+            if (field.isAnnotationPresent(ColumnSize.class)) {
+                ColumnSize options = field.getAnnotation(ColumnSize.class);
                 nullable = options.nullable();
                 unique = options.unique();
                 type = DatabaseSQLUtil.getSQLType(typeClass, options.size());

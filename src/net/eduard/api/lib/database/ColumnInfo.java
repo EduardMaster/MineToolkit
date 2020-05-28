@@ -1,4 +1,4 @@
-package net.eduard.api.lib.database.autobase;
+package net.eduard.api.lib.database;
 
 import java.sql.Date;
 import java.util.UUID;
@@ -17,7 +17,7 @@ public class ColumnInfo {
     private String typeName;
     private String className;
 
-    public Object get() {
+    public Object get()  {
         return getValue();
     }
 

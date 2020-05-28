@@ -1,4 +1,4 @@
-package net.eduard.api.lib.database.autobase;
+package net.eduard.api.lib.database;
 
 
 /**
