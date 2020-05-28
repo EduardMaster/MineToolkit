@@ -2,19 +2,19 @@ package net.eduard.api.lib.database.api;
 
 public interface SQLQueryBuilder {
 
-    IOption option();
+    SQLOption option();
     StringBuilder builder();
 
     default StringBuilder space(){
         return builder().append(" ");
     }
 
-    default String createTable(TableData table){
+    default String createTable(SQLTable table){
         builder().append(option().createTable());
 
         space().append(option().name(table.getTableName()));
         builder().append("(");
-        for (ColumnData column : table.getColumns()){
+        for (SQLColumn column : table.getColumns()){
             builder().append(option().name(column.getName()));
 
             space().append(column.getSqlType());
@@ -33,7 +33,7 @@ public interface SQLQueryBuilder {
         return builder().toString();
 
     }
-    default String deleteTable(TableData table){
+    default String deleteTable(SQLTable table){
         return builder().append(option().deleteTable()).append(option().name(table.getTableName())).toString();
     }
 

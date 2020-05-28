@@ -1,17 +1,27 @@
 package net.eduard.api.lib.database.api;
 
-public class ColumnData {
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+
+public class SQLColumn {
 
     private String name;
     private String sqlType;
     private Class<?> javaType;
+    private Type javaGenericType;
     private Object defaultValue;
     private boolean isPrimary;
     private boolean isNullable;
     private boolean isUnique;
 
+    public SQLColumn(Field field){
+        javaType = field.getType();
+        javaGenericType = field.getGenericType();
+
+    }
 
     public String getName() {
+
         return name;
     }
 
@@ -65,5 +75,13 @@ public class ColumnData {
 
     public void setUnique(boolean unique) {
         isUnique = unique;
+    }
+
+    public Type getJavaGenericType() {
+        return javaGenericType;
+    }
+
+    public void setJavaGenericType(Type javaGenericType) {
+        this.javaGenericType = javaGenericType;
     }
 }

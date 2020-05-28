@@ -1,8 +1,8 @@
 package net.eduard.api.lib.database.sqlite;
 
-import net.eduard.api.lib.database.api.IOption;
+import net.eduard.api.lib.database.api.SQLOption;
 
-public class SQLiteOption implements IOption {
+public class SQLiteOption implements SQLOption {
 
     @Override
     public String primaryKey() {

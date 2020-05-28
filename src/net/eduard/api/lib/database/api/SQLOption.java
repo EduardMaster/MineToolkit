@@ -1,6 +1,6 @@
 package net.eduard.api.lib.database.api;
 
-public interface IOption {
+public interface SQLOption {
 
     String primaryKey();
 

@@ -1,8 +1,8 @@
 package net.eduard.api.lib.database.mysql;
 
-import net.eduard.api.lib.database.api.IOption;
+import net.eduard.api.lib.database.api.SQLOption;
 
-public class MySQLOption implements IOption {
+public class MySQLOption implements SQLOption {
     @Override
     public String primaryKey() {
         return "PRIMARY KEY";

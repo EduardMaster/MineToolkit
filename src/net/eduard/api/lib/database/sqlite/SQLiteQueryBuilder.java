@@ -1,10 +1,11 @@
-package net.eduard.api.lib.database.mysql;
+package net.eduard.api.lib.database.sqlite;
 
 import net.eduard.api.lib.database.api.SQLOption;
 import net.eduard.api.lib.database.api.SQLQueryBuilder;
+import net.eduard.api.lib.database.mysql.MySQLOption;
 
-public class MySQLQueryBuilder implements SQLQueryBuilder {
-    private MySQLOption option= new MySQLOption();
+public class SQLiteQueryBuilder implements SQLQueryBuilder {
+    private SQLiteOption option= new SQLiteOption();
     private StringBuilder builder = new StringBuilder();
 
     @Override

@@ -97,6 +97,7 @@ public class AutoBaseEngine {
      */
     public <E> List<E> fetchAll(Class<E> type) {
         List<E> list = new ArrayList<>();
+
         try {
             String tableName = AutoBaseUtil.getTableName(type);
             StringBuilder builder = new StringBuilder();
