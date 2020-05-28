@@ -26,6 +26,7 @@ import net.eduard.api.listener.EduWorldEditListener
 import net.eduard.api.listener.EduardAPIEvents
 import net.eduard.api.listener.LinkadorDeItem
 import net.eduard.api.listener.PlayerTargetAtEntityListener
+import net.eduard.api.server.EduardPlugin
 import net.eduard.api.server.currency.Currency
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
@@ -44,56 +45,31 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI(val api : EduAPI )  {
-    init{
-        instance = api
-    }
+class EduardAPI: EduardPlugin()  {
 
 
 
-    /*
-    private val VALUE_TNT_POWER = 4f
 
-    private val VALUE_CREEPER_POWER = 3f
-
-    private val VALUE_WALKING_VELOCITY = -0.08f
-
-    private val DAY_IN_HOUR = 24
-
-    private val DAY_IN_MINUTES = DAY_IN_HOUR * 60
-
-    private val DAY_IN_SECONDS = DAY_IN_MINUTES * 60
-
-    private val DAY_IN_TICKS = (DAY_IN_SECONDS * 20).toLong()
-
-    private val DAY_IN_MILLIS = DAY_IN_TICKS * 50
-
-     */
-    fun log(msg :String){
-        api.log(msg)
-    }
-    val configs
-    get() = api.configs
-
-    val plugin = api
-
-     fun onEnable() {
-
+     override fun onEnable() {
+        instance=this
+         LibraryLoader(File(dataFolder,"libs/"))
+         reloadVars()
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
-        StorageAPI.registerPackage(EduAPI::class.java, "net.eduard.api.lib")
+        StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
         BukkitStorables.load()
         StorageAPI.startGson()
+
         log("Storables do Bukkit carregado!")
 
-        MAPS_CONFIG = Config(plugin, "maps/")
+        MAPS_CONFIG = Config(this, "maps/")
 
         VaultAPI.setupVault()
 
-        BukkitControl.register(plugin)
+        BukkitControl.register(this)
 
         BukkitBungeeAPI.requestCurrentServer()
-        BungeeAPI.getBukkit().plugin = api
+        BungeeAPI.getBukkit().plugin = this
         BungeeAPI.getBukkit().register()
 
 
@@ -105,14 +81,15 @@ class EduardAPI(val api : EduAPI )  {
 
         reload()
 
-        Mine.resetScoreboards()
+
+        //Mine.resetScoreboards()
         log("Scoreboards dos jogadores online resetadas!")
 
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
         // Na versão 1.16 precisa ser em Sync não pode ser Async
-        PlayerTargetTask().runTaskTimerAsynchronously(plugin, 20, 20)
-        AutoSaveAndBackupTask().runTaskTimerAsynchronously(plugin, 58, 58)
+        PlayerTargetTask().runTaskTimerAsynchronously(this, 20, 20)
+        AutoSaveAndBackupTask().runTaskTimerAsynchronously(this, 58, 58)
 
         log("Ativando comandos")
         ApiCommand().register()
@@ -126,10 +103,10 @@ class EduardAPI(val api : EduAPI )  {
         log("Comandos ativados com sucesso")
 
         log("Ativando listeners dos Eventos")
-        EduardAPIEvents().register(plugin)
-        EduWorldEditListener().register(plugin)
-        PlayerTargetAtEntityListener().register(plugin)
-        LinkadorDeItem().register(plugin)
+        EduardAPIEvents().register(this)
+        EduWorldEditListener().register(this)
+        PlayerTargetAtEntityListener().register(this)
+        LinkadorDeItem().register(this)
         log("Listeners dos Eventos ativados com sucesso")
 
         log("Gerando Base de dados de Enums do Bukkit")
@@ -150,10 +127,9 @@ class EduardAPI(val api : EduAPI )  {
 
 
     }
-    val messages
-    get() = api.messages
 
-     fun reload() {
+
+     override fun reload() {
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
@@ -207,10 +183,8 @@ class EduardAPI(val api : EduAPI )  {
         }
 
     }
-    val dataFolder
-    get() = api.dataFolder
 
-     fun onDisable() {
+     override fun onDisable() {
         PlayerSkin.saveSkins()
         EduardAPI.saveMaps()
         log("Mapas salvados!")
@@ -220,7 +194,7 @@ class EduardAPI(val api : EduAPI )  {
 
     companion object {
 
-        lateinit var instance: EduAPI
+        lateinit var instance: EduardAPI
             private set
             @JvmStatic
             get
@@ -242,6 +216,26 @@ class EduardAPI(val api : EduAPI )  {
          */
         var OPT_SOUND_ERROR = SoundEffect.create("NOTE_BASS_DRUM")
 
+
+
+        /*
+        private val VALUE_TNT_POWER = 4f
+
+        private val VALUE_CREEPER_POWER = 3f
+
+        private val VALUE_WALKING_VELOCITY = -0.08f
+
+        private val DAY_IN_HOUR = 24
+
+        private val DAY_IN_MINUTES = DAY_IN_HOUR * 60
+
+        private val DAY_IN_SECONDS = DAY_IN_MINUTES * 60
+
+        private val DAY_IN_TICKS = (DAY_IN_SECONDS * 20).toLong()
+
+        private val DAY_IN_MILLIS = DAY_IN_TICKS * 50
+
+         */
 
         fun getSchematic(player: Player): Schematic {
             var schema = MAPS_CACHE[player]

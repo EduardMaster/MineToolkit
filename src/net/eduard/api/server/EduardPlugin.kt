@@ -127,7 +127,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     }
 
 
-    fun reloadVars() {
+    protected fun reloadVars() {
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")
         storage = Config(this, "storage.yml")
