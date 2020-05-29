@@ -21,12 +21,13 @@ public class SQLColumn {
     private int size;
 
     public SQLColumn(Field field) {
-        reload(field);
-
-
-    }
-    public void reload(Field field){
         setField(field);
+        getField().setAccessible(true);
+        reload();
+    }
+
+    public void reload() {
+
         name = field.getName();
         if (field.isAnnotationPresent(ColumnName.class)) {
             name = field.getAnnotation(ColumnName.class).value();
@@ -34,8 +35,8 @@ public class SQLColumn {
         javaType = field.getType();
         javaType = Extra.getWrapperOrReturn(javaType);
         javaGenericType = field.getGenericType();
-        if (javaType.equals(String.class)){
-            size=50;
+        if (javaType.equals(String.class)) {
+            size = 50;
         }
 
         if (field.isAnnotationPresent(ColumnValue.class)) {

@@ -1,4 +1,4 @@
-package net.eduard.api.lib.inventory;
+package net.eduard.api.lib.game;
 
 import java.util.*;
 

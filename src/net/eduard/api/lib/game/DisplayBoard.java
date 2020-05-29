@@ -1,4 +1,4 @@
-package net.eduard.api.lib.player;
+package net.eduard.api.lib.game;
 
 import java.util.ArrayList;
 import java.util.Arrays;

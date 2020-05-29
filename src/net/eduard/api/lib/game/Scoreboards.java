@@ -1,9 +1,8 @@
-package net.eduard.api.lib.player;
+package net.eduard.api.lib.game;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import net.eduard.api.lib.player.FakePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;

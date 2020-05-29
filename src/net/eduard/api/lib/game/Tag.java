@@ -1,6 +1,4 @@
-package net.eduard.api.lib.player;
-
-import java.util.Map;
+package net.eduard.api.lib.game;
 
 import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.storage.Storable;

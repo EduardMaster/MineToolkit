@@ -1,8 +1,7 @@
-package net.eduard.api.lib.inventory;
+package net.eduard.api.lib.game;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

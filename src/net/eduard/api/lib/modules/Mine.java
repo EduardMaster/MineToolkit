@@ -2,8 +2,8 @@ package net.eduard.api.lib.modules;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import net.eduard.api.lib.player.FakePlayer;
-import net.eduard.api.lib.world.EmptyWorldGenerator;
+import net.eduard.api.lib.game.FakePlayer;
+import net.eduard.api.lib.game.EmptyWorldGenerator;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -42,7 +42,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 

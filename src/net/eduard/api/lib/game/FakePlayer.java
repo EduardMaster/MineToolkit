@@ -1,4 +1,4 @@
-package net.eduard.api.lib.player;
+package net.eduard.api.lib.game;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;

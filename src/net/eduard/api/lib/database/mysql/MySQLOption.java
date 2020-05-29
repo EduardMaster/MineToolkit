@@ -27,7 +27,7 @@ public class MySQLOption implements SQLOption {
         if (wrapper != null) {
             javaClass = wrapper;
         }
-      
+
         if (String.class.equals(javaClass)) {
             return "VARCHAR(" + size + ")";
         } else if (Integer.class.equals(javaClass)) {

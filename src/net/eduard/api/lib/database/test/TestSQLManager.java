@@ -9,7 +9,8 @@ public class TestSQLManager {
         DBManager dbManager = new DBManager("root", "", "localhost");
         dbManager.openConnection();
         SQLManager manager = new SQLManager(dbManager.getConnection(), SQLEngineType.MYSQL);
-        System.out.println(manager);
+        manager.clearTable(PlayerData.class);
+        manager.deleteTable(PlayerData.class);
         manager.createTable(PlayerData.class);
         dbManager.closeConnection();
     }

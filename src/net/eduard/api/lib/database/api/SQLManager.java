@@ -1,5 +1,7 @@
 package net.eduard.api.lib.database.api;
 
+import net.eduard.api.lib.database.api.entity.SQLColumn;
+import net.eduard.api.lib.database.api.entity.SQLRecord;
 import net.eduard.api.lib.database.api.entity.SQLTable;
 import net.eduard.api.lib.database.mysql.MySQLQueryBuilder;
 import net.eduard.api.lib.database.sqlite.SQLiteQueryBuilder;
@@ -7,7 +9,9 @@ import net.eduard.api.lib.database.sqlite.SQLiteQueryBuilder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SQLManager {
@@ -31,6 +35,47 @@ public class SQLManager {
             default:
                 break;
         }
+    }
+
+
+    public <E> E getData(Class<E> dataClass, Object primaryKeyValue) {
+
+        SQLTable table = getTableData(dataClass);
+
+        ResultSet result = executeQuery(builder.findRecord(table, primaryKeyValue));
+
+        try {
+            if (result.next()) {
+                SQLRecord record = new SQLRecord(table, result, builder.option());
+                return (E) record.getInstance();
+            }
+        } catch (Exception ex) {
+
+        }
+        return null;
+    }
+
+    public <E> List<E> getAllData(Class<E> dataClass) {
+        List<E> list = new ArrayList<>();
+        SQLTable table = getTableData(dataClass);
+
+        ResultSet result = executeQuery(builder.findRecords(table));
+        try {
+            while (result.next()) {
+                SQLRecord record = new SQLRecord(table, result, builder.option());
+                list.add((E) record.getInstance());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public void insertData(Object data){
+        Class<?> dataClass = data.getClass();
+        SQLTable table = getTableData(dataClass);
+        executeUpdate(builder.insertRecord(table, data));
     }
 
 
@@ -58,13 +103,13 @@ public class SQLManager {
         executeUpdate(builder.clearTable(table));
     }
 
-    protected  void log(String msg){
-        System.out.println("SQLManager: "+msg);
+    protected void log(String msg) {
+        System.out.println("SQLManager: " + msg);
     }
 
     protected void executeUpdate(String query) {
         try {
-            log("Update: "+query);
+            log("Update: " + query);
             connection.prepareStatement(query).executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

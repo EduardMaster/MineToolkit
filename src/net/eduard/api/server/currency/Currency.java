@@ -1,11 +1,9 @@
 package net.eduard.api.server.currency;
 
 
-import net.eduard.api.lib.player.FakePlayer;
+import net.eduard.api.lib.game.FakePlayer;
 import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.modules.VaultAPI;
 
-import net.eduard.api.server.Systems;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

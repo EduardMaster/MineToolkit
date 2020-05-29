@@ -16,6 +16,15 @@ public class SQLTable {
 
     }
 
+    public SQLColumn getPrimaryKey(){
+        for (SQLColumn column : columns){
+            if (column.isPrimary()){
+                return column;
+            }
+        }
+        return null;
+    }
+
     public void reload(Class<?> tableClass) {
         this.tableName = tableName;
         if (tableClass.isAnnotationPresent(TableName.class)){

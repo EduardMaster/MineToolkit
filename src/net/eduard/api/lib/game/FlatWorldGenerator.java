@@ -1,4 +1,4 @@
-package net.eduard.api.lib.world;
+package net.eduard.api.lib.game;
 
 import java.util.Random;
 
@@ -12,13 +12,12 @@ import org.bukkit.generator.ChunkGenerator;
  * @author Eduard
  *
  */
-public class PlotWorldGenerator extends EmptyWorldGenerator {
+public class FlatWorldGenerator extends EmptyWorldGenerator {
 
 	@Override
 	public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ,
 			ChunkGenerator.BiomeGrid biomeGrid) {
 		byte[][] result = new byte[world.getMaxHeight() / 16][];
-		
 		setLayer(result, 0, Material.BEDROCK);
 		setLayer(result, 1, 3, Material.DIRT);
 		setLayer(result, 4, Material.GRASS);

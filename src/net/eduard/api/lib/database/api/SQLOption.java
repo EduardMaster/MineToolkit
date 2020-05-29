@@ -49,6 +49,13 @@ public interface SQLOption {
         return "INSERT INTO ";
     }
 
+    default String selectData() {
+        return "SELECT " + allCollumns() + " FROM ";
+    }
+    default String where(){
+        return "WHERE ";
+    }
+
     default String unique() {
         return "UNIQUE";
     }
@@ -61,18 +68,17 @@ public interface SQLOption {
         return "'" + data + "'";
     }
 
-     String sqlTypeOf(Class<?> javaClass, int size);
-
+    String sqlTypeOf(Class<?> javaClass, int size);
 
 
     default String convertToSQL(Object javaObject) {
-        if (javaObject == null){
+        if (javaObject == null) {
             return null;
         }
         return javaObject.toString();
     }
 
-    default Object convertToJava(String sqlData) {
+    default Object convertToJava(Object sqlData) {
         return sqlData;
     }
 
@@ -84,4 +90,6 @@ public interface SQLOption {
     default String defaults() {
         return "DEFAULT ";
     }
+
+
 }

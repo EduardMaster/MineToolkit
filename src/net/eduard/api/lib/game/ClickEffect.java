@@ -1,4 +1,4 @@
-package net.eduard.api.lib.inventory;
+package net.eduard.api.lib.game;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

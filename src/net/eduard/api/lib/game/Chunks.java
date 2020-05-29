@@ -1,4 +1,4 @@
-package net.eduard.api.lib.world;
+package net.eduard.api.lib.game;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
