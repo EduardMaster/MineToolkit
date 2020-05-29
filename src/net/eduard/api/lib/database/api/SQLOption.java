@@ -1,12 +1,18 @@
 package net.eduard.api.lib.database.api;
 
+import net.eduard.api.lib.modules.Extra;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.UUID;
+
 public interface SQLOption {
 
     String primaryKey();
 
     String autoIncrement();
-
-    String varText(int size);
 
     default String notNull() {
         return "NOT NULL";
@@ -35,9 +41,11 @@ public interface SQLOption {
 
     default String clearTable() {
         return "TRUNCATE TABLE ";
-    };
+    }
 
-    default String insertData(){
+    ;
+
+    default String insertData() {
         return "INSERT INTO ";
     }
 
@@ -52,11 +60,19 @@ public interface SQLOption {
     default String data(String data) {
         return "'" + data + "'";
     }
-    default String convertToSQL(Object javaObject){
 
+     String sqlTypeOf(Class<?> javaClass, int size);
+
+
+
+    default String convertToSQL(Object javaObject) {
+        if (javaObject == null){
+            return null;
+        }
         return javaObject.toString();
     }
-    default Object convertToJava(String sqlData){
+
+    default Object convertToJava(String sqlData) {
         return sqlData;
     }
 
@@ -65,7 +81,7 @@ public interface SQLOption {
     }
 
 
-    default String defaults(){
+    default String defaults() {
         return "DEFAULT ";
     }
 }

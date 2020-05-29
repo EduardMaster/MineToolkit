@@ -8,7 +8,6 @@ import net.eduard.api.lib.database.annotations.*;
 public class PlayerData {
 
     @ColumnPrimary
-    @ColumnAuto
     private int id;
 
     @ColumnUnique

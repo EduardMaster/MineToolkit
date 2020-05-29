@@ -1,6 +1,7 @@
 package net.eduard.api.lib.database.api.entity;
 
 import net.eduard.api.lib.database.annotations.*;
+import net.eduard.api.lib.modules.Extra;
 
 import javax.persistence.Column;
 import java.lang.reflect.Field;
@@ -31,7 +32,11 @@ public class SQLColumn {
             name = field.getAnnotation(ColumnName.class).value();
         }
         javaType = field.getType();
+        javaType = Extra.getWrapperOrReturn(javaType);
         javaGenericType = field.getGenericType();
+        if (javaType.equals(String.class)){
+            size=50;
+        }
 
         if (field.isAnnotationPresent(ColumnValue.class)) {
             defaultValue = field.getAnnotation(ColumnValue.class).value();

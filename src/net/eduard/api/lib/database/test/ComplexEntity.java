@@ -1,6 +1,5 @@
 package net.eduard.api.lib.database.test;
 
-import net.eduard.api.lib.database.TestAutoBase;
 import net.eduard.api.lib.database.annotations.*;
 
 import java.sql.Timestamp;

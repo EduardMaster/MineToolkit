@@ -1,15 +1,27 @@
 package net.eduard.api.server.currency;
 
-import me.yblackdev.legitpvp.sistema.token.TokenSistema;
+
 import net.eduard.api.lib.player.FakePlayer;
 import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.modules.VaultAPI;
+
 import net.eduard.api.server.Systems;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public enum Currency {
 
+    DEFAULT,
+    EDU_CASH,PLAYER_POINTS,
+    LEGIT_RANKUP_TOKEN
+    ,
+    JH_CASH
+
+    ;
+    private Currency(){}
+
+
+/*
     DEFAULT("Dinheiro Padrão", Material.EMERALD, '$') {
         @Override
         public double get(FakePlayer player) {
@@ -142,6 +154,8 @@ public enum Currency {
             return true;
         }
     };
+
+ */
     private String name;
     private Material material;
     private char symbol;
@@ -153,7 +167,9 @@ public enum Currency {
 
     }
 
-    public abstract double get(FakePlayer player);
+    public  double get(FakePlayer player){
+        return -1;
+    }
 
     public ItemStack getIcon() {
         return Mine.newItem(material, "§a" + name);
@@ -177,11 +193,17 @@ public enum Currency {
         this.material = material;
     }
 
-    public abstract boolean check(FakePlayer player, double amount);
+    public boolean check(FakePlayer player, double amount){
+        return false;
+    }
 
-    public abstract boolean remove(FakePlayer player, double amount);
+    public boolean remove(FakePlayer player, double amount){
+        return false;
+    }
 
-    public abstract boolean add(FakePlayer player, double amount);
+    public boolean add(FakePlayer player, double amount){
+        return false;
+    }
 
     public char getSymbol() {
         return symbol;

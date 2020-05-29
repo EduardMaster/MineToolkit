@@ -1309,6 +1309,13 @@ public final class Extra {
         }
         return finalValue;
     }
+    public static Class<?> getWrapperOrReturn(Class<?> clazz) {
+        Class<?> wrapper = getWrapper(clazz);
+        if (wrapper==null){
+            wrapper = clazz;
+        }
+        return wrapper;
+    }
 
     public static Class<?> getWrapper(Class<?> clazz) {
         for (Entry<Class<?>, Class<?>> wrapperEntry : wrappers.entrySet()) {

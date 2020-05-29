@@ -18,21 +18,20 @@ public class SQLManager {
     private Map<Class<?>, SQLTable> cacheTables = new HashMap<>();
 
 
-    public SQLManager(Connection connection) {
+    public SQLManager(Connection connection, SQLEngineType type) {
         setConnection(connection);
-
-        try {
-            if (connection.getCatalog().equalsIgnoreCase("mysql")){
-                builder = new MySQLQueryBuilder();
-            } else {
-                builder = new SQLiteQueryBuilder();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        setEngineType(type);
+        switch (engineType) {
+            case MYSQL:
+                setBuilder(new MySQLQueryBuilder());
+                break;
+            case SQLITE:
+                setBuilder(new SQLiteQueryBuilder());
+                break;
+            default:
+                break;
         }
-
     }
-
 
 
     protected SQLTable getTableData(Class<?> dataClass) {
@@ -53,12 +52,19 @@ public class SQLManager {
         SQLTable table = getTableData(dataClass);
         executeUpdate(builder.deleteTable(table));
     }
+
     public void clearTable(Class<?> dataClass) {
         SQLTable table = getTableData(dataClass);
         executeUpdate(builder.clearTable(table));
     }
+
+    protected  void log(String msg){
+        System.out.println("SQLManager: "+msg);
+    }
+
     protected void executeUpdate(String query) {
         try {
+            log("Update: "+query);
             connection.prepareStatement(query).executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
