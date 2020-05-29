@@ -27,7 +27,6 @@ import net.eduard.api.listener.EduardAPIEvents
 import net.eduard.api.listener.LinkadorDeItem
 import net.eduard.api.listener.PlayerTargetAtEntityListener
 import net.eduard.api.server.EduardPlugin
-import net.eduard.api.server.currency.Currency
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetTask

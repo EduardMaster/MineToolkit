@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import net.eduard.api.lib.game.FakePlayer;
-import net.eduard.api.server.currency.Currency;
 import net.eduard.api.lib.modules.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -1,7 +1,7 @@
 package net.eduard.api.server.kit;
 
 /**
- * GlpplerHook 1.7
+ * GlapplerHook 1.7
  */
 public class GrapplerHookOld {
 
