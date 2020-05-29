@@ -7,7 +7,7 @@ import net.eduard.api.lib.storage.Storable;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.player.FakePlayer;
+import net.eduard.api.lib.game.FakePlayer;
 
 public class CooldownManager extends EffectManager  {
 	private String msgOnCooldown;

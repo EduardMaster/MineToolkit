@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.eduard.api.lib.player.FakePlayer;
+import net.eduard.api.lib.game.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 
 

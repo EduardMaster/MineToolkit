@@ -17,7 +17,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
 import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.inventory.EnchantGlow;
+import net.eduard.api.lib.game.EnchantGlow;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 

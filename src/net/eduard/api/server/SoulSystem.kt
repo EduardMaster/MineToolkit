@@ -1,6 +1,6 @@
 package net.eduard.api.server
 
-import net.eduard.api.lib.player.FakePlayer
+import net.eduard.api.lib.game.FakePlayer
 
 interface SoulSystem {
 

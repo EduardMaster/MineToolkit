@@ -7,8 +7,8 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.player.DisplayBoard
-import net.eduard.api.lib.inventory.Kit
+import net.eduard.api.lib.game.DisplayBoard
+import net.eduard.api.lib.game.Kit
 import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.eduard.api.lib.config.Config

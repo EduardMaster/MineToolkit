@@ -6,7 +6,7 @@ import java.util.UUID;
 import com.google.gson.*;
 import org.bukkit.OfflinePlayer;
 
-import net.eduard.api.lib.player.FakePlayer;
+import net.eduard.api.lib.game.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.Storable.*;
 

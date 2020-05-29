@@ -2,7 +2,7 @@ package net.eduard.api.lib.menu;
 
 import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.inventory.ClickEffect;
+import net.eduard.api.lib.game.ClickEffect;
 
 public class MenuButton  extends Slot{
 

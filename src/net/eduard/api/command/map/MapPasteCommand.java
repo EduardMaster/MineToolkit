@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.world.Schematic;
+import net.eduard.api.lib.game.Schematic;
 import net.eduard.api.lib.manager.CommandManager;
 
 public class MapPasteCommand extends CommandManager {

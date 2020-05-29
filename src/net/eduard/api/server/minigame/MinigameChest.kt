@@ -2,9 +2,8 @@ package net.eduard.api.server.minigame
 
 import java.util.ArrayList
 import java.util.Arrays
-import java.util.stream.Stream
 
-import net.eduard.api.lib.inventory.ItemRandom
+import net.eduard.api.lib.game.ItemRandom
 import net.eduard.api.lib.modules.Extra
 import org.bukkit.Material
 import org.bukkit.inventory.Inventory
@@ -12,7 +11,6 @@ import org.bukkit.inventory.ItemStack
 
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.storage.Storable
-import kotlin.streams.toList
 
 class MinigameChest : Storable<MinigameChest> {
     var refilTime = 2 * 60

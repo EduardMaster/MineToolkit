@@ -2,7 +2,7 @@ package net.eduard.api.server
 
 import org.bukkit.entity.Player
 
-import net.eduard.api.lib.player.DisplayBoard
+import net.eduard.api.lib.game.DisplayBoard
 
 interface ScoreSystem {
 

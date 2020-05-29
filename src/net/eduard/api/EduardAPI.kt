@@ -21,7 +21,7 @@ import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
-import net.eduard.api.lib.world.Schematic
+import net.eduard.api.lib.game.Schematic
 import net.eduard.api.listener.EduWorldEditListener
 import net.eduard.api.listener.EduardAPIEvents
 import net.eduard.api.listener.LinkadorDeItem

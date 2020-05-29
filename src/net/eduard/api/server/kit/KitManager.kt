@@ -15,7 +15,7 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.menu.Slot
-import net.eduard.api.lib.inventory.ClickEffect
+import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.modules.VaultAPI
 
 class KitManager : EventsManager() {

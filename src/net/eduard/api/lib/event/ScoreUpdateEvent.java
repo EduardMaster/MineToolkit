@@ -5,7 +5,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-import net.eduard.api.lib.player.DisplayBoard;
+import net.eduard.api.lib.game.DisplayBoard;
 
 public class ScoreUpdateEvent extends PlayerEvent implements Cancellable {
 	private DisplayBoard score;
