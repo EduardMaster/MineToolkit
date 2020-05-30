@@ -1,14 +1,11 @@
 package net.eduard.api.lib.database.api;
 
-import net.eduard.api.lib.database.api.entity.SQLColumn;
 import net.eduard.api.lib.database.api.entity.SQLRecord;
 import net.eduard.api.lib.database.api.entity.SQLTable;
 import net.eduard.api.lib.database.mysql.MySQLQueryBuilder;
 import net.eduard.api.lib.database.sqlite.SQLiteQueryBuilder;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +23,7 @@ public class SQLManager {
         setBuilder(builder);
         setEngineType(SQLEngineType.OTHER);
     }
+
     public SQLManager(Connection connection, SQLEngineType type) {
         setConnection(connection);
         setEngineType(type);
@@ -47,17 +45,20 @@ public class SQLManager {
         SQLTable table = getTableData(dataClass);
 
         ResultSet result = executeQuery(builder.findRecord(table, primaryKeyValue));
-
+        E dataToReturn = null;
         try {
             if (result.next()) {
                 SQLRecord record = new SQLRecord(table, result, builder.option());
                 table.getRecords().add(record);
-                return (E) record.getInstance();
+
+                dataToReturn = (E) record.getInstance();
             }
+            result.close();
+            result.getStatement().close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return null;
+        return dataToReturn;
     }
 
     public <E> List<E> getAllData(Class<E> dataClass) {
@@ -70,6 +71,8 @@ public class SQLManager {
                 SQLRecord record = new SQLRecord(table, result, builder.option());
                 list.add((E) record.getInstance());
             }
+            result.close();
+            result.getStatement().close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -77,20 +80,22 @@ public class SQLManager {
         return list;
     }
 
-    public void insertData(Object data){
+    public void insertData(Object data) {
         Class<?> dataClass = data.getClass();
         SQLTable table = getTableData(dataClass);
         SQLRecord record = table.getRecord(data);
-        executeUpdate(builder.insertRecord(record));
+        int intReturned = executeUpdate(builder.insertRecord(record));
     }
-    public void updateData(Object data){
+
+    public void updateData(Object data) {
         Class<?> dataClass = data.getClass();
         SQLTable table = getTableData(dataClass);
         SQLRecord record = table.getRecord(data);
         record.reload();
         executeUpdate(builder.updateRecord(record));
     }
-    public void deleteData(Object data){
+
+    public void deleteData(Object data) {
         Class<?> dataClass = data.getClass();
         SQLTable table = getTableData(dataClass);
         SQLRecord record = table.getRecord(data);
@@ -126,18 +131,31 @@ public class SQLManager {
         System.out.println("SQLManager: " + msg);
     }
 
-    protected void executeUpdate(String query) {
+    protected int executeUpdate(String query) {
+        int id = -1;
         try {
             log("Update: " + query);
-            connection.prepareStatement(query).executeUpdate();
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+
+            statement.executeUpdate();
+            ResultSet keys = statement.getGeneratedKeys();
+
+            if (keys != null) {
+                if (keys.next()) {
+                    id = keys.getInt(1);
+                }
+            }
+            keys.close();
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return id;
     }
 
     protected ResultSet executeQuery(String queryStr) {
         try {
-            log( "Query: " + queryStr);
+            log("Query: " + queryStr);
             ResultSet resultSet = connection.prepareStatement(queryStr).executeQuery();
             return resultSet;
         } catch (SQLException e) {

@@ -9,6 +9,7 @@ import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * API de Controle de MySQL ou SQLite com apenas 1 conexão
@@ -38,6 +39,7 @@ public class DBManager implements Storable, Copyable {
     static {
         hasMySQL();
         hasSQLite();
+
     }
 
     public DBManager() {
@@ -78,7 +80,7 @@ public class DBManager implements Storable, Copyable {
             try {
                 this.connection.close();
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
+
                 e.printStackTrace();
             }
         }
@@ -477,16 +479,11 @@ public class DBManager implements Storable, Copyable {
                 } else {
                     try {
                         Object data = DBManager.fromJavaToSQL(replacer);
-						/*if (data instanceof  String){
-							state.setString(id, (String) data);
-						}else {
 
-						 */
                         state.setObject(id, data);
 
-                        //}
                     } catch (SQLException e) {
-                        // TODO Auto-generated catch block
+
                         e.printStackTrace();
                     }
                 }
@@ -533,6 +530,7 @@ public class DBManager implements Storable, Copyable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return result;
     }
 
@@ -656,11 +654,6 @@ public class DBManager implements Storable, Copyable {
         if (store != null) {
             return store.store(value);
         }
-        /*
-        if (type == boolean.class || type == Boolean.class) {
-            value = Boolean.valueOf(value.toString()) ? 1 : 0;
-        }
-        */
         if (type == java.util.Date.class) {
             value = new Date(((java.util.Date) value).getTime());
         } else if (value instanceof Calendar) {
@@ -699,66 +692,6 @@ public class DBManager implements Storable, Copyable {
         }
 
         return value;
-    }
-
-    public static PreparedStatement prepare(Connection connection, String query, Object... array) {
-        PreparedStatement state = null;
-        try {
-            state = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            for (int id = 1; id <= array.length; id++) {
-                DBManager.setSQLValue(state, array[id - 1], id);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-        return state;
-
-    }
-
-    public static ResultSet query(Connection connection, String query, Object... array) {
-        try {
-            PreparedStatement state = DBManager.prepare(connection, query, array);
-            if (state != null) {
-                return state.executeQuery();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public static int getGeneratedId(PreparedStatement statement) {
-        try {
-            ResultSet keys = statement.getGeneratedKeys();
-            if (keys != null) {
-                if (keys.next()) {
-                    return keys.getInt(1);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return -1;
-    }
-
-    public static int update(Connection connection, String query, Object... array) {
-        try {
-            PreparedStatement state = DBManager.prepare(connection, query, array);
-            if (state != null) {
-
-                state.executeUpdate();
-                int id = DBManager.getGeneratedId(state);
-                state.close();
-                return id;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return -1;
     }
 
 
@@ -854,10 +787,10 @@ public class DBManager implements Storable, Copyable {
     public static String getQuestionMarks(int size) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            if (i != 0)
-                builder.append(",");
             builder.append("?");
+            builder.append(",");
         }
+        builder.deleteCharAt(builder.length()-1);
         return builder.toString();
     }
 

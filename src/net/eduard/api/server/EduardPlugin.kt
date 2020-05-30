@@ -19,6 +19,9 @@ import org.bukkit.plugin.java.JavaPlugin
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
+import net.eduard.api.lib.database.api.SQLEngineType
+import net.eduard.api.lib.database.api.SQLManager
+import net.eduard.api.lib.database.mysql.MySQLOption
 import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.StorageAPI
@@ -37,11 +40,25 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         @JvmName("getDB")
         get
 
+    var sqlManager: SQLManager? = null
+        get() {
+            if (field == null) {
+                var type = SQLEngineType.MYSQL
+                if (db.useSQLite()) {
+                    type = SQLEngineType.SQLITE
+                }
+                field = SQLManager(db.connection, type)
+            }
+            return field
+        }
+    private set
+
 
     lateinit var configs: Config
         protected set
     lateinit var messages: Config
         protected set
+
     /**
      * @return A [Config] Storage
      */
@@ -88,6 +105,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         get() = configs.getBoolean("backup")
 
     fun getString(path: String): String {
+
         return configs.message(path)
     }
 
@@ -148,6 +166,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
 
     protected fun mainConfig() {
 
+
         configs.add("auto-save", false)
         configs.add("auto-save-seconds", 60)
         configs.add("auto-save-lasttime", Extra.getNow())
@@ -207,10 +226,10 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         var lista = Arrays.asList(*pasta.listFiles()!!)
         lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
                 .forEach {
-            Extra.deleteFolder(it)
-            if (it.exists())
-                it.delete()
-        }
+                    Extra.deleteFolder(it)
+                    if (it.exists())
+                        it.delete()
+                }
     }
 
     /**
