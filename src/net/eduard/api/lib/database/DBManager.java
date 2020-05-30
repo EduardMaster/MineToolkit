@@ -41,7 +41,7 @@ public class DBManager implements Storable, Copyable {
     }
 
     public DBManager() {
-        // TODO Auto-generated constructor stub
+
     }
 
     /**
@@ -195,7 +195,7 @@ public class DBManager implements Storable, Copyable {
     public void createDatabase(String database) {
         update("create database if not exists " + database
                 + " default character set utf8 default collate utf8_general_ci");
-        update("create database if not exists " + database + " default character set utf8");
+       // update("create database if not exists " + database + " default character set utf8");
     }
 
     /**
@@ -249,13 +249,10 @@ public class DBManager implements Storable, Copyable {
      * @return
      */
     public int insert(String table, Object... objects) {
-//		if (useSQLite) {
-        // antes era hashes
+
         return update("INSERT INTO " + table + " values ( NULL , " + DBManager.getQuestionMarks(objects.length) + " )",
                 objects);
-//		} else {
-//			return update("INSERT INTO " + table + " values (default, " + inters(objects.length) + " )", objects);
-//		}
+
     }
 
     /**
@@ -326,7 +323,7 @@ public class DBManager implements Storable, Copyable {
      *
      * @param table        Tabela
      * @param column       Coluna
-     * @param modification Modifica§§o
+     * @param modification Modificar
      */
     public void modify(String table, String column, String modification) {
         alter(table, "modify column " + column + " " + modification);
@@ -358,7 +355,7 @@ public class DBManager implements Storable, Copyable {
      *
      * @param table  Tabela
      * @param where  Como
-     * @param edit   Modifica§§o
+     * @param edit   Modificar
      * @param values Valores
      */
     public void change(String table, String edit, String where, Object... values) {
@@ -609,7 +606,6 @@ public class DBManager implements Storable, Copyable {
     }
 
 
-
     @Override
     public String toString() {
         return "DBManager [user=" + user + ", pass=" + pass + ", host=" + host + ", port=" + port + ", database="
@@ -648,11 +644,6 @@ public class DBManager implements Storable, Copyable {
 
     /**
      *
-     *
-     *
-     *
-     *
-     *
      */
 
 
@@ -662,7 +653,7 @@ public class DBManager implements Storable, Copyable {
         }
         Class<? extends Object> type = value.getClass();
         Storable store = StorageAPI.getStore(type);
-        if (store!=null){
+        if (store != null) {
             return store.store(value);
         }
         /*
@@ -674,15 +665,16 @@ public class DBManager implements Storable, Copyable {
             value = new Date(((java.util.Date) value).getTime());
         } else if (value instanceof Calendar) {
             value = new Timestamp(((Calendar) value).getTimeInMillis());
-        }else if( value instanceof UUID){
+        } else if (value instanceof UUID) {
             value = value.toString();
         }
 
         return value;
     }
+
     public static Object fromSQLToJava(Class<?> type, Object value) {
         Storable store = StorageAPI.getStore(type);
-        if (store!=null){
+        if (store != null) {
             return store.restore(value.toString());
         }
         if (type == UUID.class) {
@@ -776,7 +768,7 @@ public class DBManager implements Storable, Copyable {
             type = wrapper;
         }
         Storable store = StorageAPI.getStore(type);
-        if (store!=null){
+        if (store != null) {
             return "TEXT";
         }
         if (String.class.isAssignableFrom(type)) {
@@ -871,12 +863,6 @@ public class DBManager implements Storable, Copyable {
 
     /**
      *
-     *
-     *
-     *
-     *
-     *
-     *
      */
 
     public List<Map<String, ColumnInfo>> getVariablesFrom(String tableName, String where) {
@@ -928,8 +914,8 @@ public class DBManager implements Storable, Copyable {
 
     /**
      * Informações de uma Coluna de uma Tabela
+     *
      * @author Eduard
-
      */
     public class ColumnInfo {
         private int id;
@@ -940,7 +926,7 @@ public class DBManager implements Storable, Copyable {
         private String typeName;
         private String className;
 
-        public Object get()  {
+        public Object get() {
             return getValue();
         }
 

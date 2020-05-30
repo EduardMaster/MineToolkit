@@ -7,9 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-@TableName("tabela teste")
+@TableName("tabela")
 public class ComplexEntity {
-
 
 
     @ColumnPrimary
@@ -22,14 +21,14 @@ public class ComplexEntity {
     String nome;
     UUID playerID = UUID.randomUUID();
     Date dia = new Date(System.currentTimeMillis());
+
     Timestamp stampa = new Timestamp(System.currentTimeMillis());
+
     Calendar calendario = Calendar.getInstance();
     long longo = 1000L;
     double decimal = 15.0D;
     float flutuante = 20.5F;
     boolean forte = false;
 
-
-    //TestAutoBase.Rank r = new TestAutoBase.Rank();
 
 }

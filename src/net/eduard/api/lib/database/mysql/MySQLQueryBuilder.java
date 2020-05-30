@@ -12,14 +12,4 @@ public class MySQLQueryBuilder implements SQLQueryBuilder {
         return option;
     }
 
-    @Override
-    public StringBuilder builder() {
-        return builder;
-    }
-
-    @Override
-    public StringBuilder newQuery() {
-        this.builder = new StringBuilder();
-        return builder;
-    }
 }

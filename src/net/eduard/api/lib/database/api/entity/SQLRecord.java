@@ -21,10 +21,10 @@ public class SQLRecord {
             instance = (Object) table.getClassBased().newInstance();
             for (SQLColumn column : table.getColumns()) {
                 try {
-                    data.put(column, option.convertToJava(resultSet.getObject(column.getName())));
+                    data.put(column, option.convertToJava(resultSet.getObject(column.getName()), column.getJavaType()));
 
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    data.put(column, null);
                 }
             }
         } catch (Exception exception) {
@@ -89,5 +89,9 @@ public class SQLRecord {
 
     public void setTable(SQLTable table) {
         this.table = table;
+    }
+
+    public Object getPrimaryKeyValue() {
+        return data.get(table.getPrimaryKey());
     }
 }

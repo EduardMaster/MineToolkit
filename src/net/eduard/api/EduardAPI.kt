@@ -143,12 +143,16 @@ class EduardAPI: EduardPlugin()  {
         Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
         PlayerSkin.reloadSkins()
 
+
+         /*
         for (currency in Currency.values()) {
             configs.add("currencies." + currency.name + ".enabled", currency.isEnabled)
             configs.add("currencies." + currency.name + ".name", currency.getName())
             currency.setName(configs.getString("currencies." + currency.name + ".name"))
             currency.isEnabled = configs.getBoolean("currencies." + currency.name + ".enabled")
         }
+
+        */
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
         EduardAPI.loadMaps()
         log("Mapas carregados!")

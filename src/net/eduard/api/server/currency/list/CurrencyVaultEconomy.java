@@ -29,8 +29,8 @@ public class CurrencyVaultEconomy implements CurrencyHandler {
     }
 
     @Override
-    public char getSymbol() {
-        return '$';
+    public String getSymbol() {
+        return "$";
     }
 
     @Override

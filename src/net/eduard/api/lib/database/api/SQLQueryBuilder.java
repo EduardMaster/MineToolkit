@@ -10,123 +10,154 @@ public interface SQLQueryBuilder {
 
     SQLOption option();
 
-    StringBuilder builder();
-
-    StringBuilder newQuery();
-
-    default StringBuilder space() {
-        return builder().append(" ");
-    }
-
 
     default String findRecord(SQLTable table, Object primaryKeyValue) {
         SQLColumn primaryKey = table.getPrimaryKey();
-        newQuery().append(option().selectData()).append(option().name(table.getTableName()));
-        space().append(option().where());
-        space().append(option().name(primaryKey.getName()));
-        space().append("=");
-        space().append(option().data(option().convertToSQL(primaryKeyValue)));
-        return builder().toString();
+        return new StringBuilder().append(option().selectData()).append(option().name(table.getTableName()))
+                .append(option().where())
+                .append(option().name(primaryKey.getName()))
+                .append(option().equalsTo()).append(option().data(option().convertToSQL(primaryKeyValue,table.getPrimaryKey().getJavaType()))).
+                        toString();
     }
 
     default String findRecords(SQLTable table) {
-        return newQuery().append(option().selectData()).append(option().name(table.getTableName())).toString();
+        return new StringBuilder().append(option().selectData()).append(option().name(table.getTableName())).toString();
     }
 
+    default String deleteRecord(SQLRecord record) {
+        SQLTable table = record.getTable();
+
+        return new StringBuilder().append(option().deleteData()).append(option().name(table.getTableName()))
+                .append(option().where())
+                .append(option().name(table.getPrimaryKey().getName()))
+                .append(option().equalsTo()).append(option().data(option().convertToSQL(record.getPrimaryKeyValue(),table.getPrimaryKey().getJavaType() ))).toString();
+    }
 
     default String createTable(SQLTable table) {
-
-        newQuery().append(option().createTable());
-
-        space().append(option().name(table.getTableName()));
-        builder().append(" (");
+        StringBuilder builder = new StringBuilder();
+        builder.append(option().createTable());
+        builder.append(option().name(table.getTableName()));
+        builder.append(" (");
         for (SQLColumn column : table.getColumns()) {
-            builder().append(option().name(column.getName()));
+            builder.append(option().name(column.getName()));
 
             if (column.getSqlType() == null) {
                 column.setSqlType(option().sqlTypeOf(column.getJavaType(), column.getSize()));
             }
-            space().append(column.getSqlType());
+            builder.append(" ");
+            builder.append(column.getSqlType());
             boolean canHaveDefault = true;
             if (!column.isNullable()) {
-                space().append(option().notNull());
+                builder.append(option().notNull());
 
             }
             if (column.isUnique()) {
-                space().append(option().unique());
+                builder.append(option().unique());
                 canHaveDefault = false;
             }
 
             if (column.isPrimary()) {
-                space().append(option().primaryKey());
+                builder.append(option().primaryKey());
 
 
-                if (Number.class.isAssignableFrom(column.getJavaType())) {
-                    space().append(option().autoIncrement());
+                if (column.isAutoIncrement()) {
+                    builder.append(option().autoIncrement());
                 }
                 canHaveDefault = false;
             }
             if (canHaveDefault) {
-                space().append(option().defaults());
+                builder.append(option().defaults());
 
 
                 if (column.getDefaultValue() == null) {
 
                     if (column.isNullable()) {
-                        space().append("NULL");
+                        builder.append("NULL");
                     } else {
-                        space().append("'0'");
+                        builder.append(option().defaultFor(column.getJavaType()));
                     }
                 } else {
-                    space().append(option().data(option().convertToSQL(column.getDefaultValue())));
+                    builder.append(option().data(option().convertToSQL(column.getDefaultValue(),table.getPrimaryKey().getJavaType())));
                 }
             }
 
 
-            builder().append(",");
+            builder.append(",");
 
         }
-        builder().deleteCharAt(builder().length() - 1);
+        builder.deleteCharAt(builder.length() - 1);
 
-        builder().append(")");
-        return builder().toString();
+        builder.append(")");
+        return builder.toString();
 
     }
 
+
     default String deleteTable(SQLTable table) {
-        return newQuery().append(option().deleteTable()).append(option().name(table.getTableName())).toString();
+        return new StringBuilder().append(option().deleteTable()).append(option().name(table.getTableName())).toString();
     }
 
     default String clearTable(SQLTable table) {
-        return newQuery().append(option().clearTable()).append(option().name(table.getTableName())).toString();
+        return new StringBuilder().append(option().clearTable()).append(option().name(table.getTableName())).toString();
     }
 
-    default String insertRecord(SQLTable table, Object instance) {
-        newQuery().append(option().insertData()).append(option().name(table.getTableName()));
-        space();
+    default String updateRecord(SQLRecord record) {
+        SQLTable table = record.getTable();
+        StringBuilder builder = new StringBuilder();
+        builder.append(option().updateData()).append(option().name(table.getTableName()));
+
+        builder.append(option().updateDataSet());
+        for (Map.Entry<SQLColumn, Object> entry : record.getData().entrySet()) {
+
+            SQLColumn column = entry.getKey();
+            if (column.isPrimary()) continue;
+            Object value = entry.getValue();
+            builder.append(option().name(column.getName()));
+            builder.append(option().equalsTo());
+            builder.append(option().data(option().convertToSQL(value , column.getJavaType())));
+            builder.append(",");
+        }
+        Object primaryKeyValue = record.getPrimaryKeyValue();
+
+        builder.deleteCharAt(builder.length() - 1);
+        builder.append(option().where())
+                .append(option().name(table.getPrimaryKey().getName()))
+                .append(option().equalsTo()).append(option().data(option().convertToSQL(primaryKeyValue, table.getPrimaryKey().getJavaType())));
+
+
+        return builder.toString();
+
+
+    }
+
+    default String insertRecord(SQLRecord record) {
+        SQLTable table = record.getTable();
+        StringBuilder builder = new StringBuilder();
+        builder.append(option().insertData()).append(option().name(table.getTableName()));
         StringBuilder header = new StringBuilder();
 
         StringBuilder values = new StringBuilder();
-        SQLRecord record = new SQLRecord(table, instance);
         for (Map.Entry<SQLColumn, Object> entry : record.getData().entrySet()) {
+
             SQLColumn column = entry.getKey();
+            if (column.isPrimary() && column.isAutoIncrement()) continue;
             Object value = entry.getValue();
             header.append(option().name(column.getName()));
             header.append(",");
-            values.append(option().data(option().convertToSQL(value)));
+            values.append(option().data(option().convertToSQL(value, column.getJavaType())));
             values.append(",");
         }
 
-        values.charAt(values.length() - 1);
-        header.charAt(values.length() - 1);
+        values.deleteCharAt(values.length() - 1);
+        header.deleteCharAt(header.length() - 1);
 
-        builder().append("(");
-        builder().append(header.toString());
-        builder().append(") VALUES (");
-        builder().append(values.toString());
-        builder().append(")");
+        builder.append(" ( ");
+        builder.append(header.toString());
+        builder.append(" ) VALUES ( ");
+        builder.append(values.toString());
+        builder.append(" ) ");
 
-        return builder().toString();
+        return builder.toString();
 
 
     }

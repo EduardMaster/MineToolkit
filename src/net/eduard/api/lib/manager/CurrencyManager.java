@@ -6,12 +6,15 @@ import java.util.Map.Entry;
 
 import net.eduard.api.lib.game.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.server.currency.CurrencyHandler;
+import org.bukkit.inventory.ItemStack;
 
 
-public class CurrencyManager implements Storable {
+public class CurrencyManager implements Storable , CurrencyHandler {
 	private String name = "Money";
 	private String symbol = "$";
 	private double inicialAmount;
+	private ItemStack icon;
 	@StorageAttributes(inline = true)
 	private Map<FakePlayer, Double> currency = new HashMap<>();
 	
@@ -82,12 +85,39 @@ public class CurrencyManager implements Storable {
 		return name;
 	}
 
+	@Override
+	public double get(FakePlayer player) {
+		return getBalance(player);
+	}
+
+	@Override
+	public ItemStack getIcon() {
+		return null;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	public String getSymbol() {
 		return symbol;
+	}
+
+	@Override
+	public boolean check(FakePlayer player, double amount) {
+		return containsBalance(player,amount);
+	}
+
+	@Override
+	public boolean remove(FakePlayer player, double amount) {
+		removeBalance(player,amount);
+		return true;
+	}
+
+	@Override
+	public boolean add(FakePlayer player, double amount) {
+		addBalance(player,amount);
+		return true;
 	}
 
 	public void setSymbol(String symbol) {
@@ -102,4 +132,7 @@ public class CurrencyManager implements Storable {
 		this.inicialAmount = inicialAmount;
 	}
 
+	public void setIcon(ItemStack icon) {
+		this.icon = icon;
+	}
 }

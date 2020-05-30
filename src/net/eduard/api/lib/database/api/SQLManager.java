@@ -21,7 +21,11 @@ public class SQLManager {
     private SQLQueryBuilder builder;
     private Map<Class<?>, SQLTable> cacheTables = new HashMap<>();
 
-
+    public SQLManager(Connection connection, SQLQueryBuilder queryBuilder) {
+        setConnection(connection);
+        setBuilder(builder);
+        setEngineType(SQLEngineType.OTHER);
+    }
     public SQLManager(Connection connection, SQLEngineType type) {
         setConnection(connection);
         setEngineType(type);
@@ -47,10 +51,11 @@ public class SQLManager {
         try {
             if (result.next()) {
                 SQLRecord record = new SQLRecord(table, result, builder.option());
+                table.getRecords().add(record);
                 return (E) record.getInstance();
             }
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
         return null;
     }
@@ -75,7 +80,21 @@ public class SQLManager {
     public void insertData(Object data){
         Class<?> dataClass = data.getClass();
         SQLTable table = getTableData(dataClass);
-        executeUpdate(builder.insertRecord(table, data));
+        SQLRecord record = table.getRecord(data);
+        executeUpdate(builder.insertRecord(record));
+    }
+    public void updateData(Object data){
+        Class<?> dataClass = data.getClass();
+        SQLTable table = getTableData(dataClass);
+        SQLRecord record = table.getRecord(data);
+        record.reload();
+        executeUpdate(builder.updateRecord(record));
+    }
+    public void deleteData(Object data){
+        Class<?> dataClass = data.getClass();
+        SQLTable table = getTableData(dataClass);
+        SQLRecord record = table.getRecord(data);
+        executeUpdate(builder.deleteRecord(record));
     }
 
 
@@ -118,6 +137,7 @@ public class SQLManager {
 
     protected ResultSet executeQuery(String queryStr) {
         try {
+            log( "Query: " + queryStr);
             ResultSet resultSet = connection.prepareStatement(queryStr).executeQuery();
             return resultSet;
         } catch (SQLException e) {

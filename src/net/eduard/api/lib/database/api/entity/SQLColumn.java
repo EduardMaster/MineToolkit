@@ -133,4 +133,8 @@ public class SQLColumn {
     public void setField(Field field) {
         this.field = field;
     }
+
+    public boolean isAutoIncrement() {
+        return Number.class.isAssignableFrom(getJavaType());
+    }
 }

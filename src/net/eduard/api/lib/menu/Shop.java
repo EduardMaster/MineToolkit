@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import net.eduard.api.lib.game.FakePlayer;
 import net.eduard.api.lib.modules.*;
+import net.eduard.api.server.currency.CurrencyController;
+import net.eduard.api.server.currency.CurrencyHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.ClickType;
@@ -17,7 +19,7 @@ import net.eduard.api.lib.manager.CurrencyManager;
 import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(indentificate = true)
-public class Shop extends Menu  {
+public class Shop extends Menu {
 
 
     public static String MESSAGE_CHOICE_AMOUNT = "§aEscolha uma quantidade para $trader este produto $product";
@@ -35,9 +37,9 @@ public class Shop extends Menu  {
             "§2Quantidade: §a$product_stock", "§2Preço por 64: §a$product_sell_pack_price", "§2Preço por Inventario: §a$product_sell_inventory_price", "", "§2Preço por 1: §a$product_buy_unit_price", "§2Preço por 64: §a$product_buy_pack_price");
 
 
-    private Currency currencyType = Currency.DEFAULT;
-    @StorageAttributes(reference = true)
-    private CurrencyManager currency;
+    private String currencyType = "VaultEconomy";
+
+    transient private CurrencyHandler currency;
     private static final int PLAYER_INVENTORY_LIMIT = 4 * 64 * 9;
     private ShopSortType sortType = ShopSortType.BUY_PRICE_ASC;
     private transient Map<Player, Product> selectingAmount = new HashMap<>();
@@ -64,6 +66,7 @@ public class Shop extends Menu  {
     }
 
     public void organize() {
+
         if (sortType == ShopSortType.BUY_PRICE_ASC) {
             Stream<Product> lista = getButtons().stream().filter(b -> b instanceof Product).map(b -> (Product) b)
                     .sorted(Comparator.comparing(Product::getUnitBuyPrice));
@@ -188,12 +191,11 @@ public class Shop extends Menu  {
         } else {
             evento.setNewStock(product.getStock());
         }
+        ;
 
-        if (currency != null)
-            evento.setBalance(currency.getBalance(fake));
-        else if (currencyType != null) {
-            evento.setBalance(currencyType.get(fake));
-        }
+
+        evento.setBalance(getCurrency().get(fake));
+
 
         evento.setType(TradeType.BUYABLE);
         evento.setPriceTotal(priceFinal);
@@ -203,29 +205,18 @@ public class Shop extends Menu  {
         if (evento.isCancelled()) {
             return;
         }
-        if (currency != null) {
-            if (currency.getBalance(fake) >= evento.getPriceTotal()) {
-                currency.removeBalance(fake, evento.getPriceTotal());
-            } else {
-                player.sendMessage(messageWithoutBalance);
-                return;
-            }
 
-        } else if (currencyType != null) {
-            if (currencyType.check(fake, evento.getPriceTotal())) {
-                currencyType.remove(fake, evento.getPriceTotal());
-            } else {
-                player.sendMessage(messageWithoutBalance);
-                return;
-            }
+        if (getCurrency().get(fake) >= evento.getPriceTotal()) {
+            getCurrency().remove(fake, evento.getPriceTotal());
         } else {
-            Companion.debug("§b[Shop] §cnao funcionado pois nao tem  um sistema de economia");
+            player.sendMessage(messageWithoutBalance);
             return;
         }
+
         product.setStock(evento.getNewStock());
 
         for (String cmd : product.getCommands()) {
-            Mine.runCommand(cmd.replace("$player", player.getName()).replace("$formated_amount",Extra.formatMoney(amount)).replace("$amount", "" + amount));
+            Mine.runCommand(cmd.replace("$player", player.getName()).replace("$formated_amount", Extra.formatMoney(amount)).replace("$amount", "" + amount));
         }
         player.sendMessage(messageBoughtItem.replace("$amount", Extra.formatMoney(amount)).replace("$product",
                 "" + product.getName()));
@@ -272,11 +263,9 @@ public class Shop extends Menu  {
         evento.setProduct(product);
         evento.setAmount(amount);
         evento.setNewStock(product.getStock() - amount);
-        if (currency != null)
-            evento.setBalance(currency.getBalance(fake));
-        else if (currencyType != null) {
-            evento.setBalance(currencyType.get(fake));
-        }
+
+        evento.setBalance(getCurrency().get(fake));
+
 
         evento.setType(TradeType.SELABLE);
         evento.setPriceTotal(finalPrice);
@@ -292,16 +281,18 @@ public class Shop extends Menu  {
         Mine.remove(player.getInventory(), product.getProduct(), (int) evento.getAmount());
         player.sendMessage(messageSoldItem.replace("$amount", "" + amount).replace("$product",
                 "" + product.getName()));
-        if (currency != null) {
-            currency.addBalance(fake, finalPrice);
-        } else if (currencyType != null) {
-            currencyType.add(fake, finalPrice);
-        }
+
+        getCurrency().add(fake, finalPrice);
 
 
     }
 
-    public CurrencyManager getCurrency() {
+    public CurrencyHandler getCurrency() {
+
+        if (currency == null) {
+            currency = CurrencyController.getInstance().getCurrencyHandler(currencyType);
+        }
+
         return currency;
     }
 
@@ -440,11 +431,11 @@ public class Shop extends Menu  {
         this.sellBuyTemplate = sellBuyTemplate;
     }
 
-    public Currency getCurrencyType() {
+    public String getCurrencyType() {
         return currencyType;
     }
 
-    public void setCurrencyType(Currency currencyType) {
+    public void setCurrencyType(String currencyType) {
         this.currencyType = currencyType;
     }
 }

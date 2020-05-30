@@ -44,6 +44,16 @@ public class SQLTable {
             columns.add(new SQLColumn(field));
         }
     }
+    public SQLRecord getRecord(Object data){
+        for (SQLRecord record : records){
+            if (record.getInstance() == data){
+                return record;
+            }
+        }
+        SQLRecord record = new SQLRecord(this, data);
+        records.add(record);
+        return record;
+    }
 
     private String tableName;
     private String charset;

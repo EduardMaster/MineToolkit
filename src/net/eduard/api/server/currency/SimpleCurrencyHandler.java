@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 public abstract class SimpleCurrencyHandler implements  CurrencyHandler{
     private String name;
     private ItemStack icon;
-    private char symbol;
+    private String symbol;
 
     public String getName() {
         return name;
@@ -23,11 +23,13 @@ public abstract class SimpleCurrencyHandler implements  CurrencyHandler{
         this.icon = icon;
     }
 
-    public char getSymbol() {
+
+    @Override
+    public String getSymbol() {
         return symbol;
     }
 
-    public void setSymbol(char symbol) {
+    public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
 }

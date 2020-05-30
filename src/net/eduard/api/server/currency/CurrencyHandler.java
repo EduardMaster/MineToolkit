@@ -11,7 +11,7 @@ public interface CurrencyHandler {
 
     ItemStack getIcon();
 
-    char getSymbol();
+    String getSymbol();
 
     boolean check(FakePlayer player, double amount);
 

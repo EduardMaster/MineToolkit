@@ -12,12 +12,12 @@ import java.util.UUID;
 public class MySQLOption implements SQLOption {
     @Override
     public String primaryKey() {
-        return "PRIMARY KEY";
+        return " PRIMARY KEY";
     }
 
     @Override
     public String autoIncrement() {
-        return "AUTO_INCREMENT";
+        return " AUTO_INCREMENT";
     }
 
     @Override
