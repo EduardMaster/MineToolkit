@@ -118,7 +118,7 @@ public class LinkadorDeItem extends EventsManager {
         if (e.getPlayer().isSneaking()) {
 
 
-            sendItemTooltipMessage(e.getPlayer(), "Item no chat", e.getPlayer().getItemInHand());
+            //sendItemTooltipMessage(e.getPlayer(), "Item no chat", e.getPlayer().getItemInHand());
         }
     }
 }

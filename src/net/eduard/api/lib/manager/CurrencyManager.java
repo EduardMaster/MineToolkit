@@ -7,132 +7,114 @@ import java.util.Map.Entry;
 import net.eduard.api.lib.game.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.server.currency.CurrencyHandler;
+import net.eduard.api.server.currency.SimpleCurrencyHandler;
 import org.bukkit.inventory.ItemStack;
 
 
-public class CurrencyManager implements Storable , CurrencyHandler {
-	private String name = "Money";
-	private String symbol = "$";
-	private double inicialAmount;
-	private ItemStack icon;
-	@StorageAttributes(inline = true)
-	private Map<FakePlayer, Double> currency = new HashMap<>();
-	
-	
+public class CurrencyManager extends SimpleCurrencyHandler {
 
-	public synchronized double getBalance(FakePlayer player) {
+    private double inicialAmount;
+    private ItemStack icon;
+    @Storable.StorageAttributes(inline = true)
+    private Map<FakePlayer, Double> currency = new HashMap<>();
+
+
+    public synchronized double getBalance(FakePlayer player) {
 //		
 //		System.out.println(currency);
-		for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
-			if (entry.getKey().equals(player)) {
-				return entry.getValue();
-			}
-			
-		}
-	
-		return inicialAmount;
+        for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
+            if (entry.getKey().equals(player)) {
+                return entry.getValue();
+            }
+
+        }
+
+        return inicialAmount;
 //		return currency.getOrDefault(player, inicialAmount);
-	}
-	
-
-	public CurrencyManager(String name, String symbol, double inicialAmount) {
-		super();
-		this.name = name;
-		this.symbol = symbol;
-		this.inicialAmount = inicialAmount;
-	}
-
-	public CurrencyManager() {
-		// TODO Auto-generated constructor stub
-	}
+    }
 
 
+    public CurrencyManager(String name, String symbol, double inicialAmount) {
+        super();
+        setName(name);
+        setSymbol(symbol);
+        this.inicialAmount = inicialAmount;
+    }
 
-	public synchronized void setBalance(FakePlayer player, double amount) {
-		for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
-			if (entry.getKey().equals(player)) {
-				entry.setValue(amount);
-				return;
-			}
-		}
-		currency.put(player, amount);
-
-	}
-
-	public boolean containsBalance(FakePlayer player, double amount) {
-		return getBalance(player) >= amount;
-	}
-
-	public void addBalance(FakePlayer player, double amount) {
-		setBalance(player, getBalance(player) + amount);
-	}
-
-	public void removeBalance(FakePlayer player, double amount) {
-		setBalance(player, getBalance(player) - amount);
-	}
+    public CurrencyManager() {
+        // TODO Auto-generated constructor stub
+    }
 
 
+    public synchronized void setBalance(FakePlayer player, double amount) {
+        for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
+            if (entry.getKey().equals(player)) {
+                entry.setValue(amount);
+                return;
+            }
+        }
+        currency.put(player, amount);
 
-	public synchronized Map<FakePlayer, Double> getCurrency() {
-		return currency;
-	}
+    }
 
-	public void setCurrency(Map<FakePlayer, Double> currency) {
-		this.currency = currency;
-	}
+    public boolean containsBalance(FakePlayer player, double amount) {
+        return getBalance(player) >= amount;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void addBalance(FakePlayer player, double amount) {
+        setBalance(player, getBalance(player) + amount);
+    }
 
-	@Override
-	public double get(FakePlayer player) {
-		return getBalance(player);
-	}
+    public void removeBalance(FakePlayer player, double amount) {
+        setBalance(player, getBalance(player) - amount);
+    }
 
-	@Override
-	public ItemStack getIcon() {
-		return null;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public synchronized Map<FakePlayer, Double> getCurrency() {
+        return currency;
+    }
 
-	public String getSymbol() {
-		return symbol;
-	}
+    public void setCurrency(Map<FakePlayer, Double> currency) {
+        this.currency = currency;
+    }
 
-	@Override
-	public boolean check(FakePlayer player, double amount) {
-		return containsBalance(player,amount);
-	}
+    @Override
+    public double get(FakePlayer player) {
+        return getBalance(player);
+    }
 
-	@Override
-	public boolean remove(FakePlayer player, double amount) {
-		removeBalance(player,amount);
-		return true;
-	}
+    @Override
+    public ItemStack getIcon() {
+        return null;
+    }
 
-	@Override
-	public boolean add(FakePlayer player, double amount) {
-		addBalance(player,amount);
-		return true;
-	}
+    @Override
+    public boolean check(FakePlayer player, double amount) {
+        return containsBalance(player, amount);
+    }
 
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
-	}
+    @Override
+    public boolean remove(FakePlayer player, double amount) {
+        removeBalance(player, amount);
+        return true;
+    }
 
-	public double getInicialAmount() {
-		return inicialAmount;
-	}
+    @Override
+    public boolean add(FakePlayer player, double amount) {
+        addBalance(player, amount);
+        return true;
+    }
 
-	public void setInicialAmount(double inicialAmount) {
-		this.inicialAmount = inicialAmount;
-	}
 
-	public void setIcon(ItemStack icon) {
-		this.icon = icon;
-	}
+    public double getInicialAmount() {
+        return inicialAmount;
+    }
+
+    public void setInicialAmount(double inicialAmount) {
+        this.inicialAmount = inicialAmount;
+    }
+
+    public void setIcon(ItemStack icon) {
+        this.icon = icon;
+    }
 }

@@ -22,11 +22,10 @@ import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
 import net.eduard.api.lib.game.Schematic
-import net.eduard.api.listener.EduWorldEditListener
-import net.eduard.api.listener.EduardAPIEvents
-import net.eduard.api.listener.LinkadorDeItem
-import net.eduard.api.listener.PlayerTargetAtEntityListener
+import net.eduard.api.listener.*
 import net.eduard.api.server.EduardPlugin
+import net.eduard.api.server.currency.CurrencyController
+import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetTask
@@ -45,9 +44,6 @@ import java.util.*
  * @since 0.5
  */
 class EduardAPI: EduardPlugin()  {
-
-
-
 
      override fun onEnable() {
         instance=this
@@ -103,6 +99,7 @@ class EduardAPI: EduardPlugin()  {
 
         log("Ativando listeners dos Eventos")
         EduardAPIEvents().register(this)
+         SupportActivations().register(this)
         EduWorldEditListener().register(this)
         PlayerTargetAtEntityListener().register(this)
         LinkadorDeItem().register(this)
@@ -115,6 +112,9 @@ class EduardAPI: EduardPlugin()  {
 
         log("Ativando replacers")
         BukkitReplacers()
+
+         CurrencyController.getInstance().register(CurrencyVaultEconomy())
+
 
         //		new McMMOReplacers();
         //		new MassiveFactionReplacers();
@@ -144,15 +144,8 @@ class EduardAPI: EduardPlugin()  {
         PlayerSkin.reloadSkins()
 
 
-         /*
-        for (currency in Currency.values()) {
-            configs.add("currencies." + currency.name + ".enabled", currency.isEnabled)
-            configs.add("currencies." + currency.name + ".name", currency.getName())
-            currency.setName(configs.getString("currencies." + currency.name + ".name"))
-            currency.isEnabled = configs.getBoolean("currencies." + currency.name + ".enabled")
-        }
 
-        */
+
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
         EduardAPI.loadMaps()
         log("Mapas carregados!")

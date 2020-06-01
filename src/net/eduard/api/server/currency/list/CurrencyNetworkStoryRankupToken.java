@@ -1,8 +1,18 @@
 package net.eduard.api.server.currency.list;
 
-public class CurrencyNetworkStoryRankupToken {
-    /*
-     LEGIT_RANKUP_TOKEN("Token (Rankup", Material.NETHER_STAR, '✪') {
+import me.yblackdev.legitpvp.sistema.token.TokenSistema;
+import net.eduard.api.lib.game.FakePlayer;
+import net.eduard.api.server.currency.SimpleCurrencyHandler;
+
+public class CurrencyNetworkStoryRankupToken extends SimpleCurrencyHandler {
+
+
+    public CurrencyNetworkStoryRankupToken(){
+        setName("NetworkStoryRankupToten");
+        setDisplayName("Sistema de Token");
+    }
+
+
         public double get(FakePlayer player) {
 
             return TokenSistema.getInstance().getTokensDouble(player.getName());
@@ -24,6 +34,6 @@ public class CurrencyNetworkStoryRankupToken {
             TokenSistema.getInstance().addTokens(player.getName(), amount);
             return true;
         }
-    };
-     */
+
+
 }

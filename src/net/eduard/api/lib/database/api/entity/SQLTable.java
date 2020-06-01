@@ -24,6 +24,14 @@ public class SQLTable {
         }
         return null;
     }
+    public SQLColumn getColumn(String fieldName){
+        for (SQLColumn column : columns){
+            if (column.getField().getName().equalsIgnoreCase(fieldName)){
+                return column;
+            }
+        }
+        return null;
+    }
 
     public void reload(Class<?> tableClass) {
         this.tableName = tableName;

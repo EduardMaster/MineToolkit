@@ -3,15 +3,19 @@ package net.eduard.api.server.currency.list;
 import net.eduard.api.lib.game.FakePlayer;
 import net.eduard.api.lib.game.ItemBuilder;
 import net.eduard.api.lib.modules.VaultAPI;
+import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.server.currency.CurrencyHandler;
+import net.eduard.api.server.currency.SimpleCurrencyHandler;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class CurrencyVaultEconomy implements CurrencyHandler {
+public class CurrencyVaultEconomy extends SimpleCurrencyHandler {
 
-    @Override
-    public String getName() {
-        return "VaultEconomy";
+    public CurrencyVaultEconomy(){
+        setName("VaultEconomy");
+        setDisplayName("Dinheiro Padrão");
+        setIcon( new ItemBuilder(Material.EMERALD).name("§aDinheiro Padrão"));
+        setSymbol("$");
     }
 
     @Override
@@ -23,15 +27,6 @@ public class CurrencyVaultEconomy implements CurrencyHandler {
 
     }
 
-    @Override
-    public ItemStack getIcon() {
-        return new ItemBuilder(Material.EMERALD).name("§aDinheiro Padrão");
-    }
-
-    @Override
-    public String getSymbol() {
-        return "$";
-    }
 
     @Override
     public boolean add(FakePlayer player, double amount) {

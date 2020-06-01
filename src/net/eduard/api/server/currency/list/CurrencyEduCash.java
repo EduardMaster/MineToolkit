@@ -2,13 +2,13 @@ package net.eduard.api.server.currency.list;
 
 import net.eduard.api.lib.game.FakePlayer;
 import net.eduard.api.server.Systems;
-import net.eduard.api.server.currency.CurrencyHandler;
-import org.bukkit.inventory.ItemStack;
+import net.eduard.api.server.currency.SimpleCurrencyHandler;
 
-public class CurrencyEduardCash implements CurrencyHandler {
-    @Override
-    public String getName() {
-        return "EduCash";
+public class CurrencyEduCash extends SimpleCurrencyHandler {
+
+    public CurrencyEduCash(){
+        setName("EduCash");
+        setDisplayName("Sistema de Cash");
     }
 
     @Override
@@ -16,15 +16,6 @@ public class CurrencyEduardCash implements CurrencyHandler {
         return Systems.getCashSystem().getCash(player);
     }
 
-    @Override
-    public ItemStack getIcon() {
-        return null;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "$";
-    }
 
     @Override
     public boolean remove(FakePlayer player, double amount) {

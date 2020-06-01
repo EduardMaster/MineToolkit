@@ -11,14 +11,15 @@ public interface SQLQueryBuilder {
     SQLOption option();
 
 
-    default String findRecord(SQLTable table, Object primaryKeyValue) {
-        SQLColumn primaryKey = table.getPrimaryKey();
+    default String findRecord(SQLTable table, SQLColumn column, Object columnValue) {
+
         return new StringBuilder().append(option().selectData()).append(option().name(table.getTableName()))
                 .append(option().where())
-                .append(option().name(primaryKey.getName()))
-                .append(option().equalsTo()).append(option().data(option().convertToSQL(primaryKeyValue,table.getPrimaryKey().getJavaType()))).
+                .append(option().name(column.getName()))
+                .append(option().equalsTo()).append(option().data(option().convertToSQL(columnValue,table.getPrimaryKey().getJavaType()))).
                         toString();
     }
+
 
     default String findRecords(SQLTable table) {
         return new StringBuilder().append(option().selectData()).append(option().name(table.getTableName())).toString();

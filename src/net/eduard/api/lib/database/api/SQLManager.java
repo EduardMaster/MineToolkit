@@ -1,5 +1,6 @@
 package net.eduard.api.lib.database.api;
 
+import net.eduard.api.lib.database.api.entity.SQLColumn;
 import net.eduard.api.lib.database.api.entity.SQLRecord;
 import net.eduard.api.lib.database.api.entity.SQLTable;
 import net.eduard.api.lib.database.mysql.MySQLQueryBuilder;
@@ -39,26 +40,35 @@ public class SQLManager {
         }
     }
 
-
-    public <E> E getData(Class<E> dataClass, Object primaryKeyValue) {
+    public <E> E getData(Class<E> dataClass, String fieldName, Object fieldValue) {
 
         SQLTable table = getTableData(dataClass);
-
-        ResultSet result = executeQuery(builder.findRecord(table, primaryKeyValue));
+        SQLColumn column = table.getColumn(fieldName);
+        ResultSet result = executeQuery(builder.findRecord(table, column, fieldValue));
         E dataToReturn = null;
-        try {
-            if (result.next()) {
-                SQLRecord record = new SQLRecord(table, result, builder.option());
-                table.getRecords().add(record);
+        if (result != null) {
+            try {
+                if (result.next()) {
+                    SQLRecord record = new SQLRecord(table, result, builder.option());
+                    table.getRecords().add(record);
 
-                dataToReturn = (E) record.getInstance();
+                    dataToReturn = (E) record.getInstance();
+                }
+                result.close();
+                result.getStatement().close();
+            } catch (Exception ex) {
+                //ex.printStackTrace();
             }
-            result.close();
-            result.getStatement().close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
         return dataToReturn;
+    }
+
+
+    public <E> E getData(Class<E> dataClass, Object primaryKeyValue) {
+        SQLTable table = getTableData(dataClass);
+
+        return getData(dataClass, table.getPrimaryKey().getField().getName(), primaryKeyValue);
+
     }
 
     public <E> List<E> getAllData(Class<E> dataClass) {
@@ -85,6 +95,10 @@ public class SQLManager {
         SQLTable table = getTableData(dataClass);
         SQLRecord record = table.getRecord(data);
         int intReturned = executeUpdate(builder.insertRecord(record));
+        if (intReturned != -1) {
+            record.getData().put(table.getPrimaryKey(), intReturned);
+            record.save();
+        }
     }
 
     public void updateData(Object data) {

@@ -1,11 +1,17 @@
 package net.eduard.api.server.currency.list;
 
-import net.eduard.api.server.currency.CurrencyHandler;
+import net.eduard.api.lib.game.FakePlayer;
+import net.eduard.api.server.currency.SimpleCurrencyHandler;
 
-public abstract class CurrencyJHCash implements CurrencyHandler {
+public  class CurrencyJHCash extends SimpleCurrencyHandler {
+    public CurrencyJHCash() {
+        setName("JHCash");
+        setDisplayName("Sistema de Cash");
+        setSymbol("$");
 
-    /*
-      @Override
+    }
+
+    @Override
         public double get(FakePlayer player) {
 
             return JH_Shop.Main.getAPI().getPontos(player.getName());
@@ -28,5 +34,5 @@ public abstract class CurrencyJHCash implements CurrencyHandler {
             JH_Shop.Main.getAPI().addPontos(player.getName(), amount);
             return true;
         }
-     */
+
 }
