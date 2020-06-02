@@ -28,7 +28,7 @@ import net.eduard.api.lib.storage.Storable
  *
  * @author Eduard
  */
-open class Menu : EventsManager, Copyable, PagedMenu,  Storable<Menu>  {
+open class Menu : EventsManager, Copyable, PagedMenu{
     @Transient
     var superiorMenu: Menu? = null
     var title = "Menu"

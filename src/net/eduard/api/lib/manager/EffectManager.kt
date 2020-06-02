@@ -11,9 +11,8 @@ import net.eduard.api.lib.game.VisualEffect
 import net.eduard.api.lib.game.Explosion
 import net.eduard.api.lib.game.Jump
 import net.eduard.api.lib.game.SoundEffect
-import net.eduard.api.lib.modules.Copyable
 
-open class EffectManager : TimeManager(), PlayerEffect, Copyable {
+open class EffectManager : TimeManager(), PlayerEffect {
 
 
     @Transient

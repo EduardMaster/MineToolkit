@@ -29,11 +29,15 @@ public class MaterialDataStorable implements Storable<MaterialData> {
     public MaterialData restore(String string) {
 
         try {
-            String[] split = string.split(";");
-            return new MaterialData(Material.getMaterial(Extra.toInt(split[0])), Extra.toByte(split[1]));
+            if (string.contains(";")) {
+                String[] split = string.split(";");
+                return new MaterialData(Material.getMaterial(Extra.toInt(split[0])), Extra.toByte(split[1]));
+            }else{
+                return  new MaterialData(Material.getMaterial(Extra.toInt(string)));
+            }
         } catch (Exception e) {
         }
-        return null;
+        return newInstance();
     }
 
 }

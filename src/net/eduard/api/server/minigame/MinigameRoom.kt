@@ -15,7 +15,7 @@ import kotlin.streams.toList
  *
  * @author Eduard-PC
  */
-class MinigameRoom : Storable<MinigameRoom> {
+class MinigameRoom  {
 
     @StorageAttributes(reference = true)
     lateinit var minigame: Minigame

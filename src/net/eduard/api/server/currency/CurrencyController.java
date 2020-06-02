@@ -28,8 +28,9 @@ public class CurrencyController {
     }
     public void register(SimpleCurrencyHandler simpleCurrencyHandler){
         EduardAPI.getInstance().getConfigs().add("currency."+simpleCurrencyHandler.getName(),simpleCurrencyHandler);
-        simpleCurrencyHandler = (SimpleCurrencyHandler) EduardAPI.getInstance().getConfigs().get("currency."+simpleCurrencyHandler.getName());
         EduardAPI.getInstance().getConfigs().saveConfig();
+        simpleCurrencyHandler = (SimpleCurrencyHandler) EduardAPI.getInstance().getConfigs().get("currency."+simpleCurrencyHandler.getName());
+
         register(simpleCurrencyHandler.getName(),simpleCurrencyHandler);
     }
 

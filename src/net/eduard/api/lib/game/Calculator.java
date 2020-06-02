@@ -1,13 +1,11 @@
 package net.eduard.api.lib.game;
 
-import java.util.Map;
 
 import net.eduard.api.lib.modules.Extra;
-import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(inline = true)
-public class Calculator implements Storable {
+public class Calculator   {
 	private double base = 10;
 	private double perLevel = 5;
 	private double limit = 0;

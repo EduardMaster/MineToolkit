@@ -26,7 +26,7 @@ import net.eduard.api.lib.storage.Storable;
  * @author Eduard
  */
 
-public class DisplayBoard implements Storable<DisplayBoard> {
+public class DisplayBoard {
     /**
      * Construtor vazio setando o nome da Scoreboard de '§6§lScoreboard'
      */

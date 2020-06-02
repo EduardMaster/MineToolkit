@@ -13,7 +13,7 @@ import net.eduard.api.lib.storage.Storable.*;
  * @author Eduard
  */
 @StorageAttributes(inline = true)
-public class Chunks implements Storable<Chunks>, Copyable {
+public class Chunks  {
     private String world;
     private int x, z;
 
@@ -22,7 +22,7 @@ public class Chunks implements Storable<Chunks>, Copyable {
     }
 
     public Chunks copy() {
-        return copy(this);
+        return Copyable.copyObject(this);
     }
 
     public Chunks newChunk(int x, int z) {

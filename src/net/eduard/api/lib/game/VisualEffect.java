@@ -1,15 +1,13 @@
 package net.eduard.api.lib.game;
 
-import java.util.Map;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import net.eduard.api.lib.storage.Storable;
 
-public class VisualEffect implements Storable {
+public class VisualEffect  {
 
 	private int data;
 

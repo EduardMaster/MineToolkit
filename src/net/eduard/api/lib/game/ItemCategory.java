@@ -17,7 +17,7 @@ public enum ItemCategory {
 
 	WEAPON, ARMOUR, BLOCK, ORE, TOOL, OTHER, FARM, FOOD, SPAWNER, SKULL, POTION, ENCHANTED_BOOK;
 
-	private ItemCategory() {
+	 ItemCategory() {
 
 	}
 

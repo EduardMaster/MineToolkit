@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
-public class Particle implements Storable<Particle> {
+public class Particle  {
 
 	private Location location;
 

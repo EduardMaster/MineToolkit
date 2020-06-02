@@ -18,7 +18,7 @@ import net.eduard.api.lib.modules.Mine
 
 
 @Storable.StorageAttributes(indentificate = true)
-open class CommandManager(name: String, vararg aliases: String) : EventsManager(), TabCompleter, CommandExecutor, Storable<CommandManager> {
+open class CommandManager(name: String, vararg aliases: String) : EventsManager(), TabCompleter, CommandExecutor {
 
     @Storable.StorageAttributes(reference = true)
     var parent: CommandManager? = null

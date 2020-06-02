@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerSkin implements Storable {
+public class PlayerSkin  {
     private static ArrayList<PlayerSkin> skins = new ArrayList<>();
     private static Map<Player, PlayerSkin> skinUsed = new HashMap<>();
     private static Config config = new Config(EduardAPI.getInstance(), "skins.yml");
@@ -38,9 +38,9 @@ public class PlayerSkin implements Storable {
 
     public static void reloadSkins() {
         skins.clear();
-        StorageAPI.register(PlayerSkin.class);
+
         for (String subSecao : config.getKeys()) {
-            PlayerSkin skin = (PlayerSkin) config.get(subSecao);
+            PlayerSkin skin = config.get(subSecao,PlayerSkin.class);
             skins.add(skin);
         }
     }

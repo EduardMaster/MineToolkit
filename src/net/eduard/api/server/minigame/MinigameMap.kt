@@ -18,7 +18,7 @@ import net.eduard.api.lib.modules.Copyable
  * @author Eduard-PC
  */
 @StorageAttributes(indentificate = true)
-class MinigameMap : Storable<MinigameMap>, Copyable {
+class MinigameMap {
 
 
     var name: String = "mapa"
@@ -57,8 +57,8 @@ class MinigameMap : Storable<MinigameMap>, Copyable {
         // TODO Auto-generated constructor stub
     }
 
-    override fun copy(): MinigameMap? {
-        return copy(this)
+     fun copy(): MinigameMap? {
+        return Copyable.copyObject(this)
 
     }
 

@@ -26,7 +26,7 @@ import net.eduard.api.lib.storage.Storable;
  * @author Eduard
  *
  */
-public class Schematic implements Storable,Copyable {
+public class Schematic {
 
 	private Vector relative, low, high;
 	private transient int count;
@@ -87,7 +87,7 @@ public class Schematic implements Storable,Copyable {
 	}
 
 	public Schematic copy() {
-		return copy(this);
+		return Copyable.copyObject(this);
 	}
 
 	@SuppressWarnings("deprecation")

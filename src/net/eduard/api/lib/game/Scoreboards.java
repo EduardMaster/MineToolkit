@@ -18,7 +18,9 @@ import org.bukkit.scoreboard.*;
 public class Scoreboards {
     private Scoreboard scoreboard;
     private Objective objective;
+    public Scoreboards(){
 
+    }
     public Scoreboards(String title) {
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         objective = scoreboard.registerNewObjective("scoreboard", "dummy");

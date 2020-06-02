@@ -1,8 +1,5 @@
 package net.eduard.api.lib.modules;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -65,8 +62,10 @@ public interface Copyable {
         }
         return object;
     }
-
     default <E> E copy(E object) {
+        return copyObject(object);
+    }
+    static <E> E copyObject(E object) {
         if (object == null)
             return null;
 
@@ -77,7 +76,7 @@ public interface Copyable {
             List<Object> list = (List<Object>) object;
             List<Object> newList = new ArrayList<>();
             for (Object item : list) {
-                newList.add(copy(item));
+                newList.add(copyObject(item));
             }
             object = (E) newList;
 
@@ -85,7 +84,7 @@ public interface Copyable {
             Map<Object, Object> map = (Map<Object, Object>) object;
             Map<Object, Object> newMap = new HashMap<>();
             for (Entry<Object, Object> entry : map.entrySet()) {
-                newMap.put(copy(entry.getKey()), copy(entry.getValue()));
+                newMap.put(copyObject(entry.getKey()), copyObject(entry.getValue()));
             }
             object = (E) newMap;
         } else if (Extra.isCloneable(claz)) {
@@ -96,7 +95,7 @@ public interface Copyable {
             for (int index = 0; index < len; index++) {
                 Array.set(newArray, index, Array.get(object, index));
             }
-        } else if (Extra.isWrapper(claz) || Extra.isString(claz)) {
+        } else if (Extra.isWrapper(claz) ) {
 
         } else {
             try {
@@ -114,7 +113,7 @@ public interface Copyable {
                         try {
                             Object value = field.get(object);
 
-                            field.set(newInstance, copy(value));
+                            field.set(newInstance, copyObject(value));
 
 
                         } catch (Exception e) {

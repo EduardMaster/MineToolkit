@@ -11,7 +11,7 @@ import org.bukkit.inventory.PlayerInventory;
 import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.storage.Storable;
 
-public class Kit implements Storable {
+public class Kit   {
 
     private String name;
     private long cooldown;

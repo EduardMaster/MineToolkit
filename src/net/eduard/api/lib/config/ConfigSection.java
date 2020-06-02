@@ -19,556 +19,557 @@ import net.eduard.api.lib.storage.StorageInfo;
 
 /**
  * Interpretador de YAML proprio, Secao da {@link Config}
- * 
+ *
  * @author Eduard
- * 
- * 
  */
 public class ConfigSection {
 
-	private static String getComment(String line) {
-		String[] split = line.split("#");
-		if (split.length > 0)
-			return line.replaceFirst(split[0] + "#", "").replaceFirst(" ", "");
-		return line.replaceFirst("#", "").replaceFirst(" ", "");
+    private static String getComment(String line) {
+        String[] split = line.split("#");
+        if (split.length > 0)
+            return line.replaceFirst(split[0] + "#", "").replaceFirst(" ", "");
+        return line.replaceFirst("#", "").replaceFirst(" ", "");
 
-	}
+    }
 
-	private static String getKey(String line, String space) {
-		line = line.replaceFirst(space, "");
-		return line.split(":")[0];
+    private static String getKey(String line, String space) {
+        line = line.replaceFirst(space, "");
+        return line.split(":")[0];
 
-	}
+    }
 
-	private static String getList(String line) {
-		String[] split = line.split("-");
-		if (split.length > 0)
-			return line.replaceFirst(split[0] + "-", "").replaceFirst(" ", "");
-		return line.replaceFirst("-", "");
-	}
+    private static String getList(String line) {
+        String[] split = line.split("-");
+        if (split.length > 0)
+            return line.replaceFirst(split[0] + "-", "").replaceFirst(" ", "");
+        return line.replaceFirst("-", "");
+    }
 
-	private static String getPath(String path) {
-		if (path.startsWith("#")) {
-			path.replaceFirst("#", "$");
-		}
-		if (path.startsWith("-")) {
-			path.replaceFirst("-", "$");
-		}
-		if (path.contains(":")) {
-			path.replace(":", "$");
-		}
-		return path;
-	}
+    private static String getPath(String path) {
+        if (path.startsWith("#")) {
+            path.replaceFirst("#", "$");
+        }
+        if (path.startsWith("-")) {
+            path.replaceFirst("-", "$");
+        }
+        if (path.contains(":")) {
+            path.replace(":", "$");
+        }
+        return path;
+    }
 
-	/**
-	 * Usar builder porque da menos lag
-	 * 
-	 * @param amount
-	 * @return
-	 */
-	private static String getSpace(int amount) {
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < amount; i++) {
-			builder.append("  ");
-		}
-		return builder.toString();
-	}
+    /**
+     * Usar builder porque da menos lag
+     *
+     * @param amount
+     * @return
+     */
+    private static String getSpace(int amount) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < amount; i++) {
+            builder.append("  ");
+        }
+        return builder.toString();
+    }
 
-	private static int getSpace(String line) {
-		int value = 0;
-		while (line.startsWith("  ")) {
-			line = line.replaceFirst("  ", "");
-			value++;
-		}
-		return value;
-	}
+    private static int getSpace(String line) {
+        int value = 0;
+        while (line.startsWith("  ")) {
+            line = line.replaceFirst("  ", "");
+            value++;
+        }
+        return value;
+    }
 
-	private static String getValue(String line, String space) {
-		line = line.replaceFirst(space, "");
-		if (line.endsWith(":")) {
-			return "";
-		}
-		String[] split = line.split(":");
-		String result = line.replaceFirst(split[0] + ":", "").replaceFirst(" ", "");
-		return result;
+    private static String getValue(String line, String space) {
+        line = line.replaceFirst(space, "");
+        if (line.endsWith(":")) {
+            return "";
+        }
+        String[] split = line.split(":");
+        String result = line.replaceFirst(split[0] + ":", "").replaceFirst(" ", "");
+        return result;
 
-	}
+    }
 
-	private static String removeQuotes(String message) {
-		if (message.startsWith("'")) {
-			message = message.replaceFirst("'", "");
-		}
-		if (message.startsWith("\"")) {
-			message = message.replaceFirst("\"", "");
-		}
-		if (message.endsWith("'")) {
-			message = message.substring(0, message.length() - 1);
-		}
-		if (message.endsWith("\"")) {
-			message = message.substring(0, message.length() - 1);
-		}
-		return message;
-	}
+    private static String removeQuotes(String message) {
+        if (message.startsWith("'")) {
+            message = message.replaceFirst("'", "");
+        }
+        if (message.startsWith("\"")) {
+            message = message.replaceFirst("\"", "");
+        }
+        if (message.endsWith("'")) {
+            message = message.substring(0, message.length() - 1);
+        }
+        if (message.endsWith("\"")) {
+            message = message.substring(0, message.length() - 1);
+        }
+        return message;
+    }
 
-	private static boolean isComment(String line) {
-		return line.replace(" ", "").startsWith("#");
-	}
+    private static boolean isComment(String line) {
+        return line.replace(" ", "").startsWith("#");
+    }
 
-	private static boolean isList(String line) {
-		return line.replace(" ", "").startsWith("-");
-	}
+    private static boolean isList(String line) {
+        return line.replace(" ", "").startsWith("-");
+    }
 
-	private static boolean isSection(String line) {
-		return !isList(line) & !isComment(line) & line.contains(":");
-	}
+    private static boolean isSection(String line) {
+        return !isList(line) & !isComment(line) & line.contains(":");
+    }
 
-	int lineSpaces;
+    int lineSpaces;
 
-	Object object;
+    Object object;
 
-	ConfigSection father;
+    ConfigSection father;
 
-	String key;
+    String key;
 
-	// Object result;
+    // Object result;
 
-	// Map<String, ConfigSection> sections = new LinkedHashMap<>();
+    // Map<String, ConfigSection> sections = new LinkedHashMap<>();
 
-	// List<Object> list = new ArrayList<>();
+    // List<Object> list = new ArrayList<>();
 
-	List<String> comments = new ArrayList<>();
+    List<String> comments = new ArrayList<>();
 
-	public ConfigSection(ConfigSection father, String key, Object value) {
-		this(key, value);
-		this.father = father;
-		father.getMap().put(key, this);
+    public ConfigSection(ConfigSection father, String key, Object value) {
+        this(key, value);
+        this.father = father;
+        father.getMap().put(key, this);
 
-	}
+    }
 
-	public Map<String, ConfigSection> getMap() {
+    public Map<String, ConfigSection> getMap() {
 
-		if (object != null) {
-			if (!(object instanceof Map)) {
-				this.object = new LinkedHashMap<String, ConfigSection>();
-			}
-		}
+        if (object != null) {
+            if (!(object instanceof Map)) {
+                this.object = new LinkedHashMap<String, ConfigSection>();
+            }
+        }
 
-		@SuppressWarnings("unchecked")
-		Map<String, ConfigSection> map = (Map<String, ConfigSection>) object;
-		return map;
-	}
+        @SuppressWarnings("unchecked")
+        Map<String, ConfigSection> map = (Map<String, ConfigSection>) object;
+        return map;
+    }
 
-	public ConfigSection(String key, Object value) {
-		this.object = value;
-		this.key = key;
-	}
+    public ConfigSection(String key, Object value) {
+        this.object = value;
+        this.key = key;
+    }
 
-	public ConfigSection add(String path, Object value) {
-		return add(path, value, new String[0]);
-	}
+    public ConfigSection add(String path, Object value) {
+        return add(path, value, new String[0]);
+    }
 
-	public ConfigSection add(String path, Object value, String... comments) {
-		ConfigSection sec = getSection(path);
-		List<String> comentarios = sec.comments;
-		if (!contains(path)) {
-			set(path, value);
-		}
-		if (comentarios.isEmpty())
-			sec.setComments(comments);
-		return sec;
-	}
+    public ConfigSection add(String path, Object value, String... comments) {
+        ConfigSection sec = getSection(path);
+        List<String> comentarios = sec.comments;
+        if (value != null)
+            StorageAPI.autoRegisterClass(value.getClass());
+        if (!contains(path)) {
+            set(path, value);
+        }
 
-	public boolean contains(String path) {
-		ConfigSection sec = getSection(path);
-		boolean contains = sec.object != null && sec.object != "";
-		if (!contains) {
-			remove(path);
-		}
-		return contains;
-	}
+        if (comentarios.isEmpty())
+            sec.setComments(comments);
+        return sec;
+    }
 
-	public List<Integer> getIntList(String path) {
-		return getSection(path).getIntList();
-	}
+    public boolean contains(String path) {
+        ConfigSection sec = getSection(path);
+        boolean contains = sec.object != null && sec.object != "";
+        if (!contains) {
+            remove(path);
+        }
+        return contains;
+    }
 
-	private Object get() {
-		if (object.equals("[]")) {
-			return getList();
-		}
-		if (object.equals("{}")) {
-			return getMap();
-		}
-		if (object instanceof String)
-		{
-			String string = (String) object;
-			return removeQuotes(string);
-		}
-		return object;
-	}
+    public List<Integer> getIntList(String path) {
+        return getSection(path).getIntList();
+    }
 
-	public Object get(String path) {
-		return getSection(path).getValue();
-	}
+    private Object get() {
+        if (object.equals("[]")) {
+            return getList();
+        }
+        if (object.equals("{}")) {
+            return getMap();
+        }
+        if (object instanceof String) {
+            String string = (String) object;
+            return removeQuotes(string);
+        }
+        return object;
+    }
 
-	public boolean getBoolean() {
-		return Extra.toBoolean(object);
-	}
+    public Object get(String path) {
+        return getSection(path).getValue();
+    }
 
-	public boolean getBoolean(String path) {
-		return getSection(path).getBoolean();
-	}
+    public boolean getBoolean() {
+        return Extra.toBoolean(object);
+    }
 
-	public Double getDouble() {
-		return Extra.toDouble(object);
-	}
+    public boolean getBoolean(String path) {
+        return getSection(path).getBoolean();
+    }
 
-	public Double getDouble(String path) {
-		return getSection(path).getDouble();
-	}
+    public Double getDouble() {
+        return Extra.toDouble(object);
+    }
 
-	public Float getFloat() {
-		return Extra.toFloat(object);
-	}
+    public Double getDouble(String path) {
+        return getSection(path).getDouble();
+    }
 
-	public Float getFloat(String path) {
-		return getSection(path).getFloat();
-	}
+    public Float getFloat() {
+        return Extra.toFloat(object);
+    }
 
-	public int getIndent() {
-		return lineSpaces;
-	}
+    public Float getFloat(String path) {
+        return getSection(path).getFloat();
+    }
 
-	public Integer getInt() {
-		return Extra.toInt(object);
-	}
+    public int getIndent() {
+        return lineSpaces;
+    }
 
-	public Integer getInt(String path) {
-		return getSection(path).getInt();
-	}
+    public Integer getInt() {
+        return Extra.toInt(object);
+    }
 
-	public List<Integer> getIntList() {
-		ArrayList<Integer> list = new ArrayList<>();
-		for (Object item : getList()) {
-			list.add(Extra.toInt(item));
-		}
-		return list;
-	}
+    public Integer getInt(String path) {
+        return getSection(path).getInt();
+    }
 
-	public ItemStack getItem() {
-		return (ItemStack) getValue();
-	}
+    public List<Integer> getIntList() {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (Object item : getList()) {
+            list.add(Extra.toInt(item));
+        }
+        return list;
+    }
 
-	public ItemStack getItem(String path) {
-		return getSection(path).getItem();
-	}
+    public ItemStack getItem() {
+        return (ItemStack) getValue();
+    }
 
-	public <CustomType> CustomType  get(String path, Class<CustomType> claz){
-		return (CustomType) getSection(path).getValue(claz);
-	}
+    public ItemStack getItem(String path) {
+        return getSection(path).getItem();
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public <CustomType> CustomType get(String path, Class<CustomType> claz) {
+        return (CustomType) getSection(path).getValue(claz);
+    }
 
-	public Set<String> getKeys() {
-		return getMap().keySet();
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public Set<String> getKeys(String path) {
-		return getSection(path).getKeys();
-	}
+    public Set<String> getKeys() {
+        return getMap().keySet();
+    }
 
-	public List<Object> getList() {
-		if (!(object instanceof List)) {
-			object = new ArrayList<Object>();
-		}
-		@SuppressWarnings("unchecked")
-		List<Object> list = (List<Object>) object;
-		return list;
-	}
+    public Set<String> getKeys(String path) {
+        return getSection(path).getKeys();
+    }
 
-	public Location getLocation() {
-		return (Location) getValue();
-	}
+    public List<Object> getList() {
+        if (!(object instanceof List)) {
+            object = new ArrayList<Object>();
+        }
+        @SuppressWarnings("unchecked")
+        List<Object> list = (List<Object>) object;
+        return list;
+    }
 
-	public Location getLocation(String path) {
-		return getSection(path).getLocation();
-	}
+    public Location getLocation() {
+        return (Location) getValue();
+    }
 
-	public Long getLong() {
-		return Extra.toLong(object);
-	}
+    public Location getLocation(String path) {
+        return getSection(path).getLocation();
+    }
 
-	public Long getLong(String path) {
-		return getSection(path).getLong();
-	}
+    public Long getLong() {
+        return Extra.toLong(object);
+    }
 
-	public String getMessage() {
+    public Long getLong(String path) {
+        return getSection(path).getLong();
+    }
 
-		return Extra.toChatMessage(getString());
-	}
+    public String getMessage() {
 
-	public ArrayList<String> getMessages() {
-		ArrayList<String> list = new ArrayList<>();
-		for (String text : getStringList()) {
-			list.add(Extra.toChatMessage(text));
-		}
-		return list;
-	}
+        return Extra.toChatMessage(getString());
+    }
 
-	public List<String> getMessages(String path) {
-		return getSection(path).getMessages();
-	}
+    public ArrayList<String> getMessages() {
+        ArrayList<String> list = new ArrayList<>();
+        for (String text : getStringList()) {
+            list.add(Extra.toChatMessage(text));
+        }
+        return list;
+    }
 
-	public ConfigSection getSection(String path) {
-		path = getPath(path);
-		if (path.contains(".")) {
-			String[] split = path.replace(".", ",").split(",");
-			String restPath = path.replaceFirst(split[0] + ".", "");
-			return getSection(split[0]).getSection(restPath);
-		} else {
-			if (path.isEmpty())
-				return null;
-			if (getMap().containsKey(path)) {
-				return getMap().get(path);
-			}
-			return new ConfigSection(this, path, "");
-		}
-	}
+    public List<String> getMessages(String path) {
+        return getSection(path).getMessages();
+    }
 
-	public Set<Entry<String, ConfigSection>> getSet() {
-		return getMap().entrySet();
-	}
+    public ConfigSection getSection(String path) {
+        path = getPath(path);
+        if (path.contains(".")) {
+            String[] split = path.replace(".", ",").split(",");
+            String restPath = path.replaceFirst(split[0] + ".", "");
+            return getSection(split[0]).getSection(restPath);
+        } else {
+            if (path.isEmpty())
+                return null;
+            if (getMap().containsKey(path)) {
+                return getMap().get(path);
+            }
+            return new ConfigSection(this, path, "");
+        }
+    }
 
-	public SoundEffect getSound() {
+    public Set<Entry<String, ConfigSection>> getSet() {
+        return getMap().entrySet();
+    }
+
+    public SoundEffect getSound() {
 //		System.out.println("Somzito "+getValue());
-		return (SoundEffect) getValue();
-	}
+        return (SoundEffect) getValue();
+    }
 
-	public SoundEffect getSound(String path) {
-		return getSection(path).getSound();
-	}
+    public SoundEffect getSound(String path) {
+        return getSection(path).getSound();
+    }
 
-	public String getString() {
-		return removeQuotes(Extra.toString(object)).replace("/*", "\n").replace("\\n", "\n").replace("<br>", "\n")
-				.replace("/n", "\n");
-	}
+    public String getString() {
+        return removeQuotes(Extra.toString(object)).replace("/*", "\n").replace("\\n", "\n").replace("<br>", "\n")
+                .replace("/n", "\n");
+    }
 
-	public String getString(String path) {
-		return getSection(path).getString();
-	}
+    public String getString(String path) {
+        return getSection(path).getString();
+    }
 
-	public List<String> getStringList() {
-		ArrayList<String> list = new ArrayList<>();
-		for (Object item : getList()) {
-			list.add(removeQuotes(Extra.toString(item)));
-		}
-		return list;
-	}
+    public List<String> getStringList() {
+        ArrayList<String> list = new ArrayList<>();
+        for (Object item : getList()) {
+            list.add(removeQuotes(Extra.toString(item)));
+        }
+        return list;
+    }
 
-	public List<String> getStringList(String path) {
-		return getSection(path).getStringList();
-	}
+    public List<String> getStringList(String path) {
+        return getSection(path).getStringList();
+    }
 
-	public Object getValue() {
+    public Object getValue() {
 
-		return getValue(null);
-	}
-	public Object getValue(Class<?> claz) {
-		// return StorageAPI.restoreData(isMap() ? toMap() : get(), null, null);
-		Object data = isMap() ? toMap() : get();
-//		System.out.println("Suposto som "+data.getClass());
-		return StorageAPI.restore(claz, data);
-	}
+        return getValue(null);
+    }
 
-	public Map<String, Object> toMap() {
-		Map<String, Object> map = new LinkedHashMap<>();
+    public Object getValue(Class<?> claz) {
 
-		for (Entry<String, ConfigSection> entry : getSet()) {
-			ConfigSection value = entry.getValue();
-			String key = entry.getKey();
-			if (value.isList()) {
-				map.put(key, value.getList());
-			} else if (value.isMap()) {
-				map.put(key, value.toMap());
-			} else {
-				map.put(key, value.get());
-			}
+        Object data = isMap() ? toMap() : get();
 
-		}
-		return map;
-	}
+        return StorageAPI.restore(claz, data);
+    }
 
-	@SuppressWarnings("unchecked")
-	public void toSections(Map<Object, Object> map) {
-		for (Entry<Object, Object> entry : map.entrySet()) {
-			String key = entry.getKey().toString();
-			Object value = entry.getValue();
-			if (value instanceof Map) {
-				ConfigSection sec = getSection(key);
-				sec.getMap().clear();
-				sec.toSections((Map<Object, Object>) value);
-			} else if (value instanceof List) {
-				getSection(key).set(value);
-			} else {
-				set(key, value);
-			}
-		}
-	}
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new LinkedHashMap<>();
 
-	public ConfigSection set(String path, Object value, String... comments) {
-		ConfigSection sec = getSection(path);
-		if (value == null) {
-			sec.remove();
-			return sec;
-		}
+        for (Entry<String, ConfigSection> entry : getSet()) {
+            ConfigSection value = entry.getValue();
+            String key = entry.getKey();
+            if (value.isList()) {
+                map.put(key, value.getList());
+            } else if (value.isMap()) {
+                map.put(key, value.toMap());
+            } else {
+                map.put(key, value.get());
+            }
 
-		// sec.set(StorageAPI.storeData(value, value.getClass(), null));
+        }
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void toSections(Map<Object, Object> map) {
+        for (Entry<Object, Object> entry : map.entrySet()) {
+            String key = entry.getKey().toString();
+            Object value = entry.getValue();
+            if (value instanceof Map) {
+                ConfigSection sec = getSection(key);
+                sec.getMap().clear();
+                sec.toSections((Map<Object, Object>) value);
+            } else if (value instanceof List) {
+                getSection(key).set(value);
+            } else {
+                set(key, value);
+            }
+        }
+    }
+
+    public ConfigSection set(String path, Object value, String... comments) {
+        ConfigSection sec = getSection(path);
+        if (value == null) {
+            sec.remove();
+            return sec;
+        }
+
+        // sec.set(StorageAPI.storeData(value, value.getClass(), null));
 //		System.out.println("Listinha "+value);
 
-		sec.set(StorageAPI.store(value.getClass(),value));
-		sec.setComments(comments);
-		return sec;
-	}
+        sec.set(StorageAPI.store(value.getClass(), value));
+        sec.setComments(comments);
+        return sec;
+    }
 
-	@SuppressWarnings("unchecked")
-	public ConfigSection set(Object value) {
-		if (value instanceof Map) {
+    @SuppressWarnings("unchecked")
+    public ConfigSection set(Object value) {
+        if (value instanceof Map) {
 
-			toSections((Map<Object, Object>) value);
-		} else {
-			this.object = value;
-		}
-		return this;
-	}
+            toSections((Map<Object, Object>) value);
+        } else {
+            this.object = value;
+        }
+        return this;
+    }
 
-	public Collection<ConfigSection> getValues() {
-		return getMap().values();
-	}
+    public Collection<ConfigSection> getValues() {
+        return getMap().values();
+    }
 
-	public Collection<ConfigSection> getValues(String path) {
-		return getSection(path).getValues();
-	}
+    public Collection<ConfigSection> getValues(String path) {
+        return getSection(path).getValues();
+    }
 
-	public String message(String path) {
-		return getSection(path).getMessage();
-	}
+    public String message(String path) {
+        return getSection(path).getMessage();
+    }
 
-	void save(List<String> lines, int spaceId) {
-		String space = getSpace(spaceId);
-		for (String comment : comments) {
-			lines.add(space + "# " + comment);
-		}
-		if (spaceId == -1) {
-			lines.add("");
-		}
-		if (isList()) {
-			lines.add(space + key + ": []");
-			for (Object text : getList()) {
-				lines.add(space + "- " + text);
-			}
-		} else if (isMap()) {
-			if (spaceId != -1) {
-				lines.add(space + key + ": {}");
-			}
-			for (ConfigSection section : getMap().values()) {
-				section.save(lines, spaceId + 1);
-				for (int i = 0; i < lineSpaces; i++) {
-					lines.add("");
-				}
-			}
-		} else {
-			if (spaceId == -1)
-				return;
-			lines.add(space + key + ": " + object);
+    void save(List<String> lines, int spaceId) {
+        String space = getSpace(spaceId);
+        for (String comment : comments) {
+            lines.add(space + "# " + comment);
+        }
+        if (spaceId == -1) {
+            lines.add("");
+        }
+        if (isList()) {
+            lines.add(space + key + ": []");
+            for (Object text : getList()) {
+                lines.add(space + "- " + text);
+            }
+        } else if (isMap()) {
+            if (spaceId != -1) {
+                lines.add(space + key + ": {}");
+            }
+            for (ConfigSection section : getMap().values()) {
+                section.save(lines, spaceId + 1);
+                for (int i = 0; i < lineSpaces; i++) {
+                    lines.add("");
+                }
+            }
+        } else {
+            if (spaceId == -1)
+                return;
+            lines.add(space + key + ": " + object);
 
-		}
+        }
 
-	}
+    }
 
-	void reload(List<String> lines) {
-		
-		int spaceId = 0;
-		ConfigSection path = this;
-		boolean headerSeted = false;
-		List<String> currentComments = new ArrayList<>();
-		// int index = 0;
-		for (String line : lines) {
-			// System.err.println("-> " + line);
-			String space = getSpace(spaceId);
-			if (!headerSeted
-					&& (line.isEmpty() || (line.length() == 1 && !Character.isLetter(line.toCharArray()[0])))) {
-				headerSeted = true;
-				// System.out.println("index " + index);
-				// index++;
-				continue;
-			}
-			if (!headerSeted && isComment(line)) {
-				comments.add(getComment(line));
-			}
-			if (headerSeted) {
-				if (isList(line)) {
-					path.getList().add(getList(line));
-				} else if (isComment(line)) {
-					currentComments.add(getComment(line));
-				} else if (isSection(line)) {
-					if (!line.startsWith("  ")) {
-						spaceId = 0;
-						path = this;
-					} else if (!line.startsWith(space)) {
-						int time = getSpace(line);
-						while (time < spaceId) {
-							path = path.father;
-							spaceId--;
-							// time = getSpace(line);
-						}
-					}
-					space = getSpace(spaceId);
-					path = path.getSection(getKey(line, space));
-					path.set(getValue(line, space));
-					path.comments.addAll(currentComments);
-					currentComments.clear();
-					spaceId++;
-					// nao desencadeia apenas muda o percurso
+    void reload(List<String> lines) {
 
-				}
-			}
-			// index++;
-		}
+        int spaceId = 0;
+        ConfigSection path = this;
+        boolean headerSeted = false;
+        List<String> currentComments = new ArrayList<>();
+        // int index = 0;
+        for (String line : lines) {
+            // System.err.println("-> " + line);
+            String space = getSpace(spaceId);
+            if (!headerSeted
+                    && (line.isEmpty() || (line.length() == 1 && !Character.isLetter(line.toCharArray()[0])))) {
+                headerSeted = true;
+                // System.out.println("index " + index);
+                // index++;
+                continue;
+            }
+            if (!headerSeted && isComment(line)) {
+                comments.add(getComment(line));
+            }
+            if (headerSeted) {
+                if (isList(line)) {
+                    path.getList().add(getList(line));
+                } else if (isComment(line)) {
+                    currentComments.add(getComment(line));
+                } else if (isSection(line)) {
+                    if (!line.startsWith("  ")) {
+                        spaceId = 0;
+                        path = this;
+                    } else if (!line.startsWith(space)) {
+                        int time = getSpace(line);
+                        while (time < spaceId) {
+                            path = path.father;
+                            spaceId--;
+                            // time = getSpace(line);
+                        }
+                    }
+                    space = getSpace(spaceId);
+                    path = path.getSection(getKey(line, space));
+                    path.set(getValue(line, space));
+                    path.comments.addAll(currentComments);
+                    currentComments.clear();
+                    spaceId++;
+                    // nao desencadeia apenas muda o percurso
 
-	}
+                }
+            }
+            // index++;
+        }
 
-	public void remove(String path) {
-		getSection(path).remove();
-	}
+    }
 
-	public void remove() {
-		father.getMap().remove(key);
-	}
+    public void remove(String path) {
+        getSection(path).remove();
+    }
 
-	public boolean isList() {
-		return object instanceof List;
-	}
+    public void remove() {
+        father.getMap().remove(key);
+    }
 
-	public boolean isMap() {
-		return object instanceof Map;
-	}
+    public boolean isList() {
+        return object instanceof List;
+    }
 
-	public void setComments(List<String> list) {
-		this.comments = list;
-	}
+    public boolean isMap() {
+        return object instanceof Map;
+    }
 
-	public void setComments(String... comments) {
-		if (comments != null & comments.length > 0) {
-			this.comments.clear();
-			for (Object value : comments) {
-				this.comments.add(Extra.toString(value));
-			}
-		}
-	}
+    public void setComments(List<String> list) {
+        this.comments = list;
+    }
 
-	public void setIndent(int amount) {
-		lineSpaces = amount;
-	}
+    public void setComments(String... comments) {
+        if (comments != null & comments.length > 0) {
+            this.comments.clear();
+            for (Object value : comments) {
+                this.comments.add(Extra.toString(value));
+            }
+        }
+    }
+
+    public void setIndent(int amount) {
+        lineSpaces = amount;
+    }
 
 }

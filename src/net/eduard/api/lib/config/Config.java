@@ -91,19 +91,7 @@ public class Config {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                // } else {
-                // plugin.saveResource(name, true);
 
-//				if (plugin.getResource(name) != null) {
-//					plugin.saveResource(name, true);
-//				} else {
-//					try {
-//						file.createNewFile();
-//					} catch (IOException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
             }
         }
     }

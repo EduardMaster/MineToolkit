@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.storage.Storable
 
-class MinigameChest : Storable<MinigameChest> {
+class MinigameChest {
     var refilTime = 2 * 60
     var maxItems = 10
     var isAcumulateItems = true

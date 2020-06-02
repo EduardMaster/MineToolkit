@@ -207,19 +207,19 @@ public class FakePlayer implements OfflinePlayer, Serializable {
 
 	@Override
 	public boolean isWhitelisted() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Deprecated
 	public void setBanned(boolean bol) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public void setWhitelisted(boolean bol) {
-		// TODO Auto-generated method stub
+
 
 	}
 

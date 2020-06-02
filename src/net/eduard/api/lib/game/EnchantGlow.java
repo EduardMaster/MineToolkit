@@ -17,6 +17,9 @@ public class EnchantGlow extends EnchantmentWrapper {
 
 	private static Enchantment glow;
 
+	public EnchantGlow(){
+		super(250);
+	}
 	public EnchantGlow(int id) {
 		super(id);
 	}

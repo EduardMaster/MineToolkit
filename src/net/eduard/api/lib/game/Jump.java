@@ -7,7 +7,7 @@ import org.bukkit.util.Vector;
 
 import net.eduard.api.lib.storage.Storable;
 
-public class Jump implements Storable {
+public class Jump   {
 	private boolean withHigh = true;
 	private boolean highFirst;
 	private double force = 2;

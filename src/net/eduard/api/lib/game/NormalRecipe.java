@@ -17,7 +17,7 @@ import net.eduard.api.lib.storage.Storable;
  * @author Eduard
  *
  */
-public class NormalRecipe implements Storable {
+public class NormalRecipe   {
 	public boolean addRecipe() {
 		if (getResult() == null)
 			return false;
@@ -28,7 +28,7 @@ public class NormalRecipe implements Storable {
 	private ItemStack result = null;
 
 	public NormalRecipe() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public NormalRecipe set(int slot, ItemStack item) {

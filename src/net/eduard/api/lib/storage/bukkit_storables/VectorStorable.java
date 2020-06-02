@@ -7,5 +7,4 @@ import net.eduard.api.lib.storage.Storable;
 public class VectorStorable implements Storable<Vector> {
 
 
-
 }

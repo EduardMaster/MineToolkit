@@ -11,9 +11,9 @@ import org.bukkit.inventory.ItemStack;
  *
  */
 public interface ClickEffect {
-	public void onClick(InventoryClickEvent event, int page);
+	 void onClick(InventoryClickEvent event, int page);
 
-	public default void onClick(Player player, int page, int slot, ItemStack item) {
+	 default void onClick(Player player, int page, int slot, ItemStack item) {
 
 	}
 }

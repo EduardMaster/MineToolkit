@@ -12,7 +12,7 @@ import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 
-public class Slot implements Storable,Copyable,Serializable {
+public class Slot implements  Serializable {
 
 	private int positionX, positionY;
 	private ItemStack item;
@@ -24,7 +24,7 @@ public class Slot implements Storable,Copyable,Serializable {
 	}
 	
 	public Slot copy() {
-		return copy(this);
+		return Copyable.copyObject(this);
 	}
 
 	public Slot(ItemStack item, int index) {

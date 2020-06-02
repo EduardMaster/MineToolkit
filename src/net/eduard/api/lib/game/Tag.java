@@ -9,7 +9,7 @@ import net.eduard.api.lib.storage.Storable;
  * @since EduardAPI 1.0
  * 
  */
-public class Tag implements Storable ,Copyable{
+public class Tag {
 
 	private String prefix, suffix, name;
 
@@ -27,7 +27,7 @@ public class Tag implements Storable ,Copyable{
 	}
 
 	public Tag() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public Tag(String prefix, String suffix, String name, int rank) {
@@ -39,7 +39,7 @@ public class Tag implements Storable ,Copyable{
 	}
 
 	public Tag copy() {
-		return copy(this);
+		return Copyable.copyObject(this);
 	}
 
 	public String getPrefix() {

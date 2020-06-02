@@ -32,7 +32,7 @@ public class OfflinePlayerStorable implements Storable<OfflinePlayer>, JsonSeria
 
         }
 
-        return null;
+        return new FakePlayer("Player");
     }
 
 

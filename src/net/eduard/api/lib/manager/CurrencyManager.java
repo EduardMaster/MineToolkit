@@ -19,7 +19,7 @@ public class CurrencyManager extends SimpleCurrencyHandler {
     private Map<FakePlayer, Double> currency = new HashMap<>();
 
 
-    public synchronized double getBalance(FakePlayer player) {
+    public  double getBalance(FakePlayer player) {
 //		
 //		System.out.println(currency);
         for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
@@ -42,11 +42,11 @@ public class CurrencyManager extends SimpleCurrencyHandler {
     }
 
     public CurrencyManager() {
-        // TODO Auto-generated constructor stub
+
     }
 
 
-    public synchronized void setBalance(FakePlayer player, double amount) {
+    public  void setBalance(FakePlayer player, double amount) {
         for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
             if (entry.getKey().equals(player)) {
                 entry.setValue(amount);
@@ -70,7 +70,7 @@ public class CurrencyManager extends SimpleCurrencyHandler {
     }
 
 
-    public synchronized Map<FakePlayer, Double> getCurrency() {
+    public  Map<FakePlayer, Double> getCurrency() {
         return currency;
     }
 

@@ -1,20 +1,17 @@
 package net.eduard.api.lib.game;
 
-import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
-import net.eduard.api.lib.storage.Storable;
-
 /**
- * Representa uma explosão sendo feita, For§a, se quebra blocos, se causa fogo
+ * Representa uma explosão sendo feita, Força, se quebra blocos, se causa fogo
  * @version 2.0
  * @since EduardAPI 1.0
  * @author Eduard
  *
  */
-public class Explosion implements Storable{
+public class Explosion {
 
 	private float power;
 	private boolean breakBlocks;

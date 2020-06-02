@@ -4,7 +4,7 @@ import net.eduard.api.lib.storage.Storable;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class SimpleCurrencyHandler implements  CurrencyHandler , Storable {
+public abstract class SimpleCurrencyHandler implements  CurrencyHandler {
     private String name;
     private ItemStack icon;
     private String symbol;

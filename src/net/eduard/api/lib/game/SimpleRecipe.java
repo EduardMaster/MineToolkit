@@ -30,7 +30,7 @@ import org.bukkit.inventory.ShapelessRecipe;
  * @author Eduard
  *
  */
-public class SimpleRecipe implements Storable {
+public class SimpleRecipe {
 	public boolean addRecipe() {
 		if (getResult() == null)
 			return false;
@@ -41,7 +41,7 @@ public class SimpleRecipe implements Storable {
 	private List<ItemStack> items = new ArrayList<>();
 
 	public SimpleRecipe() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public SimpleRecipe(ItemStack result) {

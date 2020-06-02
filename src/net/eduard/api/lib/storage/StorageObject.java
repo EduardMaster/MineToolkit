@@ -12,335 +12,319 @@ import net.eduard.api.lib.storage.references.ReferenceValue;
 
 public class StorageObject extends StorageBase {
 
-	public StorageObject(StorageInfo info) {
-		super(info);
-	}
+    public StorageObject(StorageInfo info) {
+        super(info);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object restore(Object data) {
-		Class<?> claz = getType();
-		if (data == null) {
-			debug(">> DATA NULL");
-			return null;
-		}
-		int id = 0;
-		String alias = null;
-		if (data instanceof Map) {
-			Map<?, ?> map = (Map<?, ?>) data;
-			if (map.containsKey(StorageAPI.STORE_KEY)) {
-				String text = (String) map.get(StorageAPI.STORE_KEY);
-				debug(">> RESTORING INFORMATIONS: " + text);
-				if (text.contains(StorageAPI.REFER_KEY)) {
-					String[] split = text.split(StorageAPI.REFER_KEY);
-					alias = split[0];
-//					debug("Alias: " + alias);
-//					System.out.println(StorageAPI.getAliases());
-					claz = StorageAPI.getClassByAlias(alias);
-//					debug("Class: " + getType());
-					try {
-						id = Extra.toInt(split[1]);
-//						debug("Id: " + id);
-					} catch (Exception e) {
-						// este erro nao vai influenciar em nada
-						e.printStackTrace();
-					}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object restore(Object data) {
+        Class<?> claz = getType();
+        if (data == null) {
+            debug(">> DATA NULL");
+            return null;
+        }
 
-				} else {
-					claz = StorageAPI.getClassByAlias(text);
-					alias = text;
-				}
-				if (claz != null)
-					debug(">> RESTORED TYPE " + claz.getSimpleName());
+        int id = 0;
+        String alias = null;
+        if (data instanceof Map) {
+            Map<?, ?> map = (Map<?, ?>) data;
+            if (map.containsKey(StorageAPI.STORE_KEY)) {
+                String text = (String) map.get(StorageAPI.STORE_KEY);
+                debug(">> RESTORING INFORMATIONS: " + text);
+                if (text.contains(StorageAPI.REFER_KEY)) {
+                    String[] split = text.split(StorageAPI.REFER_KEY);
+                    alias = split[0];
+                    try {
+                        id = Extra.toInt(split[1]);
 
-				debug(">> RESTORED ALIAS " + alias);
-				debug(">> RESTORED ID " + id);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-			} else {
-			}
-		}
-		if (claz == null) {
-			debug(">> CLASS NULL ");
-			return data;
-		}
-		alias = StorageAPI.getAlias(claz);
-		Storable store = StorageAPI.getStore(claz);
+                } else {
+                    alias = text;
+                }
+                claz = StorageAPI.getClassByAlias(alias);
+                if (claz != null)
+                    debug(">> RESTORED TYPE " + claz.getSimpleName());
 
-		Class<?> wrapper = Extra.getWrapper(claz);
+                debug(">> RESTORED ALIAS " + alias);
+                debug(">> RESTORED ID " + id);
 
-		if (wrapper != null) {
-			try {
-				debug(">> RESTORING DATA FROM " + data);
-				Object result = Extra.getResult(Extra.class, "to" + wrapper.getSimpleName(),
-						new Object[] { Object.class }, data);
-				if (result instanceof String){
-					result = ((String) result).replace("&","§");
-				}
-				debug(">> DATA RESTORED " + data);
-				return result;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if (Extra.isList(claz)) {
-			debug(">> LIST " + data);
-			return new StorageList(getInfo().clone()).restore(data);
-		}
-		if (Extra.isMap(claz)) {
-			debug(">> MAP " + data);
-			return new StorageMap(getInfo().clone()).restore(data);
-		}
-		if (claz.isEnum()) {
-			debug(">> ENUM " + data);
-			return new StorageEnum(getInfo().clone()).restore(data);
-		}
+            } else {
+            }
 
-		if (isReference()) {
-			if (data.toString().contains(StorageAPI.REFER_KEY)) {
-				debug(">> REFERENCE " + data);
-				return (int) Extra.toInt(data.toString().split(StorageAPI.REFER_KEY)[1]);
-			}
-			return null;
-		}
 
+        }
+        if (claz == null) {
+            debug(">> CLASS NULL ");
+            return null;
+        }
+        if (claz.isEnum()) {
+            debug(">> ENUM " + data);
+            return new StorageEnum(getInfo().clone()).restore(data);
+        }
+        if (isReference()) {
+            if (data.toString().contains(StorageAPI.REFER_KEY)) {
+                debug(">> REFERENCE " + data);
+                return (int) Extra.toInt(data.toString().split(StorageAPI.REFER_KEY)[1]);
+            }
+            return null;
+        }
+        if (Extra.isList(claz)) {
+            debug(">> LIST " + data);
+            return new StorageList(getInfo().clone()).restore(data);
+        }
+        if (Extra.isMap(claz)) {
+            debug(">> MAP " + data);
+            return new StorageMap(getInfo().clone()).restore(data);
+        }
+
+
+        alias = StorageAPI.getAlias(claz);
+
+        Storable store = StorageAPI.getStore(claz);
+
+        Class<?> wrapper = Extra.getWrapper(claz);
+
+        if (wrapper != null) {
+            try {
+                debug(">> RESTORING DATA FROM " + data);
+                Object result = Extra.getResult(Extra.class, "to" + wrapper.getSimpleName(),
+                        new Object[]{Object.class}, data);
+                if (result instanceof String) {
+                    result = ((String) result).replace("&", "§");
+                }
+                debug(">> DATA RESTORED " + data);
+                return result;
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+        }
+
+        Object instance = null;
+
+
+		/* mesmo se a Storable esteja nula vai continuar recarregando da config
 		if (store == null) {
 			debug(">> NULL STORABLE ");
 			return null;
 		}
-//		if (claz.equals(UUID.class)) {
-//			debug("=========== "+isInline());
-//		}
-		if (isInline()) {
+		*/
 
-			Object result = store.restore(data.toString());
-			if (result == null) {
-				debug(">> INLINE  " + data);
-				result = new StorageInline(getInfo().clone()).restore(data);
-			} else {
-				debug(">> INLINE CUSTOM " + data);
 
-			}
-			return result;
+        if (isInline()) {
+            if (store != null) {
+                debug(">> INLINE CUSTOM " + data);
+                instance = store.restore(data.toString());
 
-		}
-		if (id == 0) {
-			id = StorageAPI.newId();
-		}
-		Object instance = store.restore((Map<String, Object>) data);
-		//debug("** RESTORED STORABLE "+store);
-		if (instance == null) {
-			try {
-				instance = store.newInstance();
-			} catch (Exception e) {
-				e.printStackTrace();
+            } else {
+                debug(">> INLINE  " + data);
+                instance = new StorageInline(getInfo().clone()).restore(data);
+            }
 
-			}
-			debug(">> NEW INSTANCE");
+            return instance;
+        }
+        if (id == 0) {
+            id = StorageAPI.newId();
+        }
+        if (store != null) {
+            instance = store.newInstance();
+        } else {
+            try {
+                debug(">> NEW INSTANCE");
+                instance = claz.newInstance();
+            } catch (Exception e) {
 
-		} else {
-			debug(">> RESTORED INSTANCE");
-		}
-		Map<?, ?> map = (Map<?, ?>) data;
+            }
+        }
+        if (instance == null) {
+            // Sem instancia não tem como retornar objeto
+            return null;
+        }
 
-//		debug("^^ " + alias + StorageAPI.REFER_KEY + id);
-		if (isIndentifiable())
-			StorageAPI.registerObject(id, instance);
-		while (!claz.equals(Object.class)) {
+        Map<?, ?> map = (Map<?, ?>) data;
 
-			for (Field field : claz.getDeclaredFields()) {
-				// debug("Class: " + field.getType().getSimpleName() + " field: " +
-				// field.getName() + " atributes: "
-				// + field.getGenericType());
-				// Class<?> keyType = Extra.getTypeKey(field.getGenericType());
-				// Class<?> valueType = Extra.getTypeValue(field.getGenericType());
-				if (Modifier.isStatic(field.getModifiers()))
-					continue;
-				if (Modifier.isTransient(field.getModifiers()))
-					continue;
-				if (Modifier.isFinal(field.getModifiers())) {
-					continue;
-				}
-				field.setAccessible(true);
+        if (isIndentifiable())
+            StorageAPI.registerObject(id, instance);
+        while (!claz.equals(Object.class)) {
 
-				try {
+            for (Field field : claz.getDeclaredFields()) {
 
-					Object fieldMapValue = map.get(field.getName());
+                if (Modifier.isStatic(field.getModifiers()))
+                    continue;
+                if (Modifier.isTransient(field.getModifiers()))
+                    continue;
+                if (Modifier.isFinal(field.getModifiers())) {
+                    continue;
+                }
+                if (Modifier.isNative(field.getModifiers())) {
+                    continue;
+                }
+                field.setAccessible(true);
 
-					if (fieldMapValue == null)
-						continue;
-					StorageObject storage = new StorageObject(getInfo().clone());
-					storage.setField(field);
-					storage.setType(field.getType());
-					storage.updateByType();
-					storage.updateByStoreClass();
-					storage.updateByField();
+                try {
 
-//					
-//					if (Extra.isList(field.getType())) {
-//						Object fieldRestored = new StorageList(getInfo().clone()).restore(fieldMapValue);
-//						field.set(instance, fieldRestored);
-//
-//					} else if (Extra.isMap(field.getType())) {
-//						Object fieldRestored = new StorageMap(field, instance, reference).restore(fieldMapValue);
-//						field.set(instance, fieldRestored);
-//
-//					} else {
-					debug(">> VARIABLE " + field.getName() + " " + field.getType().getSimpleName());
-					Object restoredValue = storage.restore(fieldMapValue);
-					if (storage.isReference()) {
-						if (restoredValue != null) {
-							if (restoredValue instanceof Integer) {
-								Integer indetification = (Integer) restoredValue;
-								StorageAPI.newReference(new ReferenceValue(indetification, field, instance));
+                    Object fieldMapValue = map.get(field.getName());
 
-								continue;
-							}
-						}
-					}
+                    if (fieldMapValue == null)
+                        continue;
+                    StorageObject storage = new StorageObject(getInfo().clone());
+                    storage.setField(field);
+                    storage.setType(field.getType());
+                    storage.updateByType();
+                    storage.updateByStoreClass();
+                    storage.updateByField();
 
-//					if (fieldRestored == null)
-//						continue;
-					try {
-						if (restoredValue != null)
-							field.set(instance, restoredValue);
+                    debug(">> VARIABLE " + field.getName() + " " + field.getType().getSimpleName());
+                    Object restoredValue = storage.restore(fieldMapValue);
+                    if (storage.isReference()) {
+                        if (restoredValue != null) {
+                            StorageAPI.newReference(new ReferenceValue((Integer) restoredValue, field, instance));
+                            continue;
+                        }
+                    }
 
-					} catch (Exception e) {
-						debug(">> FAILED TO SET VARIABLE " + field.getName() + " USING " + restoredValue);
-					}
+                    try {
+                        if (restoredValue != null)
+                            field.set(instance, restoredValue);
 
-//					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			claz = claz.getSuperclass();
-		}
+                    } catch (Exception e) {
+                        debug(">> FAILED TO SET VARIABLE " + field.getName() + " USING " + restoredValue);
+                    }
 
-		if (instance instanceof Storable) {
-			Storable storable = (Storable) instance;
-			storable.restore((Map<String, Object>) map);
-		}
-		return instance;
-	}
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            claz = claz.getSuperclass();
+        }
 
-	@Override
-	public Object store(Object data) {
-		if (data == null)
-			return null;
-		Class<?> claz = data.getClass();
+        if (instance instanceof Storable) {
+            Storable storable = (Storable) instance;
+            storable.restore((Map<String, Object>) map);
 
-		String alias = StorageAPI.getAlias(claz);
-		if (claz.isEnum()) {
-			debug("<< ENUM " + data);
-			return new StorageEnum(getInfo().clone()).store(data);
-//			return new StorageEnum(getField(), getInstance(), getType(), isReference(), isInline(), isIndentifiable())
-//					.store(data);
-		}
-		if (claz.isArray()) {
-			debug("<< ARRAY " + data);
-			return new StorageArray(getInfo().clone()).store(data);
-		}
-		if (Extra.isList(claz)) {
-			debug("<< LIST " + new ArrayList<>((List<?>)data));
+        }
+        if (store!=null){
+            Object returned = store.restore((Map<String, Object>)map);
+            if (returned!=null){
+                instance = returned;
+            }
+        }
+        return instance;
+    }
 
-			return new StorageList(getInfo().clone()).store((List) data);
-		}
-		if (Extra.isMap(claz)) {
-			return new StorageMap(getInfo().clone()).store(data);
-		}
-		Storable store = getStore(claz);
-		if (store == null) {
-			store = getStore(getType());
-		}
-		if (store == null) {
-			return data;
-		}
-//		if (claz.equals(UUID.class)) {
-//			debug("=========== " + isInline() + "     " + store);
-//		}
-		if (isReference()) {
+    @Override
+    public Object store(Object data) {
+        if (data == null)
+            return null;
+        Class<?> claz = data.getClass();
 
-			String text = alias + StorageAPI.REFER_KEY + StorageAPI.getIdByObject(data);
-			debug("<< REFERENCE " + text);
-			return text;
-		}
-		if (isInline()) {
-			Object result = store.store(data);
-			if (result == null) {
-				debug("<< INLINE " + data);
-				return new StorageInline(getInfo().clone()).store(data);
-			}
-			debug("<< INLINE CUSTOM " + result);
-			return result;
-		}
+        String alias = StorageAPI.getAlias(claz);
+        if (claz.isEnum()) {
+            debug("<< ENUM " + data);
+            return new StorageEnum(getInfo().clone()).store(data);
 
-		try {
-			Map<String, Object> map = new LinkedHashMap<>();
-			if (isIndentifiable()) {
-				debug("<< INDENTIFIABLE " + claz);
-				map.put(StorageAPI.STORE_KEY, alias + StorageAPI.REFER_KEY + StorageAPI.getIdByObject(data));
-			} else {
-				map.put(StorageAPI.STORE_KEY, alias);
-			}
-			while (!claz.equals(Object.class)) {
-				for (Field field : claz.getDeclaredFields()) {
-					field.setAccessible(true);
+        }
+        if (claz.isArray()) {
+            debug("<< ARRAY " + data);
+            return new StorageArray(getInfo().clone()).store(data);
+        }
+        if (Extra.isList(claz)) {
+            debug("<< LIST " + new ArrayList<>((List<?>) data));
 
-					if (Modifier.isStatic(field.getModifiers()))
-						continue;
-					if (Modifier.isTransient(field.getModifiers()))
-						continue;
-					if (Modifier.isFinal(field.getModifiers())) {
-						continue;
-					}
-					Object fieldValue = field.get(data);
-					if (fieldValue == null) {
-						continue;
-					}
+            return new StorageList(getInfo().clone()).store((List) data);
+        }
+        if (Extra.isMap(claz)) {
+            return new StorageMap(getInfo().clone()).store(data);
+        }
+        Storable store = getStore(claz);
 
-					StorageObject storage = new StorageObject(getInfo().clone());
-					storage.setField(field);
-					storage.setType(field.getType());
-					storage.updateByType();
-					storage.updateByStoreClass();
-					storage.updateByField();
 
-//					if (fieldValue.getClass().equals(UUID.class)) {
-//						debug("********** " + storage.isInline());
-//					}
-					debug("<< VARIABLE " + field.getName() + " " + fieldValue.getClass().getSimpleName());
-					Object fieldResult = storage.store(fieldValue);
-//					if (Extra.isList(field.getType())) {
-//						fieldResult = new StorageList(Extra.getTypeKey(field.getGenericType()), reference).store(value);
-//					} else if (Extra.isMap(field.getType())) {
-//						fieldResult = new StorageMap(Extra.getTypeKey(field.getGenericType()),
-//								Extra.getTypeValue(field.getGenericType()), isReference).store(value);
-//					} else {
-//						if (StorageAPI) {
-//							Mine.console("§dTenso " + value.getClass());
-//							fieldResult = new StorageObject(value.getClass(), isReference).store(value);
-//						} else {
-//							fieldResult = new StorageObject(field.getType(), isReference).store(value);
-//						}
-//					}
-					if (fieldResult != null)
-						map.put(field.getName(), fieldResult);
+        /* Se caso a Storable for nula ainda sim vai continuar
+        if (store == null) {
+            return data;
+        }
+         */
 
-				}
-				claz = claz.getSuperclass();
-			}
-			if (!(data instanceof Storable)) {
-				store.store(map, data);
-			} else {
-				((Storable) data).store(map, data);
-			}
-			return map;
+        if (isReference()) {
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return data;
-	}
+            String text = alias + StorageAPI.REFER_KEY + StorageAPI.getIdByObject(data);
+            debug("<< REFERENCE " + text);
+            return text;
+        }
+        if (isInline()) {
+            if (store != null) {
+                Object result = store.store(data);
+                debug("<< INLINE CUSTOM " + result);
+                return result;
+            } else {
+                debug("<< INLINE " + data);
+                return new StorageInline(getInfo().clone()).store(data);
+            }
+        }
+        Class<?> wrapper = Extra.getWrapper(claz);
+        if (wrapper!=null){
+            return data;
+        }
+        try {
+            Map<String, Object> map = new LinkedHashMap<>();
+            if (isIndentifiable()) {
+                debug("<< INDENTIFIABLE " + claz);
+                map.put(StorageAPI.STORE_KEY, alias + StorageAPI.REFER_KEY + StorageAPI.getIdByObject(data));
+            } else {
+                map.put(StorageAPI.STORE_KEY, alias);
+            }
+            while (!claz.equals(Object.class)) {
+                for (Field field : claz.getDeclaredFields()) {
+                    field.setAccessible(true);
+
+                    if (Modifier.isStatic(field.getModifiers()))
+                        continue;
+                    if (Modifier.isTransient(field.getModifiers()))
+                        continue;
+                    if (Modifier.isFinal(field.getModifiers())) {
+                        continue;
+                    }
+                    if (Modifier.isNative(field.getModifiers())) {
+                        continue;
+                    }
+                    Object fieldValue = field.get(data);
+                    if (fieldValue == null) {
+                        continue;
+                    }
+
+                    StorageObject storage = new StorageObject(getInfo().clone());
+                    storage.setField(field);
+                    storage.setType(field.getType());
+                    storage.updateByType();
+                    storage.updateByStoreClass();
+                    storage.updateByField();
+
+                    debug("<< VARIABLE " + field.getName() + " " + fieldValue.getClass().getSimpleName());
+                    Object fieldResult = storage.store(fieldValue);
+
+                    if (fieldResult != null)
+                        map.put(field.getName(), fieldResult);
+
+                }
+                claz = claz.getSuperclass();
+            }
+            if (data instanceof Storable) {
+                Storable dataStorable = (Storable) data;
+                dataStorable.store(map, data);
+
+            } else if (store != null) {
+                store.store(map, data);
+            }
+            return map;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
