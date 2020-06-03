@@ -42,9 +42,7 @@ public class StorageMap extends StorageBase {
 		storeKey.setType(keyType);
 		storeKey.updateByType();
 		storeKey.updateByStoreClass();
-//		if (keyType.equals(UUID.class)) {
-//			Mine.console("§a"+storeKey);
-//		}
+
 		StorageObject storeValue = new StorageObject(getInfo().clone());
 		storeValue.setType(valueType);
 		storeValue.updateByType();
@@ -87,16 +85,15 @@ public class StorageMap extends StorageBase {
 	public Object store(Object data) {
 		StorageObject storeKey = new StorageObject(getInfo().clone());
 		storeKey.setType(keyType);
-		if (keyType.equals(UUID.class)) {
-
-		}
 		storeKey.updateByType();
 		storeKey.updateByStoreClass();
+
 		StorageObject storeValue = new StorageObject(getInfo().clone());
 		storeValue.setType(valueType);
 		storeValue.updateByType();
 		storeValue.updateByStoreClass();
 		storeValue.updateByField();
+
 		Map<String, Object> newMap = new HashMap<>();
 		Map<?, ?> map = (Map<?, ?>) data;
 		for (Entry<?, ?> entry : map.entrySet()) {

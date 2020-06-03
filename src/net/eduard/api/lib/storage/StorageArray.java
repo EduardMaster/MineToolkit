@@ -51,30 +51,14 @@ public class StorageArray extends StorageBase {
 		StorageInfo clone = getInfo().clone();
 		clone.setType(arrayType);
 		StorageObject store = new StorageObject(clone);
-//		System.out.println("Array porra "+data);
-//		Storable store = getStore(getType());
-//		String alias = getAlias(getType());
 		int arraySize = Array.getLength(data);
 		List<Object> newList = new ArrayList<>();
-//		
 		for (int index = 0; index < arraySize; index++) {
 			newList.add(store.store(Array.get(data, index)));
 		}
-		if (store.isStorable()) {
-			if (!store.isInline()) {
-				Map<String, Object> map = new LinkedHashMap<>();
-				for (int index = 0; index < newList.size(); index++) {
-					map.put(getAlias() + index, newList.get(index));
-				}
-				return map;
-			}
-		}
-//		if (store != null) {
-//			if (!isInline()) {
-//				
-//			}
-//		}
-		return null;
+
+
+		return newList;
 	}
 
 	public Class<?> getArrayType() {

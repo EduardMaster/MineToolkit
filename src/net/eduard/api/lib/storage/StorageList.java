@@ -13,6 +13,7 @@ public class StorageList extends StorageBase<List> {
         super(info);
         if (getField() != null) {
             setListType(Extra.getTypeKey(getField().getGenericType()));
+            System.out.println("TIPO DA LISTA: "+getListType());
         } else
             setListType(String.class);
 
@@ -27,11 +28,12 @@ public class StorageList extends StorageBase<List> {
         storage.updateByField();
         debug(">> LIST RESTORATION");
         if (storage.isReference()) {
+            debug("  IS REFERENCE LIST");
             if (data instanceof List) {
                 List<?> oldList = (List<?>) data;
                 List<Integer> newList = new ArrayList<>();
                 for (Object item : oldList) {
-                    newList.add((Integer) storage.restore(item));
+                    newList.add((Integer) Integer.parseInt(item.toString()));
                 }
                 List<Object> list = new ArrayList<>();
                 StorageAPI.newReference(new ReferenceList(newList, list));
@@ -40,7 +42,6 @@ public class StorageList extends StorageBase<List> {
             return null;
 
         }
-//
         List<Object> newList = new ArrayList<>();
         if (data instanceof List) {
             List<?> listOld = (List<?>) data;
@@ -52,7 +53,6 @@ public class StorageList extends StorageBase<List> {
             for (Object item : mapOld.values()) {
                 Object objeto = storage.restore(item);
                 newList.add(objeto);
-//				System.out.println("Restaurando lista "+objeto);
             }
 
         }
@@ -62,6 +62,7 @@ public class StorageList extends StorageBase<List> {
 
     @Override
     public Object store(List data) {
+
         StorageObject storage = new StorageObject(getInfo().clone());
         storage.setType(listType);
         storage.updateByType();
@@ -70,11 +71,14 @@ public class StorageList extends StorageBase<List> {
         debug("<< LIST STORATION");
         List<Object> newList = new ArrayList<>();
         List<?> list = (List<?>) data;
-        ArrayList<?> listaCopia = new ArrayList<>(list);
-        for (Object item : listaCopia) {
-            newList.add(storage.store(item));
+
+        for (Object item : list) {
+            Object dado = storage.store(item);
+            System.out.println("TIPO DA LISTA2 "+dado.getClass());
+            newList.add(dado);
 
         }
+        /*
         if (getStore(getListType()) != null) {
             if (!storage.isInline() && !storage.isReference()) {
                 Map<String, Object> map = new LinkedHashMap<>();
@@ -84,6 +88,7 @@ public class StorageList extends StorageBase<List> {
                 return map;
             }
         }
+        */
         return newList;
 
     }

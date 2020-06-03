@@ -2,6 +2,7 @@ package net.eduard.api.server.currency;
 
 import net.eduard.api.EduardAPI;
 import net.eduard.api.server.currency.list.CurrencyVaultEconomy;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,32 @@ public class CurrencyController {
 
     public static CurrencyController getInstance(){
         return INSTANCE;
+    }
+
+    public CurrencyHandler getNextCurrency(CurrencyHandler currencyHandler){
+        int id = 0;
+        List<CurrencyHandler> tempList = new ArrayList<>(currencies.values());
+        for (CurrencyHandler handler :  tempList){
+            id++;
+            if (currencyHandler.equals(handler)){
+                break;
+            }
+        }
+        if (id >= tempList.size()){
+            id = 1;
+        }
+
+        return tempList.get(0);
+    }
+    public CurrencyHandler getCurrencyByIcon(ItemStack icon){
+        List<CurrencyHandler> tempList = new ArrayList<>(currencies.values());
+        for (CurrencyHandler currencyHandler : tempList) {
+            if (icon.equals(currencyHandler.getIcon())){
+                return currencyHandler;
+            }
+
+        }
+        return null;
     }
 
     private Map<String,CurrencyHandler> currencies = new HashMap<>();

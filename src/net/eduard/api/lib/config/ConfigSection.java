@@ -1,12 +1,7 @@
 package net.eduard.api.lib.config;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import net.eduard.api.lib.storage.StorageObject;
 import org.bukkit.Location;
@@ -341,7 +336,6 @@ public class ConfigSection {
     }
 
     public SoundEffect getSound() {
-//		System.out.println("Somzito "+getValue());
         return (SoundEffect) getValue();
     }
 
@@ -424,17 +418,29 @@ public class ConfigSection {
             return sec;
         }
 
-        // sec.set(StorageAPI.storeData(value, value.getClass(), null));
-//		System.out.println("Listinha "+value);
-
-        sec.set(StorageAPI.store(value.getClass(), value));
+        Object dataSalved = StorageAPI.store(value.getClass(), value);
+        sec.set(dataSalved);
         sec.setComments(comments);
         return sec;
     }
 
     @SuppressWarnings("unchecked")
     public ConfigSection set(Object value) {
-        if (value instanceof Map) {
+        if (value instanceof List) {
+            List<?> list = (List<?>) value;
+            if (!list.isEmpty()) {
+                Object first = list.get(0);
+                if (first instanceof Map) {
+                    int id = 1;
+                    for (Object item : list) {
+                        getSection("" + id).set(item);
+                        id++;
+                    }
+                } else {
+                    this.object = list;
+                }
+            }
+        } else if (value instanceof Map) {
 
             toSections((Map<Object, Object>) value);
         } else {

@@ -5,18 +5,15 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
-import net.eduard.api.lib.modules.Copyable;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI;
-import org.bukkit.scheduler.BukkitRunnable;
-
 /**
  * API de Controle de MySQL ou SQLite com apenas 1 conexão
  *
  * @author Eduard-PC
  */
-public class DBManager implements Storable, Copyable {
+public class DBManager implements Storable {
 
     private static boolean debug = true;
 
@@ -150,7 +147,12 @@ public class DBManager implements Storable, Copyable {
      * @return Se a conexao existe
      */
     public boolean hasConnection() {
-        return connection != null;
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException ex) {
+
+        }
+        return false;
     }
 
     /**
@@ -627,9 +629,6 @@ public class DBManager implements Storable, Copyable {
         debug = d;
     }
 
-    public DBManager copy() {
-        return copy(this);
-    }
 
     public boolean isEnabled() {
         return enabled;

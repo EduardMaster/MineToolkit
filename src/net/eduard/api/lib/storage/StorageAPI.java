@@ -107,6 +107,9 @@ public class StorageAPI {
     }
 
     public static Object restore(Class<?> claz, Object object) {
+        if (claz!=null){
+            autoRegisterClass(claz);
+        }
         StorageObject storeSystem = new StorageObject(new StorageInfo(claz));
         storeSystem.setIndentifiable(true);
 

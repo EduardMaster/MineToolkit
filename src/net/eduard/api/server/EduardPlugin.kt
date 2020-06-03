@@ -40,14 +40,12 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         @JvmName("getDB")
         get
 
-    var sqlManager: SQLManager? = null
-        get() {
-            if (field == null) {
-                var type = if (db.useSQLite()) SQLEngineType.MYSQL else SQLEngineType.SQLITE
-                field = SQLManager(db.connection, type)
-            }
-            return field
-        }
+    lateinit var sqlManager: SQLManager
+
+    fun startSQLManager(){
+        var type = if (db.useSQLite()) SQLEngineType.MYSQL else SQLEngineType.SQLITE
+        sqlManager = SQLManager(db.connection, type)
+    }
 
 
     lateinit var configs: Config
@@ -176,7 +174,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
 
 
     fun reloadDBManager() {
-        db = configs.get("database") as DBManager
+        db = configs.get("database", DBManager::class.java)
     }
 
     fun registerPackage(packname: String) {
