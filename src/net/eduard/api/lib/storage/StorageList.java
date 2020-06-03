@@ -13,7 +13,7 @@ public class StorageList extends StorageBase<List> {
         super(info);
         if (getField() != null) {
             setListType(Extra.getTypeKey(getField().getGenericType()));
-            System.out.println("TIPO DA LISTA: "+getListType());
+
         } else
             setListType(String.class);
 
@@ -50,6 +50,7 @@ public class StorageList extends StorageBase<List> {
             }
         } else if (data instanceof Map) {
             Map<?, ?> mapOld = (Map<?, ?>) data;
+            debug("RESTORING LIST BY MAP");
             for (Object item : mapOld.values()) {
                 Object objeto = storage.restore(item);
                 newList.add(objeto);
@@ -74,21 +75,11 @@ public class StorageList extends StorageBase<List> {
 
         for (Object item : list) {
             Object dado = storage.store(item);
-            System.out.println("TIPO DA LISTA2 "+dado.getClass());
+
             newList.add(dado);
 
         }
-        /*
-        if (getStore(getListType()) != null) {
-            if (!storage.isInline() && !storage.isReference()) {
-                Map<String, Object> map = new LinkedHashMap<>();
-                for (int index = 1; index <= newList.size(); index++) {
-                    map.put("" + index, newList.get(index - 1));
-                }
-                return map;
-            }
-        }
-        */
+
         return newList;
 
     }

@@ -439,6 +439,8 @@ public class ConfigSection {
                 } else {
                     this.object = list;
                 }
+            } else {
+                this.object = list;
             }
         } else if (value instanceof Map) {
 
@@ -554,7 +556,7 @@ public class ConfigSection {
     }
 
     public boolean isList() {
-        return object instanceof List;
+        return object instanceof List || object.toString().startsWith("[]");
     }
 
     public boolean isMap() {

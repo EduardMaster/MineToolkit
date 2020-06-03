@@ -54,7 +54,7 @@ public class SQLManager {
 
                     dataToReturn = (E) record.getInstance();
                 }
-                result.close();
+
                 result.getStatement().close();
             } catch (Exception ex) {
                 //ex.printStackTrace();
@@ -81,7 +81,7 @@ public class SQLManager {
                 SQLRecord record = new SQLRecord(table, result, builder.option());
                 list.add((E) record.getInstance());
             }
-            result.close();
+
             result.getStatement().close();
         } catch (Exception ex) {
             ex.printStackTrace();

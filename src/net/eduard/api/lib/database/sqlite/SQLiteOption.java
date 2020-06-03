@@ -13,12 +13,12 @@ public class SQLiteOption implements SQLOption {
 
     @Override
     public String primaryKey() {
-        return "PRIMARY_KEY";
+        return " PRIMARY_KEY";
     }
 
     @Override
     public String autoIncrement() {
-        return "AUTOINCREMENT";
+        return " AUTOINCREMENT";
     }
 
     @Override

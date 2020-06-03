@@ -43,7 +43,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     lateinit var sqlManager: SQLManager
 
     fun startSQLManager(){
-        var type = if (db.useSQLite()) SQLEngineType.MYSQL else SQLEngineType.SQLITE
+        var type = if (db.useSQLite()) SQLEngineType.SQLITE else SQLEngineType.MYSQL
         sqlManager = SQLManager(db.connection, type)
     }
 

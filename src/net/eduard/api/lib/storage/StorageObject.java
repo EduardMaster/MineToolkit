@@ -31,7 +31,7 @@ public class StorageObject extends StorageBase {
             Map<?, ?> map = (Map<?, ?>) data;
             if (map.containsKey(StorageAPI.STORE_KEY)) {
                 String text = (String) map.get(StorageAPI.STORE_KEY);
-                debug(">> RESTORING INFORMATIONS: " + text);
+                debug(">> RESTORING TYPE AND ALIAS BY : " + text);
                 if (text.contains(StorageAPI.REFER_KEY)) {
                     String[] split = text.split(StorageAPI.REFER_KEY);
                     alias = split[0];
@@ -45,10 +45,12 @@ public class StorageObject extends StorageBase {
                 } else {
                     alias = text;
                 }
-                claz = StorageAPI.getClassByAlias(alias);
-                if (claz != null)
-                    debug(">> RESTORED TYPE " + claz.getSimpleName());
 
+                Class<?> tempClass = StorageAPI.getClassByAlias(alias);
+                if (tempClass != null) {
+                    debug(">> RESTORED TYPE " + tempClass.getSimpleName());
+                    claz = tempClass;
+                }
                 debug(">> RESTORED ALIAS " + alias);
                 debug(">> RESTORED ID " + id);
 
