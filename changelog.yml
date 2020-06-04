@@ -7,7 +7,7 @@
   - Antes estas classes ficavam nos dois projetos pagos, EduHG e EduKitPvP,
   - resolvi que como os kits são os mesmos é melhor ficam em um lugar só
   - Movi 3 classes da pasta api/server/kits para api/server/net.eduard.hg.kit
-2.8:
+2.8.0:
   - Removido métodos da Extra relacionados a contagem de Valor de Projeto pois agora sigo o padrão do Site que calcula o projeto dependendo de coisas que os propríos compradores podem avaliar
   - Método removido calculateClassValue(class)->double que calcula o valor da Classe com base em um HashMap de valores levando em consideração até suas variaveis
   - Método removido setPrice(class,double) que define o valor da Classe dentro do HashMap
@@ -22,3 +22,9 @@
   - Retirando lista de classes de todos os Kits conhecidos de HG e KitPvP e colocando no projeto HG
 2.8.1:
   - Colocando arquivos da package player/ , world/ e outras foram todas para package /game/
+  - Deletei a Storage v2 (Storation) não precisa ter dois sistema de Automatização de armazenamento
+  - Deletei o repositorio da package lib/ que existia
+  - Criando o SQLManager um ORM feito para facilitar a sua vida 50% concluido, falta relacionamento entre tabelas
+2.8.2:
+  - Atualizando DBManager classe retirando independencia agora depende da classe SQLManager ou seja não da pra usar isso fora deste projeto
+  - Em breve será reconstruido todos os códigos para que use StringBuilder para maior eficiência

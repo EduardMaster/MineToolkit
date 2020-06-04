@@ -230,7 +230,7 @@ open class Menu : EventsManager, Copyable, PagedMenu{
 
             val prefix = pagePrefix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             val suffix = pageSuffix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
-            var menuTitle = Extra.toText(32, prefix + title + suffix)
+            var menuTitle = Extra.cutText( prefix + title + suffix,32)
             if (!isPageSystem) {
                 menuTitle = title
             }

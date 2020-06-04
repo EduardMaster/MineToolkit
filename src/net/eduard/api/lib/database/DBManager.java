@@ -5,9 +5,14 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
+import com.google.gson.internal.$Gson$Preconditions;
+import net.eduard.api.lib.database.api.SQLOption;
+import net.eduard.api.lib.database.mysql.MySQLOption;
+import net.eduard.api.lib.database.sqlite.SQLiteOption;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI;
+
 /**
  * API de Controle de MySQL ou SQLite com apenas 1 conexão
  *
@@ -16,6 +21,8 @@ import net.eduard.api.lib.storage.StorageAPI;
 public class DBManager implements Storable {
 
     private static boolean debug = true;
+
+    private SQLOption option;
 
     public static void debug(String msg) {
         if (debug)
@@ -128,8 +135,12 @@ public class DBManager implements Storable {
             try {
                 this.connection = connect();
                 if (!useSQLite) {
+                    option = new MySQLOption();
                     createDatabase(database);
                     useDatabase(database);
+
+                } else {
+                    option = new SQLiteOption();
                 }
             } catch (Exception e) {
                 if (isDebugging()) {
@@ -150,7 +161,7 @@ public class DBManager implements Storable {
         try {
             return connection != null && !connection.isClosed();
         } catch (SQLException ex) {
-
+            ex.printStackTrace();
         }
         return false;
     }
@@ -199,7 +210,7 @@ public class DBManager implements Storable {
     public void createDatabase(String database) {
         update("create database if not exists " + database
                 + " default character set utf8 default collate utf8_general_ci");
-       // update("create database if not exists " + database + " default character set utf8");
+        // update("create database if not exists " + database + " default character set utf8");
     }
 
     /**
@@ -218,13 +229,19 @@ public class DBManager implements Storable {
      * @param values Valores
      */
     public void createTable(String table, String values) {
-        if (useSQLite) {
-            update("CREATE TABLE IF NOT EXISTS " + table + " (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT , " + values
-                    + ");");
-        } else {
-            update("CREATE TABLE IF NOT EXISTS " + table + " (ID INT NOT NULL AUTO_INCREMENT, " + values
-                    + ", PRIMARY KEY(ID)) default charset = utf8");
-        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(option.createTable());
+        builder.append(option.name(table));
+        builder.append(option.fieldOpen());
+        builder.append(" ID " + option.sqlTypeOf(Integer.class,10));
+        builder.append(option.notNull());
+        builder.append(option.primaryKey());
+        builder.append(option.autoIncrement());
+        builder.append(option.fieldSeparator());
+        builder.append(values);
+        builder.append(option.fieldClose());
+
+        update(builder.toString());
     }
 
     /**
@@ -253,8 +270,20 @@ public class DBManager implements Storable {
      * @return
      */
     public int insert(String table, Object... objects) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(option.insertData());
+        builder.append(option.name(table));
+        builder.append(option.values());
+        builder.append(option.fieldOpen());
+        builder.append(option.useDefault());
+        builder.append(option.fieldSeparator());
+        for (int i = 0; i < objects.length; i++) {
+            builder.append(option.fieldPlaceholder());
+            builder.append(option.fieldSeparator());
+        }
+        builder.append(option.fieldOpen());
 
-        return update("INSERT INTO " + table + " values ( NULL , " + DBManager.getQuestionMarks(objects.length) + " )",
+        return update(builder.toString(),
                 objects);
 
     }
@@ -266,7 +295,7 @@ public class DBManager implements Storable {
      * @param index Index (ID)
      */
     public void delete(String table, int index) {
-        update("DELETE FROM " + table + " WHERE ID = ?", index);
+        update(option.deleteData() + table + " WHERE ID = ?", index);
     }
 
     /**
@@ -410,15 +439,17 @@ public class DBManager implements Storable {
     /**
      * Executa um Select e volta se tem algum registro
      *
-     * @param query     Query
-     * @param replacers Objetos
+     * @param query   Query
+     * @param objects Objetos
      * @return Se tem ou nao registro com esta Query
      */
-    public boolean contains(String query, Object... replacers) {
+    public boolean contains(String query, Object... objects
+    ) {
         boolean has = false;
         if (hasConnection())
             try {
-                ResultSet rs = select(query, replacers);
+                ResultSet rs = select(query, objects
+                );
                 has = rs.next();
                 rs.close();
 
@@ -432,15 +463,17 @@ public class DBManager implements Storable {
     /**
      * Executa uma Atualiza§§o com um Query
      *
-     * @param query     Query Pesquisa
-     * @param replacers Objetos
+     * @param query   Query Pesquisa
+     * @param objects Objetos
      * @return
      */
-    public int update(String query, Object... replacers) {
+    public int update(String query, Object... objects
+    ) {
         int resultado = -1;
         if (hasConnection()) {
             try {
-                PreparedStatement state = query(query, replacers);
+                PreparedStatement state = query(query, objects
+                );
 
                 resultado = state.executeUpdate();
                 ResultSet keys = state.getGeneratedKeys();
@@ -458,13 +491,14 @@ public class DBManager implements Storable {
     }
 
     /**
-     * Cria um PreparedStatement com uma Query dada, e aplica os Replacers
+     * Cria um PreparedStatement com uma Query dada, e aplica os objects
      *
-     * @param query     Query
-     * @param replacers Objetos
+     * @param query   Query
+     * @param objects Objetos
      * @return PreparedStatement (Estado da Query)
      */
-    public PreparedStatement query(String query, Object... replacers) {
+    public PreparedStatement query(String query, Object... objects
+    ) {
         try {
             if (!query.endsWith(";")) {
                 query += ";";
@@ -473,24 +507,20 @@ public class DBManager implements Storable {
             PreparedStatement state = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
             int id = 1;
-            for (Object replacer : replacers) {
+            for (Object replacer : objects) {
 
+                try {
+                    Object data = option.convertToSQL(replacer, replacer.getClass());
 
-                if (useSQLite) {
-                    query.replaceFirst("\\?", "'" + DBManager.fromJavaToSQL(replacer) + "'");
-                } else {
-                    try {
-                        Object data = DBManager.fromJavaToSQL(replacer);
+                    state.setObject(id, data);
 
-                        state.setObject(id, data);
+                } catch (SQLException e) {
 
-                    } catch (SQLException e) {
-
-                        e.printStackTrace();
-                    }
+                    e.printStackTrace();
                 }
                 id++;
             }
+
 
             debug("[MySQL] " + query);
 
@@ -501,29 +531,41 @@ public class DBManager implements Storable {
         return null;
     }
 
-    public String getString(String table, String column, String where, Object... replacers) {
-        return this.getData(String.class, table, column, where, replacers);
+    public String getString(String table, String column, String where, Object... objects
+    ) {
+        return this.getData(String.class, table, column, where, objects
+        );
     }
 
-    public Date getDate(String table, String column, String where, Object... replacers) {
-        return this.getData(Date.class, table, column, where, replacers);
+    public Date getDate(String table, String column, String where, Object... objects
+    ) {
+        return this.getData(Date.class, table, column, where, objects
+        );
     }
 
-    public UUID getUUID(String table, String column, String where, Object... replacers) {
-        return UUID.fromString(getString(table, column, where, replacers));
+    public UUID getUUID(String table, String column, String where, Object... objects
+    ) {
+        return UUID.fromString(getString(table, column, where, objects
+        ));
     }
 
-    public int getInt(String table, String column, String where, Object... replacers) {
-        return this.getData(Integer.class, table, column, where, replacers);
+    public int getInt(String table, String column, String where, Object... objects
+    ) {
+        return this.getData(Integer.class, table, column, where, objects
+        );
     }
 
-    public double getDouble(String table, String column, String where, Object... replacers) {
-        return this.getData(Double.class, table, column, where, replacers);
+    public double getDouble(String table, String column, String where, Object... objects
+    ) {
+        return this.getData(Double.class, table, column, where, objects
+        );
     }
 
-    public <E> E getData(Class<E> type, String table, String column, String where, Object... replacers) {
+    public <E> E getData(Class<E> type, String table, String column, String where, Object... objects
+    ) {
         E result = null;
-        ResultSet rs = selectAll(table, where, replacers);
+        ResultSet rs = selectAll(table, where, objects
+        );
         try {
             if (rs.next()) {
                 result = (E) rs.getObject(column, type);
@@ -536,20 +578,24 @@ public class DBManager implements Storable {
         return result;
     }
 
-    public ResultSet selectAll(String table, String where, Object... replacers) {
-        return select("SELECT * FROM " + table + " WHERE " + where, replacers);
+    public ResultSet selectAll(String table, String where, Object... objects
+    ) {
+        return select("SELECT * FROM " + table + " WHERE " + where, objects
+        );
     }
 
     /**
      * Executa um Query e volta um ResultSet
      *
-     * @param query     Pesquisa
-     * @param replacers Objetos
+     * @param query   Pesquisa
+     * @param objects Objetos
      * @return ResultSet (Resultado da Query)
      */
-    public ResultSet select(String query, Object... replacers) {
+    public ResultSet select(String query, Object... objects
+    ) {
         try {
-            return query(query, replacers).executeQuery();
+            return query(query, objects
+            ).executeQuery();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -639,159 +685,6 @@ public class DBManager implements Storable {
     }
 
 
-    /**
-     *
-     */
-
-
-    public static Object fromJavaToSQL(Object value) {
-        if (value == null) {
-            return null;
-        }
-        Class<? extends Object> type = value.getClass();
-        Storable store = StorageAPI.getStore(type);
-        if (store != null) {
-            return store.store(value);
-        }
-        if (type == java.util.Date.class) {
-            value = new Date(((java.util.Date) value).getTime());
-        } else if (value instanceof Calendar) {
-            value = new Timestamp(((Calendar) value).getTimeInMillis());
-        } else if (value instanceof UUID) {
-            value = value.toString();
-        }
-
-        return value;
-    }
-
-    public static Object fromSQLToJava(Class<?> type, Object value) {
-        Storable store = StorageAPI.getStore(type);
-        if (store != null) {
-            return store.restore(value.toString());
-        }
-        if (type == UUID.class) {
-            return UUID.fromString(value.toString());
-        }
-        if (type == Character.class) {
-            return value.toString().toCharArray()[0];
-        }
-        if (type == Calendar.class) {
-            if (value instanceof Timestamp) {
-                Timestamp timestamp = (Timestamp) value;
-                Calendar calendario = Calendar.getInstance();
-                calendario.setTimeInMillis(timestamp.getTime());
-                return calendario;
-            }
-        }
-        if (type == java.util.Date.class) {
-            if (value instanceof Date) {
-                Date date = (Date) value;
-                return new java.util.Date(date.getTime());
-            }
-        }
-
-        return value;
-    }
-
-
-    public static String getSQLType(Class<?> type, int size) {
-        Class<?> wrapper = Extra.getWrapper(type);
-        if (wrapper != null) {
-            type = wrapper;
-        }
-        Storable store = StorageAPI.getStore(type);
-        if (store != null) {
-            return "TEXT";
-        }
-        if (String.class.isAssignableFrom(type)) {
-            return "VARCHAR" + "(" + size + ")";
-        } else if (Integer.class == type) {
-            return "INTEGER" + "(" + size + ")";
-        } else if (Boolean.class == type) {
-            return "TINYINT(1)";
-        } else if (Short.class == type) {
-            return "SMALLINT" + "(" + size + ")";
-        } else if (Byte.class == type) {
-            return "TINYINT" + "(" + size + ")";
-        } else if (Long.class == type) {
-            return "BIGINT" + "(" + size + ")";
-        } else if (Character.class == type) {
-            return "CHAR" + "(" + size + ")";
-        } else if (Float.class == type) {
-            return "FLOAT";
-        } else if (Double.class == type) {
-            return "DOUBLE";
-        } else if (Number.class.isAssignableFrom(type)) {
-            return "NUMERIC";
-        } else if (Timestamp.class.equals(type)) {
-            return "TIMESTAMP";
-        } else if (Calendar.class.equals(type)) {
-            return "DATETIME";
-        } else if (Date.class.equals(type)) {
-            return "DATE";
-        } else if (java.util.Date.class.equals(type)) {
-            return "DATE";
-        } else if (Time.class.equals(type)) {
-            return "TIME";
-        } else if (UUID.class.isAssignableFrom(type)) {
-            return "VARCHAR(40)";
-        }
-
-        return null;
-    }
-
-    public static void setSQLValue(PreparedStatement st, Object value, int column) {
-        try {
-            st.setObject(column, fromJavaToSQL(value));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Object getSQLValue(ResultSet rs, Class<?> type, String column) {
-        Object result = null;
-        try {
-            Class<?> wrap = Extra.getWrapper(type);
-            if (wrap != null) {
-                type = wrap;
-            }
-            result = rs.getObject(column);
-            if (type == Boolean.class) {
-                result = rs.getBoolean(column);
-            }
-            if (type == Byte.class) {
-                result = rs.getByte(column);
-            }
-            if (type == Short.class) {
-                result = rs.getShort(column);
-            }
-
-            result = fromSQLToJava(type, result);
-        } catch (SQLException e) {
-
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
-
-    /**
-     * Gera um texto com "?" baseado na quantidade<br>
-     * Exemplo 5 = "? , ?,?,?,?"
-     *
-     * @param size Quantidade
-     * @return Texto criado
-     */
-    public static String getQuestionMarks(int size) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < size; i++) {
-            builder.append("?");
-            builder.append(",");
-        }
-        builder.deleteCharAt(builder.length()-1);
-        return builder.toString();
-    }
 
     /**
      *

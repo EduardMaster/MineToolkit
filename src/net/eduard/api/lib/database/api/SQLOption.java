@@ -16,13 +16,35 @@ public interface SQLOption {
 
     String autoIncrement();
 
+    default String fieldOpen(){
+        return " ( ";
+    }
+    default String fieldPlaceholder(){
+        return " ? ";
+    }
+    default String fieldClose(){
+        return " ) ";
+    }
+    default String fieldSeparator(){
+        return " , ";
+    }
+
     default String notNull() {
         return " NOT NULL";
+    }
+    default  String useDefault(){
+        return "DEFAULT";
     }
 
     default String nullable() {
         return "NULL";
     }
+
+    default String defaultCharset(){
+        return "default charset = utf8";
+    }
+
+    default String values(){return " VALUES ";}
 
     default String equalsTo() {
         return " = ";
