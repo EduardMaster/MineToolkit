@@ -9,6 +9,7 @@ public class CurrencyEduCash extends SimpleCurrencyHandler {
     public CurrencyEduCash(){
         setName("EduCash");
         setDisplayName("Sistema de Cash");
+
     }
 
     @Override

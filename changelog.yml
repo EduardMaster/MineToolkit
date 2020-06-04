@@ -20,3 +20,5 @@
   - Reformulando onde fica as classe em qual package, muitas refatorações
   - Removendo classe EduardLIB que extendia JavaPlugin
   - Retirando lista de classes de todos os Kits conhecidos de HG e KitPvP e colocando no projeto HG
+2.8.1:
+  - Colocando arquivos da package player/ , world/ e outras foram todas para package /game/

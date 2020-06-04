@@ -4,70 +4,66 @@ import net.eduard.api.EduardAPI;
 import net.eduard.api.server.currency.list.CurrencyVaultEconomy;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CurrencyController {
 
-    private CurrencyController(){}
+    private CurrencyController() {
+    }
+
     private static final CurrencyController INSTANCE = new CurrencyController();
 
-    public static CurrencyController getInstance(){
+    public static CurrencyController getInstance() {
         return INSTANCE;
     }
 
-    public CurrencyHandler getNextCurrency(CurrencyHandler currencyHandler){
-        int id = 0;
-        List<CurrencyHandler> tempList = new ArrayList<>(currencies.values());
-        for (CurrencyHandler handler :  tempList){
-            id++;
-            if (currencyHandler.equals(handler)){
-                break;
-            }
-        }
-        if (id >= tempList.size()){
-            id = 1;
-        }
+    public CurrencyHandler getNextCurrency(CurrencyHandler currencyHandler) {
+        Iterator<CurrencyHandler> it = currencies.values().iterator();
 
-        return tempList.get(0);
-    }
-    public CurrencyHandler getCurrencyByIcon(ItemStack icon){
-        List<CurrencyHandler> tempList = new ArrayList<>(currencies.values());
-        for (CurrencyHandler currencyHandler : tempList) {
-            if (icon.equals(currencyHandler.getIcon())){
-                return currencyHandler;
+        while (it.hasNext()) {
+            CurrencyHandler handler = it.next();
+            if (currencyHandler.equals(handler)) {
+                if (it.hasNext()) {
+                    return it.next();
+                }
+                return currencies.values().iterator().next();
             }
-
         }
         return null;
     }
 
-    private Map<String,CurrencyHandler> currencies = new HashMap<>();
+    public CurrencyHandler getCurrencyByIcon(ItemStack icon) {
+        Iterator<CurrencyHandler> it = currencies.values().iterator();
+        while (it.hasNext()) {
+            CurrencyHandler currencyHandler = it.next();
+            if (icon.equals(currencyHandler.getIcon())) {
+                return currencyHandler;
+            }
+        }
 
-    public List<CurrencyHandler> getCurrencies(){
-        return new ArrayList<>(currencies.values());
+        return null;
     }
 
-    public void register(CurrencyHandler currencyHandler){
-        currencies.put(currencyHandler.getName().toLowerCase() , currencyHandler);
-    }
-    public void register(SimpleCurrencyHandler simpleCurrencyHandler){
-        EduardAPI.getInstance().getConfigs().add("currency."+simpleCurrencyHandler.getName(),simpleCurrencyHandler);
+    private Map<String, CurrencyHandler> currencies = new LinkedHashMap<>();
+
+
+    public void register(SimpleCurrencyHandler simpleCurrencyHandler) {
+        EduardAPI.getInstance().getConfigs().add("currency." + simpleCurrencyHandler.getName(), simpleCurrencyHandler);
         EduardAPI.getInstance().getConfigs().saveConfig();
-        simpleCurrencyHandler = (SimpleCurrencyHandler) EduardAPI.getInstance().getConfigs().get("currency."+simpleCurrencyHandler.getName());
-
-        register(simpleCurrencyHandler.getName(),simpleCurrencyHandler);
+        simpleCurrencyHandler = EduardAPI.getInstance().getConfigs().get("currency." + simpleCurrencyHandler.getName(), SimpleCurrencyHandler.class);
+        System.out.println("Moeda registrada: " + simpleCurrencyHandler.getName());
+        register(simpleCurrencyHandler.getName(), simpleCurrencyHandler);
     }
 
-    public void register(String currencyName, CurrencyHandler currencyHandler){
-        currencies.put(currencyName.toLowerCase(),currencyHandler);
+    public void register(String currencyName, CurrencyHandler currencyHandler) {
+        currencies.put(currencyName.toLowerCase(), currencyHandler);
     }
-    public boolean isRegistred(String currencName){
+
+    public boolean isRegistred(String currencName) {
         return currencies.containsKey(currencName.toLowerCase());
     }
-    public CurrencyHandler getCurrencyHandler(String currencyName){
+
+    public CurrencyHandler getCurrencyHandler(String currencyName) {
         return currencies.get(currencyName.toLowerCase());
     }
 

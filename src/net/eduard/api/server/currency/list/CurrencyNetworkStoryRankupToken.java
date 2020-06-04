@@ -2,7 +2,9 @@ package net.eduard.api.server.currency.list;
 
 import me.yblackdev.legitpvp.sistema.token.TokenSistema;
 import net.eduard.api.lib.game.FakePlayer;
+import net.eduard.api.lib.game.ItemBuilder;
 import net.eduard.api.server.currency.SimpleCurrencyHandler;
+import org.bukkit.Material;
 
 public class CurrencyNetworkStoryRankupToken extends SimpleCurrencyHandler {
 
@@ -10,6 +12,8 @@ public class CurrencyNetworkStoryRankupToken extends SimpleCurrencyHandler {
     public CurrencyNetworkStoryRankupToken(){
         setName("NetworkStoryRankupToten");
         setDisplayName("Sistema de Token");
+        setIcon( new ItemBuilder(Material.NETHER_STAR).name("§aToken"));
+        setSymbol("$");
     }
 
 

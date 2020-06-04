@@ -1,13 +1,16 @@
 package net.eduard.api.server.currency.list;
 
 import net.eduard.api.lib.game.FakePlayer;
+import net.eduard.api.lib.game.ItemBuilder;
 import net.eduard.api.server.currency.SimpleCurrencyHandler;
+import org.bukkit.Material;
 
 public  class CurrencyJHCash extends SimpleCurrencyHandler {
     public CurrencyJHCash() {
         setName("JHCash");
         setDisplayName("Sistema de Cash");
         setSymbol("$");
+        setIcon( new ItemBuilder(Material.DIAMOND_BLOCK).name("§aCash"));
 
     }
 

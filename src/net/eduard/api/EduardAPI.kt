@@ -25,6 +25,8 @@ import net.eduard.api.lib.game.Schematic
 import net.eduard.api.listener.*
 import net.eduard.api.server.EduardPlugin
 import net.eduard.api.server.currency.CurrencyController
+import net.eduard.api.server.currency.list.CurrencyJHCash
+import net.eduard.api.server.currency.list.CurrencyNetworkStoryRankupToken
 import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
@@ -113,7 +115,7 @@ class EduardAPI: EduardPlugin()  {
         log("Ativando replacers")
         BukkitReplacers()
 
-         CurrencyController.getInstance().register(CurrencyVaultEconomy())
+
 
 
         //		new McMMOReplacers();
@@ -123,6 +125,15 @@ class EduardAPI: EduardPlugin()  {
         //		new McMMOReplacers();
         //		new MassiveFactionReplacers();
         log("Carregado com sucesso!")
+
+
+         CurrencyController.getInstance().register(CurrencyVaultEconomy())
+         if (Mine.hasPlugin("JH_Shop")){
+             CurrencyController.getInstance().register(CurrencyJHCash())
+         }
+         if (Mine.hasPlugin("LegitPvP")){
+             CurrencyController.getInstance().register(CurrencyNetworkStoryRankupToken())
+         }
 
 
     }

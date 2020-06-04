@@ -228,8 +228,8 @@ open class Menu : EventsManager, Copyable, PagedMenu{
             val minSlot = getMinPageSlot(page)
             val maxSlot = getMaxPageSlot(page)
 
-            val prefix = pagePrefix.replace("\$page", "" + page).replace("\$max_page", "" + pageAmount)
-            val suffix = pageSuffix.replace("\$page", "" + page).replace("\$max_page", "" + pageAmount)
+            val prefix = pagePrefix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
+            val suffix = pageSuffix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             var menuTitle = Extra.toText(32, prefix + title + suffix)
             if (!isPageSystem) {
                 menuTitle = title
