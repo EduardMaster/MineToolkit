@@ -262,7 +262,7 @@ public class StorageAPI {
     }
 
     public static String getAlias(Class<?> claz) {
-
+        /*
         for (Entry<Class<?>, String> entry : aliases.entrySet()) {
             Class<?> loopClass = entry.getKey();
             if (loopClass.equals(claz)) {
@@ -275,9 +275,22 @@ public class StorageAPI {
                 return entry.getValue();
             }
         }
+        */
+        String alias = aliases.getOrDefault(claz,getClassName(claz));
 
-        return claz.getSimpleName();
 
+        return alias;
+
+    }
+    public static String getClassName(Class<?> claz){
+        try
+        {
+
+            return claz.getSimpleName();
+        }
+        catch (Exception ex){
+            return claz.toString();
+        }
     }
 
     public static Class<?> getClassByAlias(String alias) {

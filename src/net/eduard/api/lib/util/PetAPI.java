@@ -1,4 +1,4 @@
-package net.eduard.api.lib.advanced_testing;
+package net.eduard.api.lib.util;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -15,7 +15,7 @@ import net.minecraft.server.v1_8_R3.PathfinderGoal;
 import net.minecraft.server.v1_8_R3.PathfinderGoalFloat;
 import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 
-public class APIPets {
+public class PetAPI {
 
 	 private static Field gsa;
 	    private static Field goalSelector;

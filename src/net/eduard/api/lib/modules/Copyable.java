@@ -14,7 +14,7 @@ import java.util.Map.Entry;
  * Sistema de copiar objetos
  *
  * @author Eduard
- * @version 1.3
+ * @version 1.4
  * @see Extra
  */
 @SuppressWarnings("unchecked")
