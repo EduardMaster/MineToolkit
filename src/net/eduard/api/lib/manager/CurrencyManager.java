@@ -2,11 +2,9 @@ package net.eduard.api.lib.manager;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import net.eduard.api.lib.game.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.server.currency.CurrencyHandler;
 import net.eduard.api.server.currency.SimpleCurrencyHandler;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,17 +18,8 @@ public class CurrencyManager extends SimpleCurrencyHandler {
 
 
     public  double getBalance(FakePlayer player) {
-//		
-//		System.out.println(currency);
-        for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
-            if (entry.getKey().equals(player)) {
-                return entry.getValue();
-            }
 
-        }
-
-        return inicialAmount;
-//		return currency.getOrDefault(player, inicialAmount);
+        return currency.getOrDefault(player,inicialAmount);
     }
 
 
@@ -47,14 +36,7 @@ public class CurrencyManager extends SimpleCurrencyHandler {
 
 
     public  void setBalance(FakePlayer player, double amount) {
-        for (Entry<FakePlayer, Double> entry : getCurrency().entrySet()) {
-            if (entry.getKey().equals(player)) {
-                entry.setValue(amount);
-                return;
-            }
-        }
         currency.put(player, amount);
-
     }
 
     public boolean containsBalance(FakePlayer player, double amount) {
