@@ -43,7 +43,6 @@ public class BukkitReplacers {
 				}
 				return "0.00";
 			});
-
 		}
 
 		Mine.addReplacer("$players_online", p -> Mine.getPlayers().size());

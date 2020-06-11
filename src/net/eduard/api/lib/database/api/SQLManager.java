@@ -25,6 +25,15 @@ public class SQLManager {
         setEngineType(SQLEngineType.OTHER);
     }
 
+    public boolean hasConnection() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+    }
+
     public SQLManager(Connection connection, SQLEngineType type) {
         setConnection(connection);
         setEngineType(type);
@@ -44,20 +53,23 @@ public class SQLManager {
 
         SQLTable table = getTableData(dataClass);
         SQLColumn column = table.getColumn(fieldName);
-        ResultSet result = executeQuery(builder.findRecord(table, column, fieldValue));
         E dataToReturn = null;
-        if (result != null) {
-            try {
-                if (result.next()) {
-                    SQLRecord record = new SQLRecord(table, result, builder.option());
-                    table.getRecords().add(record);
+        if (hasConnection()) {
+            ResultSet result = executeQuery(builder.findRecord(table, column, fieldValue));
 
-                    dataToReturn = (E) record.getInstance();
+            if (result != null) {
+                try {
+                    if (result.next()) {
+                        SQLRecord record = new SQLRecord(table, result, builder.option());
+                        table.getRecords().add(record);
+
+                        dataToReturn = (E) record.getInstance();
+                    }
+
+                    result.getStatement().close();
+                } catch (Exception ex) {
+                    //ex.printStackTrace();
                 }
-
-                result.getStatement().close();
-            } catch (Exception ex) {
-                //ex.printStackTrace();
             }
         }
         return dataToReturn;
@@ -75,45 +87,53 @@ public class SQLManager {
         List<E> list = new ArrayList<>();
         SQLTable table = getTableData(dataClass);
 
-        ResultSet result = executeQuery(builder.findRecords(table));
-        try {
-            while (result.next()) {
-                SQLRecord record = new SQLRecord(table, result, builder.option());
-                list.add((E) record.getInstance());
-            }
+        if (hasConnection()) {
+            ResultSet result = executeQuery(builder.findRecords(table));
+            try {
+                while (result.next()) {
+                    SQLRecord record = new SQLRecord(table, result, builder.option());
+                    list.add((E) record.getInstance());
+                }
 
-            result.getStatement().close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+                result.getStatement().close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         return list;
     }
 
     public void insertData(Object data) {
-        Class<?> dataClass = data.getClass();
-        SQLTable table = getTableData(dataClass);
-        SQLRecord record = table.getRecord(data);
-        int intReturned = executeUpdate(builder.insertRecord(record));
-        if (intReturned != -1) {
-            record.getData().put(table.getPrimaryKey(), intReturned);
-            record.save();
+        if (hasConnection()) {
+            Class<?> dataClass = data.getClass();
+            SQLTable table = getTableData(dataClass);
+            SQLRecord record = table.getRecord(data);
+            int intReturned = executeUpdate(builder.insertRecord(record));
+            if (intReturned != -1) {
+                record.getData().put(table.getPrimaryKey(), intReturned);
+                record.save();
+            }
         }
     }
 
     public void updateData(Object data) {
-        Class<?> dataClass = data.getClass();
-        SQLTable table = getTableData(dataClass);
-        SQLRecord record = table.getRecord(data);
-        record.reload();
-        executeUpdate(builder.updateRecord(record));
+        if (hasConnection()) {
+            Class<?> dataClass = data.getClass();
+            SQLTable table = getTableData(dataClass);
+            SQLRecord record = table.getRecord(data);
+            record.reload();
+            executeUpdate(builder.updateRecord(record));
+        }
     }
 
     public void deleteData(Object data) {
-        Class<?> dataClass = data.getClass();
-        SQLTable table = getTableData(dataClass);
-        SQLRecord record = table.getRecord(data);
-        executeUpdate(builder.deleteRecord(record));
+        if (hasConnection()) {
+            Class<?> dataClass = data.getClass();
+            SQLTable table = getTableData(dataClass);
+            SQLRecord record = table.getRecord(data);
+            executeUpdate(builder.deleteRecord(record));
+        }
     }
 
 
@@ -128,17 +148,23 @@ public class SQLManager {
 
     public void createTable(Class<?> dataClass) {
         SQLTable table = getTableData(dataClass);
-        executeUpdate(builder.createTable(table));
+        if (hasConnection()) {
+            executeUpdate(builder.createTable(table));
+        }
     }
 
     public void deleteTable(Class<?> dataClass) {
-        SQLTable table = getTableData(dataClass);
-        executeUpdate(builder.deleteTable(table));
+        if (hasConnection()) {
+            SQLTable table = getTableData(dataClass);
+            executeUpdate(builder.deleteTable(table));
+        }
     }
 
     public void clearTable(Class<?> dataClass) {
-        SQLTable table = getTableData(dataClass);
-        executeUpdate(builder.clearTable(table));
+        if (hasConnection()) {
+            SQLTable table = getTableData(dataClass);
+            executeUpdate(builder.clearTable(table));
+        }
     }
 
     protected void log(String msg) {
