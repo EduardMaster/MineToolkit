@@ -51,7 +51,7 @@ public class EduardBungeeAPI extends EduardBungeePlugin{
 	}
 	private BungeeDB bungee;
 	public void onLoad() {
-		StorageAPI.register(DBManager.class);
+
 		super.onLoad();
 	}
 	public void onEnable() {

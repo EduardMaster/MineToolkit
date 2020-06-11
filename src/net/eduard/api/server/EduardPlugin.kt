@@ -42,7 +42,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
 
     lateinit var sqlManager: SQLManager
 
-    fun startSQLManager(){
+    fun startSQLManager() {
         var type = if (db.useSQLite()) SQLEngineType.SQLITE else SQLEngineType.MYSQL
         sqlManager = SQLManager(db.connection, type)
     }
@@ -58,7 +58,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
      */
     lateinit var storage: Config
         protected set
-    var databaseFile: File? = null
+    var databaseFile = File(dataFolder,"database.db")
     /**
      * @return Se o Plugin é gratuito
      */
@@ -141,7 +141,6 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")
         storage = Config(this, "storage.yml")
-        databaseFile = File(dataFolder, "database.db")
     }
 
     /**
@@ -198,7 +197,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         val pasta = File(dataFolder, "/backup/")
 
         pasta.mkdirs()
-        var lista = Arrays.asList(*pasta.listFiles()!!)
+        var lista = mutableListOf(*pasta.listFiles()!!)
         lista.sortBy { it.lastModified() }
 
         //lista = lista.stream().sorted(Comparator.comparing<File, Long>(Function<File, Long> { return@Function it.lastModified() })).collect<List<File>, Any>(Collectors.toList())
@@ -217,7 +216,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     fun deleteOldBackups() {
         val pasta = File(dataFolder, "/backup/")
         pasta.mkdirs()
-        var lista = Arrays.asList(*pasta.listFiles()!!)
+        var lista = listOf(*pasta.listFiles()!!)
         lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
                 .forEach {
                     Extra.deleteFolder(it)
@@ -238,16 +237,16 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
 
             pasta.mkdirs()
 
-            if (storage.existConfig() && !storage.keys.isEmpty()) {
+            if (storage.existConfig() && storage.keys.isNotEmpty()) {
 
                 Files.copy(storage.file.toPath(), Paths.get(pasta.path, storage.name))
             }
-            if (configs.existConfig() && !storage.keys.isEmpty()) {
+            if (configs.existConfig() && storage.keys.isNotEmpty()) {
 
                 Files.copy(configs.file.toPath(), Paths.get(pasta.path, configs.name))
             }
-            if (databaseFile!!.exists()) {
-                Files.copy(databaseFile!!.toPath(), Paths.get(pasta.path, databaseFile!!.name))
+            if (databaseFile.exists()) {
+                Files.copy(databaseFile.toPath(), Paths.get(pasta.path, databaseFile.name))
             }
         } catch (e: IOException) {
             // TODO Auto-generated catch block
@@ -276,7 +275,6 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         for (menu in ArrayList(Menu.getRegisteredMenus())) {
             if (this == menu.pluginInstance) {
                 menu.unregisterListener()
-
             }
         }
 
@@ -293,9 +291,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     }
 
     fun disconnectDB() {
-        if (db.isEnabled) {
-            db.closeConnection()
-        }
+        db.closeConnection()
     }
 
     override fun onDisable() {

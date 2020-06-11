@@ -5,20 +5,16 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
-import com.google.gson.internal.$Gson$Preconditions;
 import net.eduard.api.lib.database.api.SQLOption;
 import net.eduard.api.lib.database.mysql.MySQLOption;
 import net.eduard.api.lib.database.sqlite.SQLiteOption;
-import net.eduard.api.lib.modules.Extra;
-import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAPI;
 
 /**
  * API de Controle de MySQL ou SQLite com apenas 1 conexão
  *
  * @author Eduard-PC
  */
-public class DBManager implements Storable {
+public class DBManager {
 
     private static boolean debug = true;
 
@@ -233,7 +229,7 @@ public class DBManager implements Storable {
         builder.append(option.createTable());
         builder.append(option.name(table));
         builder.append(option.fieldOpen());
-        builder.append(" ID " + option.sqlTypeOf(Integer.class,10));
+        builder.append(" ID " + option.sqlTypeOf(Integer.class, 10));
         builder.append(option.notNull());
         builder.append(option.primaryKey());
         builder.append(option.autoIncrement());
@@ -683,7 +679,6 @@ public class DBManager implements Storable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
 
 
     /**
