@@ -12,6 +12,7 @@ import net.eduard.api.lib.game.Kit
 import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.eduard.api.lib.config.Config
+import net.eduard.api.lib.game.FakePlayer
 import java.io.File
 import java.lang.Exception
 
@@ -47,7 +48,7 @@ open class Minigame : TimeManager {
     @Transient
     var setting: MinigameMap? = null
     @Transient
-    var players: MutableList<MinigamePlayer> = ArrayList()
+    var players: MutableMap<FakePlayer,MinigamePlayer> = mutableMapOf()
     var scoreboardStarting: DisplayBoard? = null
     var scoreboardLobby: DisplayBoard? = null
     var scoreboardPlaying: DisplayBoard? = null
@@ -89,7 +90,7 @@ open class Minigame : TimeManager {
     // List<Player> listaDoPlayers =
     // players.stream().map(MinigamePlayer::getPlayer).collect(Collectors.toList());
     val playersOnline: List<Player>
-        get() = players.filter { it.isOnline }.map { it.player!! }
+        get() = players.values.filter { it.isOnline }.map { it.player!! }
 
 
     val isSetting: Boolean
@@ -99,7 +100,7 @@ open class Minigame : TimeManager {
      * Conecta todos jogadores no servidor Lobby
      */
     fun connectAllPlayersToLobby() {
-        for (player in players) {
+        for (player in players.values) {
             BukkitBungeeAPI.connectToServer(player.player, bungeeLobby)
         }
 
@@ -292,18 +293,24 @@ open class Minigame : TimeManager {
      * @param player Jogador
      * @return Instancia de MinigamePlayer (MP)
      */
-    fun getPlayer(player: Player): MinigamePlayer {
-        val miniplayer: MinigamePlayer
-        for (p in players) {
-            if (player == p.player) {
-                return p
-            }
-        }
-        miniplayer = MinigamePlayer()
-        miniplayer.player = player
-        players.add(miniplayer)
+    fun getPlayer(player: FakePlayer): MinigamePlayer {
+        var member = players[player]
+        if (member == null){
+            member = MinigamePlayer() as MinigamePlayer
+            member.fakePlayer = player
 
-        return miniplayer
+            if (player.isOnline){
+                member.player = player.player
+            }
+            players[player] = member
+        }
+
+
+
+        return member
+    }
+    fun getPlayer(player : Player): MinigamePlayer {
+        return getPlayer(FakePlayer(player))
     }
 
     /**

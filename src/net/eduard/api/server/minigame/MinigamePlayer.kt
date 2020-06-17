@@ -1,5 +1,6 @@
 package net.eduard.api.server.minigame
 
+import net.eduard.api.lib.game.FakePlayer
 import org.bukkit.entity.Player
 
 import net.eduard.api.lib.modules.Mine
@@ -18,6 +19,7 @@ class MinigamePlayer() {
     var game: MinigameRoom? = null
     var lobby: MinigameLobby? = null
      var player : Player? = null
+    var fakePlayer : FakePlayer? = null
 
     val isPlaying: Boolean
         get() = game != null

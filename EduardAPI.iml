@@ -20,17 +20,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Plugins APIs" level="application" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../libs/spigot v1.7-1.8.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../libs/spigot v1.7-1.8.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Clientes API" level="application" />
   </component>
 </module>
