@@ -16,6 +16,14 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
             if (plugin is EduardPlugin) {
                 try {
                     val agora = Extra.getNow()
+                    if (plugin.isSQLManagerStarted){
+
+
+                        plugin.sqlManager.runUpdatesQueue()
+                        val tempoDepois = Extra.getNow()
+                        val dif = tempoDepois - agora
+                        log("Atualizando objetos na tabela tempo levado: $dif")
+                    }
                     if (plugin.isAutoSaving) {
                         if (plugin.autoSaveLastTime + plugin.autoSaveSeconds * 1000 < agora) {
                             log("Salvando dados do plugin §b" + plugin.name)
@@ -27,7 +35,9 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
                             log("§7-----")
                         }
                     }
-                    if (plugin.isBackup) {
+
+
+                    if (plugin.canBackup) {
                         if (plugin.backupLastTime + plugin.backupTimeUnitType.toMillis(plugin.backupTime) < agora) {
                             log("Iniciando sistema de backup para o plugin §b" + plugin.name)
                             log("Deletando backups dos dias anteriores")
@@ -44,6 +54,7 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
                             log("§7-----")
                         }
                     }
+
                 } catch (ex: Exception) {
                     log("Falha ao tentar salvar dados do plugin ou gerar backup do plugin " + plugin.name)
                     ex.printStackTrace()

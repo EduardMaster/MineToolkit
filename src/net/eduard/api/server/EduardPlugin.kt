@@ -36,21 +36,26 @@ import net.eduard.api.lib.storage.StorageAPI
 abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     var isLogEnabled = true
     var isErrorLogEnabled = true
+    var isSQLManagerStarted = false
     var db = DBManager()
         @JvmName("getDB")
         get
 
-    lateinit var sqlManager: SQLManager
+     lateinit var sqlManager: SQLManager
 
-    fun startSQLManager() {
+
+
+    protected fun startSQLManager() {
+        isSQLManagerStarted = true
         var type = if (db.useSQLite()) SQLEngineType.SQLITE else SQLEngineType.MYSQL
         sqlManager = SQLManager(db.connection, type)
+
     }
 
 
     lateinit var configs: Config
         protected set
-    lateinit var messages: Config
+     lateinit var messages: Config
         protected set
 
     /**
@@ -58,7 +63,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
      */
     lateinit var storage: Config
         protected set
-    var databaseFile = File(dataFolder,"database.db")
+    var databaseFile = File(dataFolder, "database.db")
     /**
      * @return Se o Plugin é gratuito
      */
@@ -95,7 +100,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     val backupTimeUnitType: TimeUnit
         get() = TimeUnit.valueOf(configs.getString("backup-timeunit-type").toUpperCase())
 
-    val isBackup: Boolean
+    val canBackup: Boolean
         get() = configs.getBoolean("backup")
 
     fun getString(path: String): String {
@@ -187,7 +192,9 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
 
     fun autosave() {
         configs.set("auto-save-lasttime", Extra.getNow())
+
         save()
+
     }
 
     /**
@@ -249,7 +256,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
                 Files.copy(databaseFile.toPath(), Paths.get(pasta.path, databaseFile.name))
             }
         } catch (e: IOException) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace()
         }
 

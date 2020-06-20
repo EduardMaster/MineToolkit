@@ -86,7 +86,7 @@ class EduardAPI: EduardPlugin()  {
         // Na versão 1.16 precisa ser em Sync não pode ser Async
         // Na versão 1.16 precisa ser em Sync não pode ser Async
         PlayerTargetTask().runTaskTimerAsynchronously(this, 20, 20)
-        AutoSaveAndBackupTask().runTaskTimerAsynchronously(this, 58, 58)
+        AutoSaveAndBackupTask().runTaskTimerAsynchronously(this, 20, 20)
 
         log("Ativando comandos")
         ApiCommand().register()

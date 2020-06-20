@@ -416,12 +416,12 @@ open class Minigame : TimeManager {
     }
 
     /**
-     * Remove o jogador da Lista de jogadores [MinigamePlayer]
+     * Remove o jogador da HashMap de jogadores [MinigamePlayer]
      *
      * @param player Jogador
      */
     fun remove(player: Player) {
-        players.remove(getPlayer(player))
+        players.remove(FakePlayer(player))
     }
 
     /**

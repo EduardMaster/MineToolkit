@@ -21,5 +21,16 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" name="Clientes API" level="application" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../plugins-apis/Spigot/spigot 1.7-1.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../plugins-apis/Spigot/spigot 1.7-1.8.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

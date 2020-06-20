@@ -11,12 +11,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SQLManager {
+    private int queueRunsLimit = 100;
 
     private Connection connection;
     private SQLEngineType engineType;
     private SQLQueryBuilder builder;
+    private ConcurrentLinkedQueue updatesQueue = new ConcurrentLinkedQueue();
+
+    public void runUpdatesQueue(){
+        for (int i = 0; i < queueRunsLimit; i++) {
+            Object data = updatesQueue.poll();
+            if (data == null)return;
+            updateData(data);
+        }
+    }
+
+
     private Map<Class<?>, SQLTable> cacheTables = new HashMap<>();
 
     public SQLManager(Connection connection, SQLQueryBuilder queryBuilder) {
@@ -116,7 +129,13 @@ public class SQLManager {
             }
         }
     }
+    public void updateDataQueue(Object data){
+        if (updatesQueue.contains(data)){
+            return;
+        }
+        updatesQueue.add(data);
 
+    }
     public void updateData(Object data) {
         if (hasConnection()) {
             Class<?> dataClass = data.getClass();

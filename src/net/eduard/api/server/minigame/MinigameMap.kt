@@ -53,8 +53,6 @@ class MinigameMap {
         }
 
     constructor() {
-
-        // TODO Auto-generated constructor stub
     }
 
      fun copy(): MinigameMap? {
