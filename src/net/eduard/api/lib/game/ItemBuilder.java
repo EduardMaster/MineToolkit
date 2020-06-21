@@ -91,7 +91,8 @@ public class ItemBuilder extends ItemStack {
 
     public List<String> getLore() {
         ItemMeta meta = getItemMeta();
-        if (meta != null) {
+        if (meta != null&& meta.getLore()!=null) {
+
             return meta.getLore();
         }
         return new ArrayList<>();

@@ -104,7 +104,7 @@ class EduardAPI: EduardPlugin()  {
          SupportActivations().register(this)
         EduWorldEditListener().register(this)
         PlayerTargetAtEntityListener().register(this)
-        LinkadorDeItem().register(this)
+        //LinkadorDeItem().register(this)
         log("Listeners dos Eventos ativados com sucesso")
 
         log("Gerando Base de dados de Enums do Bukkit")

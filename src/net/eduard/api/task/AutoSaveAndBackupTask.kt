@@ -7,22 +7,24 @@ import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitRunnable
 
 class AutoSaveAndBackupTask : BukkitRunnable() {
-    fun log(msg : String){
+    fun log(msg: String) {
         EduardAPI.instance.log(msg)
     }
+
     override fun run() {
         for (plugin in Bukkit.getPluginManager().plugins) {
 
             if (plugin is EduardPlugin) {
                 try {
                     val agora = Extra.getNow()
-                    if (plugin.isSQLManagerStarted){
+                    if (plugin.isSQLManagerStarted) {
 
 
-                        plugin.sqlManager.runUpdatesQueue()
+                        val amountUpdated = plugin.sqlManager.runUpdatesQueue()
                         val tempoDepois = Extra.getNow()
                         val dif = tempoDepois - agora
-                        log("Atualizando objetos na tabela tempo levado: $dif")
+                        if (amountUpdated > 0)
+                            log("Atualizando $amountUpdated objetos na tabela (tempo levado: ${dif}ms)")
                     }
                     if (plugin.isAutoSaving) {
                         if (plugin.autoSaveLastTime + plugin.autoSaveSeconds * 1000 < agora) {

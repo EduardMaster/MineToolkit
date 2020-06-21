@@ -26,6 +26,12 @@ public class MenuButton  extends Slot{
 		getParentMenu().addButton(this);
 
 	}
+	public MenuButton(String name, Menu parent) {
+		this(parent);
+		setName(name);
+
+
+	}
 	public MenuButton(String name) {
 		setName(name);
 

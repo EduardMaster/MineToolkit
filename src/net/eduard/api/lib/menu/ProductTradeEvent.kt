@@ -30,7 +30,10 @@ class ProductTradeEvent(player: Player) : PlayerEvent(player), Cancellable {
 
     companion object {
 
+
         val handlerList = HandlerList()
+            @JvmStatic
+            get
     }
 
 }

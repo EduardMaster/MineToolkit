@@ -69,10 +69,7 @@ public class EnchantCommand extends CommandManager {
 				} else {
 					int nivel = 1;
 					if (args.length >= 2) {
-						try {
-							nivel = Integer.parseInt(args[1]);
-						} catch (Exception e) {
-						}
+						nivel = Extra.toInt(args[1]);
 					}
 					if (nivel == 0) {
 						p.getItemInHand().removeEnchantment(enchant);

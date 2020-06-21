@@ -23,7 +23,6 @@ public class Kit   {
     private double price;
     private int level;
     private List<ItemStack> items = new ArrayList<>();
-    private List<Item> extras = new ArrayList<>();
     private List<Kit> upgrades = new ArrayList<>();
 
     public Kit(Kit kit, int price, int level) {
@@ -85,9 +84,7 @@ public class Kit   {
                 }
             }
         }
-        for (Item item : extras) {
-            inv.addItem(item.create());
-        }
+
         if (fillSoup)
             Mine.fill(inv, new ItemStack(Material.MUSHROOM_SOUP));
     }
@@ -155,15 +152,6 @@ public class Kit   {
 
     public void setCooldown(long cooldown) {
         this.cooldown = cooldown;
-    }
-
-
-    public List<Item> getExtras() {
-        return extras;
-    }
-
-    public void setExtras(List<Item> extras) {
-        this.extras = extras;
     }
 
     public boolean isAutoEquip() {

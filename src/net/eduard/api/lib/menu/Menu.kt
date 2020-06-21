@@ -277,13 +277,14 @@ open class Menu : EventsManager, Copyable, PagedMenu{
                     }
                 }
             }
-
+            player.closeInventory()
+            pageOpened[player] = page
             player.openInventory(menu)
             if (isCacheInventories && !pagesCache.containsKey(page)) {
                 pagesCache[page] = menu
             }
-            pageOpened[player] = page
-            //			debug("Abrindo "+page +" tem "+pageOpened.containsKey(player));
+
+
             return menu
         }
         return Mine.newInventory("Null", 9)
@@ -323,7 +324,8 @@ open class Menu : EventsManager, Copyable, PagedMenu{
         val p = e.player
         if (p.itemInHand == null)
             return
-        if (openWithItem != null && p.itemInHand.isSimilar(openWithItem)) {
+
+        if (openWithItem != null && Mine.equals(p.itemInHand , openWithItem)) {
             open(p)
         }
 
@@ -358,8 +360,6 @@ open class Menu : EventsManager, Copyable, PagedMenu{
         if (e.whoClicked is Player) {
 
             val player = e.whoClicked as Player
-
-            //			if (e.getInventory().getTitle().contains(getTitle())) {
 
             if (pageOpened.containsKey(player)) {
                 debug("Nome do Menu: " + e.inventory.name)
@@ -413,16 +413,13 @@ open class Menu : EventsManager, Copyable, PagedMenu{
                 }
             } else {
             }
-
-            //		}
-
         }
 
     }
 
 
     override fun isOpen(player: Player): Boolean {
-        return player.openInventory.title == title
+        return pageOpened.containsKey(player)
     }
 
     override fun getPageOpen(player: Player): Int {

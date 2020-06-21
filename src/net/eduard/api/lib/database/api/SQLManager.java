@@ -21,12 +21,16 @@ public class SQLManager {
     private SQLQueryBuilder builder;
     private ConcurrentLinkedQueue updatesQueue = new ConcurrentLinkedQueue();
 
-    public void runUpdatesQueue(){
+    public int runUpdatesQueue(){
+        int amount = 0;
         for (int i = 0; i < queueRunsLimit; i++) {
             Object data = updatesQueue.poll();
-            if (data == null)return;
+
+            if (data == null)break;
             updateData(data);
+            amount++;
         }
+        return amount;
     }
 
 

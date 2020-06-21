@@ -46,7 +46,6 @@ public class Product extends MenuButton {
     public ItemStack getItem() {
 
 
-//		System.out.println(getProduct());
         ItemStack clone = super.getItem();
         if (clone == null) {
             clone = getProduct();
@@ -88,7 +87,6 @@ public class Product extends MenuButton {
 
     public Product() {
         setName("Produto");
-        // TODO Auto-generated constructor stub
     }
 
 
@@ -99,7 +97,6 @@ public class Product extends MenuButton {
 
     public Product(String name) {
         super(name);
-        // TODO Auto-generated constructor stub
     }
 
 
@@ -109,7 +106,6 @@ public class Product extends MenuButton {
     }
     public Product(String name, ItemStack icon) {
         super(name, icon);
-        // TODO Auto-generated constructor stub
     }
 
     public ItemStack getProduct() {
