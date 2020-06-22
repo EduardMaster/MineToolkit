@@ -51,7 +51,7 @@ open class Menu : EventsManager, Copyable, PagedMenu{
     var buttons = ArrayList<MenuButton>()
 
     @Transient
-    var effect: ClickEffect? = null
+    var effect: ClickEffect = MenuButton.NO_ACTION
 
     @Transient
     private var pagesCache: MutableMap<Int, Inventory> = HashMap()
@@ -298,8 +298,8 @@ open class Menu : EventsManager, Copyable, PagedMenu{
         for (button in buttons) {
             button.parentMenu = this
             if (button.isCategory) {
-                button.menu.superiorMenu = this
-                button.menu.register(plugin)
+                button.menu?.superiorMenu = this
+                button.menu?.register(plugin)
 
             }
 
@@ -312,7 +312,7 @@ open class Menu : EventsManager, Copyable, PagedMenu{
         registeredMenus.remove(this)
         for (button in buttons) {
             if (button.isCategory) {
-                button.menu.unregisterListener()
+                button.menu?.unregisterListener()
             }
 
         }
@@ -361,11 +361,11 @@ open class Menu : EventsManager, Copyable, PagedMenu{
 
             val player = e.whoClicked as Player
 
-            if (pageOpened.containsKey(player)) {
+            if (isOpen(player)) {
                 debug("Nome do Menu: " + e.inventory.name)
                 e.isCancelled = true
                 val slot = e.rawSlot
-                var page: Int = pageOpened[player]!!
+                var page: Int = getPageOpen(player)
                 val itemClicked = e.currentItem
                 var button: MenuButton? = null
                 if (itemClicked != null) {
@@ -387,29 +387,26 @@ open class Menu : EventsManager, Copyable, PagedMenu{
                     }
                 }
                 if (button == null) {
-                    button = getButton(page!!, slot)
+                    button = getButton(page, slot)
                     debug("Button by Slot " + if (button == null) "is Null" else "is not null")
                 }
 
                 if (button != null) {
                     debug("Button is not null")
-                    if (button.click != null) {
-                        debug("Button make a Custom Effect")
-                        button.click.onClick(e, slot)
-                    }
+                    button.click.onClick(e, slot)
                     if (button.effects != null) {
                         debug("Button make Editable Effects")
-                        button.effects.effect(player)
+                        button.effects?.effect(player)
                     }
                     if (button.isCategory) {
-                        button.menu.open(player)
+                        button.menu?.open(player)
                         debug("Button open another menu")
                         return
                     }
                 }
                 if (effect != null) {
                     debug("Played menu effect")
-                    effect!!.onClick(e, page!!)
+                    effect?.onClick(e, page)
                 }
             } else {
             }
