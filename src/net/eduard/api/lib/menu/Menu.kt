@@ -98,7 +98,7 @@ open class Menu : EventsManager, Copyable, PagedMenu{
         pageOpened.clear()
     }
 
-    override fun copy(): Menu? {
+    override fun copy(): Menu {
 
         return copy(this)
     }
@@ -252,7 +252,7 @@ open class Menu : EventsManager, Copyable, PagedMenu{
                         slot++
                         continue
                     }
-                    //				slot -= minSlot;
+
                     if (isTranslateIcon) {
                         menu.setItem(slot, Mine.getReplacers(button.icon, player))
                     } else {
@@ -268,7 +268,7 @@ open class Menu : EventsManager, Copyable, PagedMenu{
                     if (slot > maxSlot) {
                         slot = maxSlot
                     }
-                    //				slot -= minSlot;
+
                     if (isTranslateIcon) {
                         val icon = Mine.getReplacers(button.icon, player)
                         menu.setItem(slot, icon)

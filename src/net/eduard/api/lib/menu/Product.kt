@@ -6,9 +6,9 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-open class Product(name : String = "Produto",
-shop : Shop? = null)
-    : MenuButton(name,parentMenu = shop) {
+open class Product(name: String = "Produto",
+                   shop: Shop? = null)
+    : MenuButton(name, parentMenu = shop) {
 
     var sellPrice = 0.0
     var buyPrice = 0.0
@@ -17,6 +17,9 @@ shop : Shop? = null)
     var tradeType = TradeType.BUYABLE
     var permission: String = "produto.permissao"
     var commands: List<String> = ArrayList()
+
+    @Transient
+    lateinit var realProduct: Any
     var product: ItemStack? = null
     val parentShop: Shop
         get() = parentMenu as Shop

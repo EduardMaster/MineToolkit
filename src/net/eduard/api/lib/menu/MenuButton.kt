@@ -13,16 +13,19 @@ open class MenuButton(var name: String = "Botao"
                  ) : Slot(positionX, positionY) {
 
    companion object{
-        val NO_ACTION : ClickEffect = ClickEffect { event, page -> }
+         val NO_ACTION : ClickEffect = ClickEffect { event, page -> }
    }
 
 
     var menu: Menu? = null
 
-    constructor(parent: Menu) : this() {
-        parentMenu = parent
-        parent.addButton(this)
+    init {
+        if (parentMenu!= null){
+            parentMenu?.addButton(this)
+        }
     }
+
+    constructor(parent: Menu) : this(parentMenu =  parent)
 
 
 
@@ -32,14 +35,7 @@ open class MenuButton(var name: String = "Botao"
     @Transient
     var click: ClickEffect = NO_ACTION
 
-    /**
-     * Retorna getItem()
-     * @return
-     */
-    /**
-     * Executa o setItem()
-     * @param icon
-     */
+
     var icon: ItemStack
         get() = item!!
         set(icon) {
