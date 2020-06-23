@@ -28,7 +28,7 @@ import net.eduard.api.lib.storage.Storable
  *
  * @author Eduard
  */
-open class Menu : EventsManager, Copyable, PagedMenu{
+open class Menu : EventsManager, Copyable, PagedMenu {
     @Transient
     var superiorMenu: Menu? = null
     var title = "Menu"
@@ -47,8 +47,8 @@ open class Menu : EventsManager, Copyable, PagedMenu{
     var backPage = Slot(
             Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal", 1, 0, "§2Clique para ir para a página superior"), 1, 2)
     var nextPage = Slot(
-            Mine.newItem( Material.ARROW,"§aPróxima Página", 1, 0, "§2Clique para ir para a próxima página"), 9, 2)
-    var buttons = ArrayList<MenuButton>()
+            Mine.newItem(Material.ARROW, "§aPróxima Página", 1, 0, "§2Clique para ir para a próxima página"), 9, 2)
+    var buttons = mutableListOf<MenuButton>()
 
     @Transient
     var effect: ClickEffect = MenuButton.NO_ACTION
@@ -82,19 +82,15 @@ open class Menu : EventsManager, Copyable, PagedMenu{
         get() = pageAmount > 1
 
     fun removeButton(name: String) {
-        for (button in buttons) {
-            if (button.name.equals(name, ignoreCase = true)) {
-                buttons.remove(button)
-                break
-            }
-        }
+        val button = getButton(name)?:return
+        buttons.remove(button)
 
     }
 
     fun removeAllButtons() {
         buttons.clear()
         clearCache()
-        pageOpened.forEach { p, a -> p.closeInventory() }
+        pageOpened.forEach { (p, a) -> p.closeInventory() }
         pageOpened.clear()
     }
 
@@ -103,9 +99,9 @@ open class Menu : EventsManager, Copyable, PagedMenu{
         return copy(this)
     }
 
-    fun getButton(icon: ItemStack): MenuButton? {
+    fun getButton(icon: ItemStack, player : Player): MenuButton? {
         for (button in buttons) {
-            if (button.icon.isSimilar(icon)) {
+            if (button.getIcon(player).isSimilar(icon)) {
                 return button
             }
         }
@@ -132,26 +128,24 @@ open class Menu : EventsManager, Copyable, PagedMenu{
     }
 
     fun addButton(button: MenuButton) {
-        addButton(button.page, button)
+        addButton(button,button.page)
     }
 
-    fun addButton(page: Int, button: MenuButton) {
-        addButton(page, button.index, button)
+    fun addButton( button: MenuButton, page: Int) {
+        addButton(button,page,button.index)
 
     }
+    fun addButton(button: MenuButton, page: Int,index: Int ) {
+        addButton(button,page, button.positionX, button.positionY)
+    }
 
-    fun addButton(page: Int, positionX: Int, positionY: Int, button: MenuButton) {
+    fun addButton( button: MenuButton,page: Int, positionX: Int, positionY: Int) {
         button.page = page
         button.setPosition(positionX, positionY)
         buttons.add(button)
         updateCache(page)
-
     }
 
-    fun addButton(page: Int, index: Int, button: MenuButton) {
-        button.index = index
-        addButton(page, button.positionX, button.positionY, button)
-    }
 
     fun removeButton(button: MenuButton) {
         buttons.remove(button)
@@ -160,7 +154,7 @@ open class Menu : EventsManager, Copyable, PagedMenu{
 
     fun updateCache(page: Int) {
         if (isCacheInventories) {
-
+            pagesCache.remove(page)
         }
     }
 
@@ -230,11 +224,11 @@ open class Menu : EventsManager, Copyable, PagedMenu{
 
             val prefix = pagePrefix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             val suffix = pageSuffix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
-            var menuTitle = Extra.cutText( prefix + title + suffix,32)
+            var menuTitle = Extra.cutText(prefix + title + suffix, 32)
             if (!isPageSystem) {
                 menuTitle = title
             }
-            val menu = Bukkit.createInventory(player, 9 * lineAmount, menuTitle)
+            val menu = Bukkit.createInventory(null, 9 * lineAmount, menuTitle)
             if (isPageSystem) {
                 if (page > 1)
                     previousPage.give(menu)
@@ -248,16 +242,17 @@ open class Menu : EventsManager, Copyable, PagedMenu{
             if (isAutoAlignItems) {
                 var slot = 0
                 for (button in buttons) {
-                    if ((slot < minSlot) or (slot > maxSlot)) {
+                    if ((slot < minSlot) || (slot > maxSlot)) {
                         slot++
                         continue
                     }
+                    var icon = button.getIcon(player)
 
                     if (isTranslateIcon) {
-                        menu.setItem(slot, Mine.getReplacers(button.icon, player))
-                    } else {
-                        menu.setItem(slot, button.icon)
+                        icon = Mine.getReplacers(icon, player)
                     }
+                    menu.setItem(slot, icon)
+
                     slot++
                 }
             } else {
@@ -268,13 +263,11 @@ open class Menu : EventsManager, Copyable, PagedMenu{
                     if (slot > maxSlot) {
                         slot = maxSlot
                     }
-
+                    var icon = button.getIcon(player)
                     if (isTranslateIcon) {
-                        val icon = Mine.getReplacers(button.icon, player)
-                        menu.setItem(slot, icon)
-                    } else {
-                        menu.setItem(slot, button.icon)
+                       icon = Mine.getReplacers(icon, player)
                     }
+                    menu.setItem(slot, icon)
                 }
             }
             player.closeInventory()
@@ -325,7 +318,7 @@ open class Menu : EventsManager, Copyable, PagedMenu{
         if (p.itemInHand == null)
             return
 
-        if (openWithItem != null && Mine.equals(p.itemInHand , openWithItem)) {
+        if (openWithItem != null && Mine.equals(p.itemInHand, openWithItem)) {
             open(p)
         }
 
@@ -374,15 +367,15 @@ open class Menu : EventsManager, Copyable, PagedMenu{
                         open(player, (--page))
                         return
                     } else if (nextPage.item == itemClicked) {
-                        open(player, (++page)!!)
+                        open(player, (++page))
                         return
                     } else if (backPage.item == itemClicked) {
                         if (superiorMenu != null) {
-                            superiorMenu!!.open(player)
+                            superiorMenu?.open(player)
                         }
                         return
                     } else {
-                        button = getButton(itemClicked)
+                        button = getButton(itemClicked,player)
                         debug("Button by Item " + if (button == null) "is Null" else "is not null")
                     }
                 }
@@ -408,7 +401,6 @@ open class Menu : EventsManager, Copyable, PagedMenu{
                     debug("Played menu effect")
                     effect?.onClick(e, page)
                 }
-            } else {
             }
         }
 
@@ -420,7 +412,7 @@ open class Menu : EventsManager, Copyable, PagedMenu{
     }
 
     override fun getPageOpen(player: Player): Int {
-        return pageOpened .getOrDefault(player, 0)
+        return pageOpened.getOrDefault(player, 0)
     }
 
     companion object {

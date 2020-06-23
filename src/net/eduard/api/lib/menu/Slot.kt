@@ -11,7 +11,7 @@ import java.io.Serializable
 open class Slot(
         var positionX : Int = 0,
         var positionY : Int = 0,
-        open var item: ItemStack? = null
+        var item: ItemStack? = null
 
 ) : Serializable {
 

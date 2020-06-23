@@ -457,7 +457,7 @@ public final class Mine {
      * @param displayName Nome do TAB
      */
     public static void changeTabName(Player player, String displayName) {
-        player.setPlayerListName(Extra.toText(32, displayName));
+        player.setPlayerListName(Extra.cutText( displayName,32));
     }
 
     /**
@@ -481,7 +481,7 @@ public final class Mine {
     }
 
     /**
-     * Limpa todo o Inventario do Jogador
+     * Limpa o Inventario do Jogador
      *
      * @param player
      */
@@ -780,6 +780,12 @@ public final class Mine {
         return true;
     }
 
+    /**
+     * Verifica se o plugin existe se não manda mensagem para o sender
+     * @param sender Sender (Quem faz o comando)
+     * @param plugin Nome do Plugin
+     * @return se o plugin esta no servidor ou não
+     */
     public static boolean existsPlugin(CommandSender sender, String plugin) {
 
         Plugin p = getPlugin(plugin);
@@ -790,6 +796,12 @@ public final class Mine {
         return true;
     }
 
+    /**
+     * Verifica se o mundo existe e esta carregado no servidor
+     * @param sender Sender (Quem faz o comando)
+     * @param name Nome do Mundo
+     * @return se o mundo esta carregado ou não
+     */
     public static boolean existsWorld(CommandSender sender, String name) {
         World world = Bukkit.getWorld(name);
         if (world == null) {
@@ -908,19 +920,47 @@ public final class Mine {
         }
     }
 
+    /**
+     * Retorna um RADAR
+     * @param inDegrees
+     * @param colorActive
+     * @param colorDefault
+     * @return
+     */
     public static ArrayList<String> getAsciiCompass(double inDegrees, ChatColor colorActive, String colorDefault) {
         return getAsciiCompass(getCompassPointForDirection(inDegrees), colorActive, colorDefault);
     }
 
+    /**
+     * Retorna um RADAR
+     * @param inDegrees
+     * @param colorActive
+     * @param colorDefault
+     * @return
+     */
     public static ArrayList<String> getAsciiCompass(double inDegrees, String colorActive, String colorDefault) {
         return getAsciiCompass(getCompassPointForDirection(inDegrees), colorActive, colorDefault);
     }
 
+    /**
+     * Retorna um RADAR
+     * @param point
+     * @param colorActive
+     * @param colorDefault
+     * @return
+     */
     public static ArrayList<String> getAsciiCompass(Point point, ChatColor colorActive, String colorDefault) {
 
         return getAsciiCompass(point, colorActive.toString(), colorDefault);
     }
 
+    /**
+     * Retorna um RADAR
+     * @param point
+     * @param colorActive
+     * @param colorDefault
+     * @return
+     */
     public static ArrayList<String> getAsciiCompass(Point point, String colorActive, String colorDefault) {
         ArrayList<String> ret = new ArrayList<>();
 
@@ -945,11 +985,21 @@ public final class Mine {
         return ret;
     }
 
+    /**
+     * Retorna a localização do bloco que esta neste Local
+     * @param location Local
+     * @return outro Local baseado no primeiro local
+     */
     public static Location getBlockLocation1(Location location) {
 
         return new Location(location.getWorld(), (int) location.getX(), (int) location.getY(), (int) location.getZ());
     }
 
+    /**
+     * Método getLocation() da classe Block retorna a localização do bloco
+     * @param location Local do bloco inicial
+     * @return Local do bloco final
+     */
     public static Location getBlockLocation2(Location location) {
 
         return location.getBlock().getLocation();
@@ -1653,6 +1703,7 @@ public final class Mine {
         if (player == null) {
             return "";
         }
+
         for (Entry<String, Replacer> value : replacers.entrySet()) {
             if (text.contains(value.getKey())) {
                 try {

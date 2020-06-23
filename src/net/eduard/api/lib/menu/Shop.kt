@@ -28,11 +28,11 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         if (event.whoClicked is Player) {
             val player = event.whoClicked as Player
             if (event.currentItem == null) return
-            val product = getProduct(event.currentItem) ?: return
-            if (confirmation != null) {
+            val product = getProduct(event.currentItem,player)?: return
+            if (menuConfirmation != null) {
                 trading[player] = product.tradeType
                 confirmingTransaction[player] = product
-                confirmation.open(player)
+                menuConfirmation.open(player)
                 return
             }
             if ((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)
@@ -114,19 +114,39 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
     var messageWithoutItems = MESSAGE_WITHOUT_ITEMS
     var messageWithoutBalance = MESSAGE_WITHOUT_BALANCE
     var messageWithoutPermission = MESSAGE_WITHOUT_PERMISSION
-    var confirmation: Menu = Menu("Confirmar Transação", 3)
+    var textAlreadyBought = TEXT_ALREADY_BOUGHT
+    var menuConfirmation: Menu = Menu("Confirmar Transação", 3)
+
+
+    companion object {
+        private var MESSAGE_CHOICE_AMOUNT = "§aEscolha uma quantidade para \$trader este produto \$product"
+        private var MESSAGE_BOUGHT_ITEM = "§aVoce adquiriu \$amount (\$product) produto(s) da Loja!"
+        private var MESSAGE_SOLD_ITEM = "§aVocê vendeu \$amount (\$product) produtos(s) para a loja!"
+        private var MESSAGE_WITHOUT_ITEMS = "§cVoce não tem items suficiente!"
+        private var MESSAGE_WITHOUT_BALANCE = "§cVoce não tem dinheiro suficiente!"
+        private var MESSAGE_WITHOUT_PERMISSION = "§cVoce não tem permissão para comprar este produto!"
+        private var MESSAGE_ALREADY_BOUGHT = "§cVocê já comprou este produto."
+        private var TEXT_ALREADY_BOUGHT = "§a§lDESBLOQUEADO"
+        private var TEMPLATE_BUY = Arrays.asList("§fCompre o produto §e\$product_name",
+                "§2Quantidade: §a\$product_stock", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
+        private var TEMPLATE_SELL = Arrays.asList("§fVende o produto: §e\$product_name",
+                "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price")
+        private var TEMPLATE_BUY_SELL = Arrays.asList("§fCompra e venda de: §e\$product_name",
+                "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price", "", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
+        private const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
+    }
 
     fun useConfirmationMenu() {
-        confirmation.superiorMenu = this
-        confirmation.register(pluginInstance)
-        val confirmationButton = MenuButton("confirmar", confirmation)
+        menuConfirmation.superiorMenu = this
+        menuConfirmation.register(pluginInstance)
+        val confirmationButton = MenuButton("confirmar", menuConfirmation)
         confirmationButton.setPosition(3, 2)
         confirmationButton.icon = ItemBuilder(Material.WOOL).data(5).name("§a§lCONFIRMAR").lore("§aClique para confirmar a transação.")
-        val cancelButton = MenuButton("cancelar", confirmation)
+        val cancelButton = MenuButton("cancelar", menuConfirmation)
         cancelButton.icon = ItemBuilder(Material.WOOL).data(14).name("§c§lCANCELAR").lore("§cClique para cancelar a transação.")
         cancelButton.setPosition(7, 2)
         cancelButton.click = ClickEffect { event: InventoryClickEvent, page: Int -> open((event.whoClicked as Player), page) }
-        val productButton = MenuButton("product", confirmation)
+        val productButton = MenuButton("product", menuConfirmation)
         productButton.setPosition(5, 2)
         productButton.icon = ItemBuilder(Material.STONE)
         confirmationButton.click = ClickEffect { event: InventoryClickEvent, page: Int ->
@@ -147,11 +167,11 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
     fun openInventory(e: InventoryOpenEvent) {
         if (e.player is Player) {
             val player = e.player as Player
-            if (confirmation != null) {
-                if (confirmation.isOpen(player)) {
-                    val productButton = confirmation.getButton("product")
-                    val product = confirmingTransaction[player]
-                    e.inventory.setItem(productButton!!.index, product!!.icon)
+            if (menuConfirmation != null) {
+                if (menuConfirmation.isOpen(player)) {
+                    val productButton = menuConfirmation.getButton("product")!!
+                    val product = confirmingTransaction[player]!!
+                    e.inventory.setItem(productButton.index, product.icon)
                 }
             }
         }
@@ -304,14 +324,14 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         this.currency = currency
         for (button in buttons) {
             if (button.menu is Shop) {
-                val shop = button.menu as Shop?
-                shop!!.setCurrency(currency)
+                val shop = button.shop
+                shop.setCurrency(currency)
             }
         }
     }
 
-    fun getProduct(icon: ItemStack?): Product? {
-        val button = getButton(icon!!)
+    fun getProduct(icon: ItemStack,  player: Player): Product? {
+        val button = getButton(icon,player)
         if (button != null) {
             if (button is Product) {
                 return button
@@ -320,33 +340,17 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         return null
     }
 
-    fun getProductFrom(item: ItemStack?): Product? {
+    fun getProductFrom(item: ItemStack): Product? {
         for (button in buttons) {
             if (button is Product) {
-                val product = button
-                if (product.item!!.isSimilar(item)) return product
+                if (button.product?.isSimilar(item)!!){
+                    return button as Product
+                }
             }
         }
         return null
     }
 
-
-    companion object {
-        private var MESSAGE_CHOICE_AMOUNT = "§aEscolha uma quantidade para \$trader este produto \$product"
-        private var MESSAGE_BOUGHT_ITEM = "§aVoce adquiriu \$amount (\$product) produto(s) da Loja!"
-        private var MESSAGE_SOLD_ITEM = "§aVocê vendeu \$amount (\$product) produtos(s) para a loja!"
-        private var MESSAGE_WITHOUT_ITEMS = "§cVoce não tem items suficiente!"
-        private var MESSAGE_WITHOUT_BALANCE = "§cVoce não tem dinheiro suficiente!"
-        private var MESSAGE_WITHOUT_PERMISSION = "§cVoce não tem permissão para comprar este produto!"
-        private var MESSAGE_ALREADY_BOUGHT = "§cVocê já comprou este produto."
-        private var TEMPLATE_BUY = Arrays.asList("§fCompre o produto §e\$product_name",
-                "§2Quantidade: §a\$product_stock", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
-        private var TEMPLATE_SELL = Arrays.asList("§fVende o produto: §e\$product_name",
-                "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price")
-        private var TEMPLATE_BUY_SELL = Arrays.asList("§fCompra e venda de: §e\$product_name",
-                "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price", "", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
-        private const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
-    }
 
     init {
         this.effect = this

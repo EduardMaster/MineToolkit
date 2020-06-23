@@ -1,6 +1,7 @@
 package net.eduard.api.lib.menu
 
 import net.eduard.api.lib.game.ClickEffect
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 open class MenuButton(var name: String = "Botao"
@@ -15,6 +16,7 @@ open class MenuButton(var name: String = "Botao"
    companion object{
          val NO_ACTION : ClickEffect = ClickEffect { event, page -> }
    }
+
 
 
     var menu: Menu? = null
@@ -35,6 +37,9 @@ open class MenuButton(var name: String = "Botao"
     @Transient
     var click: ClickEffect = NO_ACTION
 
+    open fun getIcon(player: Player): ItemStack {
+        return this.icon
+    }
 
     var icon: ItemStack
         get() = item!!
