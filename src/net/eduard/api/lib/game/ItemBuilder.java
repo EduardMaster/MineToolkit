@@ -1,10 +1,10 @@
 package net.eduard.api.lib.game;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.*;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
@@ -48,6 +48,26 @@ public class ItemBuilder extends ItemStack {
         setItemMeta(meta);
         return this;
 
+    }
+    public ItemBuilder skin(String skinUrl){
+        type(Material.SKULL_ITEM);
+        data(SkullType.PLAYER.ordinal());
+        SkullMeta itemMeta = (SkullMeta) getItemMeta();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        byte[] encodedData = Base64.getEncoder()
+                .encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", skinUrl).getBytes());
+        profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
+        Field profileField = null;
+        try {
+            profileField = itemMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(itemMeta, profile);
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+       setItemMeta(itemMeta);
+
+        return this
     }
 
     public ItemBuilder amount(int amount) {
