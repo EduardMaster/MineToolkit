@@ -67,7 +67,7 @@ public class ItemBuilder extends ItemStack {
         }
        setItemMeta(itemMeta);
 
-        return this
+        return this;
     }
 
     public ItemBuilder amount(int amount) {
