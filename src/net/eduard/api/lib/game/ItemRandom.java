@@ -1,5 +1,6 @@
 package net.eduard.api.lib.game;
 
+import net.eduard.api.lib.modules.Extra;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -45,7 +46,7 @@ public class ItemRandom implements Storable {
 
 	public ItemStack createAmountRandom() {
 		ItemStack clone = item.clone();
-		int amount = Mine.getRandomInt(getMinAmount(), getMaxAmount());
+		int amount = Extra.getRandomInt(getMinAmount(), getMaxAmount());
 
 		clone.setAmount(amount);
 		return clone;

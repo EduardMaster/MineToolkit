@@ -23,6 +23,12 @@ open class Product(name: String = "Produto",
     @Transient
     lateinit var realProduct: Any
     var product: ItemStack? = null
+    set(value){
+        field = value
+        if (item == null){
+            item = value
+        }
+    }
     val parentShop: Shop
         get() = parentMenu as Shop
 

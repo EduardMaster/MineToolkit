@@ -56,7 +56,7 @@ class MinigameChest {
             val contents = inv.contents
             for (i in contents.indices) {
                 val itemStack = contents[i]
-                var temp = Mine.getRandomInt(1, contents.size)
+                var temp = Extra.getRandomInt(1, contents.size)
                 temp--
                 val tempItem = contents[temp]
                 contents[i] = tempItem

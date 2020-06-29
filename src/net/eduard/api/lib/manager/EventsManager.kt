@@ -15,7 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin
  * @author Eduard
  * @version 2.0
  */
-open class EventsManager : Listener {
+open class EventsManager(  @Transient
+                           var plugin: Plugin? = null
+ ) : Listener {
     /**
      * Se o Listener esta registrado
      */
@@ -34,8 +36,7 @@ open class EventsManager : Listener {
      * @param plugin Plugin
      */
 
-    @Transient
-    var plugin: Plugin? = null
+
 
     /**
      * @return Plugin
@@ -54,8 +55,11 @@ open class EventsManager : Listener {
     /**
      * Construtor base deixando Plugin automatico
      */
-    constructor() {
-        plugin = defaultPlugin()
+    init {
+        if (plugin == null){
+            plugin = defaultPlugin()
+        }
+
     }
 
     protected fun defaultPlugin(): Plugin {
@@ -66,14 +70,6 @@ open class EventsManager : Listener {
         return defPl
     }
 
-    /**
-     * Construtor pedindo um Plugin
-     *
-     * @param plugin Plugin
-     */
-    constructor(plugin: Plugin) {
-        register(plugin)
-    }
 
     /**
      * Registra o Listener para o Plugin

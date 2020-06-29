@@ -1614,16 +1614,12 @@ public final class Mine {
         }
         for (int i = 0; i < 10; i++) {
 
-            int slot = Mine.getRandomInt(1, inv.getSize());
+            int slot = Extra.getRandomInt(1, inv.getSize());
             if (inv.getItem(slot) == null) {
                 return slot;
             }
         }
         return inv.firstEmpty();
-    }
-
-    public static int getRandomInt(int minValue, int maxValue) {
-        return Extra.getRandomInt(minValue, maxValue);
     }
 
     /**
@@ -1652,9 +1648,9 @@ public final class Mine {
         int x = location.getBlockX();
         int z = location.getBlockZ();
         int y = location.getBlockY();
-        int xR = Mine.getRandomInt(x - xVar, x + xVar);
-        int zR = Mine.getRandomInt(z - zVar, z + zVar);
-        int yR = Mine.getRandomInt(y - yVar, y + zVar);
+        int xR = Extra.getRandomInt(x - xVar, x + xVar);
+        int zR = Extra.getRandomInt(z - zVar, z + zVar);
+        int yR = Extra.getRandomInt(y - yVar, y + zVar);
         return new Location(location.getWorld(), xR, yR, zR);
     }
 
@@ -1663,7 +1659,7 @@ public final class Mine {
     }
 
     public static Player getRandomPlayer(List<Player> list) {
-        return list.get(Mine.getRandomInt(1, list.size()) - 1);
+        return list.get(Extra.getRandomInt(1, list.size()) - 1);
     }
 
     public static Location getRandomPosition(Location location, int xVar, int zVar) {
@@ -2634,10 +2630,6 @@ public final class Mine {
      */
     public static boolean random(double chance) {
         return getChance(chance);
-    }
-
-    public static int randomInt(int minValue, int maxValue) {
-        return getRandomInt(minValue, maxValue);
     }
 
     /**

@@ -28,7 +28,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         if (event.whoClicked is Player) {
             val player = event.whoClicked as Player
             if (event.currentItem == null) return
-            val product = getProduct(event.currentItem,player)?: return
+            val product = getProduct(event.currentItem, player) ?: return
             if (menuConfirmation != null) {
                 trading[player] = product.tradeType
                 confirmingTransaction[player] = product
@@ -135,6 +135,9 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
                 "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price", "", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
         private const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
     }
+    init{
+        useConfirmationMenu()
+    }
 
     fun useConfirmationMenu() {
         menuConfirmation.superiorMenu = this
@@ -167,13 +170,13 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
     fun openInventory(e: InventoryOpenEvent) {
         if (e.player is Player) {
             val player = e.player as Player
-            if (menuConfirmation != null) {
-                if (menuConfirmation.isOpen(player)) {
-                    val productButton = menuConfirmation.getButton("product")!!
-                    val product = confirmingTransaction[player]!!
-                    e.inventory.setItem(productButton.index, product.icon)
-                }
+
+            if (menuConfirmation.isOpen(player)) {
+                val productButton = menuConfirmation.getButton("product")!!
+                val product = confirmingTransaction[player]!!
+                e.inventory.setItem(productButton.index, product.icon)
             }
+
         }
     }
 
@@ -184,8 +187,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
     fun organize() {
         if (sortType === ShopSortType.BUY_PRICE_ASC) {
 
-           val result = buttons.filterIsInstance<Product>().sortedBy { it.buyPrice }
-            for ((index,data) in result.withIndex()){
+            val result = buttons.filterIsInstance<Product>().sortedBy { it.buyPrice }
+            for ((index, data) in result.withIndex()) {
                 data.index = index
             }
 
@@ -218,13 +221,13 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         if (product.isLimited && amount > product.stock) {
             amount = product.stock
         }
-        if (isPermissionShop){
-            if (player.hasPermission(product.permission)){
+        if (isPermissionShop) {
+            if (player.hasPermission(product.permission)) {
                 player.sendMessage(messageAlreadyBought)
                 return;
             }
-        }else{
-            if (!player.hasPermission(product.permission)){
+        } else {
+            if (!player.hasPermission(product.permission)) {
                 player.sendMessage(messageWithoutPermission)
                 return;
             }
@@ -258,9 +261,9 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         }
         player.sendMessage(messageBoughtItem.replace("\$amount", Extra.formatMoney(amount)).replace("\$product",
                 "" + product.name))
-        if (isPermissionShop){
-            if (VaultAPI.hasVault()&&VaultAPI.hasPermission()){
-                VaultAPI.getPermission().playerAdd(null,fake,product.permission)
+        if (isPermissionShop) {
+            if (VaultAPI.hasVault() && VaultAPI.hasPermission()) {
+                VaultAPI.getPermission().playerAdd(null, fake, product.permission)
             }
             return;
         }
@@ -330,8 +333,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         }
     }
 
-    fun getProduct(icon: ItemStack,  player: Player): Product? {
-        val button = getButton(icon,player)
+    fun getProduct(icon: ItemStack, player: Player): Product? {
+        val button = getButton(icon, player)
         if (button != null) {
             if (button is Product) {
                 return button
@@ -343,7 +346,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
     fun getProductFrom(item: ItemStack): Product? {
         for (button in buttons) {
             if (button is Product) {
-                if (button.product?.isSimilar(item)!!){
+                if (button.product?.isSimilar(item)!!) {
                     return button as Product
                 }
             }

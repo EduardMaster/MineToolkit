@@ -14,35 +14,15 @@ import net.eduard.api.lib.modules.BukkitTimeHandler
  *
  * @author Eduard
  */
-open class TimeManager : EventsManager, Runnable, BukkitTimeHandler {
+open class TimeManager(var time: Long = 20, plugin : Plugin? = null ) : EventsManager(plugin), Runnable, BukkitTimeHandler {
+
+
 
 
     /**
-     * Tempo em ticks para o Delay ou Timer
+     * Tempo anterior para fazer uma checagem
      */
-    /**
-     *
-     * @return Tempo em ticks
-     */
-    /**
-     * Seta o Tempo
-     *
-     * @param time Tempo em ticks
-     */
-    var time: Long = 20
 
-    /**
-     * Tempo anterior para fazer a compara§§o
-     */
-    /**
-     *
-     * @return O tempo do inicio
-     */
-    /**
-     * Define o Tempo de inicio
-     *
-     * @param startTime Tempo em ticks
-     */
     var startTime: Long = 0
 
     /**
@@ -58,22 +38,7 @@ open class TimeManager : EventsManager, Runnable, BukkitTimeHandler {
 
 
 
-    /**
-     * Construtor base automatico usando o Plugin da Mine;
-     */
-    constructor() {
-        plugin = defaultPlugin()
 
-    }
-
-    /**
-     * Construtor pedindo um Plugin
-     *
-     * @param plugin Plugin
-     */
-    constructor(plugin: Plugin) {
-       this.plugin = plugin
-    }
 
     /**
      * Metodo principal do Efeito a cada Tempo

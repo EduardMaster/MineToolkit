@@ -1030,7 +1030,7 @@ public final class Extra {
 
     public static <E> E getRandom(List<E> objects) {
         if (objects.size() >= 1)
-            return objects.get(getRandomInt(0, objects.size()));
+            return objects.get(getRandomInt(1, objects.size()) -1);
         return null;
     }
 

@@ -18,6 +18,7 @@ import org.bukkit.plugin.Plugin
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.game.ClickEffect
+import net.eduard.api.lib.kotlin.centralized
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.Storable
@@ -241,12 +242,13 @@ open class Menu : EventsManager, Copyable, PagedMenu {
             }
 
             if (isAutoAlignItems) {
-                var slot = 0
+                var slot = 10
                 for (button in buttons) {
                     if ((slot < minSlot) || (slot > maxSlot)) {
                         slot++
                         continue
                     }
+                    slot.centralized()
                     var icon = button.getIcon(player)
 
                     if (isTranslateIcon) {
