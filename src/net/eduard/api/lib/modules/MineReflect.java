@@ -40,7 +40,6 @@ public class MineReflect {
     public static class ItemExtraData {
 
         private ItemExtraData() {
-            // net.minecraft.server.v1_8_R3.ItemStack
 
         }
 
@@ -262,6 +261,7 @@ public class MineReflect {
     public static String classBukkitBukkit = "#bBukkit";
     public static String classMineChatComponentText = "#mChatComponentText";
     public static String classMineMinecraftServer = "#mMinecraftServer";
+
     public static Villager newNPCVillager(Location location, String name) {
         Villager npc = location.getWorld().spawn(location, Villager.class);
         npc.setCustomName(name);
@@ -282,6 +282,7 @@ public class MineReflect {
 
         return 0D;
     }
+
     public static int getCurrentTick() throws Exception {
         return (int) Extra.getValue(MineReflect.classMineMinecraftServer, "currentTick");
     }
@@ -307,9 +308,6 @@ public class MineReflect {
 
             Object newItem = method_asBukkitCopy.invoke(0, nmsItemStack);
 
-//            net.minecraft.server.v1_8_R3.ItemStack nmsIS = CraftItemStack.asNMSCopy(itemOriginal);
-//            nmsIS.getItem().c(amount);
-//            return CraftItemStack.asBukkitCopy(nmsIS);
             return (ItemStack) newItem;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -318,7 +316,7 @@ public class MineReflect {
     }
 
     /**
-     * Desabilita a Inteligencia da Entidade<br>
+     * Desabilita a Inteligência da Entidade<br>
      * <p>
      * NMS código executado <br>
      *
@@ -424,8 +422,8 @@ public class MineReflect {
             Extra.setValue(packet, "h", Integer.valueOf(0));
             Extra.setValue(packet, "i", Integer.valueOf(1));
             MineReflect.sendPackets(packet);
+
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -593,9 +591,9 @@ public class MineReflect {
                     Extra.getParameters(MineReflect.classMineIChatBaseComponent, byte.class), component, (byte) 2);
             sendPacket(player, packet);
         } catch (Exception e) {
-//			e.printStackTrace();
-//			Bukkit.getConsoleSender().sendMessage(
-//					"§bRexMine §aNao foi possivel usar o 'setActionBar' pois o servidor esta na versao anterior a 1.8");
+            e.printStackTrace();
+			Bukkit.getConsoleSender().sendMessage(
+				"§bRexMine §aNao foi possivel usar o 'setActionBar' pois o servidor esta na versao anterior a 1.8");
 
         }
 

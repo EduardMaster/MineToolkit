@@ -81,7 +81,6 @@ public class Config {
                 file.mkdirs();
             } else {
 
-
                 try {
                     InputStream is = Extra.getResource(plugin.getClass().getClassLoader(), name);
                     if (is != null) {

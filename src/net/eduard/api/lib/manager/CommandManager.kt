@@ -24,6 +24,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
     var parent: CommandManager? = null
     var name: String
     var permission: String? = null
+
     @Transient
     var customCommand: Command? = null
 
@@ -49,7 +50,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
 
     fun autoUsage(): String {
         return if (parent != null) {
-            parent!!.autoUsage() + " " + name
+            parent?.autoUsage() + " " + name
         } else {
 
             "/$name"
@@ -59,7 +60,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
     fun autoPermission(): String {
 
         return if (parent != null) {
-            parent!!.autoPermission() + "." + name
+            parent?.autoPermission() + "." + name
         } else {
             "command.$name"
         }
@@ -87,43 +88,43 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
 
-        run {
-            var cmd = this
-            for (i in args.indices) {
-                val arg = args[i].toLowerCase()
-                var sub: CommandManager? = null
-                for (subcmd in cmd.getCommands().values) {
-                    if (subcmd.name.equals(arg, ignoreCase = true)) {
+
+        var cmd = this
+        for (i in args.indices) {
+            val arg = args[i].toLowerCase()
+            var sub: CommandManager? = null
+            for (subcmd in cmd.getCommands().values) {
+                if (subcmd.name.equals(arg, ignoreCase = true)) {
+                    sub = subcmd
+                }
+                for (alias in subcmd.aliases) {
+                    if (alias.equals(arg, ignoreCase = true)) {
                         sub = subcmd
                     }
-                    for (alias in subcmd.aliases) {
-                        if (alias.equals(arg, ignoreCase = true)) {
-                            sub = subcmd
-                        }
-                    }
                 }
-                if (sub == null) {
-                    break
-
-                }
-                cmd = sub
             }
-            //			sender.sendMessage("permiscao " + cmd.getPermission());
-            if (cmd === this) {
-                if (args.size == 0) {
-                    sender.sendMessage("/$name help")
-                } else {
-                    sendUsage(sender)
-                }
-            } else {
+            if (sub == null) {
+                break
 
-                if (sender.hasPermission(cmd.permission)) {
-                    cmd.onCommand(sender, command, label, args)
-                } else
-                    sender.sendMessage(cmd.permissionMessage)
             }
-
+            cmd = sub
         }
+        //			sender.sendMessage("permiscao " + cmd.getPermission());
+        if (cmd === this) {
+            if (args.size == 0) {
+                sender.sendMessage("/$name help")
+            } else {
+                sendUsage(sender)
+            }
+        } else {
+
+            if (sender.hasPermission(cmd.permission)) {
+                cmd.onCommand(sender, command, label, args)
+            } else
+                sender.sendMessage(cmd.permissionMessage)
+        }
+
+
         return true
 
     }
@@ -131,56 +132,42 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): List<String>? {
         val vars = ArrayList<String>()
 
-        run {
-            var cmd = this
-            for (i in args.indices) {
-                val arg = args[i].toLowerCase()
-                vars.clear()
-                var sub: CommandManager? = null
-                for (subcmd in cmd.getCommands().values) {
-                    if (sender.hasPermission(subcmd.permission)) {
-                        if (Extra.startWith(subcmd.name, arg)) {
-                            vars.add(subcmd.name)
+
+        var cmd = this
+        for (i in args.indices) {
+            val arg = args[i].toLowerCase()
+            vars.clear()
+            var sub: CommandManager? = null
+            for (subcmd in cmd.getCommands().values) {
+                if (sender.hasPermission(subcmd.permission)) {
+                    if (Extra.startWith(subcmd.name, arg)) {
+                        vars.add(subcmd.name)
+                    }
+                    if (subcmd.name.equals(arg, ignoreCase = true)) {
+                        sub = subcmd
+                    }
+                    for (alias in subcmd.aliases) {
+                        if (Extra.startWith(alias, arg)) {
+                            vars.add(alias)
                         }
-                        if (subcmd.name.equals(arg, ignoreCase = true)) {
+                        if (alias.equals(arg, ignoreCase = true)) {
                             sub = subcmd
                         }
-                        for (alias in subcmd.aliases) {
-                            if (Extra.startWith(alias, arg)) {
-                                vars.add(alias)
-                            }
-                            if (alias.equals(arg, ignoreCase = true)) {
-                                sub = subcmd
-                            }
-                        }
-
                     }
 
                 }
-                if (sub == null) {
-                    break
-                }
-                cmd = sub
+
             }
-            return if (vars.isEmpty()) {
-
-
-                null
-            } else vars
-            //			if (cmd == this) {
-            //				if (vars.isEmpty()) {
-            //					return null;
-            //				}
-            //				return vars;
-            //			} else {
-
-            //				if (sender.hasPermission(cmd.getPermission())) {
-            //					return cmd.onTabComplete(sender, command, label, args);
-            //				}
-            //			}
-
+            if (sub == null) {
+                break
+            }
+            cmd = sub
         }
+        return if (vars.isEmpty()) {
 
+
+            null
+        } else vars
     }
 
     fun register(): Boolean {

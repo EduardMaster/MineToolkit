@@ -7,8 +7,13 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -25,6 +30,11 @@ public class ItemBuilder extends ItemStack {
         this(Material.STONE, 1);
 
     }
+    public ItemBuilder(ItemStack clone){
+        super(clone);
+    }
+
+
 
     public ItemBuilder(Material type) {
         this(type, 1);
@@ -34,9 +44,23 @@ public class ItemBuilder extends ItemStack {
         setType(type);
         setAmount(amount);
     }
+    public ItemBuilder spawnerType(EntityType type){
+        type(Material.MOB_SPAWNER);
+        BlockStateMeta meta = (BlockStateMeta) getItemMeta();;
+
+        BlockState state = meta.getBlockState();
+        if (state != null){
+            CreatureSpawner spawner = (CreatureSpawner) state;
+            spawner.setSpawnedType(type);
+        }
+
+        return this;
+    }
+
+
 
     public ItemBuilder(String name) {
-        this();
+        this(Material.DIAMOND_SWORD,1);
         name(name);
     }
 
@@ -53,6 +77,7 @@ public class ItemBuilder extends ItemStack {
         type(Material.SKULL_ITEM);
         data(SkullType.PLAYER.ordinal());
         SkullMeta itemMeta = (SkullMeta) getItemMeta();
+
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         byte[] encodedData = Base64.getEncoder()
                 .encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", skinUrl).getBytes());

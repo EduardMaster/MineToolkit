@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import com.google.gson.*;
+import net.eduard.api.lib.game.ItemBuilder;
 import net.eduard.api.lib.storage.StorageAPI;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -45,7 +46,8 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         int amount = Extra.toInt(map.get("amount"));
         int data = Extra.toInt(map.get("data"));
         @SuppressWarnings("deprecation")
-        ItemStack item = new ItemStack(id, amount, (short) data);
+        ItemBuilder item = new ItemBuilder(Material.getMaterial(id), amount);
+        item.data(data);
         String name = Extra.toChatMessage((String) map.get("name"));
         if (!name.isEmpty()) {
             Mine.setName(item, name);
@@ -86,7 +88,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 SkullMeta skullmeta = (SkullMeta) meta;
 
                 skullmeta.setOwner("" + map.get("head-name"));
-                //Bukkit.broadcastMessage("Setando owner com o head-name: "+skullmeta.getOwner());
+
                 item.setItemMeta(skullmeta);
             }
 
@@ -94,8 +96,6 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
             ItemMeta meta = item.getItemMeta();
 //
             if (meta instanceof SkullMeta) {
-//				Bukkit.broadcastMessage("Teste2");
-                // map.containsKey("texture-signature") &&
                 GameProfile profile = new GameProfile(UUID.randomUUID(), null);
                 profile.getProperties().put("textures", new Property("textures", (String) map.get("texture-value")));
                 Field profileField = null;
@@ -131,6 +131,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         map.remove("meta");
         map.remove("type");
         map.remove("handle");
+        map.remove("skull-owner");
         map.put("id", item.getTypeId());
         map.put("data", item.getDurability());
         map.put("amount", item.getAmount());

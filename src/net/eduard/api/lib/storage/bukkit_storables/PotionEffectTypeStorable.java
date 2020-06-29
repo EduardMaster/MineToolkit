@@ -13,7 +13,7 @@ public class PotionEffectTypeStorable implements Storable<PotionEffectType> {
 
 
         String[] split = string.split(";");
-        return PotionEffectType.getByName(split[1]);
+        return PotionEffectType.getByName(split[0]);
 
     }
 

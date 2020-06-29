@@ -21,6 +21,7 @@ import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.Storable
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventory
 
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
@@ -318,7 +319,10 @@ open class Menu : EventsManager, Copyable, PagedMenu {
         if (p.itemInHand == null)
             return
 
+        val a :CraftInventory? = null
+
         if (openWithItem != null && Mine.equals(p.itemInHand, openWithItem)) {
+            e.isCancelled=true
             open(p)
         }
 

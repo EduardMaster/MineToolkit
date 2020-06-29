@@ -194,7 +194,8 @@ public class StorageObject extends StorageBase {
                             field.set(instance, restoredValue);
 
                     } catch (Exception e) {
-                        debug(">> FAILED TO SET VARIABLE " + field.getName() + " USING " + restoredValue);
+                        e.printStackTrace();
+                        //debug(">> FAILED TO SET VARIABLE " + field.getName() + " USING " + restoredValue);
                     }
 
                 } catch (Exception e) {
