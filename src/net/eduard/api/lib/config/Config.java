@@ -23,17 +23,14 @@ public class Config {
     private transient File folder;
     private transient Object plugin;
     private String name;
-
-
     transient List<String> lines;
 
-    public Config() {
 
-    }
 
-    public Config(String folder, String name) {
+    public Config(String folder,Object plugin, String name) {
         this.name = name;
         this.folder = new File(folder);
+        this.plugin = plugin;
         init();
     }
 
@@ -46,9 +43,9 @@ public class Config {
 
     public void init() {
         file = new File(folder, name);
+        file.getParentFile().mkdirs();
         root = new ConfigSection("", "{}");
         lines = new ArrayList<>();
-
         root.lineSpaces = 1;
         this.root.father = root;
         reloadConfig();
@@ -153,7 +150,7 @@ public class Config {
     }
 
     public Config createConfig(String name) {
-        return new Config(folder.getName(), name);
+        return new Config(plugin, name);
     }
 
     public void deleteConfig() {

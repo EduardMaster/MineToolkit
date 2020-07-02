@@ -3,6 +3,7 @@ package net.eduard.api.lib.database.api;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.StorageInline;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -16,47 +17,54 @@ public interface SQLOption {
 
     String autoIncrement();
 
-    default String fieldOpen(){
+    default String fieldOpen() {
         return " ( ";
     }
-    default String fieldPlaceholder(){
+
+    default String fieldPlaceholder() {
         return " ? ";
     }
-    default String fieldClose(){
+
+    default String fieldClose() {
         return " ) ";
     }
-    default String fieldSeparator(){
+
+    default String fieldSeparator() {
         return " , ";
     }
 
     default String notNull() {
         return " NOT NULL";
     }
-    default  String useDefault(){
+
+    default String useDefault() {
         return "DEFAULT";
     }
 
+
+    default String defaults() {
+        return " DEFAULT ";
+    }
+
+    default String name(String name) {
+        return "`" + name + "`";
+    }
     default String nullable() {
         return "NULL";
     }
 
-    default String defaultCharset(){
+    default String defaultCharset() {
         return "default charset = utf8";
     }
 
-    default String values(){return " VALUES ";}
+    default String values() {
+        return " VALUES ";
+    }
 
     default String equalsTo() {
         return " = ";
     }
 
-    default String currentTime() {
-        return "CURRENT_TIME";
-    }
-
-    default String currentDate() {
-        return "CURRENT_DATE";
-    }
 
     default String currentTimestamp() {
         return "CURRENT_TIMESTAMP()";
@@ -64,11 +72,11 @@ public interface SQLOption {
 
     default String defaultFor(Class<?> javaClass) {
         if (Time.class.equals(javaClass)) {
-            return currentTime();
+            return data(new Time(System.currentTimeMillis()).toString());
         } else if (Timestamp.class.equals(javaClass) || Calendar.class.equals(javaClass)) {
             return currentTimestamp();
-        }else if (java.util.Date.class.equals(javaClass)|| Date.class.equals(javaClass)){
-            return currentDate();
+        } else if (java.util.Date.class.equals(javaClass) || Date.class.equals(javaClass)) {
+            return data(new Date(System.currentTimeMillis()).toString());
         }
         return data("0");
 
@@ -83,7 +91,7 @@ public interface SQLOption {
     }
 
     default String deleteTable() {
-        return "DROP TABLE ";
+        return "DROP TABLE IF EXISTS ";
     }
 
 
@@ -140,28 +148,27 @@ public interface SQLOption {
 
         if (javaClass == Boolean.class) {
             value = ((boolean) value) ? 1 : 0;
-        }
-
-        if (javaClass == java.util.Date.class) {
+        } else if (javaClass == java.util.Date.class) {
             value = new Date(((java.util.Date) value).getTime());
         } else if (value instanceof Calendar) {
             value = new Timestamp(((Calendar) value).getTimeInMillis());
+        } else if (value instanceof Timestamp | value instanceof Time) {
+
         } else if (value instanceof UUID) {
             value = value.toString();
-        }
+        } else {
 
+            String result = StorageAPI.storeInline(javaClass, value);
+            if (result != null) {
+                return result;
+            }
+        }
         return value.toString();
     }
 
     default Object convertToJava(Object value, Class<?> javaClass) {
 
 
-        if (javaClass == UUID.class) {
-            return UUID.fromString(value.toString());
-        }
-        if (javaClass == Character.class) {
-            return value.toString().toCharArray()[0];
-        }
         if (javaClass == Calendar.class) {
             if (value instanceof Timestamp) {
                 Timestamp timestamp = (Timestamp) value;
@@ -169,25 +176,21 @@ public interface SQLOption {
                 calendario.setTimeInMillis(timestamp.getTime());
                 return calendario;
             }
-        }
-        if (javaClass == java.util.Date.class) {
+        } else if (javaClass == java.util.Date.class) {
             if (value instanceof Date) {
                 Date date = (Date) value;
                 return new java.util.Date(date.getTime());
+            }
+        }else {
+            Object result = StorageAPI.restoreInline(javaClass, value);
+            if (result != null) {
+                return result;
             }
         }
 
         return value;
     }
 
-    default String name(String name) {
-        return "`" + name + "`";
-    }
-
-
-    default String defaults() {
-        return " DEFAULT ";
-    }
 
 
 }

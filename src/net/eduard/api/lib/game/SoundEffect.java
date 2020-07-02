@@ -1,6 +1,5 @@
 package net.eduard.api.lib.game;
 
-import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;

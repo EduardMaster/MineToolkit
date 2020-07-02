@@ -56,7 +56,6 @@ public class DBManager {
             Class.forName("com.mysql.jdbc.Driver");
             return true;
         } catch (Exception e) {
-            // dont has mysql
             return false;
         }
     }
@@ -67,7 +66,6 @@ public class DBManager {
             return true;
 
         } catch (Exception e) {
-            // e.printStackTrace();
             return false;
         }
     }
@@ -457,7 +455,7 @@ public class DBManager {
     }
 
     /**
-     * Executa uma Atualiza§§o com um Query
+     * Executa uma Atualisação com um Query
      *
      * @param query   Query Pesquisa
      * @param objects Objetos
@@ -838,8 +836,5 @@ public class DBManager {
         public void setId(int id) {
             this.id = id;
         }
-
     }
-
-
 }

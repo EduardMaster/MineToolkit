@@ -1,6 +1,5 @@
 package net.eduard.api.lib.click;
 
-import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

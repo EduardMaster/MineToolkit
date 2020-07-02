@@ -119,13 +119,19 @@ public class StorageObject extends StorageBase {
 
         if (isInline()) {
             if (store != null) {
-                debug(">> INLINE CUSTOM " + data);
                 instance = store.restore(data.toString());
 
-            } else {
+            }
+            if (instance == null){
                 debug(">> INLINE  " + data);
                 instance = new StorageInline(getInfo().clone()).restore(data);
+            }else{
+                debug(">> INLINE CUSTOM " + data);
             }
+
+
+
+
 
             return instance;
         }
@@ -258,20 +264,24 @@ public class StorageObject extends StorageBase {
             debug("<< REFERENCE " + text);
             return text;
         }
-        if (isInline()) {
-            if (store != null) {
-                Object result = store.store(data);
-                debug("<< INLINE CUSTOM " + result);
-                return result;
-            } else {
-                debug("<< INLINE " + data);
-                return new StorageInline(getInfo().clone()).store(data);
-            }
-        }
         Class<?> wrapper = Extra.getWrapper(claz);
         if (wrapper!=null){
             return data;
         }
+        if (isInline()) {
+
+            Object result = null;
+            if (store != null) {
+                result = store.store(data);
+                debug("<< INLINE CUSTOM " + result);
+            } if (result == null) {
+                debug("<< INLINE " + data);
+                return new StorageInline(getInfo().clone()).store(data);
+            }else{
+                return result;
+            }
+        }
+
         try {
             Map<String, Object> map = new LinkedHashMap<>();
             if (isIndentifiable()) {

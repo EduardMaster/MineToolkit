@@ -52,6 +52,20 @@ open class Menu : EventsManager, Copyable, PagedMenu {
             Mine.newItem(Material.ARROW, "§aPróxima Página", 1, 0, "§2Clique para ir para a próxima página"), 9, 2)
     var buttons = mutableListOf<MenuButton>()
 
+    fun a (){
+
+        val p = Product()
+        val c = p.apply {
+
+        }
+        val d = p.let {  true  }
+        val e = p.also {
+
+        }
+
+
+    }
+
     @Transient
     var effect: ClickEffect = MenuButton.NO_ACTION
 

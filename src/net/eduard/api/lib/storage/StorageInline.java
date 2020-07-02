@@ -13,197 +13,204 @@ import net.eduard.api.lib.storage.references.ReferenceValue;
 
 public class StorageInline extends StorageBase {
 
-	public StorageInline(StorageInfo info) {
-		super(info);
-	}
+    public StorageInline(StorageInfo info) {
+        super(info);
+    }
 
-	@Override
-	public Object restore(Object data) {
-		if (data == null)
-			return null;
-		Object resultadoFinal = null;
-//		if (data == null) {
-		try {
-			resultadoFinal = getStore().newInstance();
-		} catch (Exception ex) {
-			debug(">> INLINE INSTANCE INVALID");
-//			ex.printStackTrace();
-			return null;
-		}
-		if (resultadoFinal == null)
-			return null;
-//		} else {
-//			resultadoFinal = data;
-//		}
-		if (data instanceof String) {
-			String line = (String) data;
-			String[] split = line.split(";");
-			int index = 0;
-			for (Field field : getType().getDeclaredFields()) {
-				if (Modifier.isTransient(field.getModifiers())) {
-					continue;
-				}
-				if (Modifier.isStatic(field.getModifiers()))
-					continue;
-				if (Modifier.isFinal(field.getModifiers()))
-					continue;
-				field.setAccessible(true);
+    @Override
+    public Object restore(Object data) {
+        if (data == null)
+            return null;
+        Object resultadoFinal = null;
+        try {
+            resultadoFinal = getStore().newInstance();
 
-				try {
-					Storable store = StorageAPI.getStore(field.getType());
-					Object fieldFinalValue = split[index];
+        } catch (Exception ex) {
+        }
+        if (resultadoFinal == null) {
+            try {
+                resultadoFinal = getType().newInstance();
+            } catch (Exception ex) {
+            }
+        }
+        if (resultadoFinal == null) {
+            debug(">> INLINE INSTANCE INVALID");
+            return null;
+        }
 
-					if (fieldFinalValue.equals("-")) {
-						fieldFinalValue = null;
-					} else if (fieldFinalValue.toString().isEmpty()) {
+        if (data instanceof String) {
+            String line = (String) data;
+            String[] split = line.split(";");
+            int index = 0;
+            for (Field field : getType().getDeclaredFields()) {
+                if (Modifier.isTransient(field.getModifiers())) {
+                    continue;
+                }
+                if (Modifier.isNative(field.getModifiers())) {
+                    continue;
+                }
+                if (Modifier.isStatic(field.getModifiers()))
+                    continue;
+                if (Modifier.isFinal(field.getModifiers()))
+                    continue;
+                field.setAccessible(true);
 
-						fieldFinalValue = new ArrayList<>();
-					}
+                try {
+                    Storable store = StorageAPI.getStore(field.getType());
 
-					else if (Extra.isList(field.getType())) {
+                    Object fieldFinalValue = split[index];
+                    debug("SPLIT PART " + fieldFinalValue + " - " + index);
+                    if (fieldFinalValue.equals("-")) {
+                        fieldFinalValue = null;
+                    } else if (fieldFinalValue.toString().isEmpty()) {
 
-						Class<?> typeKey = Extra.getTypeKey(field.getGenericType());
-						String[] subSplit = fieldFinalValue.toString().split(",");
-						List<Object> list = new ArrayList<>();
-						for (String pedaco : subSplit) {
-							if (pedaco.isEmpty())
-								continue;
-							list.add(StorageAPI.transform(pedaco, typeKey));
-						}
-						fieldFinalValue = list;
-					} else if (Extra.isMap(field.getType())) {
+                        fieldFinalValue = new ArrayList<>();
+                    } else if (Extra.isList(field.getType())) {
 
-						Class<?> typeKey = Extra.getTypeKey(field.getGenericType());
-						Class<?> typeValue = Extra.getTypeValue(field.getGenericType());
-						String[] subSplit = fieldFinalValue.toString().split(",");
-						Map<Object, Object> mapa = new HashMap<>();
-						for (String pedaco : subSplit) {
-							String[] corteNoPedaco = pedaco.split("=");
-							Object chave = StorageAPI.transform(corteNoPedaco[0], typeKey);
-							Object value = StorageAPI.transform(corteNoPedaco[1], typeValue);
-							mapa.put(chave, value);
-						}
-						fieldFinalValue = mapa;
-					} else if (store != null) {
+                        Class<?> typeKey = Extra.getTypeKey(field.getGenericType());
+                        String[] subSplit = fieldFinalValue.toString().split(",");
+                        List<Object> list = new ArrayList<>();
+                        for (String pedaco : subSplit) {
+                            if (pedaco.isEmpty())
+                                continue;
+                            list.add(StorageAPI.transform(pedaco, typeKey));
+                        }
+                        fieldFinalValue = list;
+                    } else if (Extra.isMap(field.getType())) {
 
-						StorageObject storage = new StorageObject(getInfo().clone());
-						storage.setField(field);
-						storage.setType(field.getType());
-						storage.updateByType();
-						storage.updateByStoreClass();
-						storage.updateByField();
+                        Class<?> typeKey = Extra.getTypeKey(field.getGenericType());
+                        Class<?> typeValue = Extra.getTypeValue(field.getGenericType());
+                        String[] subSplit = fieldFinalValue.toString().split(",");
+                        Map<Object, Object> mapa = new HashMap<>();
+                        for (String pedaco : subSplit) {
+                            String[] corteNoPedaco = pedaco.split("=");
+                            Object chave = StorageAPI.transform(corteNoPedaco[0], typeKey);
+                            Object value = StorageAPI.transform(corteNoPedaco[1], typeValue);
+                            mapa.put(chave, value);
+                        }
+                        fieldFinalValue = mapa;
+                    } else if (store != null) {
+
+                        StorageObject storage = new StorageObject(getInfo().clone());
+                        storage.setField(field);
+                        storage.setType(field.getType());
+                        storage.updateByType();
+                        storage.updateByStoreClass();
+                        storage.updateByField();
+                        storage.setInline(true);
+                        StringBuilder b = new StringBuilder();
+                        String currentText = fieldFinalValue.toString();
 
 
-						if (storage.isInline()) {
-							int length = index + field.getType().getDeclaredFields().length;
+                        boolean ended = false;
+                        while (true) {
+                            currentText = split[index];
+                            ended = currentText.endsWith("}");
+                            currentText = currentText.replace("{", "");
+                            if (ended) {
+                                currentText = currentText.replace("}", "");
+                            }
+                            b.append((currentText) + ";");
 
-							StringBuilder b = new StringBuilder();
-							while (index < length) {
-								b.append(split[index] + ";");
-								index++;
-							}
-							fieldFinalValue = storage.restore(b.toString());
-						} else if (storage.isReference()) {
-							if (fieldFinalValue.toString().contains(StorageAPI.REFER_KEY)) {
-								StorageAPI.newReference(new ReferenceValue(
-										(int) Extra.toInt(fieldFinalValue.toString().split(StorageAPI.REFER_KEY)[1]),
-										field, resultadoFinal));
-//							b.append(getAlias(fieldValue.getClass()) + StorageAPI.REFER_KEY
-//									+ StorageAPI.getIdByObject(fieldValue));
-//							StorageAPI.newReference(new ReferenceValue(id, field, resultadoFinal));
-								fieldFinalValue = null;
-							}
-						}
 
-					} else if (Extra.getWrapper(field.getType()) != null) {
-						fieldFinalValue = StorageAPI.transform(fieldFinalValue, Extra.getWrapper(field.getType()));
-					} else {
-						fieldFinalValue = null;
-					}
-					field.set(resultadoFinal, fieldFinalValue);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				index++;
-			}
-		}
-		return resultadoFinal;
+                            if (ended) break;
+                            else index++;
+                        }
+                        b.deleteCharAt(b.length() - 1);
+                        debug("TRYING TO RESTORE A INLINE INSIDE INLINE");
+                        debug("FOR THIS TEXT: " + b.toString());
+                        fieldFinalValue = storage.restore(b.toString());
 
-	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object store(Object data) {
-		Class<? extends Object> c = getType();
-		StringBuilder b = new StringBuilder();
-		for (Field field : c.getDeclaredFields()) {
-			field.setAccessible(true);
-			if (Modifier.isTransient(field.getModifiers())) {
-				continue;
-			}
-			if (Modifier.isStatic(field.getModifiers()))
-				continue;
-			if (Modifier.isFinal(field.getModifiers()))
-				continue;
-			try {
-				Object fieldValue = field.get(data);
-				if (fieldValue == null) {
-					b.append("-;");
+                    } else if (Extra.isWrapper(field.getType())) {
+                        fieldFinalValue = StorageAPI.transform(fieldFinalValue, Extra.getWrapper(field.getType()));
+                    } else {
+                        fieldFinalValue = null;
+                    }
+                    field.set(resultadoFinal, fieldFinalValue);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                index++;
+            }
+        }
+        return resultadoFinal;
 
-				} else {
-					Storable store = StorageAPI.getStore(fieldValue.getClass());
-					if (Extra.isList(field.getType())) {
-						int index = 0;
-						for (Object object : (List<Object>) fieldValue) {
-							if (index > 0) {
-								b.append(",");
-							} else
-								index++;
-							b.append(object);
-						}
+    }
 
-					} else if (Extra.isMap(field.getType())) {
-						int index = 0;
-						for (Entry<Object, Object> entrada : ((Map<Object, Object>) fieldValue).entrySet()) {
-							if (index > 0) {
-								b.append(",");
-							} else
-								index++;
-							b.append(entrada.getKey() + "=" + entrada.getValue());
-						}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object store(Object data) {
+        Class<? extends Object> c = getType();
+        StringBuilder b = new StringBuilder();
 
-					} else if (store != null) {
+        for (Field field : c.getDeclaredFields()) {
 
-						StorageObject storage = new StorageObject(getInfo().clone());
-						storage.setField(field);
-						storage.setType(fieldValue.getClass());
-						storage.updateByType();
-						storage.updateByStoreClass();
-						storage.updateByField();
+            if (Modifier.isTransient(field.getModifiers())) {
+                continue;
+            }
+            if (Modifier.isStatic(field.getModifiers()))
+                continue;
+            if (Modifier.isNative(field.getModifiers()))
+                continue;
+            if (Modifier.isFinal(field.getModifiers()))
+                continue;
+            field.setAccessible(true);
+            Class<?> clz = field.getType();
+            try {
+                Object fieldValue = field.get(data);
+                if (fieldValue == null) {
+                    b.append("-;");
 
-						if (storage.isInline()) {
-							debug("salvando inline dentro de inline " +fieldValue);
+                } else {
 
-							Object r =   storage.store(fieldValue);
-							debug("resultado inline "+r);
-							b.append(r);
-							continue;
-						} else if (storage.isReference()) {
-							b.append(getAlias(fieldValue.getClass()) + StorageAPI.REFER_KEY
-									+ StorageAPI.getIdByObject(fieldValue));
-						}
-					} else {
-						b.append(fieldValue);
-					}
-					b.append(";");
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+                    Storable store = StorageAPI.getStore(fieldValue.getClass());
+                    if (Extra.isWrapper(clz)) {
+                        b.append(fieldValue);
+                    } else if (Extra.isList(field.getType())) {
+                        int index = 0;
+                        for (Object object : (List<Object>) fieldValue) {
+                            if (index > 0) {
+                                b.append(",");
+                            } else
+                                index++;
+                            b.append(object);
+                        }
 
-		}
-		return b.toString();
-//		return data;
-	}
+                    } else if (Extra.isMap(field.getType())) {
+                        int index = 0;
+                        for (Entry<Object, Object> entrada : ((Map<Object, Object>) fieldValue).entrySet()) {
+                            if (index > 0) {
+                                b.append(",");
+                            } else
+                                index++;
+                            b.append(entrada.getKey() + "=" + entrada.getValue());
+                        }
+
+                    } else {
+                        b.append("{");
+                        StorageObject storage = new StorageObject(getInfo().clone());
+                        storage.setField(field);
+                        storage.setType(clz);
+                        storage.updateByType();
+                        storage.updateByStoreClass();
+                        storage.updateByField();
+                        storage.setInline(true);
+
+                        Object result = storage.store(fieldValue);
+                        b.append(result);
+                        b.append("}");
+
+                    }
+                    b.append(";");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }
+
+        return b.toString();
+    }
 
 }

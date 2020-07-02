@@ -17,7 +17,15 @@ public class TestSQLManager {
         dbManager.closeConnection();
     }
     public static void testComplexEntityTable(SQLManager manager){
+
+
+        manager.deleteTable(ComplexEntity.class);
         manager.createTable(ComplexEntity.class);
+        ComplexEntity dado = new ComplexEntity();
+        manager.insertData(dado);
+        ComplexEntity result = manager.getData(ComplexEntity.class, 1);
+
+        System.out.println(result.toString());
 
     }
     public static void testPlayerDataTable(SQLManager manager){

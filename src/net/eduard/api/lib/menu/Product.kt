@@ -19,6 +19,23 @@ open class Product(name: String = "Produto",
     var tradeType = TradeType.BUYABLE
     var permission: String = "produto.permissao"
     var commands: List<String> = ArrayList()
+    var upgrades = mutableListOf<ProductUpgrade>()
+
+    fun hasBought(player: Player) = player.hasPermission(permission)
+
+    fun hasBoughtAllUpgrades(player: Player): Boolean {
+        if (!hasBought(player))return false
+        for (upgrade in upgrades){
+            if (!upgrade.hasBought(player))return false
+        }
+        return true
+    }
+    fun getNextUpgrade(player: Player) : ProductUpgrade? {
+        for (upgrade in upgrades){
+            if (!upgrade.hasBought(player)) return upgrade
+        }
+        return null
+    }
 
     @Transient
     lateinit var realProduct: Any

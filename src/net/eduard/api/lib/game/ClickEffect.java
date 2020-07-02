@@ -13,7 +13,4 @@ import org.bukkit.inventory.ItemStack;
 public interface ClickEffect {
 	 void onClick(InventoryClickEvent event, int page);
 
-	 default void onClick(Player player, int page, int slot, ItemStack item) {
-
-	}
 }

@@ -14,7 +14,6 @@ public class StorageMap extends StorageBase {
 		super(info);
 		this.keyType = Extra.getTypeKey(getField().getGenericType());
 		this.valueType = Extra.getTypeValue(getField().getGenericType());
-		// TODO Auto-generated constructor stub
 	}
 
 	private Class<?> keyType;

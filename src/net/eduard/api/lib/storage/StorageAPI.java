@@ -105,6 +105,31 @@ public class StorageAPI {
         storeSystem.updateByStoreClass();
         return storeSystem.store(object);
     }
+    public static String storeInline(Class<?> claz, Object object){
+        autoRegisterClass(claz);
+        StorageObject storeSystem = new StorageObject(new StorageInfo(claz));
+        storeSystem.updateByType();
+        storeSystem.updateByStoreClass();
+        storeSystem.setInline(true);
+        Object result = storeSystem.store(object);
+        if (result == null)return null;
+        return result.toString();
+    }
+    public static Object restoreInline(Class<?> claz, Object object) {
+        if (claz!=null){
+            autoRegisterClass(claz);
+        }
+        StorageObject storeSystem = new StorageObject(new StorageInfo(claz));
+        storeSystem.setIndentifiable(true);
+
+
+        if (claz != null) {
+            storeSystem.updateByType();
+            storeSystem.updateByStoreClass();
+        }
+        storeSystem.setInline(true);
+        return storeSystem.restore(object);
+    }
 
     public static Object restore(Class<?> claz, Object object) {
         if (claz!=null){
@@ -288,7 +313,7 @@ public class StorageAPI {
 
             return claz.getSimpleName();
         }
-        catch (Exception ex){
+        catch (Error err){
             return claz.toString();
         }
     }

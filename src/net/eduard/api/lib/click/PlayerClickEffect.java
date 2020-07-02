@@ -6,6 +6,6 @@ import org.bukkit.inventory.ItemStack;
 
 public interface PlayerClickEffect {
 	
-	public abstract void onClick(Player player,Block block,ItemStack item);
+	void onClick(Player player, Block block, ItemStack item);
 
 }

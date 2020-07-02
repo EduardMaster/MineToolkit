@@ -63,7 +63,7 @@ public class MySQLOption implements SQLOption {
         } else if (UUID.class.equals(javaClass)) {
             return "VARCHAR(40)";
         }
-        return "TEXT";
+        return "VARCHAR(200)";
 
     }
 
