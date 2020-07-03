@@ -37,7 +37,7 @@ public class Minecraft_v1_8_R3 implements Minecraft {
 
 	@Override
 	public void setHeadSkin(ItemStack head, String texture, String signature) {
-		// TODO Auto-generated method stub
+
 
 	}
 

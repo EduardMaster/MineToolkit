@@ -52,19 +52,7 @@ open class Menu : EventsManager, Copyable, PagedMenu {
             Mine.newItem(Material.ARROW, "§aPróxima Página", 1, 0, "§2Clique para ir para a próxima página"), 9, 2)
     var buttons = mutableListOf<MenuButton>()
 
-    fun a (){
 
-        val p = Product()
-        val c = p.apply {
-
-        }
-        val d = p.let {  true  }
-        val e = p.also {
-
-        }
-
-
-    }
 
     @Transient
     var effect: ClickEffect = MenuButton.NO_ACTION
@@ -406,7 +394,7 @@ open class Menu : EventsManager, Copyable, PagedMenu {
 
                 if (button != null) {
                     debug("Button is not null")
-                    button.click.onClick(e, slot)
+                    button.click.accept(e)
                     if (button.effects != null) {
                         debug("Button make Editable Effects")
                         button.effects?.effect(player)
@@ -419,7 +407,7 @@ open class Menu : EventsManager, Copyable, PagedMenu {
                 }
                 if (effect != null) {
                     debug("Played menu effect")
-                    effect?.onClick(e, page)
+                    effect?.accept(e)
                 }
             }
         }

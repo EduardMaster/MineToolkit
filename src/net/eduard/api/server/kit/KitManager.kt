@@ -50,7 +50,7 @@ class KitManager : EventsManager() {
         globalItems.add(ItemStack(Material.STONE_SWORD))
         kitsSelection.openWithItem = null
         kitsShop.openWithItem = null
-        kitsSelection.effect = ClickEffect { event, page ->
+        kitsSelection.effect = ClickEffect { event ->
             if (event.whoClicked is Player) {
                 val player = event.whoClicked as Player
                 val item = event.currentItem
@@ -64,7 +64,7 @@ class KitManager : EventsManager() {
 
             }
         }
-        kitsShop.effect = ClickEffect { event, page ->
+        kitsShop.effect = ClickEffect { event ->
             if (event.whoClicked is Player) {
                 val player = event.whoClicked as Player
 

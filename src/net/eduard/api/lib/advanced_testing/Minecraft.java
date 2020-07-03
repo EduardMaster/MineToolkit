@@ -16,33 +16,33 @@ public interface Minecraft {
 	 * @param packet Pacote
 	 * @param player Jogador
 	 */
-	public void sendPacket(Object packet, Player player);
+	void sendPacket(Object packet, Player player);
 	/**
 	 * Envia um Pacote de dados para o jogador
 	 * @param player Jogador
 	 * @param packet Pacote
 	 */
-	public default void sendPacket(Player player,Object packet) {
+	default void sendPacket(Player player, Object packet) {
 		sendPacket(packet, player);
 	}
 	/**
 	 * Inicia automaticamente uma istancia da versão atual do servidor
 	 * @return Instancia nova feita com Reflection
 	 */
-	public static Minecraft newInstance() {
+	static Minecraft newInstance() {
 		try {
 			return (Minecraft) Class.forName("net.eduard.api.lib.advanced_testing.Minecraft_" + MineReflect.getVersion())
 					.newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public void sendActionBar(Player player, String message);
+	void sendActionBar(Player player, String message);
 
-	public default void sendPacketsToAll(Object... packets) {
+	default void sendPacketsToAll(Object... packets) {
 		for (Player player : Mine.getPlayers()) {
 			for (Object packet : packets) {
 				sendPacket(packet, player);
@@ -50,7 +50,7 @@ public interface Minecraft {
 		}
 	}
 
-	public default void sendPacketsToOthers(Player player, Object... packets) {
+	default void sendPacketsToOthers(Player player, Object... packets) {
 		for (Player playerLoop : Mine.getPlayers()) {
 			if (playerLoop.equals(player))continue;
 			if (playerLoop.canSee(player) ) {
@@ -61,18 +61,18 @@ public interface Minecraft {
 		}
 	}
 
-	public void setHeadSkin(ItemStack head, String texture, String signature);
+	void setHeadSkin(ItemStack head, String texture, String signature);
 
-	public void performRespawn(Player player);
+	void performRespawn(Player player);
 
-	public void setPlayerSkin(Player player, String newSkin);
+	void setPlayerSkin(Player player, String newSkin);
 
-	public void setPlayerName(Player player, String newName);
+	void setPlayerName(Player player, String newName);
 
-	public void respawnPlayer(Player playerToRespawn);
+	void respawnPlayer(Player playerToRespawn);
 
-	public void removeFromTab(Player playerRemoved);
+	void removeFromTab(Player playerRemoved);
 
-	public void addToTab(Player playerToAdd);
+	void addToTab(Player playerToAdd);
 
 }

@@ -1,8 +1,8 @@
 package net.eduard.api.lib.game;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
+
+import java.util.function.Consumer;
 
 /**
  * Efeito quando clicar
@@ -10,7 +10,10 @@ import org.bukkit.inventory.ItemStack;
  * @author Eduard
  *
  */
-public interface ClickEffect {
-	 void onClick(InventoryClickEvent event, int page);
+public interface ClickEffect extends Consumer<InventoryClickEvent> {
+	@Deprecated
+	 default void onClick(InventoryClickEvent event, int page){
+		accept(event);
+	}
 
 }

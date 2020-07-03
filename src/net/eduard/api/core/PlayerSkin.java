@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.eduard.api.EduardAPI;
+import net.eduard.api.lib.advanced_testing.Minecraft;
 import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.MineReflect;
@@ -137,8 +138,8 @@ public class PlayerSkin  {
 
 
 
-//
-        //  Minecraft.newInstance().respawnPlayer(player);
+
+       Minecraft.newInstance().respawnPlayer(player);
       /*
         Location loc = player.getLocation();
 

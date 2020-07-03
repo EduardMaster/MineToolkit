@@ -1,4 +1,4 @@
-package net.eduard.api.lib.advanced_testing;
+package net.eduard.api.lib.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

@@ -3,6 +3,7 @@ package net.eduard.api.lib.menu
 import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.game.FakePlayer
 import net.eduard.api.lib.game.ItemBuilder
+import net.eduard.api.lib.kotlin.player
 import net.eduard.api.lib.manager.CurrencyManager
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
@@ -22,63 +23,8 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 @StorageAttributes(indentificate = true)
-open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmount), ClickEffect {
+open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmount) {
 
-    override fun onClick(event: InventoryClickEvent, page: Int) {
-        if (event.whoClicked is Player) {
-            val player = event.whoClicked as Player
-            if (event.currentItem == null) return
-            val product = getProduct(event.currentItem, player) ?: return
-            if (menuConfirmation != null) {
-                trading[player] = product.tradeType
-                confirmingTransaction[player] = product
-                menuConfirmation.open(player)
-                return
-            }
-            if ((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)
-                    && (product.tradeType === TradeType.BOTH
-                            || product.tradeType === TradeType.BUYABLE)) {
-                if (isAmountPerChat) {
-                    selectingAmount[player] = product
-                    trading[player] = TradeType.BUYABLE
-                    player.closeInventory()
-                    player.sendMessage(messageChoiceAmount.replace("\$product",
-                            "" + product.name).replace("\$trader", "comprar"))
-                    return
-                }
-                var amount = 1
-                if (event.click == ClickType.SHIFT_RIGHT) {
-                    amount = product.amount
-                    if (amount < 64) {
-                        amount = 64
-                    }
-                }
-                buy(player, product, amount.toDouble())
-            }
-            if ((event.click == ClickType.LEFT || event.click == ClickType.SHIFT_LEFT)
-                    && (product.tradeType === TradeType.BOTH
-                            || product.tradeType === TradeType.SELABLE)) {
-                if (product.product != null) {
-                    if (isAmountPerChat) {
-                        selectingAmount[player] = product
-                        trading[player] = TradeType.SELABLE
-                        player.closeInventory()
-                        player.sendMessage(messageChoiceAmount.replace("\$product",
-                                "" + product.name).replace("\$trader", "vender"))
-                        return
-                    }
-                    var amount = Mine.getTotalAmount(player.inventory, product.product)
-                    if (event.click == ClickType.LEFT) {
-                        if (amount > 64) {
-                            amount = 64
-                        }
-                    }
-                    sell(player, product, amount.toDouble())
-                }
-            }
-        }
-
-    }
 
     var currencyType = "VaultEconomy"
 
@@ -135,7 +81,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
                 "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price", "", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
         private const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
     }
-    init{
+
+    init {
         useConfirmationMenu()
     }
 
@@ -148,11 +95,11 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         val cancelButton = MenuButton("cancelar", menuConfirmation)
         cancelButton.icon = ItemBuilder(Material.WOOL).data(14).name("§c§lCANCELAR").lore("§cClique para cancelar a transação.")
         cancelButton.setPosition(7, 2)
-        cancelButton.click = ClickEffect { event: InventoryClickEvent, page: Int -> open((event.whoClicked as Player), page) }
+        cancelButton.click = ClickEffect { event -> open(event.player) }
         val productButton = MenuButton("product", menuConfirmation)
         productButton.setPosition(5, 2)
         productButton.icon = ItemBuilder(Material.STONE)
-        confirmationButton.click = ClickEffect { event: InventoryClickEvent, page: Int ->
+        confirmationButton.click = ClickEffect { event ->
             if (event.whoClicked is Player) {
                 val player = event.whoClicked as Player
                 val produto = confirmingTransaction[player]!!
@@ -356,7 +303,61 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
 
 
     init {
-        this.effect = this
+        this.effect = ClickEffect { event ->
+
+
+            val player = event.player
+            if (event.currentItem == null) return@ClickEffect
+            val product = getProduct(event.currentItem, player) ?: return@ClickEffect
+            if (menuConfirmation != null) {
+                trading[player] = product.tradeType
+                confirmingTransaction[player] = product
+                menuConfirmation.open(player)
+                return@ClickEffect
+            }
+            if ((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)
+                    && (product.tradeType === TradeType.BOTH
+                            || product.tradeType === TradeType.BUYABLE)) {
+                if (isAmountPerChat) {
+                    selectingAmount[player] = product
+                    trading[player] = TradeType.BUYABLE
+                    player.closeInventory()
+                    player.sendMessage(messageChoiceAmount.replace("\$product",
+                            "" + product.name).replace("\$trader", "comprar"))
+                    return@ClickEffect
+                }
+                var amount = 1
+                if (event.click == ClickType.SHIFT_RIGHT) {
+                    amount = product.amount
+                    if (amount < 64) {
+                        amount = 64
+                    }
+                }
+                buy(player, product, amount.toDouble())
+            }
+            if ((event.click == ClickType.LEFT || event.click == ClickType.SHIFT_LEFT)
+                    && (product.tradeType === TradeType.BOTH
+                            || product.tradeType === TradeType.SELABLE)) {
+                if (product.product != null) {
+                    if (isAmountPerChat) {
+                        selectingAmount[player] = product
+                        trading[player] = TradeType.SELABLE
+                        player.closeInventory()
+                        player.sendMessage(messageChoiceAmount.replace("\$product",
+                                "" + product.name).replace("\$trader", "vender"))
+                        return@ClickEffect
+                    }
+                    var amount = Mine.getTotalAmount(player.inventory, product.product)
+                    if (event.click == ClickType.LEFT) {
+                        if (amount > 64) {
+                            amount = 64
+                        }
+                    }
+                    sell(player, product, amount.toDouble())
+                }
+            }
+        }
     }
+
 
 }
