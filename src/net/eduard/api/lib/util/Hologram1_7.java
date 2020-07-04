@@ -1,4 +1,4 @@
-package net.eduard.api.lib.advanced_testing;
+package net.eduard.api.lib.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

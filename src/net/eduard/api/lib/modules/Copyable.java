@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Sistema de copiar objetos
+ * Sistema de copiar objetos mais funcional do que o método clone() do prório Java
  *
  * @author Eduard
  * @version 1.4
@@ -70,8 +70,7 @@ public interface Copyable {
             return null;
 
         Class<? extends Object> claz = object.getClass();
-        // System.out.println("classe a ser copiada " + object + " e array? " +
-        // claz.isArray());
+
         if (Extra.isList(claz)) {
             List<Object> list = (List<Object>) object;
             List<Object> newList = new ArrayList<>();

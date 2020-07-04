@@ -1,4 +1,4 @@
-package net.eduard.api.lib.advanced_testing;
+package net.eduard.api.lib.abstraction;
 
 import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public interface Minecraft {
 	 */
 	static Minecraft newInstance() {
 		try {
-			return (Minecraft) Class.forName("net.eduard.api.lib.advanced_testing.Minecraft_" + MineReflect.getVersion())
+			return (Minecraft) Class.forName("net.eduard.api.lib.abstraction.Minecraft_" + MineReflect.getVersion())
 					.newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 

@@ -7,6 +7,7 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.MineReflect
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 
 /**
  * Listener feito apenas para o Evento PlayerTargetEvent que ocorre a cada 1s
@@ -18,7 +19,7 @@ import org.bukkit.event.EventHandler
 class PlayerTargetAtEntityListener : EventsManager() {
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun onTarget(e: PlayerTargetEvent) {
 
         if (e.entity is Player) {

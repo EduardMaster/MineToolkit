@@ -14,12 +14,31 @@ import org.bukkit.plugin.java.JavaPlugin
 
 fun Number.format() = Extra.formatMoney(this.toDouble())
 
-fun Int.centralized() : Int {
-    while(Extra.isColumn(this,1) || Extra.isColumn(this,9)){
+fun Int.centralized(): Int {
+    while (Extra.isColumn(this, 1) || Extra.isColumn(this, 9)) {
         this.inc()
     }
     return this
 }
+
+fun String.formatColors(): String {
+    return Extra.formatColors(this)
+}
+
+
+fun Integer.chance(): Boolean {
+    return (this.toDouble()/100).chance()
+}
+fun Double.chance(): Boolean {
+   return Extra.getChance(this)
+}
+
+fun String.cut(maxSize: Int): String {
+    return Extra.cutText(this,maxSize)
+}
+fun String.lowerContains(msg: String) = Extra.contains(this,msg)
+
+
 
 
 
