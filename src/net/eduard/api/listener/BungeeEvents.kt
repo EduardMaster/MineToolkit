@@ -8,10 +8,10 @@ import net.md_5.bungee.event.EventHandler
 
 class BungeeEvents : Listener {
     @EventHandler
-    fun event(e: ServerConnectEvent?) {
+    fun event(e: ServerConnectEvent) {
     }
     @EventHandler
-    fun onJoin(e: LoginEvent?) {
+    fun onJoin(e: LoginEvent) {
         // PendingConnection p = e.getConnection();
         // info("§aLoginEvent", p);
     }
@@ -59,7 +59,7 @@ class BungeeEvents : Listener {
     }
 
     @EventHandler
-    fun onJoin(e: PreLoginEvent?) {
+    fun onJoin(e: PreLoginEvent) {
         // PendingConnection p = e.getConnection();
         // info("§aPreLoginEvent", p);
     }
@@ -72,46 +72,46 @@ class BungeeEvents : Listener {
 
      */
     @EventHandler
-    fun event(e: PermissionCheckEvent?) {
+    fun event(e: PermissionCheckEvent) {
     }
 
     @EventHandler
-    fun event(e: PlayerHandshakeEvent?) {
+    fun event(e: PlayerHandshakeEvent) {
     }
 
     @EventHandler
-    fun event(e: PlayerDisconnectEvent?) {
+    fun event(e: PlayerDisconnectEvent) {
     }
 
     @EventHandler
-    fun event(e: PluginMessageEvent?) {
+    fun event(e: PluginMessageEvent) {
     }
 
     @EventHandler
-    fun event(e: ProxyPingEvent?) {
+    fun event(e: ProxyPingEvent) {
     }
 
     @EventHandler
-    fun event(e: ServerKickEvent?) {
+    fun event(e: ServerKickEvent) {
     }
 
     @EventHandler
-    fun event(e: ServerSwitchEvent?) {
+    fun event(e: ServerSwitchEvent) {
     }
 
     @EventHandler
-    fun event(e: TargetedEvent?) {
+    fun event(e: TargetedEvent) {
     }
 
     @EventHandler
-    fun event(e: ProxyReloadEvent?) {
+    fun event(e: ProxyReloadEvent) {
     }
 
     @EventHandler
-    fun event(e: TabCompleteResponseEvent?) {
+    fun event(e: TabCompleteResponseEvent) {
     }
 
     @EventHandler
-    fun event(e: TabCompleteEvent?) {
+    fun event(e: TabCompleteEvent) {
     }
 }

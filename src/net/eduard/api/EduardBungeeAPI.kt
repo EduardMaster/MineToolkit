@@ -4,6 +4,7 @@ import net.eduard.api.command.bungee.BungeeReloadCommand
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerState
 import net.eduard.api.lib.database.DBManager
+import net.eduard.api.listener.BungeeEvents
 import net.eduard.api.server.BungeeDB
 import net.eduard.api.server.EduardBungeePlugin
 import net.md_5.bungee.BungeeCord
@@ -22,10 +23,11 @@ class EduardBungeeAPI : EduardBungeePlugin() {
         instance = this
         LibraryLoader(File(dataFolder,"libs/")).loadLibraries()
         reload()
-        registerEvents(this)
+
         val bungee = BungeeAPI.getBungee()
         bungee.plugin = this
         bungee.register()
+        BungeeCord.getInstance().getPluginManager().registerListener(this,BungeeEvents())
         BungeeCord.getInstance().getPluginManager().registerCommand(this, BungeeReloadCommand())
     }
 

@@ -201,11 +201,6 @@ class KitManager : EventsManager() {
     }
 
 
-    //	public void setKitsGui(Menu kitsSelection) {
-    //		this.kitsSelection = kitsSelection;
-    //	}
-
-
 
     fun buyKit(player: Player, kit: KitAbility) {
         if (VaultAPI.hasVault()) {
