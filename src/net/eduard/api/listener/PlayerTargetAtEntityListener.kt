@@ -21,11 +21,9 @@ class PlayerTargetAtEntityListener : EventsManager() {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onTarget(e: PlayerTargetPlayerEvent) {
+        val player = e.target
+        MineReflect.sendActionBar(e.player, Mine.getReplacers(EduardAPI.instance.message("player information"), player))
 
-        if (e.livingEntity is Player) {
-            val player = e.livingEntity as Player
-            MineReflect.sendActionBar(e.player, Mine.getReplacers(EduardAPI.instance.message("player information"), player))
-        }
     }
 
 }

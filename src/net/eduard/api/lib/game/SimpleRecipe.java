@@ -24,8 +24,8 @@ import org.bukkit.inventory.ShapelessRecipe;
  * <br>
  * net.eduard.api.gui.SimpleCraft 5.0
  * <br>
- * net.eduard.api.setup.Mine$SimpleCraft 6.0
- * @version 7.0
+ * net.eduard.api.setup.Mine$SimpleCraft
+ * @version 1.0
  * @since EduardAPI 1.0
  * @author Eduard
  *

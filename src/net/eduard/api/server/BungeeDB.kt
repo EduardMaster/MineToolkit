@@ -4,9 +4,9 @@ import java.util.UUID
 
 import net.eduard.api.lib.database.DBManager
 
-class BungeeDB(manager: DBManager) {
+class BungeeDB(var db: DBManager) {
 
-    lateinit var db: DBManager
+
 
 
 

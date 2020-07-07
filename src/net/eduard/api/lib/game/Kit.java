@@ -10,7 +10,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import net.eduard.api.lib.modules.Mine;
 
-public class Kit   {
+public class Kit {
 
     private String name;
     private long cooldown;
@@ -23,6 +23,10 @@ public class Kit   {
     private int level;
     private List<ItemStack> items = new ArrayList<>();
     private List<Kit> upgrades = new ArrayList<>();
+
+    public List<Kit> getUpgrades() {
+        return upgrades;
+    }
 
     public Kit(Kit kit, int price, int level) {
         kit.upgrades.add(this);

@@ -1593,6 +1593,7 @@ public final class Mine {
 
         List<Player> players = new ArrayList<>();
         for (Player p : location.getWorld().getPlayers()) {
+
             if (!location.getWorld().equals(p.getWorld()))
                 continue;
             if (p.getLocation().distance(location) <= range) {

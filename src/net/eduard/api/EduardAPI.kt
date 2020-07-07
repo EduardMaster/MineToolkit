@@ -6,6 +6,7 @@ import net.eduard.api.command.map.MapCommand
 import net.eduard.api.core.BukkitReplacers
 import net.eduard.api.core.InfoGenerator
 import net.eduard.api.core.PlayerSkin
+import net.eduard.api.lib.abstraction.Minecraft
 import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerAPI.BukkitControl
@@ -31,6 +32,7 @@ import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetPlayerTask
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import java.io.File
@@ -45,12 +47,12 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI: EduardPlugin()  {
+class EduardAPI : EduardPlugin() {
 
-     override fun onEnable() {
-        instance=this
-         LibraryLoader(File(dataFolder,"libs/"))
-         reloadVars()
+    override fun onEnable() {
+        instance = this
+        LibraryLoader(File(dataFolder, "libs/"))
+        reloadVars()
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
         StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
@@ -61,7 +63,6 @@ class EduardAPI: EduardPlugin()  {
         MAPS_CONFIG = Config(this, "maps/")
 
         VaultAPI.setupVault()
-
         BukkitControl.register(this)
 
         BukkitBungeeAPI.requestCurrentServer()
@@ -99,7 +100,7 @@ class EduardAPI: EduardPlugin()  {
 
         log("Ativando listeners dos Eventos")
         EduardAPIEvents().register(this)
-         SupportActivations().register(this)
+        SupportActivations().register(this)
         EduWorldEditListener().register(this)
         PlayerTargetAtEntityListener().register(this)
         //LinkadorDeItem().register(this)
@@ -114,8 +115,6 @@ class EduardAPI: EduardPlugin()  {
         BukkitReplacers()
 
 
-
-
         //		new McMMOReplacers();
         //		new MassiveFactionReplacers();
 
@@ -125,19 +124,19 @@ class EduardAPI: EduardPlugin()  {
         log("Carregado com sucesso!")
 
 
-         CurrencyController.getInstance().register(CurrencyVaultEconomy())
-         if (Mine.hasPlugin("JH_Shop")){
-             CurrencyController.getInstance().register(CurrencyJHCash())
-         }
-         if (Mine.hasPlugin("LegitPvP")){
-             CurrencyController.getInstance().register(CurrencyNetworkStoryRankupToken())
-         }
+        CurrencyController.getInstance().register(CurrencyVaultEconomy())
+        if (Mine.hasPlugin("JH_Shop")) {
+            CurrencyController.getInstance().register(CurrencyJHCash())
+        }
+        if (Mine.hasPlugin("LegitPvP")) {
+            CurrencyController.getInstance().register(CurrencyNetworkStoryRankupToken())
+        }
 
 
     }
 
 
-     override fun reload() {
+    override fun reload() {
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
@@ -189,7 +188,7 @@ class EduardAPI: EduardPlugin()  {
 
     }
 
-     override fun onDisable() {
+    override fun onDisable() {
         PlayerSkin.saveSkins()
         EduardAPI.saveMaps()
         log("Mapas salvados!")
@@ -203,6 +202,7 @@ class EduardAPI: EduardPlugin()  {
             private set
             @JvmStatic
             get
+
         /**
          * Som do rosnar do gato
          */
@@ -212,15 +212,16 @@ class EduardAPI: EduardPlugin()  {
          * Som para o Teleporte
          */
         var OPT_SOUND_TELEPORT = SoundEffect.create("ENDERMAN_TELEPORT")
+
         /**
          * Som para algum sucesso
          */
         var OPT_SOUND_SUCCESS = SoundEffect.create("LEVEL_UP")
+
         /**
          * Som para algum erro
          */
         var OPT_SOUND_ERROR = SoundEffect.create("NOTE_BASS_DRUM")
-
 
 
         /*

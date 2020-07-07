@@ -1,11 +1,8 @@
 package net.eduard.api.lib.game;
 
-import java.util.Map;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
-
-import net.eduard.api.lib.storage.Storable;
 
 public class Jump   {
 	private boolean withHigh = true;
