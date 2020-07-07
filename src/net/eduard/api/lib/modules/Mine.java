@@ -112,7 +112,6 @@ public final class Mine {
     }
 
 
-
     /**
      * Ponto de direção usado para fazer um RADAR
      *
@@ -457,7 +456,7 @@ public final class Mine {
      * @param displayName Nome do TAB
      */
     public static void changeTabName(Player player, String displayName) {
-        player.setPlayerListName(Extra.cutText( displayName,32));
+        player.setPlayerListName(Extra.cutText(displayName, 32));
     }
 
     /**
@@ -782,6 +781,7 @@ public final class Mine {
 
     /**
      * Verifica se o plugin existe se não manda mensagem para o sender
+     *
      * @param sender Sender (Quem faz o comando)
      * @param plugin Nome do Plugin
      * @return se o plugin esta no servidor ou não
@@ -798,8 +798,9 @@ public final class Mine {
 
     /**
      * Verifica se o mundo existe e esta carregado no servidor
+     *
      * @param sender Sender (Quem faz o comando)
-     * @param name Nome do Mundo
+     * @param name   Nome do Mundo
      * @return se o mundo esta carregado ou não
      */
     public static boolean existsWorld(CommandSender sender, String name) {
@@ -922,6 +923,7 @@ public final class Mine {
 
     /**
      * Retorna um RADAR
+     *
      * @param inDegrees
      * @param colorActive
      * @param colorDefault
@@ -933,6 +935,7 @@ public final class Mine {
 
     /**
      * Retorna um RADAR
+     *
      * @param inDegrees
      * @param colorActive
      * @param colorDefault
@@ -944,6 +947,7 @@ public final class Mine {
 
     /**
      * Retorna um RADAR
+     *
      * @param point
      * @param colorActive
      * @param colorDefault
@@ -956,6 +960,7 @@ public final class Mine {
 
     /**
      * Retorna um RADAR
+     *
      * @param point
      * @param colorActive
      * @param colorDefault
@@ -987,6 +992,7 @@ public final class Mine {
 
     /**
      * Retorna a localização do bloco que esta neste Local
+     *
      * @param location Local
      * @return outro Local baseado no primeiro local
      */
@@ -997,6 +1003,7 @@ public final class Mine {
 
     /**
      * Método getLocation() da classe Block retorna a localização do bloco
+     *
      * @param location Local do bloco inicial
      * @return Local do bloco final
      */
@@ -1298,9 +1305,9 @@ public final class Mine {
     }
 
 
-
     /**
      * Tenta interpretar um Tipo de Entidade apartir de um texto
+     *
      * @param entityType Tipo de Entidade
      * @return o Dado ou nulo
      */
@@ -1606,8 +1613,6 @@ public final class Mine {
     }
 
 
-
-
     public static int getRandomEmptySlot(Inventory inv) {
         if (Mine.isFull(inv)) {
             return -1;
@@ -1741,11 +1746,18 @@ public final class Mine {
     }
 
 
-
     public static Location getSpawn() {
         return Bukkit.getWorlds().get(0).getSpawnLocation();
     }
 
+    /**
+     * Retorna um alvo apartir do Jogador , onde ele estiver mirando
+     *
+     * @param entity
+     * @param entities
+     * @param <T>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static <T extends Player> T getTarget(Player entity, Iterable<T> entities) {
         if (entity == null)
@@ -1780,8 +1792,6 @@ public final class Mine {
         }
         return team;
     }
-
-
 
 
     /**
@@ -1913,8 +1923,6 @@ public final class Mine {
         return Extra.inCooldown(before, seconds);
 
     }
-
-
 
 
     /**
@@ -2516,7 +2524,7 @@ public final class Mine {
      */
     public static Inventory newInventory(String name, int size) {
 
-        return Bukkit.createInventory(null, size, Extra.cutText(name,32 ));
+        return Bukkit.createInventory(null, size, Extra.cutText(name, 32));
     }
 
     /**
@@ -2530,23 +2538,23 @@ public final class Mine {
     public static Scoreboard newScoreboard(Player player, String title, String... lines) {
 
 
-            Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
-            Objective obj = board.registerNewObjective("score", "dummy");
-            obj.setDisplayName(title);
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-            int id = 15;
-            for (String line : lines) {
-                String empty = ChatColor.values()[id - 1].toString();
-                obj.getScore(new FakePlayer(line.isEmpty() ? empty : line)).setScore(id);
-                ;
-                id--;
-                if (id == 0) {
-                    break;
-                }
+        Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective obj = board.registerNewObjective("score", "dummy");
+        obj.setDisplayName(title);
+        obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+        int id = 15;
+        for (String line : lines) {
+            String empty = ChatColor.values()[id - 1].toString();
+            obj.getScore(new FakePlayer(line.isEmpty() ? empty : line)).setScore(id);
+            ;
+            id--;
+            if (id == 0) {
+                break;
             }
+        }
 
-            player.setScoreboard(board);
-            return board;
+        player.setScoreboard(board);
+        return board;
 
 
     }
@@ -2567,6 +2575,7 @@ public final class Mine {
         }
         return true;
     }
+
     /**
      * Testa se o numero passado é da coluna expecificada
      *
@@ -2575,8 +2584,9 @@ public final class Mine {
      * @return O resultado do teste
      */
     public static boolean isColumn(int index, int colunm) {
-        return Extra.isColumn(index,colunm);
+        return Extra.isColumn(index, colunm);
     }
+
     public static boolean onlyPlayer(CommandSender sender) {
         return noConsole(sender);
     }
@@ -3105,7 +3115,7 @@ public final class Mine {
 
     public static List<Player> getPlayers() {
         Object obj = Bukkit.getOnlinePlayers();
-        if (obj instanceof  List){
+        if (obj instanceof List) {
             return (List<Player>) obj;
         }
         return Arrays.asList((Player[]) obj);
@@ -3119,7 +3129,6 @@ public final class Mine {
             }
         }
     }
-
 
 
     public static LightningStrike strike(LivingEntity living, int maxDistance) {

@@ -22,7 +22,6 @@ import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
 import net.eduard.api.lib.game.Schematic
-import net.eduard.api.lib.kotlin.format
 import net.eduard.api.listener.*
 import net.eduard.api.server.EduardPlugin
 import net.eduard.api.server.currency.CurrencyController
@@ -31,7 +30,7 @@ import net.eduard.api.server.currency.list.CurrencyNetworkStoryRankupToken
 import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
-import net.eduard.api.task.PlayerTargetTask
+import net.eduard.api.task.PlayerTargetPlayerTask
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import java.io.File
@@ -57,7 +56,6 @@ class EduardAPI: EduardPlugin()  {
         StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
         BukkitStorables.load()
         StorageAPI.startGson()
-
         log("Storables do Bukkit carregado!")
 
         MAPS_CONFIG = Config(this, "maps/")
@@ -85,7 +83,7 @@ class EduardAPI: EduardPlugin()  {
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
         // Na versão 1.16 precisa ser em Sync não pode ser Async
-        PlayerTargetTask().runTaskTimerAsynchronously(this, 20, 20)
+        PlayerTargetPlayerTask().runTaskTimerAsynchronously(this, 20, 20)
         AutoSaveAndBackupTask().runTaskTimerAsynchronously(this, 20, 20)
 
         log("Ativando comandos")

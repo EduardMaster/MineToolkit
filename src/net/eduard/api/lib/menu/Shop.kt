@@ -4,6 +4,7 @@ import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.game.FakePlayer
 import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.kotlin.player
+import net.eduard.api.lib.kotlin.sendTitle
 import net.eduard.api.lib.manager.CurrencyManager
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
@@ -41,13 +42,13 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
     var sortType = ShopSortType.BUY_PRICE_ASC
 
     @Transient
-    private val selectingAmount: MutableMap<Player, Product> = HashMap()
+    var selectingAmount: MutableMap<Player, Product> = HashMap()
 
     @Transient
     var trading: MutableMap<Player, TradeType> = HashMap()
 
     @Transient
-    val confirmingTransaction: MutableMap<Player, Product> = HashMap()
+    val selectedProduct: MutableMap<Player, Product> = HashMap()
     var isAmountPerChat = false
     var isPermissionShop = false
     var buyTemplate: MutableList<String> = ArrayList(TEMPLATE_BUY)
@@ -60,30 +61,66 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
     var messageWithoutItems = MESSAGE_WITHOUT_ITEMS
     var messageWithoutBalance = MESSAGE_WITHOUT_BALANCE
     var messageWithoutPermission = MESSAGE_WITHOUT_PERMISSION
+    var messageUpgradeBought = MESSAGE_UPGRADE_BOUGHT
     var textAlreadyBought = TEXT_ALREADY_BOUGHT
     var menuConfirmation: Menu = Menu("Confirmar Transação", 3)
 
 
     companion object {
-        private var MESSAGE_CHOICE_AMOUNT = "§aEscolha uma quantidade para \$trader este produto \$product"
-        private var MESSAGE_BOUGHT_ITEM = "§aVoce adquiriu \$amount (\$product) produto(s) da Loja!"
-        private var MESSAGE_SOLD_ITEM = "§aVocê vendeu \$amount (\$product) produtos(s) para a loja!"
-        private var MESSAGE_WITHOUT_ITEMS = "§cVoce não tem items suficiente!"
-        private var MESSAGE_WITHOUT_BALANCE = "§cVoce não tem dinheiro suficiente!"
-        private var MESSAGE_WITHOUT_PERMISSION = "§cVoce não tem permissão para comprar este produto!"
-        private var MESSAGE_ALREADY_BOUGHT = "§cVocê já comprou este produto."
-        private var TEXT_ALREADY_BOUGHT = "§a§lDESBLOQUEADO"
-        private var TEMPLATE_BUY = Arrays.asList("§fCompre o produto §e\$product_name",
+        var MESSAGE_CHOICE_AMOUNT = "§aEscolha uma quantidade para \$trader este produto \$product"
+        var MESSAGE_BOUGHT_ITEM = "§aVoce adquiriu \$amount (\$product) produto(s) da Loja!"
+        var MESSAGE_SOLD_ITEM = "§aVocê vendeu \$amount (\$product) produtos(s) para a loja!"
+        var MESSAGE_WITHOUT_ITEMS = "§cVoce não tem items suficiente!"
+        var MESSAGE_WITHOUT_BALANCE = "§cVoce não tem dinheiro suficiente!"
+        var MESSAGE_WITHOUT_PERMISSION = "§cVoce não tem permissão para comprar este produto!"
+        var MESSAGE_ALREADY_BOUGHT = "§cVocê já comprou este produto."
+        var MESSAGE_UPGRADE_BOUGHT = "§cVocê comprou evolução do \$product para o nível \$level"
+        var TEXT_ALREADY_BOUGHT = "§a§lDESBLOQUEADO"
+
+        var TEMPLATE_BUY = Arrays.asList("§fCompre o produto §e\$product_name",
                 "§2Quantidade: §a\$product_stock", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
-        private var TEMPLATE_SELL = Arrays.asList("§fVende o produto: §e\$product_name",
+        var TEMPLATE_SELL = Arrays.asList("§fVende o produto: §e\$product_name",
                 "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price")
-        private var TEMPLATE_BUY_SELL = Arrays.asList("§fCompra e venda de: §e\$product_name",
+        var TEMPLATE_BUY_SELL = Arrays.asList("§fCompra e venda de: §e\$product_name",
                 "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price", "", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
-        private const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
+        const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
     }
 
-    init {
-        useConfirmationMenu()
+
+    var menuUpgrades = Menu("Lista de Upgrades", 6)
+
+    fun useUpgradesMenu() {
+        menuUpgrades.superiorMenu = this
+        menuUpgrades.register(pluginInstance)
+        val upgradeButton = MenuButton("upgrade", menuUpgrades)
+        upgradeButton.setPosition(3, 2)
+        upgradeButton.icon = ItemBuilder(Material.ANVIL).name("§aEvoluir")
+
+        val productButton = MenuButton("product", menuConfirmation)
+        productButton.setPosition(5, 2)
+        productButton.icon = ItemBuilder(Material.STONE)
+        upgradeButton.click = ClickEffect { event ->
+            val p = event.player
+            val fake = FakePlayer(p)
+            val product = selectedProduct[p]!!
+            val nextUpgrade = product.getNextUpgrade(p)
+            if (nextUpgrade != null) {
+                if (this.currency!!.contains(fake, nextUpgrade.price)) {
+
+                    this.currency!!.remove(fake, nextUpgrade.price)
+                    VaultAPI.getPermission().playerAdd(p, nextUpgrade.permission)
+                    p.sendMessage(messageUpgradeBought
+                            .replace("\$product_name", nextUpgrade.displayName)
+                            .replace("\$product", nextUpgrade.name)
+
+                            .replace("\$level", "" + nextUpgrade.level))
+                } else {
+                    p.sendMessage(messageWithoutBalance)
+                }
+            } else {
+                p.sendMessage("§cTodos os upgrades já foram adquiridos.")
+            }
+        }
     }
 
     fun useConfirmationMenu() {
@@ -100,16 +137,16 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         productButton.setPosition(5, 2)
         productButton.icon = ItemBuilder(Material.STONE)
         confirmationButton.click = ClickEffect { event ->
-            if (event.whoClicked is Player) {
-                val player = event.whoClicked as Player
-                val produto = confirmingTransaction[player]!!
-                val type = trading[player]!!
-                if (type == TradeType.BUYABLE) {
-                    buy(player, produto, 1.0)
-                } else if (type == TradeType.SELABLE) {
-                    sell(player, produto, 1.0)
-                }
+
+            val player = event.player
+            val produto = selectedProduct[player]!!
+            val type = trading[player]!!
+            if (type == TradeType.BUYABLE) {
+                buy(player, produto, 1.0)
+            } else if (type == TradeType.SELABLE) {
+                sell(player, produto, 1.0)
             }
+
         }
     }
 
@@ -119,9 +156,32 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
             val player = e.player as Player
 
             if (menuConfirmation.isOpen(player)) {
+
                 val productButton = menuConfirmation.getButton("product")!!
-                val product = confirmingTransaction[player]!!
+
+                val product = selectedProduct[player]!!
                 e.inventory.setItem(productButton.index, product.icon)
+                if (isPermissionShop) {
+                    if (product.hasBought(player)) {
+                        e.isCancelled = true
+                        menuUpgrades.open(player)
+                    }
+                }
+
+            } else if (menuUpgrades.isOpen(player)) {
+                val product = selectedProduct[player]!!
+                var slot = Extra.getIndex(2, 3)
+                for (upgrade in product.upgrades) {
+                    var icon = ItemBuilder(Material.STAINED_GLASS_PANE).data(14)
+                            .name(upgrade.displayName)
+                    if (upgrade.hasBought(player)) {
+                        icon.data(4)
+                    }
+                    e.inventory.setItem(slot, icon)
+                    slot++
+
+
+                }
             }
 
         }
@@ -264,7 +324,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         }
         Mine.remove(player.inventory, product.product, evento.amount.toInt())
         player.sendMessage(messageSoldItem.replace("\$amount", "" + amount).replace("\$product",
-                "" + product.name))
+                product.name))
         currency!!.add(fake, finalPrice)
     }
 
@@ -303,6 +363,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
 
 
     init {
+        useConfirmationMenu()
+        useUpgradesMenu()
         this.effect = ClickEffect { event ->
 
 
@@ -311,7 +373,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
             val product = getProduct(event.currentItem, player) ?: return@ClickEffect
             if (menuConfirmation != null) {
                 trading[player] = product.tradeType
-                confirmingTransaction[player] = product
+                selectedProduct[player] = product
+
                 menuConfirmation.open(player)
                 return@ClickEffect
             }

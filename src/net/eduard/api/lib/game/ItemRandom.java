@@ -5,9 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.storage.Storable;
 
-public class ItemRandom implements Storable {
+public class ItemRandom  {
 
 	private int minAmount = 1;
 

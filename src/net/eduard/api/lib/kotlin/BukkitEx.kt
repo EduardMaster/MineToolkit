@@ -14,10 +14,27 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.Crops
 import org.bukkit.plugin.java.JavaPlugin
 
+fun Listener.register() {
+    register(javaClass.plugin)
+}
+
 fun Listener.register(plugin: JavaPlugin) = Bukkit.getPluginManager().registerEvents(this, plugin)
-fun CommandExecutor.register(cmd : String, plugin: JavaPlugin){
+
+fun CommandExecutor.register(cmd: String, plugin: JavaPlugin) {
     plugin.getCommand(cmd).executor = this
 }
+
+fun CommandExecutor.register(cmd: String) {
+    register(cmd, javaClass.plugin)
+}
+
+val Class<*>.plugin: JavaPlugin
+    get() {
+        if (JavaPlugin::class.java.isAssignableFrom(this)) {
+            return JavaPlugin.getProvidingPlugin(this)
+        }
+        return JavaPlugin.getPlugin(this as Class<out JavaPlugin>) as JavaPlugin
+    }
 
 fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
 

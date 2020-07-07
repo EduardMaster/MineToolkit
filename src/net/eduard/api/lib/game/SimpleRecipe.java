@@ -12,7 +12,7 @@ import org.bukkit.inventory.ShapelessRecipe;
 /**
  * Craft simples
  * <br><br>
- * V Antigas:
+ * Versões Antigas:
  * <br>
  * net.eduard.craft.CraftSetup1 1.0
  * <br>

@@ -8,8 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 
-import net.eduard.api.lib.storage.Storable;
-
 /**
  * Representa um Craft sendo montado quais itens precisam ter para craftar este item
  * @version 2.0

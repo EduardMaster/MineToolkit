@@ -1,161 +1,157 @@
 package net.eduard.api.lib.game;
 
-import java.util.Map;
 
 import net.eduard.api.lib.modules.MineReflect;
-import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.modules.Extra;
-import net.eduard.api.lib.storage.Storable;
 
-public class Particle  {
+public class Particle {
 
-	private Location location;
+    private Location location;
 
-	private int amount;
+    private int amount;
 
-	private ParticleType particle;
+    private ParticleType particle;
 
-	private float speed;
+    private float speed;
 
-	private float xRandom;
+    private float xRandom;
 
-	private float yRandom;
+    private float yRandom;
 
-	private float zRandom;
-public Particle() {
-}
-	public Particle(ParticleType type, Location location, int amount) {
-		setLocation(location);
-		setAmount(amount);
-		setParticle(type);
-	}
+    private float zRandom;
 
-	public Particle(ParticleType type, Location location, int amount, float random, float speed) {
+    public Particle() {
+    }
 
-		this(type, location, amount);
-		setxRandom(random);
-		setyRandom(random);
-		setzRandom(random);
-		setSpeed(speed);
-	}
+    public Particle(ParticleType type, Location location, int amount) {
+        setLocation(location);
+        setAmount(amount);
+        setParticle(type);
+    }
 
-	public Particle(ParticleType type, Location location, int amount, float xRandom, float yRandom, int zRandom) {
+    public Particle(ParticleType type, Location location, int amount, float random, float speed) {
 
-		this(type, location, amount);
-		setxRandom(xRandom);
-		setyRandom(yRandom);
-		setzRandom(zRandom);
-	}
+        this(type, location, amount);
+        setxRandom(random);
+        setyRandom(random);
+        setzRandom(random);
+        setSpeed(speed);
+    }
 
-	public Particle(ParticleType type, Location location, int amount, float xRandom, float yRandom, int zRandom,
-			float speed) {
+    public Particle(ParticleType type, Location location, int amount, float xRandom, float yRandom, int zRandom) {
 
-		this(type, location, amount, xRandom, yRandom, zRandom);
-		setSpeed(speed);
-	}
+        this(type, location, amount);
+        setxRandom(xRandom);
+        setyRandom(yRandom);
+        setzRandom(zRandom);
+    }
 
-	public Particle create() {
-		try {
-			MineReflect.sendPackets(getPacket());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    public Particle(ParticleType type, Location location, int amount, float xRandom, float yRandom, int zRandom,
+                    float speed) {
 
-		return this;
-	}
+        this(type, location, amount, xRandom, yRandom, zRandom);
+        setSpeed(speed);
+    }
 
-	private Object getPacket() throws Exception {
+    public Particle create() {
+        try {
+            MineReflect.sendPackets(getPacket());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return Extra.getNew(MineReflect.classPacketPlayOutWorldParticles, particle.getParticleName(), (float) location.getX(),
-				(float) location.getY(), (float) location.getZ(), xRandom, yRandom, zRandom, speed, amount);
-	}
+        return this;
+    }
 
-	public Particle create(Player p) {
+    private Object getPacket() throws Exception {
 
+        return Extra.getNew(MineReflect.classPacketPlayOutWorldParticles, particle.getParticleName(), (float) location.getX(),
+                (float) location.getY(), (float) location.getZ(), xRandom, yRandom, zRandom, speed, amount);
+    }
 
-
-		try {
-			MineReflect.sendPacket(getPacket(), p);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return this;
-	}
-
-	public int getAmount() {
-
-		return amount;
-	}
-
-	public Location getLocation() {
-
-		return location;
-	}
-
-	public ParticleType getParticle() {
-
-		return particle;
-	}
-
-	public float getSpeed() {
-
-		return speed;
-	}
-
-	public float getxRandom() {
-
-		return xRandom;
-	}
-
-	public float getyRandom() {
-
-		return yRandom;
-	}
-
-	public float getzRandom() {
-
-		return zRandom;
-	}
-
-	public void setAmount(int amount) {
-
-		this.amount = amount;
-	}
-
-	public void setLocation(Location location) {
-
-		this.location = location;
-	}
-
-	public void setParticle(ParticleType particle) {
-
-		this.particle = particle;
-	}
-
-	public void setSpeed(float speed) {
-
-		this.speed = speed;
-	}
-
-	public void setxRandom(float xRandom) {
-
-		this.xRandom = xRandom;
-	}
-
-	public void setyRandom(float yRandom) {
-
-		this.yRandom = yRandom;
-	}
-
-	public void setzRandom(float zRandom) {
-
-		this.zRandom = zRandom;
-	}
+    public Particle create(Player p) {
 
 
+        try {
+            MineReflect.sendPacket(getPacket(), p);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return this;
+    }
 
-	
+    public int getAmount() {
+
+        return amount;
+    }
+
+    public Location getLocation() {
+
+        return location;
+    }
+
+    public ParticleType getParticle() {
+
+        return particle;
+    }
+
+    public float getSpeed() {
+
+        return speed;
+    }
+
+    public float getxRandom() {
+
+        return xRandom;
+    }
+
+    public float getyRandom() {
+
+        return yRandom;
+    }
+
+    public float getzRandom() {
+
+        return zRandom;
+    }
+
+    public void setAmount(int amount) {
+
+        this.amount = amount;
+    }
+
+    public void setLocation(Location location) {
+
+        this.location = location;
+    }
+
+    public void setParticle(ParticleType particle) {
+
+        this.particle = particle;
+    }
+
+    public void setSpeed(float speed) {
+
+        this.speed = speed;
+    }
+
+    public void setxRandom(float xRandom) {
+
+        this.xRandom = xRandom;
+    }
+
+    public void setyRandom(float yRandom) {
+
+        this.yRandom = yRandom;
+    }
+
+    public void setzRandom(float zRandom) {
+
+        this.zRandom = zRandom;
+    }
+
+
 }

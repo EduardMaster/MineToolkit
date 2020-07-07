@@ -12,6 +12,7 @@ open class Product(name: String = "Produto",
                    shop: Shop? = null)
     : MenuButton(name, parentMenu = shop) {
 
+
     var sellPrice = 0.0
     var buyPrice = 0.0
     var isLimited = false
@@ -20,7 +21,7 @@ open class Product(name: String = "Produto",
     var permission: String = "produto.permissao"
     var commands: List<String> = ArrayList()
     var upgrades = mutableListOf<ProductUpgrade>()
-
+    val hasUpgrades get() = upgrades.isNotEmpty()
     fun hasBought(player: Player) = player.hasPermission(permission)
 
     fun hasBoughtAllUpgrades(player: Player): Boolean {

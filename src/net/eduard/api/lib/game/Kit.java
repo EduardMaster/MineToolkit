@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.storage.Storable;
 
 public class Kit   {
 

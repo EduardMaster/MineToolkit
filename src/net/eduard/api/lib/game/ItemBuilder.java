@@ -11,7 +11,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -33,8 +32,6 @@ public class ItemBuilder extends ItemStack {
     public ItemBuilder(ItemStack clone){
         super(clone);
     }
-
-
 
     public ItemBuilder(Material type) {
         this(type, 1);

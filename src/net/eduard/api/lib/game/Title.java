@@ -8,14 +8,14 @@ import net.eduard.api.lib.storage.Storable;
 
 public class Title implements Storable, Copyable {
 
+    private String title;
+    private String subTitle;
+
     private int fadeIn;
 
     private int stay;
 
     private int fadeOut;
-
-    private String title;
-    private String subTitle;
 
     public String getTitle() {
         return title;
@@ -85,7 +85,6 @@ public class Title implements Storable, Copyable {
 
         this.stay = stay;
     }
-
 
 
 }

@@ -1,7 +1,6 @@
 package net.eduard.api.lib.game;
 
 import net.eduard.api.lib.modules.Copyable;
-import net.eduard.api.lib.storage.Storable;
 /**
  * Representa a Importancia no servidor, Prefixo e Suffixo do Jogador
  * @author Eduard
@@ -11,7 +10,7 @@ import net.eduard.api.lib.storage.Storable;
  */
 public class Tag {
 
-	private String prefix, suffix, name;
+	private String name,prefix, suffix ;
 
 	private int rank;
 

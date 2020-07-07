@@ -2,17 +2,20 @@ package net.eduard.api.lib.menu
 
 import org.bukkit.entity.Player
 
-class ProductUpgrade(var level : Int = 1, product : Product? = null) {
+class ProductUpgrade(var level: Int = 1, product: Product? = null) {
 
     @Transient
     lateinit var productParent: Product
-    init{
-        if (product!=null){
+
+    init {
+        if (product != null) {
             productParent = product!!
             productParent.upgrades.add(this)
         }
     }
-    var name = "Produto nivel 2"
+
+    var name = "Produto nivel $level"
+    val displayName get() = productParent.name + " Nível $level"
 
     var price = 10000.0
 
