@@ -62,9 +62,11 @@ public interface Copyable {
         }
         return object;
     }
+
     default <E> E copy(E object) {
         return copyObject(object);
     }
+
     static <E> E copyObject(E object) {
         if (object == null)
             return null;
@@ -94,7 +96,7 @@ public interface Copyable {
             for (int index = 0; index < len; index++) {
                 Array.set(newArray, index, Array.get(object, index));
             }
-        } else if (Extra.isWrapper(claz) ) {
+        } else if (Extra.isWrapper(claz)) {
 
         } else {
             try {
