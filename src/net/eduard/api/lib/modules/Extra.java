@@ -90,7 +90,7 @@ public final class Extra {
         /**
          * NUMEROS E LETRAS
          */
-        ALPHANUMERIC;
+        ALPHANUMERIC
     }
 
     /**
@@ -108,7 +108,7 @@ public final class Extra {
                 id++;
                 continue;
             }
-            text.append(" " + toChatMessage(arg));
+            text.append(" ").append(toChatMessage(arg));
             id++;
         }
         return text.toString();
@@ -119,7 +119,7 @@ public final class Extra {
      *
      * @param loader
      * @param name
-     * @return
+     * @return InputStream da leitura
      * @throws IOException
      */
     public static InputStream getResource(ClassLoader loader, String name) throws IOException {

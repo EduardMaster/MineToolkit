@@ -2040,26 +2040,6 @@ public final class Mine {
         return config;
     }
 
-
-    /**
-     * Gera um Key invisivel para o chat ou menu<br>
-     * A key consiste em § + alguma cor
-     *
-     * @param amount Quantidade
-     * @return a Key Gerada
-     * @deprecated Não há necessidade mais deste método
-     */
-    @Deprecated
-    public static String generateInvisibleKey(int amount) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < amount; i++) {
-            builder.append(ChatColor.values()[new Random().nextInt(ChatColor.values().length)]);
-
-        }
-
-        return builder.toString();
-    }
-
     /**
      * Carrega o mundo especificado
      *
