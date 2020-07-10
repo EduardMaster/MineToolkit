@@ -60,7 +60,7 @@ public class BukkitController implements ServerController{
 	public void unregister() {
 		Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin, getChannel(),listener);
 		Bukkit.getMessenger().unregisterOutgoingPluginChannel(plugin, getChannel());
-		// TODO Auto-generated method stub
+
 		
 	}
 

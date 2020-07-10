@@ -36,7 +36,6 @@ public class FakePlayer implements OfflinePlayer {
             System.out.println(id1);
             System.out.println(id2);
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -46,7 +45,6 @@ public class FakePlayer implements OfflinePlayer {
         try {
             this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
