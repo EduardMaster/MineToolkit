@@ -1,6 +1,5 @@
 package net.eduard.api.lib.game;
 
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,7 @@ import org.bukkit.entity.Player;
  * @author Eduard
  * @version 1.2
  */
-public class FakePlayer implements OfflinePlayer, Serializable {
+public class FakePlayer implements OfflinePlayer {
 
     private static final long serialVersionUID = 1L;
     private String name;
@@ -100,7 +99,7 @@ public class FakePlayer implements OfflinePlayer, Serializable {
     }
 
     public FakePlayer() {
-
+        this("Eduard");
     }
 
     @Override

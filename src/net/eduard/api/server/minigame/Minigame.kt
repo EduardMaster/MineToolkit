@@ -62,6 +62,11 @@ open class Minigame : TimeManager {
     @Transient
     var rooms: MutableList<MinigameRoom> = ArrayList()
 
+
+    init{
+
+    }
+
     /**
      * Pega a primera sala existente do Minigame
      *
@@ -296,12 +301,8 @@ open class Minigame : TimeManager {
     fun getPlayer(player: FakePlayer): MinigamePlayer {
         var member = players[player]
         if (member == null){
-            member = MinigamePlayer() as MinigamePlayer
+            member = MinigamePlayer()
             member.fakePlayer = player
-
-            if (player.isOnline){
-                member.player = player.player
-            }
             players[player] = member
         }
 

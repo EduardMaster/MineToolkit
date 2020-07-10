@@ -18,8 +18,7 @@ class MinigamePlayer() {
     var team: MinigameTeam? = null
     var game: MinigameRoom? = null
     var lobby: MinigameLobby? = null
-     var player : Player? = null
-    var fakePlayer : FakePlayer? = null
+    var fakePlayer = FakePlayer("Eduard")
 
     val isPlaying: Boolean
         get() = game != null
@@ -30,10 +29,12 @@ class MinigamePlayer() {
      * @return
      */
     val isOnline: Boolean
-        get() = player != null
+        get() = fakePlayer.isOnline
 
     val isInLobby: Boolean
         get() = lobby != null
+
+    val player get() = fakePlayer.player
 
     fun show(player: MinigamePlayer) {
         if (player == this)
@@ -52,21 +53,21 @@ class MinigamePlayer() {
      * Adiciona um Kill
      */
     fun addKill() {
-        kills = kills + 1
+        kills++
     }
 
     /**
      * Adiciona um Streak
      */
     fun addStreak() {
-        streak = streak + 1
+        streak++
     }
 
     /**
      * Adiciona uma Morte
      */
     fun addDeath() {
-        deaths = deaths + 1
+        deaths++
     }
 
     /**
