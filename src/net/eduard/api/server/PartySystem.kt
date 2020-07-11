@@ -1,17 +1,17 @@
 package net.eduard.api.server
 
-import net.eduard.api.lib.game.FakePlayer
+import net.eduard.api.lib.command.PlayerOffline
 
 interface PartySystem {
 
-    fun isInParty(player: FakePlayer): Boolean
+    fun isInParty(player: PlayerOffline): Boolean
 
-    fun isLeader(player: FakePlayer): Boolean
+    fun isLeader(player: PlayerOffline): Boolean
 
-    fun isMember(player: FakePlayer): Boolean
+    fun isMember(player: PlayerOffline): Boolean
 
-    fun getPartyLeader(player: FakePlayer): FakePlayer
+    fun getPartyLeader(player: PlayerOffline): PlayerOffline
 
-    fun getPartyMembers(player: FakePlayer): List<FakePlayer>
+    fun getPartyMembers(player: PlayerOffline): List<PlayerOffline>
 
 }

@@ -1,6 +1,8 @@
 package net.eduard.api.lib.command
 
-abstract class Sender(var name: String) {
+import java.util.*
+
+abstract class Sender(var name: String,var uniqueId: UUID) {
 
 
     abstract fun sendMessage(str : String)

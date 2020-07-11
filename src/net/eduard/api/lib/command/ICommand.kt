@@ -4,6 +4,7 @@ interface ICommand {
 
     var name : String
     var aliases : MutableList<String>
+    var description : String
     var permission : String
     var permissionMessage : String
     var playerOnly : Boolean

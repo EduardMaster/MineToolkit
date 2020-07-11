@@ -1,8 +1,10 @@
 package net.eduard.api.lib.command
 
-class ConsoleSender : Sender("CONSOLE") {
+import java.util.*
+
+class ConsoleSender : Sender("CONSOLE", UUID.nameUUIDFromBytes("CONSOLE".toByteArray())) {
     override fun sendMessage(str: String) {
-        print(str)
+        println(str)
     }
 
     override fun hasPermission(permission: String): Boolean {

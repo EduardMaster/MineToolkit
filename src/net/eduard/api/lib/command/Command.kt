@@ -1,8 +1,9 @@
 package net.eduard.api.lib.command
 
-import net.eduard.api.lib.manager.CommandManager
 import net.md_5.bungee.api.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import java.lang.Error
+import java.lang.Exception
 
 open class Command(override var name: String = "comando", vararg aliases: String) : ICommand {
 
@@ -12,10 +13,12 @@ open class Command(override var name: String = "comando", vararg aliases: String
         val COMMANDS = mutableListOf<Command>()
 
     }
+
     @Transient
-    var parent : Command? = null
+    var parent: Command? = null
 
     override var aliases = mutableListOf<String>()
+    override var description = "Descrição do comando"
 
     var usage = "§cDigite /comando"
 
@@ -25,6 +28,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
     init {
         this.aliases.addAll(aliases)
     }
+
     fun autoPermission(): String {
 
         return if (parent != null) {
@@ -34,6 +38,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
         }
 
     }
+
     fun autoUsage(): String {
         return if (parent != null) {
             parent?.autoUsage() + " " + name
@@ -42,17 +47,19 @@ open class Command(override var name: String = "comando", vararg aliases: String
             "/$name"
         }
     }
+
     override var permission = "permissao.do.comando"
     override var permissionMessage = MESSAGE_PERMISSION
     override var playerOnly = false
 
     open fun onCommand(sender: Sender, args: List<String>) {
-        if (sender is PlayerSender<*>){
-            onCommand(sender,args)
+        if (sender is PlayerSender<*>) {
+            onCommand(sender, args)
         }
 
     }
-    fun processCommand(sender : Sender, args : List<String>){
+
+    fun processCommand(sender: Sender, args: List<String>) {
         var cmd = this
         for (i in args.indices) {
             val arg = args[i].toLowerCase()
@@ -83,32 +90,46 @@ open class Command(override var name: String = "comando", vararg aliases: String
         } else {
 
             if (sender.hasPermission(cmd.permission)) {
-                cmd.onCommand(sender,args)
+                cmd.onCommand(sender, args)
             } else
                 sender.sendMessage(cmd.permissionMessage)
         }
 
     }
-    fun sendUsage(sender: Sender){
+
+    fun sendUsage(sender: Sender) {
         sender.sendMessage(usage)
     }
 
     open fun onCommand(sender: PlayerSender<*>, args: List<String>) {}
 
-    fun register(subCommand : Command){
+    fun register(subCommand: Command) {
         subCommands.add(subCommand)
         subCommand.parent = this
     }
 
     fun register(main: Any) {
 
-        if (main is JavaPlugin) {
-            BukkitCommand(this).register(main)
 
-        } else if (main is Plugin) {
+        try {
+            if (main is JavaPlugin) {
+                BukkitCommand(this).register(main)
 
-            BungeeCommand(this).register(main)
+            }
+        } catch (er: Error) {
         }
+
+
+        try {
+            if (main is Plugin) {
+
+                BungeeCommand(this).register(main)
+            }
+        } catch (er: Error) {
+        }
+        println("Comando $name registrado para o plugin $main")
+
+        COMMANDS.add(this)
 
     }
 

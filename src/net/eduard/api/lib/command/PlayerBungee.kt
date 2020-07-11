@@ -4,7 +4,7 @@ import net.md_5.bungee.BungeeCord
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
 
-class PlayerBungee(override val player: ProxiedPlayer) : PlayerSender<ProxiedPlayer>(player.name) {
+class PlayerBungee(override val player: ProxiedPlayer) : PlayerSender<ProxiedPlayer>(player.name,player.uniqueId) {
 
     override fun sendMessage(str: String) {
         player.sendMessage(str)
@@ -19,6 +19,8 @@ class PlayerBungee(override val player: ProxiedPlayer) : PlayerSender<ProxiedPla
     }
 
     override var fly = false
+
+
     override fun hasPermission(permission: String): Boolean {
         return player.hasPermission(permission)
     }

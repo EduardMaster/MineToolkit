@@ -17,9 +17,9 @@ class BungeeCommand(val bungeeCommand: net.eduard.api.lib.command.Command)
     override fun execute(sender: CommandSender, args: Array<String>) {
 
         if (sender is ProxiedPlayer) {
-            bungeeCommand.onCommand(PlayerBungee(sender), args.toList())
+            bungeeCommand.processCommand(PlayerBungee(sender), args.toList())
         } else {
-            bungeeCommand.onCommand(ConsoleSender(), args.toList())
+            bungeeCommand.processCommand(ConsoleSender(), args.toList())
         }
     }
 }

@@ -4,7 +4,7 @@ import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.entity.Player
 
-class PlayerBukkit(override val player: Player) : PlayerSender<Player>(player.name) {
+class PlayerBukkit(override val player: Player) : PlayerSender<Player>(player.name,player.uniqueId) {
 
     override fun sendMessage(str: String) {
         player.sendMessage(str)
