@@ -6,7 +6,6 @@ import net.eduard.api.command.map.MapCommand
 import net.eduard.api.core.BukkitReplacers
 import net.eduard.api.core.InfoGenerator
 import net.eduard.api.core.PlayerSkin
-import net.eduard.api.lib.abstraction.Minecraft
 import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerAPI.BukkitControl
@@ -32,7 +31,6 @@ import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetPlayerTask
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import java.io.File

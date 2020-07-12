@@ -629,7 +629,7 @@ public final class Mine {
 
 
     /**
-     * Registra um Vetor de comandos na HashMap que armazena os comandos registrados
+     * Registra um Lista de comandos na HashMap que armazena os comandos registrados
      *
      * @param plugin   Plugin
      * @param commands Vetor de Comando

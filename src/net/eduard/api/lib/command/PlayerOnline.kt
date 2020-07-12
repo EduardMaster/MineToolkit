@@ -4,7 +4,7 @@ import net.md_5.bungee.api.chat.TextComponent
 import java.util.*
 
 
-abstract class PlayerSender<PlayerClass>(name: String,uuid : UUID) : Sender(name,uuid) {
+abstract class PlayerOnline<PlayerClass>(name: String, uuid : UUID) : Sender(name,uuid) {
 
 
     abstract val player: PlayerClass
@@ -13,6 +13,8 @@ abstract class PlayerSender<PlayerClass>(name: String,uuid : UUID) : Sender(name
     abstract fun connect(serverName: String)
 
     abstract var fly: Boolean
+
+    val offline = PlayerOffline(name,uuid)
 
 
 }

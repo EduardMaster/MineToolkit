@@ -212,7 +212,7 @@ public class MineReflect {
     public static String getVersion() {
 
         try {
-            String v = Bukkit.getServer().getClass().getPackage().getName().replace('.', ',').split(",")[3];
+            String v = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             return v;
         } catch (Exception er) {
             return "";

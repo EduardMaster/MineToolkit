@@ -145,7 +145,11 @@ public interface SQLQueryBuilder {
             Object value = entry.getValue();
             header.append(option().name(column.getName()));
             header.append(",");
-            values.append(option().data(option().convertToSQL(value, column.getJavaType())));
+            if (value == null&&column.isNullable()){
+                values.append(option().nullable());
+            }else {
+                values.append(option().data(option().convertToSQL(value, column.getJavaType())));
+            }
             values.append(",");
         }
 

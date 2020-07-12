@@ -120,7 +120,7 @@ public class StorageAPI {
             autoRegisterClass(claz);
         }
         StorageObject storeSystem = new StorageObject(new StorageInfo(claz));
-        storeSystem.setIndentifiable(true);
+       //storeSystem.setIndentifiable(true);
 
 
         if (claz != null) {

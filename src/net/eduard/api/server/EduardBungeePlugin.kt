@@ -18,7 +18,10 @@ open class EduardBungeePlugin : Plugin(), Listener {
     var isErrorLogEnabled = true
     lateinit var config: Config
     lateinit var messages: Config
+
     lateinit var db: DBManager
+        @JvmName("getDB")
+        get
         protected set
 
     val prefix: String

@@ -6,8 +6,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Plugin
 
-class BungeeCommand(val bungeeCommand: net.eduard.api.lib.command.Command)
-    : Command(bungeeCommand.name, bungeeCommand.permission, *bungeeCommand.aliases.toTypedArray()) {
+class BungeeCommand(val command: net.eduard.api.lib.command.Command)
+    : Command(command.name, command.permission, *command.aliases.toTypedArray()) {
 
 
     fun register(plugin : Plugin){
@@ -17,9 +17,9 @@ class BungeeCommand(val bungeeCommand: net.eduard.api.lib.command.Command)
     override fun execute(sender: CommandSender, args: Array<String>) {
 
         if (sender is ProxiedPlayer) {
-            bungeeCommand.processCommand(PlayerBungee(sender), args.toList())
+            command.processCommand(PlayerBungee(sender), args.toList())
         } else {
-            bungeeCommand.processCommand(ConsoleSender(), args.toList())
+            command.processCommand(ConsoleSender, args.toList())
         }
     }
 }
