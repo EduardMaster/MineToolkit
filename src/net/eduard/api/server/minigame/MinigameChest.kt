@@ -46,14 +46,12 @@ class MinigameChest {
             index++
         }
         if (isNoRepeatItems) {
-            var contents = inv.contents
-            val stream = Arrays.stream(contents)
-            stream.distinct()
-            //contents = stream.toArray { size -> arrayOfNulls(size) }
-            inv.contents = stream.toArray() as Array<ItemStack?>
+            inv.contents = inv.contents.distinct().toTypedArray()
         }
         if (isShuffleItems) {
             val contents = inv.contents
+
+
             for (i in contents.indices) {
                 val itemStack = contents[i]
                 var temp = Extra.getRandomInt(1, contents.size)

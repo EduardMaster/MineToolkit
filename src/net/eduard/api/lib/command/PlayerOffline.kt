@@ -18,6 +18,10 @@ class PlayerOffline(var name: String = "Eduard",
         return uniqueId
     }
 
+    fun sendMessage(message: String){
+        onlinePlayer?.sendMessage(message)
+    }
+
 
     constructor(player: PlayerOnline<*>) : this(player.name, player.uniqueId) {
         this.onlinePlayer = player

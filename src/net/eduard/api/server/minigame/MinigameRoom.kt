@@ -15,43 +15,59 @@ import kotlin.streams.toList
  *
  * @author Eduard-PC
  */
-class MinigameRoom  {
+class MinigameRoom {
+
+    @Transient
+    lateinit var minigame: Minigame
 
     @StorageAttributes(reference = true)
-    lateinit var minigame: Minigame
-    @StorageAttributes(reference = true)
-    lateinit var map: MinigameMap
+    var map: MinigameMap = MinigameMap()
+
+    constructor()
+
+    constructor(minigame: Minigame, map: MinigameMap) {
+        this.minigame = minigame
+        this.id = minigame.rooms.size + 1
+        this.minigame.rooms.add(this)
+        this.map = map
+        this.isEnabled = true
+        this.time = minigame.timeIntoStart
+    }
+
     var mode = MinigameMode.NORMAL
     var id: Int = 0
     var time: Int = 0
     var isEnabled: Boolean = false
     var round: Int = 0
+
     @Transient
     var state = MinigameState.STARTING
+
     @Transient
-    var mapUsed: MinigameMap? = null
+    var mapUsed: MinigameMap = map
 
     var secondWinner: MinigamePlayer? = null
     var thirdWinner: MinigamePlayer? = null
+
     @Transient
-    var players: MutableList<MinigamePlayer> = ArrayList()
+    var players = mutableListOf<MinigamePlayer>()
+
     @Transient
-    var losers: MutableList<MinigamePlayer> = ArrayList()
+    var losers = mutableListOf<MinigamePlayer>()
+
     @Transient
-    var teams: MutableList<MinigameTeam> = ArrayList()
+    var teams = mutableListOf<MinigameTeam>()
 
     val playersOnline: List<Player>
         get() = players.filter { it.isOnline }.map { it.player!! }
-    //players.stream().filter { p -> p.isOnline }.map { p -> p.player }.collect<List<Player>, Any>(Collectors.toList())
 
     val teamWinner: MinigameTeam?
-        get() = teams.filter { it.getPlayers(MinigamePlayerState.NORMAL).isNotEmpty() }.getOrNull(0)
-            //teams.stream().filter { t -> t.getPlayers(MinigamePlayerState.NORMAL).size > 0 }.findFirst().get()
+        get() = teams.firstOrNull { it.getPlayers(MinigamePlayerState.NORMAL).isNotEmpty() }
+
 
     val winner: MinigamePlayer
         get() = getPlayers(MinigamePlayerState.NORMAL)[0]
 
-    constructor() {}
 
     /**
      * Manda a mensagem para todos os jogadores participando da Sala
@@ -61,7 +77,7 @@ class MinigameRoom  {
     fun broadcast(message: String) {
         for (player in players) {
 
-            player.send(minigame!!.messagePrefix + message.replace("\$time", Extra.formatSeconds1(time)).replace("\$max", "" + map!!.maxPlayersAmount)
+            player.send(minigame.messagePrefix + message.replace("\$time", Extra.formatSeconds1(time)).replace("\$max", "" + map!!.maxPlayersAmount)
                     .replace("\$players", "" + players.size))
         }
     }
@@ -81,24 +97,16 @@ class MinigameRoom  {
     }
 
     fun getTeams(state: MinigamePlayerState): List<MinigameTeam> {
-        return teams.stream().filter { t -> t.getPlayers(state).isNotEmpty() }.toList()
+        return teams.filter {  it.getPlayers(state).isNotEmpty() }
     }
 
     fun getPlayersOnline(state: MinigamePlayerState): List<Player> {
 
-        return players.stream().filter { p -> p.state == state && p.isOnline }.map { p -> p.player!! }.toList()
+        return  players.filter { p -> p.state == state && p.isOnline }.map { it.player }
     }
 
     fun getPlayers(state: MinigamePlayerState): List<MinigamePlayer> {
-        return  players.stream().filter { p -> p.state == state }.toList()
-    }
-
-    fun disable() {
-        isEnabled = false
-    }
-
-    fun enable() {
-        isEnabled = true
+        return players.filter { p -> p.state == state }
     }
 
     fun checkEnd(): Boolean {
@@ -106,19 +114,20 @@ class MinigameRoom  {
     }
 
     fun checkWinner(): Boolean {
-        return getPlayers(MinigamePlayerState.NORMAL).size == 1
+        return getPlayers(MinigamePlayerState.NORMAL).any()
     }
 
     fun checkTeamWinner(): Boolean {
-        return teams.stream().filter { team -> team.getPlayers(MinigamePlayerState.NORMAL).isNotEmpty() }.count() == 1L
+
+        return teams.any { it.getPlayers(MinigamePlayerState.NORMAL).isNotEmpty() }
     }
 
     fun checkForceStart(): Boolean {
-        return players.size >= map!!.neededPlayersAmount && time > minigame.timeOnForceTimer
+        return players.size >= map.neededPlayersAmount && time > minigame.timeOnForceTimer
     }
 
     fun forceGameStart() {
-        time = minigame!!.timeOnForceTimer
+        time = minigame.timeOnForceTimer
     }
 
     /**
@@ -143,7 +152,7 @@ class MinigameRoom  {
      * Coloca o estado desta sala em Jogando (A batalha vai começar)
      */
     fun startGame() {
-        time = minigame!!.timeOnStartTimer
+        time = minigame.timeOnStartTimer
         state = MinigameState.PLAYING
     }
 
@@ -170,7 +179,7 @@ class MinigameRoom  {
      */
     fun restarting() {
         state = MinigameState.RESTARTING
-        time = minigame!!.timeIntoRestart
+        time = minigame.timeIntoRestart
     }
 
     /**
@@ -178,7 +187,7 @@ class MinigameRoom  {
      */
     fun restart() {
         state = MinigameState.STARTING
-        time = minigame!!.timeIntoStart
+        time = minigame.timeIntoStart
     }
 
     /**
@@ -187,7 +196,7 @@ class MinigameRoom  {
      * @param player
      */
     fun leave(player: MinigamePlayer) {
-        player.game?.players?.remove(player)
+        players.remove(player)
         player.game = null
         for (jogador in players) {
             jogador.hide(player)
@@ -196,22 +205,11 @@ class MinigameRoom  {
     }
 
     fun leaveAll() {
-        val it = players.iterator()
-        while (it.hasNext()) {
-            val player = it.next()
-            player.game = null
-            it.remove()
-        }
+        players.forEach{ it.game = null}
+        players.clear()
+
     }
 
-    constructor(minigame: Minigame, map: MinigameMap) {
-        this.minigame = minigame
-        this.id = minigame.rooms.size + 1
-        this.minigame.rooms.add(this)
-        this.map = map
-        this.isEnabled = true
-        this.time = minigame.timeIntoStart
-    }
 
     fun isState(state: MinigameState): Boolean {
         return this.state === state

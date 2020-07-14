@@ -33,7 +33,7 @@ open class Minigame : TimeManager {
 
     var isBungeecord = true
     var bungeeLobby = "Lobby"
-    var lobby: Location? = null
+
     var maxPlayersPerLobby = 20
     var timeIntoStart = 60
     var timeIntoRestart = 20
@@ -45,27 +45,28 @@ open class Minigame : TimeManager {
     var timeOnForceTimer = 10
     var timeOnStartingToBroadcast = 15
     var timeOnEquipingToBroadcast = 1
+
     @Transient
     var setting: MinigameMap? = null
+    var lobby: Location? = null
+
     @Transient
-    var players: MutableMap<FakePlayer,MinigamePlayer> = mutableMapOf()
-    var scoreboardStarting: DisplayBoard? = null
-    var scoreboardLobby: DisplayBoard? = null
-    var scoreboardPlaying: DisplayBoard? = null
+    var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
+    var scoreboardStarting = DisplayBoard("Minigame iniciando")
+    var scoreboardLobby = DisplayBoard("Minigame lobby")
+    var scoreboardPlaying = DisplayBoard("Minigame em jogo")
     var chests = MinigameChest()
     var chestsFeast = MinigameChest()
     var chestMiniFeast = MinigameChest()
     var kits: MutableList<Kit> = ArrayList()
     var lobbies: MutableList<MinigameLobby> = ArrayList()
+
     @Transient
     var maps: MutableList<MinigameMap> = ArrayList()
+
     @Transient
     var rooms: MutableList<MinigameRoom> = ArrayList()
 
-
-    init{
-
-    }
 
     /**
      * Pega a primera sala existente do Minigame
@@ -92,8 +93,6 @@ open class Minigame : TimeManager {
      *
      * @return Lista de Jogadores ([Player])
      */
-    // List<Player> listaDoPlayers =
-    // players.stream().map(MinigamePlayer::getPlayer).collect(Collectors.toList());
     val playersOnline: List<Player>
         get() = players.values.filter { it.isOnline }.map { it.player!! }
 
@@ -115,18 +114,13 @@ open class Minigame : TimeManager {
      * Teleporta todos os jogadores para o Local do Lobby
      */
     fun teleportAllPlayersToLobby() {
-        //playersOnline.forEach (Player:teleport(lobby!!))
-        if (hasLobby())
-            playersOnline.forEach {
-                it.teleport(lobby!!)
-            }
-        //		for (MinigamePlayer player : getPlayers()) {
-        //			Player p = player.getPlayer();
-        //			p.teleport(getLobby());
-        //		}
+
+
+        lobby ?: playersOnline.forEach { it.teleport(lobby) }
+
     }
 
-    constructor() {}
+    constructor()
 
     constructor(name: String) {
         this.name = name
@@ -140,12 +134,8 @@ open class Minigame : TimeManager {
      * @param nome Nome
      * @return Mapa Novo
      */
-    fun createMap(nome: String): MinigameMap {
-        val map = MinigameMap(nome)
-        maps.add(map)
-        return map
+    fun createMap(nome: String) = MinigameMap(this, nome)
 
-    }
 
     /**
      * Timer do Minigame define oque acontece a cada segundo que se passa do
@@ -224,14 +214,8 @@ open class Minigame : TimeManager {
      * @param id ID
      * @return Sala
      */
-    fun getRoom(id: Int): MinigameRoom? {
-        for (room in rooms) {
-            if (room.id == id) {
-                return room
-            }
-        }
-        return null
-    }
+    fun getRoom(id: Int) = rooms.firstOrNull { it.id == id }
+
 
     /**
      * Verifica se a sala com este ID existe
@@ -239,9 +223,8 @@ open class Minigame : TimeManager {
      * @param id ID
      * @return Sala
      */
-    fun hasRoom(id: Int): Boolean {
-        return getRoom(id) != null
-    }
+    fun hasRoom(id: Int) = getRoom(id) != null
+
 
     /**
      * Cria uma Sala com este ID para o Mapa expecifico
@@ -250,12 +233,7 @@ open class Minigame : TimeManager {
      * @param id  ID
      * @return Nova Sala
      */
-    fun createRoom(map: MinigameMap, id: Int): MinigameRoom {
-        val room = MinigameRoom(this, map)
-        room.id = id
-        return room
-
-    }
+    fun createRoom(map: MinigameMap, id: Int) = MinigameRoom(this, map)
 
 
     /**
@@ -300,7 +278,7 @@ open class Minigame : TimeManager {
      */
     fun getPlayer(player: FakePlayer): MinigamePlayer {
         var member = players[player]
-        if (member == null){
+        if (member == null) {
             member = MinigamePlayer()
             member.fakePlayer = player
             players[player] = member
@@ -310,7 +288,8 @@ open class Minigame : TimeManager {
 
         return member
     }
-    fun getPlayer(player : Player): MinigamePlayer {
+
+    fun getPlayer(player: Player): MinigamePlayer {
         return getPlayer(FakePlayer(player))
     }
 
@@ -445,7 +424,6 @@ open class Minigame : TimeManager {
     }
 
 
-
     /**
      * Metodo que é executado a cada segundo e executa o metodo de cada sala
      * ` listener(room)`
@@ -460,11 +438,11 @@ open class Minigame : TimeManager {
         }
     }
 
-    fun save(){
+    fun save() {
 
 
         try {
-            if (plugin==null)return
+            if (plugin == null) return
 
             var pastaMapas = File(plugin!!.dataFolder, "maps/")
             pastaMapas.mkdirs()
@@ -486,13 +464,13 @@ open class Minigame : TimeManager {
 
             }
 
-        }catch (erro : Exception){
+        } catch (erro: Exception) {
             erro.printStackTrace()
         }
     }
 
 
-    fun reload(){
+    fun reload() {
         var pastaMapas = File(plugin!!.dataFolder, "maps/")
         pastaMapas.mkdirs()
 
@@ -500,12 +478,12 @@ open class Minigame : TimeManager {
         pastaSalas.mkdirs()
         maps.clear()
         rooms.clear()
-        for (arquivoNome in pastaMapas.list()){
+        for (arquivoNome in pastaMapas.list()) {
             var configMapa = Config(plugin, "maps/$arquivoNome")
             var mapa = configMapa.get("map", MinigameMap::class.java)
             maps.add(mapa)
         }
-        for (arquivoNome in pastaSalas.list()){
+        for (arquivoNome in pastaSalas.list()) {
             var configMapa = Config(plugin, "rooms/$arquivoNome")
             var room = configMapa.get("room", MinigameRoom::class.java)
             rooms.add(room)

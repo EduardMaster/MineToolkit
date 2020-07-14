@@ -31,7 +31,7 @@ class EduardBungeeAPI : EduardBungeePlugin() {
         BungeeCord.getInstance().getPluginManager().registerCommand(this, BungeeReloadCommand())
     }
 
-    fun reload() {
+    override fun reload() {
         config.reloadConfig()
         messages.reloadConfig()
 

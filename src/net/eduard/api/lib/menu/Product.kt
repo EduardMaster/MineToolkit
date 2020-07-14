@@ -12,7 +12,13 @@ open class Product(name: String = "Produto",
                    shop: Shop? = null)
     : MenuButton(name, parentMenu = shop) {
 
+    constructor(shopping: Shop) : this(shop = shopping)
 
+    constructor(shopping: Shop, product: ItemStack, buyPrice: Double) : this(shop = shopping)
+    {
+        this.product = product
+        this.buyPrice = buyPrice
+    }
     var sellPrice = 0.0
     var buyPrice = 0.0
     var isLimited = false

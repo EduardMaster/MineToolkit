@@ -1844,10 +1844,6 @@ public final class Mine {
     }
 
 
-    public static World getWorld(String name) {
-        return Bukkit.getWorld(name);
-    }
-
     public static File getWorldFolder(String name) {
         return new File(Bukkit.getWorldContainer(), name);
     }

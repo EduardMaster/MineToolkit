@@ -83,7 +83,7 @@ open class KitAbility : CooldownManager() {
             var meta = item.itemMeta
             meta.displayName = "§e$name"
             val list = mutableListOf<String>()
-            for (line in lore){
+            for (line in lore) {
                 list.add("§f$line")
             }
             meta.lore = list
@@ -95,13 +95,13 @@ open class KitAbility : CooldownManager() {
 
     @Storable.StorageAttributes(reference = true)
     var kits: List<KitAbility> = ArrayList()
+
     @Transient
     var players: List<Player> = ArrayList()
-        private set
 
     init {
 
-        if (name.isEmpty()||name == "Kit")
+        if (name.isEmpty() || name == "Kit")
             name = (javaClass.simpleName)
 
 
@@ -109,12 +109,12 @@ open class KitAbility : CooldownManager() {
     }
 
     fun add(item: ItemStack) {
-        ITEMS_TO_GIVE.add(Mine.setName(item, "§b" + name!!))
+        ITEMS_TO_GIVE.add(Mine.setName(item, "§b" + name))
 
     }
 
     fun add(type: Material) {
-        ITEMS_TO_GIVE.add(Mine.newItem(type,"§b" + name))
+        ITEMS_TO_GIVE.add(Mine.newItem(type, "§b$name"))
 
     }
 
@@ -168,8 +168,6 @@ open class KitAbility : CooldownManager() {
         itemType = material
         itemData = data
         this.lore.addAll(lore)
-
-
     }
 
 

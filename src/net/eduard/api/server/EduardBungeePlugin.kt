@@ -31,7 +31,8 @@ open class EduardBungeePlugin : Plugin(), Listener {
         db = config.get("database") as DBManager
 
     }
-
+    open fun reload(){}
+    open fun save(){}
     override fun onLoad() {
         config = Config(this, "bungee-config.yml")
         messages = Config(this, "bungee-messages.yml")

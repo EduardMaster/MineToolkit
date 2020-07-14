@@ -6,10 +6,7 @@ import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.kotlin.player
 import net.eduard.api.lib.kotlin.sendTitle
 import net.eduard.api.lib.manager.CurrencyManager
-import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.modules.MineReflect
-import net.eduard.api.lib.modules.VaultAPI
+import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.storage.Storable.StorageAttributes
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.CurrencyHandler
@@ -187,8 +184,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         }
     }
 
-    override fun copy(): Shop {
-        return copy(this)
+    override fun copy() : Shop {
+        return Copyable.copyObject(this)
     }
 
     fun organize() {

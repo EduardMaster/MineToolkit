@@ -115,7 +115,11 @@ public interface SQLQueryBuilder {
             Object value = entry.getValue();
             builder.append(option().name(column.getName()));
             builder.append(option().equalsTo());
-            builder.append(option().data(option().convertToSQL(value , column.getJavaType())));
+            if (column.isNullable() && value == null){
+                builder.append(option().nullable());
+            }else {
+                builder.append(option().data(option().convertToSQL(value, column.getJavaType())));
+            }
             builder.append(",");
         }
         Object primaryKeyValue = record.getPrimaryKeyValue();

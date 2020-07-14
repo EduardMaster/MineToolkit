@@ -1,8 +1,5 @@
 package net.eduard.api.server.minigame
 
-import java.util.ArrayList
-import java.util.stream.Collectors
-
 import org.bukkit.entity.Player
 
 /**
@@ -15,38 +12,15 @@ class MinigameTeam {
     var game: MinigameRoom? = null
     var name: String? = null
     var points: Int = 0
-    private var players: MutableList<MinigamePlayer> = ArrayList()
+    var players = mutableListOf<MinigamePlayer>()
     var maxSize: Int = 0
 
-    //		int kills = 0;
-    //		for ( MinigamePlayer player : players) {
-    //			kills+=player.getKills();
-    //		}
-    //		return players.stream().reduce(0, new BiFunction<Integer, MinigamePlayer, Integer>() {
-    //
-    //			@Override
-    //			public Integer apply(Integer t, MinigamePlayer u) {
-    //
-    //				return t+=u.getKills();
-    //			}
-    //		},new BinaryOperator<Integer>() {
-    //
-    //			@Override
-    //			public Integer apply(Integer t, Integer u) {
-    //
-    //				return null;
-    //			}
-    //
-    //
-    //		} );
     val kills: Int
-        get() {
-            return players.sumBy { it.kills }
+        get() = players.sumBy { it.kills }
 
-          // players.stream().reduce(0, { n, p -> n += p.kills }, null);
-        }
     val deaths: Int
-        get() =  players.sumBy { it.deaths } //players.stream().reduce(0, { n, p -> n += p.deaths }, null)
+        get() = players.sumBy { it.deaths }
+
 
     val size: Int
         get() = players.size
@@ -77,14 +51,6 @@ class MinigameTeam {
         players.remove(player)
     }
 
-    fun getPlayers(): List<MinigamePlayer> {
-        return players
-    }
-
-    fun setPlayers(players: MutableList<MinigamePlayer>) {
-        this.players = players
-    }
-
     fun send(message: String) {
         for (p in players) {
             p.send(message)
@@ -92,29 +58,17 @@ class MinigameTeam {
     }
 
     fun getPlayers(state: MinigamePlayerState): List<MinigamePlayer> {
-        return players.filter { it.state==state }.toList()
-        //return players.stream().filter { p -> p.state == state }.collect<List<MinigamePlayer>, Any>(Collectors.toList())
+        return players.filter { it.state == state }
     }
 
+
     fun getPlayersOnline(state: MinigamePlayerState): List<Player> {
-        val list = ArrayList<Player>()
-        for (player in players) {
-            if (player.state == state) {
-                if (player.isOnline) {
-                    list.add(player.player!!)
-                }
-            }
-        }
-        return list
+        return getPlayers(state).filter { it.isOnline }.map { it.player }
     }
 
     fun leaveAll() {
-        val it = players.iterator()
-        while (it.hasNext()) {
-            val p = it.next()
-            leave(p)
-        }
-
+        players.forEach{it.team = null}
+        players.clear()
     }
 
 }

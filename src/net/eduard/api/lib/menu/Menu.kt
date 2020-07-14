@@ -21,8 +21,6 @@ import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.kotlin.centralized
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.storage.Storable
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventory
 
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
@@ -30,7 +28,7 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventory
  *
  * @author Eduard
  */
-open class Menu : EventsManager, Copyable, PagedMenu {
+open class Menu : EventsManager, PagedMenu {
     @Transient
     var superiorMenu: Menu? = null
     var title = "Menu"
@@ -51,7 +49,6 @@ open class Menu : EventsManager, Copyable, PagedMenu {
     var nextPage = Slot(
             Mine.newItem(Material.ARROW, "§aPróxima Página", 1, 0, "§2Clique para ir para a próxima página"), 9, 2)
     var buttons = mutableListOf<MenuButton>()
-
 
 
     @Transient
@@ -86,7 +83,7 @@ open class Menu : EventsManager, Copyable, PagedMenu {
         get() = pageAmount > 1
 
     fun removeButton(name: String) {
-        val button = getButton(name)?:return
+        val button = getButton(name) ?: return
         buttons.remove(button)
 
     }
@@ -98,12 +95,12 @@ open class Menu : EventsManager, Copyable, PagedMenu {
         pageOpened.clear()
     }
 
-    override fun copy(): Menu {
+    open fun copy(): Menu {
 
-        return copy(this)
+        return Copyable.copyObject(this)
     }
 
-    fun getButton(icon: ItemStack, player : Player): MenuButton? {
+    fun getButton(icon: ItemStack, player: Player): MenuButton? {
         for (button in buttons) {
             if (button.getIcon(player).isSimilar(icon)) {
                 return button
@@ -132,22 +129,7 @@ open class Menu : EventsManager, Copyable, PagedMenu {
     }
 
     fun addButton(button: MenuButton) {
-        addButton(button,button.page)
-    }
-
-    fun addButton( button: MenuButton, page: Int) {
-        addButton(button,page,button.index)
-
-    }
-    fun addButton(button: MenuButton, page: Int,index: Int ) {
-        addButton(button,page, button.positionX, button.positionY)
-    }
-
-    fun addButton( button: MenuButton,page: Int, positionX: Int, positionY: Int) {
-        button.page = page
-        button.setPosition(positionX, positionY)
         buttons.add(button)
-        updateCache(page)
     }
 
 
@@ -270,7 +252,7 @@ open class Menu : EventsManager, Copyable, PagedMenu {
                     }
                     var icon = button.getIcon(player)
                     if (isTranslateIcon) {
-                       icon = Mine.getReplacers(icon, player)
+                        icon = Mine.getReplacers(icon, player)
                     }
                     menu.setItem(slot, icon)
                 }
@@ -323,10 +305,8 @@ open class Menu : EventsManager, Copyable, PagedMenu {
         if (p.itemInHand == null)
             return
 
-        val a :CraftInventory? = null
-
         if (openWithItem != null && Mine.equals(p.itemInHand, openWithItem)) {
-            e.isCancelled=true
+            e.isCancelled = true
             open(p)
         }
 
@@ -383,7 +363,7 @@ open class Menu : EventsManager, Copyable, PagedMenu {
                         }
                         return
                     } else {
-                        button = getButton(itemClicked,player)
+                        button = getButton(itemClicked, player)
                         debug("Button by Item " + if (button == null) "is Null" else "is not null")
                     }
                 }

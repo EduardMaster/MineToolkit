@@ -1,7 +1,6 @@
 package net.eduard.api.server.minigame
 
 import net.eduard.api.lib.game.FakePlayer
-import org.bukkit.entity.Player
 
 import net.eduard.api.lib.modules.Mine
 
@@ -39,13 +38,13 @@ class MinigamePlayer() {
     fun show(player: MinigamePlayer) {
         if (player == this)
             return
-        this.player!!.showPlayer(player.player)
+        this.player.showPlayer(player.player)
     }
 
     fun hide(player: MinigamePlayer) {
         if (player == this)
             return
-        this.player!!.hidePlayer(player.player)
+        this.player.hidePlayer(player.player)
 
     }
 
@@ -105,7 +104,7 @@ class MinigamePlayer() {
      * @param message Mensagem
      */
     fun send(message: String) {
-        player!!.sendMessage(Mine.getReplacers(message, player))
+        player.sendMessage(Mine.getReplacers(message, player))
     }
 
     override fun hashCode(): Int {

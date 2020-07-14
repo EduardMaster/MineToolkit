@@ -11,6 +11,7 @@ import org.bukkit.World
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.game.Schematic
 import net.eduard.api.lib.modules.Copyable
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer
 
 /**
  * Mapa da Sala
@@ -18,12 +19,19 @@ import net.eduard.api.lib.modules.Copyable
  * @author Eduard-PC
  */
 @StorageAttributes(indentificate = true)
-class MinigameMap {
+class MinigameMap(
 
 
-    var name: String = "mapa"
-    var displayName: String = "mapinha"
-    var worldName: String = "mapa"
+        @Transient
+        var minigame: Minigame? = null,
+        var name: String = "mapa",
+        var displayName: String = "mapinha"
+) {
+    init {
+        minigame?.maps?.add(this)
+    }
+
+
     var teamSize = 1
     var minPlayersAmount = 2
     var maxPlayersAmount = 20
@@ -31,47 +39,37 @@ class MinigameMap {
     var maxRounds = 3
     var spawn: Location? = null
     var lobby: Location? = null
-    var locations: MutableMap<String, Location> = HashMap()
-    var bases: MutableList<Schematic> = ArrayList()
-    var spawns: MutableList<Location> = ArrayList()
+    var locations = mutableMapOf<String, Location>()
+    var bases = mutableListOf<Schematic>()
+    var spawns = mutableListOf<Location>()
     var map: Schematic? = null
     var feast: Schematic? = null
     var feastLocation: Location? = null
 
-    val isSolo: Boolean
-        get() = teamSize == 1
+    val worldName get() = "${minigame?.name}/map/$name"
 
-    val world: World?
+    val isSolo get() = teamSize == 1
+
+    val world: World
         get() {
             var mundo: World? = Bukkit.getWorld(worldName)
             if (mundo == null) {
                 mundo = Mine.loadWorld(worldName)
-
             }
+            mundo?.isAutoSave = false
 
-            return mundo
+
+            return mundo!!
         }
 
-    constructor() {
-    }
 
-     fun copy(): MinigameMap? {
+    fun copy(): MinigameMap {
         return Copyable.copyObject(this)
 
     }
 
-    constructor(name: String) {
-        this.name = name
-        this.displayName = name
-    }
-
-    constructor(minigame: Minigame, name: String) : this(name) {
-        minigame.maps.add(this)
-    }
-
 
     fun world(world: World): MinigameMap {
-        this.worldName = world.name
         for (spawn in this.spawns) {
             spawn.world = world
         }
@@ -105,38 +103,24 @@ class MinigameMap {
 
     }
 
+    fun fixWorld() = world(world)
 
-    val hasFeast: Boolean
-        get() {
-            return feast != null
-        }
+    val hasFeast get() = feast != null
 
-    val hasLobby: Boolean
-        get() {
-            return lobby != null
-        }
 
-    val hasBases: Boolean
-        get() {
-            return !this.bases.isEmpty()
-        }
+    val hasLobby get() = lobby != null
 
-    val hasSpawn: Boolean
-        get() {
-            return spawn != null
-        }
 
-    val hasSpawns: Boolean
-        get() {
-            return !spawns.isEmpty()
-        }
+    val hasBases get() = this.bases.isNotEmpty()
 
-    fun hasSchematic(): Boolean {
-        return this.map != null
-    }
 
-    fun fixWorld(): MinigameMap {
-        return world(world!!)
-    }
+    val hasSpawn get() = spawn != null
+
+
+    val hasSpawns get() = spawns.isNotEmpty()
+
+
+    val hasSchematic get() = this.map != null
+
 
 }
