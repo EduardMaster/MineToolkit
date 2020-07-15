@@ -1,42 +1,18 @@
 package net.eduard.api.listener
 
-import net.eduard.api.EduardAPI
 import net.eduard.api.lib.manager.EventsManager
-import net.eduard.api.server.currency.CurrencyController
-import net.eduard.api.server.currency.list.CurrencyJHCash
-import net.eduard.api.server.currency.list.CurrencyNetworkStoryRankupToken
+import net.eduard.api.server.PluginRook
 import org.bukkit.event.EventHandler
 import org.bukkit.event.server.PluginEnableEvent
 
 class SupportActivations : EventsManager() {
 
 
-
-    companion object{
-        var tasks = mutableMapOf<String,Function<Unit>>()
-
-    }
-
-
     @EventHandler
-    fun event(e: PluginEnableEvent) {
-        val api = EduardAPI.instance
+    fun onEnableRookEvent(e: PluginEnableEvent) {
 
-
-        when (e.plugin.name) {
-            "JH_Shop" -> {
-
-                CurrencyController.getInstance().register(CurrencyJHCash())
-
-            }
-            "LegitRankUP" -> {
-                CurrencyController.getInstance().register(CurrencyNetworkStoryRankupToken())
-            }
-
-        }
-        var task = tasks[e.plugin.name]?:return
-
-
+        var rooks = PluginRook.getRooks(e.plugin.name)
+        rooks.forEach(PluginRook::onPluginActive)
 
     }
 

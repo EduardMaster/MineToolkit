@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
 import java.util.*
 
 @StorageAttributes(indentificate = true)
@@ -84,9 +85,10 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
     }
 
 
-    var menuUpgrades = Menu("Lista de Upgrades", 6)
+    lateinit var menuUpgrades: Menu
 
     fun useUpgradesMenu() {
+        menuUpgrades = Menu("Lista de Upgrades", 6)
         menuUpgrades.superiorMenu = this
         menuUpgrades.register(pluginInstance)
         val upgradeButton = MenuButton("upgrade", menuUpgrades)
@@ -120,31 +122,17 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         }
     }
 
-    fun useConfirmationMenu() {
+    private fun useConfirmationMenu() {
         menuConfirmation.superiorMenu = this
-        menuConfirmation.register(pluginInstance)
         val confirmationButton = MenuButton("confirmar", menuConfirmation)
         confirmationButton.setPosition(3, 2)
         confirmationButton.icon = ItemBuilder(Material.WOOL).data(5).name("§a§lCONFIRMAR").lore("§aClique para confirmar a transação.")
         val cancelButton = MenuButton("cancelar", menuConfirmation)
         cancelButton.icon = ItemBuilder(Material.WOOL).data(14).name("§c§lCANCELAR").lore("§cClique para cancelar a transação.")
         cancelButton.setPosition(7, 2)
-        cancelButton.click = ClickEffect { event -> open(event.player) }
         val productButton = MenuButton("product", menuConfirmation)
         productButton.setPosition(5, 2)
-        productButton.icon = ItemBuilder(Material.STONE)
-        confirmationButton.click = ClickEffect { event ->
 
-            val player = event.player
-            val produto = selectedProduct[player]!!
-            val type = trading[player]!!
-            if (type == TradeType.BUYABLE) {
-                buy(player, produto, 1.0)
-            } else if (type == TradeType.SELABLE) {
-                sell(player, produto, 1.0)
-            }
-
-        }
     }
 
     @EventHandler
@@ -165,7 +153,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
                     }
                 }
 
-            } else if (menuUpgrades.isOpen(player)) {
+            } else if (isPermissionShop && menuUpgrades.isOpen(player)) {
                 val product = selectedProduct[player]!!
                 var slot = Extra.getIndex(2, 3)
                 for (upgrade in product.upgrades) {
@@ -179,12 +167,13 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
 
 
                 }
+
             }
 
         }
     }
 
-    override fun copy() : Shop {
+    override fun copy(): Shop {
         return Copyable.copyObject(this)
     }
 
@@ -358,10 +347,30 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmo
         return null
     }
 
+    override fun register(plugin: Plugin) {
+        super.register(plugin)
+
+        val confirmationButton = menuConfirmation.getButton("confirmar")!!
+        val cancelButton = menuConfirmation.getButton("cancelar")!!
+        val productButton = menuConfirmation.getButton("product")!!
+        cancelButton.click = ClickEffect { event -> open(event.player) }
+        confirmationButton.click = ClickEffect { event ->
+
+            val player = event.player
+            val produto = selectedProduct[player]!!
+            val type = trading[player]!!
+            if (type == TradeType.BUYABLE) {
+                buy(player, produto, 1.0)
+            } else if (type == TradeType.SELABLE) {
+                sell(player, produto, 1.0)
+            }
+
+        }
+
+    }
 
     init {
         useConfirmationMenu()
-        useUpgradesMenu()
         this.effect = ClickEffect { event ->
 
 

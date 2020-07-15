@@ -5,7 +5,6 @@ import net.eduard.api.lib.event.PlayerTargetPlayerEvent
 import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.MineReflect
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 
@@ -16,7 +15,7 @@ import org.bukkit.event.EventPriority
  *
  * @author Eduard
  */
-class PlayerTargetAtEntityListener : EventsManager() {
+class PlayerTargetListener : EventsManager() {
 
 
     @EventHandler(priority = EventPriority.HIGHEST)

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 
 class VisualEffect(var type: Effect? = Effect.FLAME, var data: Int = 0) {
 
+    constructor(type: Effect?) : this(type,0)
 
     fun create(entity: Entity, radius: Int = 10): VisualEffect {
         return create(entity.location, radius)

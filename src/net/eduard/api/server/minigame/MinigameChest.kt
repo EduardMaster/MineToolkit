@@ -37,7 +37,7 @@ class MinigameChest {
                 }
             }
             if (itemrandom != null) {
-                item = itemrandom.createChance()
+                item = itemrandom.create();
             }
             if (item!!.type == Material.AIR) {
                 index--

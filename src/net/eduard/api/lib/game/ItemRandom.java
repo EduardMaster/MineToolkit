@@ -6,92 +6,88 @@ import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.modules.Mine;
 
-public class ItemRandom  {
+public class ItemRandom {
 
-	private int minAmount = 1;
+    private int minAmount = 1;
 
-	private int maxAmount = 1;
+    private int maxAmount = 1;
 
-	private double chance = 1.0;
+    private double chance = 1.0;
 
-	private ItemStack item;
+    private ItemStack item;
 
-	public ItemRandom() {
-	}
+    public ItemRandom() {
+    }
 
-	public ItemRandom(ItemStack item, int min, int max) {
-		this(item, min, max, 1);
-	}
+    public ItemRandom(ItemStack item, int min, int max) {
+        this(item, min, max, 1);
+    }
 
-	public ItemRandom(ItemStack item, int min) {
-		this(item, min, min);
-	}
+    public ItemRandom(ItemStack item, int min) {
+        this(item, min, min);
+    }
 
-	public ItemRandom(ItemStack item, int min, int max, double chance) {
-		setMinAmount(min);
-		setMaxAmount(max);
-		setChance(chance);
-		setItem(item);
-	}
+    public ItemRandom(ItemStack item, int min, int max, double chance) {
+        setMinAmount(min);
+        setMaxAmount(max);
+        setChance(chance);
+        setItem(item);
+    }
 
-	public ItemStack createChance() {
-		if (Mine.getChance(chance)) {
-			
-			return createAmountRandom();
-		}
-		return new ItemStack(Material.AIR);
+    public ItemStack create() {
+        if (Mine.getChance(chance)) {
 
-	}
+            ItemStack clone = item.clone();
+            int amount = Extra.getRandomInt(getMinAmount(), getMaxAmount());
 
-	public ItemStack createAmountRandom() {
-		ItemStack clone = item.clone();
-		int amount = Extra.getRandomInt(getMinAmount(), getMaxAmount());
+            clone.setAmount(amount);
+            return clone;
+        }
+        return new ItemStack(Material.AIR);
 
-		clone.setAmount(amount);
-		return clone;
+    }
 
-	}
 
-	public double getChance() {
+    public double getChance() {
 
-		return chance;
-	}
+        return chance;
+    }
 
-	public int getMaxAmount() {
+    public int getMaxAmount() {
 
-		return maxAmount;
-	}
+        return maxAmount;
+    }
 
-	public int getMinAmount() {
+    public int getMinAmount() {
 
-		return minAmount;
-	}
+        return minAmount;
+    }
 
-	public ItemStack getItem() {
+    public ItemStack getItem() {
 
-		return this.item;
-	}
+        return this.item;
+    }
 
-	public void setItem(ItemStack item) {
+    public void setItem(ItemStack item) {
 
-		this.item = item;
-	}
+        this.item = item;
+    }
 
-	public void setChance(double chance) {
+    public void setChance(double chance) {
 
-		this.chance = chance;
-	}
+        this.chance = chance;
+    }
 
-	public void setMaxAmount(int maxAmount) {
+    public void setMaxAmount(int maxAmount) {
 
-		this.maxAmount = maxAmount;
-	}
+        this.maxAmount = maxAmount;
+    }
 
-	public void setMinAmount(int minAmount) {
+    public void setMinAmount(int minAmount) {
 
-		this.minAmount = minAmount;
+        this.minAmount = minAmount;
 
-	}
+    }
 
 
 }

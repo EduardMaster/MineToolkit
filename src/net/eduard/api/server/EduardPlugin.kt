@@ -34,6 +34,7 @@ import net.eduard.api.lib.storage.StorageAPI
  * @since 2.0
  */
 abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
+    var isActivated = false
     var isLogEnabled = true
     var isErrorLogEnabled = true
     var isSQLManagerStarted = false
@@ -321,6 +322,8 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     }
 
     open fun reload() {}
+
+    open fun onActivation(){}
 
     open fun configDefault() {
 

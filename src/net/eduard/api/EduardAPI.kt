@@ -31,6 +31,7 @@ import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetPlayerTask
+import net.eduard.api.task.PluginActivator
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import java.io.File
@@ -49,6 +50,7 @@ class EduardAPI : EduardPlugin() {
 
     override fun onEnable() {
         instance = this
+        isFree = true
         LibraryLoader(File(dataFolder, "libs/"))
         reloadVars()
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
@@ -81,9 +83,9 @@ class EduardAPI : EduardPlugin() {
 
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
-        // Na versão 1.16 precisa ser em Sync não pode ser Async
         PlayerTargetPlayerTask().runTaskTimerAsynchronously(this, 20, 20)
         AutoSaveAndBackupTask().runTaskTimerAsynchronously(this, 20, 20)
+        PluginActivator().asyncTimer()
 
         log("Ativando comandos")
         ApiCommand().register()
@@ -98,9 +100,10 @@ class EduardAPI : EduardPlugin() {
 
         log("Ativando listeners dos Eventos")
         EduardAPIEvents().register(this)
+
         SupportActivations().register(this)
         EduWorldEditListener().register(this)
-        PlayerTargetAtEntityListener().register(this)
+        PlayerTargetListener().register(this)
         //LinkadorDeItem().register(this)
         log("Listeners dos Eventos ativados com sucesso")
 
@@ -112,14 +115,8 @@ class EduardAPI : EduardPlugin() {
         log("Ativando replacers")
         BukkitReplacers()
 
-
-        //		new McMMOReplacers();
-        //		new MassiveFactionReplacers();
-
-
-        //		new McMMOReplacers();
-        //		new MassiveFactionReplacers();
         log("Carregado com sucesso!")
+
 
 
         CurrencyController.getInstance().register(CurrencyVaultEconomy())
@@ -156,9 +153,9 @@ class EduardAPI : EduardPlugin() {
         EduardAPI.loadMaps()
         log("Mapas carregados!")
 
-        configs.add("sound-teleport", EduardAPI.OPT_SOUND_TELEPORT)
-        configs.add("sound-error", EduardAPI.OPT_SOUND_ERROR)
-        configs.add("sound-success", EduardAPI.OPT_SOUND_SUCCESS)
+        configs.add("sound-teleport", OPT_SOUND_TELEPORT)
+        configs.add("sound-error", OPT_SOUND_ERROR)
+        configs.add("sound-success", OPT_SOUND_SUCCESS)
         configs.saveConfig()
         Mine.OPT_AUTO_RESPAWN = configs.getBoolean("auto-respawn")
         Mine.OPT_NO_JOIN_MESSAGE = configs.getBoolean("no-join-message")
@@ -175,9 +172,9 @@ class EduardAPI : EduardPlugin() {
 
         Mine.MSG_ON_JOIN = configs.message("on-join-message")
         Mine.MSG_ON_QUIT = configs.message("on-quit-message")
-        EduardAPI.OPT_SOUND_TELEPORT = configs.getSound("sound-teleport")
-        EduardAPI.OPT_SOUND_ERROR = configs.getSound("sound-error")
-        EduardAPI.OPT_SOUND_SUCCESS = configs.getSound("sound-success")
+        OPT_SOUND_TELEPORT = configs.getSound("sound-teleport")
+        OPT_SOUND_ERROR = configs.getSound("sound-error")
+        OPT_SOUND_SUCCESS = configs.getSound("sound-success")
         if (configs.getBoolean("auto-rejoin")) {
             for (p in Mine.getPlayers()) {
                 Mine.callEvent(PlayerJoinEvent(p, null))
