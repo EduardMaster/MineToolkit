@@ -31,9 +31,10 @@ open class EffectManager : TimeManager(), PlayerEffect {
     var CLOSE_INVENTORY: Boolean = false
     var CLEAR_INVENTORY: Boolean = false
 
+
     override fun effect(p: Player) {
-        if (CUSTOM_EFFECT != null)
-            CUSTOM_EFFECT!!.effect(p)
+
+        CUSTOM_EFFECT?.effect(p)
         if (REQUIRE_PERMISSION != null)
             if (!p.hasPermission(REQUIRE_PERMISSION))
                 return
@@ -44,30 +45,34 @@ open class EffectManager : TimeManager(), PlayerEffect {
             p.performCommand(cmd.replace("\$player", p.name).replaceFirst("/".toRegex(), ""))
         }
 
-        if (PLAY_SOUND != null)
-            PLAY_SOUND?.create(p)
-        if (SEND_MESSAGE != null) {
-            p.sendMessage(SEND_MESSAGE)
-        }
+
+        PLAY_SOUND?.create(p)
+
+        SEND_MESSAGE?.apply(p::sendMessage)
+
         if (CLOSE_INVENTORY)
             p.closeInventory()
         if (CLEAR_INVENTORY) {
             Mine.clearInventory(p)
         }
-        if (TELEPORT_TO != null)
-            p.teleport(TELEPORT_TO)
-        if (PLAY_JUMP != null)
-            PLAY_JUMP!!.create(p)
 
-        if (PLAY_VISUAL != null) {
-            PLAY_VISUAL!!.create(p)
-        }
-        for (item in ITEMS_TO_GIVE) {
-            p.inventory.addItem(item)
-        }
-        for (pot in APPLY_POTIONS) {
-            pot.apply(p)
-        }
+        TELEPORT_TO?.apply{ p.teleport(TELEPORT_TO)}
+
+
+        PLAY_JUMP?.create(p)
+
+
+        PLAY_VISUAL?.create(p)
+
+
+        p.inventory.addItem(*ITEMS_TO_GIVE.toTypedArray())
+
+
+        APPLY_POTIONS.forEach { it.apply(p) }
+
+
+        MAKE_EXPLOSION?.create(p)
+
 
     }
 

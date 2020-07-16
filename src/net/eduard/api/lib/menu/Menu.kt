@@ -405,7 +405,7 @@ open class Menu : EventsManager, PagedMenu {
 
     companion object {
         var isDebug = true
-        private val registeredMenus = ArrayList<Menu>()
+        val registeredMenus = ArrayList<Menu>()
 
 
         fun debug(msg: String) {
@@ -415,9 +415,7 @@ open class Menu : EventsManager, PagedMenu {
 
         }
 
-        fun getRegisteredMenus(): List<Menu> {
-            return registeredMenus
-        }
+
     }
 
 

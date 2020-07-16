@@ -280,7 +280,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     }
 
     fun unregisterMenus() {
-        for (menu in ArrayList(Menu.getRegisteredMenus())) {
+        for (menu in Menu.registeredMenus.toList()) {
             if (this == menu.pluginInstance) {
                 menu.unregisterListener()
             }
