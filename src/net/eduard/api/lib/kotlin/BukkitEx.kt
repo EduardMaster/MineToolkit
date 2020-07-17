@@ -47,7 +47,7 @@ val InventoryClickEvent.player get() = this.whoClicked as Player
 
 val InventoryOpenEvent.player get() = this.player as Player
 
-fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -> Unit): Inventory? {
+fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -> Unit): Inventory {
 
     val inventory = Bukkit.createInventory(this, 9 * lineAmount, name.cut(32))
 
@@ -61,6 +61,7 @@ fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -> Unit)
 fun Inventory.item(position: Int, block: ItemStack.() -> Unit): ItemStack {
 
     val item = ItemStack(Material.STONE)
+
     block(item)
 
     setItem(position, item)

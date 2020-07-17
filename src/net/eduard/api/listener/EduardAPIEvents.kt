@@ -14,6 +14,7 @@ import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.server.ServerCommandEvent
 import org.bukkit.event.server.ServerListPingEvent
 import org.bukkit.scheduler.BukkitRunnable
 
@@ -26,6 +27,12 @@ import org.bukkit.scheduler.BukkitRunnable
  * @author Eduard
  */
 class EduardAPIEvents : EventsManager() {
+
+
+    @EventHandler
+    fun onConsoleSendMessage(e : ServerCommandEvent){
+
+    }
 
     @EventHandler
     fun onChat(e : AsyncPlayerChatEvent){

@@ -5,6 +5,9 @@ import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.MineReflect
 import org.bukkit.entity.Player
 
+/**
+ * Representa um Titulo e Subtitulo
+ */
 class Title(
 
         var title: String = "Titulo",

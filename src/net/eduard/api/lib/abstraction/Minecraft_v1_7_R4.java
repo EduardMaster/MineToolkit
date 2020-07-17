@@ -1,5 +1,6 @@
 package net.eduard.api.lib.abstraction;
 
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -86,6 +87,11 @@ public class Minecraft_v1_7_R4 implements Minecraft {
 	@Override
 	public void sendActionBar(Player player, String message) {
 
+
+	}
+
+	@Override
+	public void sendParticle(Player player, String name, Location location, int amount, float xOffset, float yOffset, float zOffset, float speed) {
 
 	}
 

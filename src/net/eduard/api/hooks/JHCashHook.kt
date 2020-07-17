@@ -1,10 +1,10 @@
-package net.eduard.api.rooks
+package net.eduard.api.hooks
 
-import net.eduard.api.server.PluginRook
+import net.eduard.api.server.PluginHook
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.list.CurrencyJHCash
 
-class JHCashRook : PluginRook("JH_SHOP") {
+class JHCashHook : PluginHook("JH_SHOP") {
     override fun onPluginActive() {
         CurrencyController.getInstance().register(CurrencyJHCash())
     }

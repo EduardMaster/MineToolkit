@@ -1,6 +1,8 @@
 package net.eduard.api.lib.abstraction;
 
 import net.eduard.api.lib.modules.MineReflect;
+import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,6 +43,13 @@ public interface Minecraft {
 	}
 
 	void sendActionBar(Player player, String message);
+
+	 void sendParticle(Player player, String name, Location location, int amount, float xOffset, float yOffset, float zOffset, float speed);
+
+	default  void sendParticle(Player player, String name, Location location, int amount){
+		sendParticle(player,name,location,amount,0,0,0,1);
+	}
+
 
 	default void sendPacketsToAll(Object... packets) {
 		for (Player player : Mine.getPlayers()) {

@@ -28,11 +28,22 @@ import net.eduard.api.lib.modules.Extra
  *
  * @author Eduard
  */
-open class Menu : EventsManager, PagedMenu {
+open class Menu(
+
+        var title: String = "Menu",
+        var lineAmount: Int = 1,
+        block: (Menu.() -> Unit)? = null
+
+) : EventsManager(), PagedMenu {
+
+    fun button(name: String = "Botao",block :(MenuButton.() -> Unit)? = null): MenuButton {
+        return MenuButton(name,this, block =block)
+    }
+
     @Transient
     var superiorMenu: Menu? = null
-    var title = "Menu"
-    var lineAmount = 1
+
+
     var pageAmount = 1
     var pagePrefix = ""
     var pageSuffix = "(\$page/\$max_page)"
@@ -42,6 +53,9 @@ open class Menu : EventsManager, PagedMenu {
     var isCacheInventories: Boolean = false
     var openWithItem: ItemStack? = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
     var openWithCommand: String? = null
+
+    var openNeedPermission: String? = null
+    var messagePermission = "§cVocê precisa de permissão do Cargo Master para abrir este menu."
     var previousPage = Slot(
             Mine.newItem(Material.ARROW, "§aVoltar Página", 1, 0, "§2Clique para ir para a página anterior"), 5, 3)
     var backPage = Slot(
@@ -51,6 +65,12 @@ open class Menu : EventsManager, PagedMenu {
     var buttons = mutableListOf<MenuButton>()
 
 
+
+    inline fun cantBeOpened(){
+        openWithItem = null
+        openWithCommand = null
+    }
+
     @Transient
     var effect: ClickEffect = MenuButton.NO_ACTION
 
@@ -59,6 +79,10 @@ open class Menu : EventsManager, PagedMenu {
 
     @Transient
     private val pageOpened = HashMap<Player, Int>()
+
+    init {
+        block?.invoke(this)
+    }
 
     val fullTitle: String
         get() = if (isPageSystem) {
@@ -144,13 +168,6 @@ open class Menu : EventsManager, PagedMenu {
         }
     }
 
-    constructor() {}
-
-    constructor(title: String, lineAmount: Int) {
-        this.title = title
-        this.lineAmount = lineAmount
-
-    }
 
     protected fun getIndex(page: Int, slot: Int): Int {
         return getPageSlot(page, slot)
@@ -191,6 +208,15 @@ open class Menu : EventsManager, PagedMenu {
     }
 
     override fun open(player: Player, page: Int): Inventory {
+        if (openNeedPermission != null) {
+            if (!player.hasPermission(openNeedPermission)) {
+                player.sendMessage(messagePermission)
+
+
+                return MENU_EMPTY
+
+            }
+        }
         var page = page
         if (page < 1) {
             page = 1
@@ -267,7 +293,7 @@ open class Menu : EventsManager, PagedMenu {
 
             return menu
         }
-        return Mine.newInventory("Null", 9)
+        return MENU_EMPTY
 
     }
 
@@ -406,7 +432,7 @@ open class Menu : EventsManager, PagedMenu {
     companion object {
         var isDebug = true
         val registeredMenus = ArrayList<Menu>()
-
+        private val MENU_EMPTY = Mine.newInventory("Null", 9)
 
         fun debug(msg: String) {
             if (isDebug) {

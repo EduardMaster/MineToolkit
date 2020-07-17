@@ -22,6 +22,7 @@ public class FlatWorldGenerator extends EmptyWorldGenerator {
 		setLayer(result, 1, 3, Material.DIRT);
 		setLayer(result, 4, Material.GRASS);
 		setCorner(result, 8, Material.DIAMOND_BLOCK);
+
 		return result;
 	}
 

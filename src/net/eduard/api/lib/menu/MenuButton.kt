@@ -7,29 +7,29 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 open class MenuButton(var name: String = "Botao"
-                      ,     @Transient
+                      , @Transient
                       var parentMenu: Menu? = null
-                 , positionX: Int = 0,
-                 positionY: Int = 1,
-                 var page: Int = 1
+                      , positionX: Int = 0,
+                      positionY: Int = 1,
+                      var page: Int = 1,
+                      block: (MenuButton.() -> Unit)? = null
 
-                 ) : Slot(positionX, positionY)  {
+) : Slot(positionX, positionY) {
 
-   companion object{
-         val NO_ACTION = ClickEffect { }
-   }
+    companion object {
+        val NO_ACTION = ClickEffect { }
+    }
 
 
     var menu: Menu? = null
 
     init {
-        if (parentMenu!= null){
-            parentMenu?.addButton(this)
-        }
+        block?.invoke(this)
+        parentMenu?.addButton(this)
+
     }
 
-    constructor(parent: Menu) : this(parentMenu =  parent)
-
+    constructor(parent: Menu) : this(parentMenu = parent)
 
 
     val shop: Shop

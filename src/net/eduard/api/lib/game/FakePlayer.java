@@ -13,33 +13,18 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 /**
- * Jogador Off Ficticio<br>
- * nome;id
+ * Representa um Jogador Offline, implementa @{@link OfflinePlayer}
  *
  * @author Eduard
  * @version 1.2
  */
 public class FakePlayer implements OfflinePlayer {
 
-    private static final long serialVersionUID = 1L;
+
     private String name;
     private UUID id;
     private Player playerCache = null;
 
-
-    public static void main(String[] args) {
-        try {
-            byte[] bites1 = ("OfflinePlayer:" + "EduardKillerPro").getBytes("UTF-8");
-            byte[] bites2 = ("OfflinePlayer:" + "EduardKillerPro".toLowerCase()).getBytes("UTF-8");
-            UUID id1 = UUID.nameUUIDFromBytes(bites1);
-            UUID id2 = UUID.nameUUIDFromBytes(bites2);
-            System.out.println(id1);
-            System.out.println(id2);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     public void setIdByName() {
         try {
@@ -54,7 +39,6 @@ public class FakePlayer implements OfflinePlayer {
         try {
             this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -165,39 +149,39 @@ public class FakePlayer implements OfflinePlayer {
         return playerCache;
     }
 
-    @Override
+
     public UUID getUniqueId() {
         return this.id;
     }
 
-    @Override
+
     public boolean hasPlayedBefore() {
         return true;
     }
 
-    @Override
+
     public boolean isBanned() {
         return false;
     }
 
-    @Override
+
     public boolean isOnline() {
         return getPlayer() != null;
     }
 
-    @Override
+
     public boolean isWhitelisted() {
 
         return false;
     }
 
-    @Deprecated
+
     public void setBanned(boolean bol) {
 
 
     }
 
-    @Override
+
     public void setWhitelisted(boolean bol) {
 
 

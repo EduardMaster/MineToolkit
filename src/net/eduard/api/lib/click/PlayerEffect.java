@@ -13,11 +13,9 @@ public interface PlayerEffect extends Consumer<Player> {
 	 */
 	@Deprecated
 	default void effect(Player player){
-
+		accept(player);
 	}
 
 
-	default void accept(Player player){
-		effect(player);
-	}
+	default void accept(Player player){}
 }

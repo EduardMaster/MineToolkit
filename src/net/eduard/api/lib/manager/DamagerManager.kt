@@ -1,5 +1,6 @@
 package net.eduard.api.lib.manager
 
+import net.eduard.api.lib.kotlin.plugin
 import net.eduard.api.lib.kotlin.register
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Projectile
@@ -30,7 +31,8 @@ class DamagerManager : Listener {
 
 
         init {
-            DamagerManager().register()
+            DamagerManager().register(javaClass.plugin )
+
 
         }
     }

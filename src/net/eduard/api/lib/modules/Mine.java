@@ -3160,7 +3160,7 @@ public final class Mine {
     }
 
 
-    public static ArrayList<Location> getCircle(Location center, double radius, int amount) {
+    public static ArrayList<Location> getCircleHorizontal(Location center, double radius, int amount) {
         World world = center.getWorld();
         double increment = (2 * Math.PI) / amount;
         ArrayList<Location> locations = new ArrayList<Location>();
@@ -3173,7 +3173,7 @@ public final class Mine {
         return locations;
     }
 
-    public static ArrayList<Location> getCircle2(Location center, double radius, int amount) {
+    public static ArrayList<Location> getCircleVertical(Location center, double radius, int amount) {
         World world = center.getWorld();
         double increment = (2 * Math.PI) / amount;
         ArrayList<Location> locations = new ArrayList<Location>();
@@ -3187,7 +3187,7 @@ public final class Mine {
         return locations;
     }
 
-    public static ArrayList<Location> getCircle3(Location center, double radius, int amount) {
+    public static ArrayList<Location> getCircleVerticalZ(Location center, double radius, int amount) {
         World world = center.getWorld();
         double increment = (2 * Math.PI) / amount;
         ArrayList<Location> locations = new ArrayList<Location>();

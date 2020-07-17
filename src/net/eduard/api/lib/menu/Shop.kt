@@ -22,7 +22,18 @@ import org.bukkit.plugin.Plugin
 import java.util.*
 
 @StorageAttributes(indentificate = true)
-open class Shop(name: String = "Loja", lineAmount: Int = 3) : Menu(name, lineAmount) {
+open class Shop(name: String = "Loja", lineAmount: Int = 3
+, block : (Shop.() -> Unit)? = null) : Menu(name, lineAmount) {
+    init{
+        block?.invoke(this)
+    }
+
+    fun product(name: String = "Produto",block : (Product.() -> Unit)? = null): Product {
+        val product =  Product(name,this)
+        block?.invoke(product)
+        return product
+    }
+
 
 
     var currencyType = "VaultEconomy"
