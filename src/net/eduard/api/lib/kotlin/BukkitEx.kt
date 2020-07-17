@@ -9,6 +9,7 @@ import org.bukkit.block.BlockState
 import org.bukkit.command.CommandExecutor
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
@@ -88,7 +89,6 @@ var ItemStack.lore: List<String>
         return itemMeta.lore;
     }
     set(value) {
-
         val meta = itemMeta
         meta.lore = value
         this.itemMeta = meta
@@ -139,3 +139,8 @@ fun ItemStack.color(color: Color): ItemStack {
     itemMeta = meta
     return this
 }
+
+
+ fun <T : Event> event(actionToDo : T.() -> Unit) = EventListener(actionToDo)
+
+

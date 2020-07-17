@@ -19,13 +19,7 @@ import java.util.Map.Entry;
  *
  */
 public class MasterConfig {
-//	private static String toLine(List<String> lines) {
-//		StringBuilder builder = new StringBuilder();
-//		for (String line : lines) {
-//			builder.append(line + "\n");
-//		}
-//		return builder.toString();
-//	}
+
 
 	private static String getSpaces(int size) {
 		StringBuilder builder = new StringBuilder();

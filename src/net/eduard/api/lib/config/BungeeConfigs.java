@@ -17,7 +17,7 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 /**
- * Sistema de Criar Configs no BungeeCord
+ * Sistema de Criar BukkitConfigs no BungeeCord
  * @author Eduard
  * @version 1.0
  */

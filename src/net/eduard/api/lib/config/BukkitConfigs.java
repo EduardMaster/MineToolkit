@@ -32,7 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @version 1.0
  * @since Lib v1.0
  */
-public class Configs {
+public class BukkitConfigs {
 
     private Plugin plugin;
 
@@ -120,7 +120,7 @@ public class Configs {
         return config;
     }
 
-    public Configs(String name, Plugin plugin) {
+    public BukkitConfigs(String name, Plugin plugin) {
         this.plugin = plugin;
         if (plugin == null)
             this.plugin = JavaPlugin.getProvidingPlugin(getClass());
@@ -128,7 +128,7 @@ public class Configs {
         saveDefaultConfig();
     }
 
-    public Configs(String name) {
+    public BukkitConfigs(String name) {
         this(name, null);
     }
 
@@ -138,7 +138,7 @@ public class Configs {
      *
      * @return Config
      */
-    public Configs reloadConfig() {
+    public BukkitConfigs reloadConfig() {
         file = new File(plugin.getDataFolder(), name);
 
         config = YamlConfiguration.loadConfiguration(file);
@@ -158,7 +158,7 @@ public class Configs {
      *
      * @return Config
      */
-    public Configs saveConfig() {
+    public BukkitConfigs saveConfig() {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file, false);
             fileOutputStream.write(config.saveToString().getBytes("UTF-8"));
@@ -218,7 +218,7 @@ public class Configs {
      *
      * @return
      */
-    public Configs saveDefault() {
+    public BukkitConfigs saveDefault() {
         config.options().copyDefaults(true);
         saveConfig();
         return this;
@@ -428,7 +428,7 @@ public class Configs {
 
 
     /**
-     * Classe CooldownConfig foi colocada dentro da Configs<br>
+     * Classe CooldownConfig foi colocada dentro da BukkitConfigs<br>
      * Sistema de configuração focada em armazenamento de cooldowns
      *
      * @author Eduard
