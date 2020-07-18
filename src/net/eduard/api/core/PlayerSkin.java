@@ -137,7 +137,7 @@ public class PlayerSkin  {
 
 
 
-       Minecraft.newInstance().respawnPlayer(player);
+       Minecraft.getInstance().respawnPlayer(player);
       /*
         Location loc = player.getLocation();
 

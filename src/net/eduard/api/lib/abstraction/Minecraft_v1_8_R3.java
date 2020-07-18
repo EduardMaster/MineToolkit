@@ -7,6 +7,7 @@ import net.eduard.api.lib.modules.MineReflect;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,7 +23,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
 /**
  * @author Eduard
  */
-public class Minecraft_v1_8_R3 implements Minecraft {
+public class Minecraft_v1_8_R3 extends Minecraft {
     private static Map<String, Object> particles = new HashMap<>();
 
     public Minecraft_v1_8_R3() {
@@ -46,7 +47,6 @@ public class Minecraft_v1_8_R3 implements Minecraft {
     }
 
 
-
     private static Set<String> blockedMessage = new HashSet<>();
 
     @Override
@@ -56,26 +56,24 @@ public class Minecraft_v1_8_R3 implements Minecraft {
         float z = (float) location.getZ();
 
         Object result = particles.get(name.toLowerCase());
-        if (result == null){
-            String text = "Particle not exist in this version "+ name;
-            if (blockedMessage.contains(text))return;
+        if (result == null) {
+            String text = "Particle not exist in this version " + name;
+            if (blockedMessage.contains(text)) return;
             System.out.println(text);
             blockedMessage.add(text);
             return;
         }
         EnumParticle particula = (EnumParticle) result;
-        if (particula.f()){
+        if (particula.f()) {
 
-            String text = "Particle not sent because need arguments: "+name;
-            if (blockedMessage.contains(text))return;
+            String text = "Particle not sent because need arguments: " + name;
+            if (blockedMessage.contains(text)) return;
             System.out.println(text);
             blockedMessage.add(text);
-        }else {
+        } else {
             Object packet = new PacketPlayOutWorldParticles(particula, true, x, y, z, xOffset, yOffset, zOffset, speed, amount);
             sendPacket(player, packet);
         }
-
-
 
 
     }
@@ -167,6 +165,24 @@ public class Minecraft_v1_8_R3 implements Minecraft {
         final PacketPlayOutPlayerInfo updatePlayerInfo = new PacketPlayOutPlayerInfo(
                 EnumPlayerInfoAction.UPDATE_DISPLAY_NAME, ((CraftPlayer) playerToAdd).getHandle());
         sendPacketsToOthers(playerToAdd, addPlayerInfo, updatePlayerInfo);
+    }
+
+    @Override
+    public Object getItemNBT(ItemStack item) {
+        net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        NBTTagCompound nbt = null;
+        if ((nbt = nmsItem.getTag()) == null)
+            nmsItem.setTag(nbt);
+
+        return nbt;
+    }
+
+    @Override
+    public ItemStack setItemNBT(ItemStack item, Object nbt) {
+        net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        nmsItem.setTag((NBTTagCompound) nbt);
+        CraftItemStack craftMirror = CraftItemStack.asCraftMirror(nmsItem);
+        return craftMirror;
     }
 
     @Override

@@ -81,7 +81,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
      * @return Se a a config.yml tem configurações
      */
     val isEditable: Boolean
-        get() = !configs.keys.isEmpty()
+        get() = configs.keys.isNotEmpty()
 
     val autoSaveSeconds: Long
         get() = configs.getLong("auto-save-seconds")!!
@@ -208,9 +208,9 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         var lista = mutableListOf(*pasta.listFiles()!!)
         lista.sortBy { it.lastModified() }
 
-        //lista = lista.stream().sorted(Comparator.comparing<File, Long>(Function<File, Long> { return@Function it.lastModified() })).collect<List<File>, Any>(Collectors.toList())
-        for (i in lista.size - 10 downTo 0) {
-            val arquivo = lista[i]
+
+        for (position in lista.size - 10 downTo 0) {
+            val arquivo = lista[position]
             Extra.deleteFolder(arquivo)
             if (arquivo.exists())
                 arquivo.delete()

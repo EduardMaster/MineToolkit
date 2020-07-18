@@ -39,11 +39,9 @@ public class MineReflect {
 
     public static class ItemExtraData {
 
-        private ItemExtraData() {
 
-        }
 
-        private Object nbtcompound;
+        private Object nbt;
 
         public String getUniqueId() {
             return getString("UNIQUE_ID");
@@ -66,7 +64,7 @@ public class MineReflect {
 
             try {
                 Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "hasKey", String.class);
-                return (boolean) getString.invoke(nbtcompound, key);
+                return (boolean) getString.invoke(nbt, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -77,7 +75,7 @@ public class MineReflect {
             if (has(key)) {
                 try {
                     Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "getString", String.class);
-                    return (String) getString.invoke(nbtcompound, key);
+                    return (String) getString.invoke(nbt, key);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -90,7 +88,7 @@ public class MineReflect {
             if (has(key)) {
                 try {
                     Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "getDouble", String.class);
-                    return (double) getString.invoke(nbtcompound, key);
+                    return (double) getString.invoke(nbt, key);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -102,7 +100,7 @@ public class MineReflect {
         public String setDouble(String key, double value) {
             try {
                 Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setDouble", String.class, double.class);
-                return (String) getString.invoke(nbtcompound, key, value);
+                return (String) getString.invoke(nbt, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -113,7 +111,7 @@ public class MineReflect {
         public String setString(String key, String value) {
             try {
                 Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setString", String.class, String.class);
-                return (String) getString.invoke(nbtcompound, key, value);
+                return (String) getString.invoke(nbt, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -121,12 +119,12 @@ public class MineReflect {
 
         }
 
-        private void setNBT(Object nbtcompound) {
-            this.nbtcompound = nbtcompound;
+        public void setNBT(Object nbtcompound) {
+            this.nbt = nbtcompound;
         }
 
-        private Object getNBT() {
-            return nbtcompound;
+        public Object getNBT() {
+            return nbt;
         }
     }
 

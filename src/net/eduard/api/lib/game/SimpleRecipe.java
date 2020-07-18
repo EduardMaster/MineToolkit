@@ -3,7 +3,6 @@ package net.eduard.api.lib.game;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.eduard.api.lib.storage.Storable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -66,10 +65,6 @@ public class SimpleRecipe {
 		return this;
 	}
 
-	public ItemStack getResult() {
-
-		return result;
-	}
 
 	public ShapelessRecipe getRecipe() {
 		if (result == null)
@@ -82,6 +77,10 @@ public class SimpleRecipe {
 	}
 
 
+	public ItemStack getResult() {
+
+		return result;
+	}
 
 	public void setResult(ItemStack result) {
 		this.result = result;
