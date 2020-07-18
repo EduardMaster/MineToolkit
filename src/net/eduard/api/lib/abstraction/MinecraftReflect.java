@@ -8,12 +8,16 @@ import org.bukkit.inventory.ItemStack;
 public class MinecraftReflect extends Minecraft {
     @Override
     public void sendPacket(Object packet, Player player) {
-
+        try {
+            MineReflect.sendPacket(packet, player);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void sendActionBar(Player player, String message) {
-
+        MineReflect.sendActionBar(player,message);
     }
 
     @Override

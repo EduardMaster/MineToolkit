@@ -8,7 +8,7 @@ import net.eduard.api.core.InfoGenerator
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.eduard.api.lib.bungee.BungeeAPI
-import net.eduard.api.lib.bungee.ServerAPI.BukkitControl
+import net.eduard.api.lib.modules.ServerAPI.BukkitControl
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.game.SoundEffect

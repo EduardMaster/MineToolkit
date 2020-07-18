@@ -263,6 +263,12 @@ public class StorageAPI {
         }
         return value;
     }
+    public static int getObjectIdByReference(String reference){
+        if (reference.contains(StorageAPI.REFER_KEY)){
+            return Extra.toInt(reference.split(STORE_KEY)[1]);
+        }
+        return Extra.toInt(reference);
+    }
 
     public static Storable getStore(Class<?> claz) {
         if (claz == null)

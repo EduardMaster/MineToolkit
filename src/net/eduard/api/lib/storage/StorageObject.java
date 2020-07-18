@@ -68,11 +68,11 @@ public class StorageObject extends StorageBase {
             return new StorageEnum(getInfo().clone()).restore(data);
         }
         if (isReference()) {
-            if (data.toString().contains(StorageAPI.REFER_KEY)) {
-                debug(">> REFERENCE " + data);
-                return (int) Extra.toInt(data.toString().split(StorageAPI.REFER_KEY)[1]);
-            }
-            return null;
+
+            debug(">> REFERENCE " + data);
+            return StorageAPI.getObjectIdByReference(data.toString());
+
+
         }
         if (Extra.isList(claz)) {
             debug(">> LIST " + data);
@@ -93,11 +93,8 @@ public class StorageObject extends StorageBase {
         if (wrapper != null) {
             try {
                 debug(">> RESTORING DATA FROM " + data);
-                Object result = Extra.getResult(Extra.class, "to" + wrapper.getSimpleName(),
-                        new Object[]{Object.class}, data);
-                if (result instanceof String) {
-                    result = ((String) result).replace("&", "§");
-                }
+                Object result = StorageAPI.transform(data, wrapper);
+
                 debug(">> DATA RESTORED " + data);
                 return result;
             } catch (Exception e) {
@@ -122,15 +119,12 @@ public class StorageObject extends StorageBase {
                 instance = store.restore(data.toString());
 
             }
-            if (instance == null){
+            if (instance == null) {
                 debug(">> INLINE  " + data);
                 instance = new StorageInline(getInfo().clone()).restore(data);
-            }else{
+            } else {
                 debug(">> INLINE CUSTOM " + data);
             }
-
-
-
 
 
             return instance;
@@ -216,9 +210,9 @@ public class StorageObject extends StorageBase {
             storable.restore((Map<String, Object>) map);
 
         }
-        if (store!=null){
-            Object returned = store.restore((Map<String, Object>)map);
-            if (returned!=null){
+        if (store != null) {
+            Object returned = store.restore((Map<String, Object>) map);
+            if (returned != null) {
                 instance = returned;
             }
         }
@@ -265,7 +259,7 @@ public class StorageObject extends StorageBase {
             return text;
         }
         Class<?> wrapper = Extra.getWrapper(claz);
-        if (wrapper!=null){
+        if (wrapper != null) {
             return data;
         }
         if (isInline()) {
@@ -274,10 +268,11 @@ public class StorageObject extends StorageBase {
             if (store != null) {
                 result = store.store(data);
                 debug("<< INLINE CUSTOM " + result);
-            } if (result == null) {
+            }
+            if (result == null) {
                 debug("<< INLINE " + data);
                 return new StorageInline(getInfo().clone()).store(data);
-            }else{
+            } else {
                 return result;
             }
         }

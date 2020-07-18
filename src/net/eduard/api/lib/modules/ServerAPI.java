@@ -1,4 +1,4 @@
-package net.eduard.api.lib.bungee;
+package net.eduard.api.lib.modules;
 
 import java.io.ByteArrayOutputStream;
 

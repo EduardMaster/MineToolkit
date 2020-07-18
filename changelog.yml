@@ -28,3 +28,5 @@
 2.8.2:
   - Atualizando DBManager classe retirando independencia agora depende da classe SQLManager ou seja não da pra usar isso fora deste projeto
   - Em breve será reconstruido todos os códigos para que use StringBuilder para maior eficiência
+2.8.5:
+  - StorageAPI sistema de Referencia para Lista e Mapas concertado

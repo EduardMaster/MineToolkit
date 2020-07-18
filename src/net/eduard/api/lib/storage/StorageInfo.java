@@ -12,8 +12,7 @@ public class StorageInfo implements Cloneable {
 	public StorageInfo clone() {
 		try {
 			return (StorageInfo) super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;

@@ -86,11 +86,8 @@ public class CustomTag {
 			setField(packet, pack_option, Integer.valueOf(1));
 			for (Player ps : Bukkit.getOnlinePlayers())
 				sendPacket(ps, packet);
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
+
 			e.printStackTrace();
 		}
 

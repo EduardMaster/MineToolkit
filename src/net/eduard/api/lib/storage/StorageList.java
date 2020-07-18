@@ -33,7 +33,8 @@ public class StorageList extends StorageBase<List> {
                 List<?> oldList = (List<?>) data;
                 List<Integer> newList = new ArrayList<>();
                 for (Object item : oldList) {
-                    newList.add((Integer) Integer.parseInt(item.toString()));
+
+                    newList.add(StorageAPI.getObjectIdByReference(item.toString()));
                 }
                 List<Object> list = new ArrayList<>();
                 StorageAPI.newReference(new ReferenceList(newList, list));
