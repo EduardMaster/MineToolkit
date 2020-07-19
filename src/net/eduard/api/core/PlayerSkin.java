@@ -122,7 +122,7 @@ public class PlayerSkin  {
 
         try {
             Object handle = MineReflect.getHandle(player);
-            GameProfile profile  = (GameProfile) Extra.getResult(handle,"getProfile");
+            GameProfile profile  = (GameProfile) Extra.getMethodInvoke(handle,"getProfile");
 
             profile.getProperties().clear();
             try {

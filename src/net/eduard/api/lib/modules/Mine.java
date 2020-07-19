@@ -1095,9 +1095,9 @@ public final class Mine {
     @SuppressWarnings("unchecked")
     public static Map<String, Command> getCommands() {
         try {
-            Object map = Extra.getValue(Bukkit.getServer().getPluginManager(), "commandMap");
+            Object map = Extra.getFieldValue(Bukkit.getServer().getPluginManager(), "commandMap");
 
-            return (Map<String, Command>) Extra.getValue(map, "knownCommands");
+            return (Map<String, Command>) Extra.getFieldValue(map, "knownCommands");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

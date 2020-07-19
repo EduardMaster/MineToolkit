@@ -6,6 +6,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -14,31 +15,61 @@ import java.util.*;
 /**
  * Classe que constitui métodos com Reflection para funções que não possui na Bukkit API
  * <br>
- *  Nome antigo: RexAPI
+ * Nome antigo: RexAPI
+ *
  * @version 1.0
  * @since 02/06/2020
  */
 public class MineReflect {
     /**
      * INICIO Métodos ABAIXO
-     *
      */
 
-    public static  String MSG_ITEM_STACK = "§aQuantidade: §f$stack";
+    public static String MSG_ITEM_STACK = "§aQuantidade: §f$stack";
+
     public static ItemStack toStack(ItemStack original, double amount) {
 
-        List<String> lore = Mine.getLore(original);
-        lore.add(MineReflect.MSG_ITEM_STACK.replace("$stack",Extra.formatMoney(amount)));
-        Mine.setLore(original, lore);
+        List<String> lore = getLore(original);
+        lore.add(MineReflect.MSG_ITEM_STACK.replace("$stack", Extra.formatMoney(amount)));
+        setLore(original, lore);
         ItemExtraData data = getData(original);
         data.setCustomStack(amount);
         original = setData(original, data);
         return original;
     }
 
+    /**
+     * Pega o descrição do Item
+     *
+     * @param item Item
+     * @return Descrição
+     */
+    private static List<String> getLore(ItemStack item) {
+        if (item != null) {
+            if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
+                return item.getItemMeta().getLore();
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Modifica a Descrição do Item
+     *
+     * @param item Item
+     * @param lore Descrição
+     * @return Item
+     */
+    private static ItemStack setLore(ItemStack item, List<String> lore) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
 
     public static class ItemExtraData {
-
 
 
         private Object nbt;
@@ -201,9 +232,6 @@ public class MineReflect {
      */
 
 
-
-
-
     /**
      * @return Versão do Servidor
      */
@@ -231,24 +259,48 @@ public class MineReflect {
     static {
         Extra.newReplacer("#v", MineReflect.getVersion());
     }
+
+    /**
+     * Se terminar com 2, é porque a classe esta dentro de outra classe
+     */
+    public static String classBukkitBukkit = "#bBukkit";
+    public static String classMineMinecraftServer = "#mMinecraftServer";
     public static String classMineEntityPlayer = "#mEntityPlayer";
     public static String classCraftCraftPlayer = "#cCraftPlayer";
+    public static String classMineEntityHuman = "#mEntityHuman";
     public static String classSpigotPacketTitle = "#sProtocolInjector$PacketTitle";
     public static String classSpigotAction = "#sProtocolInjector$PacketTitle$Action";
     public static String classSpigotPacketTabHeader = "#sProtocolInjector$PacketTabHeader";
+
     public static String classPacketPlayOutChat = "#pPlayOutChat";
     public static String classPacketPlayOutTitle = "#pPlayOutTitle";
     public static String classPacketPlayOutWorldParticles = "#pPlayOutWorldParticles";
     public static String classPacketPlayOutPlayerListHeaderFooter = "#pPlayOutPlayerListHeaderFooter";
     public static String classPacketPlayOutNamedEntitySpawn = "#pPlayOutNamedEntitySpawn";
-    public static String classPacketPlayInClientCommand = "#pPlayInClientCommand";
     public static String classCraftEnumTitleAction = "#cEnumTitleAction";
     public static String classPacketEnumTitleAction2 = "#pPlayOutTitle$EnumTitleAction";
+
+
+    /**
+     * Responsavel por Ações acontecerem no Cliente
+     */
+    public static String classPacketPlayInClientCommand = "#pPlayInClientCommand";
     public static String classMineEnumClientCommand = "#mEnumClientCommand";
     public static String classMineEnumClientCommand2 = "#pPlayInClientCommand$EnumClientCommand";
-    public static String classMineChatSerializer = "#mChatSerializer";
+
+
+    /**
+     * Classes para criar Textos, e componentes de Textos
+     */
     public static String classMineIChatBaseComponent = "#mIChatBaseComponent";
-    public static String classMineEntityHuman = "#mEntityHuman";
+    public static String classMineChatComponentText = "#mChatComponentText";
+    public static String classMineChatSerializer = "#mChatSerializer";
+    public static String classMineChatSerializer2 = "#mIChatBaseComponent$ChatSerializer";
+
+
+    /**
+     * Classes abaixo relacionado a items
+     */
     public static String classMineNBTTagCompound = "#mNBTTagCompound";
     public static String classMineNBTBase = "#mNBTBase";
     public static String classMineNBTTagList = "#mNBTTagList";
@@ -256,9 +308,7 @@ public class MineReflect {
     public static String classCraftItemStack = "#cinventory.CraftItemStack";
     public static String classMineItemStack = "#mItemStack";
     public static String classBukkitItemStack = "#bItemStack";
-    public static String classBukkitBukkit = "#bBukkit";
-    public static String classMineChatComponentText = "#mChatComponentText";
-    public static String classMineMinecraftServer = "#mMinecraftServer";
+
 
     public static Villager newNPCVillager(Location location, String name) {
         Villager npc = location.getWorld().spawn(location, Villager.class);
@@ -267,6 +317,7 @@ public class MineReflect {
         MineReflect.disableAI(npc);
         return npc;
     }
+
     /**
      * Pega o TPS do servidor uma expecie de calculador de LAG
      *
@@ -282,11 +333,12 @@ public class MineReflect {
     }
 
     public static int getCurrentTick() throws Exception {
-        return (int) Extra.getValue(MineReflect.classMineMinecraftServer, "currentTick");
+        return (int) Extra.getFieldValue(MineReflect.classMineMinecraftServer, "currentTick");
     }
 
     /**
      * Altera a stack máxima do Item
+     *
      * @param itemOriginal
      * @param amount
      * @return
@@ -332,10 +384,10 @@ public class MineReflect {
     public static void disableAI(Entity entity) {
         try {
             Object compound = Extra.getNew(MineReflect.classMineNBTTagCompound);
-            Object getHandle = Extra.getResult(entity, "getHandle");
-            Extra.getResult(getHandle, "c", compound);
-            Extra.getResult(compound, "setByte", "NoAI", (byte) 1);
-            Extra.getResult(getHandle, "f", compound);
+            Object getHandle = Extra.getMethodInvoke(entity, "getHandle");
+            Extra.getMethodInvoke(getHandle, "c", compound);
+            Extra.getMethodInvoke(compound, "setByte", "NoAI", (byte) 1);
+            Extra.getMethodInvoke(getHandle, "f", compound);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -362,13 +414,13 @@ public class MineReflect {
             // EntityHuman b;
             Field profileField = Extra.getField(MineReflect.classMineEntityHuman, "bH");
             Object gameprofile = profileField.get(entityplayer);
-            // Object before = Extra.getValue(gameprofile, "name");
-            Extra.setValue(gameprofile, "name", displayName);
+            // Object before = Extra.getFieldValue(gameprofile, "name");
+            Extra.setFieldValue(gameprofile, "name", displayName);
             // EntityPlayer a;
             // Object packet = Extra.getNew(MineReflect.classPacketPlayOutNamedEntitySpawn,
             // Extra.getParameters(MineReflect.classMineEntityHuman),
             // entityplayer);
-            // // Extra.setValue(Extra.getValue(packet, "b"), "name", displayName);
+            // // Extra.setFieldValue(Extra.getFieldValue(packet, "b"), "name", displayName);
             // sendPackets(packet, player);
             for (Player p : getPlayers()) {
                 if (p.equals(player))
@@ -380,7 +432,7 @@ public class MineReflect {
                     continue;
                 p.showPlayer(player);
             }
-            // Extra.setValue(gameprofile, "name", before);
+            // Extra.setFieldValue(gameprofile, "name", before);
             // System.out.println(Bukkit.getPlayer(displayName));
 
         } catch (Exception ex) {
@@ -412,13 +464,13 @@ public class MineReflect {
             Field members = Extra.getField(clas, "g");
             Field param_int = Extra.getField(clas, "h");
             Field pack_option = Extra.getField(clas, "i");
-            Extra.setValue(packet, "a", order + teamName);
-            Extra.setValue(packet, "b", player.getName());
-            Extra.setValue(packet, "c", prefix);
-            Extra.setValue(packet, "d", suffix);
-            Extra.setValue(packet, "g", Arrays.asList(new String[]{player.getName()}));
-            Extra.setValue(packet, "h", Integer.valueOf(0));
-            Extra.setValue(packet, "i", Integer.valueOf(1));
+            Extra.setFieldValue(packet, "a", order + teamName);
+            Extra.setFieldValue(packet, "b", player.getName());
+            Extra.setFieldValue(packet, "c", prefix);
+            Extra.setFieldValue(packet, "d", suffix);
+            Extra.setFieldValue(packet, "g", Arrays.asList(new String[]{player.getName()}));
+            Extra.setFieldValue(packet, "h", Integer.valueOf(0));
+            Extra.setFieldValue(packet, "i", Integer.valueOf(1));
             MineReflect.sendPackets(packet);
 
         } catch (Exception e) {
@@ -456,20 +508,16 @@ public class MineReflect {
     public static void sendTitle(Player player, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
         try {
             if (isAbove1_8(player)) {
-
-                // sendPacket(player, getNew(PacketTitle, getParameters(Action,
-                // int.class, int.class, int.class),
-                // getValue(Action, "TIMES"), fadeIn, stay, fadeOut));
                 sendPacket(player, Extra.getNew(MineReflect.classSpigotPacketTitle,
-                        Extra.getValue(MineReflect.classSpigotAction, "TIMES"), fadeIn, stay, fadeOut));
+                        Extra.getFieldValue(MineReflect.classSpigotAction, "TIMES"), fadeIn, stay, fadeOut));
                 sendPacket(player,
                         Extra.getNew(MineReflect.classSpigotPacketTitle,
                                 Extra.getParameters(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
-                                Extra.getValue(MineReflect.classSpigotAction, "TITLE"), getIChatText(title)));
+                                Extra.getFieldValue(MineReflect.classSpigotAction, "TITLE"), getChatComponentText(title)));
                 sendPacket(player,
                         Extra.getNew(MineReflect.classSpigotPacketTitle,
                                 Extra.getParameters(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
-                                Extra.getValue(MineReflect.classSpigotAction, "SUBTITLE"), getIChatText(subTitle)));
+                                Extra.getFieldValue(MineReflect.classSpigotAction, "SUBTITLE"), getChatComponentText(subTitle)));
 
                 return;
             }
@@ -481,11 +529,11 @@ public class MineReflect {
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
                             Extra.getParameters(MineReflect.classCraftEnumTitleAction, MineReflect.classMineIChatBaseComponent),
-                            Extra.getValue(MineReflect.classCraftEnumTitleAction, "TITLE"), getIChatText(title)));
+                            Extra.getFieldValue(MineReflect.classCraftEnumTitleAction, "TITLE"), getChatComponentText(title)));
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
                             Extra.getParameters(MineReflect.classCraftEnumTitleAction, MineReflect.classMineIChatBaseComponent),
-                            Extra.getValue(MineReflect.classCraftEnumTitleAction, "SUBTITLE"), getIChatText(subTitle)));
+                            Extra.getFieldValue(MineReflect.classCraftEnumTitleAction, "SUBTITLE"), getChatComponentText(subTitle)));
             return;
         } catch (Exception e) {
         }
@@ -494,16 +542,15 @@ public class MineReflect {
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
                             Extra.getParameters(MineReflect.classPacketEnumTitleAction2, MineReflect.classMineIChatBaseComponent),
-                            Extra.getValue(MineReflect.classPacketEnumTitleAction2, "TITLE"), getIChatText2(title)));
+                            Extra.getFieldValue(MineReflect.classPacketEnumTitleAction2, "TITLE"), getChatComponentText(title)));
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
                             Extra.getParameters(MineReflect.classPacketEnumTitleAction2, MineReflect.classMineIChatBaseComponent),
-                            Extra.getValue(MineReflect.classPacketEnumTitleAction2, "SUBTITLE"), getIChatText2(subTitle)));
+                            Extra.getFieldValue(MineReflect.classPacketEnumTitleAction2, "SUBTITLE"), getChatComponentText(subTitle)));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 
     /**
@@ -518,7 +565,7 @@ public class MineReflect {
             if (isAbove1_8(player)) {
                 Object packet = Extra.getNew(MineReflect.classSpigotPacketTabHeader,
                         Extra.getParameters(MineReflect.classMineIChatBaseComponent, MineReflect.classMineIChatBaseComponent),
-                        getIChatText(header), getIChatText(footer));
+                        getChatComponentText(header), getChatComponentText(footer));
                 sendPacket(packet, player);
                 return;
             }
@@ -527,41 +574,44 @@ public class MineReflect {
         }
         try {
             Object packet = Extra.getNew(MineReflect.classPacketPlayOutPlayerListHeaderFooter,
-                    Extra.getParameters(MineReflect.classMineIChatBaseComponent), getIChatText(header));
+                    Extra.getParameters(MineReflect.classMineIChatBaseComponent), getChatComponentText(header));
 
-            Extra.setValue(packet, "b", getIChatText(footer));
+
+            Extra.setFieldValue(packet, "b", getChatComponentText(footer));
             sendPacket(packet, player);
         } catch (Exception e) {
         }
         try {
             Object packet = Extra.getNew(MineReflect.classPacketPlayOutPlayerListHeaderFooter,
-                    Extra.getParameters(MineReflect.classMineIChatBaseComponent), getIChatText2(header));
-            Extra.setValue(packet, "b", getIChatText2(footer));
+                    Extra.getParameters(MineReflect.classMineIChatBaseComponent), getChatComponentText(header));
+            Extra.setFieldValue(packet, "b", getChatComponentText(footer));
             sendPacket(packet, player);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
     }
+
     /**
      * @param player Jogador
-     * @return Se o Jogador esta na versão 1.8 ou pra cima
+     * @return Se o Jogador esta na cima versão 1.8
      */
     public static boolean isAbove1_8(Player player) {
         try {
-            return (int) Extra.getResult(Extra.getValue(getConnection(player), "networkManager"), "getVersion") == 47;
+            return (int) Extra.getMethodInvoke(Extra.getFieldValue(getConnection(player), "networkManager"), "getVersion") == 47;
 
         } catch (Exception ex) {
         }
         return false;
     }
+
     /**
      * @param player Jogador
      * @return Ping do jogador
      */
     public static String getPing(Player player) {
         try {
-            return Extra.getValue(getHandle(player), "ping").toString();
+            return Extra.getFieldValue(getHandle(player), "ping").toString();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -576,23 +626,12 @@ public class MineReflect {
      */
     public static void sendActionBar(Player player, String text) {
         try {
-            Object component = getIChatText(text);
-            Object packet = Extra.getNew(MineReflect.classPacketPlayOutChat,
-                    Extra.getParameters(MineReflect.classMineIChatBaseComponent, byte.class), component, (byte) 2);
-            sendPacket(player, packet);
-            return;
-        } catch (Exception ex) {
-        }
-        try {
-            Object component = getIChatText2(text);
+            Object component = getChatComponentText(text);
             Object packet = Extra.getNew(MineReflect.classPacketPlayOutChat,
                     Extra.getParameters(MineReflect.classMineIChatBaseComponent, byte.class), component, (byte) 2);
             sendPacket(player, packet);
         } catch (Exception e) {
             e.printStackTrace();
-			Bukkit.getConsoleSender().sendMessage(
-				"§bRexMine §aNao foi possivel usar o 'setActionBar' pois o servidor esta na versao anterior a 1.8");
-
         }
 
     }
@@ -603,54 +642,70 @@ public class MineReflect {
      * @param component Componente (Texto)
      * @return IChatBaseComponent iniciado
      */
-    public static Object getIChatBaseComponent(String component) throws Exception {
-        return Extra.getResult(MineReflect.classMineChatSerializer, "a", component);
+    public static String getChatComponentJSON(Object component) throws Exception {
+
+        try {
+            return (String) Extra.getMethodInvoke(MineReflect.classMineChatSerializer, "a", new Object[]{
+                    classMineIChatBaseComponent
+            }, component);
+        } catch (Exception ex) {
+            return (String) Extra.getMethodInvoke(MineReflect.classMineChatSerializer2, "a", new Object[]{
+                    classMineIChatBaseComponent
+            }, component);
+        }
     }
 
     /**
      * Inicia um IChatBaseComponent pelo metodo a(String) da classe ChatSerializer
      * adicionando componente texto
      *
-     * @param text Texto
+     * @param component Texto
      * @return IChatBaseComponent iniciado
      */
-    public static Object getIChatText(String text) throws Exception {
-        return getIChatBaseComponent(getIComponentText(text));
+    public static Object getChatComponent(String component) throws Exception {
+        try {
+            return Extra.getMethodInvoke(MineReflect.classMineChatSerializer, "a", component);
+        } catch (Exception ex) {
+            return Extra.getMethodInvoke(MineReflect.classMineChatSerializer2, "a", component);
+        }
     }
 
     /**
-     * Inicia um ChatComponentText"IChatBaseComponent" pelo cons(String) da classe
+     * Inicia um ChatComponentText"IChatBaseComponent" pelo init(String) da classe
      * ChatComponentText
      *
      * @param text Texto
      * @return ChatComponentText iniciado
      */
-    public static Object getIChatText2(String text) throws Exception {
+    public static Object getChatComponentText(String text) throws Exception {
+
         return Extra.getNew(MineReflect.classMineChatComponentText, text);
 
     }
 
     /**
-     * @param text Texto
+     * @param rawText Texto
      * @return "{\"text\":\"" + text + "\"}"
      */
-    public static String getIComponentText(String text) {
-        return ("{\"text\":\"" + text + "\"}");
+    private static String getChatJsonByRaw(String rawText) {
+        return ("{\"text\":\"" + rawText + "\"}");
 
     }
+
     public static void sendActionBar(String message) {
         for (Player player : MineReflect.getPlayers()) {
             MineReflect.sendActionBar(player, message);
         }
     }
+
     /**
      * @return Lista de jogadores do servidor
      */
-    public static List<Player> getPlayers() {
+    private static List<Player> getPlayers() {
         List<Player> list = new ArrayList<>();
         try {
 
-            Object object = Extra.getResult(MineReflect.classBukkitBukkit, "getOnlinePlayers");
+            Object object = Extra.getMethodInvoke(MineReflect.classBukkitBukkit, "getOnlinePlayers");
             if (object instanceof Collection) {
                 Collection<?> players = (Collection<?>) object;
                 for (Object obj : players) {
@@ -680,7 +735,7 @@ public class MineReflect {
      */
     public static void sendPacket(Object packet, Player player) throws Exception {
 
-        Extra.getResult(getConnection(player), "sendPacket", Extra.getParameters(MineReflect.classPacketPacket), packet);
+        Extra.getMethodInvoke(getConnection(player), "sendPacket", Extra.getParameters(MineReflect.classPacketPacket), packet);
     }
 
     /**
@@ -733,8 +788,9 @@ public class MineReflect {
      * @throws Exception
      */
     public static Object getHandle(Player player) throws Exception {
-        return Extra.getResult(player, "getHandle");
+        return Extra.getMethodInvoke(player, "getHandle");
     }
+
     /**
      * Retorna Um PlayerConnection pela variavel playerConnection da classe
      * EntityPlayer <Br>
@@ -744,8 +800,9 @@ public class MineReflect {
      * @return Conexão do jogador
      */
     public static Object getConnection(Player player) throws Exception {
-        return Extra.getValue(getHandle(player), "playerConnection");
+        return Extra.getFieldValue(getHandle(player), "playerConnection");
     }
+
     /**
      * Força o Respawn do Jogador (Respawn Automatico)
      *
@@ -754,14 +811,15 @@ public class MineReflect {
     public static void makeRespawn(Player player) {
         try {
             Object packet = Extra.getNew(MineReflect.classPacketPlayInClientCommand,
-                    Extra.getValue(MineReflect.classMineEnumClientCommand, "PERFORM_RESPAWN"));
-            Extra.getResult(getConnection(player), "a", packet);
+                    Extra.getFieldValue(MineReflect.classMineEnumClientCommand, "PERFORM_RESPAWN"));
+            Extra.getMethodInvoke(getConnection(player), "a", packet);
 
         } catch (Exception ex) {
             try {
+
                 Object packet = Extra.getNew(MineReflect.classPacketPlayInClientCommand,
-                        Extra.getValue(MineReflect.classMineEnumClientCommand2, "PERFORM_RESPAWN"));
-                Extra.getResult(getConnection(player), "a", packet);
+                        Extra.getFieldValue(MineReflect.classMineEnumClientCommand2, "PERFORM_RESPAWN"));
+                Extra.getMethodInvoke(getConnection(player), "a", packet);
             } catch (Exception e) {
                 e.printStackTrace();
             }

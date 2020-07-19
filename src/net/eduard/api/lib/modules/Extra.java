@@ -976,11 +976,11 @@ public final class Extra {
 
     }
 
-    public static Object getValue(Object object, String name) throws Exception {
+    public static Object getFieldValue(Object object, String name) throws Exception {
         return getField(object, name).get(object);
     }
 
-    public static void setValue(Object object, String name, Object value) throws Exception {
+    public static void setFieldValue(Object object, String name, Object value) throws Exception {
         getField(object, name).set(object, value);
     }
     public static Object getNew(Object object, Object[] parameters, Object... values) throws Exception {
@@ -995,12 +995,12 @@ public final class Extra {
 
     }
 
-    public static Object getResult(Object object, String name, Object... values) throws Exception {
+    public static Object getMethodInvoke(Object object, String name, Object... values) throws Exception {
 
         return getMethod(object, name, values).invoke(object, values);
     }
 
-    public static Object getResult(Object object, String name, Object[] parameters, Object... values) throws Exception {
+    public static Object getMethodInvoke(Object object, String name, Object[] parameters, Object... values) throws Exception {
         try {
             return getMethod(object, name, parameters).invoke(object, values);
         } catch (InvocationTargetException e) {

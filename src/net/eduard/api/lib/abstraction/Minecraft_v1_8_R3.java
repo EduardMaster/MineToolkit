@@ -8,6 +8,7 @@ import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +17,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
 import net.eduard.api.lib.modules.Extra;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand.EnumClientCommand;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
 
@@ -187,10 +187,15 @@ public class Minecraft_v1_8_R3 extends Minecraft {
 
     @Override
     public void sendActionBar(Player player, String message) {
-        IChatBaseComponent chatBaseComponent = ChatSerializer.a("" + message);
-        PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(chatBaseComponent, (byte) 2);
+        PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(new ChatComponentText(message), (byte) 2);
         sendPacket(packetPlayOutChat, player);
 
     }
 
+    @Override
+    public void disableAI(Entity entity) {
+
+        MineReflect.disableAI(entity);
+
+    }
 }

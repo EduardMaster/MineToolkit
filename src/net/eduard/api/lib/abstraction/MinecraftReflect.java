@@ -2,6 +2,7 @@ package net.eduard.api.lib.abstraction;
 
 import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,6 +18,7 @@ public class MinecraftReflect extends Minecraft {
 
     @Override
     public void sendActionBar(Player player, String message) {
+
         MineReflect.sendActionBar(player,message);
     }
 
@@ -37,6 +39,7 @@ public class MinecraftReflect extends Minecraft {
 
     @Override
     public void setPlayerSkin(Player player, String newSkin) {
+
 
     }
 
@@ -71,6 +74,10 @@ public class MinecraftReflect extends Minecraft {
         data.setNBT(nbt);
         return MineReflect.setData(item, data);
 
+    }
 
+    @Override
+    public void disableAI(Entity entity) {
+        MineReflect.disableAI(entity);
     }
 }

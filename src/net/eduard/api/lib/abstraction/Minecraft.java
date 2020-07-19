@@ -3,6 +3,7 @@ package net.eduard.api.lib.abstraction;
 import net.eduard.api.lib.modules.MineReflect;
 import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -99,9 +100,11 @@ abstract public class Minecraft {
 
     abstract public void addToTab(Player playerToAdd);
 
-
     abstract public Object getItemNBT(ItemStack item);
 
     abstract public ItemStack setItemNBT(ItemStack item, Object nbt);
+
+    abstract public void disableAI(Entity entity);
+
 
 }

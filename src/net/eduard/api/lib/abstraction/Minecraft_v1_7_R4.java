@@ -2,6 +2,7 @@ package net.eduard.api.lib.abstraction;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,6 +55,12 @@ public class Minecraft_v1_7_R4 extends Minecraft {
     public ItemStack setItemNBT(ItemStack item, Object nbt) {
 
         return item;
+    }
+
+
+    @Override
+    public void disableAI(Entity entity) {
+
     }
 
     @Override

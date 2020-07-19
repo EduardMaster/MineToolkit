@@ -257,7 +257,7 @@ public class StorageAPI {
 
     public static Object transform(Object object, Class<?> type) throws Exception {
         String fieldTypeName = Extra.toTitle(type.getSimpleName());
-        Object value = Extra.getResult(Extra.class, "to" + fieldTypeName, Extra.getParameters(Object.class), object);
+        Object value = Extra.getMethodInvoke(Extra.class, "to" + fieldTypeName, Extra.getParameters(Object.class), object);
         if (value instanceof String) {
             value = Extra.toChatMessage((String) value);
         }
@@ -297,13 +297,13 @@ public class StorageAPI {
         for (Entry<Class<?>, String> entry : aliases.entrySet()) {
             Class<?> loopClass = entry.getKey();
             if (loopClass.equals(claz)) {
-                return entry.getValue();
+                return entry.getFieldValue();
             }
             if (loopClass.isAssignableFrom(claz)) {
-                return entry.getValue();
+                return entry.getFieldValue();
             }
             if (claz.isAssignableFrom(loopClass)) {
-                return entry.getValue();
+                return entry.getFieldValue();
             }
         }
         */
