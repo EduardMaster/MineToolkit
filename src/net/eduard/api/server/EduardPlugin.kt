@@ -1,30 +1,17 @@
 package net.eduard.api.server
 
-import java.io.File
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit
-
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
-import org.bukkit.Bukkit
-import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.event.HandlerList
-import org.bukkit.plugin.Plugin
-import org.bukkit.plugin.java.JavaPlugin
-
-import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.config.Config
-import net.eduard.api.lib.database.DBManager
-import net.eduard.api.lib.database.api.SQLEngineType
-import net.eduard.api.lib.database.api.SQLManager
-import net.eduard.api.lib.database.mysql.MySQLOption
 import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.plugin.BukkitPlugin
+import net.eduard.api.lib.plugin.HybridPlugin
+import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.storage.StorageAPI
+import org.bukkit.Bukkit
+import org.bukkit.event.HandlerList
+import org.bukkit.plugin.Plugin
 
 /**
  * Representa os plugins feitos pelo Eduard
@@ -33,108 +20,43 @@ import net.eduard.api.lib.storage.StorageAPI
  * @version 1.0
  * @since 2.0
  */
-abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
-    var isActivated = false
-    var isLogEnabled = true
-    var isErrorLogEnabled = true
-    var isSQLManagerStarted = false
-    var db = DBManager()
-        @JvmName("getDB")
-        get
+abstract class EduardPlugin : BukkitPlugin(), BukkitTimeHandler {
 
-     lateinit var sqlManager: SQLManager
+    override val hybridPlugin = EduardHybridPlugin(this)
 
+    class EduardHybridPlugin(plugin: IPlugin) : HybridPlugin(plugin) {
+        /**
+         * Envia mensagem para o console caso as Log Normais esteja ativada para ele
+         *
+         * @param message Mensagem
+         */
+        override fun log(message: String) {
+            if (isLogEnabled)
+                Bukkit.getConsoleSender().sendMessage("§b[${getName()}] §f$message")
+        }
 
+        /**
+         * Envia mensagem para o console caso as Log de Erros esteja ativada para ele
+         *
+         * @param message Mensagem
+         */
+        override fun error(message: String) {
+            if (isLogEnabled)
+                Bukkit.getConsoleSender().sendMessage("§b[${getName()}] §c$message")
+        }
 
-    protected fun startSQLManager() {
-        isSQLManagerStarted = true
-        var type = if (db.useSQLite()) SQLEngineType.SQLITE else SQLEngineType.MYSQL
-        sqlManager = SQLManager(db.connection, type)
+        override fun onLoad() {
 
-    }
+        }
 
+        override fun onEnable() {
 
-    lateinit var configs: Config
-        protected set
-     lateinit var messages: Config
-        protected set
+        }
 
-    /**
-     * @return A [Config] Storage
-     */
-    lateinit var storage: Config
-        protected set
-    var databaseFile = File(dataFolder, "database.db")
-    /**
-     * @return Se o Plugin é gratuito
-     */
-    /**
-     * Define se o Plugin é gratuito
-     *
-     * @param free
-     */
-    var isFree: Boolean = false
+        override fun onDisable() {
 
-    /**
-     * Verifica se tem algo dentro da config.yml
-     *
-     * @return Se a a config.yml tem configurações
-     */
-    val isEditable: Boolean
-        get() = configs.keys.isNotEmpty()
+        }
 
-    val autoSaveSeconds: Long
-        get() = configs.getLong("auto-save-seconds")!!
-
-    val isAutoSaving: Boolean
-        get() = configs.getBoolean("auto-save")
-
-    val backupTime: Long
-        get() = configs.getLong("backup-time")!!
-
-    val backupLastTime: Long
-        get() = configs.getLong("backup-lasttime")!!
-
-    val autoSaveLastTime: Long
-        get() = configs.getLong("auto-save-lasttime")!!
-
-    val backupTimeUnitType: TimeUnit
-        get() = TimeUnit.valueOf(configs.getString("backup-timeunit-type").toUpperCase())
-
-    val canBackup: Boolean
-        get() = configs.getBoolean("backup")
-
-    fun getString(path: String): String {
-
-        return configs.message(path)
-    }
-
-
-    /**
-     * Config padrão do spigot não funciona com Config
-     */
-    override fun getConfig(): FileConfiguration? {
-        return null
-    }
-
-    /**
-     * Envia mensagem para o console caso as Log Normais esteja ativada para ele
-     *
-     * @param msg Mensagem
-     */
-    fun log(msg: String) {
-        if (isLogEnabled)
-            Bukkit.getConsoleSender().sendMessage("§b[$name] §f$msg")
-    }
-
-    /**
-     * Envia mensagem para o console caso as Log de Erros esteja ativada para ele
-     *
-     * @param msg Mensagem
-     */
-    fun error(msg: String) {
-        if (isErrorLogEnabled)
-            Bukkit.getConsoleSender().sendMessage("§b[$name] §c$msg")
     }
 
 
@@ -143,48 +65,17 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
     }
 
 
-    protected fun reloadVars() {
-        configs = Config(this, "config.yml")
-        messages = Config(this, "messages.yml")
-        storage = Config(this, "storage.yml")
-    }
-
     /**
      * Necessario fazer super.onEnable() para poder suportar os comandos do PlugMan
      * <br></br> /plugman unload NomePlugin
      * <br></br>/plugman load NomePlugin
      */
     override fun onEnable() {
-        reloadVars()
-        mainConfig()
 
-        reloadDBManager()
         log("Foi ativado na v" + description.version + " um plugin "
                 + (if (isFree) "§aGratuito" else "§bPago") + "§f feito pelo Eduard")
     }
 
-    protected fun mainConfig() {
-
-
-        configs.add("auto-save", false)
-        configs.add("auto-save-seconds", 60)
-        configs.add("auto-save-lasttime", Extra.getNow())
-        configs.add("backup", false)
-        configs.add("backup-lasttime", Extra.getNow())
-        configs.add("backup-time", 1)
-        configs.add("backup-timeunit-type", "MINUTES")
-        configs.add("database", db)
-        configs.saveConfig()
-    }
-
-
-    fun reloadDBManager() {
-        db = configs.get("database", DBManager::class.java)
-    }
-
-    fun registerPackage(packname: String) {
-        StorageAPI.registerPackage(javaClass, packname)
-    }
 
     fun getClasses(pack: String): List<Class<*>> {
         return Mine.getClasses(this, pack)
@@ -198,85 +89,35 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
 
     }
 
-    /**
-     * Deleta os ultimos backups
-     */
-    private fun deleteLastBackups() {
-        val pasta = File(dataFolder, "/backup/")
 
-        pasta.mkdirs()
-        var lista = mutableListOf(*pasta.listFiles()!!)
-        lista.sortBy { it.lastModified() }
-
-
-        for (position in lista.size - 10 downTo 0) {
-            val arquivo = lista[position]
-            Extra.deleteFolder(arquivo)
-            if (arquivo.exists())
-                arquivo.delete()
-
-        }
-    }
-
-    /**
-     * Deleta os backups dos dias anteriores
-     */
-    fun deleteOldBackups() {
-        val pasta = File(dataFolder, "/backup/")
-        pasta.mkdirs()
-        var lista = listOf(*pasta.listFiles()!!)
-        lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
-                .forEach {
-                    Extra.deleteFolder(it)
-                    if (it.exists())
-                        it.delete()
-                }
-    }
-
-    /**
-     * Gera backup dos arquivos config.yml, storage.yml e por ultimo database.db
-     */
-    fun backup() {
-        configs.set("backup-lasttime", Extra.getNow())
-        try {
-
-            val pasta = File(dataFolder,
-                    "/backup/" + DATE_TIME_FORMATER.format(System.currentTimeMillis()) + "/")
-
-            pasta.mkdirs()
-
-            if (storage.existConfig() && storage.keys.isNotEmpty()) {
-
-                Files.copy(storage.file.toPath(), Paths.get(pasta.path, storage.name))
-            }
-            if (configs.existConfig() && storage.keys.isNotEmpty()) {
-
-                Files.copy(configs.file.toPath(), Paths.get(pasta.path, configs.name))
-            }
-            if (databaseFile.exists()) {
-                Files.copy(databaseFile.toPath(), Paths.get(pasta.path, databaseFile.name))
-            }
-        } catch (e: IOException) {
-
-            e.printStackTrace()
-        }
-
-    }
-
-    fun unregisterServices() {
+    override fun unregisterServices() {
         Bukkit.getServicesManager().unregisterAll(this)
     }
 
-    fun unregisterListeners() {
+    override fun unregisterListeners() {
         HandlerList.unregisterAll(this)
     }
 
-    fun unregisterTasks() {
+    override fun unregisterTasks() {
         Bukkit.getScheduler().cancelTasks(this)
     }
 
-    fun unregisterStorableClasses() {
-        StorageAPI.unregisterStorables(this)
+    override fun unregisterStorableClasses() {
+        StorageAPI.debug("- CLASSES FROM PLUGIN $name")
+        val it = StorageAPI.getStorages().keys.iterator()
+        var amount = 0
+        while (it.hasNext()) {
+            val next = it.next()
+            val loader = next.classLoader
+            if (loader != null) {
+                if (loader == javaClass.classLoader) {
+                    StorageAPI.getAliases().remove(next)
+                    amount++
+                    it.remove()
+                }
+            }
+        }
+        StorageAPI.debug("- CLASSES WITH SAME LOADER OF $name : $amount")
     }
 
     fun unregisterMenus() {
@@ -289,7 +130,7 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
 
     }
 
-    fun unregisterCustomCommands() {
+    override fun unregisterCommands() {
         CommandManager.commandsRegistred.values.forEach { cmd ->
             if (this == cmd.pluginInstance) {
                 cmd.unregisterCommand()
@@ -298,9 +139,6 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
 
     }
 
-    fun disconnectDB() {
-        db.closeConnection()
-    }
 
     override fun onDisable() {
         disconnectDB()
@@ -309,48 +147,10 @@ abstract class EduardPlugin : JavaPlugin(), BukkitTimeHandler {
         unregisterTasks()
         unregisterStorableClasses()
         unregisterMenus()
-        unregisterCustomCommands()
+        unregisterCommands()
         log("Foi desativado na v" + description.version + " um plugin "
                 + if (isFree) "§aGratuito" else "§bPago")
 
-
-    }
-
-
-    open fun save() {
-
-    }
-
-    open fun reload() {}
-
-    open fun onActivation(){}
-
-    open fun configDefault() {
-
-    }
-
-    fun getBoolean(path: String): Boolean {
-        return configs.getBoolean(path)
-    }
-
-    fun getInt(path: String): Int {
-        return configs.getInt(path)!!
-    }
-
-    fun getDouble(path: String): Double {
-        return configs.getDouble(path)!!
-    }
-
-    fun message(path: String): String {
-        return messages.message(path)
-    }
-
-    fun getMessages(path: String): List<String> {
-        return messages.getMessages(path)
-    }
-
-    companion object {
-        private val DATE_TIME_FORMATER = SimpleDateFormat("dd-MM-YYYY HH-mm-ss")
     }
 
 

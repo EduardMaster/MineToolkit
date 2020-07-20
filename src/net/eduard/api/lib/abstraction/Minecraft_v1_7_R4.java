@@ -20,7 +20,7 @@ import net.minecraft.server.v1_7_R4.PacketPlayOutPlayerInfo;
 /**
  * @author Eduard
  */
-public class Minecraft_v1_7_R4 extends Minecraft {
+final public class Minecraft_v1_7_R4 extends Minecraft {
 
     public void sendPacket(Object packet, Player player) {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket((Packet) packet);

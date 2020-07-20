@@ -17,9 +17,7 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
             if (plugin is EduardPlugin) {
                 try {
                     val agora = Extra.getNow()
-                    if (plugin.isSQLManagerStarted) {
-
-
+                    if (plugin.db.hasConnection()) {
                         val amountUpdated = plugin.sqlManager.runUpdatesQueue()
                         val tempoDepois = Extra.getNow()
                         val dif = tempoDepois - agora

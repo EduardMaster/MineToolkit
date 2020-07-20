@@ -1,6 +1,5 @@
 package net.eduard.api.server.currency;
 
-import net.eduard.api.lib.storage.Storable;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

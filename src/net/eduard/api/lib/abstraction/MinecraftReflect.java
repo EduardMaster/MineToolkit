@@ -6,7 +6,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class MinecraftReflect extends Minecraft {
+final public class MinecraftReflect extends Minecraft {
     @Override
     public void sendPacket(Object packet, Player player) {
         try {

@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SQLManager {
     private int queueRunsLimit = 100;
-
     private Connection connection;
     private SQLEngineType engineType;
     private SQLQueryBuilder builder;
@@ -41,16 +40,6 @@ public class SQLManager {
         setBuilder(builder);
         setEngineType(SQLEngineType.OTHER);
     }
-
-    public boolean hasConnection() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            return false;
-        }
-    }
-
     public SQLManager(Connection connection, SQLEngineType type) {
         setConnection(connection);
         setEngineType(type);
@@ -65,6 +54,16 @@ public class SQLManager {
                 break;
         }
     }
+    public boolean hasConnection() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+    }
+
+
 
     public <E> E getData(Class<E> dataClass, String fieldName, Object fieldValue) {
 
@@ -85,7 +84,6 @@ public class SQLManager {
 
                     result.getStatement().close();
                 } catch (Exception ex) {
-                    //ex.printStackTrace();
                 }
             }
         }

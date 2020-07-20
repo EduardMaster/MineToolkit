@@ -6,10 +6,14 @@ import java.util.*;
 import net.eduard.api.lib.modules.MineReflect;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventoryDoubleChest;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.gson.JsonObject;
@@ -23,7 +27,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
 /**
  * @author Eduard
  */
-public class Minecraft_v1_8_R3 extends Minecraft {
+final public class Minecraft_v1_8_R3 extends Minecraft {
     private static Map<String, Object> particles = new HashMap<>();
 
     public Minecraft_v1_8_R3() {
@@ -42,6 +46,11 @@ public class Minecraft_v1_8_R3 extends Minecraft {
 
     @Override
     public void setHeadSkin(ItemStack head, String texture, String signature) {
+
+
+    }
+    public void setInventoryName(Inventory inventory, String name){
+
 
 
     }

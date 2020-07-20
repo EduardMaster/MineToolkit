@@ -15,4 +15,4 @@ inline fun confirmationChat(acceptCommand: String, declineCommand: String): Text
     texto.addExtra(negar)
     return texto
 }
-val String.chat get() = TextComponent(this)
+inline val String.chat get() = TextComponent(this)

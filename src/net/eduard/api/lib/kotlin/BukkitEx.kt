@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.material.Crops
 import org.bukkit.plugin.java.JavaPlugin
+import kotlin.reflect.KClass
 
 fun Listener.register(plugin: JavaPlugin) = Bukkit.getPluginManager().registerEvents(this, plugin)
 
@@ -28,7 +30,7 @@ fun CommandExecutor.register(cmd: String, plugin: JavaPlugin) {
 
 val Class<*>.plugin: JavaPlugin
     get() {
-        if (JavaPlugin::class.java.isAssignableFrom(this)) {
+        if (!JavaPlugin::class.java.isAssignableFrom(this)) {
             return JavaPlugin.getProvidingPlugin(this)
         }
         return JavaPlugin.getPlugin(this as Class<out JavaPlugin>) as JavaPlugin
@@ -109,7 +111,15 @@ fun ItemStack.id(id: Int): ItemStack {
 
 fun ItemStack.data(data: Int): ItemStack {
     durability = data.toShort()
+
+    //ItemStack(Material.STONE,"")
+
+
     return this
+}
+operator fun ItemStack.invoke(material : Material, name : String) : ItemStack{
+
+    return ItemStack(material)
 }
 
 fun ItemStack.addLore(vararg lore: String): ItemStack {
@@ -137,10 +147,26 @@ fun ItemStack.color(color: Color): ItemStack {
     val meta = itemMeta as LeatherArmorMeta
     meta.color = color
     itemMeta = meta
+
+
+
     return this
 }
 
 
- fun <T : Event> event(actionToDo : T.() -> Unit) = EventListener(actionToDo)
+fun <T : Event> KClass<T>.event(actionToDo: T.() -> Unit) {
+    Bukkit.getPluginManager()
+            .registerEvent(this.java,
+                    BukkitEventListener, EventPriority.NORMAL, { _, event ->
+                actionToDo(event as T)
+            }, BukkitEventListener.javaClass.plugin)
+}
+
+
+inline fun <reified T : Event> event(noinline actionToDo: T.() -> Unit) {
+    T::class.event(actionToDo)
+}
+
+
 
 

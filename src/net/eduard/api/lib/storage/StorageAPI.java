@@ -43,6 +43,10 @@ public class StorageAPI {
     private static Map<Integer, Object> objects = new LinkedHashMap<>();
     private static List<ReferenceBase> references = new ArrayList<>();
 
+    public static Map<Class<?>, Storable> getStorages() {
+        return storages;
+    }
+
     public static boolean isStorable(Object object) {
 
         return object instanceof Storable;
@@ -233,27 +237,7 @@ public class StorageAPI {
 
     }
 
-    public static void unregisterStorables(JavaPlugin plugin) {
-        debug("- CLASSES FROM PLUGIN " + plugin.getName());
-        Iterator<Class<?>> it = storages.keySet().iterator();
-        int amount = 0;
 
-        while (it.hasNext()) {
-            Class<?> next = it.next();
-
-            ClassLoader loader = next.getClassLoader();
-
-            if (loader != null) {
-                if (loader.equals(plugin.getClass().getClassLoader())) {
-
-                    aliases.remove(next);
-                    amount++;
-                    it.remove();
-                }
-            }
-        }
-        debug("- CLASSES WITH SAME LOADER OF " + plugin.getName() + " : " + amount);
-    }
 
     public static Object transform(Object object, Class<?> type) throws Exception {
         String fieldTypeName = Extra.toTitle(type.getSimpleName());

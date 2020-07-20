@@ -6,6 +6,8 @@ import net.eduard.api.command.map.MapCommand
 import net.eduard.api.core.BukkitReplacers
 import net.eduard.api.core.InfoGenerator
 import net.eduard.api.core.PlayerSkin
+import net.eduard.api.hooks.JHCashHook
+import net.eduard.api.hooks.StoryHook
 import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.modules.ServerAPI.BukkitControl
@@ -22,6 +24,7 @@ import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
 import net.eduard.api.lib.game.Schematic
+import net.eduard.api.lib.kotlin.examples.EventsAlterations
 import net.eduard.api.listener.*
 import net.eduard.api.server.EduardPlugin
 import net.eduard.api.server.currency.CurrencyController
@@ -51,8 +54,9 @@ class EduardAPI : EduardPlugin() {
     override fun onEnable() {
         instance = this
         isFree = true
+
         LibraryLoader(File(dataFolder, "libs/"))
-        reloadVars()
+        //reloadVars()
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
         StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
@@ -78,7 +82,7 @@ class EduardAPI : EduardPlugin() {
 
         reload()
 
-        //Mine.resetScoreboards()
+        Mine.resetScoreboards()
         log("Scoreboards dos jogadores online resetadas!")
 
         log("Ativando tasks (Timers)")
@@ -104,7 +108,7 @@ class EduardAPI : EduardPlugin() {
         SupportActivations().register(this)
         EduWorldEditListener().register(this)
         PlayerTargetListener().register(this)
-        //LinkadorDeItem().register(this)
+
         log("Listeners dos Eventos ativados com sucesso")
 
         log("Gerando Base de dados de Enums do Bukkit")
@@ -120,14 +124,21 @@ class EduardAPI : EduardPlugin() {
 
 
         CurrencyController.getInstance().register(CurrencyVaultEconomy())
-        if (Mine.hasPlugin("JH_Shop")) {
-            CurrencyController.getInstance().register(CurrencyJHCash())
-        }
-        if (Mine.hasPlugin("LegitPvP")) {
-            CurrencyController.getInstance().register(CurrencyNetworkStoryRankupToken())
-        }
 
 
+        log("Carregando dependencias")
+        JHCashHook()
+        StoryHook()
+
+
+
+
+        testingKotlin()
+
+    }
+    fun testingKotlin(){
+        log("Testando Kotlin")
+        EventsAlterations()
     }
 
 
@@ -181,11 +192,13 @@ class EduardAPI : EduardPlugin() {
             }
         }
 
+
+
     }
 
     override fun onDisable() {
         PlayerSkin.saveSkins()
-        EduardAPI.saveMaps()
+        saveMaps()
         log("Mapas salvados!")
         log("desativado com sucesso!")
         BungeeAPI.getController().unregister()

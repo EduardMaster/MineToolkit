@@ -1,5 +1,7 @@
 package net.eduard.api.lib.kotlin
 
+import net.eduard.api.lib.command.PlayerOffline
+import net.eduard.api.lib.game.FakePlayer
 import net.eduard.api.lib.modules.Mine
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.LivingEntity
@@ -8,29 +10,33 @@ import org.bukkit.event.Event
 import org.bukkit.inventory.ItemStack
 
 
-fun Player.removeXP(amount: Double){
+inline fun Player.removeXP(amount: Double){
     Mine.removeXP(this,amount)
 }
-fun Player.addHotBar(item : ItemStack){
+inline fun Player.addHotBar(item : ItemStack){
     Mine.setHotBar(this,item)
 }
-fun Player.changeTabName(tabName : String){
+inline fun Player.changeTabName(tabName : String){
     Mine.changeTabName(this,tabName)
 }
-fun Player.clearHotBar(){
+inline fun Player.clearHotBar(){
     Mine.clearHotBar(this)
 
 }
-fun LivingEntity.clearArmors(){
+inline fun LivingEntity.clearArmors(){
      Mine.clearArmours(this)
 }
-fun Player.clearInventory(){
+inline fun Player.clearInventory(){
     Mine.clearInventory(this)
 }
 
-fun Event.call(){
+inline fun Event.call(){
     return Mine.callEvent(this)
 }
+
+inline val FakePlayer.offline : PlayerOffline
+    get() { return PlayerOffline(name,id)}
+
 fun CommandSender.isPlayer(block: Player.() -> Unit){
     if (Mine.onlyPlayer(this)){
         block(this as Player)

@@ -15,6 +15,11 @@ open class Command(override var name: String = "comando", vararg aliases: String
 
     }
 
+    fun List<String>.sendNoMessage(arg: Int): Boolean {
+        if (size <= arg) return false
+        return get(arg) == "-msg"
+    }
+
     @Transient
     var parent: Command? = null
 

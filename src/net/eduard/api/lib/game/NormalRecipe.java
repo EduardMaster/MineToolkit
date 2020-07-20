@@ -9,31 +9,52 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 
 /**
- * Representa um Craft sendo montado quais itens precisam ter para craftar este item
- * @version 2.0
+ * Representa um Craft composto com posições e items fixos
+ * @version 1.0
  * @since 1.0 
  * @author Eduard
- *
+ * @see SimpleRecipe
  */
 public class NormalRecipe   {
+	/**
+	 * Retorna false se não tiver Recipe pronto
+	 * @return Novo recipe criado
+	 */
 	public boolean addRecipe() {
 		if (getResult() == null)
 			return false;
 		return Bukkit.addRecipe(getRecipe());
 	}
 
+	/**
+	 * Posições dos items do craft
+	 */
 	private Map<Integer, ItemStack> items = new HashMap<>();
+	/**
+	 * Resultado do Craft
+	 */
 	private ItemStack result = null;
 
 	public NormalRecipe() {
 
 	}
 
+	/**
+	 * Define um ingrediente fixo
+	 * @param slot Posição
+	 * @param item Item
+	 * @return a classe mesma
+	 */
 	public NormalRecipe set(int slot, ItemStack item) {
 		items.put(slot, item);
 		return this;
 	}
 
+	/**
+	 * Remove um ingrediente fixo
+	 * @param slot Posição
+	 * @return a classe mesma
+	 */
 	public NormalRecipe remove(int slot) {
 		items.remove(slot);
 		return this;
@@ -43,6 +64,10 @@ public class NormalRecipe   {
 		return items.get(slot);
 	}
 
+	/**
+	 *  Monta o recipe
+	 * @return o Recipe criado
+	 */
 	public ShapedRecipe getRecipe() {
 		if (result == null)
 			return null;

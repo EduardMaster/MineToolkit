@@ -12,7 +12,7 @@ import org.bukkit.inventory.PlayerInventory
 import org.bukkit.plugin.java.JavaPlugin
 
 
-fun Number.format() = Extra.formatMoney(this.toDouble())
+inline fun Number.format() = Extra.formatMoney(this.toDouble())
 
 fun Int.centralized(): Int {
     while (Extra.isColumn(this, 1) || Extra.isColumn(this, 9)) {
@@ -21,22 +21,24 @@ fun Int.centralized(): Int {
     return this
 }
 
-fun String.formatColors(): String {
+inline fun String.formatColors(): String {
     return Extra.formatColors(this)
 }
 
 
-fun Integer.chance(): Boolean {
-    return (this.toDouble()/100).chance()
-}
-fun Double.chance(): Boolean {
-   return Extra.getChance(this)
+inline fun Integer.chance(): Boolean {
+    return (this.toDouble() / 100).chance()
 }
 
-fun String.cut(maxSize: Int): String {
-    return Extra.cutText(this,maxSize)
+inline fun Double.chance(): Boolean {
+    return Extra.getChance(this)
 }
-fun String.lowerContains(msg: String) = Extra.contains(this,msg)
+
+inline fun String.cut(maxSize: Int): String {
+    return Extra.cutText(this, maxSize)
+}
+
+inline fun String.lowerContains(msg: String) = Extra.contains(this, msg)
 
 
 
