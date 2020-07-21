@@ -17,6 +17,7 @@ import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.menu.Slot
 import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.modules.VaultAPI
+import org.bukkit.plugin.java.JavaPlugin
 
 class KitManager : EventsManager() {
 
@@ -35,9 +36,9 @@ class KitManager : EventsManager() {
     var msgNoKitBuyed = "§§Voce nao tem dinheiro para comprar o kit §e\$kit"
     var msgShopTitle = "§cKit §4§l\$kit §cseu pre§o: §a§l\$price"
     var msgKitDisabled = "§cHabilidade \$kit desativada temporariamente!"
-    var itemSoup = Mine.newItem( Material.MUSHROOM_SOUP,"§6Sopa")
-    var itemEmptySlot = Mine.newItem( Material.STAINED_GLASS_PANE," ", 15)
-    var itemHotBar = Mine.newItem( Material.STAINED_GLASS_PANE,"§6§lKit§f§lPvP", 10)
+    var itemSoup = Mine.newItem(Material.MUSHROOM_SOUP, "§6Sopa")
+    var itemEmptySlot = Mine.newItem(Material.STAINED_GLASS_PANE, " ", 15)
+    var itemHotBar = Mine.newItem(Material.STAINED_GLASS_PANE, "§6§lKit§f§lPvP", 10)
     var globalItems: MutableList<ItemStack> = ArrayList()
     var openKits = Slot(Mine.newItem(Material.CHEST, "§6§lSelecionar Kit"), 0)
     var openShop = Slot(Mine.newItem(Material.EMERALD, "§6§lComprar Kit"), 8)
@@ -95,7 +96,7 @@ class KitManager : EventsManager() {
                 menu.setItem(posicao, kit.icon)
                 posicao++
             }
-            if (posicao>=menu.size)break
+            if (posicao >= menu.size) break
 
         }
         player.updateInventory()
@@ -110,11 +111,11 @@ class KitManager : EventsManager() {
             if (!kit.isShowOnGui) continue
 
             if (player.hasPermission(kit.REQUIRE_PERMISSION)) {
-               // player.sendMessage("§cAbrindo menu com kit " + kit.name)
+                // player.sendMessage("§cAbrindo menu com kit " + kit.name)
                 menu.setItem(posicao, kit.icon)
                 posicao++
             }
-            if (posicao>=menu.size)break
+            if (posicao >= menu.size) break
         }
         player.updateInventory()
     }
@@ -165,19 +166,19 @@ class KitManager : EventsManager() {
         player.sendMessage(msgKitGived.replace("\$kit", kit.name))
     }
 
-    override fun register(plugin: Plugin) {
+    fun register(plugin: JavaPlugin) {
         for (kit in kits) {
-            kit.register(plugin)
-            if (kit.click != null) {
-                kit.click!!.register(plugin)
-            }
+            kit.registerListener(plugin)
+
+            kit.click?.registerListener(plugin)
+
             if (kit.price == 0.0) {
                 kit.price = defaultKitPrice
             }
         }
         this.kitsShop.register(plugin)
         this.kitsSelection.register(plugin)
-        super.register(plugin)
+        super.registerListener(plugin)
 
     }
 
@@ -199,7 +200,6 @@ class KitManager : EventsManager() {
         val kit = getKit(type)
         selectKit(player, kit)
     }
-
 
 
     fun buyKit(player: Player, kit: KitAbility) {
@@ -243,7 +243,6 @@ class KitManager : EventsManager() {
     fun hasKit(player: Player): Boolean {
         return playersKits.containsKey(player)
     }
-
 
 
 }

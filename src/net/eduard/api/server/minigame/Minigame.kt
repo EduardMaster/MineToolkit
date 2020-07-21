@@ -13,6 +13,8 @@ import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.bungee.BukkitBungeeAPI
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.game.FakePlayer
+import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.plugin.java.JavaPluginLoader
 import java.io.File
 import java.lang.Exception
 
@@ -193,7 +195,7 @@ open class Minigame : TimeManager {
         return MinigameRoom(this, MinigameMap(this, name))
     }
 
-    constructor(name: String, plugin: Plugin) : this(name) {
+    constructor(name: String, plugin: JavaPlugin) : this(name) {
         this.plugin = plugin
     }
 

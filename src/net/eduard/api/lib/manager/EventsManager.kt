@@ -1,23 +1,17 @@
 package net.eduard.api.lib.manager
 
-import net.eduard.api.EduardAPI
+import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
-import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
-
-
-
 /**
  * Controlador de Eventos ([Listener])
  *
  * @author Eduard
  * @version 2.0
  */
-open class EventsManager(  @Transient
-                           var plugin: Plugin? = null
- ) : Listener {
+open class EventsManager : Listener {
     /**
      * Se o Listener esta registrado
      */
@@ -26,7 +20,6 @@ open class EventsManager(  @Transient
      */
     @Transient
     var isRegistered: Boolean = false
-        private set
     /**
      * Plugin
      */
@@ -42,33 +35,23 @@ open class EventsManager(  @Transient
      * @return Plugin
      */
 
-    val pluginInstance : Plugin
+    val pluginInstance get() = plugin
 
-    get(){
-        if (plugin == null) {
-            plugin = defaultPlugin()
-        }
-        return plugin!!
-    }
 
 
     /**
      * Construtor base deixando Plugin automatico
      */
-    init {
-        if (plugin == null){
-            plugin = defaultPlugin()
-        }
 
+    @Transient
+    var plugin: JavaPlugin = defaultPlugin()
+
+
+    protected fun defaultPlugin(): JavaPlugin {
+
+        return JavaPlugin.getProvidingPlugin(javaClass)
     }
 
-    protected fun defaultPlugin(): Plugin {
-        var defPl: JavaPlugin? = JavaPlugin.getProvidingPlugin(javaClass)
-        if (defPl == null) {
-            defPl = EduardAPI.instance
-        }
-        return defPl
-    }
 
 
     /**
@@ -76,13 +59,18 @@ open class EventsManager(  @Transient
      *
      * @param plugin Plugin
      */
-    open fun register(plugin: Plugin) {
+    open fun registerListener(plugin: JavaPlugin) {
         unregisterListener()
-        this.isRegistered = true
+        registerListener()
+    }
+    open fun registerListener() {
         this.plugin = plugin
+        this.isRegistered = true
         Bukkit.getPluginManager().registerEvents(this, plugin)
     }
-
+    open fun register(plugin : IPluginInstance){
+        registerListener(plugin.plugin as JavaPlugin)
+    }
 
 
     /**

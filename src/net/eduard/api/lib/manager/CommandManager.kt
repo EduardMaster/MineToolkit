@@ -15,6 +15,7 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.plugin.Plugin
 
 import net.eduard.api.lib.modules.Mine
+import org.bukkit.plugin.java.JavaPlugin
 
 
 @Storable.StorageAttributes(indentificate = true)
@@ -177,7 +178,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
             log("O comando §a$name §fnao foi registrado na plugin.yml de nenhum Plugin do Servidor")
             return false
         }
-        plugin = command.plugin
+        plugin = command.plugin as JavaPlugin
         if (command.usage != null) {
             if (!command.usage.isEmpty()) {
                 usage = command.usage.replace("<command>", name).replace('&', '§')
@@ -215,7 +216,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
                 + "§f pela plugin.yml")
         commandsRegistred[name.toLowerCase()] = this
         updateSubs()
-        register(pluginInstance)
+        registerListener(pluginInstance)
         return true
 
     }
@@ -227,7 +228,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
     }
 
     fun registerCommand(plugin: Plugin) {
-        this.plugin = plugin
+        this.plugin = plugin as JavaPlugin
         if (usage == null) {
             usage = autoUsage()
         }
@@ -280,7 +281,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
         commandsRegistred[name.toLowerCase()] = this
 
         updateSubs()
-        register(plugin)
+        registerListener(plugin)
         Mine.createCommand(plugin, command)
     }
 

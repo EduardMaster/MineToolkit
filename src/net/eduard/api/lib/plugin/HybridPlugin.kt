@@ -7,18 +7,45 @@ import net.eduard.api.lib.database.StorageManager
 import net.eduard.api.lib.database.api.SQLEngineType
 import net.eduard.api.lib.database.api.SQLManager
 import net.eduard.api.lib.modules.Extra
+import net.md_5.bungee.api.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
 abstract class HybridPlugin(
-        val pluginBase: IPlugin
+        val pluginBase: IPluginInstance
 ) : IPlugin {
+
+
+
+    override fun getPlugin(): Any {
+        return pluginBase
+    }
+
+    fun inBukkit(): Boolean {
+        return pluginBase is JavaPlugin
+    }
+
+    fun inBungee(): Boolean {
+        return pluginBase is Plugin
+    }
+
     override fun getDataFolder(): File {
-        return pluginBase.getDataFolder()
+
+        return try {
+            Extra.getMethodInvoke(pluginBase, "getDataFolder") as File
+        }catch (ex :Exception){
+            File("plugins/"+ getName()+"/")
+        }
+
+    }
+    override fun getName(): String {
+        return  Extra.getMethodInvoke(pluginBase, "getName") as String
     }
 
     override var isActivated = false
@@ -29,8 +56,7 @@ abstract class HybridPlugin(
     final override var databaseFile = File(getDataFolder(), "database.db")
     final override var dbManager: DBManager = DBManager()
     final override var sqlManager: SQLManager = SQLManager(null, SQLEngineType.SQLITE)
-
-    override var storageManager: StorageManager = StorageManager()
+    final override var storageManager: StorageManager = StorageManager()
     override fun log(message: String) {
         println("§a$message")
     }
@@ -101,6 +127,17 @@ abstract class HybridPlugin(
 
     }
 
+    override fun save() {
+
+    }
+
+    override fun reload() {
+
+    }
+
+    override fun configDefault() {
+
+    }
     override fun unregisterTasks() {
 
     }
@@ -125,9 +162,6 @@ abstract class HybridPlugin(
     val config get() = configs
 
 
-    override fun getName(): String {
-        return pluginBase.getName()
-    }
 
 
     /**

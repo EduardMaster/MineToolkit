@@ -21,6 +21,7 @@ import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.kotlin.centralized
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
+import org.bukkit.plugin.java.JavaPlugin
 
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
@@ -297,18 +298,15 @@ open class Menu(
 
     }
 
-    override fun register(plugin: Plugin) {
-        if (isRegistered) return
-        super.register(plugin)
+    open fun register(plugin: JavaPlugin) {
+        registerListener(plugin)
         registeredMenus.add(this)
         for (button in buttons) {
             button.parentMenu = this
             if (button.isCategory) {
                 button.menu?.superiorMenu = this
                 button.menu?.register(plugin)
-
             }
-
         }
     }
 

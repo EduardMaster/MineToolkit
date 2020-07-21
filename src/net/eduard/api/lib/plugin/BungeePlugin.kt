@@ -4,23 +4,24 @@ import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.StorageManager
 import net.eduard.api.lib.database.api.SQLManager
-import net.eduard.api.lib.plugin.examples.PluginExemplo
-import org.apache.logging.log4j.core.config.plugins.PluginType
-import org.bukkit.plugin.java.JavaPlugin
+import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 
-abstract class BukkitPlugin : JavaPlugin(), IPlugin {
+abstract class BungeePlugin : Plugin(), IPlugin {
 
     abstract val hybridPlugin: HybridPlugin
-
+    val config get() = configs
     override fun onLoad() {
+
         hybridPlugin.onLoad()
-
-
 
     }
 
-    override fun getPlugin(): JavaPlugin {
+    override fun getName(): String {
+        return description.name
+    }
+
+    override fun getPlugin(): Plugin {
         return this
     }
 
@@ -33,24 +34,24 @@ abstract class BukkitPlugin : JavaPlugin(), IPlugin {
         hybridPlugin.onDisable()
     }
 
-     override var isActivated: Boolean
-         get() = hybridPlugin.isActivated
-         set(value) {
-             hybridPlugin.isActivated = value
-         }
+    override var isActivated: Boolean
+        get() = hybridPlugin.isActivated
+        set(value) {
+            hybridPlugin.isActivated = value
+        }
 
-     override var isFree: Boolean
-         get() = hybridPlugin.isFree
-         set(value) {
-             hybridPlugin.isFree = value
-         }
-     override var sqlManager: SQLManager
-         get() = hybridPlugin.sqlManager
-         set(value) {
-             hybridPlugin.sqlManager = value
-         }
+    override var isFree: Boolean
+        get() = hybridPlugin.isFree
+        set(value) {
+            hybridPlugin.isFree = value
+        }
+    override var sqlManager: SQLManager
+        get() = hybridPlugin.sqlManager
+        set(value) {
+            hybridPlugin.sqlManager = value
+        }
 
-     override var configs: Config
+    override var configs: Config
         get() = hybridPlugin.configs
         set(value) {
             hybridPlugin.configs = value
@@ -63,6 +64,7 @@ abstract class BukkitPlugin : JavaPlugin(), IPlugin {
     override fun deleteOldBackups() {
         hybridPlugin.deleteOldBackups()
     }
+
     override var storageManager: StorageManager
         get() = hybridPlugin.storageManager
         set(value) {
@@ -92,47 +94,46 @@ abstract class BukkitPlugin : JavaPlugin(), IPlugin {
         hybridPlugin.reload()
     }
 
-     override fun unregisterServices() {
-         hybridPlugin.unregisterServices()
+    override fun unregisterServices() {
+        hybridPlugin.unregisterServices()
 
-     }
+    }
 
-     override fun unregisterCommands() {
-         hybridPlugin.unregisterCommands()
+    override fun unregisterCommands() {
+        hybridPlugin.unregisterCommands()
 
-     }
+    }
 
-     override fun unregisterListeners() {
-         hybridPlugin.unregisterListeners()
-     }
+    override fun unregisterListeners() {
+        hybridPlugin.unregisterListeners()
+    }
 
-     override fun unregisterTasks() {
-         hybridPlugin.unregisterTasks()
-     }
+    override fun unregisterTasks() {
+        hybridPlugin.unregisterTasks()
+    }
 
     override fun unregisterStorableClasses() {
         hybridPlugin.unregisterStorableClasses()
     }
 
-     override var databaseFile: File
+    override var databaseFile: File
         get() = hybridPlugin.databaseFile
         set(value) {
             hybridPlugin.databaseFile = value
 
         }
-     override var dbManager: DBManager
-         get() = hybridPlugin.dbManager
-         set(value) {
-             hybridPlugin.dbManager =value
-         }
+    override var dbManager: DBManager
+        get() = hybridPlugin.dbManager
+        set(value) {
+            hybridPlugin.dbManager = value
+        }
 
-     override fun error(message: String) {
-         hybridPlugin.error(message)
-     }
+    override fun error(message: String) {
+        hybridPlugin.error(message)
+    }
 
-     override fun log(message: String) {
-         hybridPlugin.log(message)
-     }
+    override fun log(message: String) {
+        hybridPlugin.log(message)
+    }
 
-
- }
+}

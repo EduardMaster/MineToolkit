@@ -4,7 +4,6 @@ import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.game.FakePlayer
 import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.kotlin.player
-import net.eduard.api.lib.kotlin.sendTitle
 import net.eduard.api.lib.manager.CurrencyManager
 import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.storage.Storable.StorageAttributes
@@ -14,11 +13,11 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.ClickType
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
 @StorageAttributes(indentificate = true)
@@ -101,7 +100,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
     fun useUpgradesMenu() {
         menuUpgrades = Menu("Lista de Upgrades", 6)
         menuUpgrades.superiorMenu = this
-        menuUpgrades.register(pluginInstance)
+        menuUpgrades.registerListener(pluginInstance)
         val upgradeButton = MenuButton("upgrade", menuUpgrades)
         upgradeButton.setPosition(3, 2)
         upgradeButton.icon = ItemBuilder(Material.ANVIL).name("§aEvoluir")
@@ -358,7 +357,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         return null
     }
 
-    override fun register(plugin: Plugin) {
+    override fun register(plugin: JavaPlugin) {
         super.register(plugin)
 
         val confirmationButton = menuConfirmation.getButton("confirmar")!!

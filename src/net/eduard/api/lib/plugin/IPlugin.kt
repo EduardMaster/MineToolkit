@@ -8,7 +8,8 @@ import net.eduard.api.lib.storage.StorageAPI
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-interface IPlugin {
+interface IPlugin  : IPluginInstance{
+
     var isActivated: Boolean
     var isFree: Boolean
     var configs: Config
@@ -21,6 +22,7 @@ interface IPlugin {
 
 
 
+
     fun deleteOldBackups()
     fun backup()
     fun getName(): String
@@ -30,20 +32,13 @@ interface IPlugin {
 
     fun onLoad()
     fun onEnable()
+    fun reload()
+    fun configDefault()
+    fun save()
     fun onActivation() {}
     fun onDisable()
 
-    fun save() {
 
-    }
-
-    fun reload() {
-
-    }
-
-    fun configDefault() {
-
-    }
 
     fun unregisterTasks()
     fun unregisterListeners()

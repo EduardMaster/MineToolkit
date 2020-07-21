@@ -65,7 +65,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
                 try {
                     if (f.getName().endsWith(".jar")) {
 
-                        PluginDescriptionFile pdf = EduardAPI.getInstance().getPluginLoader().getPluginDescription(f);
+                        PluginDescriptionFile pdf = EduardAPI.getInstance().getPlugin().getPluginLoader().getPluginDescription(f);
                         if (pdf.getName().equalsIgnoreCase(pl)) {
                             pluginFile = f;
                             msg = "(via search) ";
@@ -85,7 +85,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         } catch (UnknownDependencyException e) {
             return pre + red + "File exists, but is missing a dependency!";
         } catch (InvalidPluginException e) {
-            EduardAPI.getInstance().getLogger().log(Level.SEVERE, "Tried to load invalid Plugin.\n", e);
+            EduardAPI.getInstance().getPlugin().getLogger().log(Level.SEVERE, "Tried to load invalid Plugin.\n", e);
             return pre + red + "File exists, but isn't a loadable plugin file!";
         } catch (InvalidDescriptionException e) {
         }

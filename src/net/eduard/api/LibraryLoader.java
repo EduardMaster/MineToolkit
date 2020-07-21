@@ -12,7 +12,6 @@ public class LibraryLoader {
     private File libFile;
     public LibraryLoader(File file){
         this.libFile = file;
-        loadLibraries();
     }
     public void loadLibraries(){
         File pastaLibs = libFile;
@@ -22,7 +21,7 @@ public class LibraryLoader {
             log("Verifying if is a Jar: "+file.getName());
             if (file.getName().endsWith(".jar")){
                 try {
-                    log("Loading jar "+file.getName());
+                    log("Loading jar..");
                     addClassPath(getJarUrl(file));
                 } catch (IOException e) {
                     e.printStackTrace();

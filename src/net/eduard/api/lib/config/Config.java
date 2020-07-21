@@ -10,6 +10,7 @@ import java.util.Set;
 
 import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.plugin.IPlugin;
 
 /**
  * Sistema Interprador de YAML usando a secao {@link ConfigSection}
@@ -24,6 +25,14 @@ public class Config {
     private transient Object plugin;
     private String name;
     transient List<String> lines;
+
+
+    public Config(IPlugin plugin, String name) {
+        this.name = name;
+        this.plugin = plugin;
+        this.folder = plugin.getDataFolder();
+        init();
+    }
 
     public Config(Object plugin, String name) {
         this.name = name;

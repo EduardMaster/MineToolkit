@@ -7,7 +7,6 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.BukkitPlugin
 import net.eduard.api.lib.plugin.HybridPlugin
-import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.storage.StorageAPI
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
@@ -20,30 +19,16 @@ import org.bukkit.plugin.Plugin
  * @version 1.0
  * @since 2.0
  */
-abstract class EduardPlugin : BukkitPlugin(), BukkitTimeHandler {
+open class EduardPlugin : BukkitPlugin(), BukkitTimeHandler {
 
-    override val hybridPlugin = EduardHybridPlugin(this)
+    override val hybridPlugin: EduardHybridPlugin = EduardHybridPlugin(this)
 
-    class EduardHybridPlugin(plugin: IPlugin) : HybridPlugin(plugin) {
-        /**
-         * Envia mensagem para o console caso as Log Normais esteja ativada para ele
-         *
-         * @param message Mensagem
-         */
-        override fun log(message: String) {
-            if (isLogEnabled)
-                Bukkit.getConsoleSender().sendMessage("§b[${getName()}] §f$message")
-        }
+    override fun getPlugin(): EduardPlugin {
+        return this
+    }
+     class EduardHybridPlugin(plugin : EduardPlugin) : HybridPlugin(plugin) {
 
-        /**
-         * Envia mensagem para o console caso as Log de Erros esteja ativada para ele
-         *
-         * @param message Mensagem
-         */
-        override fun error(message: String) {
-            if (isLogEnabled)
-                Bukkit.getConsoleSender().sendMessage("§b[${getName()}] §c$message")
-        }
+
 
         override fun onLoad() {
 
@@ -57,11 +42,29 @@ abstract class EduardPlugin : BukkitPlugin(), BukkitTimeHandler {
 
         }
 
-    }
 
+    }
+    /**
+     * Envia mensagem para o console caso as Log Normais esteja ativada para ele
+     *
+     * @param message Mensagem
+     */
+    override fun log(message: String) {
+        if (isLogEnabled)
+            Bukkit.getConsoleSender().sendMessage("§b[${getName()}] §f$message")
+    }
 
     override fun getPluginConnected(): Plugin {
         return this
+    }
+    /**
+     * Envia mensagem para o console caso as Log de Erros esteja ativada para ele
+     *
+     * @param message Mensagem
+     */
+    override fun error(message: String) {
+        if (isLogEnabled)
+            Bukkit.getConsoleSender().sendMessage("§b[${getName()}] §c$message")
     }
 
 

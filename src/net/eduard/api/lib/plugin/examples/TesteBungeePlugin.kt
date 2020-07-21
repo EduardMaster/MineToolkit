@@ -1,9 +1,10 @@
 package net.eduard.api.lib.plugin.examples
 
-import net.eduard.api.lib.plugin.BukkitPlugin
+
+import net.eduard.api.lib.plugin.BungeePlugin
 
 
-class TesteBukkitPlugin : BukkitPlugin() {
+class TesteBungeePlugin : BungeePlugin() {
 
     override val hybridPlugin = PluginExemplo(this)
 

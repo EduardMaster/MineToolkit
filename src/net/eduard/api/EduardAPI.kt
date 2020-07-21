@@ -25,11 +25,10 @@ import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
 import net.eduard.api.lib.game.Schematic
 import net.eduard.api.lib.kotlin.examples.EventsAlterations
+import net.eduard.api.lib.plugin.HybridPlugin
+import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.listener.*
-import net.eduard.api.server.EduardPlugin
 import net.eduard.api.server.currency.CurrencyController
-import net.eduard.api.server.currency.list.CurrencyJHCash
-import net.eduard.api.server.currency.list.CurrencyNetworkStoryRankupToken
 import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
@@ -37,6 +36,7 @@ import net.eduard.api.task.PlayerTargetPlayerTask
 import net.eduard.api.task.PluginActivator
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -49,14 +49,17 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI : EduardPlugin() {
+class EduardAPI(plugin : IPluginInstance) : HybridPlugin(plugin) {
+
+    override fun getPlugin(): JavaPlugin {
+        return pluginBase as JavaPlugin
+    }
 
     override fun onEnable() {
         instance = this
         isFree = true
 
-        LibraryLoader(File(dataFolder, "libs/"))
-        //reloadVars()
+
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
         StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
@@ -67,10 +70,10 @@ class EduardAPI : EduardPlugin() {
         MAPS_CONFIG = Config(this, "maps/")
 
         VaultAPI.setupVault()
-        BukkitControl.register(this)
+        BukkitControl.register(plugin)
 
         BukkitBungeeAPI.requestCurrentServer()
-        BungeeAPI.getBukkit().plugin = this
+        BungeeAPI.getBukkit().plugin = plugin
         BungeeAPI.getBukkit().register()
 
 
@@ -87,8 +90,8 @@ class EduardAPI : EduardPlugin() {
 
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
-        PlayerTargetPlayerTask().runTaskTimerAsynchronously(this, 20, 20)
-        AutoSaveAndBackupTask().runTaskTimerAsynchronously(this, 20, 20)
+        PlayerTargetPlayerTask().runTaskTimerAsynchronously(getPlugin(), 20, 20)
+        AutoSaveAndBackupTask().runTaskTimerAsynchronously(getPlugin(), 20, 20)
         PluginActivator().asyncTimer()
 
         log("Ativando comandos")
@@ -104,7 +107,6 @@ class EduardAPI : EduardPlugin() {
 
         log("Ativando listeners dos Eventos")
         EduardAPIEvents().register(this)
-
         SupportActivations().register(this)
         EduWorldEditListener().register(this)
         PlayerTargetListener().register(this)
@@ -136,6 +138,7 @@ class EduardAPI : EduardPlugin() {
         testingKotlin()
 
     }
+
     fun testingKotlin(){
         log("Testando Kotlin")
         EventsAlterations()
@@ -161,7 +164,7 @@ class EduardAPI : EduardPlugin() {
 
 
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
-        EduardAPI.loadMaps()
+        loadMaps()
         log("Mapas carregados!")
 
         configs.add("sound-teleport", OPT_SOUND_TELEPORT)
@@ -195,6 +198,7 @@ class EduardAPI : EduardPlugin() {
 
 
     }
+
 
     override fun onDisable() {
         PlayerSkin.saveSkins()

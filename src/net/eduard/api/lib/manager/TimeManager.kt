@@ -6,6 +6,7 @@ import org.bukkit.scheduler.BukkitTask
 
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.BukkitTimeHandler
+import org.bukkit.plugin.java.JavaPlugin
 
 /**
  * Controlador de Tempo, classe que controla e ajuda na criação de
@@ -14,9 +15,7 @@ import net.eduard.api.lib.modules.BukkitTimeHandler
  *
  * @author Eduard
  */
-open class TimeManager(var time: Long = 20, plugin : Plugin? = null ) : EventsManager(plugin), Runnable, BukkitTimeHandler {
-
-
+open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitTimeHandler {
 
 
     /**
@@ -35,9 +34,6 @@ open class TimeManager(var time: Long = 20, plugin : Plugin? = null ) : EventsMa
 
     val isRunning: Boolean
         get() = existsTask() && Bukkit.getScheduler().isCurrentlyRunning(task!!.taskId)
-
-
-
 
 
     /**

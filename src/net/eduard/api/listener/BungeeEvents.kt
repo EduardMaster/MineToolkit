@@ -1,6 +1,6 @@
 package net.eduard.api.listener
 
-import net.eduard.api.EduardBungeeAPI
+import net.eduard.api.EduardAPIBungee
 import net.md_5.bungee.BungeeCord
 import net.md_5.bungee.api.event.*
 import net.md_5.bungee.api.plugin.Listener
@@ -16,8 +16,8 @@ class BungeeEvents : Listener {
         // info("§aLoginEvent", p);
     }
 
-    val bungee get() = EduardBungeeAPI.instance.bungee
-    val db get() = EduardBungeeAPI.instance.db
+    val bungee get() = EduardAPIBungee.instance.bungee
+    val db get() = EduardAPIBungee.instance.db
 
 
 
@@ -39,7 +39,7 @@ class BungeeEvents : Listener {
         val playerUUID = e.player.uniqueId
         val playerAmount = e.target.players.size
         if (db.hasConnection()) {
-            BungeeCord.getInstance().scheduler.runAsync(EduardBungeeAPI.instance) {
+            BungeeCord.getInstance().scheduler.runAsync(EduardAPIBungee.instance.plugin) {
                 bungee!!.setPlayersAmount(serverName, playerAmount)
                 bungee!!.setPlayerServer(playerUUID, "")
             }
@@ -51,7 +51,7 @@ class BungeeEvents : Listener {
         val playerUUID = e.player.uniqueId
         val playerAmount = e.server.info.players.size
         if (db.hasConnection()) {
-            BungeeCord.getInstance().scheduler.runAsync(EduardBungeeAPI.instance) {
+            BungeeCord.getInstance().scheduler.runAsync(EduardAPIBungee.instance.plugin) {
                 bungee!!.setPlayersAmount(serverName, playerAmount)
                 bungee!!.setPlayerServer(playerUUID, serverName)
             }
