@@ -1,4 +1,4 @@
-package net.eduard.api.lib.util;
+package net.eduard.api.lib.abstraction;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -249,7 +249,7 @@ public class StorageAPI {
     }
     public static int getObjectIdByReference(String reference){
         if (reference.contains(StorageAPI.REFER_KEY)){
-            return Extra.toInt(reference.split(STORE_KEY)[1]);
+            return Extra.toInt(reference.split(REFER_KEY)[1]);
         }
         return Extra.toInt(reference);
     }

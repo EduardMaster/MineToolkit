@@ -67,13 +67,6 @@ public class StorageObject extends StorageBase {
             debug(">> ENUM " + data);
             return new StorageEnum(getInfo().clone()).restore(data);
         }
-        if (isReference()) {
-
-            debug(">> REFERENCE " + data);
-            return StorageAPI.getObjectIdByReference(data.toString());
-
-
-        }
         if (Extra.isList(claz)) {
             debug(">> LIST " + data);
             return new StorageList(getInfo().clone()).restore(data);
@@ -81,6 +74,14 @@ public class StorageObject extends StorageBase {
         if (Extra.isMap(claz)) {
             debug(">> MAP " + data);
             return new StorageMap(getInfo().clone()).restore(data);
+        }
+
+        if (isReference()) {
+
+            debug(">> REFERENCE " + data);
+            return StorageAPI.getObjectIdByReference(data.toString());
+
+
         }
 
 
@@ -183,7 +184,7 @@ public class StorageObject extends StorageBase {
                     debug(">> VARIABLE " + field.getName() + " " + field.getType().getSimpleName());
                     Object restoredValue = storage.restore(fieldMapValue);
                     if (storage.isReference()) {
-                        if (restoredValue != null) {
+                        if (restoredValue != null && (!(restoredValue instanceof List || restoredValue instanceof Map))) {
                             StorageAPI.newReference(new ReferenceValue((Integer) restoredValue, field, instance));
                             continue;
                         }

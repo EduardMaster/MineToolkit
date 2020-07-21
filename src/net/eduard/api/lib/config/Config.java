@@ -25,21 +25,19 @@ public class Config {
     private String name;
     transient List<String> lines;
 
-
-
-    public Config(String folder,Object plugin, String name) {
-        this.name = name;
-        this.folder = new File(folder);
-        this.plugin = plugin;
-        init();
-    }
-
     public Config(Object plugin, String name) {
         this.name = name;
         this.plugin = plugin;
         this.folder = getDataFolder();
         init();
     }
+
+    public Config(File dataFolder, String name) {
+        this.name = name;
+        this.folder = dataFolder;
+        init();
+    }
+
 
     public void init() {
         file = new File(folder, name);
@@ -53,9 +51,14 @@ public class Config {
 
     public File getDataFolder() {
         try {
-            return (File) plugin.getClass().getMethod("getDataFolder").invoke(plugin);
+            return (File) plugin.getClass().getDeclaredMethod("getDataFolder").invoke(plugin);
         } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                return (File) plugin.getClass().getMethod("getDataFolder").invoke(plugin);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
         }
         return null;
 
@@ -78,14 +81,16 @@ public class Config {
                 file.mkdirs();
             } else {
 
-                try {
-                    InputStream is = Extra.getResource(plugin.getClass().getClassLoader(), name);
-                    if (is != null) {
-                        Extra.copyAsUTF8(is, file);
-                    }
+                if (plugin != null) {
+                    try {
+                        InputStream is = Extra.getResource(plugin.getClass().getClassLoader(), name);
+                        if (is != null) {
+                            Extra.copyAsUTF8(is, file);
+                        }
 
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
 
             }
@@ -122,8 +127,9 @@ public class Config {
             ex.printStackTrace();
         }
     }
-    public <ClasseRetorno> ClasseRetorno get(String path, Class<ClasseRetorno> clazz){
-        return root.get(path,clazz);
+
+    public <ClasseRetorno> ClasseRetorno get(String path, Class<ClasseRetorno> clazz) {
+        return root.get(path, clazz);
     }
 
     public ConfigSection add(String path, Object value, String... comments) {
@@ -150,7 +156,7 @@ public class Config {
     }
 
     public Config createConfig(String name) {
-        return new Config(plugin, name);
+        return new Config(folder, name);
     }
 
     public void deleteConfig() {

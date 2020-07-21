@@ -31,6 +31,14 @@ abstract class HybridPlugin(
     final override var sqlManager: SQLManager = SQLManager(null, SQLEngineType.SQLITE)
 
     override var storageManager: StorageManager = StorageManager()
+    override fun log(message: String) {
+        println("§a$message")
+    }
+
+    override fun error(message: String) {
+        println("§c$message")
+    }
+
     init {
 
         config.add("database-type", DBType.YAML)

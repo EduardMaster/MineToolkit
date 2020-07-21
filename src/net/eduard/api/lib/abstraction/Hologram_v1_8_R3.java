@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author Eduard
  * @version 1.1
  */
-public class Hologram {
+public class Hologram_v1_8_R3  implements Hologram{
     private Location location;
     private EntityArmorStand holo;
     private String text;
@@ -26,10 +27,10 @@ public class Hologram {
 
     private static void log(String msg) {
         if (debug)
-            System.out.println("[Hologram] " + msg);
+            System.out.println("[Hologram_v1_8_R3] " + msg);
     }
 
-    public Hologram() {
+    public Hologram_v1_8_R3() {
 
 
     }
@@ -50,7 +51,7 @@ public class Hologram {
         }
     }
 
-    public Hologram(Location loc) {
+    public Hologram_v1_8_R3(Location loc) {
         setLocation(loc);
         setText("§fHolograma");
         spawn();
@@ -95,9 +96,8 @@ public class Hologram {
     public void update(Player p) {
         // tentativas de mandar packets de atualização da entidade
         setText(getText());
+
         PacketPlayOutUpdateEntityNBT updateNBT = new PacketPlayOutUpdateEntityNBT(holo.getId(), holo.getNBTTag());
-
-
         PacketPlayOutEntityMetadata updateMetadata = new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), false);
 
 
@@ -158,5 +158,26 @@ public class Hologram {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    @Override
+    public boolean canSee(@NotNull Player player) {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public List<Player> getPlayers() {
+        return null;
+    }
+
+    @Override
+    public boolean isSpawned() {
+        return false;
+    }
+
+    @Override
+    public void move(@NotNull Location local) {
+
     }
 }
