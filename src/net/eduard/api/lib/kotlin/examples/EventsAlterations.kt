@@ -6,10 +6,11 @@ import org.bukkit.event.weather.WeatherChangeEvent
 class EventsAlterations {
 
 
-    init{
+    init {
         event<WeatherChangeEvent>
         {
-            isCancelled=true
+            if (toWeatherState())
+                isCancelled = true
         }
 
 

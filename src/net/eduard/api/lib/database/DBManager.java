@@ -1,6 +1,5 @@
 package net.eduard.api.lib.database;
 
-import java.io.File;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
@@ -33,7 +32,6 @@ public class DBManager {
     private String database = "mine";
     private String type = "jdbc:mysql://";
 
-    private boolean useSQLite;
     private transient Connection connection;
 
     static {
@@ -101,15 +99,10 @@ public class DBManager {
      * @throws Exception
      */
     public Connection connect() throws Exception {
-        if (useSQLite) {
-            String suffix = ".sqlite";
-            File file = new File(database + suffix);
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-            return DriverManager.getConnection("jdbc:sqlite:" + database + suffix);
-        } else {
-            return DriverManager.getConnection(getURL() + "?autoReconnect=true", user, pass);
+        if (useSQLite()) {
+            return DriverManager.getConnection(type+":"+database+".db");
         }
+        return DriverManager.getConnection(getURL() + "?autoReconnect=true", user, pass);
     }
 
     /**
@@ -128,7 +121,7 @@ public class DBManager {
         if (!hasConnection()) {
             try {
                 this.connection = connect();
-                if (!useSQLite) {
+                if (!useSQLite()) {
                     option = new MySQLOption();
                     createDatabase(database);
                     useDatabase(database);
@@ -214,8 +207,7 @@ public class DBManager {
      *
      * @param database Database
      */
-    public void useDatabase(String database)
-    {
+    public void useDatabase(String database) {
         update("USE " + database);
     }
 
@@ -246,8 +238,7 @@ public class DBManager {
      *
      * @param database Database
      */
-    public void clearDatabase(String database)
-    {
+    public void clearDatabase(String database) {
         update("TRUNCATE DATABASE " + database);
     }
 
@@ -339,8 +330,7 @@ public class DBManager {
         update("CREATE OR REPLACE VIEW " + view + " AS " + select);
     }
 
-    public void deleteView(String view)
-    {
+    public void deleteView(String view) {
         update("DROP VIEW " + view);
     }
 
@@ -607,7 +597,6 @@ public class DBManager {
     }
 
 
-
     public List<Map<String, ColumnInfo>> getVariablesFrom(String tableName, String where) {
         List<Map<String, ColumnInfo>> lista = new LinkedList<>();
 
@@ -710,12 +699,14 @@ public class DBManager {
     }
 
     public boolean useSQLite() {
-        return useSQLite;
+        return this.type.equalsIgnoreCase("jdbc::sqlite");
     }
 
     public void setUseSQLite(boolean useSQLite) {
-        this.useSQLite = useSQLite;
+        if (useSQLite)
+            this.type = "jdbc:sqlite";
     }
+
 
 
     public static boolean isDebugging() {

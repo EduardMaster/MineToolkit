@@ -3288,7 +3288,7 @@ public final class Mine {
      *
      * @param name Nome do Mundo
      */
-    public static void unloadWorld(String name) {
+    public static void unloadWorld(String name, boolean saveWorld) {
         World world = Bukkit.getWorld(name);
         if (world != null) {
             World mundoPadrao = Bukkit.getWorlds().get(0);
@@ -3297,8 +3297,13 @@ public final class Mine {
             }
 
         }
-        Bukkit.unloadWorld(name, true);
+        Bukkit.unloadWorld(name, saveWorld);
     }
+
+    public static void unloadWorld(String name) {
+        unloadWorld(name, true);
+    }
+
 
     public static String[] wordWrap(String rawString, int lineLength) {
         if (rawString == null) {

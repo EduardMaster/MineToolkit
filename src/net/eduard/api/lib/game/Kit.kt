@@ -7,12 +7,18 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class Kit {
+class Kit() {
+
+
+    constructor(block  : Kit.() -> Unit) : this(){
+        block.invoke(this)
+    }
 
     class KitUpgrade(
             var level: Int = 1,
             var price: Double = 0.0,
             var cooldown: Long = TimeUnit.HOURS.toMillis(1)
+
     ) {
 
         var items = mutableListOf<ItemStack>()
@@ -21,10 +27,11 @@ class Kit {
 
     }
 
-    fun newUpgrade(level: Int): KitUpgrade {
+    fun newUpgrade(level: Int, block : (KitUpgrade.() -> Unit)? = null) : KitUpgrade {
         val upgrade = KitUpgrade(level)
         upgrade.kit = this
         upgrades.add(upgrade)
+        block?.invoke(upgrade)
         return upgrade
     }
 

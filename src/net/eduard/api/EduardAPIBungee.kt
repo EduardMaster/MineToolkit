@@ -28,6 +28,7 @@ class EduardAPIBungee(plugin : IPluginInstance) : HybridPlugin(plugin) {
         val bungee = BungeeAPI.getBungee()
         bungee.plugin = plugin
         bungee.register()
+
        // BungeeCord.getInstance().getPluginManager().registerListener(this,BungeeEvents())
        // BungeeCord.getInstance().getPluginManager().registerCommand(this, BungeeReloadCommand())
     }

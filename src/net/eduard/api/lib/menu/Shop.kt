@@ -6,6 +6,7 @@ import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.kotlin.player
 import net.eduard.api.lib.manager.CurrencyManager
 import net.eduard.api.lib.modules.*
+import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.storage.Storable.StorageAttributes
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.CurrencyHandler
@@ -357,7 +358,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         return null
     }
 
-    override fun register(plugin: JavaPlugin) {
+    override fun register(plugin: IPluginInstance) {
         super.register(plugin)
 
         val confirmationButton = menuConfirmation.getButton("confirmar")!!

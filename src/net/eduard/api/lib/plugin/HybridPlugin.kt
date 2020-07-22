@@ -88,10 +88,12 @@ abstract class HybridPlugin(
         storageManager.storeType = dbType
         if (db.isEnabled) {
             db.openConnection()
-            var type = SQLEngineType.valueOf(dbType.name.toUpperCase())
+            var type = SQLEngineType.SQLITE
+            try {
+                 type = SQLEngineType.valueOf(dbType.name.toUpperCase())
+            }catch (ex :Exception){}
             sqlManager = SQLManager(db.connection, type)
             storageManager.sqlManager = sqlManager
-
         }
 
         storageManager.folderBase = File(getDataFolder(),"/database/")

@@ -21,6 +21,7 @@ import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.kotlin.centralized
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -297,9 +298,11 @@ open class Menu(
         return MENU_EMPTY
 
     }
-
-    open fun register(plugin: JavaPlugin) {
-        registerListener(plugin)
+    override fun register(plugin: IPluginInstance) {
+        registerMenu(plugin)
+    }
+    fun registerMenu(plugin: IPluginInstance) {
+        registerListener(plugin.plugin as JavaPlugin)
         registeredMenus.add(this)
         for (button in buttons) {
             button.parentMenu = this
@@ -310,15 +313,14 @@ open class Menu(
         }
     }
 
-    override fun unregisterListener() {
-        if (!isRegistered) return
-        super.unregisterListener()
+
+    fun unregisterMenu() {
+        unregisterListener()
         registeredMenus.remove(this)
         for (button in buttons) {
             if (button.isCategory) {
-                button.menu?.unregisterListener()
+                button.menu?.unregisterMenu()
             }
-
         }
 
     }

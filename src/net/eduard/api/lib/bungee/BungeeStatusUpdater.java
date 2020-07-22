@@ -7,8 +7,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 
 public class BungeeStatusUpdater implements Runnable{
 
-	
-	
+
 	public static void updateServers() {
 		for (ServerSpigot server : BungeeAPI.getServers()) {
 			ServerInfo servidor = BungeeCord.getInstance().getServerInfo(server.getName());
@@ -38,7 +37,6 @@ public class BungeeStatusUpdater implements Runnable{
 	@Override
 	public void run() {
 		updateServers();
-		// TODO Auto-generated method stub
 		
 	}
 }

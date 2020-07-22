@@ -11,10 +11,12 @@ class PluginActivator : TimeManager() {
         for (plugin in Bukkit.getPluginManager().plugins) {
             if (plugin is EduardPlugin) {
                 if (!plugin.isFree && !plugin.isActivated) {
-                    Licence.BukkitLicense.test(plugin, Runnable {
-                        plugin.isActivated = true
-                        plugin.onActivation()
-                    })
+                    if (plugin.isEnabled) {
+                        Licence.BukkitLicense.test(plugin, Runnable {
+                            plugin.isActivated = true
+                            plugin.onActivation()
+                        })
+                    }
 
                 }
             }

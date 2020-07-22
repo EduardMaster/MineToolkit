@@ -655,8 +655,7 @@ BungeeControl. task = task;
         server.sendData(ServerAPI.getChannel(), data);
       }
     }
-    
-    @Deprecated
+
     public void sendData(ProxiedPlayer player, ServerAPI.ServerMessage message)
     {
       player.sendData(ServerAPI.getChannel(), message.write());

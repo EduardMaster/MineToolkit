@@ -1,8 +1,6 @@
 package net.eduard.api.server.minigame
 
-import java.util.ArrayList
-import java.util.HashMap
-import net.eduard.api.lib.storage.Storable
+import net.eduard.api.lib.database.annotations.TableName
 import net.eduard.api.lib.storage.Storable.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -11,13 +9,14 @@ import org.bukkit.World
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.game.Schematic
 import net.eduard.api.lib.modules.Copyable
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer
 
 /**
  * Mapa da Sala
  *
  * @author Eduard-PC
  */
+
+@TableName("minigame_maps")
 @StorageAttributes(indentificate = true)
 class MinigameMap(
 
@@ -30,7 +29,6 @@ class MinigameMap(
     init {
         minigame?.maps?.add(this)
     }
-
 
     var teamSize = 1
     var minPlayersAmount = 2
@@ -46,22 +44,41 @@ class MinigameMap(
     var feast: Schematic? = null
     var feastLocation: Location? = null
 
-    val worldName get() = "${minigame?.name}/map/$name"
+    var worldName = defaultWorldName()
+
+    fun defaultWorldName(): String {
+        return "${minigame?.name}/map/$name"
+    }
 
     val isSolo get() = teamSize == 1
 
-    val world: World
-        get() {
-            var mundo: World? = Bukkit.getWorld(worldName)
-            if (mundo == null) {
-                mundo = Mine.loadWorld(worldName)
-            }
-            mundo?.isAutoSave = false
+    @Transient
+    var world: World = loadWorld()
 
+    fun copyWorld(map : MinigameMap) {
+        world = Mine.copyWorld(map.worldName, worldName)
+        fixWorld()
+    }
 
-            return mundo!!
+    fun unloadWorld() {
+        Mine.unloadWorld(worldName, world.isAutoSave)
+    }
+
+    fun loadWorld(): World {
+        var mundo: World? = Bukkit.getWorld(worldName)
+        if (mundo == null) {
+            mundo = Mine.loadWorld(worldName)
         }
+        return mundo!!
 
+    }
+    fun fixWorld() = world(world)
+
+    fun resetWorld() {
+        unloadWorld()
+        world = loadWorld()
+        fixWorld()
+    }
 
     fun copy(): MinigameMap {
         return Copyable.copyObject(this)
@@ -103,7 +120,7 @@ class MinigameMap(
 
     }
 
-    fun fixWorld() = world(world)
+
 
     val hasFeast get() = feast != null
 

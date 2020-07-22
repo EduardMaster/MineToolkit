@@ -42,8 +42,13 @@ open class EduardPlugin : BukkitPlugin(), BukkitTimeHandler {
 
         }
 
-
     }
+
+
+
+
+
+
     /**
      * Envia mensagem para o console caso as Log Normais esteja ativada para ele
      *
@@ -126,7 +131,7 @@ open class EduardPlugin : BukkitPlugin(), BukkitTimeHandler {
     fun unregisterMenus() {
         for (menu in Menu.registeredMenus.toList()) {
             if (this == menu.pluginInstance) {
-                menu.unregisterListener()
+                menu.unregisterMenu()
             }
         }
 

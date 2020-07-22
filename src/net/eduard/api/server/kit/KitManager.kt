@@ -17,6 +17,7 @@ import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.menu.Slot
 import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.modules.VaultAPI
+import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.plugin.java.JavaPlugin
 
 class KitManager : EventsManager() {
@@ -166,11 +167,10 @@ class KitManager : EventsManager() {
         player.sendMessage(msgKitGived.replace("\$kit", kit.name))
     }
 
-    fun register(plugin: JavaPlugin) {
+    override fun register(plugin: IPluginInstance) {
         for (kit in kits) {
-            kit.registerListener(plugin)
-
-            kit.click?.registerListener(plugin)
+            kit.register(plugin)
+            kit.click?.register(plugin)
 
             if (kit.price == 0.0) {
                 kit.price = defaultKitPrice
@@ -178,7 +178,7 @@ class KitManager : EventsManager() {
         }
         this.kitsShop.register(plugin)
         this.kitsSelection.register(plugin)
-        super.registerListener(plugin)
+        super.register(plugin)
 
     }
 

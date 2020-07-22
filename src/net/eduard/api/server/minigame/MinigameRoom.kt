@@ -1,24 +1,24 @@
 package net.eduard.api.server.minigame
 
+import net.eduard.api.lib.database.annotations.TableName
 import net.eduard.api.lib.modules.Extra
-import java.util.ArrayList
 
 import org.bukkit.entity.Player
 
-import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.storage.Storable
 import net.eduard.api.lib.storage.Storable.*
-import kotlin.streams.toList
+import org.bukkit.Bukkit
 
 /**
  * Sala do Minigame
  *
  * @author Eduard-PC
  */
+@TableName("minigame_rooms")
 class MinigameRoom {
 
     @Transient
     lateinit var minigame: Minigame
+
 
     @StorageAttributes(reference = true)
     var map: MinigameMap = MinigameMap()
@@ -33,20 +33,47 @@ class MinigameRoom {
         this.isEnabled = true
         this.time = minigame.timeIntoStart
     }
+    fun start(){
+        mapUsed = map.copy()
+        mapUsed.minigame = minigame
+        mapUsed.copyWorld(map)
+        mapUsed.world.isAutoSave = false
+        restart()
+
+    }
+    fun stop() {
+        mapUsed.unloadWorld()
+        restarting()
+    }
+    fun reset(){
+        mapUsed.resetWorld()
+
+    }
+
 
     var mode = MinigameMode.NORMAL
+
     var id: Int = 0
+
     var time: Int = 0
+
+    var ip: String = "127.0.0.1"
+
+    var port: Int = Bukkit.getPort()
+
     var isEnabled: Boolean = false
+
     var round: Int = 0
 
-    @Transient
     var state = MinigameState.STARTING
 
     @Transient
     var mapUsed: MinigameMap = map
 
+    @Transient
     var secondWinner: MinigamePlayer? = null
+
+    @Transient
     var thirdWinner: MinigamePlayer? = null
 
     @Transient
@@ -97,12 +124,12 @@ class MinigameRoom {
     }
 
     fun getTeams(state: MinigamePlayerState): List<MinigameTeam> {
-        return teams.filter {  it.getPlayers(state).isNotEmpty() }
+        return teams.filter { it.getPlayers(state).isNotEmpty() }
     }
 
     fun getPlayersOnline(state: MinigamePlayerState): List<Player> {
 
-        return  players.filter { p -> p.state == state && p.isOnline }.map { it.player }
+        return players.filter { p -> p.state == state && p.isOnline }.map { it.player }
     }
 
     fun getPlayers(state: MinigamePlayerState): List<MinigamePlayer> {
@@ -205,9 +232,8 @@ class MinigameRoom {
     }
 
     fun leaveAll() {
-        players.forEach{ it.game = null}
+        players.forEach { it.game = null }
         players.clear()
-
     }
 
 
@@ -241,5 +267,7 @@ class MinigameRoom {
     fun hasSpace(): Boolean {
         return players.size < map!!.maxPlayersAmount
     }
+
+
 
 }

@@ -26,10 +26,11 @@ public class BukkitController implements ServerController{
 	@Override
 	public void sendMessage(String tag, String line) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("bungeecord");
+		out.writeUTF(channel);
 		out.writeUTF(tag);
 		out.writeUTF(line);
 		Bukkit.getServer().sendPluginMessage(plugin, channel, out.toByteArray());
+
 		
 	}
 
@@ -53,7 +54,7 @@ public class BukkitController implements ServerController{
 	public void register() {
 		Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, getChannel());
 		Bukkit.getMessenger().registerIncomingPluginChannel(plugin, getChannel(), listener );
-		
+
 	}
 
 	@Override
@@ -61,7 +62,6 @@ public class BukkitController implements ServerController{
 		Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin, getChannel(),listener);
 		Bukkit.getMessenger().unregisterOutgoingPluginChannel(plugin, getChannel());
 
-		
 	}
 
 	@Override
@@ -69,6 +69,7 @@ public class BukkitController implements ServerController{
 		for (ServerMessageHandler handler : BungeeAPI.getHandlers()) {
 			handler.onMessage(server, tag, line);
 		}
+
 	}
 
 	@Override

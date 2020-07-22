@@ -478,6 +478,9 @@ open class Minigame : TimeManager {
 
         var pastaSalas = File(plugin!!.dataFolder, "rooms/")
         pastaSalas.mkdirs()
+
+
+
         maps.clear()
         rooms.clear()
         for (arquivoNome in pastaMapas.list()) {
