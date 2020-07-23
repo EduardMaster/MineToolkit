@@ -16,6 +16,4 @@ public interface PlayerEffect extends Consumer<Player> {
 		accept(player);
 	}
 
-
-	default void accept(Player player){}
 }

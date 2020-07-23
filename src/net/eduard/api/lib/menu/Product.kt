@@ -14,11 +14,18 @@ open class Product(name: String = "Produto",
 
     constructor(shopping: Shop) : this(shop = shopping)
 
-    constructor(shopping: Shop, product: ItemStack, buyPrice: Double) : this(shop = shopping)
-    {
+    constructor(shopping: Shop, product: ItemStack, buyPrice: Double) : this(shop = shopping) {
         this.product = product
         this.buyPrice = buyPrice
     }
+
+    fun upgrade(level: Int, body: ProductUpgrade.() -> Unit): ProductUpgrade {
+        val upgrade = ProductUpgrade(level, this)
+        body.invoke(upgrade)
+        return upgrade
+    }
+
+
     var sellPrice = 0.0
     var buyPrice = 0.0
     var isLimited = false
@@ -31,14 +38,15 @@ open class Product(name: String = "Produto",
     fun hasBought(player: Player) = player.hasPermission(permission)
 
     fun hasBoughtAllUpgrades(player: Player): Boolean {
-        if (!hasBought(player))return false
-        for (upgrade in upgrades){
-            if (!upgrade.hasBought(player))return false
+        if (!hasBought(player)) return false
+        for (upgrade in upgrades) {
+            if (!upgrade.hasBought(player)) return false
         }
         return true
     }
-    fun getNextUpgrade(player: Player) : ProductUpgrade? {
-        for (upgrade in upgrades){
+
+    fun getNextUpgrade(player: Player): ProductUpgrade? {
+        for (upgrade in upgrades) {
             if (!upgrade.hasBought(player)) return upgrade
         }
         return null
@@ -47,12 +55,12 @@ open class Product(name: String = "Produto",
     @Transient
     lateinit var realProduct: Any
     var product: ItemStack? = null
-    set(value){
-        field = value
-        if (item == null){
-            item = value
+        set(value) {
+            field = value
+            if (item == null) {
+                item = value
+            }
         }
-    }
     val parentShop: Shop
         get() = parentMenu as Shop
 
@@ -68,40 +76,42 @@ open class Product(name: String = "Produto",
 
     override fun getIcon(player: Player): ItemStack {
 
-        var clone=  super.getIcon(player).clone()
+        var clone = super.getIcon(player).clone()
         clone = clone.clone()
         if (isLimited) {
             clone.amount = 64
         }
         val lore = Mine.getLore(clone)
-        if (parentShop != null) {
-            var template: List<String>? = null
-            if (tradeType === TradeType.BUYABLE) {
-                template = parentShop.buyTemplate
-            }
-            if (tradeType === TradeType.SELABLE) {
-                template = parentShop.sellTemplate
-            }
-            if (tradeType === TradeType.BOTH) {
-                template = parentShop.sellBuyTemplate
-            }
-            for (line in template!!) {
-                lore.add(line.replace("\$product_name", name)
-                        .replace("\$product_stock", "" + stock)
-                        .replace("\$product_buy_unit_price", Extra.formatMoney(unitBuyPrice))
-                        .replace("\$product_buy_pack_price", Extra.formatMoney(unitBuyPrice * 64))
-                        .replace("\$product_sell_unit_price", Extra.formatMoney(unitSellPrice)).replace("\$product_sell_pack_price", Extra.formatMoney(unitSellPrice * 64)).
-                        replace("\$product_sell_inventory_price", Extra.formatMoney(unitSellPrice * 64 * 4 * 9)))
+        if (parentMenu != null) {
+            if (parentMenu is Shop) {
+                var template: List<String>? = null
+                if (tradeType === TradeType.BUYABLE) {
+                    template = parentShop.buyTemplate
+                }
+                if (tradeType === TradeType.SELABLE) {
+                    template = parentShop.sellTemplate
+                }
+                if (tradeType === TradeType.BOTH) {
+                    template = parentShop.sellBuyTemplate
+                }
+                for (line in template!!) {
+                    lore.add(line.replace("\$product_name", name)
+                            .replace("\$product_stock", "" + stock)
+                            .replace("\$product_buy_unit_price", Extra.formatMoney(unitBuyPrice))
+                            .replace("\$product_buy_pack_price", Extra.formatMoney(unitBuyPrice * 64))
+                            .replace("\$product_sell_unit_price", Extra.formatMoney(unitSellPrice)).replace("\$product_sell_pack_price", Extra.formatMoney(unitSellPrice * 64)).replace("\$product_sell_inventory_price", Extra.formatMoney(unitSellPrice * 64 * 4 * 9)))
+                }
+                if (parentShop.isPermissionShop) {
+                    if (player.hasPermission(permission)) {
+                        EnchantGlow.addGlow(clone)
+                        lore.add(parentShop.textAlreadyBought)
+                    }
+                }
             }
         }
 
-        if (parentShop.isPermissionShop){
-            if (player.hasPermission(permission)){
-                EnchantGlow.addGlow(clone)
-                lore.add(parentShop.textAlreadyBought)
-            }
-        }
-        Mine.setLore( clone, lore)
+
+        Mine.setLore(clone, lore)
         return clone
     }
 

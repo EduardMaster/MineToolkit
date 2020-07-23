@@ -82,7 +82,6 @@ public class Scoreboards {
             Score score = objective.getScore(fake);
             if (score.getScore() == -1)
                 scoreboard.resetScores(fake);
-
         }
     }
 

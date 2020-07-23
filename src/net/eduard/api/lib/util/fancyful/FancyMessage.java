@@ -215,7 +215,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * Set the behavior of the current editing component to display raw text when the client hovers over the text.
 	 * <p>Tooltips do not inherit display characteristics, such as color and styles, from the message component on which they are applied.</p>
 	 *
-	 * @param text The text, which supports newlines, which will be displayed to the client upon hovering.
+	 * @param text The text, which hooks newlines, which will be displayed to the client upon hovering.
 	 * @return This builder instance.
 	 */
 	public FancyMessage tooltip(final String text) {

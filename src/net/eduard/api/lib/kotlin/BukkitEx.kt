@@ -36,7 +36,7 @@ val Class<*>.plugin: JavaPlugin
         return JavaPlugin.getPlugin(this as Class<out JavaPlugin>) as JavaPlugin
     }
 
-fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
+inline fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
 
 val BlockState.isCrop get() = type == Material.CROPS
 
@@ -46,11 +46,12 @@ val BlockState.plantState: CropState?
     else null
 
 
-val InventoryClickEvent.player get() = this.whoClicked as Player
+inline val InventoryClickEvent.player get() = this.whoClicked as Player
 
-val InventoryOpenEvent.player get() = this.player as Player
+inline val InventoryOpenEvent.player get() = this.player as Player
 
-fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -> Unit): Inventory {
+
+inline fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -> Unit): Inventory {
 
     val inventory = Bukkit.createInventory(this, 9 * lineAmount, name.cut(32))
 
@@ -61,7 +62,7 @@ fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -> Unit)
 
 }
 
-fun Inventory.item(position: Int, block: ItemStack.() -> Unit): ItemStack {
+inline fun Inventory.item(position: Int, block: ItemStack.() -> Unit): ItemStack {
 
     val item = ItemStack(Material.STONE)
 
@@ -75,11 +76,9 @@ fun Inventory.item(position: Int, block: ItemStack.() -> Unit): ItemStack {
 
 var ItemStack.name: String
     get() {
-
-        return itemMeta.displayName;
+        return itemMeta.displayName ?: ""
     }
     set(value) {
-
         val meta = itemMeta
         meta.displayName = value
         this.itemMeta = meta
@@ -88,7 +87,7 @@ var ItemStack.name: String
 
 var ItemStack.lore: List<String>
     get() {
-        return itemMeta.lore;
+        return itemMeta.lore ?: listOf()
     }
     set(value) {
         val meta = itemMeta
@@ -98,58 +97,66 @@ var ItemStack.lore: List<String>
     }
 
 
-fun ItemStack.lore(vararg lore: String): ItemStack {
-
-    this.lore = lore.toList()
+inline operator fun ItemStack.invoke(name: String): ItemStack {
+    this.name = name
     return this
 }
 
-fun ItemStack.id(id: Int): ItemStack {
+inline operator fun ItemStack.invoke(enchament: Enchantment, level: Int): ItemStack {
+    addUnsafeEnchantment(enchament, level)
+    return this
+}
+
+inline operator fun ItemStack.minus(enchament: Enchantment): ItemStack {
+    removeEnchantment(enchament)
+    return this
+}
+
+inline operator fun ItemStack.plus(amount: Int): ItemStack {
+    this.amount += amount
+    return this
+}
+
+inline operator fun ItemStack.plus(map: Map<Enchantment, Int>): ItemStack {
+    addUnsafeEnchantments(map)
+    return this
+}
+
+inline infix fun Enchantment.level(level: Int): Map<Enchantment, Int> {
+    return mapOf(this to level)
+}
+
+inline fun ItemStack.id(id: Int): ItemStack {
     typeId = id
     return this
 }
 
-fun ItemStack.data(data: Int): ItemStack {
+inline fun ItemStack.data(data: Int): ItemStack {
     durability = data.toShort()
-
-    //ItemStack(Material.STONE,"")
-
-
     return this
-}
-operator fun ItemStack.invoke(material : Material, name : String) : ItemStack{
-
-    return ItemStack(material)
 }
 
 fun ItemStack.addLore(vararg lore: String): ItemStack {
-
-    if (hasItemMeta()) {
-        val meta = itemMeta
-        meta.lore.addAll(lore)
-        this.itemMeta = meta
-
-    }
-
+    this.lore = lore.toList()
     return this
 }
 
-fun ItemStack.addEnchant(ench: Enchantment, level: Int): ItemStack {
+inline fun ItemStack.lore(vararg lore: String): ItemStack {
+    this.lore = lore.toList()
+    return this
+}
+
+inline fun ItemStack.addEnchant(ench: Enchantment, level: Int): ItemStack {
     addUnsafeEnchantment(ench, level)
     return this
 }
 
 fun ItemStack.color(color: Color): ItemStack {
-
     if (!type.name.contains("LEATHER"))
         type = Material.LEATHER_CHESTPLATE
-
     val meta = itemMeta as LeatherArmorMeta
     meta.color = color
     itemMeta = meta
-
-
-
     return this
 }
 

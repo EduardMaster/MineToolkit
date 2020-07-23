@@ -18,14 +18,13 @@ import org.bukkit.scoreboard.Team;
 
 import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.modules.Extra;
-import net.eduard.api.lib.storage.Storable;
 
 /**
  * API de criação de Scoreboard feita para facilitar sua vida
  *
  * @author Eduard
  */
-
+@SuppressWarnings("unused")
 public class DisplayBoard {
     /**
      * Construtor vazio setando o nome da Scoreboard de '§6§lScoreboard'
@@ -58,36 +57,36 @@ public class DisplayBoard {
     /**
      * Tamanho máximo do Titulo da Scoreboard
      */
-    public static final int TITLE_LIMIT = 32;
+    private static final int TITLE_LIMIT = 32;
 
     /**
      * Tamanh máximo de um Prefixo do {@link Team} da Scoreboard
      */
-    public static final int PREFIX_LIMIT = 16;
+    private static final int PREFIX_LIMIT = 16;
     /**
      * Tamanh máximo de um Suffix do {@link Team} da Scoreboard
      */
-    public static final int SUFFIX_LIMIT = 16;
+    private static final int SUFFIX_LIMIT = 16;
     /**
      * Limite atual do nome do Jogador
      */
-    public int PLAYER_NAME_LIMIT = PLAYER_BELOW_1_8_NAME_LIMIT;
+    private int PLAYER_NAME_LIMIT = PLAYER_BELOW_1_8_NAME_LIMIT;
     /**
      * Linhas da Scoreboard
      */
-    protected List<String> lines = new ArrayList<>();
+    private List<String> lines = new ArrayList<>();
     /**
      * Titulo da scoreboard
      */
-    protected String title;
+    private String title;
     /**
      * Barra de vida encima da cabeça do jogador
      */
-    protected String healthBar;
+    private String healthBar;
     /**
      * Se a scoreboard não irá piscar de Jeito nenhum (se ela é perfeita)
      */
-    protected boolean perfect;
+    private boolean perfect;
     /**
      * {@link Objective} que armazena a Vida dos jogadores
      */
@@ -99,25 +98,25 @@ public class DisplayBoard {
      * {@link Scoreboard} criada
      */
 
-    protected transient Scoreboard scoreboard;
+    private transient Scoreboard scoreboard;
     /**
      * {@link Objective} que armazena as linhas da Scoreboard
      */
 
-    protected transient Objective objective;
+    private transient Objective objective;
 
     /**
      * HashMap armazenando os nomes dos jgoadores Fakes (As Linhas)
      */
 
-    protected transient Map<Integer, OfflinePlayer> fakes = new HashMap<>();
+    private transient Map<Integer, OfflinePlayer> fakes = new HashMap<>();
     /**
      *
      */
 
-    protected transient Map<Integer, Team> teams = new HashMap<>();
+    private transient Map<Integer, Team> teams = new HashMap<>();
 
-    protected transient Map<Integer, String> texts = new HashMap<>();
+    private transient Map<Integer, String> texts = new HashMap<>();
 
     public DisplayBoard hide() {
 
@@ -164,35 +163,33 @@ public class DisplayBoard {
         if (center.isEmpty()) {
             center = "" + ChatColor.values()[line - 1];
         }
-        prefix = Extra.cutText(prefix, 16);
-        center = Extra.cutText(center, 40);
-        suffix = Extra.cutText(suffix, 16);
+        prefix = Extra.cutText(prefix, PREFIX_LIMIT);
+        center = Extra.cutText(center, PLAYER_ABOVE_1_7_NAME_LIMIT);
+        suffix = Extra.cutText(suffix, SUFFIX_LIMIT);
         Team team = teams.get(line);
+        boolean needUpdate = true;
         if (fakes.containsKey(line)) {
             OfflinePlayer fake = fakes.get(line);
             if (!fake.getName().equals(center)) {
                 team.removePlayer(fake);
-               /* if (fakes.size() >= 15) {
+                if (fakes.size() >= 15) {
                     objective.getScore(fake).setScore(-1);
                 } else {
-
-                */
-                scoreboard.resetScores(fake);
-                //}
-                fakes.remove(line);
-            }
-        } else {
-            FakePlayer fake = new FakePlayer(center);
-
+                    scoreboard.resetScores(fake);
+                }
+            }else needUpdate = false;
+        }
+        FakePlayer fake = new FakePlayer(center);
+        if (needUpdate) {
             objective.getScore(fake).setScore(line);
             fakes.put(line, fake);
             team.addPlayer(fake);
         }
+
         team.setSuffix(suffix);
         team.setPrefix(prefix);
 
     }
-
 
 
     /**
@@ -206,8 +203,6 @@ public class DisplayBoard {
     }
 
 
-
-
     public DisplayBoard update(Player player) {
         int id = 15;
         for (String line : this.lines) {
@@ -215,7 +210,7 @@ public class DisplayBoard {
             id--;
         }
         setDisplay(Mine.getReplacers(title, player));
-        //clearEntries(false);
+        removeTrash();
         return this;
     }
 
@@ -226,8 +221,22 @@ public class DisplayBoard {
             set(id, line);
             id--;
         }
-        //clearEntries(false);
+
+        removeTrash();
+
         return this;
+    }
+
+    protected void toTrash(OfflinePlayer player){
+        objective.getScore(player).setScore(-1);
+    }
+
+    protected void removeTrash(){
+        for (OfflinePlayer player : scoreboard.getPlayers()){
+            if (objective.getScore(player).getScore() == -1){
+                scoreboard.resetScores(player);
+            }
+        }
     }
 
     public Scoreboard getScoreboard() {
@@ -246,13 +255,10 @@ public class DisplayBoard {
                     health.setDisplaySlot(DisplaySlot.BELOW_NAME);
                 }
                 for (int id = 15; id > 0; id--) {
-                    Team team = scoreboard.registerNewTeam("displayTeam" +id);
-//			FakePlayer fake = new FakePlayer("" + ChatColor.values()[id]);
-//			team.addPlayer(fake);
-//			objective.getScore(fake).setScore(id);
+                    Team team = scoreboard.registerNewTeam("displayTeam" + id);
+
                     teams.put(id, team);
 
-//			fakes.put(id, fake);
                 }
                 setDisplay(title);
                 setHealthBar(Mine.getRedHeart());

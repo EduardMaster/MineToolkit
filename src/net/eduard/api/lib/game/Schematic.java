@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.modules.Copyable;
+import org.jetbrains.annotations.Contract;
 
 /**
  * Schematic do WorldEdit Compacto
@@ -25,7 +26,7 @@ import net.eduard.api.lib.modules.Copyable;
  * @author Eduard
  *
  */
-public class Schematic {
+final public class Schematic {
 
 	private Vector relative, low, high;
 	private transient int count;
@@ -37,7 +38,7 @@ public class Schematic {
 	private transient byte[] blocksData;
 
 
-	public short getWidth() {
+	 public short getWidth() {
 		return width;
 	}
 

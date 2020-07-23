@@ -8,7 +8,9 @@ abstract class PluginHook(val pluginName: String) {
         hooks.add(this)
         val pl = Bukkit.getPluginManager().getPlugin(pluginName)
 
-        if (pl != null && pl.isEnabled) onPluginActive()
+        if (pl != null && pl.isEnabled) {
+            onPluginActive()
+        }
 
     }
 

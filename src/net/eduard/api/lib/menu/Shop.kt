@@ -23,17 +23,16 @@ import java.util.*
 
 @StorageAttributes(indentificate = true)
 open class Shop(name: String = "Loja", lineAmount: Int = 3
-, block : (Shop.() -> Unit)? = null) : Menu(name, lineAmount) {
-    init{
+                , block: (Shop.() -> Unit)? = null) : Menu(name, lineAmount) {
+    init {
         block?.invoke(this)
     }
 
-    fun product(name: String = "Produto",block : (Product.() -> Unit)? = null): Product {
-        val product =  Product(name,this)
+    fun product(name: String = "Produto", block: (Product.() -> Unit)? = null): Product {
+        val product = Product(name, this)
         block?.invoke(product)
         return product
     }
-
 
 
     var currencyType = "VaultEconomy"
@@ -49,6 +48,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
         }
     var sortType = ShopSortType.BUY_PRICE_ASC
+    var menuUpgrades: Menu? = null
 
     @Transient
     var selectingAmount: MutableMap<Player, Product> = HashMap()
@@ -71,8 +71,10 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
     var messageWithoutBalance = MESSAGE_WITHOUT_BALANCE
     var messageWithoutPermission = MESSAGE_WITHOUT_PERMISSION
     var messageUpgradeBought = MESSAGE_UPGRADE_BOUGHT
+    var messageUpgradesAlreadyBought = MESSAGE_UPGRADES_ALREADY_BOUGHT
     var textAlreadyBought = TEXT_ALREADY_BOUGHT
-    var menuConfirmation: Menu = Menu("Confirmar Transação", 3)
+
+    var menuConfirmation: Menu? = null
 
 
     companion object {
@@ -84,65 +86,60 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         var MESSAGE_WITHOUT_PERMISSION = "§cVoce não tem permissão para comprar este produto!"
         var MESSAGE_ALREADY_BOUGHT = "§cVocê já comprou este produto."
         var MESSAGE_UPGRADE_BOUGHT = "§cVocê comprou evolução do \$product para o nível \$level"
+        var MESSAGE_UPGRADES_ALREADY_BOUGHT = "§cTodos os upgrades já foram adquiridos."
         var TEXT_ALREADY_BOUGHT = "§a§lDESBLOQUEADO"
 
-        var TEMPLATE_BUY = Arrays.asList("§fCompre o produto §e\$product_name",
+        var TEMPLATE_BUY = listOf("§fCompre o produto §e\$product_name",
                 "§2Quantidade: §a\$product_stock", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
-        var TEMPLATE_SELL = Arrays.asList("§fVende o produto: §e\$product_name",
+        var TEMPLATE_SELL = listOf("§fVende o produto: §e\$product_name",
                 "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price")
-        var TEMPLATE_BUY_SELL = Arrays.asList("§fCompra e venda de: §e\$product_name",
+        var TEMPLATE_BUY_SELL = listOf("§fCompra e venda de: §e\$product_name",
                 "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price", "", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
         const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
     }
 
 
-    lateinit var menuUpgrades: Menu
-
     fun useUpgradesMenu() {
-        menuUpgrades = Menu("Lista de Upgrades", 6)
-        menuUpgrades.superiorMenu = this
-        menuUpgrades.registerListener(pluginInstance)
-        val upgradeButton = MenuButton("upgrade", menuUpgrades)
-        upgradeButton.setPosition(3, 2)
-        upgradeButton.icon = ItemBuilder(Material.ANVIL).name("§aEvoluir")
-
-        val productButton = MenuButton("product", menuConfirmation)
-        productButton.setPosition(5, 2)
-        productButton.icon = ItemBuilder(Material.STONE)
-        upgradeButton.click = ClickEffect { event ->
-            val p = event.player
-            val fake = FakePlayer(p)
-            val product = selectedProduct[p]!!
-            val nextUpgrade = product.getNextUpgrade(p)
-            if (nextUpgrade != null) {
-                if (this.currency!!.contains(fake, nextUpgrade.price)) {
-
-                    this.currency!!.remove(fake, nextUpgrade.price)
-                    VaultAPI.getPermission().playerAdd(p, nextUpgrade.permission)
-                    p.sendMessage(messageUpgradeBought
-                            .replace("\$product_name", nextUpgrade.displayName)
-                            .replace("\$product", nextUpgrade.name)
-
-                            .replace("\$level", "" + nextUpgrade.level))
-                } else {
-                    p.sendMessage(messageWithoutBalance)
-                }
-            } else {
-                p.sendMessage("§cTodos os upgrades já foram adquiridos.")
+        menuUpgrades = Menu("Lista de Upgrades", 6) {
+            button("upgrade") {
+                setPosition(3, 2)
+                icon = ItemBuilder(Material.ANVIL).name("§aEvoluir")
             }
+
+
+            button("product") {
+                setPosition(5, 2)
+                icon = ItemBuilder(Material.STONE)
+            }
+
         }
     }
 
-    private fun useConfirmationMenu() {
-        menuConfirmation.superiorMenu = this
-        val confirmationButton = MenuButton("confirmar", menuConfirmation)
-        confirmationButton.setPosition(3, 2)
-        confirmationButton.icon = ItemBuilder(Material.WOOL).data(5).name("§a§lCONFIRMAR").lore("§aClique para confirmar a transação.")
-        val cancelButton = MenuButton("cancelar", menuConfirmation)
-        cancelButton.icon = ItemBuilder(Material.WOOL).data(14).name("§c§lCANCELAR").lore("§cClique para cancelar a transação.")
-        cancelButton.setPosition(7, 2)
-        val productButton = MenuButton("product", menuConfirmation)
-        productButton.setPosition(5, 2)
+    fun useConfirmationMenu() {
+        menuConfirmation = Menu("Confirmar Transação", 3) {
+
+
+            button("confirmar") {
+                setPosition(3, 2)
+                icon = ItemBuilder(Material.WOOL)
+                        .data(5)
+                        .name("§a§lCONFIRMAR")
+                        .lore("§aClique para confirmar a transação.")
+            }
+
+            button("cancelar") {
+                icon = ItemBuilder(Material.WOOL)
+                        .data(14)
+                        .name("§c§lCANCELAR")
+                        .lore("§cClique para cancelar a transação.")
+                setPosition(7, 2)
+            }
+
+            button("product") {
+                setPosition(5, 2)
+                icon = ItemBuilder(Material.STONE)
+            }
+        }
 
     }
 
@@ -151,34 +148,37 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         if (e.player is Player) {
             val player = e.player as Player
 
-            if (menuConfirmation.isOpen(player)) {
+            if (menuConfirmation?.isOpen(player) == true) {
 
-                val productButton = menuConfirmation.getButton("product")!!
+                val productButton = menuConfirmation?.getButton("product")!!
 
                 val product = selectedProduct[player]!!
                 e.inventory.setItem(productButton.index, product.icon)
                 if (isPermissionShop) {
                     if (product.hasBought(player)) {
                         e.isCancelled = true
-                        menuUpgrades.open(player)
+                        menuUpgrades?.open(player)
                     }
                 }
 
-            } else if (isPermissionShop && menuUpgrades.isOpen(player)) {
-                val product = selectedProduct[player]!!
-                var slot = Extra.getIndex(2, 3)
-                for (upgrade in product.upgrades) {
-                    var icon = ItemBuilder(Material.STAINED_GLASS_PANE).data(14)
-                            .name(upgrade.displayName)
-                    if (upgrade.hasBought(player)) {
-                        icon.data(4)
-                    }
-                    e.inventory.setItem(slot, icon)
-                    slot++
+            } else {
+                menuUpgrades ?: return
+                if (isPermissionShop && menuUpgrades!!.isOpen(player)) {
+                    val product = selectedProduct[player]!!
+                    var slot = Extra.getIndex(2, 3)
+                    for (upgrade in product.upgrades) {
+                        var icon = ItemBuilder(Material.STAINED_GLASS_PANE).data(14)
+                                .name(upgrade.displayName)
+                        if (upgrade.hasBought(player)) {
+                            icon.data(4)
+                        }
+                        e.inventory.setItem(slot, icon)
+                        slot++
 
+
+                    }
 
                 }
-
             }
 
         }
@@ -351,7 +351,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         for (button in buttons) {
             if (button is Product) {
                 if (button.product?.isSimilar(item)!!) {
-                    return button as Product
+                    return button
                 }
             }
         }
@@ -360,22 +360,48 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     override fun register(plugin: IPluginInstance) {
         super.register(plugin)
+        menuUpgrades?.superiorMenu = this
+        menuConfirmation?.superiorMenu = this
+        if (menuConfirmation!= null) {
+            val confirmationButton = menuConfirmation!!.getButton("confirmar")!!
+            val cancelButton = menuConfirmation!!.getButton("cancelar")!!
+            val productButton = menuConfirmation!!.getButton("product")!!
+            cancelButton.click = ClickEffect { event -> open(event.player) }
+            confirmationButton.click = ClickEffect { event ->
 
-        val confirmationButton = menuConfirmation.getButton("confirmar")!!
-        val cancelButton = menuConfirmation.getButton("cancelar")!!
-        val productButton = menuConfirmation.getButton("product")!!
-        cancelButton.click = ClickEffect { event -> open(event.player) }
-        confirmationButton.click = ClickEffect { event ->
+                val player = event.player
+                val produto = selectedProduct[player]!!
+                val type = trading[player]!!
+                if (type == TradeType.BUYABLE) {
+                    buy(player, produto, 1.0)
+                } else if (type == TradeType.SELABLE) {
+                    sell(player, produto, 1.0)
+                }
 
-            val player = event.player
-            val produto = selectedProduct[player]!!
-            val type = trading[player]!!
-            if (type == TradeType.BUYABLE) {
-                buy(player, produto, 1.0)
-            } else if (type == TradeType.SELABLE) {
-                sell(player, produto, 1.0)
             }
+        }
+        val upgradeButton = menuUpgrades?.getButton("upgrade") ?: return
+        upgradeButton.click = ClickEffect { event ->
+            val p = event.player
+            val fake = FakePlayer(p)
+            val product = selectedProduct[p]!!
+            val nextUpgrade = product.getNextUpgrade(p)
+            if (nextUpgrade != null) {
+                if (this.currency!!.contains(fake, nextUpgrade.price)) {
 
+                    this.currency!!.remove(fake, nextUpgrade.price)
+                    VaultAPI.getPermission().playerAdd(p, nextUpgrade.permission)
+                    p.sendMessage(messageUpgradeBought
+                            .replace("\$product_name", nextUpgrade.displayName)
+                            .replace("\$product", nextUpgrade.name)
+
+                            .replace("\$level", "" + nextUpgrade.level))
+                } else {
+                    p.sendMessage(messageWithoutBalance)
+                }
+            } else {
+                p.sendMessage(messageUpgradesAlreadyBought)
+            }
         }
 
     }
@@ -392,7 +418,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                 trading[player] = product.tradeType
                 selectedProduct[player] = product
 
-                menuConfirmation.open(player)
+                menuConfirmation?.open(player)
                 return@ClickEffect
             }
             if ((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)

@@ -117,7 +117,7 @@ open class Menu(
     fun removeAllButtons() {
         buttons.clear()
         clearCache()
-        pageOpened.forEach { (p, a) -> p.closeInventory() }
+        pageOpened.forEach { (p, page) -> p.closeInventory() }
         pageOpened.clear()
     }
 
@@ -344,7 +344,7 @@ open class Menu(
         val message = event.message
         val cmd = Extra.getCommandName(message)
         if (openWithCommand != null)
-            if (cmd.toLowerCase() == "/" + openWithCommand!!.toLowerCase()) {
+            if (cmd.toLowerCase() == openWithCommand!!.toLowerCase()) {
                 event.isCancelled = true
                 open(player)
             }
@@ -403,7 +403,7 @@ open class Menu(
                     button.click.accept(e)
                     if (button.effects != null) {
                         debug("Button make Editable Effects")
-                        button.effects?.effect(player)
+                        button.effects?.accept(player)
                     }
                     if (button.isCategory) {
                         button.menu?.open(player)

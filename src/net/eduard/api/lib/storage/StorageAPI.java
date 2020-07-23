@@ -36,12 +36,12 @@ public class StorageAPI {
 
 
     private static boolean debug = true;
-    public static String STORE_KEY = "=";
-    public static String REFER_KEY = "@";
-    private static Map<Class<?>, Storable> storages = new LinkedHashMap<>();
-    private static Map<Class<?>, String> aliases = new LinkedHashMap<>();
-    private static Map<Integer, Object> objects = new LinkedHashMap<>();
-    private static List<ReferenceBase> references = new ArrayList<>();
+    public static final String STORE_KEY = "=";
+    public static final String REFER_KEY = "@";
+    private static final Map<Class<?>, Storable> storages = new LinkedHashMap<>();
+    private static final Map<Class<?>, String> aliases = new LinkedHashMap<>();
+    private static final Map<Integer, Object> objects = new LinkedHashMap<>();
+    private static  List<ReferenceBase> references = new ArrayList<>();
 
     public static Map<Class<?>, Storable> getStorages() {
         return storages;
@@ -178,7 +178,8 @@ public class StorageAPI {
         }
     }
 
-    public static Storable autoRegisterClass(Class<?> claz) {
+    public static Storable autoRegisterClass(Class<?> claz)
+    {
         return autoRegisterClass(claz, claz.getSimpleName());
     }
 
@@ -325,10 +326,6 @@ public class StorageAPI {
         return aliases;
     }
 
-    public static void setAliases(Map<Class<?>, String> aliases) {
-        StorageAPI.aliases = aliases;
-    }
-
     static {
         StorageAPI.register(UUID.class, new UUIDStorable());
         StorageAPI.register(Timestamp.class, new TimeStampStorable());
@@ -355,6 +352,7 @@ public class StorageAPI {
 
     public static void startGson() {
         GsonBuilder b = new GsonBuilder()
+
                 .serializeSpecialFloatingPointValues()
                 .enableComplexMapKeySerialization();
         storages.entrySet().forEach(entry -> {

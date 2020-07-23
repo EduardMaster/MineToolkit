@@ -70,9 +70,9 @@ abstract class BukkitPlugin : JavaPlugin(), IPlugin {
         }
 
     override var messages: Config
-        get() = hybridPlugin.configs
+        get() = hybridPlugin.messages
         set(value) {
-            hybridPlugin.configs = value
+            hybridPlugin.messages = value
         }
     override var storage: Config
         get() = hybridPlugin.storage

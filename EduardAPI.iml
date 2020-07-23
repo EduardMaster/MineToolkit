@@ -24,11 +24,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../plugins-apis/Spigot/spigot 1.7-1.8.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../plugins-apis/Spigot/spigot-1.7.10-SNAPSHOT-b1657.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../plugins-apis/Spigot/spigot 1.7-1.8.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../plugins-apis/Spigot/spigot-1.7.10-SNAPSHOT-b1657.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

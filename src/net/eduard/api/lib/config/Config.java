@@ -29,7 +29,7 @@ public class Config {
 
     public Config(IPlugin plugin, String name) {
         this.name = name;
-        this.plugin = plugin;
+        this.plugin = plugin.getPlugin();
         this.folder = plugin.getDataFolder();
         init();
     }

@@ -50,9 +50,9 @@ abstract class HybridPlugin(
 
     override var isActivated = false
     override var isFree: Boolean = false
-    final override var configs: Config = Config(getDataFolder(), "config.yml")
-    final override var messages: Config = Config(getDataFolder(), "messages.yml")
-    final override var storage: Config = Config(getDataFolder(), "storage.yml")
+    final override var configs: Config = Config(this, "config.yml")
+    final override var messages: Config = Config(this, "messages.yml")
+    final override var storage: Config = Config(this, "storage.yml")
     final override var databaseFile = File(getDataFolder(), "database.db")
     final override var dbManager: DBManager = DBManager()
     final override var sqlManager: SQLManager = SQLManager(null, SQLEngineType.SQLITE)

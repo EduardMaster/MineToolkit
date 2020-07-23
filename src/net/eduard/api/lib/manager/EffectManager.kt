@@ -30,11 +30,8 @@ open class EffectManager : TimeManager(), PlayerEffect {
     var MAKE_EXPLOSION: Explosion? = null
     var CLOSE_INVENTORY: Boolean = false
     var CLEAR_INVENTORY: Boolean = false
-
-
-    override fun effect(p: Player) {
-
-        CUSTOM_EFFECT?.effect(p)
+    override fun accept(p: Player) {
+        CUSTOM_EFFECT?.accept(p)
         if (REQUIRE_PERMISSION != null)
             if (!p.hasPermission(REQUIRE_PERMISSION))
                 return
@@ -72,8 +69,7 @@ open class EffectManager : TimeManager(), PlayerEffect {
 
 
         MAKE_EXPLOSION?.create(p)
-
-
     }
+
 
 }
