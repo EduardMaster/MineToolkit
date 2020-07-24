@@ -316,14 +316,15 @@ public class ConfigSection {
     }
 
     public ConfigSection getSection(String path) {
+        if (path.isEmpty()){
+            return this;
+        }
         path = getPath(path);
         if (path.contains(".")) {
             String[] split = path.replace(".", ",").split(",");
             String restPath = path.replaceFirst(split[0] + ".", "");
             return getSection(split[0]).getSection(restPath);
         } else {
-            if (path.isEmpty())
-                return null;
             if (getMap().containsKey(path)) {
                 return getMap().get(path);
             }

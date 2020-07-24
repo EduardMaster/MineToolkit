@@ -1,7 +1,6 @@
 package net.eduard.api.server.minigame
 
 import java.util.ArrayList
-import net.eduard.api.lib.storage.Storable.*
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
@@ -24,7 +23,6 @@ import java.lang.Exception
  * @since EduardAPI 2.0
  * @author Eduard
  */
-@StorageAttributes(indentificate = true)
 open class Minigame : TimeManager {
 
     var name = "Minigame"
@@ -32,13 +30,14 @@ open class Minigame : TimeManager {
     var isEnabled = true
     var isBungeecord = true
     var bungeeLobby = "Lobby"
-
+    var scoreboardStarting = DisplayBoard("Minigame iniciando")
+    var scoreboardLobby = DisplayBoard("Minigame lobby")
+    var scoreboardPlaying = DisplayBoard("Minigame em jogo")
     var maxPlayersPerLobby = 20
     var timeIntoStart = 60
     var timeIntoRestart = 20
     var timeIntoGameOver = 15 * 60
     var timeIntoPlay = 2 * 60
-
     var timeOnStartTimer = 0
     var timeOnRestartTimer = 40
     var timeOnForceTimer = 10
@@ -51,9 +50,7 @@ open class Minigame : TimeManager {
 
     @Transient
     var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
-    var scoreboardStarting = DisplayBoard("Minigame iniciando")
-    var scoreboardLobby = DisplayBoard("Minigame lobby")
-    var scoreboardPlaying = DisplayBoard("Minigame em jogo")
+
 
     @Transient
     var chests = MinigameChest()
@@ -63,7 +60,11 @@ open class Minigame : TimeManager {
 
     @Transient
     var chestMiniFeast = MinigameChest()
+
+    @Transient
     var kits: MutableList<Kit> = ArrayList()
+
+    @Transient
     var lobbies: MutableList<MinigameLobby> = ArrayList()
 
     @Transient
@@ -443,63 +444,97 @@ open class Minigame : TimeManager {
         }
     }
 
-    fun save() {
+    open fun save() {
 
 
         try {
 
             for (mapa in maps) {
 
-                val configMapa = Config(plugin, "maps/${mapa.name.toLowerCase()}.yml")
+                val config = Config(plugin, "maps/${mapa.name.toLowerCase()}.yml")
 
-                configMapa.set("map", mapa)
-                configMapa.saveConfig()
+                config.set("", mapa)
+                config.saveConfig()
+
+            }
+            for (lobby in lobbies) {
+
+                val config = Config(plugin, "lobby/lobby-${lobby.id}.yml")
+
+                config.set("", lobby)
+                config.saveConfig()
 
             }
             for (sala in rooms) {
-                val configSala = Config(plugin, "rooms/${sala.id}.yml")
-                configSala.set("room", sala)
-                configSala.saveConfig()
+                val config = Config(plugin, "rooms/${sala.id}.yml")
+                config.set(sala)
+                config.saveConfig()
 
             }
             val configChest = Config(plugin, "chests/normal.yml")
-            configChest.set("chest", chests)
+            configChest.set(chests)
             configChest.saveConfig()
 
             val configFeast = Config(plugin, "chests/feast.yml")
-            configFeast.set("chest", chestsFeast)
+            configFeast.set(chestsFeast)
             configFeast.saveConfig()
 
             val configMiniFeast = Config(plugin, "chests/mini-feast.yml")
-            configMiniFeast.set("chest", chestMiniFeast)
+            configMiniFeast.set(chestMiniFeast)
             configMiniFeast.saveConfig()
+
+            val kitsConfig = Config(plugin, "kits/kits.yml");
+            var id = 1
+            for (kit in kits) {
+                kitsConfig.set("$id", kit)
+                id++
+            }
+            kitsConfig.saveConfig()
+
         } catch (erro: Exception) {
             erro.printStackTrace()
         }
     }
 
 
-    fun reload() {
+    open fun reload() {
         val pastaMapas = File(plugin.dataFolder, "maps/")
         pastaMapas.mkdirs()
 
         val pastaSalas = File(plugin.dataFolder, "rooms/")
         pastaSalas.mkdirs()
 
+        val pastaLobbies = File(plugin.dataFolder, "lobby/")
+        pastaLobbies.mkdirs()
 
 
-        maps.clear()
-        rooms.clear()
         for (arquivoNome: String in pastaMapas.list()!!) {
-            val configMapa = Config(plugin, "maps/$arquivoNome")
-            val mapa = configMapa.get("map", MinigameMap::class.java)
+            val config = Config(plugin, "maps/$arquivoNome")
+            val mapa = config.get(MinigameMap::class.java)
+            mapa.minigame = this
             maps.add(mapa)
         }
         for (arquivoNome: String in pastaSalas.list()!!) {
-            val configMapa = Config(plugin, "rooms/$arquivoNome")
-            val room = configMapa.get("room", MinigameRoom::class.java)
+            val config = Config(plugin, "rooms/$arquivoNome")
+            val room = config.get(MinigameRoom::class.java)
+            room.minigame = this
             rooms.add(room)
         }
+        for (arquivoNome: String in pastaLobbies.list()!!) {
+            val config = Config(plugin, "lobby/$arquivoNome")
+            val lobby = config.get(MinigameLobby::class.java)
+
+            lobbies.add(lobby)
+        }
+        val kitsConfig = Config(plugin, "kits/kits.yml");
+        for (id in kitsConfig.keys) {
+            val kit = kitsConfig.get(id, Kit::class.java)
+            kits.add(kit)
+        }
+
+        chests = Config(plugin, "chests/normal.yml").get(MinigameChest::class.java)
+        chestsFeast = Config(plugin, "chests/feast.yml").get(MinigameChest::class.java)
+        chestMiniFeast = Config(plugin, "chests/mini-feast.yml").get(MinigameChest::class.java)
 
     }
 

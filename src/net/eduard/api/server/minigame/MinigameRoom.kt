@@ -16,7 +16,7 @@ import org.bukkit.Bukkit
 @TableName("minigame_rooms")
 class MinigameRoom {
 
-    @Transient
+    @StorageAttributes(reference = true)
     lateinit var minigame: Minigame
 
 

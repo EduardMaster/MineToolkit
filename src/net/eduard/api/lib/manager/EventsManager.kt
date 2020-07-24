@@ -20,14 +20,6 @@ open class EventsManager : Listener {
      */
     @Transient
     var isRegistered: Boolean = false
-    /**
-     * Plugin
-     */
-    /**
-     * Seta o Plugin
-     *
-     * @param plugin Plugin
-     */
 
 
 
@@ -47,7 +39,7 @@ open class EventsManager : Listener {
     var plugin: JavaPlugin = defaultPlugin()
 
 
-    protected fun defaultPlugin(): JavaPlugin {
+    private fun defaultPlugin(): JavaPlugin {
 
         return JavaPlugin.getProvidingPlugin(javaClass)
     }
@@ -61,10 +53,10 @@ open class EventsManager : Listener {
      */
     open fun registerListener(plugin: JavaPlugin) {
         unregisterListener()
+        this.plugin = plugin
         registerListener()
     }
     open fun registerListener() {
-        this.plugin = plugin
         this.isRegistered = true
         Bukkit.getPluginManager().registerEvents(this, plugin)
     }

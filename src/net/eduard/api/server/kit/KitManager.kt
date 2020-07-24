@@ -87,7 +87,7 @@ class KitManager : EventsManager() {
 
     fun openShop(player: Player) {
 
-        val menu = kitsSelection.open(player)
+        val menu = kitsSelection.open(player)!!
 
         var posicao = 0
         for (kit in kits) {
@@ -105,7 +105,7 @@ class KitManager : EventsManager() {
     }
 
     fun openKitSelector(player: Player) {
-        val menu = kitsSelection.open(player)
+        val menu = kitsSelection.open(player)!!
 
         var posicao = 0
         for (kit in kits) {

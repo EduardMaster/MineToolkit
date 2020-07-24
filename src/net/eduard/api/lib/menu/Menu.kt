@@ -22,7 +22,9 @@ import net.eduard.api.lib.kotlin.centralized
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPluginInstance
+import org.bukkit.inventory.InventoryHolder
 import org.bukkit.plugin.java.JavaPlugin
+import java.lang.Exception
 
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
@@ -36,14 +38,17 @@ open class Menu(
         var lineAmount: Int = 1,
         block: (Menu.() -> Unit)? = null
 
-) : EventsManager(), PagedMenu {
+) : EventsManager() {
 
-    fun button(name: String = "Botao",block :(MenuButton.() -> Unit)? = null): MenuButton {
-        return MenuButton(name,this, block =block)
+    fun button(name: String = "Botao", block: (MenuButton.() -> Unit)? = null): MenuButton {
+        return MenuButton(name, this, block = block)
     }
 
     @Transient
     var superiorMenu: Menu? = null
+
+    @Transient
+    var openHandler :(Menu.(Inventory, Player) -> Unit)? = null
 
 
     var pageAmount = 1
@@ -67,8 +72,7 @@ open class Menu(
     var buttons = mutableListOf<MenuButton>()
 
 
-
-    inline fun cantBeOpened(){
+    inline fun cantBeOpened() {
         openWithItem = null
         openWithCommand = null
     }
@@ -117,7 +121,7 @@ open class Menu(
     fun removeAllButtons() {
         buttons.clear()
         clearCache()
-        pageOpened.forEach { (p, page) -> p.closeInventory() }
+        pageOpened.forEach { (p, _) -> p.closeInventory() }
         pageOpened.clear()
     }
 
@@ -209,14 +213,18 @@ open class Menu(
         return true
     }
 
-    override fun open(player: Player, page: Int): Inventory {
+    fun open(player: Player): Inventory? {
+        return open(player, 1)
+    }
+
+    fun open(player: Player, page: Int): Inventory? {
+
         if (openNeedPermission != null) {
             if (!player.hasPermission(openNeedPermission)) {
                 player.sendMessage(messagePermission)
 
 
-                return MENU_EMPTY
-
+                return null
             }
         }
         var page = page
@@ -242,7 +250,10 @@ open class Menu(
             if (!isPageSystem) {
                 menuTitle = title
             }
-            val menu = Bukkit.createInventory(null, 9 * lineAmount, menuTitle)
+            val fakeHolder = FakeInventoryHolder(this)
+            val menu = Bukkit.createInventory(fakeHolder, 9 * lineAmount, menuTitle)
+            fakeHolder.openInventory = menu
+            fakeHolder.pageOpenned = page
             if (isPageSystem) {
                 if (page > 1)
                     previousPage.give(menu)
@@ -285,9 +296,11 @@ open class Menu(
                     menu.setItem(slot, icon)
                 }
             }
-            player.closeInventory()
+
             pageOpened[player] = page
             player.openInventory(menu)
+            openHandler?.invoke(this,menu,player)
+
             if (isCacheInventories && !pagesCache.containsKey(page)) {
                 pagesCache[page] = menu
             }
@@ -295,12 +308,13 @@ open class Menu(
 
             return menu
         }
-        return MENU_EMPTY
-
+        return null
     }
+
     override fun register(plugin: IPluginInstance) {
         registerMenu(plugin)
     }
+
     fun registerMenu(plugin: IPluginInstance) {
         registerListener(plugin.plugin as JavaPlugin)
         registeredMenus.add(this)
@@ -343,32 +357,32 @@ open class Menu(
         val player = event.player
         val message = event.message
         val cmd = Extra.getCommandName(message)
-        if (openWithCommand != null)
-            if (cmd.toLowerCase() == openWithCommand!!.toLowerCase()) {
-                event.isCancelled = true
-                open(player)
-            }
+        openWithCommand ?: return
+
+        if (cmd.toLowerCase() == openWithCommand!!.toLowerCase()) {
+            event.isCancelled = true
+            open(player)
+        }
     }
 
     @EventHandler
     fun close(e: InventoryCloseEvent) {
         if (e.player is Player) {
             val p = e.player as Player
-
             if (pageOpened.containsKey(p)) {
                 pageOpened.remove(p)
             }
-
         }
     }
 
     @EventHandler
     fun onClick(e: InventoryClickEvent) {
+
         if (e.whoClicked is Player) {
 
             val player = e.whoClicked as Player
 
-            if (isOpen(player)) {
+            if (isOpen(player, e.inventory)) {
                 debug("Nome do Menu: " + e.inventory.name)
                 e.isCancelled = true
                 val slot = e.rawSlot
@@ -421,18 +435,32 @@ open class Menu(
     }
 
 
-    override fun isOpen(player: Player): Boolean {
+    fun isOpen(player: Player): Boolean {
         return pageOpened.containsKey(player)
     }
 
-    override fun getPageOpen(player: Player): Int {
+    fun isOpen(player: Player, inventory: Inventory): Boolean {
+        try {
+            val holder = inventory.holder!!
+            if (holder is FakeInventoryHolder) {
+                if (holder.menu == this) return true
+
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+
+        return false
+    }
+
+    fun getPageOpen(player: Player): Int {
         return pageOpened.getOrDefault(player, 0)
     }
 
     companion object {
         var isDebug = true
         val registeredMenus = ArrayList<Menu>()
-        private val MENU_EMPTY = Mine.newInventory("Null", 9)
+
 
         fun debug(msg: String) {
             if (isDebug) {
@@ -440,7 +468,6 @@ open class Menu(
             }
 
         }
-
 
     }
 

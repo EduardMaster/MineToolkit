@@ -137,6 +137,9 @@ public class Config {
         }
     }
 
+    public <ClasseRetorno> ClasseRetorno get( Class<ClasseRetorno> clazz) {
+        return root.get("", clazz);
+    }
     public <ClasseRetorno> ClasseRetorno get(String path, Class<ClasseRetorno> clazz) {
         return root.get(path, clazz);
     }
@@ -309,11 +312,17 @@ public class Config {
         root.remove(path);
     }
 
+    public ConfigSection set(Object value){
+        return set("",value);
+    }
+
     public ConfigSection set(String path, Object value) {
+
         return root.set(path, value, new String[0]);
     }
 
-    public ConfigSection set(String path, Object value, String... comments) {
+    public ConfigSection set(String path, Object value, String... comments)
+    {
         return root.set(path, value, comments);
     }
 

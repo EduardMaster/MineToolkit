@@ -11,12 +11,7 @@ import java.io.IOException
 import java.net.URL
 import java.util.*
 
-/**
- * Sistema de verificacao de Compra do Plugin para Bungee ou Bukkit
- *
- * @author Eduard
- * @version 1.0
- */
+
 object Licence {
     private const val debug = true
     private const val site = "http://eduard.com.br/license/?"

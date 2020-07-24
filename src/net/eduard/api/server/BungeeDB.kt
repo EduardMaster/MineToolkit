@@ -6,10 +6,6 @@ import net.eduard.api.lib.database.DBManager
 
 class BungeeDB(var db: DBManager) {
 
-
-
-
-
     fun createBungeeTables() {
         db.createTable("servers",
                 "name varchar(50), host varchar(100), port int, players int, status int")

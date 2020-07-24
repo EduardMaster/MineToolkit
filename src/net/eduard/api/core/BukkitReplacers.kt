@@ -41,10 +41,10 @@ class BukkitReplacers {
         }
         Mine.addReplacer("\$players_online") { Mine.getPlayers().size }
         Mine.addReplacer("\$player_world") { it.world.name }
-        Mine.addReplacer("\$player_displayname") { it.displayName }
+        Mine.addReplacer("\$player_display_name") { it.displayName }
         Mine.addReplacer("\$player_name") { it.name }
         Mine.addReplacer("\$player_health") { it.health.format() }
-        Mine.addReplacer("\$player_maxhealth") { it.maxHealth.format() }
+        Mine.addReplacer("\$player_max_health") { it.maxHealth.format() }
         Mine.addReplacer("\$player_level") { it.level }
         Mine.addReplacer("\$player_xp") { Extra.MONEY.format(it.totalExperience.toLong()) }
         Mine.addReplacer("\$player_kills") { it.getStatistic(Statistic.PLAYER_KILLS) }

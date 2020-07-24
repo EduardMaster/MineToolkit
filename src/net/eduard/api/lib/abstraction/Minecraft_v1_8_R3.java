@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.eduard.api.lib.modules.MineReflect;
 import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -49,8 +50,8 @@ final public class Minecraft_v1_8_R3 extends Minecraft {
 
 
     }
-    public void setInventoryName(Inventory inventory, String name){
 
+    public void setInventoryName(Inventory inventory, String name) {
 
 
     }
@@ -97,7 +98,7 @@ final public class Minecraft_v1_8_R3 extends Minecraft {
     public void setPlayerSkin(Player player, String newSkin) {
         final EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         final GameProfile playerProfile = entityPlayer.getProfile();
-//		playerProfile.getProperties().clear();
+		playerProfile.getProperties().clear();
         String uuid = Extra.getPlayerUUIDByName(newSkin);
 
 
@@ -114,6 +115,7 @@ final public class Minecraft_v1_8_R3 extends Minecraft {
 
 
         respawnPlayer(player);
+        reloadPlayer(player);
 
     }
 
@@ -124,7 +126,7 @@ final public class Minecraft_v1_8_R3 extends Minecraft {
         final EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         final GameProfile playerProfile = entityPlayer.getProfile();
 
-        removeFromTab(player);
+
 
         try {
             final Field field = playerProfile.getClass().getDeclaredField("name");
@@ -138,6 +140,7 @@ final public class Minecraft_v1_8_R3 extends Minecraft {
         }
 
         respawnPlayer(player);
+        addToTab(player);
 
     }
 
@@ -145,6 +148,8 @@ final public class Minecraft_v1_8_R3 extends Minecraft {
     public void respawnPlayer(Player player) {
         final EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         final PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(new int[]{entityPlayer.getId()});
+        final PacketPlayOutPlayerInfo removePlayerInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER,
+                ((CraftPlayer) player).getHandle());
         final PacketPlayOutNamedEntitySpawn spawn = new PacketPlayOutNamedEntitySpawn(entityPlayer);
         final PacketPlayOutPlayerInfo addPlayerInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER,
                 ((CraftPlayer) player).getHandle());
@@ -152,28 +157,50 @@ final public class Minecraft_v1_8_R3 extends Minecraft {
                 entityPlayer.getDataWatcher(), true);
         final PacketPlayOutEntityHeadRotation headRotation = new PacketPlayOutEntityHeadRotation(entityPlayer,
                 (byte) MathHelper.d(entityPlayer.getHeadRotation() * 256.0f / 360.0f));
-        final PacketPlayOutPlayerInfo removePlayerInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER,
-                ((CraftPlayer) player).getHandle());
-        sendPacketsToOthers(player, removePlayerInfo, addPlayerInfo, destroy, spawn, metadata, headRotation);
 
+        sendPacketsToOthers(player, removePlayerInfo,destroy, spawn,addPlayerInfo, metadata, headRotation);
+
+    }
+
+
+
+    public void reloadPlayer(Player player){
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(
+                new PacketPlayOutPlayerInfo(
+                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) player).getHandle())
+        );
+
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(
+                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) player).getHandle())
+        );
+        ((CraftServer) Bukkit.getServer()).getHandle().moveToWorld(
+                ((CraftPlayer) player).getHandle(), ((CraftPlayer) player)
+                        .getHandle().dimension, true, player.getLocation(),
+                true);
     }
 
     @Override
     public void removeFromTab(Player playerRemoved) {
         final PacketPlayOutPlayerInfo removePlayerInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER,
                 ((CraftPlayer) playerRemoved).getHandle());
-        sendPacketsToOthers(playerRemoved, removePlayerInfo);
+        sendPacketsToAll(removePlayerInfo);
 
     }
 
     @Override
     public void addToTab(Player playerToAdd) {
-        final PacketPlayOutPlayerInfo addPlayerInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER,
-                ((CraftPlayer) playerToAdd).getHandle());
+        final PacketPlayOutPlayerInfo addPlayerInfo =
 
-        final PacketPlayOutPlayerInfo updatePlayerInfo = new PacketPlayOutPlayerInfo(
-                EnumPlayerInfoAction.UPDATE_DISPLAY_NAME, ((CraftPlayer) playerToAdd).getHandle());
-        sendPacketsToOthers(playerToAdd, addPlayerInfo, updatePlayerInfo);
+                new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER,
+                        ((CraftPlayer) playerToAdd).getHandle());
+        sendPacketsToAll(addPlayerInfo);
+
+    }
+
+    public void updateDisplayName(Player player) {
+        final PacketPlayOutPlayerInfo updateDisplayName = new PacketPlayOutPlayerInfo(
+                EnumPlayerInfoAction.UPDATE_DISPLAY_NAME, ((CraftPlayer) player).getHandle());
+        sendPacketsToAll(updateDisplayName);
     }
 
     @Override

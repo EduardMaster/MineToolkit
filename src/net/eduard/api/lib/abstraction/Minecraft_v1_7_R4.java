@@ -46,6 +46,11 @@ final public class Minecraft_v1_7_R4 extends Minecraft {
     }
 
     @Override
+    public void updateDisplayName(Player playerToAdd) {
+
+    }
+
+    @Override
     public Object getItemNBT(ItemStack item) {
 
         return null;
@@ -78,6 +83,11 @@ final public class Minecraft_v1_7_R4 extends Minecraft {
                 .removePlayer(((CraftPlayer) playerToRespawn).getHandle());
 
         sendPacketsToOthers(playerToRespawn, removePlayerInfo, addPlayerInfo, destroy, spawn, metadata, headRotation);
+
+    }
+
+    @Override
+    public void reloadPlayer(Player player) {
 
     }
 

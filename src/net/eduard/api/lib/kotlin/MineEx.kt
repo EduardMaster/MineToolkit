@@ -37,7 +37,7 @@ inline fun Event.call(){
 inline val FakePlayer.offline : PlayerOffline
     get() { return PlayerOffline(name,id)}
 
-fun CommandSender.isPlayer(block: Player.() -> Unit){
+inline fun CommandSender.isPlayer(block: Player.() -> Unit){
     if (Mine.onlyPlayer(this)){
         block(this as Player)
     }

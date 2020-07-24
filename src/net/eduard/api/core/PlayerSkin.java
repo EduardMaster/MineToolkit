@@ -10,23 +10,17 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.entity.Player;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
-public class PlayerSkin  {
-    private static ArrayList<PlayerSkin> skins = new ArrayList<>();
+public class PlayerSkin {
+    private static HashMap<String, PlayerSkin> skins = new HashMap<>();
     private static Map<Player, PlayerSkin> skinUsed = new HashMap<>();
     private static Config config = new Config(EduardAPI.getInstance(), "skins.yml");
 
     public static void saveSkins() {
-        for (PlayerSkin skin : skins) {
+        for (PlayerSkin skin : skins.values()) {
             config.set(skin.getPlayerName().toLowerCase(), skin);
         }
         config.saveConfig();
@@ -39,21 +33,18 @@ public class PlayerSkin  {
         skins.clear();
 
         for (String subSecao : config.getKeys()) {
-            PlayerSkin skin = config.get(subSecao,PlayerSkin.class);
-            skins.add(skin);
+            PlayerSkin skin = config.get(subSecao, PlayerSkin.class);
+            skins.put(skin.getPlayerName().toLowerCase(), skin);
         }
     }
 
     public static PlayerSkin getSkin(String playerName) {
-        for (PlayerSkin skin : skins) {
-            if (skin.getPlayerName().equalsIgnoreCase(playerName
-            )) {
-                return skin;
-            }
+        PlayerSkin skin = skins.get(playerName.toLowerCase());
+        if (skin == null) {
+            skin = new PlayerSkin(playerName);
+            if (skin.exists())
+                skins.put(playerName.toLowerCase(), skin);
         }
-        PlayerSkin skin = new PlayerSkin(playerName);
-        if (skin.exists())
-            skins.add(skin);
 
         return skin;
     }
@@ -75,28 +66,6 @@ public class PlayerSkin  {
         return this.playerUUID != null;
     }
 
-    public static boolean setSkin(GameProfile profile, UUID uuid) {
-        try {
-
-            URLConnection connection = (URLConnection) new URL(String
-                    .format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", "" + uuid))
-                    .openConnection();
-//	        if (connection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
-            String reply = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
-            String skin = reply.split("\"value\":\"")[1].split("\"")[0];
-            String signature = reply.split("\"signature\":\"")[1].split("\"")[0];
-            profile.getProperties().put("textures", new Property("textures", skin, signature));
-//	            return true;
-//	        } else {
-//	            System.out.println("Connection could not be opened (Response code " + connection.getResponseCode() + ", " + connection.getResponseMessage() + ")");
-//	            return false;
-//	        }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return false;
-    }
 
     private String playerName;
     private String playerUUID;
@@ -122,7 +91,7 @@ public class PlayerSkin  {
 
         try {
             Object handle = MineReflect.getHandle(player);
-            GameProfile profile  = (GameProfile) Extra.getMethodInvoke(handle,"getProfile");
+            GameProfile profile = (GameProfile) Extra.getMethodInvoke(handle, "getProfile");
 
             profile.getProperties().clear();
             try {
@@ -130,22 +99,25 @@ public class PlayerSkin  {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
 
+        System.out.println("Atualizando skin do "+player.getName());
+
+        Minecraft.getInstance().respawnPlayer(player);
+        Minecraft.getInstance().reloadPlayer(player);
 
 
-       Minecraft.getInstance().respawnPlayer(player);
-      /*
-        Location loc = player.getLocation();
-
-        player.teleport(Bukkit.getWorld("world_nether").getSpawnLocation());
-        player.teleport(loc);
 
 
-       */
+        /*
+
+
+         */
+
+
     }
 
     public void update() {

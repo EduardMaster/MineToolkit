@@ -1,16 +1,6 @@
 package net.eduard.api.lib.kotlin
 
 import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
-import org.bukkit.Bukkit
-import org.bukkit.entity.Player
-import org.bukkit.event.Listener
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.PlayerInventory
-import org.bukkit.plugin.java.JavaPlugin
-
 
 inline fun Number.format() = Extra.formatMoney(this.toDouble())
 
@@ -40,6 +30,10 @@ inline fun String.cut(maxSize: Int): String {
 
 inline fun String.lowerContains(msg: String) = Extra.contains(this, msg)
 
+inline operator fun <T> T.invoke(block : T.() -> Unit) : T {
+    block(this)
+    return this
+}
 
 
 

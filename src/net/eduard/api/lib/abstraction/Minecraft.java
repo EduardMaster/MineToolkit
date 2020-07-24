@@ -96,9 +96,13 @@ abstract public class Minecraft {
 
     abstract public void respawnPlayer(Player playerToRespawn);
 
+    abstract public void reloadPlayer(Player player);
+
     abstract public void removeFromTab(Player playerRemoved);
 
     abstract public void addToTab(Player playerToAdd);
+
+    abstract public void updateDisplayName(Player playerToAdd);
 
     abstract public Object getItemNBT(ItemStack item);
 

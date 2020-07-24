@@ -10,6 +10,7 @@ import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.storage.Storable.StorageAttributes
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.CurrencyHandler
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -19,6 +20,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitRunnable
+import org.bukkit.scheduler.BukkitScheduler
 import java.util.*
 
 @StorageAttributes(indentificate = true)
@@ -143,46 +146,6 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     }
 
-    @EventHandler
-    fun openInventory(e: InventoryOpenEvent) {
-        if (e.player is Player) {
-            val player = e.player as Player
-
-            if (menuConfirmation?.isOpen(player) == true) {
-
-                val productButton = menuConfirmation?.getButton("product")!!
-
-                val product = selectedProduct[player]!!
-                e.inventory.setItem(productButton.index, product.icon)
-                if (isPermissionShop) {
-                    if (product.hasBought(player)) {
-                        e.isCancelled = true
-                        menuUpgrades?.open(player)
-                    }
-                }
-
-            } else {
-                menuUpgrades ?: return
-                if (isPermissionShop && menuUpgrades!!.isOpen(player)) {
-                    val product = selectedProduct[player]!!
-                    var slot = Extra.getIndex(2, 3)
-                    for (upgrade in product.upgrades) {
-                        var icon = ItemBuilder(Material.STAINED_GLASS_PANE).data(14)
-                                .name(upgrade.displayName)
-                        if (upgrade.hasBought(player)) {
-                            icon.data(4)
-                        }
-                        e.inventory.setItem(slot, icon)
-                        slot++
-
-
-                    }
-
-                }
-            }
-
-        }
-    }
 
     override fun copy(): Shop {
         return Copyable.copyObject(this)
@@ -360,9 +323,10 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     override fun register(plugin: IPluginInstance) {
         super.register(plugin)
-        menuUpgrades?.superiorMenu = this
-        menuConfirmation?.superiorMenu = this
-        if (menuConfirmation!= null) {
+        menuUpgrades?.register(plugin)
+        menuConfirmation?.register(plugin)
+        if (menuConfirmation != null) {
+
             val confirmationButton = menuConfirmation!!.getButton("confirmar")!!
             val cancelButton = menuConfirmation!!.getButton("cancelar")!!
             val productButton = menuConfirmation!!.getButton("product")!!
@@ -380,6 +344,53 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
             }
         }
+
+        if (menuUpgrades != null) {
+            menuUpgrades!!.superiorMenu = this
+            menuUpgrades!!.openHandler = { inventory, player ->
+
+                val product = selectedProduct[player]!!
+                var slot = Extra.getIndex(3, 4)
+                val productButton = menuUpgrades?.getButton("product")!!
+
+
+                inventory.setItem(productButton.index, product.icon)
+
+                for (upgrade in product.upgrades) {
+                    var icon = ItemBuilder(Material.STAINED_GLASS_PANE)
+                            .data(14)
+                            .name("§6Upgrade §e"+ upgrade.displayName)
+                    if (upgrade.hasBought(player)) {
+                        icon.data(5)
+                    }
+                    inventory.setItem(slot, icon)
+                    slot++
+
+
+                }
+
+
+            }
+
+        }
+
+        if (menuConfirmation != null) {
+
+            menuConfirmation!!.openHandler = { inventory, player ->
+
+                val productButton = menuConfirmation?.getButton("product")!!
+
+                val product = selectedProduct[player]!!
+
+                if (isPermissionShop && product.hasBought(player)) {
+                    menuUpgrades?.open(player)
+
+                } else {
+                    inventory.setItem(productButton.index, product.icon)
+                }
+            }
+        }
+
         val upgradeButton = menuUpgrades?.getButton("upgrade") ?: return
         upgradeButton.click = ClickEffect { event ->
             val p = event.player
@@ -412,13 +423,23 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
 
             val player = event.player
+
             if (event.currentItem == null) return@ClickEffect
+
+
             val product = getProduct(event.currentItem, player) ?: return@ClickEffect
             if (menuConfirmation != null) {
                 trading[player] = product.tradeType
                 selectedProduct[player] = product
+                player.closeInventory()
 
-                menuConfirmation?.open(player)
+
+
+                menuConfirmation!!.open(player)
+
+
+
+
                 return@ClickEffect
             }
             if ((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)

@@ -54,12 +54,22 @@ final public class MinecraftReflect extends Minecraft {
     }
 
     @Override
+    public void reloadPlayer(Player player) {
+
+    }
+
+    @Override
     public void removeFromTab(Player playerRemoved) {
 
     }
 
     @Override
     public void addToTab(Player playerToAdd) {
+
+    }
+
+    @Override
+    public void updateDisplayName(Player playerToAdd) {
 
     }
 
