@@ -78,7 +78,7 @@ open class Menu(
     }
 
     @Transient
-    var effect: ClickEffect = MenuButton.NO_ACTION
+    var effect: ClickEffect? = null
 
     @Transient
     private var pagesCache: MutableMap<Int, Inventory> = HashMap()
@@ -418,7 +418,10 @@ open class Menu(
 
                 if (button != null) {
                     debug("Button is not null")
-                    button.click.accept(e)
+                    if (button.click != null) {
+                        debug("Button make click effect")
+                        button.click?.accept(e)
+                    }
                     if (button.effects != null) {
                         debug("Button make Editable Effects")
                         button.effects?.accept(player)
@@ -443,6 +446,7 @@ open class Menu(
     fun isOpen(player: Player): Boolean {
         return pageOpened.containsKey(player)
     }
+
 
     fun isOpen(player: Player, inventory: Inventory): Boolean {
         try {

@@ -16,9 +16,6 @@ open class MenuButton(var name: String = "Botao"
 
 ) : Slot(positionX, positionY) {
 
-    companion object {
-        val NO_ACTION = ClickEffect { }
-    }
 
 
     var menu: Menu? = null
@@ -36,7 +33,7 @@ open class MenuButton(var name: String = "Botao"
         get() = menu as Shop
 
     @Transient
-    var click: ClickEffect = NO_ACTION
+    var click: ClickEffect? = null
 
     open fun getIcon(player: Player): ItemStack {
         return this.icon
