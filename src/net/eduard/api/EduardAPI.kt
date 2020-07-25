@@ -141,6 +141,7 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin(plugin) {
 
     fun testingKotlin(){
         log("Testando Kotlin")
+        Muzinho().register(this)
         EventsAlterations()
     }
 

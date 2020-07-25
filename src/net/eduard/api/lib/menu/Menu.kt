@@ -13,7 +13,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.bukkit.plugin.Plugin
 
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.manager.EventsManager
@@ -22,9 +21,9 @@ import net.eduard.api.lib.kotlin.centralized
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPluginInstance
-import org.bukkit.inventory.InventoryHolder
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
+import kotlin.math.log
 
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
@@ -48,7 +47,7 @@ open class Menu(
     var superiorMenu: Menu? = null
 
     @Transient
-    var openHandler :(Menu.(Inventory, Player) -> Unit)? = null
+    var openHandler: (Menu.(Inventory, Player) -> Unit)? = null
 
 
     var pageAmount = 1
@@ -57,6 +56,7 @@ open class Menu(
 
     var isTranslateIcon: Boolean = false
     var isAutoAlignItems: Boolean = false
+    var autoAlignSkipCenter = true
     var isCacheInventories: Boolean = false
     var openWithItem: ItemStack? = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
     var openWithCommand: String? = null
@@ -175,21 +175,6 @@ open class Menu(
     }
 
 
-    protected fun getIndex(page: Int, slot: Int): Int {
-        return getPageSlot(page, slot)
-    }
-
-    fun getPageSlot(page: Int, slot: Int): Int {
-        return getMinPageSlot(page) + slot
-    }
-
-    fun getMinPageSlot(page: Int): Int {
-        return (page - 1) * 9 * lineAmount
-    }
-
-    fun getMaxPageSlot(page: Int): Int {
-        return page * 9 * lineAmount
-    }
 
     fun clearCache() {
         pagesCache.clear()
@@ -197,18 +182,17 @@ open class Menu(
 
     fun getFirstEmptySlot(page: Int): Int {
 
-        for (slot in getMinPageSlot(page) until getMaxPageSlot(page)) {
-            val button = getButton(page, slot) ?: return slot
-        }
+      for (slot in 0..(lineAmount * 9)){
+          getButton(page, slot) ?: return slot
+      }
 
         return -1
     }
 
     fun isFull(page: Int): Boolean {
 
-        for (slot in getMinPageSlot(page) until getMaxPageSlot(page)) {
-            val button = getButton(page, slot) ?: return false
-
+        for (slot in 0..(lineAmount * 9)){
+            getButton(page, slot) ?: return false
         }
         return true
     }
@@ -241,13 +225,27 @@ open class Menu(
             if ((lineAmount < 1) or (lineAmount > 6)) {
                 lineAmount = 1
             }
-            val minSlot = getMinPageSlot(page)
-            val maxSlot = getMaxPageSlot(page)
 
+            var perPage = lineAmount * 9
+            var slot = 0
+            if (lineAmount>=2){
+                perPage-= 6
+                slot = 10
+            }
+            if (lineAmount>=3){
+                perPage-= 6
+            }
+            perPage -= lineAmount * 2
+            if (autoAlignSkipCenter){
+                perPage-= lineAmount
+            }
+            if (isAutoAlignItems){
+                pageAmount = 1 + (buttons.size/perPage)
+            }
             val prefix = pagePrefix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             val suffix = pageSuffix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             var menuTitle = Extra.cutText(prefix + title + suffix, 32)
-            if (!isPageSystem) {
+            if (!isPageSystem &&!isAutoAlignItems) {
                 menuTitle = title
             }
             val fakeHolder = FakeInventoryHolder(this)
@@ -265,41 +263,57 @@ open class Menu(
             }
 
             if (isAutoAlignItems) {
-                var slot = 10
-                for (button in buttons) {
-                    if ((slot < minSlot) || (slot > maxSlot)) {
-                        slot++
-                        continue
+
+                var startList = perPage*(page-1)
+                var endList = startList + perPage
+                if (endList > buttons.size){
+                    endList = buttons.size
+                }
+
+                var subButtons = buttons.subList(startList,endList)
+
+
+                for (button in subButtons) {
+
+                    slot = slot.centralized()
+
+
+                    if (autoAlignSkipCenter){
+                        if (Extra.isColumn(slot,5))slot++
                     }
-                    slot.centralized()
+
                     var icon = button.getIcon(player)
 
                     if (isTranslateIcon) {
                         icon = Mine.getReplacers(icon, player)
                     }
-                    menu.setItem(slot, icon)
-
+                    if (slot >=menu.size){
+                        println("Slot $slot" + " acima do limite" + menu.size)
+                    }else {
+                        menu.setItem(slot, icon)
+                    }
                     slot++
                 }
             } else {
 
+
                 for (button in buttons) {
                     if (button.page != page) continue
-                    var slot = button.index
-                    if (slot > maxSlot) {
-                        slot = maxSlot
+                    var position = button.index
+                    if (position >= lineAmount * 9) {
+                        position = 0
                     }
                     var icon = button.getIcon(player)
                     if (isTranslateIcon) {
                         icon = Mine.getReplacers(icon, player)
                     }
-                    menu.setItem(slot, icon)
+                    menu.setItem(position, icon)
                 }
             }
 
             pageOpened[player] = page
             player.openInventory(menu)
-            openHandler?.invoke(this,menu,player)
+            openHandler?.invoke(this, menu, player)
 
             if (isCacheInventories && !pagesCache.containsKey(page)) {
                 pagesCache[page] = menu
@@ -366,16 +380,6 @@ open class Menu(
     }
 
     @EventHandler
-    fun close(e: InventoryCloseEvent) {
-        if (e.player is Player) {
-            val p = e.player as Player
-            if (pageOpened.containsKey(p)) {
-                pageOpened.remove(p)
-            }
-        }
-    }
-
-    @EventHandler
     fun onClick(e: InventoryClickEvent) {
 
         if (e.whoClicked is Player) {
@@ -387,6 +391,7 @@ open class Menu(
                 e.isCancelled = true
                 val slot = e.rawSlot
                 var page: Int = getPageOpen(player)
+
                 val itemClicked = e.currentItem
                 var button: MenuButton? = null
                 if (itemClicked != null) {

@@ -5,10 +5,11 @@ import net.eduard.api.lib.modules.Extra
 inline fun Number.format() = Extra.formatMoney(this.toDouble())
 
 fun Int.centralized(): Int {
-    while (Extra.isColumn(this, 1) || Extra.isColumn(this, 9)) {
-        this.inc()
+    var valor = this
+    while (Extra.isColumn(valor, 1) || Extra.isColumn(valor, 9)) {
+        valor++
     }
-    return this
+    return valor
 }
 
 inline fun String.formatColors(): String {
