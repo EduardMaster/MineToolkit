@@ -56,7 +56,7 @@ open class Menu(
 
     var isTranslateIcon: Boolean = false
     var isAutoAlignItems: Boolean = false
-    var autoAlignSkipCenter = true
+    var autoAlignSkipCenter = false
     var isCacheInventories: Boolean = false
     var openWithItem: ItemStack? = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
     var openWithCommand: String? = null
@@ -175,23 +175,22 @@ open class Menu(
     }
 
 
-
     fun clearCache() {
         pagesCache.clear()
     }
 
     fun getFirstEmptySlot(page: Int): Int {
 
-      for (slot in 0..(lineAmount * 9)){
-          getButton(page, slot) ?: return slot
-      }
+        for (slot in 0..(lineAmount * 9)) {
+            getButton(page, slot) ?: return slot
+        }
 
         return -1
     }
 
     fun isFull(page: Int): Boolean {
 
-        for (slot in 0..(lineAmount * 9)){
+        for (slot in 0..(lineAmount * 9)) {
             getButton(page, slot) ?: return false
         }
         return true
@@ -228,24 +227,24 @@ open class Menu(
 
             var perPage = lineAmount * 9
             var slot = 0
-            if (lineAmount>=2){
-                perPage-= 6
+            if (lineAmount >= 2) {
+                perPage -= 6
                 slot = 10
             }
-            if (lineAmount>=3){
-                perPage-= 6
+            if (lineAmount >= 3) {
+                perPage -= 6
             }
             perPage -= lineAmount * 2
-            if (autoAlignSkipCenter){
-                perPage-= lineAmount
+            if (autoAlignSkipCenter) {
+                perPage -= lineAmount
             }
-            if (isAutoAlignItems){
-                pageAmount = 1 + (buttons.size/perPage)
+            if (isAutoAlignItems) {
+                pageAmount = 1 + (buttons.size / perPage)
             }
             val prefix = pagePrefix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             val suffix = pageSuffix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             var menuTitle = Extra.cutText(prefix + title + suffix, 32)
-            if (!isPageSystem &&!isAutoAlignItems) {
+            if (!isPageSystem && !isAutoAlignItems) {
                 menuTitle = title
             }
             val fakeHolder = FakeInventoryHolder(this)
@@ -264,13 +263,13 @@ open class Menu(
 
             if (isAutoAlignItems) {
 
-                var startList = perPage*(page-1)
+                var startList = perPage * (page - 1)
                 var endList = startList + perPage
-                if (endList > buttons.size){
+                if (endList > buttons.size) {
                     endList = buttons.size
                 }
 
-                var subButtons = buttons.subList(startList,endList)
+                var subButtons = buttons.subList(startList, endList)
 
 
                 for (button in subButtons) {
@@ -278,8 +277,8 @@ open class Menu(
                     slot = slot.centralized()
 
 
-                    if (autoAlignSkipCenter){
-                        if (Extra.isColumn(slot,5))slot++
+                    if (autoAlignSkipCenter) {
+                        if (Extra.isColumn(slot, 5)) slot++
                     }
 
                     var icon = button.getIcon(player)
@@ -287,9 +286,9 @@ open class Menu(
                     if (isTranslateIcon) {
                         icon = Mine.getReplacers(icon, player)
                     }
-                    if (slot >=menu.size){
+                    if (slot >= menu.size) {
                         println("Slot $slot" + " acima do limite" + menu.size)
-                    }else {
+                    } else {
                         menu.setItem(slot, icon)
                     }
                     slot++
@@ -424,6 +423,7 @@ open class Menu(
                         debug("Button make Editable Effects")
                         button.effects?.accept(player)
                     }
+
                     if (button.isCategory) {
                         button.menu?.open(player)
                         debug("Button open another menu")
