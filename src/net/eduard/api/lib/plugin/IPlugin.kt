@@ -4,8 +4,10 @@ import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.StorageManager
 import net.eduard.api.lib.database.api.SQLManager
+import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.StorageAPI
 import java.io.File
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 interface IPlugin  : IPluginInstance{
@@ -23,13 +25,24 @@ interface IPlugin  : IPluginInstance{
 
 
 
+
+
+
     fun deleteOldBackups()
     fun backup()
-    fun getName(): String
-    fun getDataFolder(): File
+    val pluginName : String
+    val pluginFolder get() : File{
+        return try {
+            Extra.getMethodInvoke(plugin, "getDataFolder") as File
+        }catch (ex: Exception){
+            File("plugins", pluginName)
+        }
+    }
     fun log(message : String)
     fun error(message : String)
-
+    fun console(message : String){
+        println(message)
+    }
     fun onLoad()
     fun onEnable()
     fun reload()

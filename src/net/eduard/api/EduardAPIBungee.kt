@@ -13,7 +13,10 @@ import net.md_5.bungee.api.plugin.Plugin
  * em vez de depend: [EduardAPI na bungee.yml
  * @author Eduard
  */
-class EduardAPIBungee(plugin : IPluginInstance) : HybridPlugin(plugin) {
+class EduardAPIBungee(plugin : IPluginInstance) : HybridPlugin() {
+    init{
+        pluginBase = plugin
+    }
     lateinit var bungee: BungeeDB
 
     override fun getPlugin(): Plugin {

@@ -450,7 +450,7 @@ open class Menu(
 
     fun isOpen(player: Player, inventory: Inventory): Boolean {
         try {
-            val holder = inventory.holder!!
+            val holder = inventory.holder?: return false
             if (holder is FakeInventoryHolder) {
                 if (holder.menu == this) return true
 

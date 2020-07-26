@@ -34,6 +34,7 @@ import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetPlayerTask
 import net.eduard.api.task.PluginActivator
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
@@ -49,10 +50,16 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI(plugin : IPluginInstance) : HybridPlugin(plugin) {
-
+class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
+    init{
+        pluginBase = plugin
+    }
     override fun getPlugin(): JavaPlugin {
         return pluginBase as JavaPlugin
+    }
+
+    override fun console(message: String) {
+        Bukkit.getConsoleSender().sendMessage(message)
     }
 
     override fun onEnable() {
@@ -199,6 +206,9 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin(plugin) {
 
 
     }
+
+    override val pluginName: String
+        get() = plugin.name
 
 
     override fun onDisable() {

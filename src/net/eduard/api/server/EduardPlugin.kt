@@ -11,6 +11,7 @@ import net.eduard.api.lib.storage.StorageAPI
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
+import java.io.File
 
 /**
  * Representa os plugins feitos pelo Eduard
@@ -19,20 +20,21 @@ import org.bukkit.plugin.Plugin
  * @version 1.0
  * @since 2.0
  */
-open class EduardPlugin : BukkitPlugin(), BukkitTimeHandler {
+open class EduardPlugin : BukkitPlugin( EduardHybridPlugin()), BukkitTimeHandler {
 
-    override val hybridPlugin: EduardHybridPlugin = EduardHybridPlugin(this)
+
 
     override fun getPlugin(): EduardPlugin {
         return this
     }
-     class EduardHybridPlugin(plugin : EduardPlugin) : HybridPlugin(plugin) {
 
+    init{
+        hybridPlugin.pluginBase = this
 
+    }
 
-        override fun onLoad() {
+     class EduardHybridPlugin : HybridPlugin() {
 
-        }
 
         override fun onEnable() {
 

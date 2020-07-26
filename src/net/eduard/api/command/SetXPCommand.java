@@ -24,11 +24,15 @@ public class SetXPCommand extends CommandManager {
 			if (args.length == 0) {
 				return false;
 			} else {
-				Integer amount = Extra.toInt(args[0]);
+				double amount = Extra.fromMoneyToDouble(args[0]);
+
 				p.setTotalExperience(0);
 				p.setExp(0);
 				p.setLevel(0);
-				p.giveExp(amount);
+				if (amount> Integer.MAX_VALUE){
+					amount = (double) Integer.MAX_VALUE;
+				}
+				p.giveExp((int)amount);
 				p.sendMessage("§aSua xp foi alterada para: §2"+amount);
 				p.sendMessage("§aSeu novo nível é: §2"+p.getLevel());
 				p.sendMessage("§aSua barra de XP: §2"+ p.getExp());

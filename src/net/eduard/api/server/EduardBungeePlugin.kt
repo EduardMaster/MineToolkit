@@ -13,24 +13,19 @@ import net.md_5.bungee.api.plugin.Listener
  *
  * @author Eduard
  */
-open class EduardBungeePlugin : BungeePlugin() , IPluginInstance {
+open class EduardBungeePlugin : BungeePlugin(EduardHybridPlugin()), IPluginInstance {
+    init {
+        hybridPlugin.pluginBase = this
 
-    override val hybridPlugin: EduardHybridPlugin = EduardHybridPlugin(this)
-
-
-
+    }
 
 
     override fun getPlugin(): EduardBungeePlugin {
         return this
     }
-    class EduardHybridPlugin(plugin : EduardBungeePlugin) : HybridPlugin(plugin) {
 
+    class EduardHybridPlugin() : HybridPlugin() {
 
-
-        override fun onLoad() {
-
-        }
 
         override fun onEnable() {
 
@@ -52,7 +47,7 @@ open class EduardBungeePlugin : BungeePlugin() , IPluginInstance {
     }
 
 
-    fun console(msg: String) {
+    override fun console(msg: String) {
         BungeeCord.getInstance().console.sendMessage(TextComponent(msg))
     }
 

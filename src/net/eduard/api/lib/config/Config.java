@@ -25,12 +25,21 @@ public class Config {
     private transient Object plugin;
     private String name;
     transient List<String> lines;
+    private File getDataFolder() {
 
+        try {
+            return (File) Extra.getMethodInvoke(plugin,"getDataFolder");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
 
     public Config(IPlugin plugin, String name) {
         this.name = name;
         this.plugin = plugin.getPlugin();
-        this.folder = plugin.getDataFolder();
+        this.folder = plugin.getPluginFolder();
         init();
     }
 
@@ -58,20 +67,7 @@ public class Config {
         reloadConfig();
     }
 
-    public File getDataFolder() {
-        try {
-            return (File) plugin.getClass().getDeclaredMethod("getDataFolder").invoke(plugin);
-        } catch (Exception e) {
-            try {
-                return (File) plugin.getClass().getMethod("getDataFolder").invoke(plugin);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
 
-        }
-        return null;
-
-    }
 
     public List<Integer> getIntList(String path) {
         return root.getIntList(path);

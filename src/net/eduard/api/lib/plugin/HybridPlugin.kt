@@ -17,11 +17,12 @@ import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
-abstract class HybridPlugin(
-        val pluginBase: IPluginInstance
-) : IPlugin {
+abstract class HybridPlugin : IPlugin {
 
-
+    private var started = false
+    lateinit var pluginBase: IPluginInstance
+    override val pluginName: String
+        get() = Extra.getMethodInvoke(plugin, "getName" ) as String
 
     override fun getPlugin(): Any {
         return pluginBase
@@ -35,38 +36,34 @@ abstract class HybridPlugin(
         return pluginBase is Plugin
     }
 
-    override fun getDataFolder(): File {
-
-        return try {
-            Extra.getMethodInvoke(pluginBase, "getDataFolder") as File
-        }catch (ex :Exception){
-            File("plugins/"+ getName()+"/")
-        }
-
-    }
-    override fun getName(): String {
-        return  Extra.getMethodInvoke(pluginBase, "getName") as String
-    }
-
     override var isActivated = false
     override var isFree: Boolean = false
-    final override var configs: Config = Config(this, "config.yml")
-    final override var messages: Config = Config(this, "messages.yml")
-    final override var storage: Config = Config(this, "storage.yml")
-    final override var databaseFile = File(getDataFolder(), "database.db")
+    final override lateinit var configs: Config
+    final override lateinit var messages: Config
+    final override lateinit var storage: Config
+    final override lateinit var databaseFile : File
     final override var dbManager: DBManager = DBManager()
     final override var sqlManager: SQLManager = SQLManager(null, SQLEngineType.SQLITE)
     final override var storageManager: StorageManager = StorageManager()
+    private val prefix get() = "[$pluginName] "
     override fun log(message: String) {
-        println("§a$message")
+        console("§b$prefix§a$message")
     }
 
     override fun error(message: String) {
-        println("§c$message")
+        console("§e$prefix§c$message")
     }
 
-    init {
+    override fun onEnable() {
+        if (!started) onLoad()
+    }
 
+    override fun onLoad() {
+        started = true
+        configs = Config(this, "config.yml")
+        messages = Config(this, "messages.yml")
+        storage = Config(this, "storage.yml")
+        databaseFile = File(pluginFolder, "database.db")
         config.add("database-type", DBType.YAML)
         config.add("log-enabled", true)
         configs.add("auto-save", false)
@@ -79,10 +76,6 @@ abstract class HybridPlugin(
         configs.add("database", dbManager)
 
         configs.saveConfig()
-
-    }
-
-    override fun onLoad() {
         dbManager = config.get("database", DBManager::class.java)
         val dbType = config.get("database-type", DBType::class.java)
         storageManager.storeType = dbType
@@ -96,7 +89,7 @@ abstract class HybridPlugin(
             storageManager.sqlManager = sqlManager
         }
 
-        storageManager.folderBase = File(getDataFolder(),"/database/")
+        storageManager.folderBase = File(pluginFolder,"/database/")
         storageManager.folderBase.mkdirs()
     }
     /**
@@ -106,7 +99,7 @@ abstract class HybridPlugin(
         configs.set("backup-lasttime", Extra.getNow())
         try {
             val DATE_TIME_FORMATER = SimpleDateFormat("dd-MM-YYYY HH-mm-ss")
-            val pasta = File(getDataFolder(),
+            val pasta = File(pluginFolder,
                     "/backup/" + DATE_TIME_FORMATER.format(System.currentTimeMillis()) + "/")
 
             pasta.mkdirs()
@@ -170,7 +163,7 @@ abstract class HybridPlugin(
      * Deleta os ultimos backups
      */
     private fun deleteLastBackups() {
-        val pasta = File(getDataFolder(), "/backup/")
+        val pasta = File(pluginFolder, "/backup/")
 
         pasta.mkdirs()
         var lista = mutableListOf(*pasta.listFiles()!!)
@@ -190,7 +183,7 @@ abstract class HybridPlugin(
      * Deleta os backups dos dias anteriores
      */
     override fun deleteOldBackups() {
-        val pasta = File(getDataFolder(), "/backup/")
+        val pasta = File(pluginFolder, "/backup/")
         pasta.mkdirs()
         var lista = listOf(*pasta.listFiles()!!)
         lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
