@@ -71,14 +71,15 @@ public class DisplayBoard {
      * Limite atual do nome do Jogador
      */
     private int PLAYER_NAME_LIMIT = PLAYER_BELOW_1_8_NAME_LIMIT;
-    /**
-     * Linhas da Scoreboard
-     */
-    private List<String> lines = new ArrayList<>();
+
     /**
      * Titulo da scoreboard
      */
     private String title;
+    /**
+     * Linhas da Scoreboard
+     */
+    private List<String> lines = new ArrayList<>();
     /**
      * Barra de vida encima da cabeça do jogador
      */
