@@ -1,13 +1,13 @@
-2.6.8:
+1.5.8:
   - Os debugs de tudo é ativavel pela config.yml
-2.6.9:
+1.5.9:
   - Removendo arquivos da pasta lib/abstraction para api/abstraction
-2.7.0:
+1.6.0:
   - Colocando lista de classes de todos os Kits conhecidos de HG e KitPvP na pasta api/server/kits
   - Antes estas classes ficavam nos dois projetos pagos, EduHG e EduKitPvP,
   - resolvi que como os kits são os mesmos é melhor ficam em um lugar só
   - Movi 3 classes da pasta api/server/kits para api/server/net.eduard.hg.kit
-2.8.0:
+1.7.0:
   - Removido métodos da Extra relacionados a contagem de Valor de Projeto pois agora sigo o padrão do Site que calcula o projeto dependendo de coisas que os propríos compradores podem avaliar
   - Método removido calculateClassValue(class)->double que calcula o valor da Classe com base em um HashMap de valores levando em consideração até suas variaveis
   - Método removido setPrice(class,double) que define o valor da Classe dentro do HashMap
@@ -20,13 +20,13 @@
   - Reformulando onde fica as classe em qual package, muitas refatorações
   - Removendo classe EduardLIB que extendia JavaPlugin
   - Retirando lista de classes de todos os Kits conhecidos de HG e KitPvP e colocando no projeto HG
-2.8.1:
+1.7.1:
   - Colocando arquivos da package player/ , world/ e outras foram todas para package /game/
   - Deletei a Storage v2 (Storation) não precisa ter dois sistema de Automatização de armazenamento
   - Deletei o repositorio da package lib/ que existia
   - Criando o SQLManager um ORM feito para facilitar a sua vida 50% concluido, falta relacionamento entre tabelas
-2.8.2:
+1.7.2:
   - Atualizando DBManager classe retirando independencia agora depende da classe SQLManager ou seja não da pra usar isso fora deste projeto
   - Em breve será reconstruido todos os códigos para que use StringBuilder para maior eficiência
-2.8.5:
+1.7.5:
   - StorageAPI sistema de Referencia para Lista e Mapas concertado

@@ -132,7 +132,7 @@ open class EduardPlugin : BukkitPlugin( EduardHybridPlugin()), BukkitTimeHandler
 
     fun unregisterMenus() {
         for (menu in Menu.registeredMenus.toList()) {
-            if (this == menu.pluginInstance) {
+            if (this == menu.plugin) {
                 menu.unregisterMenu()
             }
         }
@@ -142,7 +142,7 @@ open class EduardPlugin : BukkitPlugin( EduardHybridPlugin()), BukkitTimeHandler
 
     override fun unregisterCommands() {
         CommandManager.commandsRegistred.values.forEach { cmd ->
-            if (this == cmd.pluginInstance) {
+            if (this == cmd.plugin) {
                 cmd.unregisterCommand()
             }
         }

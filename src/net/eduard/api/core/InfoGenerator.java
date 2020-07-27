@@ -32,7 +32,9 @@ public class InfoGenerator {
 
     public InfoGenerator(EduardAPI plugin) {
         setPlugin(plugin);
-        if (!new File(plugin.getPluginFolder(), "database").exists()) {
+        File pasta = new File(plugin.getPluginFolder(), "database");
+        pasta.mkdirs();
+        if (pasta.listFiles().length == 0) {
             saveEnum(DamageCause.class);
             saveEnum(Material.class);
             saveEnum(Effect.class);

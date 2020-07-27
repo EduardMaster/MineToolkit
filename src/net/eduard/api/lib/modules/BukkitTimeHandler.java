@@ -18,6 +18,35 @@ public interface BukkitTimeHandler {
      */
     Plugin getPluginConnected();
 
+
+
+    default BukkitTask asyncTimer( long startTicks,long ticks ,Runnable runnable) {
+
+        return newTimer(startTicks, ticks, true,runnable);
+    }
+
+    default BukkitTask syncTimer(long startTicks, long ticks, Runnable runnable) {
+        return newTimer(startTicks, ticks, false,runnable);
+    }
+
+    default BukkitTask syncDelay( long ticks,Runnable runnable) {
+
+        return newDelay( ticks, false,runnable);
+    }
+
+    default BukkitTask asyncDelay( long ticks,Runnable runnable)
+    {
+        return newDelay( ticks, true,runnable);
+    }
+
+    default BukkitTask asyncTask(Runnable runnable) {
+        return newTask( true,runnable);
+    }
+
+    default BukkitTask syncTask(Runnable runnable) {
+        return newTask( false,runnable);
+    }
+
     default BukkitTask newTask(long time, boolean repeat, boolean async, Runnable task) {
         if (repeat) {
             if (async) {
@@ -32,40 +61,14 @@ public interface BukkitTimeHandler {
         }
     }
 
-    default BukkitTask asyncTimer(Runnable runnable, long ticks, long startTicks) {
-
-        return newTimer(runnable, ticks, startTicks, true);
-    }
-
-    default BukkitTask syncTimer(Runnable runnable, long ticks, long startTicks) {
-        return newTimer(runnable, ticks, startTicks, false);
-    }
-
-    default BukkitTask syncDelay(Runnable runnable, long ticks) {
-
-        return newDelay(runnable, ticks, false);
-    }
-
-    default BukkitTask asyncDelay(Runnable runnable, long ticks) {
-        return newDelay(runnable, ticks, true);
-    }
-
-    default BukkitTask asyncTask(Runnable runnable) {
-        return newTask(runnable, true);
-    }
-
-    default BukkitTask syncTask(Runnable runnable) {
-        return newTask(runnable, false);
-    }
-
-    default BukkitTask newTimer(Runnable runnable, long ticks, long startTicks, boolean async) {
+    default BukkitTask newTimer(long startTicks, long ticks , boolean async,Runnable runnable) {
 
         if (async)
             return getScheduler().runTaskTimerAsynchronously(getPluginConnected(), runnable, startTicks, ticks);
         return getScheduler().runTaskTimer(getPluginConnected(), runnable, startTicks, ticks);
     }
 
-    default BukkitTask newTask(Runnable runnable, boolean async) {
+    default BukkitTask newTask(boolean async,Runnable runnable) {
         if (async) {
             return getScheduler().runTaskAsynchronously(getPluginConnected(), runnable);
         } else {
@@ -74,7 +77,7 @@ public interface BukkitTimeHandler {
     }
 
 
-    default BukkitTask newDelay(Runnable runnable, long ticks, boolean async) {
+    default BukkitTask newDelay(long ticks, boolean async,Runnable runnable) {
         if (async)
             return getScheduler().runTaskLaterAsynchronously(getPluginConnected(), runnable, ticks);
         return getScheduler().runTaskLater(getPluginConnected(), runnable, ticks);

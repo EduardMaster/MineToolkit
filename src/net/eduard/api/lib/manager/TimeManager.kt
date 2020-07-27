@@ -6,7 +6,6 @@ import org.bukkit.scheduler.BukkitTask
 
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.BukkitTimeHandler
-import org.bukkit.plugin.java.JavaPlugin
 
 /**
  * Controlador de Tempo, classe que controla e ajuda na criação de
@@ -22,13 +21,9 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      * Tempo anterior para fazer uma checagem
      */
 
-    var startTime: Long = 0
+    var startedTime: Long = 0
 
-    /**
-     * Define
-     *
-     * @param task
-     */
+
     @Transient
     var task: BukkitTask? = null
 
@@ -43,7 +38,7 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
 
 
     override fun getPluginConnected(): Plugin {
-        return pluginInstance
+        return plugin
     }
 
     /**
@@ -53,8 +48,8 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      * @return Delay
      */
     fun syncDelay(): BukkitTask? {
-        task = syncDelay(this, this.time)
-        startTime = Mine.getNow()
+        task = newTask(time,false,false,this)
+        startedTime = Mine.getNow()
         return task
     }
 
@@ -65,8 +60,8 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      * @return Timer
      */
     fun syncTimer(): BukkitTask? {
-        task = syncTimer(this, this.time, this.time)
-        startTime = Mine.getNow()
+        task = newTask(time,true,false,this)
+        startedTime = Mine.getNow()
         return task
     }
 
@@ -77,8 +72,8 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      * @return Timer
      */
     fun asyncTimer(): BukkitTask? {
-        task = asyncTimer(this, this.time, this.time)
-        startTime = Mine.getNow()
+        task = newTask(time,true,true,this)
+        startedTime = Mine.getNow()
         return task
     }
 
@@ -89,8 +84,8 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      * @return Delay
      */
     fun asyncDelay(): BukkitTask? {
-        task = asyncDelay(this, this.time)
-        startTime = Mine.getNow()
+        task = newTask(time,false,true,this)
+        startedTime = Mine.getNow()
         return task
     }
 

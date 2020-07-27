@@ -19,17 +19,18 @@ import org.bukkit.plugin.java.JavaPlugin
 
 
 @Storable.StorageAttributes(indentificate = true)
-open class CommandManager(name: String, vararg aliases: String) : EventsManager(), TabCompleter, CommandExecutor {
+open class CommandManager(var name: String, vararg aliases: String) : EventsManager(), TabCompleter, CommandExecutor {
 
     @Transient
     var parent: CommandManager? = null
-    var name: String
-    var permission: String? = null
+
+    var permission: String = ""
 
     @Transient
     var customCommand: Command? = null
 
-    var usage: String? = null
+    var usage: String = autoUsage()
+
     var usagePrefix: String? = "§cUtilize "
         private set
 
@@ -43,20 +44,13 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
     val command: PluginCommand
         get() = Bukkit.getPluginCommand(name)
 
-    val commandName: String
-        get() = javaClass.simpleName.toLowerCase().replace("sub", "").replace("subcommand", "")
-                .replace("comando", "").replace("command", "").replace("cmd", "").replace("eduard", "")
-
+    init {
+        this.aliases =  aliases.toList()
+    }
     constructor() : this("") {}
 
-    fun autoUsage(): String {
-        return if (parent != null) {
-            parent?.autoUsage() + " " + name
-        } else {
+    fun autoUsage(): String = parent?.autoUsage()  ?: "$name "
 
-            "/$name"
-        }
-    }
 
     fun autoPermission(): String {
 
@@ -68,15 +62,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
 
     }
 
-    init {
-        this.name = name
-        if (name == "") {
-            this.name = commandName
 
-        }
-        if (aliases != null)
-            this.aliases = Arrays.asList(*aliases)
-    }
 
     fun broadcast(message: String) {
         Mine.broadcast(message, permission)
@@ -184,13 +170,9 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
                 usage = command.usage.replace("<command>", name).replace('&', '§')
             }
         }
-        if (usage == null) {
-            usage = autoUsage()
-        }
+
         if (command.permission != null) {
             permission = command.permission
-        } else if (permission == null) {
-            permission = autoPermission()
         }
         if (command.permissionMessage != null) {
             permissionMessage = command.permissionMessage.replace('&', '§')
@@ -216,7 +198,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
                 + "§f pela plugin.yml")
         commandsRegistred[name.toLowerCase()] = this
         updateSubs()
-        registerListener(pluginInstance)
+        registerListener(plugin)
         return true
 
     }
@@ -229,9 +211,7 @@ open class CommandManager(name: String, vararg aliases: String) : EventsManager(
 
     fun registerCommand(plugin: Plugin) {
         this.plugin = plugin as JavaPlugin
-        if (usage == null) {
-            usage = autoUsage()
-        }
+
         if (permission == null) {
             permission = autoPermission()
         }

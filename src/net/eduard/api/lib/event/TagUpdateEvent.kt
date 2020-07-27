@@ -6,7 +6,7 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
 
-class TagUpdateEvent(var tag: Tag?, who: Player?) : PlayerEvent(who), Cancellable {
+class TagUpdateEvent(var tag: Tag, who: Player) : PlayerEvent(who), Cancellable {
 
     private var cancelled = false
     override fun isCancelled(): Boolean {

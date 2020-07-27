@@ -92,7 +92,7 @@ class KitManager : EventsManager() {
         var posicao = 0
         for (kit in kits) {
             if (!kit.isShowOnGui) continue
-            if (!player.hasPermission(kit.REQUIRE_PERMISSION)) {
+            if (!player.hasPermission(kit.effects.requirePermission)) {
 
                 menu.setItem(posicao, kit.icon)
                 posicao++
@@ -111,7 +111,7 @@ class KitManager : EventsManager() {
         for (kit in kits) {
             if (!kit.isShowOnGui) continue
 
-            if (player.hasPermission(kit.REQUIRE_PERMISSION)) {
+            if (player.hasPermission(kit.permission)) {
                 // player.sendMessage("§cAbrindo menu com kit " + kit.name)
                 menu.setItem(posicao, kit.icon)
                 posicao++
@@ -149,11 +149,11 @@ class KitManager : EventsManager() {
         removeKits(player)
         Mine.refreshAll(player)
         val inv = player.inventory
-        for (item in kit.ITEMS_TO_GIVE) {
+        for (item in kit.items) {
             inv.addItem(item)
         }
         for (subkit in kit.kits) {
-            for (item in subkit.ITEMS_TO_GIVE) {
+            for (item in subkit.items) {
                 inv.addItem(item)
             }
         }
@@ -206,7 +206,7 @@ class KitManager : EventsManager() {
         if (VaultAPI.hasVault()) {
             if (VaultAPI.getEconomy().has(player, kit.price)) {
                 VaultAPI.getEconomy().withdrawPlayer(player, kit.price)
-                VaultAPI.getPermission().playerAdd(player, kit.REQUIRE_PERMISSION)
+                VaultAPI.getPermission().playerAdd(player, kit.permission)
                 player.sendMessage(msgKitBuyed.replace("\$kit", kit.name))
             } else {
                 player.sendMessage(msgNoKitBuyed.replace("\$kit", kit.name))

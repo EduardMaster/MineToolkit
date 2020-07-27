@@ -1,7 +1,5 @@
 package net.eduard.api.lib.manager
 
-import net.eduard.api.lib.kotlin.plugin
-import net.eduard.api.lib.kotlin.register
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
@@ -30,11 +28,6 @@ class DamagerManager : Listener {
         private val lastPvP: MutableMap<Entity, Entity> = HashMap()
 
 
-        init {
-            DamagerManager().register(javaClass.plugin )
-
-
-        }
     }
 
     @EventHandler

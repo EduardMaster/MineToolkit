@@ -424,7 +424,7 @@ open class Menu(
                     }
                     if (button.effects != null) {
                         debug("Button make Editable Effects")
-                        button.effects?.accept(player)
+                        button.effects?.playEffects(player)
                     }
 
                     if (button.isCategory) {

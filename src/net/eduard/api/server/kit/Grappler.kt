@@ -69,7 +69,7 @@ class Grappler : KitAbility() {
 
     @EventHandler
     fun event(e: PluginDisableEvent) {
-        if (pluginInstance == e.plugin)
+        if (plugin == e.plugin)
             for (p in Mine.getPlayers()) {
                 if (hooks.containsKey(p)) {
                     hooks[p]!!.remove()

@@ -11,12 +11,14 @@ import org.bukkit.inventory.ItemStack
 
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.click.PlayerInteract
+import net.eduard.api.lib.game.Explosion
+import net.eduard.api.lib.game.Jump
 import net.eduard.api.lib.manager.CooldownManager
-import net.eduard.api.lib.modules.Copyable.*
+import net.eduard.api.lib.manager.EffectManager
+import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.storage.Storable
 
-open class KitAbility : CooldownManager() {
-
+open class KitAbility : EventsManager() {
 
     @Transient
     var click: PlayerInteract? = null
@@ -32,55 +34,50 @@ open class KitAbility : CooldownManager() {
     val lore = ArrayList<String>()
     var itemType = Material.DIAMOND_AXE
     var itemData = 0
+    var effects = EffectManager()
+    var jump: Jump? = null
+    var explosion: Explosion? = null
+    var cooldown = CooldownManager()
+    val permission get() = effects.requirePermission
 
 
-    protected val potions
-        get() = APPLY_POTIONS
+    val potions
+        get() = effects.potionsToApply
 
-    protected fun setTime(n: Int) {
-
-        super.time = n.toLong()
+    fun setTime(seconds: Int) {
+        cooldown.duration = seconds * 20.toLong()
     }
 
 
-    protected var jump
-        get() = PLAY_JUMP
+    var sound
+        get() = effects.soundToPlay
         set(value) {
-            PLAY_JUMP = value
-        }
-
-    protected var sound
-        get() = PLAY_SOUND
-        set(value) {
-            PLAY_SOUND = value
+            effects.soundToPlay = value
         }
 
 
-    protected var explosion
-        get() = MAKE_EXPLOSION
+    var display
+        get() = effects.visualEffectToShow
         set(value) {
-            MAKE_EXPLOSION = value
-        }
-    protected var display
-        get() = PLAY_VISUAL
-        set(value) {
-            PLAY_VISUAL = value
+            effects.visualEffectToShow = value
         }
 
 
-    protected val items
-        get() = ITEMS_TO_GIVE
-    protected var message
-        get() = SEND_MESSAGE
+    val items
+        get() = effects.itemsToGive
+
+
+    var message
+        get() = effects.messageToSend
         set(value) {
-            SEND_MESSAGE = value
+            effects.messageToSend = value
         }
 
     val icon: ItemStack
         get() {
 
-            var item = ItemStack(itemType, 1)
-            var meta = item.itemMeta
+            val item = ItemStack(itemType, 1)
+            val meta = item.itemMeta
             meta.displayName = "§e$name"
             val list = mutableListOf<String>()
             for (line in lore) {
@@ -105,26 +102,35 @@ open class KitAbility : CooldownManager() {
             name = (javaClass.simpleName)
 
 
-        REQUIRE_PERMISSION = name.toLowerCase().replace(" ", "")
+        effects.requirePermission = name.toLowerCase().replace(" ", "")
     }
 
     fun add(item: ItemStack) {
-        ITEMS_TO_GIVE.add(Mine.setName(item, "§b" + name))
+        items.add(Mine.setName(item, "§b" + name))
 
     }
 
     fun add(type: Material) {
-        ITEMS_TO_GIVE.add(Mine.newItem(type, "§b$name"))
+        items.add(Mine.newItem(type, "§b$name"))
 
     }
 
-    override fun cooldown(player: Player): Boolean {
+
+    fun onCooldown(player: Player): Boolean {
+        return cooldown.onCooldown(player)
+    }
+
+    fun setOnCooldown(player: Player) {
+        cooldown.setOnCooldown(player)
+    }
+
+    fun cooldown(player: Player): Boolean {
         if (!isEnabled) {
             Mine.send(player, "")
             return false
         }
-        if (onCooldown(player)) {
-            sendOnCooldown(player)
+        if (cooldown.onCooldown(player)) {
+            cooldown.sendOnCooldown(player)
             return false
         }
         var x = 0
@@ -133,8 +139,8 @@ open class KitAbility : CooldownManager() {
         }
         x++
         if (x == useLimit) {
-            setOnCooldown(player)
-            sendStartCooldown(player)
+            cooldown.setOnCooldown(player)
+            cooldown.sendStartCooldown(player)
             timesUsed.remove(player)
         } else {
             timesUsed[player] = x
@@ -148,7 +154,7 @@ open class KitAbility : CooldownManager() {
             if (e.entity is Player) {
                 val p = e.entity as Player
                 if (hasKit(p)) {
-                    setOnCooldown(p)
+                    cooldown.setOnCooldown(p)
                 }
             }
         }
