@@ -1,15 +1,11 @@
 package net.eduard.api.lib.storage;
 
-public class StorageEnum extends StorageBase {
-
-    public StorageEnum(StorageInfo info) {
-        super(info);
-    }
+public class StorageEnum extends StorageBase<Enum<?>,String> {
 
     @Override
-    public Object restore(Object data) {
+    public Enum<?> restore(StorageInfo info, String data) {
         try {
-            return getType().getDeclaredField(data.toString().toUpperCase()).get(null);
+            return (Enum<?>) info.getType().getDeclaredField(data.toUpperCase()).get(null);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -19,7 +15,7 @@ public class StorageEnum extends StorageBase {
     }
 
     @Override
-    public Object store(Object data) {
+    public String store(StorageInfo info,Enum<?> data) {
         return data.toString();
     }
 

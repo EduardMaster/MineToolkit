@@ -3,31 +3,21 @@ package net.eduard.api.lib.storage;
 
 import java.util.*;
 
-import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceList;
 
-public class StorageList extends StorageBase<List> {
-    private Class<?> listType;
-
-    public StorageList(StorageInfo info) {
-        super(info);
-        if (getField() != null) {
-            setListType(Extra.getTypeKey(getField().getGenericType()));
-
-        } else
-            setListType(String.class);
-
-    }
+final public class StorageList extends StorageBase<List<?>, Object> {
+    StorageList(){}
 
     @Override
-    public List restore(Object data) {
-        StorageObject storage = new StorageObject(getInfo().clone());
-        storage.setType(listType);
-        storage.updateByType();
-        storage.updateByStoreClass();
-        storage.updateByField();
+    public List<?> restore(StorageInfo info, Object data) {
+        StorageInfo listInfo = info.clone();
+        listInfo.setType(info.getListType());
+        listInfo.updateByType();
+        listInfo.updateByStoreClass();
+        listInfo.updateByField();
+
         debug(">> LIST RESTORATION");
-        if (storage.isReference()) {
+        if (listInfo.isReference()) {
             debug("  IS REFERENCE LIST");
             if (data instanceof List) {
                 List<?> oldList = (List<?>) data;
@@ -47,13 +37,13 @@ public class StorageList extends StorageBase<List> {
         if (data instanceof List) {
             List<?> listOld = (List<?>) data;
             for (Object item : listOld) {
-                newList.add(storage.restore(item));
+                newList.add(StorageAPI.STORE_OBJECT.restore(listInfo, item));
             }
         } else if (data instanceof Map) {
             Map<?, ?> mapOld = (Map<?, ?>) data;
             debug("RESTORING LIST BY MAP");
             for (Object item : mapOld.values()) {
-                Object objeto = storage.restore(item);
+                Object objeto = StorageAPI.STORE_OBJECT.restore(listInfo, item);
                 newList.add(objeto);
             }
 
@@ -62,34 +52,22 @@ public class StorageList extends StorageBase<List> {
 
     }
 
-    @Override
-    public Object store(List data) {
+    public Object store(StorageInfo info, List<?> data) {
+        StorageInfo listInfo = info.clone();
+        listInfo.setType(info.getListType());
+        listInfo.updateByType();
+        listInfo.updateByStoreClass();
+        listInfo.updateByField();
 
-        StorageObject storage = new StorageObject(getInfo().clone());
-        storage.setType(listType);
-        storage.updateByType();
-        storage.updateByStoreClass();
-        storage.updateByField();
         debug("<< LIST STORATION");
         List<Object> newList = new ArrayList<>();
-        List<?> list = (List<?>) data;
 
-        for (Object item : list) {
-            Object dado = storage.store(item);
-
+        for (Object item : data) {
+            Object dado = StorageAPI.STORE_OBJECT.store(listInfo, item);
             newList.add(dado);
-
         }
-
         return newList;
 
     }
 
-    public Class<?> getListType() {
-        return listType;
-    }
-
-    public void setListType(Class<?> listType) {
-        this.listType = listType;
-    }
 }

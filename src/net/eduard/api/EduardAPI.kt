@@ -55,7 +55,7 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         pluginBase = plugin
     }
     override fun getPlugin(): JavaPlugin {
-        return pluginBase as JavaPlugin
+        return pluginBase.plugin as JavaPlugin
     }
 
     override fun console(message: String) {

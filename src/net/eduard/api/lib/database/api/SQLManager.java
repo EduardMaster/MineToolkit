@@ -7,10 +7,7 @@ import net.eduard.api.lib.database.mysql.MySQLQueryBuilder;
 import net.eduard.api.lib.database.sqlite.SQLiteQueryBuilder;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SQLManager {
@@ -18,14 +15,15 @@ public class SQLManager {
     private Connection connection;
     private SQLEngineType engineType;
     private SQLQueryBuilder builder;
-    private ConcurrentLinkedQueue updatesQueue = new ConcurrentLinkedQueue();
+    private final Queue<Object> updatesQueue = new ConcurrentLinkedQueue<>();
 
-    public int runUpdatesQueue(){
+
+    public int runUpdatesQueue() {
         int amount = 0;
         for (int i = 0; i < queueRunsLimit; i++) {
             Object data = updatesQueue.poll();
 
-            if (data == null)break;
+            if (data == null) break;
             updateData(data);
             amount++;
         }
@@ -40,6 +38,7 @@ public class SQLManager {
         setBuilder(builder);
         setEngineType(SQLEngineType.OTHER);
     }
+
     public SQLManager(Connection connection, SQLEngineType type) {
         setConnection(connection);
         setEngineType(type);
@@ -54,15 +53,15 @@ public class SQLManager {
                 break;
         }
     }
+
     public boolean hasConnection() {
         try {
             return connection != null && !connection.isClosed();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
             return false;
         }
     }
-
 
 
     public <E> E getData(Class<E> dataClass, String fieldName, Object fieldValue) {
@@ -99,8 +98,14 @@ public class SQLManager {
     }
 
     public <E> List<E> getAllData(Class<E> dataClass) {
+        return getAllData(dataClass, "", "", false, 0);
+    }
+
+    public <E> List<E> getAllData(Class<E> dataClass, String where, String orderBy, boolean desc, int limit) {
         List<E> list = new ArrayList<>();
         SQLTable table = getTableData(dataClass);
+        if (orderBy.isEmpty())
+            orderBy = table.getPrimaryKey().getName();
 
         if (hasConnection()) {
             ResultSet result = executeQuery(builder.findRecords(table));
@@ -131,13 +136,15 @@ public class SQLManager {
             }
         }
     }
-    public void updateDataQueue(Object data){
-        if (updatesQueue.contains(data)){
+
+    public void updateDataQueue(Object data) {
+        if (updatesQueue.contains(data)) {
             return;
         }
         updatesQueue.add(data);
 
     }
+
     public void updateData(Object data) {
         if (hasConnection()) {
             Class<?> dataClass = data.getClass();

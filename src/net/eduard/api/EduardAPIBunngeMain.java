@@ -7,10 +7,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 import java.io.File;
 
 public class EduardAPIBunngeMain extends Plugin implements IPluginInstance {
-
     static{
         new LibraryLoader(new File("libs/")).loadLibraries();
     }
+
 
     private HybridPlugin api;
 

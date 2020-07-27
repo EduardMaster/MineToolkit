@@ -3,58 +3,33 @@ package net.eduard.api.lib.storage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
-import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceMap;
 
-public class StorageMap extends StorageBase {
+final public class StorageMap extends StorageBase<Map<?,?> , Object> {
 
-    public StorageMap(StorageInfo info) {
-        super(info);
-        this.keyType = Extra.getTypeKey(getField().getGenericType());
-        this.valueType = Extra.getTypeValue(getField().getGenericType());
-    }
-
-    private Class<?> keyType;
-    private Class<?> valueType;
-
-    public Class<?> getKeyType() {
-        return keyType;
-    }
-
-    public void setKeyType(Class<?> keyType) {
-        this.keyType = keyType;
-    }
-
-    public Class<?> getValueType() {
-        return valueType;
-    }
-
-    public void setValueType(Class<?> valueType) {
-        this.valueType = valueType;
-    }
+    StorageMap(){}
 
     @Override
-    public Object restore(Object data) {
-        StorageObject storeKey = new StorageObject(getInfo().clone());
-        storeKey.setType(keyType);
-        storeKey.updateByType();
-        storeKey.updateByStoreClass();
+    public Map<?,?> restore(StorageInfo info,Object data) {
+        StorageInfo mapInfoKey = info.clone();
+        mapInfoKey.setType(info.getMapKey());
+        mapInfoKey.updateByType();
+        mapInfoKey.updateByStoreClass();
 
-        StorageObject storeValue = new StorageObject(getInfo().clone());
-        storeValue.setType(valueType);
-        storeValue.updateByType();
-        storeValue.updateByStoreClass();
-        storeValue.updateByField();
+        StorageInfo mapInfoValue = info.clone();
+        mapInfoValue.setType(info.getMapValue());
+        mapInfoValue.updateByType();
+        mapInfoValue.updateByStoreClass();
+        mapInfoValue.updateByField();
 
-        if (isReference()) {
+        if (info.isReference()) {
             if (data instanceof Map) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> oldMap = (Map<String, Object>) data;
                 Map<Object, Integer> newMap = new HashMap<>();
                 for (Entry<String, Object> entry : oldMap.entrySet()) {
-                    newMap.put(storeKey.restore(entry.getKey()), StorageAPI.getObjectIdByReference(entry.getValue().toString()));
+                    newMap.put(StorageAPI.STORE_OBJECT.restore(mapInfoKey,entry.getKey()), StorageAPI.getObjectIdByReference(entry.getValue().toString()));
                 }
                 Map<Object, Object> mapinha = new HashMap<>();
                 StorageAPI.newReference(new ReferenceMap(newMap, mapinha));
@@ -69,8 +44,8 @@ public class StorageMap extends StorageBase {
             Map<?, ?> map = (Map<?, ?>) data;
             for (Entry<?, ?> entry : map.entrySet()) {
 
-                Object key = storeKey.restore(entry.getKey());
-                Object value = storeValue.restore(entry.getValue());
+                Object key = StorageAPI.STORE_OBJECT.restore(mapInfoKey,entry.getKey());
+                Object value = StorageAPI.STORE_OBJECT.restore(mapInfoValue,entry.getValue());
                 debug("^^ " + key + " " + value);
                 newMap.put(key, value);
             }
@@ -79,24 +54,23 @@ public class StorageMap extends StorageBase {
     }
 
     @Override
-    public Object store(Object data) {
-        StorageObject storeKey = new StorageObject(getInfo().clone());
-        storeKey.setType(keyType);
-        storeKey.updateByType();
-        storeKey.updateByStoreClass();
+    public Object store(StorageInfo info, Map<?,?> data) {
+        StorageInfo mapInfoKey = info.clone();
+        mapInfoKey.setType(info.getMapKey());
+        mapInfoKey.updateByType();
+        mapInfoKey.updateByStoreClass();
 
-        StorageObject storeValue = new StorageObject(getInfo().clone());
-        storeValue.setType(valueType);
-        storeValue.updateByType();
-        storeValue.updateByStoreClass();
-        storeValue.updateByField();
+        StorageInfo mapInfoValue = info.clone();
+        mapInfoValue.setType(info.getMapValue());
+        mapInfoValue.updateByType();
+        mapInfoValue.updateByStoreClass();
+        mapInfoValue.updateByField();
 
         Map<String, Object> newMap = new HashMap<>();
-        Map<?, ?> map = (Map<?, ?>) data;
-        for (Entry<?, ?> entry : map.entrySet()) {
-            String key = storeKey.store(entry.getKey()).toString();
+        for (Entry<?, ?> entry : data.entrySet()) {
+            String key = StorageAPI.STORE_OBJECT.store(mapInfoKey,entry.getKey()).toString();
 
-            Object value = storeValue.store(entry.getValue());
+            Object value = StorageAPI.STORE_OBJECT.store(mapInfoValue,entry.getValue());
             newMap.put(key, value);
         }
         return newMap;

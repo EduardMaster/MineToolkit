@@ -12,14 +12,12 @@ import net.eduard.api.lib.storage.references.ReferenceValue;
 
 public class StorageObject extends StorageBase {
 
-    public StorageObject(StorageInfo info) {
-        super(info);
-    }
+    StorageObject(){}
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object restore(Object data) {
-        Class<?> claz = getType();
+    public Object restore(StorageInfo info, Object data) {
+        Class<?> claz = info.getType();
         if (data == null) {
             debug(">> DATA NULL");
             return null;
@@ -65,18 +63,19 @@ public class StorageObject extends StorageBase {
         }
         if (claz.isEnum()) {
             debug(">> ENUM " + data);
-            return new StorageEnum(getInfo().clone()).restore(data);
+
+            return StorageAPI.STORE_ENUM.restore(info,data.toString());
         }
         if (Extra.isList(claz)) {
             debug(">> LIST " + data);
-            return new StorageList(getInfo().clone()).restore(data);
+            return StorageAPI.STORE_LIST.restore(info,data);
         }
         if (Extra.isMap(claz)) {
             debug(">> MAP " + data);
-            return new StorageMap(getInfo().clone()).restore(data);
+            return StorageAPI.STORE_MAP.restore(info,data);
         }
 
-        if (isReference()) {
+        if (info.isReference()) {
 
             debug(">> REFERENCE " + data);
             return StorageAPI.getObjectIdByReference(data.toString());
@@ -87,7 +86,7 @@ public class StorageObject extends StorageBase {
 
         alias = StorageAPI.getAlias(claz);
 
-        Storable store = StorageAPI.getStore(claz);
+        Storable<?> store = StorageAPI.getStore(claz);
 
         Class<?> wrapper = Extra.getWrapper(claz);
 
@@ -115,14 +114,14 @@ public class StorageObject extends StorageBase {
 		*/
 
 
-        if (isInline()) {
+        if (info.isInline()) {
             if (store != null) {
                 instance = store.restore(data.toString());
 
             }
             if (instance == null) {
                 debug(">> INLINE  " + data);
-                instance = new StorageInline(getInfo().clone()).restore(data);
+                instance = StorageAPI.STORE_INLINE.restore(info,data.toString());
             } else {
                 debug(">> INLINE CUSTOM " + data);
             }
@@ -150,7 +149,7 @@ public class StorageObject extends StorageBase {
 
         Map<?, ?> map = (Map<?, ?>) data;
 
-        if (isIndentifiable())
+        if (info.isIndentifiable())
             StorageAPI.registerObject(id, instance);
         while (!claz.equals(Object.class)) {
 
@@ -174,16 +173,16 @@ public class StorageObject extends StorageBase {
 
                     if (fieldMapValue == null)
                         continue;
-                    StorageObject storage = new StorageObject(getInfo().clone());
-                    storage.setField(field);
-                    storage.setType(field.getType());
-                    storage.updateByType();
-                    storage.updateByStoreClass();
-                    storage.updateByField();
+                    StorageInfo infoField = info.clone();
+                    infoField.setField(field);
+                    infoField.setType(field.getType());
+                    infoField.updateByType();
+                    infoField.updateByStoreClass();
+                    infoField.updateByField();
 
                     debug(">> VARIABLE " + field.getName() + " " + field.getType().getSimpleName());
-                    Object restoredValue = storage.restore(fieldMapValue);
-                    if (storage.isReference()) {
+                    Object restoredValue = StorageAPI.STORE_OBJECT.restore(infoField , fieldMapValue);
+                    if (infoField.isReference()) {
                         if (restoredValue != null && (!(restoredValue instanceof List || restoredValue instanceof Map))) {
                             StorageAPI.newReference(new ReferenceValue((Integer) restoredValue, field, instance));
                             continue;
@@ -221,7 +220,7 @@ public class StorageObject extends StorageBase {
     }
 
     @Override
-    public Object store(Object data) {
+    public Object store(StorageInfo info, Object data) {
         if (data == null)
             return null;
         Class<?> claz = data.getClass();
@@ -229,20 +228,21 @@ public class StorageObject extends StorageBase {
         String alias = StorageAPI.getAlias(claz);
         if (claz.isEnum()) {
             debug("<< ENUM " + data);
-            return new StorageEnum(getInfo().clone()).store(data);
+
+            return StorageAPI.STORE_ENUM.store(info,(Enum<?>)data);
 
         }
         if (claz.isArray()) {
             debug("<< ARRAY " + data);
-            return new StorageArray(getInfo().clone()).store(data);
+            return StorageAPI.STORE_ARRAY.store(info,data);
         }
         if (Extra.isList(claz)) {
             debug("<< LIST " + new ArrayList<>((List<?>) data));
 
-            return new StorageList(getInfo().clone()).store((List) data);
+            return StorageAPI.STORE_LIST.store(info,(List<?>) data);
         }
         if (Extra.isMap(claz)) {
-            return new StorageMap(getInfo().clone()).store(data);
+            return StorageAPI.STORE_MAP.store(info,(Map<?,?>)data);
         }
         Storable store = getStore(claz);
 
@@ -253,7 +253,7 @@ public class StorageObject extends StorageBase {
         }
          */
 
-        if (isReference()) {
+        if (info.isReference()) {
 
             String text = alias + StorageAPI.REFER_KEY + StorageAPI.getIdByObject(data);
             debug("<< REFERENCE " + text);
@@ -263,7 +263,7 @@ public class StorageObject extends StorageBase {
         if (wrapper != null) {
             return data;
         }
-        if (isInline()) {
+        if (info.isInline()) {
 
             Object result = null;
             if (store != null) {
@@ -272,7 +272,7 @@ public class StorageObject extends StorageBase {
             }
             if (result == null) {
                 debug("<< INLINE " + data);
-                return new StorageInline(getInfo().clone()).store(data);
+                return StorageAPI.STORE_INLINE.store(info,data);
             } else {
                 return result;
             }
@@ -280,7 +280,7 @@ public class StorageObject extends StorageBase {
 
         try {
             Map<String, Object> map = new LinkedHashMap<>();
-            if (isIndentifiable()) {
+            if (info.isIndentifiable()) {
                 debug("<< INDENTIFIABLE " + claz);
                 map.put(StorageAPI.STORE_KEY, alias + StorageAPI.REFER_KEY + StorageAPI.getIdByObject(data));
             } else {
@@ -305,15 +305,15 @@ public class StorageObject extends StorageBase {
                         continue;
                     }
 
-                    StorageObject storage = new StorageObject(getInfo().clone());
-                    storage.setField(field);
-                    storage.setType(field.getType());
-                    storage.updateByType();
-                    storage.updateByStoreClass();
-                    storage.updateByField();
+                    StorageInfo infoField = info.clone();
+                    infoField.setField(field);
+                    infoField.setType(field.getType());
+                    infoField.updateByType();
+                    infoField.updateByStoreClass();
+                    infoField.updateByField();
 
                     debug("<< VARIABLE " + field.getName() + " " + fieldValue.getClass().getSimpleName());
-                    Object fieldResult = storage.store(fieldValue);
+                    Object fieldResult = StorageAPI.STORE_OBJECT.store(infoField,fieldValue);
 
                     if (fieldResult != null)
                         map.put(field.getName(), fieldResult);
@@ -322,7 +322,7 @@ public class StorageObject extends StorageBase {
                 claz = claz.getSuperclass();
             }
             if (data instanceof Storable) {
-                Storable dataStorable = (Storable) data;
+                Storable<Object> dataStorable = (Storable<Object>) data;
                 dataStorable.store(map, data);
 
             } else if (store != null) {
