@@ -13,7 +13,7 @@ public class StorageArray extends StorageBase {
 	public Object restore(StorageInfo info,Object data) {
 
 		Object array = null;
-		Class<?> arrayType = info.getType();
+		Class<?> arrayType = info.getArrayType();
 		StorageInfo arrayInfo = info.clone();
 		arrayInfo.setType(arrayType);
 		arrayInfo.updateByType();
@@ -43,7 +43,7 @@ public class StorageArray extends StorageBase {
 
 	@Override
 	public Object store(StorageInfo info, Object data) {
-		Class<?> arrayType = info.getType();
+		Class<?> arrayType = info.getArrayType();
 		StorageInfo arrayInfo = info.clone();
 		arrayInfo.setType(arrayType);
 		arrayInfo.updateByType();
@@ -53,8 +53,6 @@ public class StorageArray extends StorageBase {
 		for (int index = 0; index < arraySize; index++) {
 			newList.add(StorageAPI.STORE_OBJECT.store(info,Array.get(data, index)));
 		}
-
-
 		return newList;
 	}
 

@@ -81,7 +81,7 @@ open class EduardPlugin : BukkitPlugin( EduardHybridPlugin()), BukkitTimeHandler
      * <br></br>/plugman load NomePlugin
      */
     override fun onEnable() {
-
+       super.onEnable();
         log("Foi ativado na v" + description.version + " um plugin "
                 + (if (isFree) "§aGratuito" else "§bPago") + "§f feito pelo Eduard")
     }

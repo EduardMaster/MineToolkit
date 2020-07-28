@@ -17,7 +17,6 @@ class PluginActivator : TimeManager() {
                             plugin.onActivation()
                         })
                     }
-
                 }
             }
         }

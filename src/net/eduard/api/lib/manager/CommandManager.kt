@@ -166,7 +166,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         }
         plugin = command.plugin as JavaPlugin
         if (command.usage != null) {
-            if (!command.usage.isEmpty()) {
+            if (command.usage.isNotEmpty()) {
                 usage = command.usage.replace("<command>", name).replace('&', '§')
             }
         }

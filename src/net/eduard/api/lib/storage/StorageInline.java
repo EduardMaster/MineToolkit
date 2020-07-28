@@ -160,7 +160,7 @@ public final class StorageInline extends StorageBase<Object, String> {
 
                 } else {
 
-                    Storable<?> store = StorageAPI.getStore(fieldValue.getClass());
+
                     if (Extra.isWrapper(clz)) {
                         builder.append(fieldValue);
                     } else if (Extra.isList(field.getType())) {

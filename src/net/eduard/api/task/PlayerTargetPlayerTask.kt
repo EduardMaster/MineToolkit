@@ -10,9 +10,11 @@ class PlayerTargetPlayerTask : BukkitRunnable() {
     override fun run() {
         for (p in Mine.getPlayers()) {
             try {
+                val target =
+                        Mine.getTarget(p, Mine.getPlayerAtRange(p.location, 100.0)) ?: continue
                 val event = PlayerTargetPlayerEvent(
-                        Mine.getTarget(p, Mine.getPlayerAtRange(p.location, 100.0)), p)
-               event.call()
+                        target, p)
+                event.call()
             } catch (ex: Exception) {
                 EduardAPI.Companion.instance.log("Erro ao causar o Evento PlayerTargetEvent ")
                 ex.printStackTrace()

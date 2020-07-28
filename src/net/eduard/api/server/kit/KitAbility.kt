@@ -16,9 +16,11 @@ import net.eduard.api.lib.game.Jump
 import net.eduard.api.lib.manager.CooldownManager
 import net.eduard.api.lib.manager.EffectManager
 import net.eduard.api.lib.manager.EventsManager
+import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.storage.Storable
+import org.bukkit.plugin.Plugin
 
-open class KitAbility : EventsManager() {
+open class KitAbility : EventsManager(), BukkitTimeHandler {
 
     @Transient
     var click: PlayerInteract? = null
@@ -44,9 +46,11 @@ open class KitAbility : EventsManager() {
     val potions
         get() = effects.potionsToApply
 
-    fun setTime(seconds: Int) {
-        cooldown.duration = seconds * 20.toLong()
-    }
+    var time: Int
+        set(value) {
+            cooldown.duration = value * 20.toLong()
+        }
+        get() = cooldown.duration.toInt()
 
 
     var sound
@@ -174,6 +178,10 @@ open class KitAbility : EventsManager() {
         itemType = material
         itemData = data
         this.lore.addAll(lore)
+    }
+
+    override fun getPluginConnected(): Plugin {
+        return plugin
     }
 
 

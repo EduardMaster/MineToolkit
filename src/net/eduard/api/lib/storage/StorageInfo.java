@@ -12,18 +12,19 @@ final public class StorageInfo implements Cloneable {
     private Field field;
 
 
-
-    public Class<?> getMapKey(){
+    public Class<?> getMapKey() {
         return Extra.getTypeKey(field.getGenericType());
     }
-    public Class<?> getMapValue(){
+
+    public Class<?> getMapValue() {
         return Extra.getTypeValue(field.getGenericType());
     }
 
-    public Class<?> getListType(){
+    public Class<?> getListType() {
         return Extra.getTypeKey(field.getGenericType());
     }
-    public Class<?> getArrayType(){
+
+    public Class<?> getArrayType() {
         return getType().getComponentType();
     }
 
@@ -57,7 +58,7 @@ final public class StorageInfo implements Cloneable {
     }
 
     public void updateByStoreClass() {
-        Storable store = getStore(getType());
+        Storable<?> store = getStore(getType());
         if (store != null) {
             if (store.getClass().isAnnotationPresent(Storable.StorageAttributes.class)) {
                 Storable.StorageAttributes atr = store.getClass().getAnnotation(Storable.StorageAttributes.class);
@@ -80,23 +81,16 @@ final public class StorageInfo implements Cloneable {
             }
         }
     }
+
     public StorageInfo(Class<?> claz) {
         setType(claz);
-    }
-
-    public StorageInfo(Field field, Class<?> type, boolean asReference, boolean inline, boolean indentifiable) {
-        setField(field);
-        setInline(inline);
-        this.type = type;
-        this.reference = asReference;
-        setIndentifiable(indentifiable);
     }
 
     public Class<?> getType() {
         return type;
     }
 
-    public Storable getStore(Class<?> claz) {
+    public Storable<?> getStore(Class<?> claz) {
         return StorageAPI.getStore(claz);
     }
 

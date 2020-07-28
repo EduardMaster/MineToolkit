@@ -33,7 +33,7 @@ import net.eduard.api.lib.storage.references.ReferenceBase;
  */
 public final class StorageAPI {
 
-    private StorageAPI(){
+    private StorageAPI() {
 
     }
 
@@ -69,6 +69,7 @@ public final class StorageAPI {
     }
 
     private static final Random random = new Random();
+
     private static int randomId() {
         return random.nextInt(100000);
     }
@@ -218,6 +219,11 @@ public final class StorageAPI {
         return store;
     }
 
+    /**
+     * Registra todas classes internas com StorageAPI#autoRegisterClass
+     *
+     * @param claz Classe com classes internas
+     */
     public static void registerClasses(Class<?> claz) {
         debug("<> CLASSES " + claz.getName());
         for (Class<?> anotherClass : claz.getDeclaredClasses()) {

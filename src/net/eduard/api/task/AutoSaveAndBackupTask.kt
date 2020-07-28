@@ -59,7 +59,6 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
                     log("Falha ao tentar salvar dados do plugin ou gerar backup do plugin " + plugin.name)
                     ex.printStackTrace()
                 }
-
             }
         }
     }
