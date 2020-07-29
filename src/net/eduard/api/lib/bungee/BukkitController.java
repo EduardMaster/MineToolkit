@@ -73,6 +73,7 @@ public class BukkitController implements ServerController{
 
 	@Override
 	public void setState(String server, int state) {
+
 		sendMessage("set-state", server+" "+state);
 	}
 

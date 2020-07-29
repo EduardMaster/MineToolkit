@@ -3,7 +3,6 @@ package net.eduard.api.lib.modules;
 import java.io.ByteArrayOutputStream;
 
 import java.io.DataInput;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,9 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
-import com.google.gson.internal.Streams;
 import net.md_5.bungee.event.EventHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

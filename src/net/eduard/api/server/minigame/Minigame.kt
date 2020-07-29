@@ -80,8 +80,8 @@ open class Minigame : TimeManager {
      * @return Sala
      */
     //		getRooms().get(0);
-    val game: MinigameRoom
-        get() = rooms.iterator().next()
+    val game: MinigameRoom?
+        get() = rooms.firstOrNull()
 
     val mainLobby: MinigameLobby
         get() = if (lobbies.size > 0) lobbies[0] else newLobby(1)
@@ -358,7 +358,7 @@ open class Minigame : TimeManager {
      * @return
      */
     fun isState(state: MinigameState): Boolean {
-        return game.isState(state)
+        return game?.isState(state) ?: false
     }
 
     /**
