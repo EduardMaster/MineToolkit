@@ -1,4 +1,4 @@
-package net.eduard.api.lib.bungee;
+package net.eduard.api.lib.modules;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -356,7 +356,6 @@ public final class BukkitBungeeAPI {
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			result = new String[0];
 		}

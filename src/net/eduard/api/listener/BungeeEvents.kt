@@ -6,15 +6,10 @@ import net.md_5.bungee.api.event.*
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 
+
+
 class BungeeEvents : Listener {
-    @EventHandler
-    fun event(e: ServerConnectEvent) {
-    }
-    @EventHandler
-    fun onJoin(e: LoginEvent) {
-        // PendingConnection p = e.getConnection();
-        // info("§aLoginEvent", p);
-    }
+
 
     val bungee get() = EduardAPIBungee.instance.bungee
     val db get() = EduardAPIBungee.instance.db
@@ -27,7 +22,7 @@ class BungeeEvents : Listener {
         val player = e.player
         // info("§aPostLoginEvent", player.getPendingConnection());
         if (db.hasConnection()) {
-            if (!bungee!!.playersContains(player.name)) {
+            if (!bungee.playersContains(player.name)) {
                 db.insert("players", player.name, player.uniqueId, "")
             }
         }
@@ -40,8 +35,8 @@ class BungeeEvents : Listener {
         val playerAmount = e.target.players.size
         if (db.hasConnection()) {
             BungeeCord.getInstance().scheduler.runAsync(EduardAPIBungee.instance.plugin) {
-                bungee!!.setPlayersAmount(serverName, playerAmount)
-                bungee!!.setPlayerServer(playerUUID, "")
+                bungee.setPlayersAmount(serverName, playerAmount)
+                bungee.setPlayerServer(playerUUID, "")
             }
         }
     }
@@ -52,8 +47,8 @@ class BungeeEvents : Listener {
         val playerAmount = e.server.info.players.size
         if (db.hasConnection()) {
             BungeeCord.getInstance().scheduler.runAsync(EduardAPIBungee.instance.plugin) {
-                bungee!!.setPlayersAmount(serverName, playerAmount)
-                bungee!!.setPlayerServer(playerUUID, serverName)
+                bungee.setPlayersAmount(serverName, playerAmount)
+                bungee.setPlayerServer(playerUUID, serverName)
             }
         }
     }
@@ -64,7 +59,14 @@ class BungeeEvents : Listener {
         // info("§aPreLoginEvent", p);
     }
 
-
+    @EventHandler
+    fun event(e: ServerConnectEvent) {
+    }
+    @EventHandler
+    fun onJoin(e: LoginEvent) {
+        // PendingConnection p = e.getConnection();
+        // info("§aLoginEvent", p);
+    }
 
     /**
      * É possivel alterar o sistema de permissão do bungee
@@ -110,6 +112,7 @@ class BungeeEvents : Listener {
     @EventHandler
     fun event(e: TabCompleteResponseEvent) {
     }
+
 
     @EventHandler
     fun event(e: TabCompleteEvent) {

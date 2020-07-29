@@ -14,7 +14,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class BungeeController implements ServerController {
-    private String channel = "BukkitBungee";
+
     private Plugin plugin;
     private BungeeMessageListener listener = new BungeeMessageListener(this);
     private BungeeStatusUpdater updater = new BungeeStatusUpdater();
@@ -28,7 +28,7 @@ public class BungeeController implements ServerController {
         out.writeUTF(line);
         ServerInfo sv = BungeeCord.getInstance().getServerInfo(server);
         if (sv != null) {
-            sv.sendData(channel, out.toByteArray(), true);
+            sv.sendData(BungeeAPI.getChannel(), out.toByteArray(), true);
         }
 
     }
@@ -40,7 +40,7 @@ public class BungeeController implements ServerController {
             out.writeUTF("bungeecord");
             out.writeUTF(tag);
             out.writeUTF(line);
-            sv.sendData(channel, out.toByteArray(), true);
+            sv.sendData(BungeeAPI.getChannel(), out.toByteArray(), true);
         }
 
     }
@@ -71,7 +71,7 @@ public class BungeeController implements ServerController {
 
     @Override
     public void register() {
-        BungeeCord.getInstance().registerChannel(getChannel());
+        BungeeCord.getInstance().registerChannel(BungeeAPI.getChannel());
         BungeeCord.getInstance().getPluginManager().registerListener(plugin, listener);
         for (ServerInfo server : BungeeCord.getInstance().getServers().values()) {
             ServerSpigot servidor = BungeeAPI.getServer(server.getName());
@@ -81,13 +81,14 @@ public class BungeeController implements ServerController {
             servidor.setCount(server.getPlayers().size());
         }
         task = BungeeCord.getInstance().getScheduler().schedule(plugin, updater, 1, 1, TimeUnit.SECONDS);
+        BungeeCord.getInstance().getConsole().sendMessage("§aRegistrando sistema de Conexão com servidores Spigot via PluginMeessaging");
 
     }
 
     @Override
     public void unregister() {
         BungeeCord.getInstance().getPluginManager().unregisterListener(listener);
-        BungeeCord.getInstance().unregisterChannel(getChannel());
+        BungeeCord.getInstance().unregisterChannel(BungeeAPI.getChannel());
         BungeeCord.getInstance().getScheduler().cancel(task);
     }
 
@@ -99,20 +100,14 @@ public class BungeeController implements ServerController {
         this.plugin = plugin;
     }
 
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
 
     @Override
     public void connect(String player, int serverType, int serverState) {
         ProxiedPlayer p = BungeeCord.getInstance().getPlayer(player);
         if (p != null) {
             for (ServerSpigot server : BungeeAPI.getServers()) {
-                if (server.getState() == serverState && server.getType() == serverType) {
+                if (server.getState() == serverState && server.getType() == serverType
+                && server.getCount() < server.getMax()) {
                     ServerInfo sv = BungeeCord.getInstance().getServerInfo(server.getName());
                     p.connect(sv);
                     break;

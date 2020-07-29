@@ -16,7 +16,7 @@ public class BukkitMessageListener implements PluginMessageListener{
 	
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-		if (channel.equals(controller.getChannel())) {
+		if (channel.equals(BungeeAPI.getChannel())) {
 			ByteArrayDataInput data = ByteStreams.newDataInput(message);
 			String server = data.readUTF();
 			String tag = data.readUTF();

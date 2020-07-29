@@ -1,6 +1,6 @@
 package net.eduard.api.lib.command
 
-import net.eduard.api.lib.bungee.BukkitBungeeAPI
+import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.entity.Player
 

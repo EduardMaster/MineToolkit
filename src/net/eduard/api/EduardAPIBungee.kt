@@ -1,12 +1,15 @@
 package net.eduard.api
 
+import net.eduard.api.command.bungee.BungeeReloadCommand
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerState
 import net.eduard.api.lib.plugin.HybridPlugin
 import net.eduard.api.lib.plugin.IPluginInstance
+import net.eduard.api.listener.BungeeEvents
 import net.eduard.api.server.BungeeDB
 import net.md_5.bungee.BungeeCord
 import net.md_5.bungee.api.plugin.Plugin
+import java.io.File
 
 /**
  * Para fazer plugins usando esta dependencia , lembre-se de colocar depends: [EduardAPI]
@@ -23,29 +26,36 @@ class EduardAPIBungee(plugin : IPluginInstance) : HybridPlugin() {
         return pluginBase.plugin as Plugin
     }
 
+    override val pluginFolder: File
+        get() = plugin.dataFolder
+
+    override val pluginName: String
+        get() = plugin.description.name
+
+
     override fun onEnable() {
         instance = this
 
         reload()
 
-        val bungee = BungeeAPI.getBungee()
-        bungee.plugin = plugin
-        bungee.register()
 
-       // BungeeCord.getInstance().getPluginManager().registerListener(this,BungeeEvents())
-       // BungeeCord.getInstance().getPluginManager().registerCommand(this, BungeeReloadCommand())
+
+       BungeeCord.getInstance().getPluginManager()
+               .registerListener(plugin,BungeeEvents())
+        BungeeCord.getInstance().getPluginManager()
+                .registerCommand(plugin, BungeeReloadCommand())
     }
 
     override fun reload() {
 
         bungee = BungeeDB(db)
         if (db.isEnabled) {
-            log("MySQL Ativado iniciando conexao")
+            log("MySQL Ativado, iniciando conexao")
             db.openConnection()
             if (db.hasConnection()) {
-                bungee!!.createBungeeTables()
+                bungee.createBungeeTables()
                 for (server in BungeeCord.getInstance().servers.values) {
-                    if (!bungee!!.serversContains(server.name)) {
+                    if (!bungee.serversContains(server.name)) {
                         db.insert("servers", server.name,
                                 server.address.address.hostAddress, server.address.port, 0, 0)
                     } else {
@@ -55,10 +65,10 @@ class EduardAPIBungee(plugin : IPluginInstance) : HybridPlugin() {
                     }
                 }
             } else {
-                error("§cFalha ao conectar com a Database")
+                error("Falha ao conectar com ao MySQL")
             }
         } else {
-            log("MySQL destivado algumas coisas da EduardBungeeAPI estarao desativado")
+            error("MySQL desativado algumas coisas da EduardBungeeAPI estarao desativado")
         }
         for (server in BungeeCord.getInstance().servers.values) {
             config.add("servers." + server.name + ".enabled", true)

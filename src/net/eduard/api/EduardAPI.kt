@@ -8,7 +8,7 @@ import net.eduard.api.core.InfoGenerator
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.hooks.JHCashHook
 import net.eduard.api.hooks.StoryHook
-import net.eduard.api.lib.bungee.BukkitBungeeAPI
+import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.modules.ServerAPI.BukkitControl
 import net.eduard.api.lib.config.Config

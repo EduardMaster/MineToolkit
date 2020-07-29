@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BungeeAPI {
+	private static String channel="bukkit:bungee";
+	public static String getChannel() {
+		return channel;
+	}
 	private static List<ServerSpigot> servers = new ArrayList<>();
 	private static ServerController controller;
 	public static ServerSpigot getServer(String serverName) {

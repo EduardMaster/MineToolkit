@@ -1,7 +1,6 @@
 package net.eduard.api.lib.database;
 
 import java.sql.*;
-import java.sql.Date;
 import java.util.*;
 
 import net.eduard.api.lib.database.api.SQLOption;
@@ -49,7 +48,7 @@ public class DBManager {
      *
      * @return Se esta instalado MySQL na Maquina
      */
-    public static boolean hasMySQL() {
+    private static boolean hasMySQL() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             return true;
@@ -57,8 +56,12 @@ public class DBManager {
             return false;
         }
     }
-
-    public static boolean hasSQLite() {
+    /**
+     * Ve se existe SQLite na Maquina
+     *
+     * @return Se esta instalado SQLite na Maquina
+     */
+    private static boolean hasSQLite() {
         try {
             Class.forName("org.sqlite.JDBC");
             return true;
@@ -83,20 +86,20 @@ public class DBManager {
     }
 
     /**
-     * Cria uma connec§§o com a Database
+     * Cria uma conexão com a Database
      *
-     * @return
-     * @throws Exception
+     * @return A conexão se criada
+     * @throws Exception Erro
      */
     public Connection connectBase() throws Exception {
         return DriverManager.getConnection(getURL() + database + "?autoReconnect=true", user, pass);
     }
 
     /**
-     * Cria uma conne§§o com o Driver
+     * Cria uma connexão com o Driver
      *
-     * @return
-     * @throws Exception
+     * @return Conexão nova criada
+     * @throws Exception Erro
      */
     public Connection connect() throws Exception {
         if (useSQLite()) {
@@ -257,7 +260,7 @@ public class DBManager {
      *
      * @param table   Tabela
      * @param objects Objetos
-     * @return
+     * @return Id gerado pelo Insert
      */
     public int insert(String table, Object... objects) {
         StringBuilder builder = new StringBuilder();
@@ -284,7 +287,7 @@ public class DBManager {
      * @param table Tabela
      * @param index Index (ID)
      */
-    public void delete(String table, int index) {
+    public void deleteData(String table, int index) {
 
         update(option.deleteData() + table + " WHERE ID = ?", index);
     }
@@ -296,7 +299,7 @@ public class DBManager {
      * @param where  Como
      * @param values Valores
      */
-    public void delete(String table, String where, Object... values) {
+    public void deleteData(String table, String where, Object... values) {
         update("DELETE FROM " + table + " WHERE " + where, values);
     }
 
@@ -306,7 +309,7 @@ public class DBManager {
      * @param table  Tale
      * @param column Coluna
      */
-    public void delete(String table, String column) {
+    public void deleteColumn(String table, String column) {
 
         alter(table, "drop column " + column);
     }
@@ -325,11 +328,20 @@ public class DBManager {
         update("ALTER TABLE " + table + " ADD FOREIGN KEY (" + key + ") REFERENCES " + references);
     }
 
+    /**
+     * Cria uma view com um select
+     * @param view View
+     * @param select Select query
+     */
     public void createView(String view, String select) {
 
         update("CREATE OR REPLACE VIEW " + view + " AS " + select);
     }
 
+    /**
+     * Deleta a view
+     * @param view View
+     */
     public void deleteView(String view) {
         update("DROP VIEW " + view);
     }
@@ -345,7 +357,7 @@ public class DBManager {
     }
 
     /**
-     * Modifica uma Coluna de uma Tabela
+     * Modifica a Coluna da Tabela
      *
      * @param table        Tabela
      * @param column       Coluna
@@ -368,8 +380,8 @@ public class DBManager {
     /**
      * Altera uma tabala
      *
-     * @param table
-     * @param alter
+     * @param table Tabela
+     * @param alter Alteração
      */
     public void alter(String table, String alter) {
         if (hasConnection())
@@ -392,7 +404,7 @@ public class DBManager {
      * Cria um join entre as tabelas
      *
      * @param table     Tabela
-     * @param joinTable Tabela2
+     * @param joinTable Tabela de Junção
      * @param onClause  Comparador
      * @param select    Select completo
      * @return ResultSet
@@ -413,17 +425,18 @@ public class DBManager {
     /**
      * Limpa a tabela removendo todos registros
      *
-     * @param table
+     * @param table Tabela
      */
     public void clearTable(String table) {
         update("TRUNCATE TABLE " + table);
     }
 
     /**
-     * @param table
-     * @param where
-     * @param values
-     * @return
+     * Verifica se contem algo na tabela
+     * @param table Tabela
+     * @param where Verificação
+     * @param values Valores da verificação
+     * @return Se contem
      */
     public boolean contains(String table, String where, Object... values) {
         return contains("select * from " + table + " where " + where, values);
@@ -454,7 +467,7 @@ public class DBManager {
     }
 
     /**
-     * Executa uma Atualisação com um Query
+     * Executa uma Atualização com um Query
      *
      * @param query   Query Pesquisa
      * @param objects Objetos
@@ -524,52 +537,14 @@ public class DBManager {
         return null;
     }
 
-    public String getString(String table, String column, String where, Object... objects
-    ) {
-        return this.getData(String.class, table, column, where, objects
-        );
-    }
 
-    public Date getDate(String table, String column, String where, Object... objects
-    ) {
-        return this.getData(Date.class, table, column, where, objects
-        );
-    }
 
-    public UUID getUUID(String table, String column, String where, Object... objects
-    ) {
-        return UUID.fromString(getString(table, column, where, objects
-        ));
-    }
 
-    public int getInt(String table, String column, String where, Object... objects
-    ) {
-        return this.getData(Integer.class, table, column, where, objects
-        );
-    }
 
-    public double getDouble(String table, String column, String where, Object... objects
-    ) {
-        return this.getData(Double.class, table, column, where, objects
-        );
-    }
 
-    public <E> E getData(Class<E> type, String table, String column, String where, Object... objects
-    ) {
-        E result = null;
-        ResultSet rs = selectAll(table, where, objects
-        );
-        try {
-            if (rs.next()) {
-                result = (E) rs.getObject(column, type);
-            }
-            rs.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        return result;
-    }
+
+
 
     public ResultSet selectAll(String table, String where, Object... objects
     ) {
@@ -726,9 +701,5 @@ public class DBManager {
         this.enabled = enabled;
     }
 
-
-    /**
-     *
-     */
 
 }

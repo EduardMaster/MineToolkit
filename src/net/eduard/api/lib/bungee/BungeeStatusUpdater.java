@@ -14,21 +14,18 @@ public class BungeeStatusUpdater implements Runnable{
 			if (servidor==null)continue;
 			if ((!server.isDisabled())
 					&& ((server.isOffline()) || ((servidor.getPlayers().size() == 0) && (server.isRestarting())))) {
-				servidor.ping(new Callback<ServerPing>() {
-					public void done(ServerPing result, Throwable error) {
-						if (result == null) {
-							if (!server.isRestarting()) {
-								server.setState(ServerState.OFFLINE);
-							}
-						} else {
-							server.setMax(result.getPlayers().getMax());
-							server.setCount(result.getPlayers().getOnline());
-							if ((server.isOffline()) || (server.isRestarting())) {
-								server.setState(ServerState.ONLINE);
-							}
+				servidor.ping((result, error) -> {
+					if (result == null) {
+						if (!server.isRestarting()) {
+							server.setState(ServerState.OFFLINE);
+						}
+					} else {
+						server.setMax(result.getPlayers().getMax());
+						server.setCount(result.getPlayers().getOnline());
+						if ((server.isOffline()) || (server.isRestarting())) {
+							server.setState(ServerState.ONLINE);
 						}
 					}
-
 				});
 			}
 		}

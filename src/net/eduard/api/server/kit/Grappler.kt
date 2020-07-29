@@ -54,7 +54,7 @@ class Grappler : KitAbility() {
         setIcon(Material.LEASH, "§fSe mova mais rapido")
         add(Material.LEASH)
         activeCooldownOnPvP = true
-        setTime(5)
+        time=(5)
         price = 50 * 1000.0
     }
 

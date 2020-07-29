@@ -14,7 +14,7 @@ public class BungeeMessageListener  implements Listener{
 	}
 	@EventHandler
 	public void onMessage(PluginMessageEvent event) {
-		if (event.getTag().equals(controller.getChannel())) {
+		if (event.getTag().equals(BungeeAPI.getChannel())) {
 			ByteArrayDataInput data = ByteStreams.newDataInput(event.getData());
 			String server = data.readUTF();
 			String tag = data.readUTF();

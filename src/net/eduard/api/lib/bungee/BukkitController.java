@@ -9,8 +9,7 @@ import com.google.common.io.ByteStreams;
 public class BukkitController implements ServerController{
 	
 	private Plugin plugin;
-	// na versão 1.15 do minecraft precisa ter : e precisa ser minusculo
-	private String channel="bukkit:bungee";
+
 	private BukkitMessageListener listener = new BukkitMessageListener(this);
 
 	@Override
@@ -19,17 +18,17 @@ public class BukkitController implements ServerController{
 		out.writeUTF(server);
 		out.writeUTF(tag);
 		out.writeUTF(line);
-		Bukkit.getServer().sendPluginMessage(plugin, channel, out.toByteArray());
+		Bukkit.getServer().sendPluginMessage(plugin, BungeeAPI.getChannel(), out.toByteArray());
 		
 	}
 
 	@Override
 	public void sendMessage(String tag, String line) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF(channel);
+		out.writeUTF("bungeecord");
 		out.writeUTF(tag);
 		out.writeUTF(line);
-		Bukkit.getServer().sendPluginMessage(plugin, channel, out.toByteArray());
+		Bukkit.getServer().sendPluginMessage(plugin, BungeeAPI.getChannel(), out.toByteArray());
 
 		
 	}
@@ -42,25 +41,19 @@ public class BukkitController implements ServerController{
 		this.plugin = plugin;
 	}
 
-	public String getChannel() {
-		return channel;
-	}
-
-	public void setChannel(String channel) {
-		this.channel = channel;
-	}
 
 	@Override
 	public void register() {
-		Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, getChannel());
-		Bukkit.getMessenger().registerIncomingPluginChannel(plugin, getChannel(), listener );
+		Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, BungeeAPI.getChannel());
+		Bukkit.getMessenger().registerIncomingPluginChannel(plugin, BungeeAPI.getChannel(), listener );
+		Bukkit.getConsoleSender().sendMessage("§aRegistrando sistema de conexão com Bungeecoard via Plugin Messaging");
 
 	}
 
 	@Override
 	public void unregister() {
-		Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin, getChannel(),listener);
-		Bukkit.getMessenger().unregisterOutgoingPluginChannel(plugin, getChannel());
+		Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin, BungeeAPI.getChannel(),listener);
+		Bukkit.getMessenger().unregisterOutgoingPluginChannel(plugin, BungeeAPI.getChannel());
 
 	}
 

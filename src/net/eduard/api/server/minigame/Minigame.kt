@@ -8,7 +8,7 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.game.DisplayBoard
 import net.eduard.api.lib.game.Kit
 import net.eduard.api.lib.manager.TimeManager
-import net.eduard.api.lib.bungee.BukkitBungeeAPI
+import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.game.FakePlayer
 import org.bukkit.plugin.java.JavaPlugin

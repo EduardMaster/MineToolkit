@@ -12,24 +12,6 @@ class BungeeDB(var db: DBManager) {
         db.createTable("players", "name varchar(16), uuid varchar(100), server varchar(50)")
     }
 
-    /**
-     * Adiciona um numero atual do tempo na tabela para o jogador
-     *
-     * @param table
-     * Tabela
-     * @param playerId
-     * Jogador UUID
-     */
-    fun addCooldown(table: String, playerId: String) {
-        db.createTable(table, "uuid varchar not null, time long not null")
-
-        if (!db.contains(table, "uuid = ?", playerId)) {
-            db.insert(table, playerId, System.currentTimeMillis())
-        } else {
-            db.change(table, "id = ?", "time = ?", playerId, System.currentTimeMillis())
-        }
-    }
-
     fun setStatusServer(server: String, status: Int) {
         db.change("servers", "status = ?", "name = ?", status, server)
     }
@@ -44,7 +26,15 @@ class BungeeDB(var db: DBManager) {
     }
 
     fun getPlayerServer(playerId: UUID): String {
-        return db.getString("players", "server", "uuid = ?", playerId)
+
+        val data = db.select("select * from players where uuid = ?",playerId)
+        var server = "lobby"
+        if (data.next()){
+            server = data.getString("server")
+        }
+        data.close();
+
+        return  server;
     }
 
     fun playersContains(name: String): Boolean {
@@ -64,7 +54,15 @@ class BungeeDB(var db: DBManager) {
     }
 
     fun getPlayersAmount(server: String): Int {
-        return db.getInt("servers", "players", "name = ?", server)
+
+        val data = db.select("select * from servers where name = ?",server)
+        var amount = 0
+        if (data.next()){
+            amount = data.getInt("players")
+        }
+        data.close();
+
+        return  amount;
     }
 
 }
