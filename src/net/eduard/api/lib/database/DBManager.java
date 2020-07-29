@@ -56,6 +56,7 @@ public class DBManager {
             return false;
         }
     }
+
     /**
      * Ve se existe SQLite na Maquina
      *
@@ -103,7 +104,7 @@ public class DBManager {
      */
     public Connection connect() throws Exception {
         if (useSQLite()) {
-            return DriverManager.getConnection(type+":"+database+".db");
+            return DriverManager.getConnection(type + ":" + database + ".db");
         }
         return DriverManager.getConnection(getURL() + "?autoReconnect=true", user, pass);
     }
@@ -330,7 +331,8 @@ public class DBManager {
 
     /**
      * Cria uma view com um select
-     * @param view View
+     *
+     * @param view   View
      * @param select Select query
      */
     public void createView(String view, String select) {
@@ -340,6 +342,7 @@ public class DBManager {
 
     /**
      * Deleta a view
+     *
      * @param view View
      */
     public void deleteView(String view) {
@@ -433,8 +436,9 @@ public class DBManager {
 
     /**
      * Verifica se contem algo na tabela
-     * @param table Tabela
-     * @param where Verificação
+     *
+     * @param table  Tabela
+     * @param where  Verificação
      * @param values Valores da verificação
      * @return Se contem
      */
@@ -496,6 +500,29 @@ public class DBManager {
         return resultado;
     }
 
+    public double getDouble(String table, String column, String where, Object... objects) {
+        return getData(Double.class, table, column, where, objects);
+    }
+    public double getInt(String table, String column, String where, Object... objects) {
+        return getData(Integer.class, table, column, where, objects);
+    }
+    public <T> T getData(Class<T> type, String table, String column, String where, Object... objects) {
+        T result = null;
+        if (hasConnection())
+            try {
+                ResultSet rs = selectAll(table, where, objects);
+                if (rs.next()) {
+                    result = (T) rs.getObject(column);
+                }
+                rs.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return result;
+
+    }
+
     /**
      * Cria um PreparedStatement com uma Query dada, e aplica os objects
      *
@@ -536,14 +563,6 @@ public class DBManager {
         }
         return null;
     }
-
-
-
-
-
-
-
-
 
 
     public ResultSet selectAll(String table, String where, Object... objects
@@ -681,7 +700,6 @@ public class DBManager {
         if (useSQLite)
             this.type = "jdbc:sqlite";
     }
-
 
 
     public static boolean isDebugging() {
