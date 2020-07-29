@@ -53,7 +53,7 @@ class EduardAPIBungee(plugin : IPluginInstance) : HybridPlugin() {
             log("MySQL Ativado, iniciando conexao")
             db.openConnection()
             if (db.hasConnection()) {
-                bungee.createBungeeTables()
+                bungee.createNetworkTables()
                 for (server in BungeeCord.getInstance().servers.values) {
                     if (!bungee.serversContains(server.name)) {
                         db.insert("servers", server.name,
