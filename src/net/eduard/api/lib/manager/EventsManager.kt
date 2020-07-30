@@ -37,7 +37,7 @@ open class EventsManager : Listener {
      *
      * @param plugin Plugin
      */
-    fun registerListener(plugin: JavaPlugin) {
+    open fun registerListener(plugin: JavaPlugin) {
         unregisterListener()
         this.plugin = plugin
         registerListener()

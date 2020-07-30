@@ -8,6 +8,7 @@ import net.eduard.api.core.InfoGenerator
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.hooks.JHCashHook
 import net.eduard.api.hooks.StoryHook
+import net.eduard.api.lib.abstraction.EntidadesNMSTeste
 import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.modules.ServerAPI.BukkitControl
@@ -148,7 +149,7 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
 
     fun testingKotlin(){
         log("Testando Kotlin")
-
+        EntidadesNMSTeste().register(this)
         EventsAlterations()
     }
 

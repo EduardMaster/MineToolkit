@@ -25,14 +25,16 @@ interface Hologram {
 
 
     companion object {
-        fun create(text: String): Hologram {
+        fun create(text: String): Hologram? {
             return try {
-                val holo = Class.forName("net.eduard.api.lib.abstraction.Hologram_" + MineReflect.getVersion())
+                val holo = Class.
+                forName("net.eduard.api.lib.abstraction.Hologram_"
+                        + MineReflect.getVersion())
                         .newInstance() as Hologram
                 holo.setText(text)
                 holo
             } catch (e: Exception) {
-                null!!
+                null
             }
         }
     }
