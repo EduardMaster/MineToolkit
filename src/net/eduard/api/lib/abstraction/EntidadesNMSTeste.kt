@@ -4,7 +4,6 @@ import com.mojang.authlib.GameProfile
 import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.modules.Extra
 import net.minecraft.server.v1_8_R3.*
-import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
@@ -17,39 +16,95 @@ import org.bukkit.entity.Zombie
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitRunnable
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class EntidadesNMSTeste : EventsManager() {
 
 
     @EventHandler
     fun event(e: PlayerCommandPreprocessEvent) {
-        if (e.message.startsWith("/cu")) {
-            e.isCancelled = true
-            removerBlocosErrados(e.player)
+        if (e.message.startsWith("/nmsteste")) {
+            if (e.player.isOp) {
+                e.isCancelled = true
+            }
+
         }
 
     }
-    val queue = ConcurrentLinkedQueue<Block>()
 
-    fun limparBlocos(){
-        
-    }
+    val lista = ArrayList<Block>()
 
-    fun removerBlocosErrados(p: Player) {
-        val variation = 500
-        for (x in -variation until +variation) {
-            for (y in 0 until 100) {
-                for (z in -variation until +variation) {
-                    val block = p.world.getBlockAt(x,y,z)
-                    if (block.typeId == 22){
-                        queue.add(block)
+    fun limparBlocos(p: Player) {
+        object : BukkitRunnable() {
+
+            var start = System.currentTimeMillis()
+            override fun run() {
+                var blocksRemoved = 0
+                repeat(1000) {
+
+                    if (lista.isNotEmpty()) {
+                        val block = lista[0]
+                        block.type = Material.AIR
+                        blocksRemoved++
                     }
 
                 }
+
+                if (System.currentTimeMillis() > (start + TimeUnit.MINUTES.toMillis(1))){
+                    p.sendMessage("§aSem mais blocos para ser removidos")
+                    cancel()
+                    return
+                }
+                p.sendMessage("§aBlocos removidos neste segundo $blocksRemoved")
             }
-        }
+
+        }.runTaskTimer(plugin, 20L, 20L)
+
+    }
+
+    fun removerBlocosErrados(p: Player) {
+
+        object : BukkitRunnable() {
+
+
+            val variation = 500
+            var perTime = 100
+            var current = -variation
+            var currentTick = 0
+            override fun run() {
+
+                var blocksToRemove = 0
+                for (x in 0 until perTime) {
+                    for (y in 0 until 100) {
+                        for (z in 0 until perTime) {
+                            val block = p.world.getBlockAt(current+x, y,current+ z)
+
+                            if (block.typeId == 22) {
+                                p.sendMessage("§6 x: ${block.x} y: ${block.y} z: ${block.z} Tipo: ${block.type}")
+                                lista.add(block)
+                                blocksToRemove++
+                            }
+
+                        }
+                    }
+                }
+
+                current += perTime
+                currentTick++
+                if (current>=+variation){
+                    p.sendMessage("§aChegou e leu no total: ${variation*2*100*variation*2 }")
+                    cancel()
+                }
+                p.sendMessage("§eCurrent ${current} Blocks to remove $blocksToRemove this tick $currentTick")
+            }
+
+        }.runTaskTimer(plugin, 0L, 1L)
+
+
 
     }
 
