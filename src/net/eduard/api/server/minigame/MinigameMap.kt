@@ -31,7 +31,6 @@ class MinigameMap(
         minigame?.maps?.add(this)
 
     }
-    lateinit var b : CraftScoreboard
 
 
     var teamSize = 1
@@ -59,13 +58,18 @@ class MinigameMap(
     @Transient
     var world: World = loadWorld()
 
-    fun copyWorld(map : MinigameMap) {
+    fun copyWorld(map: MinigameMap) {
         world = Mine.copyWorld(map.worldName, worldName)
         fixWorld()
     }
 
     fun unloadWorld() {
         Mine.unloadWorld(worldName, world.isAutoSave)
+    }
+
+    fun clearWorld() {
+        Mine.deleteWorld(worldName)
+        world = Mine.newEmptyWorld(worldName)
     }
 
     fun loadWorld(): World {
@@ -76,6 +80,7 @@ class MinigameMap(
         return mundo!!
 
     }
+
     fun fixWorld() = world(world)
 
     fun resetWorld() {
@@ -123,7 +128,6 @@ class MinigameMap(
         map!!.paste(relative, true)
 
     }
-
 
 
     val hasFeast get() = feast != null
