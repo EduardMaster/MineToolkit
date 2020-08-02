@@ -19,23 +19,8 @@ import java.security.CodeSource;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -44,8 +29,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -117,10 +100,10 @@ public final class Extra {
     /**
      * Tenta ler o arquivo dentro do Jar
      *
-     * @param loader
-     * @param name
+     * @param loader ClassLoader que ligou a classe
+     * @param name   Nome do Recurso (Arquivo dentro do Jar)
      * @return InputStream da leitura
-     * @throws IOException
+     * @throws IOException Erro
      */
     public static InputStream getResource(ClassLoader loader, String name) throws IOException {
         URL url = loader.getResource(name);
@@ -141,13 +124,13 @@ public final class Extra {
     public static void copyWorldFolder(File source, File target) {
 
         try {
-            List<String> ignore = new ArrayList<String>(Arrays.asList("uid.dat", "session.dat"));
+            List<String> ignore = new ArrayList<>(Arrays.asList("uid.dat", "session.dat"));
             if (!ignore.contains(source.getName())) {
                 if (source.isDirectory()) {
                     if (!target.exists())
                         target.mkdirs();
-                    String files[] = source.list();
-                    for (String file : files) {
+                    String[] files = source.list();
+                    for (String file : Objects.requireNonNull(files)) {
                         File srcFile = new File(source, file);
                         File destFile = new File(target, file);
                         copyWorldFolder(srcFile, destFile);
@@ -178,13 +161,13 @@ public final class Extra {
     public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
     public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
     public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
-    private static Map<String, String> replacers = new LinkedHashMap<>();
+    private static final Map<String, String> REPLACERS = new LinkedHashMap<>();
 
 
-    public static Random RANDOM = new Random();
+    private static final Random RANDOM = new Random();
 
 
-    private static Map<Class<?>, Class<?>> wrappers = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> wrappers = new HashMap<>();
 
     static {
 
@@ -201,15 +184,15 @@ public final class Extra {
     }
 
     static {
-        replacers.put("#b", "org.bukkit.");
-        replacers.put("#s", "org.spigotmc.");
-        replacers.put("#a", "net.eduard.api.");
-        replacers.put("#e", "net.eduard.eduardapi.");
-        replacers.put("#k", "net.eduard.api.kits.");
-        replacers.put("#p", "#mPacket");
-        replacers.put("#m", "net.minecraft.server.#v.");
-        replacers.put("#c", "org.bukkit.craftbukkit.#v.");
-        replacers.put("#s", "org.bukkit.");
+        REPLACERS.put("#b", "org.bukkit.");
+        REPLACERS.put("#s", "org.spigotmc.");
+        REPLACERS.put("#a", "net.eduard.api.");
+        REPLACERS.put("#e", "net.eduard.eduardapi.");
+        REPLACERS.put("#k", "net.eduard.api.kits.");
+        REPLACERS.put("#p", "#mPacket");
+        REPLACERS.put("#m", "net.minecraft.server.#v.");
+        REPLACERS.put("#c", "org.bukkit.craftbukkit.#v.");
+        REPLACERS.put("#s", "org.bukkit.");
     }
 
     /**
@@ -244,8 +227,8 @@ public final class Extra {
     /**
      * Centraliza a Array
      *
-     * @param paragraph
-     * @param title
+     * @param paragraph Paragrafo em forma de Array de Texto
+     * @param title     Titulo do Texto
      */
     public static void box(String[] paragraph, String title) {
         ArrayList<String> buffer = new ArrayList<String>();
@@ -267,10 +250,9 @@ public final class Extra {
         buffer.add(at.toString());
         at = new StringBuilder();
         buffer.add("|                                                   |");
-        String[] arrayOfString = paragraph;
         int j = paragraph.length;
         for (int i = 0; i < j; i++) {
-            String s = arrayOfString[i];
+            String s = paragraph[i];
             at.append("| ");
             int left = 49;
             for (int t = 0; t < s.length(); t++) {
@@ -368,14 +350,14 @@ public final class Extra {
      */
     public static void deleteFolder(File file) {
         if (file.exists()) {
-            File files[] = file.listFiles();
+            File[] files = file.listFiles();
             if (files != null) {
-                for (int i = 0; i < files.length; i++) {
-                    if (files[i].isDirectory()) {
-                        deleteFolder(files[i]);
-                        files[i].delete();
+                for (File value : files) {
+                    if (value.isDirectory()) {
+                        deleteFolder(value);
+                        value.delete();
                     } else {
-                        files[i].delete();
+                        value.delete();
                     }
                 }
             }
@@ -612,15 +594,15 @@ public final class Extra {
      * No dia 28/07/2019 o ViniOtaku#0666 passou este Metodo de formatacao<br>
      * se usar formatMoney3(numero, 0)
      *
-     * @param numero
-     * @param iteration
+     * @param numero    Numero grandão
+     * @param iteration Interação em N
      * @return Numero Formatado
      * @deprecated Por alguma razão deu falhas no funcionamento mas funcionava bem
      */
     @Deprecated
     public static String formatMoney3(double numero, int iteration) {
         String[] letras = new String[]{"K", "M", "B", "Q", "QQ", "S", "SS", "O", "N", "D"};
-        double d = ((long) numero / 100) / 10.0;
+        double d = ((long) numero / 100D) / 10.0;
         boolean isRound = (d * 10) % 10 == 0;
 
 
@@ -763,7 +745,6 @@ public final class Extra {
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
-               // System.out.println("Entrada "+entryName);
                 if ((entryName.endsWith(".class")) && (entryName.startsWith(relPath)) && !entryName.contains("$")) {
 
                     String classeName = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
@@ -792,7 +773,7 @@ public final class Extra {
         if (object instanceof String) {
             String string = (String) object;
             if (string.startsWith("#")) {
-                for (Entry<String, String> entry : replacers.entrySet()) {
+                for (Entry<String, String> entry : REPLACERS.entrySet()) {
                     string = string.replace(entry.getKey(), entry.getValue());
                 }
                 return Class.forName(string);
@@ -800,7 +781,7 @@ public final class Extra {
         }
         try {
             return (Class<?>) object.getClass().getField("TYPE").get(0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return object.getClass();
     }
@@ -832,7 +813,6 @@ public final class Extra {
     }
 
 
-
     /**
      * Pega o tempo restante que podera sair do cooldown
      *
@@ -850,7 +830,6 @@ public final class Extra {
         return +cooldown - now + before;
 
     }
-
 
 
     public static int getIndex(int column, int line) {
@@ -874,11 +853,9 @@ public final class Extra {
     }
 
 
-
     public static long getNow() {
         return System.currentTimeMillis();
     }
-
 
 
     /**
@@ -893,23 +870,21 @@ public final class Extra {
             URL link = new URL("https://api.mojang.com/users/profiles/minecraft/" + playerName);
             URLConnection conexao = link.openConnection();
             InputStream stream = conexao.getInputStream();
-            byte[] array = new byte[stream.available()];
-            stream.read(array);
-            stream.close();
-            String json = new String(array);
+            String json = readSTR(stream, StandardCharsets.UTF_8);
             JsonParser parser = new JsonParser();
             JsonObject object = parser.parse(json).getAsJsonObject();
             return object.get("id").getAsString();
 
-        } catch (Exception ex) {
-            //ex.printStackTrace();
+        } catch (Exception ignored) {
+
         }
 
         return null;
     }
+
     public static String getProgressBar(double money, double price, String completedColor, String needColor,
                                         String symbol) {
-       return getProgressBar(money/price,completedColor,needColor,symbol);
+        return getProgressBar(money / price, completedColor, needColor, symbol);
     }
 
 
@@ -979,13 +954,20 @@ public final class Extra {
     public static Object getFieldValue(Object object, String name) throws Exception {
         return getField(object, name).get(object);
     }
+
+    /**
+     * Retorna o construtor vazio da classe
+     * @param clz Classe com o Construtor vazio
+     * @param <T> Classe
+     * @return Construtor da classe com zero parametros
+     */
     public static <T> Constructor<T> getEmptyConstructor(Class<T> clz) {
         Constructor<T> constructor = null;
-        for (Constructor<?> loopConstructor : clz.getDeclaredConstructors()){
-                if (loopConstructor.getParameterCount() == 0){
-                    constructor = (Constructor<T>) loopConstructor;
-                    break;
-                }
+        for (Constructor<?> loopConstructor : clz.getDeclaredConstructors()) {
+            if (loopConstructor.getParameterCount() == 0) {
+                constructor = (Constructor<T>) loopConstructor;
+                break;
+            }
         }
         return constructor;
     }
@@ -993,9 +975,11 @@ public final class Extra {
     public static void setFieldValue(Object object, String name, Object value) throws Exception {
         getField(object, name).set(object, value);
     }
+
     public static Object getNew(Object object, Object[] parameters, Object... values) throws Exception {
         return getConstructor(object, parameters).newInstance(values);
     }
+
     public static Class<?>[] getParameters(Object... parameters) throws Exception {
         Class<?>[] objects = new Class<?>[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
@@ -1018,6 +1002,7 @@ public final class Extra {
         }
 
     }
+
     public static Field getField(Object object, String name) throws Exception {
         Class<?> claz = getClassFrom(object);
         try {
@@ -1040,7 +1025,7 @@ public final class Extra {
 
     public static <E> E getRandom(List<E> objects) {
         if (objects.size() >= 1)
-            return objects.get(getRandomInt(1, objects.size()) -1);
+            return objects.get(getRandomInt(1, objects.size()) - 1);
         return null;
     }
 
@@ -1065,7 +1050,7 @@ public final class Extra {
     }
 
     public static String getReplacer(String key) {
-        return replacers.get(key);
+        return REPLACERS.get(key);
     }
 
     /**
@@ -1122,8 +1107,8 @@ public final class Extra {
     /**
      * Retorna um JsonObject com os dados mais impotantes o
      *
-     * @param playerUUID
-     * @return
+     * @param playerUUID UUID do Jogador
+     * @return JsonObject com os dados da SKIN
      */
     public static JsonObject getSkinProperty(String playerUUID) {
 
@@ -1133,15 +1118,11 @@ public final class Extra {
             URLConnection conexao = link.openConnection();
             conexao.setUseCaches(true);
             InputStream stream = conexao.getInputStream();
-            byte[] array = new byte[stream.available()];
-            stream.read(array);
-            stream.close();
-            String json = new String(array);
+
+            String json = readSTR(stream, StandardCharsets.UTF_8);
             JsonParser parser = new JsonParser();
             JsonObject object = parser.parse(json).getAsJsonObject();
-            JsonObject skin = object.get("properties").getAsJsonArray().get(0).getAsJsonObject();
-
-            return skin;
+            return object.get("properties").getAsJsonArray().get(0).getAsJsonObject();
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -1319,9 +1300,10 @@ public final class Extra {
         }
         return finalValue;
     }
+
     public static Class<?> getWrapperOrReturn(Class<?> clazz) {
         Class<?> wrapper = getWrapper(clazz);
-        if (wrapper==null){
+        if (wrapper == null) {
             wrapper = clazz;
         }
         return wrapper;
@@ -1489,7 +1471,7 @@ public final class Extra {
         if (type == KeyType.UUID) {
             key = UUID.randomUUID().toString();
         } else if (type == KeyType.LETTER) {
-            final StringBuffer buffer = new StringBuffer();
+            final StringBuilder buffer = new StringBuilder();
             String characters = "";
             characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             final int charactersLength = characters.length();
@@ -1499,7 +1481,7 @@ public final class Extra {
             }
             key = buffer.toString();
         } else if (type == KeyType.NUMERIC) {
-            final StringBuffer buffer = new StringBuffer();
+            final StringBuilder buffer = new StringBuilder();
             String characters = "";
             characters = "0123456789";
             final int charactersLength = characters.length();
@@ -1509,7 +1491,7 @@ public final class Extra {
             }
             key = buffer.toString();
         } else if (type == KeyType.ALPHANUMERIC) {
-            final StringBuffer buffer = new StringBuffer();
+            final StringBuilder buffer = new StringBuilder();
             String characters = "";
             characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             final int charactersLength = characters.length();
@@ -1524,19 +1506,12 @@ public final class Extra {
     }
 
     public static void newReplacer(String key, String replacer) {
-        replacers.put(key, replacer);
+        REPLACERS.put(key, replacer);
     }
 
     @SafeVarargs
     public static <T> Set<T> newSet(T... array) {
-        Set<T> set = new HashSet<>();
-
-
-        for (T element : array) {
-            set.add(element);
-        }
-
-        return set;
+        return new HashSet<>(Arrays.asList(array));
     }
 
     public static long parseDateDiff(String time, boolean future) throws Exception {
@@ -1592,93 +1567,62 @@ public final class Extra {
         if (years > 20) {
             throw new Exception("Illegal Date");
         }
-        Calendar c = new GregorianCalendar();
+        Calendar calendar = new GregorianCalendar();
         if (years > 0) {
-            c.add(1, years * (future ? 1 : -1));
+            calendar.add(Calendar.YEAR, years * (future ? 1 : -1));
         }
         if (months > 0) {
-            c.add(2, months * (future ? 1 : -1));
+            calendar.add(Calendar.MONTH, months * (future ? 1 : -1));
         }
         if (weeks > 0) {
-            c.add(3, weeks * (future ? 1 : -1));
+            calendar.add(Calendar.WEEK_OF_YEAR, weeks * (future ? 1 : -1));
         }
         if (days > 0) {
-            c.add(5, days * (future ? 1 : -1));
+            calendar.add(Calendar.DATE, days * (future ? 1 : -1));
         }
         if (hours > 0) {
-            c.add(11, hours * (future ? 1 : -1));
+            calendar.add(Calendar.HOUR_OF_DAY, hours * (future ? 1 : -1));
         }
         if (minutes > 0) {
-            c.add(12, minutes * (future ? 1 : -1));
+            calendar.add(Calendar.MINUTE, minutes * (future ? 1 : -1));
         }
         if (seconds > 0) {
-            c.add(13, seconds * (future ? 1 : -1));
+            calendar.add(Calendar.SECOND, seconds * (future ? 1 : -1));
         }
-        return c.getTimeInMillis();
+        return calendar.getTimeInMillis();
     }
 
 
     /**
-     * Lê um lista de Objetos apartir de uma Array de byte
+     * Le todas as linhas do arquivo
      *
-     * @param message array de byte
-     * @param oneLine se foi salvo os objetos na mesma linha do arquivo
-     * @return lista de objetos restaurados dos bytes
-     */
-    public static List<Object> read(byte[] message, boolean oneLine) {
-        List<Object> lista = new ArrayList<>();
-        ByteArrayDataInput in = ByteStreams.newDataInput(message);
-        if (oneLine) {
-            String text = in.readUTF();
-            if (text.contains(";")) {
-                for (String line : text.split(";")) {
-                    lista.add(line);
-                }
-            } else {
-                lista.add(text);
-            }
-        } else {
-            String text = in.readUTF();
-            lista.add(text);
-            short size = in.readShort();
-            for (int id = 1; id < size + 1; id++) {
-                lista.add(in.readUTF());
-            }
-        }
-        return lista;
-    }
-
-    /**
-     * Fazer funcionar
-     *
-     * @param file
-     * @return
+     * @param file Arquivo
+     * @return Linhas lida
      */
     public static List<String> readLines(File file) {
         Path path = file.toPath();
         try {
-//			Mine.console("§bConfigAPI §a-> " + file.getName() + " §futf-8");
+
             return Files.readAllLines(path);
-        } catch (Exception e) {
-            // e.printStackTrace();
+        } catch (Exception ignored) {
+
         }
         try {
-//			Mine.console("§bConfigAPI §a-> " + file.getName() + " §f" + Charset.defaultCharset().displayName());
+
             return Files.readAllLines(path, Charset.defaultCharset());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         List<String> lines = new ArrayList<>();
         try {
-//			Mine.console("§bConfigAPI §a-> " + file.getName());
+
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line;
             while ((line = reader.readLine()) != null) {
-                // System.out.println(line);
                 lines.add(line);
             }
             reader.close();
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return lines;
 
@@ -1694,13 +1638,14 @@ public final class Extra {
      */
     public static String readSTR(InputStream stream, Charset charset) throws IOException {
         byte[] bytes = new byte[stream.available()];
-        stream.read(bytes);
-        return new String(bytes, charset);
+        if (stream.read(bytes) != -1) {
+            return new String(bytes, charset);
+        } else return "";
     }
 
     public static String removeBrackets(String... message) {
 
-        return message.toString().replace("[", "").replace("]", "");
+        return Arrays.toString(message).replace("[", "").replace("]", "");
     }
 
 
@@ -1716,7 +1661,6 @@ public final class Extra {
             ObjectOutputStream save = new ObjectOutputStream(saveStream);
             if (object instanceof Serializable) {
                 save.writeObject(object);
-            } else {
             }
             save.close();
             saveStream.close();
@@ -1733,11 +1677,11 @@ public final class Extra {
         for (int i = 0; i < split.length; i++) {
             parse[i] = Integer.parseInt(split[i]) - split.length * split.length;
         }
-        String build = "";
+        StringBuilder build = new StringBuilder();
         for (int i = 0; i < split.length; i++) {
-            build = build + (char) parse[i];
+            build.append((char) parse[i]);
         }
-        return build;
+        return build.toString();
     }
 
     public static String simpleOfuscation(String str) {
@@ -1753,6 +1697,12 @@ public final class Extra {
         return message.toLowerCase().startsWith(text.toLowerCase());
     }
 
+    /**
+     * Transforma um objeto em boolean
+     *
+     * @param obj any
+     * @return Boolean
+     */
     public static Boolean toBoolean(Object obj) {
 
         if (obj == null) {
@@ -1771,8 +1721,8 @@ public final class Extra {
     /**
      * Transforma um objeto em byte
      *
-     * @param object
-     * @return
+     * @param object any
+     * @return Byte
      */
     public static Byte toByte(Object object) {
 
@@ -1893,9 +1843,9 @@ public final class Extra {
     /**
      * Transforma o Texto em uma Lista de Texto
      *
-     * @param text
-     * @param size
-     * @return
+     * @param text Texto a ser cortado
+     * @param size Tamanho do corte
+     * @return Lista de textos
      */
     public static List<String> toLines(String text, int size) {
 
@@ -1965,8 +1915,8 @@ public final class Extra {
     /**
      * Transforma um objeto em texto
      *
-     * @param object
-     * @return
+     * @param object any
+     * @return String
      */
     public static String toString(Object object) {
 
@@ -1986,10 +1936,11 @@ public final class Extra {
     /**
      * Transforma uma array de objeto em texto
      *
-     * @param objects
-     * @return
+     * @param objects varios objetos
+     * @return Texto
      */
     public static String toText(Object... objects) {
+
         StringBuilder builder = new StringBuilder();
         for (Object object : objects) {
             builder.append(object);
@@ -2024,16 +1975,16 @@ public final class Extra {
      */
     public static String toTitle(String name, String replacer) {
         if (name.contains("_")) {
-            String customName = "";
+            StringBuilder customName = new StringBuilder();
             int id = 0;
             for (String newName : name.split("_")) {
                 if (id != 0) {
-                    customName += replacer;
+                    customName.append(replacer);
                 }
                 id++;
-                customName += toTitle(newName);
+                customName.append(toTitle(newName));
             }
-            return customName;
+            return customName.toString();
         }
         return toTitle(name);
     }
@@ -2047,9 +1998,9 @@ public final class Extra {
     public static void unzip(String zipFilePath, String destDirectory) {
         try {
             File destDir = new File(destDirectory);
-            if (!destDir.exists()) {
-                destDir.mkdir();
-            }
+            if (!destDir.exists())
+                destDir.mkdirs();
+
             ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
             ZipEntry entry = zipIn.getNextEntry();
 
@@ -2059,7 +2010,7 @@ public final class Extra {
                     extractFile(zipIn, filePath);
                 } else {
                     File dir = new File(filePath);
-                    dir.mkdir();
+                    dir.mkdirs();
                 }
                 zipIn.closeEntry();
                 entry = zipIn.getNextEntry();
@@ -2083,48 +2034,18 @@ public final class Extra {
         return matcher.matches();
     }
 
-    public static byte[] write(String tag, boolean oneLine, List<Object> objects) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(stream);
-        try {
-            if (oneLine) {
-                StringBuilder sb = new StringBuilder();
-                for (int id = 0; id < objects.size(); id++) {
-                    if (id != 0) {
-                        sb.append(";");
-                    }
-                    sb.append(objects.get(id));
-                }
-                out.writeUTF(sb.toString());
-            } else {
-                out.writeUTF(tag);
-                out.writeShort(objects.size());
-                for (Object value : objects) {
-                    out.writeUTF("" + value);
-                }
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stream.toByteArray();
-    }
-
-    public static byte[] write(String tag, boolean oneLine, Object... objects) {
-        return write(tag, oneLine, Arrays.asList(objects));
-    }
 
     public static void writeLines(File file, List<String> lines) {
         Path path = file.toPath();
         try {
             Files.write(path, lines, StandardCharsets.UTF_8);
             return;
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         try {
             Files.write(path, lines, Charset.defaultCharset());
             return;
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));

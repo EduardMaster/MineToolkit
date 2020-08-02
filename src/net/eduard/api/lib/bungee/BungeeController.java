@@ -1,13 +1,14 @@
 package net.eduard.api.lib.bungee;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-
 import net.eduard.api.lib.modules.Extra;
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -16,31 +17,44 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 public class BungeeController implements ServerController {
 
     private Plugin plugin;
-    private BungeeMessageListener listener = new BungeeMessageListener(this);
-    private BungeeStatusUpdater updater = new BungeeStatusUpdater();
+    private final BungeeMessageListener listener = new BungeeMessageListener(this);
+    private final BungeeStatusUpdater updater = new BungeeStatusUpdater();
     private ScheduledTask task;
 
     @Override
     public void sendMessage(String server, String tag, String line) {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF(server);
-        out.writeUTF(tag);
-        out.writeUTF(line);
-        ServerInfo sv = BungeeCord.getInstance().getServerInfo(server);
-        if (sv != null) {
-            sv.sendData(BungeeAPI.getChannel(), out.toByteArray(), true);
+        ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(arrayOut);
+        try {
+            out.writeUTF(server);
+            out.writeUTF(tag);
+            out.writeUTF(line);
+            ServerInfo sv = BungeeCord.getInstance().getServerInfo(server);
+            if (sv != null) {
+                sv.sendData(BungeeAPI.getChannel(), arrayOut.toByteArray(), true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
 
     }
 
     @Override
     public void sendMessage(String tag, String line) {
         for (ServerInfo sv : BungeeCord.getInstance().getServers().values()) {
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            out.writeUTF("bungeecord");
-            out.writeUTF(tag);
-            out.writeUTF(line);
-            sv.sendData(BungeeAPI.getChannel(), out.toByteArray(), true);
+            ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(arrayOut);
+            try {
+                out.writeUTF("bungeecord");
+                out.writeUTF(tag);
+                out.writeUTF(line);
+                sv.sendData(BungeeAPI.getChannel(), arrayOut.toByteArray(), true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
         }
 
     }
@@ -81,7 +95,7 @@ public class BungeeController implements ServerController {
             servidor.setCount(server.getPlayers().size());
         }
         task = BungeeCord.getInstance().getScheduler().schedule(plugin, updater, 1, 1, TimeUnit.SECONDS);
-        BungeeCord.getInstance().getConsole().sendMessage("§aRegistrando sistema de Conexão com servidores Spigot via PluginMeessaging");
+        BungeeCord.getInstance().getConsole().sendMessage(new TextComponent("§aRegistrando sistema de Conexão com servidores Spigot via PluginMeessaging"));
 
     }
 
@@ -105,9 +119,10 @@ public class BungeeController implements ServerController {
     public void connect(String player, int serverType, int serverState) {
         ProxiedPlayer p = BungeeCord.getInstance().getPlayer(player);
         if (p != null) {
-            for (ServerSpigot server : BungeeAPI.getServers()) {
-                if (server.getState() == serverState && server.getType() == serverType
-                && server.getCount() < server.getMax()) {
+            for (ServerSpigot server : BungeeAPI.getServers().values()) {
+                if (server.getState() == serverState
+                        && server.getType() == serverType
+                        && server.getCount() < server.getMax()) {
                     ServerInfo sv = BungeeCord.getInstance().getServerInfo(server.getName());
                     p.connect(sv);
                     break;
