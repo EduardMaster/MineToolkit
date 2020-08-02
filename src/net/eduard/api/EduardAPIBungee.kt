@@ -56,10 +56,10 @@ class EduardAPIBungee(plugin : IPluginInstance) : HybridPlugin() {
                 bungee.createNetworkTables()
                 for (server in BungeeCord.getInstance().servers.values) {
                     if (!bungee.serversContains(server.name)) {
-                        db.insert("servers", server.name,
+                        db.insert(bungee.serverTable, server.name,
                                 server.address.address.hostAddress, server.address.port, 0, 0)
                     } else {
-                        db.change("servers", "host = ? , port = ?", "name = ?",
+                        db.change(bungee.serverTable, "host = ? , port = ?", "name = ?",
                                 server.address.address.hostAddress, server.address.port,
                                 server.name)
                     }

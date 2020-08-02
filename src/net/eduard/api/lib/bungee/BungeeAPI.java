@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BungeeAPI {
+public final class BungeeAPI {
+    BungeeAPI(){}
 
     private final static String channel = "bukkit:bungee";
     private final static Map<String, ServerSpigot> servers = new HashMap<>();

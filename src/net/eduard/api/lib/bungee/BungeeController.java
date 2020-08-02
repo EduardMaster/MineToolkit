@@ -95,7 +95,9 @@ public class BungeeController implements ServerController {
             servidor.setCount(server.getPlayers().size());
         }
         task = BungeeCord.getInstance().getScheduler().schedule(plugin, updater, 1, 1, TimeUnit.SECONDS);
-        BungeeCord.getInstance().getConsole().sendMessage(new TextComponent("§aRegistrando sistema de Conexão com servidores Spigot via PluginMeessaging"));
+        BungeeCord.getInstance().getConsole().
+                sendMessage(new TextComponent(
+                        "§aRegistrando sistema de Conexão com servidores Spigot via Plugin Messager"));
 
     }
 
