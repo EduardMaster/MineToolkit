@@ -1,8 +1,6 @@
 package net.eduard.api.lib.bungee;
 
 import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.Callback;
-import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.config.ServerInfo;
 
 public class BungeeStatusUpdater implements Runnable{
@@ -13,8 +11,10 @@ public class BungeeStatusUpdater implements Runnable{
 			ServerInfo servidor = BungeeCord.getInstance().getServerInfo(server.getName());
 			if (servidor==null)continue;
 			if ((!server.isDisabled())
-					&& ((server.isOffline()) || ((servidor.getPlayers().size() == 0) && (server.isRestarting())))) {
+					&& ((server.isOffline()) || ((servidor.getPlayers().size() == 0)
+					&& (server.isRestarting())))) {
 				servidor.ping((result, error) -> {
+
 					if (result == null) {
 						if (!server.isRestarting()) {
 							server.setState(ServerState.OFFLINE);

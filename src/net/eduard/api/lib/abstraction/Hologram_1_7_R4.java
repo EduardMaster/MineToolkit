@@ -22,7 +22,7 @@ import net.minecraft.server.v1_7_R4.WorldServer;
 /**
  * @author  Internet
  */
-public class Hologram1_7_R4 {
+public class Hologram_1_7_R4 {
 	private List<String> lines = new ArrayList<>();
 	private List<Integer> ids = new ArrayList<>();
 	private boolean showing = false;
@@ -32,7 +32,7 @@ public class Hologram1_7_R4 {
 		return location;
 	}
 
-	public Hologram1_7_R4(String[] lines) {
+	public Hologram_1_7_R4(String[] lines) {
 		this.lines.addAll(Arrays.asList(lines));
 	}
 
