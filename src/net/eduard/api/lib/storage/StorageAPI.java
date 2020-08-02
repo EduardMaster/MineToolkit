@@ -56,10 +56,6 @@ public final class StorageAPI {
         return storages;
     }
 
-    static boolean isStorable(Object object) {
-        return object instanceof Storable;
-    }
-
     static boolean isStorable(Class<?> claz) {
         return Storable.class.isAssignableFrom(claz);
     }
@@ -75,7 +71,7 @@ public final class StorageAPI {
     }
 
     public static int newId() {
-        int id = 0;
+        int id;
         do {
             id = randomId();
         } while (objects.containsKey(id));
@@ -128,20 +124,7 @@ public final class StorageAPI {
         info.setInline(true);
 
 
-        return STORE_INLINE.store(info, object);
-    }
-
-    public static Object restoreInline(Class<?> claz, Object object) {
-        if (claz != null) {
-            autoRegisterClass(claz);
-        }
-        StorageInfo info = new StorageInfo(claz);
-        if (claz != null) {
-            info.updateByType();
-            info.updateByStoreClass();
-        }
-        info.setInline(true);
-        return STORE_INLINE.restore(info, "" + object);
+        return ""+ STORE_OBJECT.store(info, object);
     }
 
     public static Object restore(Class<?> claz, Object object) {
@@ -158,6 +141,22 @@ public final class StorageAPI {
         }
         return STORE_OBJECT.restore(info, object);
     }
+
+    public static Object restoreInline(Class<?> claz, Object object) {
+        if (claz != null) {
+            autoRegisterClass(claz);
+        }
+        StorageInfo info = new StorageInfo(claz);
+        if (claz != null) {
+            info.updateByType();
+            info.updateByStoreClass();
+        }
+        info.setInline(true);
+        return STORE_OBJECT.restore(info, object);
+
+    }
+
+
 
     public static void register(Class<? extends Storable<?>> claz) {
 
@@ -189,6 +188,7 @@ public final class StorageAPI {
     }
 
     public static Storable<?> autoRegisterClass(Class<?> claz) {
+
         return autoRegisterClass(claz, claz.getSimpleName());
     }
 

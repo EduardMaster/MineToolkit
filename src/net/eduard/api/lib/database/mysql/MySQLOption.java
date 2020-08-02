@@ -60,8 +60,6 @@ public class MySQLOption implements SQLOption {
             return "DATE";
         } else if (Time.class.equals(javaClass)) {
             return "TIME";
-        } else if (UUID.class.equals(javaClass)) {
-            return "VARCHAR(40)";
         }
         return "VARCHAR(200)";
 

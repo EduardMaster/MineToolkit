@@ -28,7 +28,7 @@ final public class StorageInfo implements Cloneable {
         return getType().getComponentType();
     }
 
-    public Storable getStore() {
+    public Storable<?> getStore() {
         return StorageAPI.getStore(getType());
     }
 
@@ -47,7 +47,7 @@ final public class StorageInfo implements Cloneable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return this;
     }
 
     public void updateByType() {

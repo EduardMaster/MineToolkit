@@ -249,47 +249,47 @@ public final class Extra {
      */
     public static void box(String[] paragraph, String title) {
         ArrayList<String> buffer = new ArrayList<String>();
-        String at = "";
+        StringBuilder at = new StringBuilder();
 
         int side1 = (int) Math.round(25.0D - (title.length() + 4) / 2.0D);
         int side2 = (int) (26.0D - (title.length() + 4) / 2.0D);
-        at = at + '+';
+        at.append('+');
         for (int t = 0; t < side1; t++) {
-            at = at + '-';
+            at.append('-');
         }
-        at = at + "{ ";
-        at = at + title;
-        at = at + " }";
+        at.append("{ ");
+        at.append(title);
+        at.append(" }");
         for (int t = 0; t < side2; t++) {
-            at = at + '-';
+            at.append('-');
         }
-        at = at + '+';
-        buffer.add(at);
-        at = "";
+        at.append('+');
+        buffer.add(at.toString());
+        at = new StringBuilder();
         buffer.add("|                                                   |");
         String[] arrayOfString = paragraph;
         int j = paragraph.length;
         for (int i = 0; i < j; i++) {
             String s = arrayOfString[i];
-            at = at + "| ";
+            at.append("| ");
             int left = 49;
             for (int t = 0; t < s.length(); t++) {
-                at = at + s.charAt(t);
+                at.append(s.charAt(t));
                 left--;
                 if (left == 0) {
-                    at = at + " |";
-                    buffer.add(at);
-                    at = "";
-                    at = at + "| ";
+                    at.append(" |");
+                    buffer.add(at.toString());
+                    at = new StringBuilder();
+                    at.append("| ");
                     left = 49;
                 }
             }
             while (left-- > 0) {
-                at = at + ' ';
+                at.append(' ');
             }
-            at = at + " |";
-            buffer.add(at);
-            at = "";
+            at.append(" |");
+            buffer.add(at.toString());
+            at = new StringBuilder();
         }
         buffer.add("|                                                   |");
         buffer.add("+---------------------------------------------------+");
@@ -474,8 +474,8 @@ public final class Extra {
     /**
      * Formata o texto aplicando as cores do CHAT_COLOR
      *
-     * @param text
-     * @return
+     * @param text Text normal
+     * @return Text formated
      */
     public static String formatColors(String text) {
         char[] chars = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f', 'n', 'r', 'l',
@@ -978,6 +978,16 @@ public final class Extra {
 
     public static Object getFieldValue(Object object, String name) throws Exception {
         return getField(object, name).get(object);
+    }
+    public static <T> Constructor<T> getEmptyConstructor(Class<T> clz) {
+        Constructor<T> constructor = null;
+        for (Constructor<?> loopConstructor : clz.getDeclaredConstructors()){
+                if (loopConstructor.getParameterCount() == 0){
+                    constructor = (Constructor<T>) loopConstructor;
+                    break;
+                }
+        }
+        return constructor;
     }
 
     public static void setFieldValue(Object object, String name, Object value) throws Exception {

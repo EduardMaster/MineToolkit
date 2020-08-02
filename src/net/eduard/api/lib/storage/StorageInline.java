@@ -2,14 +2,11 @@ package net.eduard.api.lib.storage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import net.eduard.api.lib.modules.Extra;
-
+@SuppressWarnings({"deprecated"})
 public final class StorageInline extends StorageBase<Object, String> {
 
     StorageInline(){}
@@ -21,12 +18,14 @@ public final class StorageInline extends StorageBase<Object, String> {
         try {
             resultadoFinal = info.getStore().newInstance();
 
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         if (resultadoFinal == null) {
             try {
-                resultadoFinal = info.getType().newInstance();
-            } catch (Exception ex) {
+
+
+                resultadoFinal = Extra.getEmptyConstructor(info.getType()).newInstance();
+            } catch (Exception ignored) {
             }
         }
         if (resultadoFinal == null) {
@@ -35,8 +34,7 @@ public final class StorageInline extends StorageBase<Object, String> {
         }
 
 
-        String line = (String) data;
-        String[] split = line.split(";");
+        String[] split = ((String) data).split(";");
         int index = 0;
         for (Field field : info.getType().getDeclaredFields()) {
             if (Modifier.isTransient(field.getModifiers())) {
@@ -52,7 +50,7 @@ public final class StorageInline extends StorageBase<Object, String> {
             field.setAccessible(true);
 
             try {
-                Storable store = StorageAPI.getStore(field.getType());
+                Storable<?> store = StorageAPI.getStore(field.getType());
 
                 Object fieldFinalValue = split[index];
                 debug("SPLIT PART " + fieldFinalValue + " - " + index);
@@ -119,7 +117,7 @@ public final class StorageInline extends StorageBase<Object, String> {
 
 
                 } else if (Extra.isWrapper(field.getType())) {
-                    fieldFinalValue = StorageAPI.transform(fieldFinalValue, Extra.getWrapper(field.getType()));
+                    fieldFinalValue = StorageAPI.transform(fieldFinalValue, Objects.requireNonNull(Extra.getWrapper(field.getType())));
                 } else {
                     fieldFinalValue = null;
                 }

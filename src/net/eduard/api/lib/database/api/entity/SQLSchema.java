@@ -7,8 +7,8 @@ public class SQLSchema {
     private String name;
     private String charset;
 
-    private List<String> tableNames = new ArrayList<>();
-    private List<SQLTable> tables = new ArrayList<>();
+    private final List<String> tableNames = new ArrayList<>();
+    private final List<SQLTable> tables = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -21,17 +21,8 @@ public class SQLSchema {
     public List<String> getTableNames() {
         return tableNames;
     }
-
-    public void setTableNames(List<String> tableNames) {
-        this.tableNames = tableNames;
-    }
-
     public List<SQLTable> getTables() {
         return tables;
-    }
-
-    public void setTables(List<SQLTable> tables) {
-        this.tables = tables;
     }
 
     public String getCharset() {

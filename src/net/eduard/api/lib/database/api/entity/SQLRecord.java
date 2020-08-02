@@ -2,17 +2,15 @@ package net.eduard.api.lib.database.api.entity;
 
 import net.eduard.api.lib.database.api.SQLOption;
 
-import javax.persistence.Column;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SQLRecord {
 
     private SQLTable table;
-    private Map<SQLColumn, Object> data = new HashMap<>();
+    private final Map<SQLColumn, Object> data = new LinkedHashMap<>();
     private Object instance;
 
     public SQLRecord(SQLTable table, ResultSet resultSet, SQLOption option) {
@@ -79,9 +77,6 @@ public class SQLRecord {
         return data;
     }
 
-    public void setData(Map<SQLColumn, Object> data) {
-        this.data = data;
-    }
 
     public SQLTable getTable() {
         return table;

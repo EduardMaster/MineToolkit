@@ -10,7 +10,7 @@ import java.util.Map;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceValue;
 
-public class StorageObject extends StorageBase {
+public class StorageObject extends StorageBase<Object,Object> {
 
     StorageObject(){}
 
@@ -24,7 +24,7 @@ public class StorageObject extends StorageBase {
         }
 
         int id = 0;
-        String alias = null;
+        String alias;
         if (data instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) data;
             if (map.containsKey(StorageAPI.STORE_KEY)) {
@@ -52,7 +52,6 @@ public class StorageObject extends StorageBase {
                 debug(">> RESTORED ALIAS " + alias);
                 debug(">> RESTORED ID " + id);
 
-            } else {
             }
 
 
@@ -206,7 +205,7 @@ public class StorageObject extends StorageBase {
         }
 
         if (instance instanceof Storable) {
-            Storable storable = (Storable) instance;
+            Storable<?> storable = (Storable<?>) instance;
             storable.restore((Map<String, Object>) map);
 
         }
@@ -244,7 +243,7 @@ public class StorageObject extends StorageBase {
         if (Extra.isMap(claz)) {
             return StorageAPI.STORE_MAP.store(info,(Map<?,?>)data);
         }
-        Storable store = getStore(claz);
+        Storable<Object> store = (Storable<Object>) getStore(claz);
 
 
         /* Se caso a Storable for nula ainda sim vai continuar

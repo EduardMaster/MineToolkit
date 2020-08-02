@@ -10,7 +10,7 @@ public abstract class StorageBase<DataType, StorageType> {
 		StorageAPI.debug(msg);
 	}
 
-	public Storable getStore(Class<?> claz) {
+	public Storable<?> getStore(Class<?> claz) {
 		return StorageAPI.getStore(claz);
 	}
 

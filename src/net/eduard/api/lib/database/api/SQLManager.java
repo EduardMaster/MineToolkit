@@ -16,7 +16,7 @@ public class SQLManager {
     private SQLEngineType engineType;
     private SQLQueryBuilder builder;
     private final Queue<Object> updatesQueue = new ConcurrentLinkedQueue<>();
-
+    private Map<Class<?>, SQLTable> cacheTables = new HashMap<>();
 
     public int runUpdatesQueue() {
         int amount = 0;
@@ -31,7 +31,6 @@ public class SQLManager {
     }
 
 
-    private Map<Class<?>, SQLTable> cacheTables = new HashMap<>();
 
     public SQLManager(Connection connection, SQLQueryBuilder queryBuilder) {
         setConnection(connection);
