@@ -1,7 +1,6 @@
 
 /**
- * Contem todas as classes da LIB inclusive a principal caso não use EduardAPI
- * como a Main
+ * Contem varias classes uteis
  * 
  * @author Eduard
  *

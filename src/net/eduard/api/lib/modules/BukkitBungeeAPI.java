@@ -29,6 +29,9 @@ import com.google.common.io.ByteStreams;
  *
  */
 public final class BukkitBungeeAPI {
+	private static String currentServer = "lobby";
+	private static Map<String, SimpleServer> servers = new HashMap<>();
+	private static Map<String, SimplePlayer> players = new HashMap<>();
 	public static String getCurrentServer() {
 		return currentServer;
 	}
@@ -210,9 +213,7 @@ public final class BukkitBungeeAPI {
 
 	}
 
-	private static String currentServer = "lobby";
-	private static Map<String, SimpleServer> servers = new HashMap<>();
-	private static Map<String, SimplePlayer> players = new HashMap<>();
+
 
 	public static SimpleServer getServer(String serverName) {
 		SimpleServer server = servers.get(serverName);
@@ -246,7 +247,7 @@ public final class BukkitBungeeAPI {
 
 	static void sendMessage(ByteArrayDataOutput message) {
 		Bukkit.getServer().sendPluginMessage(getInstance(), "BungeeCord", message.toByteArray());
-//		sendMessage(getFirstPlayer(), message);
+
 	}
 
 	static void sendMessage(Player player, ByteArrayDataOutput message) {
@@ -277,7 +278,6 @@ public final class BukkitBungeeAPI {
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} // You can do anything you want with msgout
 
