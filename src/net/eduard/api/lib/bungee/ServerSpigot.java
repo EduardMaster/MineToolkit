@@ -46,6 +46,7 @@ public class ServerSpigot implements Serializable {
     }
 
 
+
     public boolean canConnect() {
         return isOnline() && !isFull() && !isRestarting() && !isGameStarted();
     }

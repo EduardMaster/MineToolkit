@@ -26,7 +26,9 @@ public final class BungeeAPI {
     public static int getPlayersAmount(int serverType){
         int amount = 0;
         for (ServerSpigot server : servers.values()){
-            amount+= server.getCount();
+            if (server.getType() == serverType) {
+                amount += server.getCount();
+            }
         }
         return amount;
     }
