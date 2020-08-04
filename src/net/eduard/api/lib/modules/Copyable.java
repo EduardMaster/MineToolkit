@@ -49,7 +49,7 @@ public interface Copyable {
             } catch (Exception e) {
                 try {
                     cloneMethod = object.getClass().getDeclaredMethod("clone");
-                } catch (Exception e2) {
+                } catch (Exception ignored) {
                 }
             }
             if (cloneMethod != null) {
@@ -71,7 +71,7 @@ public interface Copyable {
         if (object == null)
             return null;
 
-        Class<? extends Object> claz = object.getClass();
+        Class<?> claz = object.getClass();
 
         if (Extra.isList(claz)) {
             List<Object> list = (List<Object>) object;
@@ -96,12 +96,10 @@ public interface Copyable {
             for (int index = 0; index < len; index++) {
                 Array.set(newArray, index, Array.get(object, index));
             }
-        } else if (Extra.isWrapper(claz)) {
-
-        } else {
+        } else if (!Extra.isWrapper(claz)) {
             try {
                 debug("COPYING " + object.getClass().getSimpleName());
-                E newInstance = (E) object.getClass().newInstance();
+                E newInstance = (E) Extra.getNew(object.getClass());
 
                 while (!claz.equals(Object.class)) {
                     for (Field field : claz.getDeclaredFields()) {

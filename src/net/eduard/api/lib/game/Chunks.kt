@@ -4,7 +4,6 @@ import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.storage.Storable.StorageAttributes
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
-import org.bukkit.Location
 
 /**
  * Representa uma Chunk Fake

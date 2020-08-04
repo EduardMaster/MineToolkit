@@ -553,9 +553,9 @@ public final class Mine {
 
     /**
      * Envia mensagem para o console do servidor
-     *
+     *<code>Bukkit.getConsoleSender().sendMessage(message)</code> ;
      * @ @param message
-     * @see <code>Bukkit.getConsoleSender().sendMessage(message)</code> ;
+     * @see Bukkit#getConsoleSender()
      */
     public static void console(String message) {
         Bukkit.getConsoleSender().sendMessage(message);

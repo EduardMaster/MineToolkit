@@ -1,9 +1,5 @@
 package net.eduard.api.lib.database.api;
 
-import net.eduard.api.lib.database.api.entity.SQLColumn;
-import net.eduard.api.lib.database.api.entity.SQLRecord;
-import net.eduard.api.lib.database.api.entity.SQLTable;
-
 import java.util.Map;
 
 public interface SQLQueryBuilder {

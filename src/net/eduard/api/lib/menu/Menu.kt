@@ -8,7 +8,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.Inventory
@@ -16,14 +15,12 @@ import org.bukkit.inventory.ItemStack
 
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.manager.EventsManager
-import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.kotlin.centralized
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
-import kotlin.math.log
 
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar

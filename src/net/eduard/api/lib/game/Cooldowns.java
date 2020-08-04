@@ -78,7 +78,7 @@ public abstract class Cooldowns {
 	/**
 	 * Metodo abstrato para oque vai acontecer quando estiver ainda em Coodlwon
 	 * 
-	 * @param player
+	 * @param player Jogador
 	 */
 	public abstract void onInCooldown(Player player);
 

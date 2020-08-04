@@ -1,8 +1,5 @@
 package net.eduard.api.lib.menu
 
-import net.eduard.api.lib.game.ClickEffect
-import net.eduard.api.lib.kotlin.player
-import net.eduard.api.lib.modules.Copyable
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 

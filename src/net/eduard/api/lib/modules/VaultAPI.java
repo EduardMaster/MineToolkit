@@ -61,7 +61,8 @@ public final class VaultAPI {
 	public static boolean hasVault() {
 		return Bukkit.getPluginManager().getPlugin("Vault") != null;
 	}
-	/**
+
+	/*
 	 * Se tiver o vault ele  ativado automaticamente
 	 */
 	static {

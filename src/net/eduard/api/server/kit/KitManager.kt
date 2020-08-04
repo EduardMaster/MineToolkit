@@ -9,16 +9,14 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.plugin.Plugin
 
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.menu.Slot
-import net.eduard.api.lib.game.ClickEffect
+import net.eduard.api.lib.menu.ClickEffect
 import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.plugin.IPluginInstance
-import org.bukkit.plugin.java.JavaPlugin
 
 class KitManager : EventsManager() {
 

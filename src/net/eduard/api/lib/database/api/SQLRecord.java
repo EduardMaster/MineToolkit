@@ -1,6 +1,4 @@
-package net.eduard.api.lib.database.api.entity;
-
-import net.eduard.api.lib.database.api.SQLOption;
+package net.eduard.api.lib.database.api;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

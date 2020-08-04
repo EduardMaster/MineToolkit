@@ -6,17 +6,26 @@ import java.util.*;
 import net.eduard.api.lib.database.api.SQLOption;
 import net.eduard.api.lib.database.mysql.MySQLOption;
 import net.eduard.api.lib.database.sqlite.SQLiteOption;
+import net.eduard.api.lib.modules.Extra;
 
 /**
  * API de Controle de MySQL ou SQLite com apenas 1 conexão
  *
  * @author Eduard-PC
  */
+@SuppressWarnings({"unchecked", "unused"})
 public class DBManager {
 
     private static boolean debug = true;
 
-    private SQLOption option;
+
+    public static boolean isDebugging() {
+        return debug;
+    }
+
+    public static void setDebug(boolean flag) {
+        debug = flag;
+    }
 
     public static void debug(String msg) {
         if (debug)
@@ -29,48 +38,15 @@ public class DBManager {
     private String host = "localhost";
     private String port = "3306";
     private String database = "mine";
-    private String type = "jdbc:mysql://";
-
+    private SQLEngineType engine = SQLEngineType.MYSQL;
+    private SQLOption option;
     private transient Connection connection;
 
-    static {
-        hasMySQL();
-        hasSQLite();
-
-    }
 
     public DBManager() {
 
     }
 
-    /**
-     * Ve se existe MySql na Maquina
-     *
-     * @return Se esta instalado MySQL na Maquina
-     */
-    private static boolean hasMySQL() {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * Ve se existe SQLite na Maquina
-     *
-     * @return Se esta instalado SQLite na Maquina
-     */
-    private static boolean hasSQLite() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            return true;
-
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     /**
      * Fecha a conexao do Banco
@@ -86,15 +62,6 @@ public class DBManager {
         }
     }
 
-    /**
-     * Cria uma conexão com a Database
-     *
-     * @return A conexão se criada
-     * @throws Exception Erro
-     */
-    public Connection connectBase() throws Exception {
-        return DriverManager.getConnection(getURL() + database + "?autoReconnect=true", user, pass);
-    }
 
     /**
      * Cria uma connexão com o Driver
@@ -103,17 +70,9 @@ public class DBManager {
      * @throws Exception Erro
      */
     public Connection connect() throws Exception {
-        if (useSQLite()) {
-            return DriverManager.getConnection(type + ":" + database + ".db");
-        }
-        return DriverManager.getConnection(getURL() + "?autoReconnect=true", user, pass);
-    }
 
-    /**
-     * @return Texto da URL de acesso ao SQL Server
-     */
-    private String getURL() {
-        return type + host + ":" + port + "/";
+
+        return DriverManager.getConnection(engine.getUrl(host, Extra.toInt(port), user, pass, database));
     }
 
     /**
@@ -125,12 +84,12 @@ public class DBManager {
         if (!hasConnection()) {
             try {
                 this.connection = connect();
-                if (!useSQLite()) {
+                if (engine == SQLEngineType.MYSQL) {
                     option = new MySQLOption();
                     createDatabase(database);
                     useDatabase(database);
 
-                } else {
+                } else if(engine == SQLEngineType.SQLITE) {
                     option = new SQLiteOption();
                 }
             } catch (Exception e) {
@@ -222,19 +181,18 @@ public class DBManager {
      * @param values Valores
      */
     public void createTable(String table, String values) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(option.createTable());
-        builder.append(option.name(table));
-        builder.append(option.fieldOpen());
-        builder.append(" ID " + option.sqlTypeOf(Integer.class, 10));
-        builder.append(option.notNull());
-        builder.append(option.primaryKey());
-        builder.append(option.autoIncrement());
-        builder.append(option.fieldSeparator());
-        builder.append(values);
-        builder.append(option.fieldClose());
 
-        update(builder.toString());
+        String builder = option.createTable() +
+                option.name(table) +
+                option.fieldOpen() +
+                " ID " + option.sqlTypeOf(Integer.class, 10) +
+                option.notNull() +
+                option.primaryKey() +
+                option.autoIncrement() +
+                option.fieldSeparator() +
+                values +
+                option.fieldClose();
+        update(builder);
     }
 
     /**
@@ -475,7 +433,7 @@ public class DBManager {
      *
      * @param query   Query Pesquisa
      * @param objects Objetos
-     * @return
+     * @return -1 se o não ocorreu update em nada, e retorna o numero do update ou insert caso tenha feito pelo menos 1
      */
     public int update(String query, Object... objects
     ) {
@@ -503,15 +461,19 @@ public class DBManager {
     public double getDouble(String table, String column, String where, Object... objects) {
         return getData(Double.class, table, column, where, objects);
     }
+
     public double getInt(String table, String column, String where, Object... objects) {
         return getData(Integer.class, table, column, where, objects);
     }
+
+
     public <T> T getData(Class<T> type, String table, String column, String where, Object... objects) {
         T result = null;
         if (hasConnection())
             try {
                 ResultSet rs = selectAll(table, where, objects);
                 if (rs.next()) {
+
                     result = (T) rs.getObject(column);
                 }
                 rs.close();
@@ -677,37 +639,22 @@ public class DBManager {
         this.database = database;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
 
     @Override
     public String toString() {
         return "DBManager [user=" + user + ", pass=" + pass + ", host=" + host + ", port=" + port + ", database="
-                + database + ", type=" + type + "]";
+                + database + ", engine=" + engine + "]";
     }
 
     public boolean useSQLite() {
-        return this.type.equalsIgnoreCase("jdbc::sqlite");
+
+        return engine == SQLEngineType.SQLITE;
     }
 
     public void setUseSQLite(boolean useSQLite) {
         if (useSQLite)
-            this.type = "jdbc:sqlite";
-    }
+            engine = SQLEngineType.SQLITE;
 
-
-    public static boolean isDebugging() {
-        return debug;
-    }
-
-    public static void setDebug(boolean d) {
-        debug = d;
     }
 
 
@@ -720,4 +667,7 @@ public class DBManager {
     }
 
 
+    public SQLEngineType getEngine() {
+        return engine;
+    }
 }

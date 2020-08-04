@@ -2,10 +2,10 @@ package net.eduard.api.lib.plugin
 
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
-import net.eduard.api.lib.database.DBType
+import net.eduard.api.lib.database.StorageType
 import net.eduard.api.lib.database.StorageManager
-import net.eduard.api.lib.database.api.SQLEngineType
-import net.eduard.api.lib.database.api.SQLManager
+import net.eduard.api.lib.database.SQLEngineType
+import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.modules.Extra
 import net.md_5.bungee.api.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -23,6 +23,8 @@ abstract class HybridPlugin : IPlugin {
     lateinit var pluginBase: IPluginInstance
     override val pluginName: String
         get() = Extra.getMethodInvoke(plugin, "getName" ) as String
+
+    val config get() = configs
 
     override fun getPlugin(): Any {
         return pluginBase
@@ -43,7 +45,7 @@ abstract class HybridPlugin : IPlugin {
     final override lateinit var storage: Config
     final override lateinit var databaseFile : File
     final override var dbManager: DBManager = DBManager()
-    final override var sqlManager: SQLManager = SQLManager(null, SQLEngineType.SQLITE)
+    final override var sqlManager: SQLManager = SQLManager()
     final override var storageManager: StorageManager = StorageManager()
     private val prefix get() = "[$pluginName] "
     override fun log(message: String) {
@@ -64,7 +66,7 @@ abstract class HybridPlugin : IPlugin {
         messages = Config(this, "messages.yml")
         storage = Config(this, "storage.yml")
         databaseFile = File(pluginFolder, "database.db")
-        config.add("database-type", DBType.YAML)
+        config.add("database-type", StorageType.YAML)
         config.add("log-enabled", true)
         configs.add("auto-save", false)
         configs.add("auto-save-seconds", 60)
@@ -77,15 +79,21 @@ abstract class HybridPlugin : IPlugin {
 
         configs.saveConfig()
         dbManager = config.get("database", DBManager::class.java)
-        val dbType = config.get("database-type", DBType::class.java)
-        storageManager.storeType = dbType
+        val dbType = config.get("database-type", StorageType::class.java)
+        storageManager.type = dbType
         if (db.isEnabled) {
             db.openConnection()
             var type = SQLEngineType.SQLITE
             try {
                  type = SQLEngineType.valueOf(dbType.name.toUpperCase())
-            }catch (ex :Exception){}
-            sqlManager = SQLManager(db.connection, type)
+            }catch (ex :Exception){
+                if (!db.useSQLite()){
+                    type = SQLEngineType.MYSQL
+                }
+            }
+
+
+            sqlManager = SQLManager(dbManager)
             storageManager.sqlManager = sqlManager
         }
 
@@ -98,9 +106,9 @@ abstract class HybridPlugin : IPlugin {
     override fun backup() {
         configs.set("backup-lasttime", Extra.getNow())
         try {
-            val DATE_TIME_FORMATER = SimpleDateFormat("dd-MM-YYYY HH-mm-ss")
+            val simpleDateFormat = SimpleDateFormat("dd-MM-YYYY HH-mm-ss")
             val pasta = File(pluginFolder,
-                    "/backup/" + DATE_TIME_FORMATER.format(System.currentTimeMillis()) + "/")
+                    "/backup/" + simpleDateFormat.format(System.currentTimeMillis()) + "/")
 
             pasta.mkdirs()
 
@@ -154,8 +162,6 @@ abstract class HybridPlugin : IPlugin {
     }
 
 
-    val config get() = configs
-
 
 
 
@@ -166,7 +172,7 @@ abstract class HybridPlugin : IPlugin {
         val pasta = File(pluginFolder, "/backup/")
 
         pasta.mkdirs()
-        var lista = mutableListOf(*pasta.listFiles()!!)
+        val lista = mutableListOf(*pasta.listFiles()!!)
         lista.sortBy { it.lastModified() }
 
 
@@ -185,7 +191,7 @@ abstract class HybridPlugin : IPlugin {
     override fun deleteOldBackups() {
         val pasta = File(pluginFolder, "/backup/")
         pasta.mkdirs()
-        var lista = listOf(*pasta.listFiles()!!)
+        val lista = listOf(*pasta.listFiles()!!)
         lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
                 .forEach {
                     Extra.deleteFolder(it)

@@ -1,8 +1,9 @@
-package net.eduard.api.lib.database.api;
+package net.eduard.api.lib.database;
 
-import net.eduard.api.lib.database.api.entity.SQLColumn;
-import net.eduard.api.lib.database.api.entity.SQLRecord;
-import net.eduard.api.lib.database.api.entity.SQLTable;
+import net.eduard.api.lib.database.api.SQLColumn;
+import net.eduard.api.lib.database.api.SQLQueryBuilder;
+import net.eduard.api.lib.database.api.SQLRecord;
+import net.eduard.api.lib.database.api.SQLTable;
 import net.eduard.api.lib.database.mysql.MySQLQueryBuilder;
 import net.eduard.api.lib.database.sqlite.SQLiteQueryBuilder;
 
@@ -11,15 +12,37 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SQLManager {
-    private int queueRunsLimit = 100;
-    private Connection connection;
-    private SQLEngineType engineType;
+
+    private DBManager dbManager;
     private SQLQueryBuilder builder;
     private final Queue<Object> updatesQueue = new ConcurrentLinkedQueue<>();
-    private Map<Class<?>, SQLTable> cacheTables = new HashMap<>();
+    private final Map<Class<?>, SQLTable> cacheTables = new HashMap<>();
+
+    public void setDbManager(DBManager dbManager) {
+        this.dbManager = dbManager;
+        switch (dbManager.getEngine()) {
+            case MYSQL:
+                builder = new MySQLQueryBuilder();
+                break;
+            case SQLITE:
+            default:
+                builder = new SQLiteQueryBuilder();
+                break;
+
+        }
+    }
+
+    public SQLManager() {
+
+    }
+
+    public SQLManager(DBManager dbManager) {
+        setDbManager(dbManager);
+    }
 
     public int runUpdatesQueue() {
         int amount = 0;
+        int queueRunsLimit = 100;
         for (int i = 0; i < queueRunsLimit; i++) {
             Object data = updatesQueue.poll();
 
@@ -31,38 +54,13 @@ public class SQLManager {
     }
 
 
-
-    public SQLManager(Connection connection, SQLQueryBuilder queryBuilder) {
-        setConnection(connection);
-        setBuilder(builder);
-        setEngineType(SQLEngineType.OTHER);
-    }
-
-    public SQLManager(Connection connection, SQLEngineType type) {
-        setConnection(connection);
-        setEngineType(type);
-        switch (engineType) {
-            case MYSQL:
-                setBuilder(new MySQLQueryBuilder());
-                break;
-            case SQLITE:
-                setBuilder(new SQLiteQueryBuilder());
-                break;
-            default:
-                break;
-        }
-    }
-
     public boolean hasConnection() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return false;
-        }
+        if (dbManager != null)
+            return dbManager.hasConnection();
+        return false;
     }
 
-
+    @SuppressWarnings("unchecked")
     public <E> E getData(Class<E> dataClass, String fieldName, Object fieldValue) {
 
         SQLTable table = getTableData(dataClass);
@@ -81,7 +79,7 @@ public class SQLManager {
                     }
 
                     result.getStatement().close();
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -100,6 +98,7 @@ public class SQLManager {
         return getAllData(dataClass, "", "", false, 0);
     }
 
+    @SuppressWarnings("unchecked")
     public <E> List<E> getAllData(Class<E> dataClass, String where, String orderBy, boolean desc, int limit) {
         List<E> list = new ArrayList<>();
         SQLTable table = getTableData(dataClass);
@@ -202,7 +201,7 @@ public class SQLManager {
         int id = -1;
         try {
             log("Update: " + query);
-            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement statement = getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
             statement.executeUpdate();
             ResultSet keys = statement.getGeneratedKeys();
@@ -211,8 +210,9 @@ public class SQLManager {
                 if (keys.next()) {
                     id = keys.getInt(1);
                 }
+                keys.close();
             }
-            keys.close();
+
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -223,8 +223,7 @@ public class SQLManager {
     protected ResultSet executeQuery(String queryStr) {
         try {
             log("Query: " + queryStr);
-            ResultSet resultSet = connection.prepareStatement(queryStr).executeQuery();
-            return resultSet;
+            return getConnection().prepareStatement(queryStr).executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -233,26 +232,11 @@ public class SQLManager {
 
 
     public Connection getConnection() {
-        return connection;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    public SQLEngineType getEngineType() {
-        return engineType;
-    }
-
-    public void setEngineType(SQLEngineType engineType) {
-        this.engineType = engineType;
+        return dbManager.getConnection();
     }
 
     public SQLQueryBuilder getBuilder() {
         return builder;
     }
 
-    public void setBuilder(SQLQueryBuilder builder) {
-        this.builder = builder;
-    }
 }

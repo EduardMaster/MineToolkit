@@ -8,6 +8,7 @@ import java.util.UUID;
  *
  * @author Eduard
  */
+@SuppressWarnings("unused")
 public class ColumnInfo {
 
     private int id;

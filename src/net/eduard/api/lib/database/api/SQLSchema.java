@@ -1,4 +1,4 @@
-package net.eduard.api.lib.database.api.entity;
+package net.eduard.api.lib.database.api;
 
 import java.util.ArrayList;
 import java.util.List;

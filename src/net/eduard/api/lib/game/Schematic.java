@@ -18,7 +18,6 @@ import org.bukkit.util.Vector;
 
 import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.modules.Copyable;
-import org.jetbrains.annotations.Contract;
 
 /**
  * Schematic do WorldEdit Compacto

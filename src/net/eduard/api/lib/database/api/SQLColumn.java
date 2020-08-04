@@ -1,4 +1,4 @@
-package net.eduard.api.lib.database.api.entity;
+package net.eduard.api.lib.database.api;
 
 import net.eduard.api.lib.database.annotations.*;
 import net.eduard.api.lib.modules.Extra;

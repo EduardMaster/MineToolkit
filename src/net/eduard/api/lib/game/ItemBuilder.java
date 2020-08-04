@@ -79,7 +79,7 @@ public class ItemBuilder extends ItemStack {
         byte[] encodedData = Base64.getEncoder()
                 .encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", skinUrl).getBytes());
         profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
-        Field profileField = null;
+        Field profileField;
         try {
             profileField = itemMeta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);

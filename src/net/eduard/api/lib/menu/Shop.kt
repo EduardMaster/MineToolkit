@@ -1,6 +1,5 @@
 package net.eduard.api.lib.menu
 
-import net.eduard.api.lib.game.ClickEffect
 import net.eduard.api.lib.game.FakePlayer
 import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.kotlin.player
@@ -10,18 +9,12 @@ import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.storage.Storable.StorageAttributes
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.CurrencyHandler
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.ClickType
-import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.plugin.Plugin
-import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.scheduler.BukkitScheduler
 import java.util.*
 
 @StorageAttributes(indentificate = true)

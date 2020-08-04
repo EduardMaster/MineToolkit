@@ -3,7 +3,7 @@ package net.eduard.api.lib.plugin
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.StorageManager
-import net.eduard.api.lib.database.api.SQLManager
+import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.StorageAPI
 import java.io.File

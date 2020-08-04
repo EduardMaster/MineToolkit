@@ -40,10 +40,10 @@ class PlayerOffline(var name: String = "Eduard",
     val player: PlayerOnline<*>
         get() {
             if (onlinePlayer == null) {
-                try {
-                    onlinePlayer = PlayerBukkit(Bukkit.getPlayer(name))
+                onlinePlayer = try {
+                    PlayerBukkit(Bukkit.getPlayer(name))
                 } catch (er: Error) {
-                    onlinePlayer = PlayerBungee(BungeeCord.getInstance().getPlayer(name))
+                    PlayerBungee(BungeeCord.getInstance().getPlayer(name))
                 }
             }
             return onlinePlayer!!
