@@ -7,8 +7,17 @@ import java.util.*
 
 @Storable.StorageAttributes(inline = true)
 class PlayerOffline(var name: String = "Eduard",
-                    var uniqueId: UUID = UUID.nameUUIDFromBytes(("OfflinePlayer:$name").toByteArray())) {
+                    uuid: UUID? = null) {
 
+    lateinit var uniqueId: UUID
+
+    init {
+        if (uuid == null) {
+            setUUIDByName()
+        } else {
+            uniqueId = uuid
+        }
+    }
 
     @Transient
     private var onlinePlayer: PlayerOnline<*>? = null
@@ -18,9 +27,11 @@ class PlayerOffline(var name: String = "Eduard",
         return uniqueId
     }
 
-    fun sendMessage(message: String){
+    fun sendMessage(message: String) {
         onlinePlayer?.sendMessage(message)
     }
+
+    constructor(name : String): this(name,null)
 
 
     constructor(player: PlayerOnline<*>) : this(player.name, player.uniqueId) {

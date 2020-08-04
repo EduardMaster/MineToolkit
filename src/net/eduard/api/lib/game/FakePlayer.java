@@ -1,6 +1,6 @@
 package net.eduard.api.lib.game;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,24 +23,16 @@ public class FakePlayer implements OfflinePlayer {
 
     private String name;
     private UUID id;
-    private Player playerCache = null;
+    private transient Player playerCache = null;
 
 
     public void setIdByName() {
-        try {
-            this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
     }
 
 
     public void setIdByNameLowerCase() {
-        try {
-            this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(StandardCharsets.UTF_8));
     }
 
     public void fixUUID() {

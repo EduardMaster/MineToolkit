@@ -2,11 +2,10 @@ package net.eduard.api.lib.storage;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StorageArray extends StorageBase {
+public class StorageArray extends StorageBase<Object,Object> {
 
 
 	@Override

@@ -22,6 +22,7 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.java_storables.TimeStampStorable;
 import net.eduard.api.lib.storage.java_storables.UUIDStorable;
 import net.eduard.api.lib.storage.references.ReferenceBase;
+import org.bukkit.GameMode;
 
 /**
  * Sistema automatico de Armazenamento em Mapas que podem ser usados em JSON,

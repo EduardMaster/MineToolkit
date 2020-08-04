@@ -7,7 +7,7 @@ import net.eduard.api.lib.storage.Storable.*;
 
 
 @StorageAttributes(inline = true)
-public class UUIDStorable implements Storable {
+public class UUIDStorable implements Storable<UUID> {
 
 
 	public UUID restore(String object) {
@@ -20,7 +20,7 @@ public class UUIDStorable implements Storable {
 	}
 
 
-	public String store(Object object) {
+	public String store(UUID object) {
 		return object.toString();
 	}
 

@@ -17,7 +17,7 @@
       <excludeFolder url="file://$MODULE_DIR$/bin" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Plugins APIs" level="application" />
+    <orderEntry type="library" name="Plugins APIs" level="application" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" name="Clientes API" level="application" />

@@ -104,7 +104,7 @@ public final class StorageInline extends StorageBase<Object, String> {
                         if (ended) {
                             currentText = currentText.replace("}", "");
                         }
-                        b.append((currentText) + ";");
+                        b.append(currentText).append(";");
 
 
                         if (ended) break;
@@ -113,7 +113,7 @@ public final class StorageInline extends StorageBase<Object, String> {
                     b.deleteCharAt(b.length() - 1);
                     debug("TRYING TO RESTORE A INLINE INSIDE INLINE");
                     debug("FOR THIS TEXT: " + b.toString());
-                    fieldFinalValue = StorageAPI.STORE_INLINE.restore(fieldInfo, b.toString());
+                    fieldFinalValue = StorageAPI.STORE_OBJECT.restore(fieldInfo, b.toString());
 
 
                 } else if (Extra.isWrapper(field.getType())) {
@@ -191,7 +191,7 @@ public final class StorageInline extends StorageBase<Object, String> {
                         fieldInfo.updateByField();
                         fieldInfo.setInline(true);
 
-                        Object result = StorageAPI.STORE_INLINE.store(fieldInfo, fieldValue);
+                        Object result = StorageAPI.STORE_OBJECT.store(fieldInfo, fieldValue);
                         builder.append(result);
                         builder.append("}");
 
