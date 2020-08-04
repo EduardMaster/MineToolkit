@@ -4,14 +4,12 @@ import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.StorageType
 import net.eduard.api.lib.database.StorageManager
-import net.eduard.api.lib.database.SQLEngineType
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.modules.Extra
 import net.md_5.bungee.api.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
@@ -79,21 +77,10 @@ abstract class HybridPlugin : IPlugin {
 
         configs.saveConfig()
         dbManager = config.get("database", DBManager::class.java)
-        val dbType = config.get("database-type", StorageType::class.java)
-        storageManager.type = dbType
+        storageManager.type = config.get("database-type", StorageType::class.java)
         if (db.isEnabled) {
             db.openConnection()
-            var type = SQLEngineType.SQLITE
-            try {
-                 type = SQLEngineType.valueOf(dbType.name.toUpperCase())
-            }catch (ex :Exception){
-                if (!db.useSQLite()){
-                    type = SQLEngineType.MYSQL
-                }
-            }
-
-
-            sqlManager = SQLManager(dbManager)
+            sqlManager.setDbManager(dbManager)
             storageManager.sqlManager = sqlManager
         }
 

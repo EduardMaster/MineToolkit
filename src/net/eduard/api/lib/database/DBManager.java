@@ -72,7 +72,7 @@ public class DBManager {
     public Connection connect() throws Exception {
 
 
-        return DriverManager.getConnection(engine.getUrl(host, Extra.toInt(port), user, pass, database));
+        return DriverManager.getConnection(engine.getUrl(host, Extra.toInt(port), user, pass, database),user,pass);
     }
 
     /**

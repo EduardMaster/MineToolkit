@@ -1,7 +1,6 @@
 package net.eduard.api.lib.kotlin
 
 import net.md_5.bungee.BungeeCord
-import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import java.util.UUID
 

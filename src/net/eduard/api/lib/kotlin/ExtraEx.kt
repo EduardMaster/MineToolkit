@@ -17,7 +17,7 @@ inline fun String.formatColors(): String {
 }
 
 
-inline fun Integer.chance(): Boolean {
+inline fun Int.chance(): Boolean {
     return (this.toDouble() / 100).chance()
 }
 
