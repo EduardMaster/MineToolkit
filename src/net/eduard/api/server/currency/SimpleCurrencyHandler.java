@@ -33,7 +33,6 @@ public abstract class SimpleCurrencyHandler implements  CurrencyHandler {
     }
 
 
-    @Override
     public String getSymbol() {
         return symbol;
     }

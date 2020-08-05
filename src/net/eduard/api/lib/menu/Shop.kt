@@ -112,7 +112,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
     }
 
     fun useConfirmationMenu() {
-        menuConfirmation = Menu("Confirmar Transação", 3) {
+        this.menuConfirmation = Menu("Confirmar Transação", 3) {
 
 
             button("confirmar") {
@@ -174,8 +174,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         }
     }
 
-    fun buy(player: Player, product: Product, amount: Double) {
-        var amount = amount
+    fun buy(player: Player, product: Product, value: Double) {
+        var amount = value
         val fake = FakePlayer(player)
         val priceUnit = product!!.unitBuyPrice
         if (product.isLimited && amount > product.stock) {
@@ -209,7 +209,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         if (evento.isCancelled) {
             return
         }
-        if (currency!![fake] >= evento.priceTotal) {
+        if (currency!!.contains(fake,evento.priceTotal)) {
             currency!!.remove(fake, evento.priceTotal)
         } else {
             player.sendMessage(messageWithoutBalance)
@@ -247,8 +247,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         }
     }
 
-    fun sell(player: Player, product: Product?, amount: Double) {
-        var amount = amount
+    fun sell(player: Player, product: Product?, value: Double) {
+        var amount = value
         val fake = FakePlayer(player)
         val priceUnit = product!!.unitSellPrice
         if (amount > product.stock) {
@@ -350,7 +350,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                 inventory.setItem(productButton.index, product.icon)
 
                 for (upgrade in product.upgrades) {
-                    var icon = ItemBuilder(Material.STAINED_GLASS_PANE)
+                    val icon = ItemBuilder(Material.STAINED_GLASS_PANE)
                             .data(14)
                             .name("§6Upgrade §e"+ upgrade.displayName)
                     if (upgrade.hasBought(player)) {
@@ -411,14 +411,12 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
     }
 
     init {
-        useConfirmationMenu()
-        this.effect = ClickEffect { event ->
 
+        this.effect = ClickEffect { event ->
 
             val player = event.player
 
             if (event.currentItem == null) return@ClickEffect
-
 
             val product = getProduct(event.currentItem, player) ?: return@ClickEffect
             if (menuConfirmation != null) {
