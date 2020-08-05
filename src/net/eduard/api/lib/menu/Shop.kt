@@ -177,19 +177,19 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
     fun buy(player: Player, product: Product, value: Double) {
         var amount = value
         val fake = FakePlayer(player)
-        val priceUnit = product!!.unitBuyPrice
+        val priceUnit = product.unitBuyPrice
         if (product.isLimited && amount > product.stock) {
             amount = product.stock
         }
         if (isPermissionShop) {
             if (player.hasPermission(product.permission)) {
                 player.sendMessage(messageAlreadyBought)
-                return;
+                return
             }
         } else {
             if (!player.hasPermission(product.permission)) {
                 player.sendMessage(messageWithoutPermission)
-                return;
+                return
             }
         }
         val priceFinal = priceUnit * amount
@@ -225,7 +225,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
             if (VaultAPI.hasVault() && VaultAPI.hasPermission()) {
                 VaultAPI.getPermission().playerAdd(null, fake, product.permission)
             }
-            return;
+            return
         }
         if (product.product == null) {
             return
