@@ -260,13 +260,13 @@ open class Menu(
 
             if (isAutoAlignItems) {
 
-                var startList = perPage * (page - 1)
+                val startList = perPage * (page - 1)
                 var endList = startList + perPage
                 if (endList > buttons.size) {
                     endList = buttons.size
                 }
 
-                var subButtons = buttons.subList(startList, endList)
+                val subButtons = buttons.subList(startList, endList)
 
 
                 for (button in subButtons) {

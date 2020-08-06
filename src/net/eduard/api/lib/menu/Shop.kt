@@ -209,7 +209,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         if (evento.isCancelled) {
             return
         }
-        if (currency!!.contains(fake,evento.priceTotal)) {
+        if (currency!!.contains(fake, evento.priceTotal)) {
             currency!!.remove(fake, evento.priceTotal)
         } else {
             player.sendMessage(messageWithoutBalance)
@@ -352,7 +352,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                 for (upgrade in product.upgrades) {
                     val icon = ItemBuilder(Material.STAINED_GLASS_PANE)
                             .data(14)
-                            .name("§6Upgrade §e"+ upgrade.displayName)
+                            .name("§6Upgrade §e" + upgrade.displayName)
                     if (upgrade.hasBought(player)) {
                         icon.data(5)
                     }
@@ -433,9 +433,10 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
                 return@ClickEffect
             }
-            if ((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)
-                    && (product.tradeType === TradeType.BOTH
-                            || product.tradeType === TradeType.BUYABLE)) {
+            if (((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)
+                            && (product.tradeType === TradeType.BOTH))
+                    || (product.tradeType === TradeType.BUYABLE)
+            ) {
                 if (isAmountPerChat) {
                     selectingAmount[player] = product
                     trading[player] = TradeType.BUYABLE
@@ -445,7 +446,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                     return@ClickEffect
                 }
                 var amount = 1
-                if (event.click == ClickType.SHIFT_RIGHT) {
+                if (event.click.name.contains("SHIFT")) {
                     amount = product.amount
                     if (amount < 64) {
                         amount = 64
@@ -453,8 +454,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                 }
                 buy(player, product, amount.toDouble())
             }
-            if ((event.click == ClickType.LEFT || event.click == ClickType.SHIFT_LEFT)
-                    && (product.tradeType === TradeType.BOTH
+            if (((event.click == ClickType.LEFT || event.click == ClickType.SHIFT_LEFT)
+                    && (product.tradeType === TradeType.BOTH)
                             || product.tradeType === TradeType.SELABLE)) {
                 if (product.product != null) {
                     if (isAmountPerChat) {
@@ -466,7 +467,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                         return@ClickEffect
                     }
                     var amount = Mine.getTotalAmount(player.inventory, product.product)
-                    if (event.click == ClickType.LEFT) {
+                    if (event.click == ClickType.LEFT || event.click == ClickType.LEFT) {
                         if (amount > 64) {
                             amount = 64
                         }
