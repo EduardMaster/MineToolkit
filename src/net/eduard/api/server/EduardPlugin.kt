@@ -19,24 +19,23 @@ import org.bukkit.plugin.Plugin
  * @version 1.0
  * @since 2.0
  */
-open class EduardPlugin : BukkitPlugin( EduardHybridPlugin()), BukkitTimeHandler {
-
+open class EduardPlugin : BukkitPlugin(EduardHybridPlugin()), BukkitTimeHandler {
 
 
     override fun getPlugin(): EduardPlugin {
         return this
     }
 
-    init{
+    init {
         hybridPlugin.pluginBase = this
 
     }
 
-     class EduardHybridPlugin : HybridPlugin() {
+    class EduardHybridPlugin : HybridPlugin() {
 
 
         override fun onEnable() {
-
+            super.onEnable()
         }
 
         override fun onDisable() {
@@ -44,10 +43,6 @@ open class EduardPlugin : BukkitPlugin( EduardHybridPlugin()), BukkitTimeHandler
         }
 
     }
-
-
-
-
 
 
     /**
@@ -63,6 +58,7 @@ open class EduardPlugin : BukkitPlugin( EduardHybridPlugin()), BukkitTimeHandler
     override fun getPluginConnected(): Plugin {
         return this
     }
+
     /**
      * Envia mensagem para o console caso as Log de Erros esteja ativada para ele
      *
@@ -80,7 +76,8 @@ open class EduardPlugin : BukkitPlugin( EduardHybridPlugin()), BukkitTimeHandler
      * <br></br>/plugman load NomePlugin
      */
     override fun onEnable() {
-       super.onEnable()
+        super.onEnable()
+        hybridPlugin.onEnable()
         log("Foi ativado na v" + description.version + " um plugin "
                 + (if (isFree) "§aGratuito" else "§bPago") + "§f feito pelo Eduard")
     }
