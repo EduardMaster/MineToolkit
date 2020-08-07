@@ -212,9 +212,6 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
     fun registerCommand(plugin: Plugin) {
         this.plugin = plugin as JavaPlugin
 
-        if (permission == null) {
-            permission = autoPermission()
-        }
 
         val command = object : Command(name) {
 
@@ -290,12 +287,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
     fun updateSubs() {
         for (sub in commands.values) {
-            if (sub.permission == null)
-                sub.permission = sub.autoPermission()
 
-            if (sub.usage == null) {
-                sub.usage = sub.autoUsage()
-            }
             log("O subcomando §e" + sub.name + " §ffoi registrado no comando §a" + name)
             if (sub.commands.isNotEmpty())
                 sub.updateSubs()

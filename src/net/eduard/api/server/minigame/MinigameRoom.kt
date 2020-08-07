@@ -16,7 +16,7 @@ import org.bukkit.Bukkit
 @TableName("minigame_rooms")
 class MinigameRoom {
 
-    @StorageAttributes(reference = true)
+    @Transient
     lateinit var minigame: Minigame
 
 
@@ -36,8 +36,9 @@ class MinigameRoom {
     fun start(){
         mapUsed = map.copy()
         mapUsed.minigame = minigame
+        mapUsed.worldName = "${minigame.name}/room/$id"
         mapUsed.copyWorld(map)
-        mapUsed.world.isAutoSave = false
+        mapUsed.world!!.isAutoSave = false
         restart()
 
     }
@@ -45,6 +46,7 @@ class MinigameRoom {
         mapUsed.unloadWorld()
         restarting()
     }
+    var isEnabled: Boolean = false
     fun reset(){
         mapUsed.resetWorld()
 
@@ -61,7 +63,6 @@ class MinigameRoom {
 
     var port: Int = Bukkit.getPort()
 
-    var isEnabled: Boolean = false
 
     var round: Int = 0
 
@@ -265,7 +266,7 @@ class MinigameRoom {
      * @return
      */
     fun hasSpace(): Boolean {
-        return players.size < map!!.maxPlayersAmount
+        return players.size < map.maxPlayersAmount
     }
 
 

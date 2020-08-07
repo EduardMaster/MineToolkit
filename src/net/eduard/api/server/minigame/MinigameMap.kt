@@ -56,7 +56,13 @@ class MinigameMap(
     val isSolo get() = teamSize == 1
 
     @Transient
-    var world: World = loadWorld()
+    var world: World? = null
+            get() {
+                if (field == null){
+                    field = loadWorld()
+                }
+                return field
+            }
 
     fun copyWorld(map: MinigameMap) {
         world = Mine.copyWorld(map.worldName, worldName)
@@ -64,7 +70,7 @@ class MinigameMap(
     }
 
     fun unloadWorld() {
-        Mine.unloadWorld(worldName, world.isAutoSave)
+        Mine.unloadWorld(worldName, world!!.isAutoSave)
     }
 
     fun clearWorld() {
@@ -81,7 +87,7 @@ class MinigameMap(
 
     }
 
-    fun fixWorld() = world(world)
+    fun fixWorld() = world(world!!)
 
     fun resetWorld() {
         unloadWorld()

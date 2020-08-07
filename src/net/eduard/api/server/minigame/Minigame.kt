@@ -133,6 +133,9 @@ open class Minigame : TimeManager {
         messagePrefix = "§8[§b$name§8] "
         lobbies.add(MinigameLobby())
     }
+    constructor(name: String, plugin: JavaPlugin) : this(name) {
+        this.plugin = plugin
+    }
 
     /**
      * Cria um Mapa
@@ -199,9 +202,6 @@ open class Minigame : TimeManager {
         return MinigameRoom(this, MinigameMap(this, name))
     }
 
-    constructor(name: String, plugin: JavaPlugin) : this(name) {
-        this.plugin = plugin
-    }
 
     /**
      * Manda mensagem para todos jogadores participando do minigame

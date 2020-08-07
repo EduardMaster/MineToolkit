@@ -2,17 +2,16 @@ package net.eduard.api.lib.storage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceValue;
 
-public class StorageObject extends StorageBase<Object,Object> {
+public class StorageObject extends StorageBase<Object, Object> {
 
-    StorageObject(){}
+    StorageObject() {
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -63,15 +62,15 @@ public class StorageObject extends StorageBase<Object,Object> {
         if (claz.isEnum()) {
             debug(">> ENUM " + data);
 
-            return StorageAPI.STORE_ENUM.restore(info,data.toString());
+            return StorageAPI.STORE_ENUM.restore(info, data.toString());
         }
         if (Extra.isList(claz)) {
             debug(">> LIST " + data);
-            return StorageAPI.STORE_LIST.restore(info,data);
+            return StorageAPI.STORE_LIST.restore(info, data);
         }
         if (Extra.isMap(claz)) {
             debug(">> MAP " + data);
-            return StorageAPI.STORE_MAP.restore(info,data);
+            return StorageAPI.STORE_MAP.restore(info, data);
         }
 
         if (info.isReference()) {
@@ -120,7 +119,7 @@ public class StorageObject extends StorageBase<Object,Object> {
             }
             if (instance == null) {
                 debug(">> INLINE  " + data);
-                instance = StorageAPI.STORE_INLINE.restore(info,data.toString());
+                instance = StorageAPI.STORE_INLINE.restore(info, data.toString());
             } else {
                 debug(">> INLINE CUSTOM " + data);
             }
@@ -137,13 +136,19 @@ public class StorageObject extends StorageBase<Object,Object> {
             try {
                 debug(">> NEW INSTANCE");
                 instance = claz.newInstance();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
         }
+
         if (instance == null) {
             // Sem instancia não tem como retornar objeto
             return null;
+        }else{
+            if (!instance.getClass().isAssignableFrom(claz)){
+                debug(" NEED CREATE newInstance() METHOD IN STORABLE");
+                return null;
+            }
         }
 
         Map<?, ?> map = (Map<?, ?>) data;
@@ -180,7 +185,7 @@ public class StorageObject extends StorageBase<Object,Object> {
                     infoField.updateByField();
 
                     debug(">> VARIABLE " + field.getName() + " " + field.getType().getSimpleName());
-                    Object restoredValue = StorageAPI.STORE_OBJECT.restore(infoField , fieldMapValue);
+                    Object restoredValue = StorageAPI.STORE_OBJECT.restore(infoField, fieldMapValue);
                     if (infoField.isReference()) {
                         if (restoredValue != null && (!(restoredValue instanceof List || restoredValue instanceof Map))) {
                             StorageAPI.newReference(new ReferenceValue((Integer) restoredValue, field, instance));
@@ -228,20 +233,20 @@ public class StorageObject extends StorageBase<Object,Object> {
         if (claz.isEnum()) {
             debug("<< ENUM " + data);
 
-            return StorageAPI.STORE_ENUM.store(info,(Enum<?>)data);
+            return StorageAPI.STORE_ENUM.store(info, (Enum<?>) data);
 
         }
         if (claz.isArray()) {
             debug("<< ARRAY " + data);
-            return StorageAPI.STORE_ARRAY.store(info,data);
+            return StorageAPI.STORE_ARRAY.store(info, data);
         }
         if (Extra.isList(claz)) {
             debug("<< LIST " + new ArrayList<>((List<?>) data));
 
-            return StorageAPI.STORE_LIST.store(info,(List<?>) data);
+            return StorageAPI.STORE_LIST.store(info, (List<?>) data);
         }
         if (Extra.isMap(claz)) {
-            return StorageAPI.STORE_MAP.store(info,(Map<?,?>)data);
+            return StorageAPI.STORE_MAP.store(info, (Map<?, ?>) data);
         }
         Storable<Object> store = (Storable<Object>) getStore(claz);
 
@@ -271,7 +276,7 @@ public class StorageObject extends StorageBase<Object,Object> {
             }
             if (result == null) {
                 debug("<< INLINE " + data);
-                return StorageAPI.STORE_INLINE.store(info,data);
+                return StorageAPI.STORE_INLINE.store(info, data);
             } else {
                 return result;
             }
@@ -285,8 +290,41 @@ public class StorageObject extends StorageBase<Object,Object> {
             } else {
                 map.put(StorageAPI.STORE_KEY, alias);
             }
+
+            List<Class<?>> classes = new ArrayList<>();
             while (!claz.equals(Object.class)) {
+                classes.add(claz);
+                claz = claz.getSuperclass();
+            }
+            Collections.reverse(classes);
+
+            //
+            /*
+            classes.stream()
+                    .flatMap(aClass ->
+                            Arrays.stream(aClass.getDeclaredFields())
+                                    .peek(field -> {
+                                        field.setAccessible(true);
+                                    })
+                    )
+                    .filter(field -> !Modifier.isStatic(field.getModifiers())
+                            && !Modifier.isTransient(field.getModifiers())
+                            && !Modifier.isFinal(field.getModifiers())
+                            && !Modifier.isNative(field.getModifiers()))
+                    .forEach(field -> {
+
+
+                    });
+
+
+
+             */
+            //
+
+            for (Class<?> clz : classes) {
+                claz = clz;
                 for (Field field : claz.getDeclaredFields()) {
+
                     field.setAccessible(true);
 
                     if (Modifier.isStatic(field.getModifiers()))
@@ -312,13 +350,13 @@ public class StorageObject extends StorageBase<Object,Object> {
                     infoField.updateByField();
 
                     debug("<< VARIABLE " + field.getName() + " " + fieldValue.getClass().getSimpleName());
-                    Object fieldResult = StorageAPI.STORE_OBJECT.store(infoField,fieldValue);
+                    Object fieldResult = StorageAPI.STORE_OBJECT.store(infoField, fieldValue);
 
                     if (fieldResult != null)
                         map.put(field.getName(), fieldResult);
 
                 }
-                claz = claz.getSuperclass();
+
             }
             if (data instanceof Storable) {
                 Storable<Object> dataStorable = (Storable<Object>) data;

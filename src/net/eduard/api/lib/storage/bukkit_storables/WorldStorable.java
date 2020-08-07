@@ -12,7 +12,12 @@ public class WorldStorable implements Storable<World> {
 
     public World restore(String str) {
 
-        return Bukkit.getWorld(str);
+        World mundo = Bukkit.getWorld(str);
+        if (mundo == null){
+            mundo = Bukkit.getWorlds().get(0);
+        }
+
+        return mundo;
 
 
     }
