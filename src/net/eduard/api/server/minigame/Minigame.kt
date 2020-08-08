@@ -28,7 +28,8 @@ open class Minigame : TimeManager {
     var name = "Minigame"
     var messagePrefix = "[Minigame] "
     var isEnabled = true
-    var isBungeecord = true
+    var isBungeecord = false
+    var isLobby = false
     var bungeeLobby = "Lobby"
     var scoreboardStarting = DisplayBoard("Minigame iniciando")
     var scoreboardLobby = DisplayBoard("Minigame lobby")
