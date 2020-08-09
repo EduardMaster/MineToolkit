@@ -50,10 +50,11 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
-    init{
+class EduardAPI(plugin: IPluginInstance) : HybridPlugin() {
+    init {
         pluginBase = plugin
     }
+
     override fun getPlugin(): JavaPlugin {
         return pluginBase.plugin as JavaPlugin
     }
@@ -65,42 +66,28 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
     override fun onEnable() {
         instance = this
         isFree = true
-
-
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
         StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
         BukkitStorables.load()
         StorageAPI.startGson()
         log("Storables do Bukkit carregado!")
-
         MAPS_CONFIG = Config(this, "maps/")
-
         VaultAPI.setupVault()
         BukkitControl.register(plugin)
-
         BukkitBungeeAPI.requestCurrentServer()
         BungeeAPI.getBukkit().plugin = plugin
         BungeeAPI.getBukkit().register()
-
-
-
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         StorageAPI.registerPackage(Minigame::class.java)
-
-
-
         reload()
-
         Mine.resetScoreboards()
         log("Scoreboards dos jogadores online resetadas!")
-
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
         PlayerTargetPlayerTask().runTaskTimerAsynchronously(plugin, 20, 20)
         AutoSaveAndBackupTask().runTaskTimerAsynchronously(plugin, 20, 20)
         BuilderTask().asyncTimer()
-
         log("Ativando comandos")
         ApiCommand().register()
         MapCommand().register()
@@ -109,44 +96,26 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         SoundCommand().register()
         SetXPCommand().register()
         SetSkinCommand().register()
-
         log("Comandos ativados com sucesso")
-
         log("Ativando listeners dos Eventos")
         EduardAPIEvents().register(this)
         SupportActivations().register(this)
         EduWorldEditListener().register(this)
         PlayerTargetListener().register(this)
-
         log("Listeners dos Eventos ativados com sucesso")
-
         log("Gerando Base de dados de Enums do Bukkit")
         BukkitInfoGenerator(this)
-
-
-
         log("Ativando replacers")
         BukkitReplacers()
-
         log("Carregado com sucesso!")
-
-
-
         CurrencyController.getInstance().register(CurrencyVaultEconomy())
-
-
         log("Carregando dependencias")
         JHCashHook()
         StoryHook()
-
-
-
-
         testingKotlin()
-
     }
 
-    private fun testingKotlin(){
+    private fun testingKotlin() {
         log("Testando Kotlin")
         EntidadesNMSTeste().register(this)
         EventsAlterations()
@@ -157,7 +126,6 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
-
         log("Ativando debug de sistemas caso marcado na config como 'true'")
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         DBManager.setDebug(configs.getBoolean("debug-db"))
@@ -167,14 +135,9 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         BukkitBungeeAPI.setDebug(configs.getBoolean("debug-bungee-bukkit"))
         Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
         PlayerSkin.reloadSkins()
-
-
-
-
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
         loadMaps()
         log("Mapas carregados!")
-
         configs.add("sound-teleport", OPT_SOUND_TELEPORT)
         configs.add("sound-error", OPT_SOUND_ERROR)
         configs.add("sound-success", OPT_SOUND_SUCCESS)
@@ -191,16 +154,11 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         } catch (e: Exception) {
             error("Formato do dinheiro invalido " + configs.getString("money-format"))
         }
-
         Mine.MSG_ON_JOIN = configs.message("on-join-message")
         Mine.MSG_ON_QUIT = configs.message("on-quit-message")
         OPT_SOUND_TELEPORT = configs.getSound("sound-teleport")
         OPT_SOUND_ERROR = configs.getSound("sound-error")
         OPT_SOUND_SUCCESS = configs.getSound("sound-success")
-
-
-
-
     }
 
     override val pluginName: String
@@ -213,6 +171,8 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         log("Mapas salvados!")
         log("desativado com sucesso!")
         BungeeAPI.getController().unregister()
+
+
     }
 
     companion object {
@@ -222,11 +182,6 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
             @JvmStatic
             get
 
-        /**
-         * Som do rosnar do gato
-         */
-
-        private val ROSNAR = SoundEffect.create("CAT_PURR")
 
         /**
          * Som para o Teleporte
@@ -245,6 +200,10 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
 
 
         /*
+
+        Som do rosnar do gato
+        private val ROSNAR = SoundEffect.create("CAT_PURR")
+
         private val VALUE_TNT_POWER = 4f
 
         private val VALUE_CREEPER_POWER = 3f
@@ -289,8 +248,8 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         }
 
         /*
-     * Mapa de Arenas registradas
-     */
+        * Mapa de Arenas registradas
+        */
         var MAPS = mutableMapOf<String, Schematic>()
         var MAPS_CACHE: MutableMap<Player, Schematic> = HashMap()
 
