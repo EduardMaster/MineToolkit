@@ -12,15 +12,16 @@ import java.net.URL
 import java.util.*
 
 
+@SuppressWarnings("unused")
 object Licence {
-    private const val debug = true
-    private const val site = "http://eduard.com.br/license/?"
+    private const val DEBUG = true
+    private const val SITE = "http://eduard.com.br/license/?"
 
 
     private fun test(plugin: String, owner: String, key: String): PluginActivationStatus {
         return try {
             val tag = "[$plugin] "
-            val link = site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner
+            val link = SITE + "key=" + key + "&plugin=" + plugin + "&owner=" + owner
             val connect = URL(link).openConnection()
             connect.connectTimeout = 5000
             connect.readTimeout = 5000
@@ -36,19 +37,19 @@ object Licence {
             try {
                 PluginActivationStatus.valueOf(b.toString().toUpperCase().replace(" ", "_"))
             } catch (ex: Exception) {
-                if (debug) {
+                if (DEBUG) {
                     ex.printStackTrace()
                     println(tag + "Verificando pelo link: " + link)
                 }
                 PluginActivationStatus.ERROR
             }
         } catch (ex: IOException) {
-            if (debug) {
+            if (DEBUG) {
                 ex.printStackTrace()
             }
             PluginActivationStatus.SITE_OFF
         } catch (ex: Exception) {
-            if (debug) {
+            if (DEBUG) {
                 ex.printStackTrace()
             }
             PluginActivationStatus.ERROR
@@ -67,7 +68,7 @@ object Licence {
 
     }
 
-    object BukkitLicense {
+    private object BukkitLicense {
         fun test(plugin: JavaPlugin, activation: Runnable) {
             val pluginName = plugin.name
             val tag = "§b[" + plugin.name + "] §f"
@@ -90,7 +91,7 @@ object Licence {
         }
     }
 
-    object BungeeLicense {
+    private object BungeeLicense {
         fun test(plugin: Plugin, activation: Runnable) {
             val pluginName = plugin.description.name
             BungeeCord.getInstance().console

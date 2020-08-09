@@ -28,13 +28,12 @@ import net.eduard.api.lib.config.ConfigSection;
  * @version 4.0
  * @since 1.1
  */
-public class InfoGenerator {
+public class BukkitInfoGenerator {
     private EduardAPI plugin;
 
-    public InfoGenerator(EduardAPI plugin) {
+    public BukkitInfoGenerator(EduardAPI plugin) {
         setPlugin(plugin);
         File pasta = new File(plugin.getPluginFolder(), "database");
-        pasta.mkdirs();
         if (Objects.requireNonNull(pasta.listFiles()).length == 0) {
             saveEnum(DamageCause.class);
             saveEnum(Material.class);
@@ -53,10 +52,9 @@ public class InfoGenerator {
 
     }
 
-
     private void saveClassLikeEnum(Class<?> value) {
         try {
-            Config config = new Config(plugin,"DataBase/"+ value.getSimpleName() + ".yml");
+            Config config = new Config(plugin,"database/"+ value.getSimpleName() + ".yml");
             for (Field field : value.getFields()) {
                 if (field.getType().equals(value)) {
                     Object obj = field.get(value);
@@ -84,7 +82,7 @@ public class InfoGenerator {
     private void saveEnum(Class<?> value, String... ignoredMethods) {
         try {
 
-            Config config = new Config(plugin,"DataBase/"+ value.getSimpleName() + ".yml");
+            Config config = new Config(plugin,"database/"+ value.getSimpleName() + ".yml");
             boolean used = false;
             for (Object part : value.getEnumConstants()) {
                 try {

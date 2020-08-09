@@ -5,19 +5,21 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Objects;
 
 public class LibraryLoader {
 
     private final String name = "EduardAPI JarLoader";
-    private File libFile;
+    private final File libFile;
     public LibraryLoader(File file){
         this.libFile = file;
     }
     public void loadLibraries(){
         File pastaLibs = libFile;
         pastaLibs.mkdirs();
+
         log("Starting loading libraries");
-        for (File file : pastaLibs.listFiles()){
+        for (File file : Objects.requireNonNull(pastaLibs.listFiles())){
             log("Verifying if is a Jar: "+file.getName());
             if (file.getName().endsWith(".jar")){
                 try {
@@ -28,12 +30,13 @@ public class LibraryLoader {
                 }
             }
         }
+
     }
 
     public void log(String msg)
     {
 
-        System.out.println("[EduardAPI Jar Loader] "+msg);
+        System.out.println("["+name+"] "+msg);
     }
 
 
@@ -50,9 +53,9 @@ public class LibraryLoader {
         final Class<URLClassLoader> sysclass = URLClassLoader.class;
         try {
             final Method method = sysclass.getDeclaredMethod("addURL",
-                    new Class[] { URL.class });
+                    URL.class);
             method.setAccessible(true);
-            method.invoke(sysloader, new Object[] { url });
+            method.invoke(sysloader, url);
         } catch (final Throwable t) {
             t.printStackTrace();
             throw new IOException("Error adding " + url

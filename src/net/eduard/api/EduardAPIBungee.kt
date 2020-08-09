@@ -13,7 +13,7 @@ import java.io.File
 
 /**
  * Para fazer plugins usando esta dependencia , lembre-se de colocar depends: [EduardAPI]
- * em vez de depend: [EduardAPI na bungee.yml
+ * em vez de depend: [EduardAPI] na bungee.yml
  * @author Eduard
  */
 class EduardAPIBungee(plugin : IPluginInstance) : HybridPlugin() {

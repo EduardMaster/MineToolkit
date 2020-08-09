@@ -1,23 +1,15 @@
 
-
 debug-bungee-bukkit: false
-
 debug-storage: false
-
 debug-copyable: false
-
 debug-commands: false
-
 debug-menu: false
-
 debug-replacers: false
-
 debug-db: false
 
 skins: false
-
+auto-respawn: false
 custom-skin: "EduardKillerPro"
-
 player target: "$player_name - $player_level"
 stack-design: "§aQuantidade: §f$stack"
 
@@ -26,7 +18,9 @@ money-format-locale: "PT-BR"
 
 no-join-message: true
 custom-join-message: false
+custom-first-join-message: false
 on-join-message: '&6O jogador &e$player &6entrou no server'
+first-join-message: "&6Seja bem vindo ao servidor!!"
 
 no-quit-message: true
 custom-quit-message: false
@@ -36,20 +30,13 @@ no-death-message: true
 custom-death-message: false
 on-death-player-message: '&6O jogador &e$killer matou o jogador $player'
 
-custom-first-join-message: false
-first-join-message: ""
-
 custom-motd: false
-
 custom-motd-amount: -1
 motd:
 - seja bem vindo
 - Ao meu servidor!
 
-auto-respawn: false
-auto-rejoin: false
 
-commands-blocked:
-- /comandobloqueado
+
 
 

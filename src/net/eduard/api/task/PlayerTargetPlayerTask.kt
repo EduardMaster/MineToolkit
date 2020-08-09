@@ -16,7 +16,7 @@ class PlayerTargetPlayerTask : BukkitRunnable() {
                         target, p)
                 event.call()
             } catch (ex: Exception) {
-                EduardAPI.Companion.instance.log("Erro ao causar o Evento PlayerTargetEvent ")
+                EduardAPI.instance.log("Erro ao causar o Evento PlayerTargetEvent ")
                 ex.printStackTrace()
             }
 

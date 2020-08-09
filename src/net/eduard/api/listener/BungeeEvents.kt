@@ -7,7 +7,7 @@ import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 
 
-
+@SuppressWarnings("unused")
 class BungeeEvents : Listener {
 
 
@@ -60,7 +60,7 @@ class BungeeEvents : Listener {
     }
 
     @EventHandler
-    fun event(e: ServerConnectEvent) {
+    private fun event(e: ServerConnectEvent) {
     }
     @EventHandler
     fun onJoin(e: LoginEvent) {
@@ -74,47 +74,47 @@ class BungeeEvents : Listener {
 
      */
     @EventHandler
-    fun event(e: PermissionCheckEvent) {
+    private fun event(e: PermissionCheckEvent) {
     }
 
     @EventHandler
-    fun event(e: PlayerHandshakeEvent) {
+    private fun event(e: PlayerHandshakeEvent) {
     }
 
     @EventHandler
-    fun event(e: PlayerDisconnectEvent) {
+    private fun event(e: PlayerDisconnectEvent) {
     }
 
     @EventHandler
-    fun event(e: PluginMessageEvent) {
+    private fun event(e: PluginMessageEvent) {
     }
 
     @EventHandler
-    fun event(e: ProxyPingEvent) {
+    private fun event(e: ProxyPingEvent) {
     }
 
     @EventHandler
-    fun event(e: ServerKickEvent) {
+    private fun event(e: ServerKickEvent) {
     }
 
     @EventHandler
-    fun event(e: ServerSwitchEvent) {
+    private fun event(e: ServerSwitchEvent) {
     }
 
     @EventHandler
-    fun event(e: TargetedEvent) {
+    private fun event(e: TargetedEvent) {
     }
 
     @EventHandler
-    fun event(e: ProxyReloadEvent) {
+    private fun event(e: ProxyReloadEvent) {
     }
 
     @EventHandler
-    fun event(e: TabCompleteResponseEvent) {
+    private fun event(e: TabCompleteResponseEvent) {
     }
 
 
     @EventHandler
-    fun event(e: TabCompleteEvent) {
+    private fun event(e: TabCompleteEvent) {
     }
 }

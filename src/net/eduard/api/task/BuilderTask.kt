@@ -5,7 +5,7 @@ import net.eduard.api.server.EduardPlugin
 import net.eduard.api.server.Licence
 import org.bukkit.Bukkit
 
-class PluginActivator : TimeManager() {
+class BuilderTask : TimeManager() {
 
     override fun run() {
         for (plugin in Bukkit.getPluginManager().plugins) {

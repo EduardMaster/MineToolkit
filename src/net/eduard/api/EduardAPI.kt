@@ -4,7 +4,7 @@ import net.eduard.api.command.*
 import net.eduard.api.command.api.ApiCommand
 import net.eduard.api.command.map.MapCommand
 import net.eduard.api.core.BukkitReplacers
-import net.eduard.api.core.InfoGenerator
+import net.eduard.api.core.BukkitInfoGenerator
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.hooks.JHCashHook
 import net.eduard.api.hooks.StoryHook
@@ -34,10 +34,9 @@ import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetPlayerTask
-import net.eduard.api.task.PluginActivator
+import net.eduard.api.task.BuilderTask
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.text.DecimalFormat
@@ -98,9 +97,9 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
 
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
-        PlayerTargetPlayerTask().runTaskTimerAsynchronously(getPlugin(), 20, 20)
-        AutoSaveAndBackupTask().runTaskTimerAsynchronously(getPlugin(), 20, 20)
-        PluginActivator().asyncTimer()
+        PlayerTargetPlayerTask().runTaskTimerAsynchronously(plugin, 20, 20)
+        AutoSaveAndBackupTask().runTaskTimerAsynchronously(plugin, 20, 20)
+        BuilderTask().asyncTimer()
 
         log("Ativando comandos")
         ApiCommand().register()
@@ -122,7 +121,7 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         log("Listeners dos Eventos ativados com sucesso")
 
         log("Gerando Base de dados de Enums do Bukkit")
-        InfoGenerator(this)
+        BukkitInfoGenerator(this)
 
 
 
@@ -147,7 +146,7 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
 
     }
 
-    fun testingKotlin(){
+    private fun testingKotlin(){
         log("Testando Kotlin")
         EntidadesNMSTeste().register(this)
         EventsAlterations()
@@ -198,11 +197,7 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         OPT_SOUND_TELEPORT = configs.getSound("sound-teleport")
         OPT_SOUND_ERROR = configs.getSound("sound-error")
         OPT_SOUND_SUCCESS = configs.getSound("sound-success")
-        if (configs.getBoolean("auto-rejoin")) {
-            for (p in Mine.getPlayers()) {
-                Mine.callEvent(PlayerJoinEvent(p, null))
-            }
-        }
+
 
 
 
@@ -230,6 +225,7 @@ class EduardAPI(plugin : IPluginInstance) : HybridPlugin() {
         /**
          * Som do rosnar do gato
          */
+
         private val ROSNAR = SoundEffect.create("CAT_PURR")
 
         /**
