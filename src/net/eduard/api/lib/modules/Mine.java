@@ -2477,6 +2477,7 @@ public final class Mine {
         holo.setGravity(false);
         holo.setVisible(false);
         holo.setSmall(true);
+        holo.setMarker(true);
         holo.setCustomNameVisible(true);
         holo.setCustomName(line);
         return holo;
