@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Objects;
 
 import org.bukkit.Effect;
 import org.bukkit.EntityEffect;
@@ -34,7 +35,7 @@ public class InfoGenerator {
         setPlugin(plugin);
         File pasta = new File(plugin.getPluginFolder(), "database");
         pasta.mkdirs();
-        if (pasta.listFiles().length == 0) {
+        if (Objects.requireNonNull(pasta.listFiles()).length == 0) {
             saveEnum(DamageCause.class);
             saveEnum(Material.class);
             saveEnum(Effect.class);

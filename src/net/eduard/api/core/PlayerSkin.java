@@ -14,10 +14,11 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class PlayerSkin {
-    private static HashMap<String, PlayerSkin> skins = new HashMap<>();
-    private static Map<Player, PlayerSkin> skinUsed = new HashMap<>();
-    private static Config config = new Config(EduardAPI.getInstance(), "skins.yml");
+    private static final HashMap<String, PlayerSkin> skins = new HashMap<>();
+    private static final Map<Player, PlayerSkin> skinUsed = new HashMap<>();
+    private static final Config config = new Config(EduardAPI.getInstance(), "skins.yml");
 
     public static void saveSkins() {
         for (PlayerSkin skin : skins.values()) {
@@ -72,10 +73,10 @@ public class PlayerSkin {
     private String name;
     private String signature;
     private String value;
-    public static final String LINK_MOJANG_UUID = "https://api.mojang.com/users/rofiles/minecraft/";
-    public static final String LINK_MOJANG_SKIN = "https://sessionserver.mojang.com/session/minecraft/profile/";
-    public static final String LINK_MCAPI_UUID = "https://mcapi.ca/name/uuid/";
-    public static final String LINK_MCAPI_SKIN = "http://mcapi.ca/uuid/player/";
+    private static final String LINK_MOJANG_UUID = "https://api.mojang.com/users/rofiles/minecraft/";
+    private static final String LINK_MOJANG_SKIN = "https://sessionserver.mojang.com/session/minecraft/profile/";
+    private static final String LINK_MCAPI_UUID = "https://mcapi.ca/name/uuid/";
+    private static final String LINK_MCAPI_SKIN = "http://mcapi.ca/uuid/player/";
 
     public PlayerSkin(String playerName) {
         this.playerName = playerName;
@@ -122,9 +123,11 @@ public class PlayerSkin {
 
     public void update() {
         JsonObject skinProperty = Extra.getSkinProperty(this.playerUUID);
-        this.name = skinProperty.get("name").getAsString();
-        this.value = skinProperty.get("value").getAsString();
-        this.signature = skinProperty.get("signature").getAsString();
+        if (skinProperty !=null) {
+            this.name = skinProperty.get("name").getAsString();
+            this.value = skinProperty.get("value").getAsString();
+            this.signature = skinProperty.get("signature").getAsString();
+        }
 
     }
 

@@ -14,8 +14,8 @@ debug-replacers: false
 
 debug-db: false
 
-
 skins: false
+
 custom-skin: "EduardKillerPro"
 
 player target: "$player_name - $player_level"

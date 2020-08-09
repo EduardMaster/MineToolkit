@@ -1,11 +1,10 @@
 package net.eduard.api.lib.manager
 
+import net.eduard.api.lib.kotlin.formatColors
 import net.eduard.api.lib.modules.Extra
 import java.util.ArrayList
-import java.util.Arrays
 import java.util.HashMap
 
-import net.eduard.api.lib.storage.Storable
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -18,41 +17,53 @@ import net.eduard.api.lib.modules.Mine
 import org.bukkit.plugin.java.JavaPlugin
 
 
-@Storable.StorageAttributes(indentificate = true)
 open class CommandManager(var name: String, vararg aliases: String) : EventsManager(), TabCompleter, CommandExecutor {
 
     @Transient
     var parent: CommandManager? = null
-
-    var permission: String = ""
+    set(value){
+        field = value
+        if (usage.isEmpty()){
+            usage = autoUsage()
+        }
+        if (permission.isEmpty()){
+            permission = autoPermission()
+        }
+    }
 
     @Transient
-    var customCommand: Command? = null
+    var customCommand: CustomCommand? = null
+    private var commands: MutableMap<String, CommandManager> = HashMap()
 
-    var usage: String = autoUsage()
 
-    var usagePrefix: String? = "§cUtilize "
-        private set
 
+    var usagePrefix: String = "§cUtilize "
     var description = "Este comando faz algo"
+    var permission: String = ""
+    var usage: String = ""
     var aliases: List<String> = ArrayList()
-
     var permissionMessage = Mine.MSG_NO_PERMISSION
 
-    private var commands: MutableMap<String, CommandManager> = HashMap()
 
     val command: PluginCommand
         get() = Bukkit.getPluginCommand(name)
 
     init {
-        this.aliases =  aliases.toList()
+        this.aliases = aliases.toList()
     }
+
     constructor() : this("") {}
 
-    fun autoUsage(): String = parent?.autoUsage()  ?: "$name "
+    private fun autoUsage(): String {
+        return if (parent != null) {
+            parent?.autoUsage() + " " + name
+        } else {
+            "/$name"
+        }
+    }
 
 
-    fun autoPermission(): String {
+    private fun autoPermission(): String {
 
         return if (parent != null) {
             parent?.autoPermission() + "." + name
@@ -61,7 +72,6 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         }
 
     }
-
 
 
     fun broadcast(message: String) {
@@ -98,7 +108,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         }
         //			sender.sendMessage("permiscao " + cmd.getPermission());
         if (cmd === this) {
-            if (args.size == 0) {
+            if (args.isEmpty()) {
                 sender.sendMessage("/$name help")
             } else {
                 sendUsage(sender)
@@ -156,9 +166,17 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             null
         } else vars
     }
+    private fun fixPermissionAndUsage(){
+        if (usage.isEmpty()){
+            usage = autoUsage()
+        }
+        if (permission.isEmpty()){
+            permission = autoPermission()
+        }
+    }
 
     fun register(): Boolean {
-
+        fixPermissionAndUsage()
         val command = Bukkit.getPluginCommand(name)
         if (command == null) {
             log("O comando §a$name §fnao foi registrado na plugin.yml de nenhum Plugin do Servidor")
@@ -175,10 +193,10 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             permission = command.permission
         }
         if (command.permissionMessage != null) {
-            permissionMessage = command.permissionMessage.replace('&', '§')
+            permissionMessage = command.permissionMessage.formatColors()
         }
         if (command.description != null) {
-            description = command.description.replace('&', '§')
+            description = command.description.formatColors()
         }
         // alias não funciona para comandos apenas na plugin.yml ou subcomandos
         if (command.aliases != null) {
@@ -187,7 +205,6 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
         command.usage = usage
         command.label = name
-        //		command.setName(name);
         command.aliases = aliases
 
         command.description = description
@@ -210,42 +227,9 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
     }
 
     fun registerCommand(plugin: Plugin) {
+        fixPermissionAndUsage()
         this.plugin = plugin as JavaPlugin
-
-
-        val command = object : Command(name) {
-
-            override fun execute(sender: CommandSender, label: String, args: Array<String>): Boolean {
-                try {
-                    if (!plugin.isEnabled) {
-                        return false
-                    }
-                    if (sender.hasPermission(permission)) {
-
-                        return onCommand(sender, this, label, args)
-
-                    } else {
-                        sender.sendMessage(permissionMessage)
-                    }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-
-                return false
-            }
-
-            @Throws(IllegalArgumentException::class)
-            override fun tabComplete(sender: CommandSender, alias: String, args: Array<String>): List<String>? {
-
-                val vars = onTabComplete(sender, this, name, args)
-                val superior = super.tabComplete(sender, alias, args)
-                return vars ?: superior
-
-
-            }
-
-
-        }
+        val command = CustomCommand(this)
         command.aliases = aliases
         command.description = description
         command.label = name
@@ -269,25 +253,20 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
     }
 
 
-    fun sendDescription(sender: CommandSender) {
-        sender.sendMessage(description)
-    }
 
     fun sendPermissionMessage(sender: CommandSender) {
         sender.sendMessage(permissionMessage)
     }
 
     fun sendUsage(sender: CommandSender) {
-        if (usagePrefix == null) {
-            usagePrefix = ""
-        }
-        sender.sendMessage(usagePrefix!! + usage!!)
+
+        sender.sendMessage(usagePrefix + usage)
     }
 
 
-    fun updateSubs() {
+    private fun updateSubs() {
         for (sub in commands.values) {
-
+            sub.parent = this
             log("O subcomando §e" + sub.name + " §ffoi registrado no comando §a" + name)
             if (sub.commands.isNotEmpty())
                 sub.updateSubs()
@@ -310,4 +289,41 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
 
     }
+
+
+    /**
+     * Classe para o comando customizado
+     */
+    class CustomCommand(val command: CommandManager) : Command(command.name) {
+        override fun execute(sender: CommandSender, label: String, args: Array<String>): Boolean {
+            try {
+                if (!command.plugin.isEnabled) {
+                    return false
+                }
+                if (sender.hasPermission(permission)) {
+
+                    return command.onCommand(sender, this, label, args)
+
+                } else {
+                    command.sendPermissionMessage(sender)
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+
+            return false
+        }
+
+        @Throws(IllegalArgumentException::class)
+        override fun tabComplete(sender: CommandSender, alias: String, args: Array<String>): List<String>? {
+
+            val vars = command.onTabComplete(sender, this, name, args)
+            val superior = super.tabComplete(sender, alias, args)
+            return vars ?: superior
+
+
+        }
+    }
+
+
 }

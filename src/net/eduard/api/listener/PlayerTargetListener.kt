@@ -17,7 +17,6 @@ import org.bukkit.event.EventPriority
  */
 class PlayerTargetListener : EventsManager() {
 
-
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onTarget(e: PlayerTargetPlayerEvent) {
         val player = e.target

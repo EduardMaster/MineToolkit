@@ -5,7 +5,6 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.VaultAPI
 import org.bukkit.Statistic
-import org.bukkit.entity.Player
 
 /**
  * Registrando os replacers mais usados na Displayboard
@@ -49,16 +48,16 @@ class BukkitReplacers {
         Mine.addReplacer("\$player_xp") { Extra.MONEY.format(it.totalExperience.toLong()) }
         Mine.addReplacer("\$player_kills") { it.getStatistic(Statistic.PLAYER_KILLS) }
         Mine.addReplacer("\$player_deaths") { it.getStatistic(Statistic.DEATHS) }
-        Mine.addReplacer("\$player_kdr") {
-            val kill = it.getStatistic(Statistic.PLAYER_KILLS)
-            val death = it.getStatistic(Statistic.DEATHS)
+        Mine.addReplacer("\$player_kdr") { p ->
+            val kill = p.getStatistic(Statistic.PLAYER_KILLS)
+            val death = p.getStatistic(Statistic.DEATHS)
             if (kill == 0) return@addReplacer 0
             if (death == 0) return@addReplacer 0
             kill / death
         }
-        Mine.addReplacer("\$player_kill/death") {
-            val kill = it.getStatistic(Statistic.PLAYER_KILLS)
-            val death = it.getStatistic(Statistic.DEATHS)
+        Mine.addReplacer("\$player_kill/death") { player ->
+            val kill = player.getStatistic(Statistic.PLAYER_KILLS)
+            val death = player.getStatistic(Statistic.DEATHS)
             if (kill == 0) return@addReplacer 0
             if (death == 0) return@addReplacer 0
             kill / death
