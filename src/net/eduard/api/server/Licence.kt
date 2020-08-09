@@ -68,7 +68,7 @@ object Licence {
 
     }
 
-    private object BukkitLicense {
+     object BukkitLicense {
         fun test(plugin: JavaPlugin, activation: Runnable) {
             val pluginName = plugin.name
             val tag = "§b[" + plugin.name + "] §f"
@@ -91,7 +91,7 @@ object Licence {
         }
     }
 
-    private object BungeeLicense {
+     object BungeeLicense {
         fun test(plugin: Plugin, activation: Runnable) {
             val pluginName = plugin.description.name
             BungeeCord.getInstance().console
