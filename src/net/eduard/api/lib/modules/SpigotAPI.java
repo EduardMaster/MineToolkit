@@ -21,6 +21,7 @@ import net.md_5.bungee.api.chat.TextComponent;
  * @author Eduard
  *
  */
+@SuppressWarnings("unused")
 public final class SpigotAPI {
 	/**
 	 *
@@ -122,21 +123,22 @@ public final class SpigotAPI {
 		return lastColor + lastFormat;
 	}
 
-	public static final ChatColor SUCCESS = ChatColor.GREEN;
-	public static final ChatColor SUCCESS_ARGUMENT = ChatColor.DARK_GREEN;
-	public static final ChatColor ERROR = ChatColor.RED;
-	public static final ChatColor ERROR_ARGUMENT = ChatColor.DARK_RED;
-	public static final ChatColor MESSAGE = ChatColor.GOLD;
-	public static final ChatColor MESSAGE_ARGUMENT = ChatColor.YELLOW;
-	public static final ChatColor CHAT_CLEAR = ChatColor.WHITE;
-	public static final ChatColor CHAT_NORMAL = ChatColor.GRAY;
-	public static final ChatColor GUI_TITLE = ChatColor.BLACK;
-	public static final ChatColor GUI_TEXT = ChatColor.DARK_GRAY;
+	public static final ChatColor GOOD_ACTION = ChatColor.GREEN;
+	public static final ChatColor GOOD_ACTION_ARGUMENT = ChatColor.DARK_GREEN;
+	public static final ChatColor BAD_ACTION = ChatColor.RED;
+	public static final ChatColor BAD_ACTION_ARGUMENT = ChatColor.GRAY;
 	public static final ChatColor CONFIG = ChatColor.AQUA;
 	public static final ChatColor CONFIG_ARGUMENT = ChatColor.DARK_AQUA;
-	public static final ChatColor ITEM_TITLE = ChatColor.LIGHT_PURPLE;
-	public static final ChatColor ITEM_TEXT = ChatColor.DARK_PURPLE;
-	public static final ChatColor TITLE = ChatColor.DARK_BLUE;
-	public static final ChatColor TEXT = ChatColor.BLUE;
-
+	public static final ChatColor GAME = ChatColor.GOLD;
+	public static final ChatColor GAME_ARGUMENT = ChatColor.YELLOW;
+	public static final ChatColor CHAT = ChatColor.WHITE;
+	public static final ChatColor CHAT_ARGUMENT = ChatColor.GRAY;
+	public static final ChatColor TITLE1 = ChatColor.BLACK;
+	public static final ChatColor TITLE2 = ChatColor.DARK_RED;
+	public static final ChatColor TITLE3 = ChatColor.DARK_PURPLE;
+	public static final ChatColor TITLE4 = ChatColor.DARK_BLUE;
+	public static final ChatColor TEXT = ChatColor.LIGHT_PURPLE;
+	public static final ChatColor TEXT2 = ChatColor.BLUE;
+	public static final ChatColor TEXT3 = ChatColor.GRAY;
+	public static final ChatColor TEXT4 = ChatColor.DARK_GRAY;
 }

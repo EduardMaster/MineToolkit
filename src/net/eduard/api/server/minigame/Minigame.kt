@@ -131,7 +131,7 @@ open class Minigame : TimeManager {
 
     constructor(name: String) {
         this.name = name
-        messagePrefix = "§8[§b$name§8] "
+        messagePrefix = "§8[§b$name§8]§f"
         lobbies.add(MinigameLobby())
     }
     constructor(name: String, plugin: JavaPlugin) : this(name) {
