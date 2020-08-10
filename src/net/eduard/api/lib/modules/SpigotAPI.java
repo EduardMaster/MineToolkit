@@ -123,10 +123,10 @@ public final class SpigotAPI {
 		return lastColor + lastFormat;
 	}
 
-	public static final ChatColor GOOD_ACTION = ChatColor.GREEN;
-	public static final ChatColor GOOD_ACTION_ARGUMENT = ChatColor.DARK_GREEN;
-	public static final ChatColor BAD_ACTION = ChatColor.RED;
-	public static final ChatColor BAD_ACTION_ARGUMENT = ChatColor.GRAY;
+	public static final ChatColor POSITIVE_ACTION = ChatColor.GREEN;
+	public static final ChatColor POSITIVE_ACTION_ARGUMENT = ChatColor.DARK_GREEN;
+	public static final ChatColor NEGATIVE_ACTION = ChatColor.RED;
+	public static final ChatColor NEGATIVE_ACTION_ARGUMENT = ChatColor.GRAY;
 	public static final ChatColor CONFIG = ChatColor.AQUA;
 	public static final ChatColor CONFIG_ARGUMENT = ChatColor.DARK_AQUA;
 	public static final ChatColor GAME = ChatColor.GOLD;
