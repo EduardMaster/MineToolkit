@@ -485,9 +485,10 @@ open class Minigame : TimeManager {
             configMiniFeast.saveConfig()
 
             val kitsConfig = Config(plugin, "kits/kits.yml");
+            kitsConfig.set("kits", null)
             var id = 1
             for (kit in kits) {
-                kitsConfig.set("$id", kit)
+                kitsConfig.set("kits.${kit.name}", kit)
                 id++
             }
             kitsConfig.saveConfig()
@@ -528,8 +529,8 @@ open class Minigame : TimeManager {
             lobbies.add(lobby)
         }
         val kitsConfig = Config(plugin, "kits/kits.yml");
-        for (id in kitsConfig.keys) {
-            val kit = kitsConfig.get(id, Kit::class.java)
+        for (id in kitsConfig.getKeys("kits")) {
+            val kit = kitsConfig.get("kits.$id", Kit::class.java)
             kits.add(kit)
         }
 

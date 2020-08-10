@@ -142,7 +142,7 @@ class MinigameRoom {
     }
 
     fun checkWinner(): Boolean {
-        return getPlayers(MinigamePlayerState.NORMAL).any()
+        return getPlayers(MinigamePlayerState.NORMAL).size == 1
     }
 
     fun checkTeamWinner(): Boolean {

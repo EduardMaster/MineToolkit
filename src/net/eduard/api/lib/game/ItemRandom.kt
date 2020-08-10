@@ -14,6 +14,7 @@ open class ItemRandom(
 
 {
     fun create(): ItemStack {
+        if (item == null ) return ItemStack(Material.AIR)
         if (Mine.getChance(chance)) {
             val clone = item!!.clone()
             val amount = Extra.getRandomInt(minAmount, maxAmount)
