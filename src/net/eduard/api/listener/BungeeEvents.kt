@@ -60,7 +60,7 @@ class BungeeEvents : Listener {
     }
 
     @EventHandler
-    private fun event(e: ServerConnectEvent) {
+    fun event(e: ServerConnectEvent) {
     }
     @EventHandler
     fun onJoin(e: LoginEvent) {
@@ -74,47 +74,47 @@ class BungeeEvents : Listener {
 
      */
     @EventHandler
-    private fun event(e: PermissionCheckEvent) {
+    fun event(e: PermissionCheckEvent) {
     }
 
     @EventHandler
-    private fun event(e: PlayerHandshakeEvent) {
+    fun event(e: PlayerHandshakeEvent) {
     }
 
     @EventHandler
-    private fun event(e: PlayerDisconnectEvent) {
+    fun event(e: PlayerDisconnectEvent) {
     }
 
     @EventHandler
-    private fun event(e: PluginMessageEvent) {
+    fun event(e: PluginMessageEvent) {
     }
 
     @EventHandler
-    private fun event(e: ProxyPingEvent) {
+    fun event(e: ProxyPingEvent) {
     }
 
     @EventHandler
-    private fun event(e: ServerKickEvent) {
+    fun event(e: ServerKickEvent) {
     }
 
     @EventHandler
-    private fun event(e: ServerSwitchEvent) {
+    fun event(e: ServerSwitchEvent) {
     }
 
     @EventHandler
-    private fun event(e: TargetedEvent) {
+    fun event(e: TargetedEvent) {
     }
 
     @EventHandler
-    private fun event(e: ProxyReloadEvent) {
+    fun event(e: ProxyReloadEvent) {
     }
 
     @EventHandler
-    private fun event(e: TabCompleteResponseEvent) {
+    fun event(e: TabCompleteResponseEvent) {
     }
 
 
     @EventHandler
-    private fun event(e: TabCompleteEvent) {
+    fun event(e: TabCompleteEvent) {
     }
 }
