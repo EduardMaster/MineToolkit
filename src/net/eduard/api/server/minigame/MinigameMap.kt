@@ -90,6 +90,7 @@ class MinigameMap(
     fun fixWorld() = world(world!!)
 
     fun resetWorld() {
+        world?.isAutoSave = false
         unloadWorld()
         world = loadWorld()
         fixWorld()

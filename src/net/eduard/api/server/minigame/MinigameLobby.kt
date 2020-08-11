@@ -15,23 +15,22 @@ class MinigameLobby {
     var players = mutableListOf<MinigamePlayer>()
     var playersAmount = players.size
     fun join(player: MinigamePlayer) {
-        for (p in players) {
-            p.show(player)
-            player.show(p)
+        for (loopPlayer in players) {
+            loopPlayer.show(player)
+            player.show(loopPlayer)
         }
         player.lobby = this
-        if (!players.contains(player))
-            players.add(player)
-
+        players.add(player)
     }
 
-    fun leave(player: MinigamePlayer) {
-        for (p in players) {
-            p.hide(player)
-            player.hide(p)
+    fun leave(gamePlayer: MinigamePlayer) {
+        gamePlayer.lobby = null
+        players.remove(gamePlayer)
+        for (loopPlayer in players) {
+            loopPlayer.hide(gamePlayer)
+            gamePlayer.hide(loopPlayer)
         }
-        player.lobby = null
-        players.remove(player)
+
     }
 
 }

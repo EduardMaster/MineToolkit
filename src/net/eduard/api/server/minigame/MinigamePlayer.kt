@@ -35,16 +35,16 @@ class MinigamePlayer() {
 
     val player get() = fakePlayer.player
 
-    fun show(player: MinigamePlayer) {
-        if (player == this)
-            return
-        this.player.showPlayer(player.player)
+    fun show(gamePlayer: MinigamePlayer) {
+
+        send("§aAgora você pode ver §2${gamePlayer.fakePlayer.name}")
+        this.player.showPlayer(gamePlayer.player)
     }
 
-    fun hide(player: MinigamePlayer) {
-        if (player == this)
-            return
-        this.player.hidePlayer(player.player)
+    fun hide(gamePlayer: MinigamePlayer) {
+
+        send("§cAgora você não pode ver §7${gamePlayer.fakePlayer.name}")
+        this.player.hidePlayer(gamePlayer.player)
 
     }
 
@@ -156,14 +156,13 @@ class MinigamePlayer() {
      * @param game Sala
      */
     fun join(game: MinigameRoom) {
+        this.game = game
+        for (gamePlayerLoop in game.players) {
+            gamePlayerLoop.show(this)
+            show(gamePlayerLoop)
+        }
         if (!game.players.contains(this))
             game.players.add(this)
-        this.game = game
-        for (jogador in game.players) {
-            jogador.show(this)
-            show(jogador)
-        }
-
     }
 
     /**
@@ -191,9 +190,7 @@ class MinigamePlayer() {
     }
 
     fun leaveLobby() {
-        if (isInLobby) {
-            lobby!!.leave(this)
-        }
+        lobby?.leave(this)
 
     }
 

@@ -33,7 +33,8 @@ class MinigameRoom {
         this.isEnabled = true
         this.time = minigame.timeIntoStart
     }
-    fun start(){
+
+    fun start() {
         mapUsed = map.copy()
         mapUsed.minigame = minigame
         mapUsed.worldName = "${minigame.name}/room/$id"
@@ -42,17 +43,19 @@ class MinigameRoom {
         restart()
 
     }
+
     fun stop() {
         mapUsed.unloadWorld()
         restarting()
     }
-    var isEnabled: Boolean = false
-    fun reset(){
-        mapUsed.resetWorld()
 
+
+
+    fun reset() {
+        mapUsed.resetWorld()
     }
 
-
+    var isEnabled: Boolean = false
     var mode = MinigameMode.NORMAL
 
     var id: Int = 0
@@ -111,7 +114,7 @@ class MinigameRoom {
     }
 
     fun hasMinPlayersAmount(): Boolean {
-        return players.size >= map!!.minPlayersAmount
+        return players.size >= map.minPlayersAmount
     }
 
     /**
@@ -268,7 +271,6 @@ class MinigameRoom {
     fun hasSpace(): Boolean {
         return players.size < map.maxPlayersAmount
     }
-
 
 
 }
