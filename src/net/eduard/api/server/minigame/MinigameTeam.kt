@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 class MinigameTeam {
 
     var game: MinigameRoom? = null
-    var name: String? = null
+    var name: String = "Time1"
     var points: Int = 0
     var players = mutableListOf<MinigamePlayer>()
     var maxSize: Int = 0
@@ -52,8 +52,8 @@ class MinigameTeam {
     }
 
     fun send(message: String) {
-        for (p in players) {
-            p.send(message)
+        for (gamePlayer in players) {
+            gamePlayer.send(message)
         }
     }
 

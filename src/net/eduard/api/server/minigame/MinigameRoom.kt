@@ -108,7 +108,7 @@ class MinigameRoom {
     fun broadcast(message: String) {
         for (player in players) {
 
-            player.send(minigame.messagePrefix + message.replace("\$time", Extra.formatSeconds1(time)).replace("\$max", "" + map!!.maxPlayersAmount)
+            player.send(minigame.messagePrefix + message.replace("\$time", Extra.formatSeconds1(time)).replace("\$max", "" + map.maxPlayersAmount)
                     .replace("\$players", "" + players.size))
         }
     }
@@ -150,7 +150,7 @@ class MinigameRoom {
 
     fun checkTeamWinner(): Boolean {
 
-        return teams.any { it.getPlayers(MinigamePlayerState.NORMAL).isNotEmpty() }
+        return teams.filter{ it.getPlayers(MinigamePlayerState.NORMAL).isNotEmpty() }.size == 1
     }
 
     fun checkForceStart(): Boolean {
@@ -252,6 +252,7 @@ class MinigameRoom {
         for (team in teams) {
             team.leaveAll()
         }
+        teams.clear()
     }
 
     /**

@@ -20,6 +20,7 @@ class MinigameLobby {
             player.show(loopPlayer)
         }
         player.lobby = this
+        if (!players.contains(player))
         players.add(player)
     }
 
