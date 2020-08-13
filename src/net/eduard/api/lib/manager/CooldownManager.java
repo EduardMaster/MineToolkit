@@ -8,7 +8,6 @@ import net.eduard.api.lib.storage.Storable;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.game.FakePlayer;
 
 public class CooldownManager {
     private long duration;
@@ -16,14 +15,14 @@ public class CooldownManager {
     private String msgOverCooldown;
     private String msgStartCooldown;
     @Storable.StorageAttributes(reference = true)
-    private Map<UUID, TimeManager> cooldowns = new HashMap<>();
+    private final Map<UUID, TimeManager> cooldowns = new HashMap<>();
 
     public CooldownManager() {
 
     }
 
     public CooldownManager(int time) {
-
+        setDuration(time);
         msgOnCooldown = "§6Voce esta em Cooldown!";
         msgOverCooldown = "§6Voce saiu do Cooldown!";
         msgStartCooldown = "§6Voce usou a Habilidade!";
@@ -40,12 +39,11 @@ public class CooldownManager {
         return true;
     }
 
-    public CooldownManager stopCooldown(Player player) {
+    public void stopCooldown(Player player) {
 
         TimeManager cd = cooldowns.get(player.getUniqueId());
         cd.stopTask();
         cooldowns.remove(player.getUniqueId());
-        return this;
     }
 
     public boolean onCooldown(Player player) {
@@ -90,11 +88,11 @@ public class CooldownManager {
     }
 
     public long getResult(Player player) {
-        FakePlayer fake = new FakePlayer(player);
-        if (cooldowns.containsKey(fake)) {
+
+        if (cooldowns.containsKey(player.getUniqueId())) {
             long now = Mine.getNow();
-            TimeManager cd = cooldowns.get(fake);
-            Long before = cd.getStartedTime();
+            TimeManager cd = cooldowns.get(player.getUniqueId());
+            long before = cd.getStartedTime();
             long cooldown = cd.getTime() * 50;
             long calc = before + cooldown;
             long result = calc - now;

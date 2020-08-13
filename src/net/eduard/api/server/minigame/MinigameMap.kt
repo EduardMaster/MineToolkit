@@ -70,7 +70,8 @@ class MinigameMap(
     }
 
     fun unloadWorld() {
-        Mine.unloadWorld(worldName, world!!.isAutoSave)
+
+        Mine.unloadWorld(worldName, false)
     }
 
     fun clearWorld() {
@@ -90,7 +91,6 @@ class MinigameMap(
     fun fixWorld() = world(world!!)
 
     fun resetWorld() {
-        world?.isAutoSave = false
         unloadWorld()
         world = loadWorld()
         fixWorld()

@@ -22,6 +22,8 @@ class MinigamePlayer() {
     val isPlaying: Boolean
         get() = game != null
 
+    val name get() = fakePlayer.name
+
     /**
      * Verifica se o jogador esta online
      *

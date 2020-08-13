@@ -39,7 +39,6 @@ class MinigameRoom {
         mapUsed.minigame = minigame
         mapUsed.worldName = "${minigame.name}/room/$id"
         mapUsed.copyWorld(map)
-        mapUsed.world!!.isAutoSave = false
         restart()
 
     }
