@@ -23,10 +23,10 @@ open class Command(override var name: String = "comando", vararg aliases: String
     @Transient
     var parent: Command? = null
 
-    override var aliases = mutableListOf<String>()
+    final override var aliases = mutableListOf<String>()
     override var description = "Descrição do comando"
 
-    var usage = autoUsage()
+    var usage = ""
 
     @Transient
     override var subCommands = mutableListOf<Command>()
@@ -49,12 +49,11 @@ open class Command(override var name: String = "comando", vararg aliases: String
         return if (parent != null) {
             parent?.autoUsage() + " " + name
         } else {
-
             "/$name help"
         }
     }
 
-    override var permission = autoPermission()
+    override var permission = ""
     override var permissionMessage = MESSAGE_PERMISSION
     override var playerOnly = false
 
@@ -144,6 +143,13 @@ open class Command(override var name: String = "comando", vararg aliases: String
     }
 
     fun register(main: Any) {
+
+        if (usage.isEmpty()){
+            usage = autoUsage()
+        }
+        if (permission.isEmpty()){
+            permission = autoPermission()
+        }
 
 
         try {
