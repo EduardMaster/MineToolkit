@@ -97,6 +97,8 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     fun useUpgradesMenu() {
         menuUpgrades = Menu("Lista de Upgrades", 6) {
+            cantBeOpened()
+
             button("upgrade") {
                 setPosition(3, 2)
                 icon = ItemBuilder(Material.ANVIL).name("§aEvoluir")
@@ -113,8 +115,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     fun useConfirmationMenu() {
         this.menuConfirmation = Menu("Confirmar Transação", 3) {
-
-
+            cantBeOpened()
             button("confirmar") {
                 setPosition(3, 2)
                 icon = ItemBuilder(Material.WOOL)

@@ -1,6 +1,7 @@
 package net.eduard.api.server.minigame
 
 import net.eduard.api.lib.game.FakePlayer
+import net.eduard.api.lib.kotlin.offline
 
 import net.eduard.api.lib.modules.Mine
 
@@ -36,6 +37,8 @@ class MinigamePlayer() {
         get() = lobby != null
 
     val player get() = fakePlayer.player
+
+    val offline get() = fakePlayer.offline
 
     fun show(gamePlayer: MinigamePlayer) {
 

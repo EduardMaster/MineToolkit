@@ -3,11 +3,12 @@ package net.eduard.api.lib.command
 import net.eduard.api.lib.storage.Storable
 import net.md_5.bungee.BungeeCord
 import org.bukkit.Bukkit
+import java.io.Serializable
 import java.util.*
 
 @Storable.StorageAttributes(inline = true)
 class PlayerOffline(var name: String = "Eduard",
-                    uuid: UUID? = null) {
+                    uuid: UUID? = null): Serializable {
 
     lateinit var uniqueId: UUID
 
