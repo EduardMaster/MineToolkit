@@ -2,10 +2,17 @@ package net.eduard.api.lib.command
 
 import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-class PlayerBukkit(override val player: Player) : PlayerOnline<Player>(player.name,player.uniqueId) {
-
+class PlayerBukkit( bukkitPlayer: Player) : PlayerOnline<Player>(bukkitPlayer.name,bukkitPlayer.uniqueId) {
+    override var player: Player = bukkitPlayer
+    get(){
+        if (!field.isOnline){
+            field = Bukkit.getPlayer(name)
+        }
+        return field
+    }
     override fun sendMessage(str: String) {
         player.sendMessage(str)
     }

@@ -4,7 +4,16 @@ import net.md_5.bungee.BungeeCord
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
 
-class PlayerBungee(override val player: ProxiedPlayer) : PlayerOnline<ProxiedPlayer>(player.name,player.uniqueId) {
+class PlayerBungee(proxiedPlayer: ProxiedPlayer) : PlayerOnline<ProxiedPlayer>(proxiedPlayer.name,proxiedPlayer.uniqueId) {
+
+    override var player: ProxiedPlayer = proxiedPlayer
+    get(){
+        if (!field.isConnected){
+            field = BungeeCord.getInstance().getPlayer(name)
+        }
+        return field
+    }
+
 
     override fun sendMessage(str: String) {
         player.sendMessage(str)
