@@ -25,5 +25,8 @@ class PlayerBungee(override val player: ProxiedPlayer) : PlayerOnline<ProxiedPla
         return player.hasPermission(permission)
     }
 
+    override val isOffline: Boolean
+        get() = !player.isConnected
+
 
 }

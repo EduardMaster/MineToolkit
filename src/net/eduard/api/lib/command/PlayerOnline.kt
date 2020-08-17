@@ -14,6 +14,8 @@ abstract class PlayerOnline<PlayerClass>(name: String, uuid : UUID) : Sender(nam
 
     abstract var fly: Boolean
 
+    abstract val isOffline : Boolean
+
     val offline = PlayerOffline(name,uuid)
 
 

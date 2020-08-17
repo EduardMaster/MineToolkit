@@ -28,5 +28,8 @@ class PlayerBukkit(override val player: Player) : PlayerOnline<Player>(player.na
         return player.hasPermission(permission)
     }
 
+    override val isOffline: Boolean
+        get() = !player.isOnline
+
 
 }

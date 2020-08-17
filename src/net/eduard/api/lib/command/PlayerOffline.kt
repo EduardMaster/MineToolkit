@@ -51,7 +51,7 @@ class PlayerOffline(var name: String = "Eduard",
 
     val player: PlayerOnline<*>
         get() {
-            if (onlinePlayer == null) {
+            if (onlinePlayer == null||onlinePlayer!!.isOffline) {
                 onlinePlayer = try {
                     PlayerBukkit(Bukkit.getPlayer(name))
                 } catch (er: Error) {
