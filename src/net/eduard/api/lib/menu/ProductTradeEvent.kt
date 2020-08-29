@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
 
 class ProductTradeEvent(player: Player) : PlayerEvent(player), Cancellable {
-    var product: Product? = null
+    lateinit var product: Product
     var shop: Shop? = null
     var amount: Double = 0.toDouble()
     var newStock: Double = 0.toDouble()
@@ -25,15 +25,11 @@ class ProductTradeEvent(player: Player) : PlayerEvent(player), Cancellable {
 
     override fun setCancelled(cancel: Boolean) {
         this.cancelled = cancel
-
     }
 
     companion object {
-
-
         val handlerList = HandlerList()
             @JvmStatic
             get
     }
-
 }

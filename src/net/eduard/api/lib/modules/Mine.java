@@ -62,9 +62,26 @@ import java.util.stream.Collectors;
 public final class Mine {
 
 
+    /**
+     * Metodo muito importante para verificar se o cara esta realmente acertando o alvo
+     *
+     * @param player
+     * @param target
+     * @return
+     */
+    public static boolean isLookingAt(Player player, LivingEntity target) {
+        Vector lookDirection = player.getEyeLocation().getDirection();
+        Vector eyeLocation = player.getEyeLocation().toVector();
+        Vector targetLocation = target.getLocation().toVector();
+        Vector difference = targetLocation.subtract(eyeLocation);
+        Vector targetLocationUpper = target.getLocation().clone().add(0.0, 1.0, 0.0).toVector();
+        Vector differenceUpper = targetLocationUpper.subtract(eyeLocation);
+        float angle = lookDirection.angle(difference);
+        float angleUpper = lookDirection.angle(differenceUpper);
 
 
-
+        return (angle < 0.2f || angleUpper < 0.2f) && player.hasLineOfSight(target);
+    }
 
     	/*
 
@@ -553,7 +570,8 @@ public final class Mine {
 
     /**
      * Envia mensagem para o console do servidor
-     *<code>Bukkit.getConsoleSender().sendMessage(message)</code> ;
+     * <code>Bukkit.getConsoleSender().sendMessage(message)</code> ;
+     *
      * @ @param message
      * @see Bukkit#getConsoleSender()
      */

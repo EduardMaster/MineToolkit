@@ -36,6 +36,9 @@ open class Menu(
 
 ) : EventsManager() {
 
+    constructor(title: String,
+                lineAmount: Int) : this(title, lineAmount, null)
+
     fun button(name: String = "Botao", block: (MenuButton.() -> Unit)? = null): MenuButton {
         return MenuButton(name, this, block = block)
     }
@@ -57,7 +60,6 @@ open class Menu(
     var isCacheInventories: Boolean = false
     var openWithItem: ItemStack? = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
     var openWithCommand: String? = null
-
     var openNeedPermission: String? = null
     var messagePermission = "§cVocê precisa de permissão do Cargo Master para abrir este menu."
     var previousPage = Slot(
@@ -69,7 +71,7 @@ open class Menu(
     var buttons = mutableListOf<MenuButton>()
 
 
-    inline fun cantBeOpened() {
+    fun cantBeOpened() {
         openWithItem = null
         openWithCommand = null
     }
@@ -447,7 +449,7 @@ open class Menu(
 
     fun isOpen(player: Player, inventory: Inventory): Boolean {
         try {
-            val holder = inventory.holder?: return false
+            val holder = inventory.holder ?: return false
             if (holder is FakeInventoryHolder) {
                 if (holder.menu == this) return true
 
