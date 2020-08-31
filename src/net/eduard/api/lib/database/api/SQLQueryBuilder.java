@@ -1,5 +1,7 @@
 package net.eduard.api.lib.database.api;
 
+import net.eduard.api.lib.storage.StorageAPI;
+
 import java.util.Map;
 
 public interface SQLQueryBuilder {
@@ -12,7 +14,8 @@ public interface SQLQueryBuilder {
         return new StringBuilder().append(option().selectData()).append(option().name(table.getTableName()))
                 .append(option().where())
                 .append(option().name(column.getName()))
-                .append(option().equalsTo()).append(option().data(option().convertToSQL(columnValue,table.getPrimaryKey().getJavaType()))).
+                .append(option().equalsTo()).append(option().data(option()
+                        .convertToSQL(columnValue, table.getPrimaryKey().getJavaType(), table.getPrimaryKey()))).
                         toString();
     }
 
@@ -27,7 +30,8 @@ public interface SQLQueryBuilder {
         return new StringBuilder().append(option().deleteData()).append(option().name(table.getTableName()))
                 .append(option().where())
                 .append(option().name(table.getPrimaryKey().getName()))
-                .append(option().equalsTo()).append(option().data(option().convertToSQL(record.getPrimaryKeyValue(),table.getPrimaryKey().getJavaType() ))).toString();
+                .append(option().equalsTo()).append(option().data(option()
+                        .convertToSQL(record.getPrimaryKeyValue(), table.getPrimaryKey().getJavaType(),table.getPrimaryKey()))).toString();
     }
 
     default String createTable(SQLTable table) {
@@ -39,7 +43,8 @@ public interface SQLQueryBuilder {
             builder.append(option().name(column.getName()));
 
             if (column.getSqlType() == null) {
-                column.setSqlType(option().sqlTypeOf(column.getJavaType(), column.getSize()));
+                column.setSqlType(option()
+                        .sqlTypeOf(column.getJavaType(), column.getSize()));
             }
             builder.append(" ");
             builder.append(column.getSqlType());
@@ -74,7 +79,9 @@ public interface SQLQueryBuilder {
                         builder.append(option().defaultFor(column.getJavaType()));
                     }
                 } else {
-                    builder.append(option().data(option().convertToSQL(column.getDefaultValue(),table.getPrimaryKey().getJavaType())));
+                    builder.append(option().data(option()
+                            .convertToSQL(column.getDefaultValue(), table.getPrimaryKey()
+                                    .getJavaType(),column)));
                 }
             }
 
@@ -91,11 +98,13 @@ public interface SQLQueryBuilder {
 
 
     default String deleteTable(SQLTable table) {
-        return new StringBuilder().append(option().deleteTable()).append(option().name(table.getTableName())).toString();
+        return new StringBuilder().append(option().deleteTable())
+                .append(option().name(table.getTableName())).toString();
     }
 
     default String clearTable(SQLTable table) {
-        return new StringBuilder().append(option().clearTable()).append(option().name(table.getTableName())).toString();
+        return new StringBuilder().append(option().clearTable())
+                .append(option().name(table.getTableName())).toString();
     }
 
     default String updateRecord(SQLRecord record) {
@@ -111,10 +120,11 @@ public interface SQLQueryBuilder {
             Object value = entry.getValue();
             builder.append(option().name(column.getName()));
             builder.append(option().equalsTo());
-            if (column.isNullable() && value == null){
+            if (column.isNullable() && value == null) {
                 builder.append(option().nullable());
-            }else {
-                builder.append(option().data(option().convertToSQL(value, column.getJavaType())));
+            } else {
+                builder.append(option().data(option()
+                        .convertToSQL(value, column.getJavaType(),column)));
             }
             builder.append(",");
         }
@@ -123,7 +133,8 @@ public interface SQLQueryBuilder {
         builder.deleteCharAt(builder.length() - 1);
         builder.append(option().where())
                 .append(option().name(table.getPrimaryKey().getName()))
-                .append(option().equalsTo()).append(option().data(option().convertToSQL(primaryKeyValue, table.getPrimaryKey().getJavaType())));
+                .append(option().equalsTo()).append(option().data(option()
+                .convertToSQL(primaryKeyValue, table.getPrimaryKey().getJavaType(),table.getPrimaryKey())));
 
 
         return builder.toString();
@@ -145,10 +156,10 @@ public interface SQLQueryBuilder {
             Object value = entry.getValue();
             header.append(option().name(column.getName()));
             header.append(",");
-            if (value == null&&column.isNullable()){
+            if (value == null && column.isNullable()) {
                 values.append(option().nullable());
-            }else {
-                values.append(option().data(option().convertToSQL(value, column.getJavaType())));
+            } else {
+                values.append(option().data(option().convertToSQL(value, column.getJavaType(),column)));
             }
             values.append(",");
         }

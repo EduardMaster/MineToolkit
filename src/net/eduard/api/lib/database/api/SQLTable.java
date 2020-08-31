@@ -78,7 +78,6 @@ public class SQLTable {
         return columns;
     }
 
-
     public String getCharset() {
         return charset;
     }

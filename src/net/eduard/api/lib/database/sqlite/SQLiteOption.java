@@ -48,8 +48,7 @@ public class SQLiteOption implements SQLOption {
             return "NUMERIC";
         } else if (Float.class.equals(javaClass)) {
             return "FLOAT";
-        } else if (UUID.class.equals(javaClass)) {
-            return "VARCHAR(40)";
+
         } else if (Timestamp.class.equals(javaClass)) {
             return "TIMESTAMP";
         } else if (Calendar.class.equals(javaClass)) {

@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Map;
 import java.util.UUID;
 
 public interface SQLOption {
@@ -46,6 +47,7 @@ public interface SQLOption {
     default String name(String name) {
         return "`" + name + "`";
     }
+
     default String nullable() {
         return "NULL";
     }
@@ -136,12 +138,11 @@ public interface SQLOption {
     String sqlTypeOf(Class<?> javaClass, int size);
 
 
-    default String convertToSQL(Object value, Class<?> javaClass) {
+    default String convertToSQL(Object value, Class<?> javaClass, SQLColumn column) {
 
         if (value == null) {
             return null;
         }
-
 
         if (javaClass == Boolean.class) {
             value = ((boolean) value) ? 1 : 0;
@@ -154,18 +155,19 @@ public interface SQLOption {
         } else if (value instanceof UUID) {
             value = value.toString();
         } else {
-
-            String result = StorageAPI.storeInline(javaClass, value);
-            if (result != null) {
-                return result;
+            if (column != null) {
+                if (column.isInline()) {
+                    return StorageAPI.storeInline(javaClass, value);
+                }
+                if (column.isJson()) {
+                    return StorageAPI.getGson().toJson(StorageAPI.store(javaClass, value));
+                }
             }
         }
         return value.toString();
     }
 
-    default Object convertToJava(Object value, Class<?> javaClass) {
-
-
+    default Object convertToJava(Object value, Class<?> javaClass, SQLColumn column) {
         if (javaClass == Calendar.class) {
             if (value instanceof Timestamp) {
                 Timestamp timestamp = (Timestamp) value;
@@ -178,16 +180,22 @@ public interface SQLOption {
                 Date date = (Date) value;
                 return new java.util.Date(date.getTime());
             }
-        }else {
-            Object result = StorageAPI.restoreInline(javaClass, value);
-            if (result != null) {
-                return result;
+        } else if (javaClass == UUID.class) {
+            return UUID.fromString(value.toString());
+        } else {
+            if (column.isInline()) {
+                return StorageAPI.restoreInline(javaClass, value);
             }
+            if (column.isJson()) {
+                Map<?, ?> map = StorageAPI.getGson().fromJson(value.toString(), Map.class);
+                return StorageAPI.restore(javaClass, map);
+
+            }
+
         }
 
         return value;
     }
-
 
 
 }

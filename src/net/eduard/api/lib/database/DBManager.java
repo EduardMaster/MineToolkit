@@ -11,7 +11,7 @@ import net.eduard.api.lib.modules.Extra;
 /**
  * API de Controle de MySQL ou SQLite com apenas 1 conexão
  *
- * @author Eduard-PC
+ * @author Eduard
  */
 @SuppressWarnings({"unchecked", "unused"})
 public class DBManager {
@@ -505,7 +505,7 @@ public class DBManager {
             for (Object replacer : objects) {
 
                 try {
-                    Object data = option.convertToSQL(replacer, replacer.getClass());
+                    Object data = option.convertToSQL(replacer, replacer.getClass(),null);
 
                     state.setObject(id, data);
 

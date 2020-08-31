@@ -3,47 +3,81 @@ package net.eduard.api.lib.database.test;
 import net.eduard.api.lib.database.DBManager;
 import net.eduard.api.lib.database.SQLEngineType;
 import net.eduard.api.lib.database.SQLManager;
+import net.eduard.api.lib.database.annotations.*;
+import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAPI;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class TestSQLManager {
     public static void main(String[] args) {
+        StorageAPI.startGson();
         DBManager dbManager = new DBManager("root", "", "localhost");
         dbManager.openConnection();
         SQLManager manager = new SQLManager(dbManager);
         testComplexEntityTable(manager);
-
-
         dbManager.closeConnection();
     }
-    public static void testComplexEntityTable(SQLManager manager){
 
-
+    public static void testComplexEntityTable(SQLManager manager) {
         manager.deleteTable(ComplexEntity.class);
         manager.createTable(ComplexEntity.class);
         ComplexEntity dado = new ComplexEntity();
         manager.insertData(dado);
         ComplexEntity result = manager.getData(ComplexEntity.class, 1);
-
-        System.out.println(result.toString());
-
+        System.out.println(result);
     }
-    public static void testPlayerDataTable(SQLManager manager){
-        manager.clearTable(PlayerData.class);
-        manager.deleteTable(PlayerData.class);
-        manager.createTable(PlayerData.class);
-        PlayerData dado = new PlayerData(1,"Nome","Porco",100);
-        PlayerData dado2 = new PlayerData(2,"Nome2","Galinha",200);
-        manager.insertData(dado);
-        manager.insertData(dado2);
-        dado = manager.getData(PlayerData.class,1);
-        System.out.println(dado);
-        List<PlayerData> players = manager.getAllData(PlayerData.class);
-        manager.deleteData(dado2);
-        dado.setCashAmount(150);
-        manager.updateData(dado);
-        dado = manager.getData(PlayerData.class,1);
-        players = manager.getAllData(PlayerData.class);
-        System.out.println(players);
+
+    @SuppressWarnings("unused")
+    @TableName("tabela_complexa")
+    public static class ComplexEntity {
+        @ColumnPrimary
+        int id;
+        @ColumnUnique
+        @ColumnSize(16)
+        String nome = "Eduard";
+
+        UUID playerID = UUID.randomUUID();
+        @ColumnName("saldo de cash")
+        int cash;
+        Date dia = new Date(System.currentTimeMillis());
+        Timestamp stampa = new Timestamp(System.currentTimeMillis());
+        Calendar calendario = Calendar.getInstance();
+        Time horario = new Time(System.currentTimeMillis());
+        long longo = 1000L;
+        double decimal = 15.0D;
+        float flutuante = 20.5F;
+        boolean forte = false;
+
+        @ColumnJson
+        SimpleLocation location = new SimpleLocation();
+
+        public static class SimpleLocation {
+            String world = "world";
+            int x;
+            int y;
+            int z;
+            @Override
+            public String toString() {
+                return "SimpleLocation{" +
+                        "world='" + world + '\'' +
+                        ", x=" + x +
+                        ", y=" + y +
+                        ", z=" + z +
+                        '}';
+            }
+        }
+        @Override
+        public String toString() {
+            return "ComplexEntity{" + location +
+                    "location=" +
+                    '}';
+        }
     }
+
 }

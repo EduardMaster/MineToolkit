@@ -128,6 +128,12 @@ public class MineReflect {
 
         }
 
+        /**
+         *
+         * @param key
+         * @param value
+         * @return
+         */
         public String setDouble(String key, double value) {
             try {
                 Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setDouble", String.class, double.class);
@@ -139,6 +145,12 @@ public class MineReflect {
 
         }
 
+        /**
+         *
+         * @param key
+         * @param value
+         * @return
+         */
         public String setString(String key, String value) {
             try {
                 Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setString", String.class, String.class);
@@ -194,8 +206,7 @@ public class MineReflect {
                 return null;
             }
             Method getTag = Extra.getMethod(MineReflect.classMineItemStack, "getTag");
-            Object tag = getTag.invoke(itemCopia);
-            return tag;
+            return getTag.invoke(itemCopia);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -238,8 +249,7 @@ public class MineReflect {
     public static String getVersion() {
 
         try {
-            String v = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-            return v;
+            return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         } catch (Exception er) {
             return "";
         }
@@ -325,8 +335,8 @@ public class MineReflect {
      */
     public static Double getTPS() {
         try {
-            return Double.valueOf(Math.min(20.0D, Math.round(MineReflect.getCurrentTick() * 10) / 10.0D));
-        } catch (Exception e) {
+            return Math.min(20.0D, Math.round(MineReflect.getCurrentTick() * 10) / 10.0D);
+        } catch (Exception ignored) {
         }
 
         return 0D;
@@ -339,9 +349,9 @@ public class MineReflect {
     /**
      * Altera a stack máxima do Item
      *
-     * @param itemOriginal
-     * @param amount
-     * @return
+     * @param itemOriginal Item Original
+     * @param amount Quantidade
+     * @return ItemStack novo
      */
     public static ItemStack setMaxStackSize(ItemStack itemOriginal, int amount) {
         try {
@@ -468,9 +478,9 @@ public class MineReflect {
             Extra.setFieldValue(packet, "b", player.getName());
             Extra.setFieldValue(packet, "c", prefix);
             Extra.setFieldValue(packet, "d", suffix);
-            Extra.setFieldValue(packet, "g", Arrays.asList(new String[]{player.getName()}));
-            Extra.setFieldValue(packet, "h", Integer.valueOf(0));
-            Extra.setFieldValue(packet, "i", Integer.valueOf(1));
+            Extra.setFieldValue(packet, "g", Collections.singletonList(player.getName()));
+            Extra.setFieldValue(packet, "h", 0);
+            Extra.setFieldValue(packet, "i", 1);
             MineReflect.sendPackets(packet);
 
         } catch (Exception e) {
@@ -522,7 +532,7 @@ public class MineReflect {
                 return;
             }
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             sendPacket(player, Extra.getNew(MineReflect.classPacketPlayOutTitle, fadeIn, stay, fadeOut));
@@ -535,7 +545,7 @@ public class MineReflect {
                             Extra.getParameters(MineReflect.classCraftEnumTitleAction, MineReflect.classMineIChatBaseComponent),
                             Extra.getFieldValue(MineReflect.classCraftEnumTitleAction, "SUBTITLE"), getChatComponentText(subTitle)));
             return;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             sendPacket(player, Extra.getNew(MineReflect.classPacketPlayOutTitle, fadeIn, stay, fadeOut));
@@ -570,7 +580,7 @@ public class MineReflect {
                 return;
             }
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             Object packet = Extra.getNew(MineReflect.classPacketPlayOutPlayerListHeaderFooter,
@@ -579,7 +589,7 @@ public class MineReflect {
 
             Extra.setFieldValue(packet, "b", getChatComponentText(footer));
             sendPacket(packet, player);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             Object packet = Extra.getNew(MineReflect.classPacketPlayOutPlayerListHeaderFooter,
@@ -600,7 +610,7 @@ public class MineReflect {
         try {
             return (int) Extra.getMethodInvoke(Extra.getFieldValue(getConnection(player), "networkManager"), "getVersion") == 47;
 
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         return false;
     }
@@ -716,11 +726,9 @@ public class MineReflect {
                 }
             } else if (object instanceof Player[]) {
                 Player[] players = (Player[]) object;
-                for (Player p : players) {
-                    list.add(p);
-                }
+                Collections.addAll(list, players);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return list;
@@ -731,7 +739,7 @@ public class MineReflect {
      *
      * @param player Jogador
      * @param packet Pacote
-     * @throws Exception
+     * @throws Exception Erro
      */
     public static void sendPacket(Object packet, Player player) throws Exception {
 
@@ -743,7 +751,7 @@ public class MineReflect {
      *
      * @param player Jogador
      * @param packet Pacote
-     * @throws Exception
+     * @throws Exception Erro
      */
     public static void sendPacket(Player player, Object packet) throws Exception {
         sendPacket(packet, player);
@@ -785,7 +793,7 @@ public class MineReflect {
     /**
      * @param player Jogador (CraftPlayer)
      * @return EntityPlayer pelo metodo getHandle da classe CraftPlayer(Player)
-     * @throws Exception
+     * @throws Exception Erro
      */
     public static Object getHandle(Player player) throws Exception {
         return Extra.getMethodInvoke(player, "getHandle");

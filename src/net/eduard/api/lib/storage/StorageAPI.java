@@ -125,7 +125,7 @@ public final class StorageAPI {
         info.setInline(true);
 
 
-        return ""+ STORE_OBJECT.store(info, object);
+        return "" + STORE_OBJECT.store(info, object);
     }
 
     public static Object restore(Class<?> claz, Object object) {
@@ -156,7 +156,6 @@ public final class StorageAPI {
         return STORE_OBJECT.restore(info, object);
 
     }
-
 
 
     public static void register(Class<? extends Storable<?>> claz) {
@@ -242,11 +241,21 @@ public final class StorageAPI {
         debug("- OBJECT @" + id);
     }
 
+    /**
+     * Desregistra uma classe
+     *
+     * @param object Objeto
+     */
     public static void unregisterObject(Object object) {
         objects.remove(object);
         debug("- OBJECT " + getAlias(object.getClass()));
     }
 
+    /**
+     * Desregistra uma classe
+     *
+     * @param claz Classe
+     */
     public static void unregisterStorable(Class<?> claz) {
         storages.remove(claz);
         debug("- CLASS " + claz.getName());
@@ -360,6 +369,10 @@ public final class StorageAPI {
         gson = b.create();
 
 
+    }
+
+    public static Gson getGson(){
+        return gson;
     }
 
     public static <E> E loadGson(File arquivo, Class<E> clz) {

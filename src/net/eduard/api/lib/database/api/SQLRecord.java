@@ -14,11 +14,11 @@ public class SQLRecord {
     public SQLRecord(SQLTable table, ResultSet resultSet, SQLOption option) {
         setTable(table);
         try {
-            instance = (Object) table.getClassBased().newInstance();
+            instance = table.getClassBased().newInstance();
             for (SQLColumn column : table.getColumns()) {
                 try {
-                    data.put(column, option.convertToJava(resultSet.getObject(column.getName()), column.getJavaType()));
-
+                    data.put(column, option.
+                            convertToJava(resultSet.getObject(column.getName()), column.getJavaType(),column));
                 } catch (SQLException e) {
                     data.put(column, null);
                 }
@@ -38,27 +38,23 @@ public class SQLRecord {
 
     public void save() {
         for (SQLColumn column : table.getColumns()) {
-
             try {
                 column.getField().set(instance, data.get(column));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
     public void reload() {
         data.clear();
         for (SQLColumn column : table.getColumns()) {
-
             try {
                 Object value = column.getField().get(instance);
                 data.put(column, value);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-
         }
     }
 

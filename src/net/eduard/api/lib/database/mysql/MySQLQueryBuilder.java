@@ -4,8 +4,8 @@ import net.eduard.api.lib.database.api.SQLOption;
 import net.eduard.api.lib.database.api.SQLQueryBuilder;
 
 public class MySQLQueryBuilder implements SQLQueryBuilder {
-    private MySQLOption option= new MySQLOption();
-    private StringBuilder builder = new StringBuilder();
+    private final MySQLOption option= new MySQLOption();
+    private final StringBuilder builder = new StringBuilder();
 
     @Override
     public SQLOption option() {

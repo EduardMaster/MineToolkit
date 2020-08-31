@@ -2,8 +2,8 @@ package net.eduard.api.lib.database.api;
 
 import net.eduard.api.lib.database.annotations.*;
 import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.storage.Storable;
 
-import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
@@ -18,6 +18,8 @@ public class SQLColumn {
     private boolean isPrimary;
     private boolean isNullable;
     private boolean isUnique;
+    private boolean isJson;
+    private boolean isInline;
     private int size;
 
     public SQLColumn(Field field) {
@@ -48,9 +50,17 @@ public class SQLColumn {
         if (field.isAnnotationPresent(ColumnSize.class)) {
             size = field.getAnnotation(ColumnSize.class).value();
         }
+
         isUnique = field.isAnnotationPresent(ColumnUnique.class);
         isPrimary = field.isAnnotationPresent(ColumnPrimary.class);
         isNullable = field.isAnnotationPresent(ColumnNullable.class);
+        isJson = field.isAnnotationPresent(ColumnJson.class);
+        if (field.isAnnotationPresent(Storable.StorageAttributes.class)){
+            Storable.StorageAttributes storageAtributes = field.getAnnotation(Storable.StorageAttributes.class);
+            if (storageAtributes.inline()){
+                isInline = true;
+            }
+        }
     }
 
     public String getName() {
@@ -77,7 +87,6 @@ public class SQLColumn {
     public void setJavaType(Class<?> javaType) {
         this.javaType = javaType;
     }
-
     public Object getDefaultValue() {
         return defaultValue;
     }
@@ -136,5 +145,17 @@ public class SQLColumn {
 
     public boolean isAutoIncrement() {
         return Number.class.isAssignableFrom(getJavaType());
+    }
+
+    public boolean isJson() {
+        return isJson;
+    }
+
+    public void setJson(boolean json) {
+        isJson = json;
+    }
+
+    public boolean isInline() {
+        return isInline;
     }
 }

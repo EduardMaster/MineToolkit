@@ -79,7 +79,8 @@ public class SQLManager {
                     }
 
                     result.getStatement().close();
-                } catch (Exception ignored) {
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         }
@@ -90,7 +91,7 @@ public class SQLManager {
     public <E> E getData(Class<E> dataClass, Object primaryKeyValue) {
         SQLTable table = getTableData(dataClass);
 
-        return getData(dataClass, table.getPrimaryKey().getField().getName(), primaryKeyValue);
+        return getData(dataClass, table.getPrimaryKey().getName(), primaryKeyValue);
 
     }
 
@@ -133,6 +134,14 @@ public class SQLManager {
                 record.save();
             }
         }
+    }
+
+    public Connection getConnection() {
+        return dbManager.getConnection();
+    }
+
+    public SQLQueryBuilder getBuilder() {
+        return builder;
     }
 
     public void updateDataQueue(Object data) {
@@ -223,20 +232,13 @@ public class SQLManager {
     protected ResultSet executeQuery(String queryStr) {
         try {
             log("Query: " + queryStr);
-            return getConnection().prepareStatement(queryStr).executeQuery();
+            return getConnection().prepareStatement(queryStr)
+                    .executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-
-    public Connection getConnection() {
-        return dbManager.getConnection();
-    }
-
-    public SQLQueryBuilder getBuilder() {
-        return builder;
-    }
 
 }
