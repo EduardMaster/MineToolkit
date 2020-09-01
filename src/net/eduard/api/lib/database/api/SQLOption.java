@@ -160,7 +160,7 @@ public interface SQLOption {
                     return StorageAPI.storeInline(javaClass, value);
                 }
                 if (column.isJson()) {
-                    return StorageAPI.getGson().toJson(StorageAPI.store(javaClass, value));
+                    return StorageAPI.getGson().toJson(StorageAPI.storeField(column.getField(), value));
                 }
             }
         }
@@ -188,8 +188,7 @@ public interface SQLOption {
             }
             if (column.isJson()) {
                 Map<?, ?> map = StorageAPI.getGson().fromJson(value.toString(), Map.class);
-                return StorageAPI.restore(javaClass, map);
-
+                return StorageAPI.restoreField(column.getField(), map);
             }
 
         }

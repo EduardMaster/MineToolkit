@@ -2,6 +2,7 @@ package net.eduard.api.lib.storage;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.sql.Timestamp;
@@ -116,6 +117,16 @@ public final class StorageAPI {
         return STORE_OBJECT.store(info, object);
     }
 
+    public static Object storeField(Field field, Object object) {
+        autoRegisterClass(field.getType());
+        StorageInfo info = new StorageInfo(field.getType());
+        info.setField(field);
+        info.updateByType();
+        info.updateByStoreClass();
+        info.updateByField();
+        return STORE_OBJECT.store(info, object);
+    }
+
     public static String storeInline(Class<?> claz, Object object) {
         autoRegisterClass(claz);
         StorageInfo info = new StorageInfo(claz);
@@ -140,6 +151,17 @@ public final class StorageAPI {
             info.updateByType();
             info.updateByStoreClass();
         }
+        return STORE_OBJECT.restore(info, object);
+    }
+
+    public static Object restoreField(Field field, Object object) {
+        Class<?> claz = field.getType();
+        autoRegisterClass(claz);
+        StorageInfo info = new StorageInfo(claz);
+        info.setField(field);
+        info.updateByType();
+        info.updateByStoreClass();
+        info.updateByField();
         return STORE_OBJECT.restore(info, object);
     }
 
@@ -371,7 +393,7 @@ public final class StorageAPI {
 
     }
 
-    public static Gson getGson(){
+    public static Gson getGson() {
         return gson;
     }
 
