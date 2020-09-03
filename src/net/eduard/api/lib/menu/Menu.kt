@@ -159,6 +159,7 @@ open class Menu(
 
     fun addButton(button: MenuButton) {
         buttons.add(button)
+        button.parentMenu = this
     }
 
 
@@ -379,21 +380,16 @@ open class Menu(
 
     @EventHandler
     fun onClick(e: InventoryClickEvent) {
-
         if (e.whoClicked is Player) {
-
             val player = e.whoClicked as Player
-
             if (isOpen(player, e.inventory)) {
                 debug("Nome do Menu: " + e.inventory.name)
                 e.isCancelled = true
                 val slot = e.rawSlot
                 var page: Int = getPageOpen(player)
-
                 val itemClicked = e.currentItem
                 var button: MenuButton? = null
                 if (itemClicked != null) {
-
                     if (previousPage.item == itemClicked) {
                         open(player, (--page))
                         return
@@ -438,7 +434,6 @@ open class Menu(
                 }
             }
         }
-
     }
 
 

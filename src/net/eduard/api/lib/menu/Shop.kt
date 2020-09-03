@@ -85,12 +85,24 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         var MESSAGE_UPGRADES_ALREADY_BOUGHT = "§cTodos os upgrades já foram adquiridos."
         var TEXT_ALREADY_BOUGHT = "§a§lDESBLOQUEADO"
 
-        var TEMPLATE_BUY = listOf("§fCompre o produto §e\$product_name",
-                "§2Quantidade: §a\$product_stock", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
-        var TEMPLATE_SELL = listOf("§fVende o produto: §e\$product_name",
-                "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price")
-        var TEMPLATE_BUY_SELL = listOf("§fCompra e venda de: §e\$product_name",
-                "§2Quantidade: §a\$product_stock", "§2Preço por 64: §a\$product_sell_pack_price", "§2Preço por Inventario: §a\$product_sell_inventory_price", "", "§2Preço por 1: §a\$product_buy_unit_price", "§2Preço por 64: §a\$product_buy_pack_price")
+        var TEMPLATE_BUY = listOf(
+                "§fCompre: §e\$product_name",
+                "§7Custo x1: §c$§f\$product_buy_unit_price",
+                "§7Custo x64: §c$§f\$product_buy_pack_price",
+                "§7Quantidade: §cx§f\$product_stock")
+        var TEMPLATE_SELL = listOf(
+                "§fVenda: §e\$product_name",
+                "§7Custo x64: §c$§f\$product_sell_pack_price",
+                "§7Custo Inventário: §f\$product_sell_inventory_price",
+                "§7Quantidade: §cx§f\$product_stock")
+        var TEMPLATE_BUY_SELL = listOf(
+                "§fCompre: §e\$product_name",
+                " §7Custo x1: §c$§f\$product_buy_unit_price",
+                " §7Custo x64: §c$§f\$product_buy_pack_price",
+                "§fVenda",
+                " §7Custo x64: §c$§f\$product_sell_pack_price",
+                " §7Custo Inventário: §f\$product_sell_inventory_price",
+                "§7Quantidade: §cx§f\$product_stock")
         const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
     }
 
@@ -408,7 +420,6 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                 p.sendMessage(messageUpgradesAlreadyBought)
             }
         }
-
     }
 
     init {
@@ -424,14 +435,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                 trading[player] = product.tradeType
                 selectedProduct[player] = product
                 player.closeInventory()
-
-
-
                 menuConfirmation!!.open(player)
-
-
-
-
                 return@ClickEffect
             }
             if (((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)
@@ -456,7 +460,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                 buy(player, product, amount.toDouble())
             }
             if (((event.click == ClickType.LEFT || event.click == ClickType.SHIFT_LEFT)
-                    && (product.tradeType === TradeType.BOTH)
+                            && (product.tradeType === TradeType.BOTH)
                             || product.tradeType === TradeType.SELABLE)) {
                 if (product.product != null) {
                     if (isAmountPerChat) {

@@ -7,13 +7,13 @@ import org.bukkit.event.player.PlayerEvent
 
 class ProductTradeEvent(player: Player) : PlayerEvent(player), Cancellable {
     lateinit var product: Product
-    var shop: Shop? = null
-    var amount: Double = 0.toDouble()
-    var newStock: Double = 0.toDouble()
-    var type: TradeType? = null
+    lateinit var shop: Shop
+    var amount = 0.0
+    var newStock = 0.0
+    var type: TradeType = TradeType.SELABLE
     private var cancelled: Boolean = false
-    var balance: Double = 0.toDouble()
-    var priceTotal: Double = 0.toDouble()
+    var balance = 0.0
+    var priceTotal = 0.0
 
     override fun getHandlers(): HandlerList {
         return handlerList

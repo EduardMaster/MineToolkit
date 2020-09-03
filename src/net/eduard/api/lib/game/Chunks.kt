@@ -4,6 +4,7 @@ import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.storage.Storable.StorageAttributes
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
+import org.bukkit.Location
 
 /**
  * Representa uma Chunk Fake
@@ -11,12 +12,17 @@ import org.bukkit.Chunk
  * @author Eduard
  */
 @StorageAttributes(inline = true)
-class Chunks {
+class Chunks() {
     var world: String = "world"
     var x = 0
     var z = 0
     val chunk: Chunk
         get() = Bukkit.getWorld(world).getChunkAt(x, z)
+
+    constructor(location: Location) : this(){
+        x = location.chunk.x
+        z = location.chunk.z
+    }
 
     fun copy(): Chunks {
         return Copyable.copyObject(this)

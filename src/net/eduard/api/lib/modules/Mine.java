@@ -293,13 +293,12 @@ public final class Mine {
             result = (int) xplevel;
             return result;
         }
-        if (level <= 15) {
-            xplevel = level * level + 6 * level;
-            xpe = 2 * level + 7;
-            xplevel += Math.round(percentage * xpe);
-            result = (int) xplevel;
-            return result;
-        }
+
+        xplevel = level * level + 6 * level;
+        xpe = 2 * level + 7;
+        xplevel += Math.round(percentage * xpe);
+        result = (int) xplevel;
+
         return result;
     }
 
@@ -339,8 +338,8 @@ public final class Mine {
     /**
      * Seta para um Tipo de bloco a borda de todas as Chunks
      *
-     * @param type
-     * @param chunks
+     * @param type   Tipo do material da borda
+     * @param chunks Lista de Chunk
      */
     public static void setBorder(Material type, List<Chunk> chunks) {
         Chunk chunkMin = null, chunkMax = null;
@@ -359,15 +358,15 @@ public final class Mine {
             }
 
         }
-        setBorder(type, chunkMin, chunkMax);
+        setBorder(type, Objects.requireNonNull(chunkMin), Objects.requireNonNull(chunkMax));
 
     }
 
     /**
      * Seta a borda para apenas uma Chunk
      *
-     * @param type
-     * @param chunk
+     * @param type  tipo do Material
+     * @param chunk Chunk
      */
     public static void setBorder(Material type, Chunk chunk) {
 
@@ -378,9 +377,9 @@ public final class Mine {
     /**
      * Seta a borda ao redor de um Raio da Chunk central
      *
-     * @param type
-     * @param chunk
-     * @param radius
+     * @param type   Tipo do material da borda
+     * @param chunk  Chunk
+     * @param radius Raio da borda
      */
     public static void setBorder(Material type, Chunk chunk, int radius) {
         Chunk chunkMin = chunk.getWorld().getChunkAt(chunk.getX() - radius, chunk.getZ() - radius);
@@ -413,7 +412,7 @@ public final class Mine {
     /**
      * Registra uma permissão no sistema
      *
-     * @param permission
+     * @param permission Permissão
      */
     public static void addPermission(String permission) {
         Bukkit.getPluginManager().addPermission(new Permission(permission));
@@ -454,11 +453,10 @@ public final class Mine {
     }
 
     /**
-     * Executa um Evento para todos os Listeners lerem ele
+     * Executa um Evento para todos os Listeners alterarem ele
      * <code>Bukkit.getPluginManager().callEvent(listener);</code>
      *
      * @param event Evento
-     * @see
      */
     public static void callEvent(Event event) {
 
@@ -499,7 +497,7 @@ public final class Mine {
     /**
      * Limpa o Inventario do Jogador
      *
-     * @param player
+     * @param player Jogador
      */
     public static void clearInventory(Player player) {
         clearItens(player);
@@ -597,7 +595,7 @@ public final class Mine {
      * @param inventory Inventario
      * @param item      Material do Item
      * @param amount    Quantidade
-     * @returno resultado da verificação
+     * @return resultado da verificação
      */
     public static boolean contains(Inventory inventory, Material item, int amount) {
         return getTotalAmount(inventory, item) >= amount;
@@ -907,7 +905,7 @@ public final class Mine {
     }
 
     /**
-     * Lê de um arquivo varios objetivos enchendo uma lista com ele
+     * Lê de um arquivo varios objetos enchendo uma lista com eles
      *
      * @param list Nova Lista
      * @param file Arquivo

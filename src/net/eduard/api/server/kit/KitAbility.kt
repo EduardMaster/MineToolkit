@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.click.PlayerInteract
 import net.eduard.api.lib.game.Explosion
+import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.game.Jump
 import net.eduard.api.lib.manager.CooldownManager
 import net.eduard.api.lib.manager.EffectManager
@@ -29,13 +30,12 @@ open class KitAbility : EventsManager(), BukkitTimeHandler {
     val timesUsed = HashMap<Player, Int>()
     var name = "Kit"
     var price = 0.0
+    var icon = ItemBuilder(Material.DIAMOND_SWORD)
     var isShowOnGui = true
     var isEnabled = true
     var activeCooldownOnPvP = false
     var useLimit = 1
-    val lore = ArrayList<String>()
-    var itemType = Material.DIAMOND_AXE
-    var itemData = 0
+    val lore get() = icon.lore
     var effects = EffectManager()
     var jump: Jump? = null
     var explosion: Explosion? = null
@@ -77,22 +77,7 @@ open class KitAbility : EventsManager(), BukkitTimeHandler {
             effects.messageToSend = value
         }
 
-    val icon: ItemStack
-        get() {
 
-            val item = ItemStack(itemType, 1)
-            val meta = item.itemMeta
-            meta.displayName = "§e$name"
-            val list = mutableListOf<String>()
-            for (line in lore) {
-                list.add("§f$line")
-            }
-            meta.lore = list
-            item.itemMeta = meta
-
-
-            return item
-        }
 
     @Storable.StorageAttributes(reference = true)
     var kits: List<KitAbility> = ArrayList()
@@ -110,7 +95,7 @@ open class KitAbility : EventsManager(), BukkitTimeHandler {
     }
 
     fun add(item: ItemStack) {
-        items.add(Mine.setName(item, "§b" + name))
+        items.add(Mine.setName(item, "§b$name"))
 
     }
 
@@ -175,8 +160,8 @@ open class KitAbility : EventsManager(), BukkitTimeHandler {
     }
 
     fun setIcon(material: Material, data: Int, vararg lore: String) {
-        itemType = material
-        itemData = data
+        icon = ItemBuilder(material,1)
+        icon.data(data)
         this.lore.addAll(lore)
     }
 

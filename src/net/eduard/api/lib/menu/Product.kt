@@ -58,7 +58,7 @@ open class Product(name: String = "Produto",
         set(value) {
             field = value
             if (item == null) {
-                item = value
+                item = value?.clone()
             }
         }
     val parentShop: Shop
@@ -79,7 +79,9 @@ open class Product(name: String = "Produto",
         var clone = super.getIcon(player).clone()
         clone = clone.clone()
         if (isLimited) {
-            clone.amount = 64
+            if (clone.amount > 64){
+                clone.amount = 64
+            }
         }
         val lore = Mine.getLore(clone)
         if (parentMenu != null) {
@@ -99,7 +101,9 @@ open class Product(name: String = "Produto",
                             .replace("\$product_stock", "" + stock)
                             .replace("\$product_buy_unit_price", Extra.formatMoney(unitBuyPrice))
                             .replace("\$product_buy_pack_price", Extra.formatMoney(unitBuyPrice * 64))
-                            .replace("\$product_sell_unit_price", Extra.formatMoney(unitSellPrice)).replace("\$product_sell_pack_price", Extra.formatMoney(unitSellPrice * 64)).replace("\$product_sell_inventory_price", Extra.formatMoney(unitSellPrice * 64 * 4 * 9)))
+                            .replace("\$product_sell_unit_price", Extra.formatMoney(unitSellPrice))
+                            .replace("\$product_sell_pack_price", Extra.formatMoney(unitSellPrice * 64))
+                            .replace("\$product_sell_inventory_price", Extra.formatMoney(unitSellPrice * 64 * 4 * 9)))
                 }
                 if (parentShop.isPermissionShop) {
                     if (player.hasPermission(permission)) {

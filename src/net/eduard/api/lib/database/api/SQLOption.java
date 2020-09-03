@@ -168,6 +168,14 @@ public interface SQLOption {
     }
 
     default Object convertToJava(Object value, Class<?> javaClass, SQLColumn column) {
+        if (javaClass.isEnum()){
+
+            try {
+                return javaClass.getDeclaredField(value.toString()).get(0);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
         if (javaClass == Calendar.class) {
             if (value instanceof Timestamp) {
                 Timestamp timestamp = (Timestamp) value;
