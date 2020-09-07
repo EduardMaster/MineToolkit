@@ -29,7 +29,8 @@ open class EffectManager {
             Mine.makeCommand(cmd.replace("\$player", player.name))
         }
         for (cmd in playerCommandsToRun) {
-            player.performCommand(cmd.replace("\$player", player.name).replaceFirst("/".toRegex(), ""))
+            print("Tentando fazer comando $cmd")
+            player.chat(cmd.replace("\$player", player.name))
         }
         soundToPlay?.create(player)
         messageToSend?.apply(player::sendMessage)
