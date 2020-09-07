@@ -63,11 +63,11 @@ open class Menu(
     var openNeedPermission: String? = null
     var messagePermission = "§cVocê precisa de permissão do Cargo Master para abrir este menu."
     var previousPage = Slot(
-            Mine.newItem(Material.ARROW, "§aVoltar Página", 1, 0, "§2Clique para ir para a página anterior"), 5, 3)
+            Mine.newItem(Material.ARROW, "§aVoltar Página.", 1, 0, "§7Clique para ir para a página anterior."), 5, 3)
     var backPage = Slot(
-            Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal", 1, 0, "§2Clique para ir para a página superior"), 1, 2)
+            Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."), 1, 2)
     var nextPage = Slot(
-            Mine.newItem(Material.ARROW, "§aPróxima Página", 1, 0, "§2Clique para ir para a próxima página"), 9, 2)
+            Mine.newItem(Material.ARROW, "§aPróxima Página.", 1, 0, "§7Clique para ir para a próxima página."), 9, 2)
     var buttons = mutableListOf<MenuButton>()
 
 
