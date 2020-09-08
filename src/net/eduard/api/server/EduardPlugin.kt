@@ -38,13 +38,11 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     override val pluginName: String
         get() = Extra.getMethodInvoke(plugin, "getName" ) as String
 
-    val config get() = configs
+    private val config get() = configs
 
     override fun getPlugin(): EduardPlugin {
         return this
     }
-
-
 
 
     override var isActivated = false
@@ -57,11 +55,6 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     final override var sqlManager: SQLManager = SQLManager()
     final override var storageManager: StorageManager = StorageManager()
     private val prefix get() = "[$pluginName] "
-
-
-
-
-
 
 
     /**
