@@ -26,9 +26,8 @@ import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
 import net.eduard.api.lib.game.Schematic
 import net.eduard.api.lib.kotlin.examples.EventsAlterations
-import net.eduard.api.lib.plugin.HybridPlugin
-import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.listener.*
+import net.eduard.api.server.EduardPlugin
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
@@ -50,14 +49,9 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI(plugin: IPluginInstance) : HybridPlugin() {
-    init {
-        pluginBase = plugin
-    }
+class EduardAPI() : EduardPlugin() {
 
-    override fun getPlugin(): JavaPlugin {
-        return pluginBase.plugin as JavaPlugin
-    }
+
 
     override fun console(message: String) {
         Bukkit.getConsoleSender().sendMessage(message)

@@ -3,10 +3,9 @@ package net.eduard.api
 import net.eduard.api.command.bungee.BungeeReloadCommand
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerState
-import net.eduard.api.lib.plugin.HybridPlugin
-import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.listener.BungeeEvents
 import net.eduard.api.server.BungeeDB
+import net.eduard.api.server.EduardBungeePlugin
 import net.md_5.bungee.BungeeCord
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
@@ -16,10 +15,8 @@ import java.io.File
  * em vez de depend: [EduardAPI] na bungee.yml
  * @author Eduard
  */
-class EduardAPIBungee(plugin : IPluginInstance) : HybridPlugin() {
-    init{
-        pluginBase = plugin
-    }
+class EduardAPIBungee() : EduardBungeePlugin() {
+
     lateinit var bungee: BungeeDB
 
     override fun getPlugin(): Plugin {

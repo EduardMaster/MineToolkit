@@ -1,6 +1,6 @@
 name: EduardAPI
 description: API de desenvolvimento de plugins que facilita sua vida
-main: net.eduard.api.EduardAPIBungeeMain
+main: net.eduard.api.EduardAPIBungee
 version: 1.0-Versao-Completa-na-Plugin-yml
 author: Eduard
 authors: [Eduard]

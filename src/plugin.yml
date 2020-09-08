@@ -1,6 +1,6 @@
 name: EduardAPI
 description: API de desenvolvimento de plugins que facilita sua vida
-main: net.eduard.api.EduardAPIMain
+main: net.eduard.api.EduardAPI
 version: 1.7.5
 author: Eduard
 authors: [Eduard]

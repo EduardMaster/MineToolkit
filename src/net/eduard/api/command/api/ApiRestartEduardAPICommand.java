@@ -85,7 +85,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         } catch (UnknownDependencyException e) {
             return pre + red + "File exists, but is missing a dependency!";
         } catch (InvalidPluginException e) {
-            EduardAPI.getInstance().getPlugin().getLogger().log(Level.SEVERE, "Tried to load invalid Plugin.\n", e);
+            EduardAPI.getInstance().getLogger().log(Level.SEVERE, "Tried to load invalid Plugin.\n", e);
             return pre + red + "File exists, but isn't a loadable plugin file!";
         } catch (InvalidDescriptionException e) {
         }

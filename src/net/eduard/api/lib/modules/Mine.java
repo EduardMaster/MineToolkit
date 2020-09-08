@@ -2770,7 +2770,7 @@ public final class Mine {
     }
 
     public static void removeCommand(String name) {
-        if (getCommands().containsKey(name)) {
+        if (Objects.requireNonNull(getCommands()).containsKey(name)) {
             PluginCommand cmd = Bukkit.getPluginCommand(name);
             String pluginName = cmd.getPlugin().getName();
             String cmdName = cmd.getName();
@@ -2780,7 +2780,7 @@ public final class Mine {
             }
             try {
                 getCommands().remove(cmd.getName());
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             console("§bCommandAPI §fremovendo o comando §a" + cmdName + "§f do Plugin §b" + pluginName);
         } else {

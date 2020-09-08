@@ -28,8 +28,7 @@ interface IPlugin  : IPluginInstance{
 
 
 
-    fun deleteOldBackups()
-    fun backup()
+
     val pluginName : String
     val pluginFolder get() : File{
         return try {
@@ -43,6 +42,8 @@ interface IPlugin  : IPluginInstance{
     fun console(message : String){
         println(message)
     }
+    fun deleteOldBackups()
+    fun backup()
     fun onLoad()
     fun onEnable()
     fun reload()
