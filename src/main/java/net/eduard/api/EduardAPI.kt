@@ -33,6 +33,8 @@ import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetPlayerTask
 import net.eduard.api.task.BuilderTask
 import org.bukkit.Bukkit
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow
+import org.bukkit.entity.Arrow
 import org.bukkit.entity.Player
 import java.io.File
 import java.text.DecimalFormat
@@ -47,7 +49,6 @@ import java.util.*
  * @since 0.5
  */
 class EduardAPI() : EduardPlugin() {
-
 
 
     override fun console(message: String) {

@@ -328,7 +328,7 @@ open class Menu(
         registerMenu(plugin)
     }
 
-    fun registerMenu(plugin: IPluginInstance) {
+    open fun registerMenu(plugin: IPluginInstance) {
         registerListener(plugin.plugin as JavaPlugin)
         registeredMenus.add(this)
         for (button in buttons) {

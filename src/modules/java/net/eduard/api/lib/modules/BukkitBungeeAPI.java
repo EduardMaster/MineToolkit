@@ -76,8 +76,7 @@ public final class BukkitBungeeAPI {
 					getServer(server).players = list;
 					log("§aRESPONSE PLAYERS FROM SERVER §F" + server + " : " + list);
 				} else if (isServerRequest(request)) {
-					String server = data.readUTF();
-					currentServer = server;
+					currentServer = data.readUTF();
 				} else if (isServerIpRequest(request)) {
 					String serverName = data.readUTF();
 					String ip = data.readUTF();
@@ -89,8 +88,7 @@ public final class BukkitBungeeAPI {
 					getPlayer(player.getName()).uuid = data.readUTF();
 				} else if (isUUIDOtherRequest(request)) {
 					String playerName = data.readUTF();
-					String uuid = data.readUTF();
-					getPlayer(playerName).uuid = uuid;
+					getPlayer(playerName).uuid = data.readUTF();
 				} else if (isPlayerIpRequest(request)) {
 					String ip = data.readUTF();
 					int port = data.readInt();
