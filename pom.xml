@@ -20,7 +20,9 @@
         <junit.version>4.12</junit.version>
     </properties>
 
+
     <build>
+        <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -152,11 +154,10 @@
 
 
         <dependency>
-            <groupId>net.jh-dev</groupId>
-            <artifactId>cash</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>E:/Tudo/Minecraft - Server/libs-local-gradle/JH_Shop.jar</systemPath>
+            <groupId>net.bukkitplugin</groupId>
+            <artifactId>jhcash</artifactId>
+            <version>6.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
