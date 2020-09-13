@@ -10,7 +10,14 @@ class Calculator(
     var limit: Double = 0.0,
     var variationPerLevel: Double = 0.0,
     var variation: Double = 0.0
-){
+) {
+    constructor(
+        base: Number = 10,
+        perLevel: Number = 5,
+        limit: Number = 0,
+        variationPerLevel: Number = 0,
+        variation: Number = 0
+    ) : this(base.toDouble(), perLevel.toDouble(), limit.toDouble(), variationPerLevel.toDouble(), variation.toDouble())
 
 
     fun getValue(level: Double): Double {

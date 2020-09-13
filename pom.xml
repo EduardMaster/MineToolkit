@@ -62,7 +62,7 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
                 <configuration>
-                    <jvmTarget>1.8</jvmTarget>
+                    <jvmTarget>$[java.version}</jvmTarget>
                 </configuration>
                 <executions>
                     <execution>
