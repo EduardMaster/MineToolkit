@@ -37,7 +37,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
 
 
-    var usagePrefix: String = "§cUtilize "
+    var usagePrefix: String = "§cUtilize: "
     var description = "Este comando faz algo"
     var permission: String = ""
     var usage: String = ""
