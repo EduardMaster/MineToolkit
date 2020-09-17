@@ -200,7 +200,7 @@ open class Menu(
         return open(player, 1)
     }
 
-    fun open(player: Player, page: Int): Inventory? {
+    fun open(player: Player, pageOpened: Int): Inventory? {
 
         if (openNeedPermission != null) {
             if (!player.hasPermission(openNeedPermission)) {
@@ -210,7 +210,7 @@ open class Menu(
                 return null
             }
         }
-        var page = page
+        var page = pageOpened
         if (page < 1) {
             page = 1
         }
@@ -310,7 +310,7 @@ open class Menu(
                 }
             }
 
-            pageOpened[player] = page
+            this.pageOpened[player] = page
             player.openInventory(menu)
             openHandler?.invoke(this, menu, player)
 

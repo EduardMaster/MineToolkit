@@ -1,6 +1,8 @@
 package net.eduard.api.server
 
 import net.eduard.api.lib.command.PlayerOffline
+import net.eduard.api.server.party.Party
+import net.eduard.api.server.party.PartyPlayer
 
 interface PartySystem {
 
@@ -14,4 +16,7 @@ interface PartySystem {
 
     fun getPartyMembers(player: PlayerOffline): List<PlayerOffline>
 
+    fun getParty(player : PlayerOffline) : Party
+
+    fun getPlayer(player : PlayerOffline) : PartyPlayer
 }

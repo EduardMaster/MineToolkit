@@ -1,6 +1,5 @@
 package net.eduard.api.lib.abstraction;
 
-import net.eduard.api.lib.abstraction.Hologram;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

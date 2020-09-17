@@ -5,13 +5,17 @@ import java.util.*;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -29,7 +33,8 @@ public class ItemBuilder extends ItemStack {
         this(Material.STONE, 1);
 
     }
-    public ItemBuilder(ItemStack clone){
+
+    public ItemBuilder(ItemStack clone) {
         super(clone);
     }
 
@@ -41,23 +46,32 @@ public class ItemBuilder extends ItemStack {
         setType(type);
         setAmount(amount);
     }
-    public ItemBuilder spawnerType(EntityType type){
-        type(Material.MOB_SPAWNER);
-        BlockStateMeta meta = (BlockStateMeta) getItemMeta();;
 
+    public ItemBuilder spawnerType(EntityType type) {
+        type(Material.MOB_SPAWNER);
+        BlockStateMeta meta = (BlockStateMeta) getItemMeta();
         BlockState state = meta.getBlockState();
-        if (state != null){
+        if (state != null) {
             CreatureSpawner spawner = (CreatureSpawner) state;
             spawner.setSpawnedType(type);
         }
 
+
+        return this;
+    }
+
+    public ItemStack banner(DyeColor baseColor, DyeColor patternColor, PatternType patternType) {
+        type(Material.BANNER);
+        BannerMeta bannerMeta = (BannerMeta) getItemMeta();
+        bannerMeta.setBaseColor(baseColor);
+        bannerMeta.addPattern(new Pattern(patternColor, patternType));
+        setItemMeta(bannerMeta);
         return this;
     }
 
 
-
     public ItemBuilder(String name) {
-        this(Material.DIAMOND_SWORD,1);
+        this(Material.DIAMOND_SWORD, 1);
         name(name);
     }
 
@@ -70,7 +84,8 @@ public class ItemBuilder extends ItemStack {
         return this;
 
     }
-    public ItemBuilder skin(String skinUrl){
+
+    public ItemBuilder skin(String skinUrl) {
         type(Material.SKULL_ITEM);
         data(SkullType.PLAYER.ordinal());
         SkullMeta itemMeta = (SkullMeta) getItemMeta();
@@ -87,7 +102,7 @@ public class ItemBuilder extends ItemStack {
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
-       setItemMeta(itemMeta);
+        setItemMeta(itemMeta);
 
         return this;
     }
@@ -133,7 +148,7 @@ public class ItemBuilder extends ItemStack {
 
     public List<String> getLore() {
         ItemMeta meta = getItemMeta();
-        if (meta != null&& meta.getLore()!=null) {
+        if (meta != null && meta.getLore() != null) {
 
             return meta.getLore();
         }
