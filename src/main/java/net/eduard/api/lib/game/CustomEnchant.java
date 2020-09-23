@@ -1,7 +1,7 @@
 package net.eduard.api.lib.game;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -26,24 +26,24 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
     public CustomEnchant() {
         super(500);
     }
-    @SuppressWarnings("deprecation")
-    public CustomEnchant unregister() {
-        if (isRegistred()) {
-            try {
-                Field byIdField = Enchantment.class.getDeclaredField("byId");
-                Field byNameField = Enchantment.class.getDeclaredField("byName");
-                byIdField.setAccessible(true);
-                byNameField.setAccessible(true);
-                Map<?, ?> byId = (Map<?, ?>) byIdField.get(null);
-                Map<?, ?> byName = (Map<?, ?>) byNameField.get(null);
-                byId.remove(getId());
-                byName.remove(getName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            setRegistred(false);
+
+    public boolean unregister() {
+        if (!isRegistred()) return false;
+        try {
+            Field byIdField = Enchantment.class.getDeclaredField("byId");
+            Field byNameField = Enchantment.class.getDeclaredField("byName");
+            byIdField.setAccessible(true);
+            byNameField.setAccessible(true);
+            Map<?, ?> byId = (Map<?, ?>) byIdField.get(null);
+            Map<?, ?> byName = (Map<?, ?>) byNameField.get(null);
+            byId.remove(getId());
+            byName.remove(getName());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return this;
+        setRegistred(false);
+
+        return true;
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
         String enchamentname = "§7" + getName() + " " + level;
         if (meta.getLore() == null) {
 
-            meta.setLore(Arrays.asList(enchamentname));
+            meta.setLore(Collections.singletonList(enchamentname));
         } else {
             List<String> lore = meta.getLore();
             lore.add(0, enchamentname);
@@ -70,7 +70,8 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
     }
 
 
-    public CustomEnchant register() {
+    public boolean register() {
+        if (Enchantment.getByName(getName()) != null) return false;
         setRegistred(true);
         try {
             try {
@@ -84,7 +85,7 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return this;
+        return true;
 
     }
 
