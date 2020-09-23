@@ -21,6 +21,7 @@ open class MenuButton(var name: String = "Botao"
         block?.invoke(this)
         parentMenu?.addButton(this)
 
+
     }
 
     constructor(parent: Menu) : this(parentMenu = parent)

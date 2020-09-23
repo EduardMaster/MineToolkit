@@ -15,9 +15,9 @@ import org.bukkit.inventory.ItemStack
 
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.manager.EventsManager
-import net.eduard.api.lib.kotlin.centralized
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
@@ -30,25 +30,42 @@ import java.lang.Exception
  */
 open class Menu(
 
-        var title: String = "Menu",
-        var lineAmount: Int = 1,
-        block: (Menu.() -> Unit)? = null
+    var title: String = "Menu",
+    var lineAmount: Int = 1,
+    block: (Menu.() -> Unit)? = null
 
 ) : EventsManager() {
 
-    constructor(title: String,
-                lineAmount: Int) : this(title, lineAmount, null)
+    constructor(
+        title: String,
+        lineAmount: Int
+    ) : this(title, lineAmount, null)
 
     fun button(name: String = "Botao", block: (MenuButton.() -> Unit)? = null): MenuButton {
         return MenuButton(name, this, block = block)
+
     }
+
+
 
     @Transient
     var superiorMenu: Menu? = null
 
+    @Deprecated("Use multi button instead")
     @Transient
     var openHandler: (Menu.(Inventory, Player) -> Unit)? = null
 
+    @Transient
+    var effect: ClickEffect? = null
+
+    @Transient
+    private var pagesCache: MutableMap<Int, Inventory> = HashMap()
+
+    @Transient
+    private var buttonsCache = mutableMapOf<String, MenuButton>()
+
+    @Transient
+    private val pageOpened = HashMap<Player, Int>()
 
     var pageAmount = 1
     var pagePrefix = ""
@@ -63,11 +80,16 @@ open class Menu(
     var openNeedPermission: String? = null
     var messagePermission = "§cVocê precisa de permissão do Cargo Master para abrir este menu."
     var previousPage = Slot(
-            Mine.newItem(Material.ARROW, "§aVoltar Página.", 1, 0, "§7Clique para ir para a página anterior."), 5, 3)
+        Mine.newItem(Material.ARROW, "§aVoltar Página.", 1, 0, "§7Clique para ir para a página anterior."), 1, 1
+    )
     var backPage = Slot(
-            Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."), 1, 2)
+        Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."),
+        1,
+        3
+    )
     var nextPage = Slot(
-            Mine.newItem(Material.ARROW, "§aPróxima Página.", 1, 0, "§7Clique para ir para a próxima página."), 9, 2)
+        Mine.newItem(Material.ARROW, "§aPróxima Página.", 1, 0, "§7Clique para ir para a próxima página."), 9, 1
+    )
     var buttons = mutableListOf<MenuButton>()
 
 
@@ -76,14 +98,6 @@ open class Menu(
         openWithCommand = null
     }
 
-    @Transient
-    var effect: ClickEffect? = null
-
-    @Transient
-    private var pagesCache: MutableMap<Int, Inventory> = HashMap()
-
-    @Transient
-    private val pageOpened = HashMap<Player, Int>()
 
     init {
         block?.invoke(this)
@@ -129,14 +143,38 @@ open class Menu(
         return Copyable.copyObject(this)
     }
 
-    fun getButton(icon: ItemStack, player: Player): MenuButton? {
+
+    fun getButtonUsingStream(icon: ItemStack, player: Player): MenuButton? {
+        val page = pageOpened[player] ?: 1
+        val perPageItems = pageAmount - 1 * 7
+        val skipValue = perPageItems * page - 1
+        val stream = buttons.stream().skip(skipValue.toLong()).filter { Mine.equals(it.getIcon(player), icon) }
+            .findFirst()
+        if (stream.isPresent)
+            return stream.get()
+        return null
+    }
+
+    fun getButtonUsingFor(icon: ItemStack, player: Player): MenuButton? {
+        val tempoAntes = System.currentTimeMillis()
+
         for (button in buttons) {
-            if (button.getIcon(player).isSimilar(icon)) {
+            if (Mine.equals(button.getIcon(player), icon)) {
+
+                val tempoDepois = System.currentTimeMillis()
+                debug("§aTempo para percorrer todos items " + (tempoDepois - tempoAntes))
                 return button
             }
         }
+        return null;
+    }
 
-        return null
+    fun getButton(icon: ItemStack, player: Player): MenuButton? {
+
+
+        val data = MineReflect.getData(icon)
+        val buttonName = data.getString("button-name")
+        return buttonsCache.get(buttonName)
     }
 
     fun getButton(name: String): MenuButton? {
@@ -157,11 +195,44 @@ open class Menu(
         return null
     }
 
-    fun addButton(button: MenuButton) {
-        buttons.add(button)
-        button.parentMenu = this
+    fun getSlotInicial(): Int {
+        if (isAutoAlignItems) {
+            if (lineAmount > 1) {
+                return 10
+            }
+        }
+        return 0
     }
 
+    fun getSlotLimit(): Int {
+        if (isAutoAlignItems) {
+            if (lineAmount > 2) {
+                return ((lineAmount - 1) * 9) -1
+            }
+        }
+        return (lineAmount * 9) - 1
+    }
+
+
+    fun addButton(button: MenuButton) {
+
+        buttons.add(button)
+        button.parentMenu = this
+
+        if (button.item != null) {
+            buttonsCache[button.name] = button
+        }
+        if (isAutoAlignItems) {
+            nextPosition()
+            button.page = lastPage
+            button.index = lastSlot
+        }
+    }
+    @Transient
+    var lastPage = 1
+
+    @Transient
+    var lastSlot = getSlotInicial()
 
     fun removeButton(button: MenuButton) {
         buttons.remove(button)
@@ -200,13 +271,53 @@ open class Menu(
         return open(player, 1)
     }
 
+    fun updateButtonPositions() {
+
+        lastSlot = getSlotInicial() - 1
+        lastPage = 1
+
+        for (button in buttons) {
+            nextPosition()
+            button.index = lastSlot
+            button.page = lastPage
+        }
+        pageAmount = lastPage
+    }
+
+    /**
+     * Método usado para gerar a nova posição do botão apartir
+     * de um sistema de paginação com 7 items por linha
+     * com 4 linhas com items e duas linhas vazias, e também com a
+     * possibildade de deixar o meio sem items
+     */
+    fun nextPosition(){
+        lastSlot++
+        if (lastSlot < getSlotInicial()){
+            lastSlot = getSlotInicial()
+        }
+        if (autoAlignSkipCenter) {
+            if (Mine.isColumn(lastSlot, 5)) {
+                lastSlot++
+            }
+        }
+        if (Mine.isColumn(lastSlot, 9)) {
+            lastSlot++
+        }
+        if (Mine.isColumn(lastSlot, 1)) {
+            lastSlot++
+        }
+        if (lastSlot >= getSlotLimit()){
+            lastPage++
+            pageAmount++
+            lastSlot = getSlotInicial()
+        }
+    }
+
     fun open(player: Player, pageOpened: Int): Inventory? {
 
         if (openNeedPermission != null) {
             if (!player.hasPermission(openNeedPermission)) {
                 player.sendMessage(messagePermission)
-
-
                 return null
             }
         }
@@ -225,22 +336,7 @@ open class Menu(
                 lineAmount = 1
             }
 
-            var perPage = lineAmount * 9
-            var slot = 0
-            if (lineAmount >= 2) {
-                perPage -= 6
-                slot = 10
-            }
-            if (lineAmount >= 3) {
-                perPage -= 6
-            }
-            perPage -= lineAmount * 2
-            if (autoAlignSkipCenter) {
-                perPage -= lineAmount
-            }
-            if (isAutoAlignItems) {
-                pageAmount = 1 + (buttons.size / perPage)
-            }
+
             val prefix = pagePrefix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             val suffix = pageSuffix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             var menuTitle = Extra.cutText(prefix + title + suffix, 32)
@@ -260,55 +356,23 @@ open class Menu(
             if (this.superiorMenu != null) {
                 backPage.give(menu)
             }
+            for (button in buttons) {
+                if (button.page != page) continue
+                var position = button.index
 
-            if (isAutoAlignItems) {
-
-                val startList = perPage * (page - 1)
-                var endList = startList + perPage
-                if (endList > buttons.size) {
-                    endList = buttons.size
+                if (position >= getSlotLimit()) {
+                    position = 0
                 }
-
-                val subButtons = buttons.subList(startList, endList)
-
-
-                for (button in subButtons) {
-
-                    slot = slot.centralized()
-
-
-                    if (autoAlignSkipCenter) {
-                        if (Extra.isColumn(slot, 5)) slot++
-                    }
-
-                    var icon = button.getIcon(player)
-
-                    if (isTranslateIcon) {
-                        icon = Mine.getReplacers(icon, player)
-                    }
-                    if (slot >= menu.size) {
-                        println("Slot $slot" + " acima do limite" + menu.size)
-                    } else {
-                        menu.setItem(slot, icon)
-                    }
-                    slot++
+                var icon = button.getIcon(player)
+                if (isTranslateIcon) {
+                    icon = Mine.getReplacers(icon, player)
                 }
-            } else {
-
-
-                for (button in buttons) {
-                    if (button.page != page) continue
-                    var position = button.index
-                    if (position >= lineAmount * 9) {
-                        position = 0
-                    }
-                    var icon = button.getIcon(player)
-                    if (isTranslateIcon) {
-                        icon = Mine.getReplacers(icon, player)
-                    }
-                    menu.setItem(position, icon)
-                }
+                val data = MineReflect.getData(icon)
+                data.setString("button-name", button.name)
+                icon = MineReflect.setData(icon,data)
+                menu.setItem(position, icon)
             }
+
 
             this.pageOpened[player] = page
             player.openInventory(menu)
@@ -403,6 +467,7 @@ open class Menu(
                         return
                     } else {
                         button = getButton(itemClicked, player)
+
                         debug("Button by Item " + if (button == null) "is Null" else "is not null")
                     }
                 }
