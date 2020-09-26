@@ -20,6 +20,7 @@ import java.util.*;
  * @version 1.0
  * @since 02/06/2020
  */
+@SuppressWarnings("unused")
 public class MineReflect {
     /**
      * INICIO Métodos ABAIXO
@@ -58,15 +59,13 @@ public class MineReflect {
      *
      * @param item Item
      * @param lore Descrição
-     * @return Item
      */
-    private static ItemStack setLore(ItemStack item, List<String> lore) {
+    private static void setLore(ItemStack item, List<String> lore) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setLore(lore);
             item.setItemMeta(meta);
         }
-        return item;
     }
 
     public static class ItemExtraData {
@@ -128,38 +127,26 @@ public class MineReflect {
 
         }
 
-        /**
-         *
-         * @param key
-         * @param value
-         * @return
-         */
-        public String setDouble(String key, double value) {
+
+        public void setDouble(String key, double value) {
             try {
-                Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setDouble", String.class, double.class);
-                return (String) getString.invoke(nbt, key, value);
+                Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setDouble", String.class, double.class);
+               setDouble.invoke(nbt, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
+
 
         }
 
-        /**
-         *
-         * @param key
-         * @param value
-         * @return
-         */
-        public String setString(String key, String value) {
+
+        public void setString(String key, String value) {
             try {
-                Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setString", String.class, String.class);
-                return (String) getString.invoke(nbt, key, value);
+                Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setString", String.class, String.class);
+                setDouble.invoke(nbt, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
-
         }
 
         public void setNBT(Object nbtcompound) {
@@ -699,7 +686,6 @@ public class MineReflect {
      */
     private static String getChatJsonByRaw(String rawText) {
         return ("{\"text\":\"" + rawText + "\"}");
-
     }
 
     public static void sendActionBar(String message) {

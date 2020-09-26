@@ -195,8 +195,12 @@ public class ItemBuilder extends ItemStack {
     }
 
 
+    public ItemBuilder clone() {
+        return (ItemBuilder) super.clone();
+    }
+
     public ItemStack builder() {
-        return this.clone();
+        return clone();
     }
 
 

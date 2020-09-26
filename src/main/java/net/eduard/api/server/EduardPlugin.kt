@@ -143,8 +143,6 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
                 menu.unregisterMenu()
             }
         }
-
-
     }
 
     override fun unregisterCommands() {

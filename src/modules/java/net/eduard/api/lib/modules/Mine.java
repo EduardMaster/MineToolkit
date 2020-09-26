@@ -36,6 +36,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -56,16 +57,16 @@ import java.util.stream.Collectors;
  * *@author Eduard
  * *@since 24/01/2020
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused","deprecated"})
 public final class Mine {
 
 
     /**
      * Metodo muito importante para verificar se o cara esta realmente acertando o alvo
      *
-     * @param player
-     * @param target
-     * @return
+     * @param player Jogador
+     * @param target Alvo
+     * @return se o jogador esta olhando para o alvo
      */
     public static boolean isLookingAt(Player player, LivingEntity target) {
         Vector lookDirection = player.getEyeLocation().getDirection();
@@ -137,7 +138,7 @@ public final class Mine {
 
         public final char asciiChar;
 
-        private Point(char asciiChar) {
+        Point(char asciiChar) {
             this.asciiChar = asciiChar;
         }
 
@@ -151,7 +152,7 @@ public final class Mine {
         }
 
         public String toString(boolean isActive, String colorActive, String colorDefault) {
-            return (isActive ? colorActive : colorDefault) + String.valueOf(this.asciiChar);
+            return (isActive ? colorActive : colorDefault) + this.asciiChar;
         }
     }
 
@@ -164,7 +165,9 @@ public final class Mine {
      * Mapa que armazena os Itens dos jogadores tirando as Armaduras
      */
     private static final Map<Player, ItemStack[]> PLAYERS_ITEMS = new HashMap<>();
-    private static Map<String, Replacer> replacers = new HashMap<>();
+
+
+    private static final Map<String, Replacer> replacers = new HashMap<>();
 
 
     /**
@@ -275,7 +278,7 @@ public final class Mine {
     public static int getXpTotalToGetLevel(int level, float percentage) {
         double xplevel;
         int xpe;
-        int result = 0;
+        int result;
         if (level > 30) {
             xplevel = 4.5D * level * level - 162.5D * level + 2220.0D;
             xpe = 9 * level - 158;
@@ -938,10 +941,10 @@ public final class Mine {
     /**
      * Retorna um RADAR
      *
-     * @param inDegrees
-     * @param colorActive
-     * @param colorDefault
-     * @return
+     * @param inDegrees Raio em Graus
+     * @param colorActive Cores
+     * @param colorDefault Cor padrão
+     * @return Radar em forma de texto
      */
     public static ArrayList<String> getAsciiCompass(double inDegrees, ChatColor colorActive, String colorDefault) {
         return getAsciiCompass(getCompassPointForDirection(inDegrees), colorActive, colorDefault);
@@ -950,10 +953,10 @@ public final class Mine {
     /**
      * Retorna um RADAR
      *
-     * @param inDegrees
-     * @param colorActive
-     * @param colorDefault
-     * @return
+     * @param inDegrees Raio em Graus
+     * @param colorActive Cores
+     * @param colorDefault Cor padrão
+     * @return Radar em forma de texto
      */
     public static ArrayList<String> getAsciiCompass(double inDegrees, String colorActive, String colorDefault) {
         return getAsciiCompass(getCompassPointForDirection(inDegrees), colorActive, colorDefault);
@@ -962,10 +965,10 @@ public final class Mine {
     /**
      * Retorna um RADAR
      *
-     * @param point
-     * @param colorActive
-     * @param colorDefault
-     * @return
+     * @param point Ponteiro
+     * @param colorActive Cores
+     * @param colorDefault Cor padrão
+     * @return Radar em forma de texto
      */
     public static ArrayList<String> getAsciiCompass(Point point, ChatColor colorActive, String colorDefault) {
 
@@ -975,10 +978,10 @@ public final class Mine {
     /**
      * Retorna um RADAR
      *
-     * @param point
-     * @param colorActive
-     * @param colorDefault
-     * @return
+     * @param point Ponteiro
+     * @param colorActive Cores
+     * @param colorDefault Cor padrão
+     * @return Radar em forma de texto
      */
     public static ArrayList<String> getAsciiCompass(Point point, String colorActive, String colorDefault) {
         ArrayList<String> ret = new ArrayList<>();
@@ -1432,8 +1435,8 @@ public final class Mine {
      */
     public static List<Class<?>> getListeners(JavaPlugin plugin, String packname) {
 
-        return getClasses(plugin, packname).stream().filter(classe -> classe != null)
-                .filter(classe -> Listener.class.isAssignableFrom(classe)).collect(Collectors.toList());
+        return getClasses(plugin, packname).stream().filter(Objects::nonNull)
+                .filter(Listener.class::isAssignableFrom).collect(Collectors.toList());
     }
 
     /**
@@ -1474,14 +1477,14 @@ public final class Mine {
                 for (double z = min.getZ(); z <= max.getZ(); z++) {
                     Location loc = new Location(min.getWorld(), x, y, z);
                     try {
-                        boolean r = effect.effect(loc);
-                        if (r) {
+                        boolean canAddTOList = effect.effect(loc);
+                        if (canAddTOList) {
                             try {
                                 locations.add(loc);
-                            } catch (Exception ex) {
+                            } catch (Exception ignored) {
                             }
                         }
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
                     }
 
                 }
@@ -1690,7 +1693,7 @@ public final class Mine {
     /**
      * Criar um coração vermelho
      *
-     * @return
+     * @return Coração vermelho
      */
     public static String getRedHeart() {
         return ChatColor.RED + "♥";
@@ -1768,10 +1771,10 @@ public final class Mine {
     /**
      * Retorna um alvo apartir do Jogador , onde ele estiver mirando
      *
-     * @param entity
-     * @param entities
-     * @param <T>
-     * @return
+     * @param entity Entidade
+     * @param entities Entidades
+     * @param <T> Entidade Alvo encontrada
+     * @return Entidade Alvo encontrada se exister
      */
     @SuppressWarnings("unchecked")
     public static <T extends Player> T getTarget(Player entity, Iterable<T> entities) {
@@ -1928,7 +1931,7 @@ public final class Mine {
      *
      * @param before  (Antes)
      * @param seconds ()
-     * @return
+     * @return Se esta em cooldown ainda
      */
     public static boolean inCooldown(long before, long seconds) {
         return Extra.inCooldown(before, seconds);
@@ -1939,7 +1942,7 @@ public final class Mine {
     /**
      * Testa se o Inventario esta vasio
      *
-     * @param inventory
+     * @param inventory Inventario
      * @return net.eduard.curso.mongodb.MongoDBTeste
      */
     public static boolean isEmpty(Inventory inventory) {
@@ -1956,7 +1959,7 @@ public final class Mine {
     /**
      * Testa se o Inventario do Player esta vasio
      *
-     * @param inventory
+     * @param inventory Inventario
      * @return net.eduard.curso.mongodb.MongoDBTeste
      */
     public static boolean isEmpty(PlayerInventory inventory) {
@@ -2026,7 +2029,7 @@ public final class Mine {
      *
      * @param entity   Entidade
      * @param material Material
-     * @return
+     * @return Se a Entidade esta usando o Material
      */
     public static boolean isUsing(LivingEntity entity, String material) {
         return getHandType(entity).name().toLowerCase().contains(material.toLowerCase());
@@ -2043,7 +2046,7 @@ public final class Mine {
         FileInputStream fileinputstream;
         try {
             fileinputstream = new FileInputStream(file);
-            config.load(new InputStreamReader(fileinputstream, Charset.forName("UTF-8")));
+            config.load(new InputStreamReader(fileinputstream, StandardCharsets.UTF_8));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -2081,7 +2084,7 @@ public final class Mine {
     }
 
     /**
-     * @param player
+     * @param player Jogador
      * @return Se o jogador esta com a Flag NoDamageTicks maior que 1
      */
     public static boolean isInvulnerable(Player player) {
@@ -2093,7 +2096,7 @@ public final class Mine {
      * Isto Significa que na teoria não pode levar Hit até acabar este tempo
      *
      * @param seconds Tempo (em segundos)
-     * @param player
+     * @param player Jogador
      */
     public static void makeInvunerable(Player player, int seconds) {
         player.setNoDamageTicks(seconds * 20);
@@ -2104,7 +2107,7 @@ public final class Mine {
     /**
      * Remove a Flag NoDamageTicks colocando para 0 assim o jogador vai tomar dano normalmente
      *
-     * @param player
+     * @param player Jogador
      */
     public static void makeVulnerable(Player player) {
 
@@ -2155,14 +2158,14 @@ public final class Mine {
      * Cria um Vector forçando a entidade a ser jogado na direção do Alvo <br>
      * Este método tem a variação de ser bem mais configuravel
      *
-     * @param entity
-     * @param target
-     * @param staticX
-     * @param staticY
-     * @param staticZ
-     * @param addX
-     * @param addY
-     * @param addZ
+     * @param entity Entidade
+     * @param target Alvo
+     * @param staticX Variação X
+     * @param staticY Variação Y
+     * @param staticZ Variação Z
+     * @param addX Adicional X
+     * @param addY Adicional Y
+     * @param addZ Adicional Z
      */
     public static void moveTo(Entity entity, Location target, double staticX, double staticY, double staticZ,
                               double addX, double addY, double addZ) {
@@ -2240,7 +2243,7 @@ public final class Mine {
     public static ItemStack newFirework() {
         ItemStack fire = new ItemStack(Material.FIREWORK);
         FireworkMeta meta = (FireworkMeta) fire.getItemMeta();
-        // meta.getEffects()
+        meta.clearEffects();
         fire.setItemMeta(meta);
         return fire;
     }
@@ -3191,7 +3194,7 @@ public final class Mine {
     public static ArrayList<Location> getCircleVertical(Location center, double radius, int amount) {
         World world = center.getWorld();
         double increment = (2 * Math.PI) / amount;
-        ArrayList<Location> locations = new ArrayList<Location>();
+        ArrayList<Location> locations = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             double angle = i * increment;
             double z = center.getZ() + (radius * Math.cos(angle));
@@ -3217,7 +3220,7 @@ public final class Mine {
 
     public static List<Location> getCircleBlocks(Location loc, double radius, double height, boolean hollow,
                                                  boolean sphere) {
-        ArrayList<Location> circleblocks = new ArrayList<Location>();
+        ArrayList<Location> circleblocks = new ArrayList<>();
         double cx = loc.getBlockX();
         double cy = loc.getBlockY();
         double cz = loc.getBlockZ();
@@ -3344,9 +3347,8 @@ public final class Mine {
                 ++i;
             } else if ((c == ' ') || (c == '\n')) {
                 if ((line.length() == 0) && (word.length() > lineLength)) {
-                    for (String partialWord : word.toString()
-                            .split(new StringBuilder().append("(?<=\\G.{").append(lineLength).append("})").toString()))
-                        lines.add(partialWord);
+                    lines.addAll(Arrays.asList(word.toString()
+                            .split("(?<=\\G.{" + lineLength + "})")));
                 } else if (line.length() + word.length() - lineColorChars == lineLength) {
                     line.append(word);
                     lines.add(line.toString());
@@ -3354,7 +3356,7 @@ public final class Mine {
                     lineColorChars = 0;
                 } else if (line.length() + 1 + word.length() - lineColorChars > lineLength) {
                     for (String partialWord : word.toString().split(
-                            new StringBuilder().append("(?<=\\G.{").append(lineLength).append("})").toString())) {
+                            "(?<=\\G.{" + lineLength + "})")) {
                         lines.add(line.toString());
                         line = new StringBuilder(partialWord);
                     }
@@ -3381,7 +3383,7 @@ public final class Mine {
         }
 
         if ((lines.get(0).length() == 0) || (lines.get(0).charAt(0) != 167)) {
-            lines.set(0, new StringBuilder().append(ChatColor.WHITE).append(lines.get(0)).toString());
+            lines.set(0, ChatColor.WHITE + lines.get(0));
         }
         for (int i = 1; i < lines.size(); ++i) {
             String pLine = lines.get(i - 1);
@@ -3389,11 +3391,11 @@ public final class Mine {
 
             char color = pLine.charAt(pLine.lastIndexOf(167) + 1);
             if ((subLine.length() == 0) || (subLine.charAt(0) != 167)) {
-                lines.set(i, new StringBuilder().append(ChatColor.getByChar(color)).append(subLine).toString());
+                lines.set(i, ChatColor.getByChar(color) + subLine);
             }
         }
 
-        return (lines.toArray(new String[lines.size()]));
+        return (lines.toArray(new String[0]));
     }
 
 

@@ -30,8 +30,8 @@ import com.google.common.io.ByteStreams;
  */
 public final class BukkitBungeeAPI {
 	private static String currentServer = "lobby";
-	private static Map<String, SimpleServer> servers = new HashMap<>();
-	private static Map<String, SimplePlayer> players = new HashMap<>();
+	private static final Map<String, SimpleServer> servers = new HashMap<>();
+	private static final Map<String, SimplePlayer> players = new HashMap<>();
 	public static String getCurrentServer() {
 		return currentServer;
 	}
@@ -61,8 +61,7 @@ public final class BukkitBungeeAPI {
 				String request = data.readUTF();
 				if (isPlayerCountRequest(request)) {
 					String server = data.readUTF();
-					int playercount = data.readInt();
-					getServer(server).playerCount = playercount;
+					getServer(server).playerCount = data.readInt();
 				} else if (isServersRequest(request)) {
 					String[] servers = data.readUTF().split(", ");
 					log("§aRESPONSE SERVERS: §F" + Arrays.asList(servers));
@@ -295,8 +294,8 @@ public final class BukkitBungeeAPI {
 		DataOutputStream msgout = new DataOutputStream(msgbytes);
 		try {
 			msgout.writeInt(data.length);
-			for (int i = 0; i < data.length; i++) {
-				msgout.writeUTF(data[i].toString());
+			for (Object datum : data) {
+				msgout.writeUTF(datum.toString());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -415,6 +414,16 @@ public final class BukkitBungeeAPI {
 		return request.equals("ServerIP");
 	}
 
+
+	public static boolean isDebug() {
+		return debug;
+	}
+
+	public static void setDebug(boolean debug) {
+		BukkitBungeeAPI.debug = debug;
+	}
+
+
 	public static void requestServersNames() {
 		log("REQUEST SERVERS NAMES");
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
@@ -474,14 +483,6 @@ public final class BukkitBungeeAPI {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("GetServer");
 		sendMessage(out);
-	}
-
-	public static boolean isDebug() {
-		return debug;
-	}
-
-	public static void setDebug(boolean debug) {
-		BukkitBungeeAPI.debug = debug;
 	}
 
 }

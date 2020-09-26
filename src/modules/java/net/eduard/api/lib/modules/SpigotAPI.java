@@ -1,7 +1,7 @@
 package net.eduard.api.lib.modules;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -26,31 +26,31 @@ public final class SpigotAPI {
 	/**
 	 *
 	 * 
-	 * @param player
-	 * @param message
-	 * @param hoverMessage
-	 * @param textToSend
+	 * @param player Jogador
+	 * @param message Mensagem
+	 * @param hoverMessage Mensagem ao passar o Mouse
+	 * @param textToSend Texto para enviar
 	 */
 	public static void sendMessage(Player player, String message, String hoverMessage, String textToSend,
 			boolean runCommand) {
-		sendMessage(Arrays.asList(player), message, Arrays.asList(hoverMessage), textToSend, runCommand);
+		sendMessage(Collections.singletonList(player), message, Collections.singletonList(hoverMessage), textToSend, runCommand);
 	}
 
 	/**
 	 *
-	 * 
-	 * @param player
-	 * @param message
-	 * @param hoverMessage
-	 * @param clickCommand
+	 *
+	 * @param player Jogador
+	 * @param message Mensagem
+	 * @param hoverMessage Mensagem ao passar o Mouse
+	 * @param clickCommand Texto para enviar
 	 */
 	public static void sendMessage(Player player, String message, String hoverMessage, String clickCommand) {
-		sendMessage(Arrays.asList(player), message, hoverMessage, clickCommand);
+		sendMessage(Collections.singletonList(player), message, hoverMessage, clickCommand);
 	}
 
 	public static void sendMessage(Collection<Player> players, String message, String hoverMessage,
 			String clickCommand) {
-		sendMessage(players, message, Arrays.asList(hoverMessage), clickCommand);
+		sendMessage(players, message, Collections.singletonList(hoverMessage), clickCommand);
 	}
 
 	public static void sendMessage(Collection<Player> players, String message, List<String> hoverMessages,
@@ -61,11 +61,11 @@ public final class SpigotAPI {
 	/**
 	 * Envia mensagems clicaveis para varios jogadores
 	 * 
-	 * @param players
-	 * @param message
-	 * @param hoverMessages
-	 * @param clickCommand
-	 * @param runCommand
+	 * @param players Jogadores
+	 * @param message Mensagem
+	 * @param hoverMessages Mensagem ao passar o Mouse
+	 * @param clickCommand Comando para rodar
+	 * @param runCommand Se é para rodar comando ou não
 	 */
 	public static void sendMessage(Collection<Player> players, String message, List<String> hoverMessages,
 			String clickCommand, boolean runCommand) {
@@ -82,10 +82,11 @@ public final class SpigotAPI {
 	 * Envia mensagems clicaveis para varios jogadores
 	 * 
 	 *
-	 * @param message
-	 * @param hoverMessages
-	 * @param clickCommand
-	 * @param runCommand
+	 * @param message Mensagem
+	 * @param hoverMessages Mensagem ao passar o Mouse
+	 * @param clickCommand Comando para rodar
+	 * @param runCommand Se é para rodar comando ou não
+
 	 */
 	public static TextComponent getText(String message, List<String> hoverMessages, String clickCommand,
 			boolean runCommand) {
