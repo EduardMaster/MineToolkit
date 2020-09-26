@@ -10,10 +10,8 @@ class SupportActivations : EventsManager() {
 
     @EventHandler
     fun onPluginEnableEvent(event: PluginEnableEvent) {
-
         val rooks = PluginHook.getRooks(event.plugin.name)
         rooks.forEach(PluginHook::onPluginActive)
-
     }
 
 }

@@ -3,12 +3,7 @@ package net.eduard.api.lib.util.particle;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -126,7 +121,7 @@ public enum ParticleEffect {
 			    }
 			  }
 
-			  private ParticleEffect(String name)
+			  ParticleEffect(String name)
 			  {
 			    this.name = name;
 			  }
@@ -151,11 +146,12 @@ public enum ParticleEffect {
 
 	    public PacketInstantiationException(String message)
 	    {
+	    	super(message);
 	    }
 
 	    public PacketInstantiationException(String message, Throwable cause)
 	    {
-	      super();
+	      super(message);
 	    }
 	  }
 
@@ -184,7 +180,7 @@ public enum ParticleEffect {
 	    if (amount < 1)
 	      throw new PacketInstantiationException("Amount cannot be lower than 1");
 	    try {
-	      return packetPlayOutWorldParticles.newInstance(new Object[] { name, Float.valueOf((float)center.getX()), Float.valueOf((float)center.getY()), Float.valueOf((float)center.getZ()), Float.valueOf(offsetX), Float.valueOf(offsetY), Float.valueOf(offsetZ), Float.valueOf(speed), Integer.valueOf(amount) });
+	      return packetPlayOutWorldParticles.newInstance(name, (float) center.getX(), (float) center.getY(), (float) center.getZ(), offsetX, offsetY, offsetZ, speed, amount);
 	    } catch (Exception e) {
 	      throw new PacketInstantiationException("Packet instantiation failed", e);
 	    }
@@ -209,7 +205,7 @@ public enum ParticleEffect {
 	  {
 	    try
 	    {
-	      sendPacket.invoke(playerConnection.get(getHandle.invoke(p, new Object[0])), new Object[] { packet });
+	      sendPacket.invoke(playerConnection.get(getHandle.invoke(p)), packet);
 	    } catch (Exception e) {
 	      throw new PacketSendingException("Failed to send a packet to player '" + p.getName() + "'", e);
 	    }
@@ -392,7 +388,7 @@ public enum ParticleEffect {
 		    }
 
 		    public static Object newInstance(Class<?> clazz, Object[] args) throws Exception {
-		      return getConstructor(clazz, DataType.convertToPrimitive(args)).newInstance(args);
+		      return Objects.requireNonNull(getConstructor(clazz, DataType.convertToPrimitive(args))).newInstance(args);
 		    }
 
 		    public static Object newInstance(String className, PackageType type, Object[] args) throws Exception {
@@ -421,11 +417,11 @@ public enum ParticleEffect {
 		    }
 
 		    public static Object invokeMethod(String name, Object instance, Object[] args) throws Exception {
-		      return getMethod(instance.getClass(), name, DataType.convertToPrimitive(args)).invoke(instance, args);
+		      return Objects.requireNonNull(getMethod(instance.getClass(), name, DataType.convertToPrimitive(args))).invoke(instance, args);
 		    }
 
 		    public static Object invokeMethod(Class<?> clazz, String name, Object instance, Object[] args) throws Exception {
-		      return getMethod(clazz, name, DataType.convertToPrimitive(args)).invoke(instance, args);
+		      return Objects.requireNonNull(getMethod(clazz, name, DataType.convertToPrimitive(args))).invoke(instance, args);
 		    }
 
 		    public static Object invokeMethod(String className, PackageType type, String name, Object instance, Object[] args) throws Exception {
@@ -704,7 +700,7 @@ public enum ParticleEffect {
 
 		      private final String name;
 
-		      private PackageType(String name) {
+		      PackageType(String name) {
 		        this.name = name;
 		      }
 
@@ -824,7 +820,7 @@ public enum ParticleEffect {
 		      private final String name;
 		      private Class<?> packet;
 
-		      private PacketType(String name) { this.name = name; }
+		      PacketType(String name) { this.name = name; }
 
 		      public String getName()
 		      {
@@ -836,7 +832,7 @@ public enum ParticleEffect {
 		      }
 		    }
 
-		    public static enum SubPackageType
+		    public enum SubPackageType
 		    {
 		      BLOCK, 
 		      CHUNKIO, 
@@ -859,7 +855,7 @@ public enum ParticleEffect {
 
 		      private final String name;
 
-		      private SubPackageType() {
+		      SubPackageType() {
 		        this.name = (Reflections.PackageType.CRAFTBUKKIT + "." + name().toLowerCase());
 		      }
 

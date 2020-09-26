@@ -1,6 +1,5 @@
 package net.eduard.api.lib.menu
 
-import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.kotlin.player
 import net.eduard.api.lib.manager.CurrencyManager
@@ -262,7 +261,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     fun sell(player: Player, product: Product?, value: Double) {
         var amount = value
-        val fake = net.eduard.api.lib.modules.FakePlayer(player)
+        val fake = FakePlayer(player)
         val priceUnit = product!!.unitSellPrice
         if (amount > product.stock) {
             amount = product.stock
@@ -399,25 +398,25 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
         val upgradeButton = menuUpgrades?.getButton("upgrade") ?: return
         upgradeButton.click = ClickEffect { event ->
-            val p = event.player
-            val fake = net.eduard.api.lib.modules.FakePlayer(p)
-            val product = selectedProduct[p]!!
-            val nextUpgrade = product.getNextUpgrade(p)
+            val player = event.player
+            val fake = net.eduard.api.lib.modules.FakePlayer(player)
+            val product = selectedProduct[player]!!
+            val nextUpgrade = product.getNextUpgrade(player)
             if (nextUpgrade != null) {
                 if (this.currency!!.contains(fake, nextUpgrade.price)) {
 
                     this.currency!!.remove(fake, nextUpgrade.price)
-                    VaultAPI.getPermission().playerAdd(p, nextUpgrade.permission)
-                    p.sendMessage(messageUpgradeBought
+                    VaultAPI.getPermission().playerAdd(player, nextUpgrade.permission)
+                    player.sendMessage(messageUpgradeBought
                             .replace("\$product_name", nextUpgrade.displayName)
                             .replace("\$product", nextUpgrade.name)
 
                             .replace("\$level", "" + nextUpgrade.level))
                 } else {
-                    p.sendMessage(messageWithoutBalance)
+                    player.sendMessage(messageWithoutBalance)
                 }
             } else {
-                p.sendMessage(messageUpgradesAlreadyBought)
+                player.sendMessage(messageUpgradesAlreadyBought)
             }
         }
     }

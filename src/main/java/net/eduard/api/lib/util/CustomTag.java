@@ -2,6 +2,8 @@ package net.eduard.api.lib.util;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -29,10 +31,10 @@ public class CustomTag {
 
 	private static void sendPacket(Player player, Object packet) {
 		try {
-			Object handle = player.getClass().getMethod("getHandle", new Class[0]).invoke(player, new Object[0]);
+			Object handle = player.getClass().getMethod("getHandle", new Class[0]).invoke(player);
 			Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
 			playerConnection.getClass().getMethod("sendPacket", new Class[] { getNMSClass("Packet") })
-					.invoke(playerConnection, new Object[] { packet });
+					.invoke(playerConnection, packet);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -68,7 +70,7 @@ public class CustomTag {
 		Class<?> classe = getNMSClass("PacketPlayOutScoreboardTeam");
 
 		try {
-			Object packet = classe.newInstance();
+			Object packet = Objects.requireNonNull(classe).newInstance();
 			Class<?> clas = packet.getClass();
 			Field team_name = getField(clas, "a");
 			Field display_name = getField(clas, "b");
@@ -77,13 +79,13 @@ public class CustomTag {
 			Field members = getField(clas, "g");
 			Field param_int = getField(clas, "h");
 			Field pack_option = getField(clas, "i");
-			setField(packet, team_name, order + name);
-			setField(packet, display_name, player.getName());
-			setField(packet, prefix2, prefix);
-			setField(packet, suffix2, suffix);
-			setField(packet, members, Arrays.asList(new String[] { player.getName() }));
-			setField(packet, param_int, Integer.valueOf(0));
-			setField(packet, pack_option, Integer.valueOf(1));
+			setField(packet, Objects.requireNonNull(team_name), order + name);
+			setField(packet, Objects.requireNonNull(display_name), player.getName());
+			setField(packet, Objects.requireNonNull(prefix2), prefix);
+			setField(packet, Objects.requireNonNull(suffix2), suffix);
+			setField(packet, Objects.requireNonNull(members), Collections.singletonList(player.getName()));
+			setField(packet, Objects.requireNonNull(param_int), 0);
+			setField(packet, Objects.requireNonNull(pack_option), 1);
 			for (Player ps : Bukkit.getOnlinePlayers())
 				sendPacket(ps, packet);
 		} catch (Exception e) {

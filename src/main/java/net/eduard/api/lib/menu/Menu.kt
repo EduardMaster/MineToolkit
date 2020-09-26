@@ -172,7 +172,7 @@ open class Menu(
     fun getButton(icon: ItemStack, player: Player): MenuButton? {
         val data = MineReflect.getData(icon)
         val buttonName = data.getString("button-name")
-        return buttonsCache.get(buttonName)
+        return buttonsCache[buttonName]
     }
 
     fun getButton(name: String): MenuButton? {
@@ -311,7 +311,7 @@ open class Menu(
         }
     }
 
-    fun open(player: Player, pageOpened: Int): Inventory? {
+    open fun open(player: Player, pageOpened: Int): Inventory? {
 
         if (openNeedPermission != null) {
             if (!player.hasPermission(openNeedPermission)) {
@@ -338,7 +338,7 @@ open class Menu(
             val prefix = pagePrefix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             val suffix = pageSuffix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             var menuTitle = Extra.cutText(prefix + title + suffix, 32)
-            if (!isPageSystem && !isAutoAlignItems) {
+            if (!isPageSystem) {
                 menuTitle = title
             }
             val fakeHolder = FakeInventoryHolder(this)
@@ -354,22 +354,7 @@ open class Menu(
             if (this.superiorMenu != null) {
                 backPage.give(menu)
             }
-            for (button in buttons) {
-                if (button.page != page) continue
-                var position = button.index
-
-                if (position >= getSlotLimit()) {
-                    position = 0
-                }
-                var icon = button.getIcon(player)
-                if (isTranslateIcon) {
-                    icon = Mine.getReplacers(icon, player)
-                }
-                val data = MineReflect.getData(icon)
-                data.setString("button-name", button.name)
-                icon = MineReflect.setData(icon,data)
-                menu.setItem(position, icon)
-            }
+            update(menu, player,page)
 
 
             this.pageOpened[player] = page
@@ -385,6 +370,25 @@ open class Menu(
         }
         return null
     }
+    fun update(menu:Inventory , player : Player , page : Int){
+        for (button in buttons) {
+            if (button.page != page) continue
+            var position = button.index
+
+            if (position >= getSlotLimit()) {
+                position = 0
+            }
+            var icon = button.getIcon(player)
+            if (isTranslateIcon) {
+                icon = Mine.getReplacers(icon, player)
+            }
+            val data = MineReflect.getData(icon)
+            data.setString("button-name", button.name)
+            icon = MineReflect.setData(icon,data)
+            menu.setItem(position, icon)
+        }
+    }
+
 
     override fun register(plugin: IPluginInstance) {
         registerMenu(plugin)

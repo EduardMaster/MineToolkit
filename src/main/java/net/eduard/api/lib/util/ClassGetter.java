@@ -9,6 +9,7 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -28,7 +29,7 @@ public class ClassGetter {
 	 */
 	public static ArrayList<Class<?>> getClassesForPackage(String pckgname)
 			throws ClassNotFoundException {
-		final ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		final ArrayList<Class<?>> classes = new ArrayList<>();
 
 		try {
 			final ClassLoader cld = Thread.currentThread()
@@ -49,7 +50,7 @@ public class ClassGetter {
 					if (connection instanceof JarURLConnection) {
 						checkJarFile((JarURLConnection) connection, pckgname,
 								classes);
-					} else if (connection instanceof Object) {
+					} else if (connection != null) {
 
 						/*
 						try {
@@ -94,9 +95,8 @@ public class ClassGetter {
 	 * @param pckgname
 	 *            The package name to search for. Will be needed for getting the
 	 *            Class object.
-	 * @param classes
-	 *            if a file isn't loaded but still is in the directory
-	 * @throws ClassNotFoundException
+	 * @param classes  if a file isn't loaded but still is in the directory
+	 * @throws ClassNotFoundException A classe pode não ser encontrada
 	 */
 	private static void checkDirectory(File directory, String pckgname,
 			ArrayList<Class<?>> classes) throws ClassNotFoundException {
@@ -105,7 +105,7 @@ public class ClassGetter {
 		if (directory.exists() && directory.isDirectory()) {
 			final String[] files = directory.list();
 
-			for (final String file : files) {
+			for (final String file : Objects.requireNonNull(files)) {
 				if (file.endsWith(".class")) {
 					try {
 						classes.add(Class.forName(pckgname + '.'
@@ -145,7 +145,7 @@ public class ClassGetter {
 		final Enumeration<JarEntry> entries = jarFile.entries();
 		String name;
 
-		for (JarEntry jarEntry = null; entries.hasMoreElements()
+		for (JarEntry jarEntry; entries.hasMoreElements()
 				&& ((jarEntry = entries.nextElement()) != null);) {
 			name = jarEntry.getName();
 

@@ -31,7 +31,6 @@ class EduWorldEditListener : EventsManager() {
                     mapa.low = e.clickedBlock.location.toVector()
                     p.sendMessage("§aPosição 2 setada!")
                 }
-
             }
         }
     }

@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
  */
 public class DragonBar {
 	private static DragonBar instance;
-	private Map<String, Dragon> dragonMap = new HashMap<>();
+	private final Map<String, Dragon> dragonMap = new HashMap<>();
 
 	public static DragonBar getInstance() {
 		if (instance == null) {
@@ -411,9 +411,9 @@ public class DragonBar {
 			Method a = getMethod(DataWatcher, "a",
 					new Class[]{Integer.TYPE, Object.class});
 
-			a.invoke(watcher, new Object[]{Integer.valueOf(0),
-					Byte.valueOf((byte) (this.visible ? 0 : 32))});
-			a.invoke(watcher, new Object[]{Integer.valueOf(6),
+			a.invoke(watcher, new Object[]{0,
+					(byte) (this.visible ? 0 : 32)});
+			a.invoke(watcher, new Object[]{6,
 					Float.valueOf(this.health)});
 			a.invoke(watcher,
 					new Object[]{Integer.valueOf(7), Integer.valueOf(0)});

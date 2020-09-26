@@ -21,7 +21,6 @@ class PlayerTargetListener : EventsManager() {
     fun onTarget(e: PlayerTargetPlayerEvent) {
         val player = e.target
         MineReflect.sendActionBar(e.player, Mine.getReplacers(EduardAPI.instance.message("player target"), player))
-
-    }
+ }
 
 }

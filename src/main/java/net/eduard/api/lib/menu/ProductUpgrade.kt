@@ -9,7 +9,7 @@ class ProductUpgrade(var level: Int = 1, product: Product? = null) {
 
     init {
         if (product != null) {
-            productParent = product!!
+            productParent = product
             productParent.upgrades.add(this)
         }
     }

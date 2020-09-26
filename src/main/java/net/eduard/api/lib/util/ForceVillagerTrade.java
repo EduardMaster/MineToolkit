@@ -19,7 +19,7 @@ import net.minecraft.server.v1_8_R3.MerchantRecipeList;
 * work on servers with the same CraftBukkit version as the one you used to compile your plugin.
 * <br>
 * Some version changes may affect the function of the class (Like they did in the transaction from 1.7.X to 1.8.X)
-* so make sure you check the project page {@link https://bukkit.org/threads/force-open-custom-villager-trade-gui.341546}
+* so make sure you check the project page http://www.bukkit.org/threads/force-open-custom-villager-trade-gui.341546
 * for updates. You can also leave comments for future changes or bugs.
 * </b>
 *
@@ -41,7 +41,7 @@ public class ForceVillagerTrade {
     }
 
     /**
-     * @param inOne The itemstack in the first input slot.
+     * @param in The itemstack in the first input slot.
      * @param out The itemstack output.
      * @return ForceVillagerTrade object so you can invoke the next method like:
      * addTrade(...).addTrade(...).addTrade(...).openTrade(player);

@@ -35,23 +35,6 @@ open class Product(name: String = "Produto",
     var commands: MutableList<String> = ArrayList()
     var upgrades = mutableListOf<ProductUpgrade>()
     val hasUpgrades get() = upgrades.isNotEmpty()
-    fun hasBought(player: Player) = player.hasPermission(permission)
-
-    fun hasBoughtAllUpgrades(player: Player): Boolean {
-        if (!hasBought(player)) return false
-        for (upgrade in upgrades) {
-            if (!upgrade.hasBought(player)) return false
-        }
-        return true
-    }
-
-    fun getNextUpgrade(player: Player): ProductUpgrade? {
-        for (upgrade in upgrades) {
-            if (!upgrade.hasBought(player)) return upgrade
-        }
-        return null
-    }
-
     @Transient
     lateinit var realProduct: Any
     var product: ItemStack? = null
@@ -72,6 +55,25 @@ open class Product(name: String = "Produto",
 
     val unitBuyPrice: Double
         get() = buyPrice / amount
+
+    fun hasBought(player: Player) = player.hasPermission(permission)
+
+    fun hasBoughtAllUpgrades(player: Player): Boolean {
+        if (!hasBought(player)) return false
+        for (upgrade in upgrades) {
+            if (!upgrade.hasBought(player)) return false
+        }
+        return true
+    }
+
+    fun getNextUpgrade(player: Player): ProductUpgrade? {
+        for (upgrade in upgrades) {
+            if (!upgrade.hasBought(player)) return upgrade
+        }
+        return null
+    }
+
+
 
 
     override fun getIcon(player: Player): ItemStack {

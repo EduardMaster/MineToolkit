@@ -25,9 +25,6 @@ import org.bukkit.scheduler.BukkitRunnable
  * @author Eduard
  */
 class EduardAPIEvents : EventsManager() {
-
-
-
     @EventHandler
     fun onChat(e : AsyncPlayerChatEvent){
         val p = e.player
@@ -59,20 +56,17 @@ class EduardAPIEvents : EventsManager() {
         }
 
     }
-
     @EventHandler
     fun onDeath(e: PlayerDeathEvent) {
-        val p = e.entity
-
-
+        val player = e.entity
         if (Mine.OPT_AUTO_RESPAWN) {
-            if (p.hasPermission("eduard.autorespawn")) {
+            if (player.hasPermission("eduard.autorespawn")) {
                 object : BukkitRunnable() {
                     override fun run() {
-                        if (p.isDead) {
-                            p.fireTicks = 0
+                        if (player.isDead) {
+                            player.fireTicks = 0
                             try {
-                                MineReflect.makeRespawn(p)
+                                MineReflect.makeRespawn(player)
                             } catch (ex: Exception) {
 
                                 ex.printStackTrace()
