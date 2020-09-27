@@ -188,7 +188,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     fun buy(player: Player, product: Product, value: Double) {
         var amount = value
-        val fake = net.eduard.api.lib.modules.FakePlayer(player)
+        val fake = FakePlayer(player)
         val priceUnit = product.unitBuyPrice
         if (product.isLimited && amount > product.stock) {
             amount = product.stock
@@ -370,11 +370,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                     }
                     inventory.setItem(slot, icon)
                     slot++
-
-
                 }
-
-
             }
 
         }
@@ -399,7 +395,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         val upgradeButton = menuUpgrades?.getButton("upgrade") ?: return
         upgradeButton.click = ClickEffect { event ->
             val player = event.player
-            val fake = net.eduard.api.lib.modules.FakePlayer(player)
+            val fake = FakePlayer(player)
             val product = selectedProduct[player]!!
             val nextUpgrade = product.getNextUpgrade(player)
             if (nextUpgrade != null) {

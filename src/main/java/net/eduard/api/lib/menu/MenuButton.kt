@@ -1,5 +1,7 @@
 package net.eduard.api.lib.menu
 
+import net.eduard.api.lib.game.ItemBuilder
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -12,6 +14,12 @@ open class MenuButton(var name: String = "Botao"
                       block: (MenuButton.() -> Unit)? = null
 
 ) : Slot(positionX, positionY) {
+
+    companion object
+    {
+
+    }
+
 
 
 
@@ -33,8 +41,12 @@ open class MenuButton(var name: String = "Botao"
     @Transient
     var click: ClickEffect? = null
 
+
+    @Transient
+    var iconPerPlayer : (Player.() -> ItemStack)? = null
+
     open fun getIcon(player: Player): ItemStack {
-        return this.icon
+        return iconPerPlayer?.invoke(player)?:icon
     }
 
     var icon: ItemStack
@@ -42,6 +54,8 @@ open class MenuButton(var name: String = "Botao"
         set(icon) {
             item = icon
         }
+
+
 
     val isCategory: Boolean
         get() = menu != null

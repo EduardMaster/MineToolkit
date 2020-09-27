@@ -62,6 +62,10 @@ open class Menu(
     private var pagesCache: MutableMap<Int, Inventory> = HashMap()
 
     @Transient
+    private var inventoryCache: MutableMap<Player, Inventory> = HashMap()
+
+
+    @Transient
     private var buttonsCache = mutableMapOf<String, MenuButton>()
 
     @Transient
@@ -75,6 +79,7 @@ open class Menu(
     var isAutoAlignItems: Boolean = false
     var autoAlignSkipCenter = false
     var isCacheInventories: Boolean = false
+    var isPerPlayerInventory = false
     var openWithItem: ItemStack? = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
     var openWithCommand: String? = null
     var openNeedPermission: String? = null
@@ -420,13 +425,13 @@ open class Menu(
 
     @EventHandler
     fun onClick(e: PlayerInteractEvent) {
-        val p = e.player
-        if (p.itemInHand == null)
+        val player = e.player
+        if (player.itemInHand == null)
             return
 
-        if (openWithItem != null && Mine.equals(p.itemInHand, openWithItem)) {
+        if (openWithItem != null && Mine.equals(player.itemInHand, openWithItem)) {
             e.isCancelled = true
-            open(p)
+            open(player)
         }
 
     }
@@ -445,15 +450,15 @@ open class Menu(
     }
 
     @EventHandler
-    fun onClick(e: InventoryClickEvent) {
-        if (e.whoClicked is Player) {
-            val player = e.whoClicked as Player
-            if (isOpen(player, e.inventory)) {
-                debug("Nome do Menu: " + e.inventory.name)
-                e.isCancelled = true
-                val slot = e.rawSlot
+    fun onClick(event: InventoryClickEvent) {
+        if (event.whoClicked is Player) {
+            val player = event.whoClicked as Player
+            if (isOpen(player, event.inventory)) {
+                debug("Nome do Menu: " + event.inventory.name)
+                event.isCancelled = true
+                val slot = event.rawSlot
                 var page: Int = getPageOpen(player)
-                val itemClicked = e.currentItem
+                val itemClicked = event.currentItem
                 var button: MenuButton? = null
                 if (itemClicked != null) {
                     if (previousPage.item == itemClicked) {
@@ -482,7 +487,7 @@ open class Menu(
                     debug("Button is not null")
                     if (button.click != null) {
                         debug("Button make click effect")
-                        button.click?.accept(e)
+                        button.click?.accept(event)
                     }
                     if (button.effects != null) {
                         debug("Button make Editable Effects")
@@ -497,7 +502,7 @@ open class Menu(
                 }
                 if (effect != null) {
                     debug("Played menu effect")
-                    effect?.accept(e)
+                    effect?.accept(event)
                 }
             }
         }
