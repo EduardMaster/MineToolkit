@@ -131,7 +131,7 @@ public class MineReflect {
         public void setDouble(String key, double value) {
             try {
                 Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setDouble", String.class, double.class);
-               setDouble.invoke(nbt, key, value);
+                setDouble.invoke(nbt, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -205,6 +205,7 @@ public class MineReflect {
         try {
             Method asNMSCopy = Extra.getMethod(MineReflect.classCraftItemStack, "asNMSCopy", ItemStack.class);
             Object itemCopia = asNMSCopy.invoke(0, item);
+
             Method setTag = Extra.getMethod(MineReflect.classMineItemStack, "setTag", MineReflect.classMineNBTTagCompound);
             setTag.invoke(itemCopia, data.getNBT());
             Method asCraftMirror = Extra.getMethod(MineReflect.classCraftItemStack, "asCraftMirror", MineReflect.classMineItemStack);
@@ -212,12 +213,13 @@ public class MineReflect {
 
             Method asBukkitCopy = Extra.getMethod(MineReflect.classCraftItemStack, "asBukkitCopy", MineReflect.classMineItemStack);
             itemModified = asBukkitCopy.invoke(0, itemCopia);
-            return (ItemStack) itemModified;
+            if (itemModified != null)
+                return (ItemStack) itemModified;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
-        return null;
+        return item;
     }
 
     /**
@@ -337,7 +339,7 @@ public class MineReflect {
      * Altera a stack máxima do Item
      *
      * @param itemOriginal Item Original
-     * @param amount Quantidade
+     * @param amount       Quantidade
      * @return ItemStack novo
      */
     public static ItemStack setMaxStackSize(ItemStack itemOriginal, int amount) {
