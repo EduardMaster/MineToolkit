@@ -79,6 +79,9 @@ public class SQLColumn {
     public void setSqlType(String sqlType) {
         this.sqlType = sqlType;
     }
+    public boolean isList(){
+        return Extra.isList(javaType);
+    }
 
     public Class<?> getJavaType() {
         return javaType;

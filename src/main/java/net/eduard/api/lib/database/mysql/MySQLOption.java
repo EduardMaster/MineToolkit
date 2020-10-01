@@ -61,7 +61,7 @@ public class MySQLOption implements SQLOption {
         } else if (Time.class.equals(javaClass)) {
             return "TIME";
         }
-        return "VARCHAR(200)";
+        return "VARCHAR("+size+")";
 
     }
 

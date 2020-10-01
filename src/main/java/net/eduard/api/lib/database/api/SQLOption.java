@@ -1,11 +1,13 @@
 package net.eduard.api.lib.database.api;
 
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.storage.StorageAPI;
 
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -168,7 +170,7 @@ public interface SQLOption {
     }
 
     default Object convertToJava(Object value, Class<?> javaClass, SQLColumn column) {
-        if (javaClass.isEnum()){
+        if (javaClass.isEnum()) {
 
             try {
                 return javaClass.getDeclaredField(value.toString()).get(0);
@@ -195,8 +197,13 @@ public interface SQLOption {
                 return StorageAPI.restoreInline(javaClass, value);
             }
             if (column.isJson()) {
-                Map<?, ?> map = StorageAPI.getGson().fromJson(value.toString(), Map.class);
-                return StorageAPI.restoreField(column.getField(), map);
+                if (column.isList()) {
+                    List<?> list = StorageAPI.getGson().fromJson(value.toString(), List.class);
+                    return StorageAPI.restoreField(column.getField(), list);
+                } else {
+                    Map<?, ?> map = StorageAPI.getGson().fromJson(value.toString(), Map.class);
+                    return StorageAPI.restoreField(column.getField(), map);
+                }
             }
 
         }
