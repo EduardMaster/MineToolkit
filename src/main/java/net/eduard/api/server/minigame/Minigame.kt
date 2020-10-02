@@ -407,8 +407,8 @@ open class Minigame : TimeManager {
      *
      * @param player Jogador
      */
-    fun remove(player: Player) {
-        players.remove(net.eduard.api.lib.modules.FakePlayer(player))
+    open fun remove(player: Player) {
+        players.remove(FakePlayer(player))
     }
 
     /**
