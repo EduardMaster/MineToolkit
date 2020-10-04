@@ -7,7 +7,6 @@ import net.eduard.api.lib.database.StorageManager
 import net.eduard.api.lib.database.StorageType
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPlugin
-import net.eduard.api.lib.plugin.IPluginInstance
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Command
@@ -15,7 +14,6 @@ import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 import java.io.IOException
-import java.net.ProxySelector
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
@@ -37,8 +35,8 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     fun registerCommand(comand: Command) {
         ProxyServer.getInstance().pluginManager.registerCommand(this, comand)
     }
-    override fun console(msg: String) {
-        ProxyServer.getInstance().console.sendMessage(TextComponent(msg))
+    override fun console(message: String) {
+        ProxyServer.getInstance().console.sendMessage(TextComponent(message))
     }
     private var started = false
 
@@ -167,26 +165,6 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
 
 
 
-
-    /**
-     * Deleta os ultimos backups
-     */
-    private fun deleteLastBackups() {
-        val pasta = File(pluginFolder, "/backup/")
-
-        pasta.mkdirs()
-        val lista = mutableListOf(*pasta.listFiles()!!)
-        lista.sortBy { it.lastModified() }
-
-
-        for (position in lista.size - 10 downTo 0) {
-            val arquivo = lista[position]
-            Extra.deleteFolder(arquivo)
-            if (arquivo.exists())
-                arquivo.delete()
-
-        }
-    }
 
     /**
      * Deleta os backups dos dias anteriores
