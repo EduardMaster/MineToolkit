@@ -37,15 +37,18 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     fun registerCommand(comand: Command) {
         ProxyServer.getInstance().pluginManager.registerCommand(this, comand)
     }
+    override fun console(msg: String) {
+        ProxyServer.getInstance().console.sendMessage(TextComponent(msg))
+    }
     private var started = false
-    lateinit var pluginBase: IPluginInstance
+
     override val pluginName: String
-        get() = Extra.getMethodInvoke(plugin, "getName" ) as String
+        get() = plugin.description.name
 
     val config get() = configs
 
-    override fun getPlugin(): Any {
-        return pluginBase
+    override fun getPlugin(): Plugin {
+        return this
     }
 
 
@@ -200,8 +203,6 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
                 }
     }
 
-    override fun console(msg: String) {
-        ProxyServer.getInstance().console.sendMessage(TextComponent(msg))
-    }
+
 
 }

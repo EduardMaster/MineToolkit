@@ -4,6 +4,7 @@ import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,9 @@ public class Hologram_v1_8_R3  implements Hologram {
     private static void log(String msg) {
         if (debug)
             System.out.println("[Hologram_v1_8_R3] " + msg);
+
+
+
     }
 
     public Hologram_v1_8_R3() {

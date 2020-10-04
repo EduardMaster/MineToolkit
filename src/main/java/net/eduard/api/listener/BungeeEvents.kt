@@ -11,7 +11,7 @@ import net.md_5.bungee.event.EventHandler
 class BungeeEvents : Listener {
 
 
-    val bungee get() = EduardAPIBungee.instance.bungee
+    val bungee get() = EduardAPIBungee.instance.bungeeDB
     val db get() = EduardAPIBungee.instance.db
 
 
