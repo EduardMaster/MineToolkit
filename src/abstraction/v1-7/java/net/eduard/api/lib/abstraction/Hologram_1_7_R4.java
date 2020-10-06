@@ -49,6 +49,7 @@ public class Hologram_1_7_R4 {
 			this.ids.addAll(showLine(p, first.clone(), this.lines.get(i)));
 			first.subtract(0.0D, 0.23D, 0.0D);
 		}
+
 		this.showing = true;
 		this.location = loc;
 	}
