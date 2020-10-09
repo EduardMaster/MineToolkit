@@ -223,16 +223,6 @@ public class MineReflect {
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
-     */
-
-
-    /**
      * @return Versão do Servidor
      */
     public static String getVersion() {

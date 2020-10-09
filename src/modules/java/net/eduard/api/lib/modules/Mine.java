@@ -1105,11 +1105,20 @@ public final class Mine {
         return lista;
     }
 
+    /**
+     * Sistema de pegar classe apartir de textos, ou objetos normais, ou classes
+     * @param object Objeto ou Classe, ou texto
+     * @return Classe encontrada
+     * @throws Exception Falha ao pegar a classes apartir do objeto passado
+     */
     public static Class<?> getClassFrom(Object object) throws Exception {
         return Extra.getClassFrom(object);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     *
+     * @return O Hashmap onde estão registrados todos comandos e aliases
+     */
     public static Map<String, Command> getCommands() {
         try {
             Object map = Extra.getFieldValue(Bukkit.getServer().getPluginManager(), "commandMap");
@@ -1836,10 +1845,14 @@ public final class Mine {
      * @return Quantidade
      */
     public static int getTotalAmount(Inventory inventory, ItemStack item) {
+
         int amount = 0;
-        for (ItemStack id : inventory.all(item.getType()).values()) {
-            if (id.isSimilar(item)) {
-                amount += id.getAmount();
+        if (item == null){
+            return 0;
+        }
+        for (ItemStack itemLoop : inventory.all(item.getType()).values()) {
+            if (item.isSimilar(itemLoop)) {
+                amount += itemLoop.getAmount();
             }
         }
         return amount;
@@ -2710,8 +2723,9 @@ public final class Mine {
      * @param item      Item
      */
     public static void remove(Inventory inventory, ItemStack item) {
+        if (item == null)return;
         for (Entry<Integer, ? extends ItemStack> map : inventory.all(item.getType()).entrySet()) {
-            if (map.getValue().isSimilar(item)) {
+            if (item.isSimilar(map.getValue())) {
                 inventory.clear(map.getKey());
             }
         }

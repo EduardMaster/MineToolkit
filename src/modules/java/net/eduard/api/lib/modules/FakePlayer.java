@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 
 import org.bukkit.Bukkit;
@@ -41,6 +43,19 @@ public class FakePlayer implements OfflinePlayer {
             this.id = player.getUniqueId();
         } else {
             setIdByName();
+        }
+    }
+    public void sendMessage(String message)
+    {
+        Player player = getPlayer();
+        if (player!=null){
+            player.sendMessage(message);
+        }
+    }
+    public void consume(Consumer<Player> playerConsume){
+        Player player = getPlayer();
+        if (player!= null){
+            playerConsume.accept(player);
         }
     }
 

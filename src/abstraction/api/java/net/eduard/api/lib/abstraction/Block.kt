@@ -1,9 +1,9 @@
 package net.eduard.api.lib.abstraction
 
 import net.eduard.api.lib.modules.MineReflect
+import org.bukkit.Location
 import org.bukkit.Material
 import java.lang.Exception
-import javax.xml.stream.Location
 
 interface Block {
 
@@ -16,13 +16,19 @@ interface Block {
 
     companion object {
 
+        private lateinit var blockClass: Class<*>
         fun get(location: Location): Block? {
             return try {
-                Class.forName(
-                    "net.eduard.api.lib.abstraction.Block_"
-                            + MineReflect.getVersion()
-                )
-                    .getDeclaredConstructor(Location::class.java)
+
+                if (!Companion::blockClass.isInitialized) {
+                    blockClass = Class.forName(
+                        "net.eduard.api.lib.abstraction.Block_"
+                                + MineReflect.getVersion()
+                    )
+                }
+
+
+                blockClass.getDeclaredConstructor(Location::class.java)
                     .newInstance(location) as Block
 
 
