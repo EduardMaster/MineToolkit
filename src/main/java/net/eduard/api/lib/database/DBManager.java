@@ -579,11 +579,11 @@ public class DBManager {
                     // int precision = meta.getPrecision(colunaID);
                     // int scale = meta.getScale(colunaID);
                     ColumnInfo campo = new ColumnInfo();
-                    campo.setText(texto);
-                    campo.setValue(valor);
-                    campo.setTypeName(typeName);
-                    campo.setType(type);
-                    campo.setClassName(classe);
+                    campo.setValueString(texto);
+                    campo.setValue( valor);
+                    campo.setTypeName( typeName);
+                    campo.setType( type);
+                    campo.setClassName( classe);
                     campo.setName(coluna);
                     campo.setId(colunaID);
                     mapa.put(coluna, campo);

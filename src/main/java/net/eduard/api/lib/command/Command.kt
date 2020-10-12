@@ -168,7 +168,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
             }
         } catch (er: Error) {
         }
-        println("Comando $name registrado para o plugin $main")
+        ConsoleSender.sendMessage("Comando $name registrado para o plugin $main")
 
         COMMANDS.add(this)
 

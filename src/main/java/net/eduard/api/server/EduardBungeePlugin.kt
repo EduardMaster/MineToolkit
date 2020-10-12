@@ -98,8 +98,7 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
             storageManager.sqlManager = sqlManager
         }
 
-        storageManager.folderBase = File(pluginFolder,"/database/")
-        storageManager.folderBase.mkdirs()
+
     }
     /**
      * Gera backup dos arquivos config.yml, storage.yml e por ultimo database.db

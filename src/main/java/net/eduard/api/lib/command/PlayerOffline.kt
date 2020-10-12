@@ -34,6 +34,9 @@ class PlayerOffline(var name: String = "Eduard",
 
     constructor(name : String): this(name,null)
 
+    override fun toString(): String {
+        return ""+this.uniqueId
+    }
 
     constructor(player: PlayerOnline<*>) : this(player.name, player.uniqueId) {
         this.onlinePlayer = player
