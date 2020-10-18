@@ -31,7 +31,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 public class ItemBuilder extends ItemStack {
     public ItemBuilder() {
         this(Material.STONE, 1);
-
     }
 
     public ItemBuilder(ItemStack clone) {
