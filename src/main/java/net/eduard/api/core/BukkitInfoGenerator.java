@@ -34,6 +34,7 @@ public class BukkitInfoGenerator {
     public BukkitInfoGenerator(EduardAPI plugin) {
         setPlugin(plugin);
         File pasta = new File(plugin.getPluginFolder(), "database");
+        pasta.mkdirs();
         if (Objects.requireNonNull(pasta.listFiles()).length == 0) {
             saveEnum(DamageCause.class);
             saveEnum(Material.class);

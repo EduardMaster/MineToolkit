@@ -55,6 +55,14 @@ class EduardAPI() : EduardPlugin() {
         Bukkit.getConsoleSender().sendMessage(message)
     }
 
+    override fun getPlugin(): EduardPlugin {
+        return this
+    }
+
+    override val pluginFolder: File
+        get() = dataFolder
+
+
     override fun onEnable() {
         instance = this
         isFree = true
