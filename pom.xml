@@ -153,8 +153,6 @@
             <scope>compile</scope>
         </dependency>
 
-
-
         <dependency>
             <groupId>net.bukkitplugin</groupId>
             <artifactId>jhcash</artifactId>

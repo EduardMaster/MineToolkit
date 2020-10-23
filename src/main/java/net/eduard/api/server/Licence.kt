@@ -23,10 +23,12 @@ object Licence {
             val tag = "[$plugin] "
             val link = SITE + "key=" + key + "&plugin=" + plugin + "&owner=" + owner
             val connect = URL(link).openConnection()
-            connect.connectTimeout = 5000
-            connect.readTimeout = 5000
-            connect.addRequestProperty("User-Agent",
-                    "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0")
+            connect.connectTimeout = 2000
+            connect.readTimeout = 2000
+            connect.addRequestProperty(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0"
+            )
             val scan = Scanner(connect.getInputStream())
             val b = StringBuilder()
             while (scan.hasNext()) {
@@ -64,11 +66,15 @@ object Licence {
         INVALID_IP("§cEste IP usado nao corresponde ao IP da Licensa"),
         ERROR("§cO plugin nao ativou pois deu algum tipo de erro ao receber a resposta do Site"),
         SITE_OFF("§eO Sistema de licença nao respondeu, §aplugin ativado para testes", true),
-        PLUGIN_ACTIVATED("§aPlugin ativado com sucesso, Licensa permitida.", true), FOR_TEST("§aO plugin foi liberado para testes no PC do Eduard", true);
+        PLUGIN_ACTIVATED(
+            "§aPlugin ativado com sucesso, Licensa permitida.",
+            true
+        ),
+        FOR_TEST("§aO plugin foi liberado para testes no PC do Eduard", true);
 
     }
 
-     object BukkitLicense {
+    object BukkitLicense {
         fun test(plugin: JavaPlugin, activation: Runnable) {
             val pluginName = plugin.name
             val tag = "§b[" + plugin.name + "] §f"
@@ -85,17 +91,21 @@ object Licence {
                 if (!result.isActive) {
                     Bukkit.getPluginManager().disablePlugin(plugin)
                 } else {
-                    activation.run()
+                    Bukkit.getScheduler().runTask(plugin) {
+                        fun run() {
+                            activation.run()
+                        }
+                    }
                 }
             }
         }
     }
 
-     object BungeeLicense {
+    object BungeeLicense {
         fun test(plugin: Plugin, activation: Runnable) {
             val pluginName = plugin.description.name
             ProxyServer.getInstance().console
-                    .sendMessage(TextComponent("§aAutenticando o plugin $pluginName"))
+                .sendMessage(TextComponent("§aAutenticando o plugin $pluginName"))
             val config = BungeeConfig("license.yml", plugin)
             config.add("key", "INSIRA_KEY")
             config.add("owner", "INSIRA_Dono")
@@ -107,8 +117,8 @@ object Licence {
                 val result = test(pluginName, owner, key)
                 ProxyServer.getInstance().console.sendMessage(TextComponent(tag + result.message))
                 if (!result.isActive) {
-                    ProxyServer.getInstance().getPluginManager().unregisterListeners(plugin)
-                    ProxyServer.getInstance().getPluginManager().unregisterCommands(plugin)
+                    ProxyServer.getInstance().pluginManager.unregisterListeners(plugin)
+                    ProxyServer.getInstance().pluginManager.unregisterCommands(plugin)
                 } else {
                     activation.run()
                 }

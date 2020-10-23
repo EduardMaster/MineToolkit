@@ -1,4 +1,4 @@
-package net.eduard.api.lib.database
+package net.eduard.api.lib.database.api
 
 enum class SQLEngineType(private val sqlLink : String, val driverLocation : String) {
     MYSQL("jdbc:mysql://%host:%port/%database?username=%user&password=%password&autoReconnect=true"

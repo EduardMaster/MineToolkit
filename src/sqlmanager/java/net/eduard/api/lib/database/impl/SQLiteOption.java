@@ -1,4 +1,4 @@
-package net.eduard.api.lib.database.mysql;
+package net.eduard.api.lib.database.impl;
 
 import net.eduard.api.lib.database.api.SQLOption;
 import net.eduard.api.lib.modules.Extra;
@@ -9,15 +9,16 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.UUID;
 
-public class MySQLOption implements SQLOption {
+public class SQLiteOption implements SQLOption {
+
     @Override
     public String primaryKey() {
-        return " PRIMARY KEY";
+        return " PRIMARY_KEY";
     }
 
     @Override
     public String autoIncrement() {
-        return " AUTO_INCREMENT";
+        return " AUTOINCREMENT";
     }
 
     @Override
@@ -27,9 +28,8 @@ public class MySQLOption implements SQLOption {
         if (wrapper != null) {
             javaClass = wrapper;
         }
-
         if (String.class.equals(javaClass)) {
-            return "VARCHAR(" + size + ")";
+            return "TEXT";
         } else if (Integer.class.equals(javaClass)) {
             return "INTEGER";
         } else if (Double.class.equals(javaClass)) {
@@ -48,8 +48,7 @@ public class MySQLOption implements SQLOption {
             return "NUMERIC";
         } else if (Float.class.equals(javaClass)) {
             return "FLOAT";
-        } else if (UUID.class.equals(javaClass)) {
-            return "VARCHAR(40)";
+
         } else if (Timestamp.class.equals(javaClass)) {
             return "TIMESTAMP";
         } else if (Calendar.class.equals(javaClass)) {
@@ -60,9 +59,13 @@ public class MySQLOption implements SQLOption {
             return "DATE";
         } else if (Time.class.equals(javaClass)) {
             return "TIME";
+        } else if (UUID.class.equals(javaClass)) {
+            return "VARCHAR(40)";
         }
-        return "VARCHAR("+size+")";
+        return "TEXT";
+
 
     }
+
 
 }

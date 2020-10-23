@@ -1,12 +1,13 @@
+# Este changelog não está 100% real, esta faltando coisas
 1.5.8:
   - Os debugs de tudo é ativavel pela config.yml
 1.5.9:
-  - Removendo arquivos da pasta lib/abstraction para api/abstraction
+  - Movendo arquivos da pasta lib/abstraction para api/abstraction
 1.6.0:
   - Colocando lista de classes de todos os Kits conhecidos de HG e KitPvP na pasta api/server/kits
   - Antes estas classes ficavam nos dois projetos pagos, EduHG e EduKitPvP,
   - resolvi que como os kits são os mesmos é melhor ficam em um lugar só
-  - Movi 3 classes da pasta api/server/kits para api/server/net.eduard.hg.kit
+  - Movi 3 classes da pasta api/server/kits para api/server/kit
 1.7.0:
   - Removido métodos da Extra relacionados a contagem de Valor de Projeto pois agora sigo o padrão do Site que calcula o projeto dependendo de coisas que os propríos compradores podem avaliar
   - Método removido calculateClassValue(class)->double que calcula o valor da Classe com base em um HashMap de valores levando em consideração até suas variaveis
