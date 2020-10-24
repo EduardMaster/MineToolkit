@@ -31,7 +31,7 @@ class BungeeDB(var db: DBManager) {
 
     fun getPlayerServer(playerId: UUID): String {
 
-        val data = db.select("select * from $playerTable where uuid = ?",playerId)
+        val data = db.select("select * from $playerTable where uuid = ?",playerId)?:return ""
         var server = "lobby"
         if (data.next()){
             server = data.getString("server")
@@ -59,7 +59,7 @@ class BungeeDB(var db: DBManager) {
 
     fun getPlayersAmount(server: String): Int {
 
-        val data = db.select("select * from $serverTable where name = ?",server)
+        val data = db.select("select * from $serverTable where name = ?",server)?:return -1
         var amount = 0
         if (data.next()){
             amount = data.getInt("players")

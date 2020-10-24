@@ -3,7 +3,10 @@
   <component name="FacetManager">
     <facet type="minecraft" name="Minecraft">
       <configuration>
-        <autoDetectTypes />
+        <autoDetectTypes>
+          <platformType>SPIGOT</platformType>
+          <platformType>BUNGEECORD</platformType>
+        </autoDetectTypes>
       </configuration>
     </facet>
   </component>

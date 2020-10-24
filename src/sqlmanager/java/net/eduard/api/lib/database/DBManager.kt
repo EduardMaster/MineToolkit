@@ -8,17 +8,29 @@ import java.sql.*
 
 /**
  * API de Controle de MySQL ou SQLite com apenas 1 conexão
+
+ * Construtor pedindo Usuario, Senha, Host sem conectar com nenhum database
+ * apenas no Driver
  *
+ * @param user Usuario
+ * @param pass Senha
+ * @param host Host
+
  * @author Eduard
  */
 @SuppressWarnings("unchecked", "unused")
-class DBManager {
+class DBManager(
+
+    var user: String = "root",
+    var pass: String = "",
+    var database: String = "mine",
+    var host: String = "localhost"
+) {
+
+
     var isEnabled = false
-    var user = "root"
-    var pass = ""
-    var host = "localhost"
     var port = "3306"
-    var database = "mine"
+
     var engine =
         SQLEngineType.MYSQL
     @Transient
@@ -32,7 +44,7 @@ class DBManager {
     @Transient
     lateinit var connection: Connection
 
-    constructor() {}
+
 
     /**
      * Fecha a conexao do Banco
@@ -98,36 +110,16 @@ class DBManager {
      */
     fun hasConnection(): Boolean {
         try {
-            return connection != null && !connection!!.isClosed
+            return this::connection.isInitialized && !(connection.isClosed)
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }
         return false
     }
 
-    /**
-     * Contrutor pedindo Usuario, Senha, Host, Database
-     *
-     * @param user     Usuario
-     * @param pass     Senha
-     * @param host     Host
-     * @param database Database
-     */
-    /**
-     * Construtor pedindo Usuario, Senha, Host sem conectar com nenhum database
-     * apenas no Driver
-     *
-     * @param user Usuario
-     * @param pass Senha
-     * @param host Host
-     */
-    @JvmOverloads
-    constructor(user: String, pass: String, host: String, database: String = "mine") {
-        this.user = user
-        this.pass = pass
-        this.host = host
-        this.database = database
-    }
+
+
+
 
     /**
      * Criar uma database
@@ -392,11 +384,11 @@ class DBManager {
     ): Boolean {
         var has = false
         if (hasConnection()) try {
-            val rs = select(
+            val resultSet = select(
                 query, *objects
             )
-            has = rs!!.next()
-            rs.close()
+            has = resultSet!!.next()
+            resultSet.close()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -527,7 +519,7 @@ class DBManager {
     ): ResultSet? {
         return try {
             query(
-                query, *objects as Array<out Any>
+                query, *objects
             )!!.executeQuery()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -550,7 +542,6 @@ class DBManager {
 
     companion object {
         var isDebugging = true
-            private set
 
         fun setDebug(flag: Boolean) {
             isDebugging = flag

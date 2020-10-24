@@ -61,8 +61,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
-            <artifactId>Vault</artifactId>
-            <version>1.7.3</version>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -1,5 +1,6 @@
 package net.eduard.api.lib.config
 
+import net.eduard.api.lib.database.SQLManager
 import java.io.File
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy

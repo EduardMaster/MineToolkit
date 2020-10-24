@@ -1,10 +1,10 @@
 package net.eduard.api.server
 
 import net.eduard.api.lib.config.Config
+import net.eduard.api.lib.config.StorageManager
+import net.eduard.api.lib.config.StorageType
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
-import net.eduard.api.lib.database.StorageManager
-import net.eduard.api.lib.database.StorageType
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPlugin
 import net.md_5.bungee.api.ProxyServer
@@ -94,7 +94,7 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
         storageManager.type = config.get("database-type", StorageType::class.java)
         if (db.isEnabled) {
             db.openConnection()
-            sqlManager.setDbManager(dbManager)
+            sqlManager.dbManager=(dbManager)
             storageManager.sqlManager = sqlManager
         }
 

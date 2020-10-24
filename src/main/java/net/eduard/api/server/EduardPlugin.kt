@@ -1,10 +1,10 @@
 package net.eduard.api.server
 
 import net.eduard.api.lib.config.Config
+import net.eduard.api.lib.config.StorageManager
+import net.eduard.api.lib.config.StorageType
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
-import net.eduard.api.lib.database.StorageManager
-import net.eduard.api.lib.database.StorageType
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.modules.BukkitTimeHandler
@@ -190,7 +190,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         storageManager.type = configs.get("database-type", StorageType::class.java)
         if (db.isEnabled) {
             db.openConnection()
-            sqlManager.setDbManager(dbManager)
+            sqlManager.dbManager=(dbManager)
             storageManager.sqlManager = sqlManager
         }
 

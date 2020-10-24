@@ -41,6 +41,16 @@ import com.google.gson.JsonParser;
  * @since Lib v2.0
  */
 public final class Extra {
+
+    public static Object transform(Object object, Class<?> type) throws Exception {
+        String fieldTypeName = Extra.toTitle(type.getSimpleName());
+        Object value = Extra.getMethodInvoke(Extra.class, "to" + fieldTypeName, Extra.getParameters(Object.class), object);
+        if (value instanceof String) {
+            value = Extra.toChatMessage((String) value);
+        }
+        return value;
+    }
+
     /**
      * Testa se o numero passado é da coluna expecificada
      *
@@ -1442,17 +1452,17 @@ public final class Extra {
         return claz;
     }
 
-    public static <E> List<E> mover(int casasMovida, List<E> lista) {
+    public static <E> List<E> moveSpaces(int timesSkip, List<E> lista) {
         List<E> listaCopia = new ArrayList<>();
-        if (casasMovida > lista.size()) {
-            casasMovida = 1;
+        if (timesSkip > lista.size()) {
+            timesSkip = 1;
         }
         for (int i = 0; i < lista.size(); i++) {
-            int m = i + casasMovida;
-            if (m >= lista.size()) {
-                m -= lista.size();
+            int variacao = i + timesSkip;
+            if (variacao >= lista.size()) {
+                variacao -= lista.size();
             }
-            E dado = lista.get(m);
+            E dado = lista.get(variacao);
             listaCopia.add(dado);
         }
         return listaCopia;

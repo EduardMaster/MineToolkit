@@ -4,23 +4,27 @@ import net.eduard.api.lib.database.annotations.TableName
 import net.eduard.api.lib.database.api.DatabaseColumn
 import net.eduard.api.lib.database.api.DatabaseEngine
 import net.eduard.api.lib.database.api.DatabaseTable
+import java.lang.Exception
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
 
-class MySQLTable<T >(override var name: String,
-                                      override var connection: Connection
-                                      , override val tableClass: Class<*>,
-                                      override val engine: DatabaseEngine
+class MySQLTable<T>(
+    override var connection: Connection
+    , override val tableClass: Class<*>,
+    override val engine: DatabaseEngine
 
 
+) : DatabaseTable<T> {
+    override val name: String = if (tableClass.isAnnotationPresent(
+            TableName:: class.java )
+    ) tableClass.getAnnotation(TableName::class.java).value else tableClass.simpleName
+    override val columns: MutableMap<Field, DatabaseColumn> = linkedMapOf()
 
-) : DatabaseTable<T>{
-    override val columns: MutableMap<Field, DatabaseColumn> = mutableMapOf()
-    init{
-        for (field in tableClass.declaredFields){
+    init {
+        for (field in tableClass.declaredFields) {
             if (Modifier.isStatic(field.modifiers)) {
                 continue
             }
@@ -34,8 +38,6 @@ class MySQLTable<T >(override var name: String,
         }
     }
 
-    val tableName :String= if (tableClass.isAnnotationPresent(TableName::
-    class.java)) tableClass.getAnnotation(TableName::class.java).value else name
 
     override var newInstance: () -> T = { tableClass.newInstance() as T }
 
@@ -44,74 +46,163 @@ class MySQLTable<T >(override var name: String,
         try {
 
             val prepare = connection.prepareStatement(
-                "SELECT * FROM $name")
+                "SELECT * FROM $name"
+            )
             val query = prepare.executeQuery()
-            while (query.next()){
-                val newData =newInstance.invoke()
-                updateCache(newData,query)
+            while (query.next()) {
+                val newData = newInstance.invoke()
+                updateCache(newData, query)
                 list.add(newData)
             }
 
-        }catch (ex : SQLException){
+        } catch (ex: SQLException) {
             ex.printStackTrace()
         }
         return list
     }
 
-    override fun findByPrimary(primaryValue: Any): T? {
-
+    override fun findByColumn(columnName: String, columnValue: Any): T? {
         try {
             val prepare = connection.prepareStatement(
-                "SELECT * FROM $name WHERE ${primaryColumn?.name ?:"ID"} = ?")
-            prepare.setString(1,""+primaryValue)
+                "SELECT * FROM $name WHERE $columnName = ?"
+            )
+            prepare.setString(1, "" + columnValue)
             val query = prepare.executeQuery()
-            if (query.next()){
-               val newData =newInstance.invoke()
-                updateCache(newData,query)
+            if (query.next()) {
+                val newData = newInstance.invoke()
+                updateCache(newData, query)
                 return newData
             }
 
-        }catch (ex : SQLException){
+        } catch (ex: SQLException) {
             ex.printStackTrace()
         }
-
         return null
+    }
+
+    override fun findByPrimary(primaryValue: Any): T? {
+        return findByColumn(primaryName, primaryValue)
 
     }
 
-    override fun select(columnOrder: String, ascending: Boolean): List<T> {
+    override fun select(where: String, columnOrder: String, ascending: Boolean, limit: Int): List<T> {
         val list = mutableListOf<T>()
         try {
 
             val prepare = connection.prepareStatement(
-                "SELECT * FROM $name ORDER BY $columnOrder "+ (if (ascending) "ASC" else "DESC"))
+                "SELECT * FROM $name WHERE $where ORDER BY $columnOrder "
+                        + (if (ascending) "ASC" else "DESC") + " LIMIT $limit"
+            )
             val query = prepare.executeQuery()
-            while (query.next()){
-                val newData =newInstance.invoke()
-                updateCache(newData,query)
+            while (query.next()) {
+                val newData = newInstance.invoke()
+                updateCache(newData, query)
                 list.add(newData)
             }
 
-        }catch (ex : SQLException){
+        } catch (ex: SQLException) {
             ex.printStackTrace()
         }
         return list
     }
 
-    override fun updateCache(data: T, query : ResultSet) {
+    override fun updateCache(data: T, query: ResultSet) {
+
+        for ((field, column) in columns) {
+            val str = query.getString(column.name)
+            val converted = engine.convertToJava(str, column)
+            try {
+                field.set(data, converted)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
 
     }
 
     override fun insert(data: T) {
-        TODO("Not yet implemented")
+
+        try {
+            val builder = StringBuilder("INSERT INTO $name VALUES (")
+
+            for (column in columns.values) {
+                builder.append("?,")
+            }
+
+            builder.deleteCharAt(builder.length - 1)
+            builder.append(")")
+            val prepare = connection
+                .prepareStatement(builder.toString())
+            var id = 1
+            for ((field, column) in columns) {
+                val fieldValue = field.get(data)
+                if (fieldValue == null || (column.isNumber && column.isPrimary)) {
+                    prepare.setObject(id, null)
+                } else {
+                    prepare.setString(id, "" + fieldValue)
+                }
+                id++
+            }
+            prepare.executeUpdate()
+
+
+        } catch (ex: SQLException) {
+            ex.printStackTrace()
+        }
+
+
     }
 
+
     override fun update(data: T) {
-        TODO("Not yet implemented")
+
+        try {
+            val builder = StringBuilder("UPDATE $name SET ")
+
+            for (column in columns.values) {
+                builder.append("${column.name} = ?,")
+            }
+
+            builder.deleteCharAt(builder.length - 1)
+            builder.append(")")
+            val prepare = connection
+                .prepareStatement(builder.toString())
+            var id = 1
+            for ((field, column) in columns) {
+                val fieldValue = field.get(data)
+                if (fieldValue == null || (column.isNumber && column.isPrimary)) {
+                    prepare.setObject(id, null)
+                } else {
+                    prepare.setString(id, "" + fieldValue)
+                }
+                id++
+            }
+            prepare.executeUpdate()
+
+
+        } catch (ex: SQLException) {
+            ex.printStackTrace()
+        }
     }
 
     override fun delete(data: T) {
-        TODO("Not yet implemented")
+        try {
+
+            val prepare = connection.prepareStatement(
+                "DELETE FROM $name WHERE ${primaryColumn?.name ?: "ID"} = ?"
+            )
+            if (primaryColumn != null) {
+                prepare.setString(1, "" + primaryColumn!!.field.get(data))
+            } else {
+                prepare.setString(1, "1")
+            }
+            prepare.executeUpdate()
+
+
+        } catch (ex: SQLException) {
+            ex.printStackTrace()
+        }
     }
+
 
 }

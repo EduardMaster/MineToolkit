@@ -7,7 +7,7 @@ import java.sql.ResultSet
 
 interface DatabaseTable<T> {
     val engine : DatabaseEngine
-    var name : String
+    val name : String
     var connection : Connection
     val tableClass : Class<*>
     var newInstance : () -> T
@@ -15,13 +15,16 @@ interface DatabaseTable<T> {
     val primaryColumn: DatabaseColumn?
         get() = columns.values.firstOrNull { it.isPrimary }
 
+    val primaryName get() = primaryColumn?.name?:"ID"
+
     fun insert(data : T)
     fun update(data : T)
     fun delete(data : T)
     fun selectAll() : List<T>
+    fun findByColumn(columnName :String, columnValue : Any) : T?
     fun findByPrimary(primaryValue : Any) : T?
     fun updateCache(data : T, query : ResultSet)
-    fun select(columnOrder : String, ascending : Boolean): List<T>
+    fun select(where: String , columnOrder : String, ascending : Boolean, limit : Int): List<T>
 
 
 }

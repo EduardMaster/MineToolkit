@@ -31,10 +31,7 @@ import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetPlayerTask
-import net.eduard.api.task.BuilderTask
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow
-import org.bukkit.entity.Arrow
 import org.bukkit.entity.Player
 import java.io.File
 import java.text.DecimalFormat
@@ -87,7 +84,7 @@ class EduardAPI() : EduardPlugin() {
         // Na versão 1.16 precisa ser em Sync não pode ser Async
         PlayerTargetPlayerTask().runTaskTimerAsynchronously(plugin, 20, 20)
         AutoSaveAndBackupTask().runTaskTimerAsynchronously(plugin, 20, 20)
-        BuilderTask().asyncTimer()
+
         log("Ativando comandos")
         ApiCommand().register()
         MapCommand().register()

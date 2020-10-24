@@ -1,12 +1,14 @@
-package net.eduard.api.server
+package net.eduard.licenser
 
-import net.eduard.api.lib.config.BukkitConfig
-import net.eduard.api.lib.config.BungeeConfig
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Plugin
+import net.md_5.bungee.config.Configuration
+import net.md_5.bungee.config.ConfigurationProvider
 import org.bukkit.Bukkit
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.util.*
@@ -30,14 +32,14 @@ object Licence {
                 "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0"
             )
             val scan = Scanner(connect.getInputStream())
-            val b = StringBuilder()
+            val readingSite = StringBuilder()
             while (scan.hasNext()) {
                 val text = scan.next()
-                b.append(text)
+                readingSite.append(text)
             }
             scan.close()
             try {
-                PluginActivationStatus.valueOf(b.toString().toUpperCase().replace(" ", "_"))
+                PluginActivationStatus.valueOf(readingSite.toString().toUpperCase().replace(" ", "_"))
             } catch (ex: Exception) {
                 if (DEBUG) {
                     ex.printStackTrace()
@@ -79,10 +81,13 @@ object Licence {
             val pluginName = plugin.name
             val tag = "§b[" + plugin.name + "] §f"
             Bukkit.getConsoleSender().sendMessage("$tag§eFazendo autenticacao do Plugin no site")
-            val config = BukkitConfig("license.yml", plugin)
-            config.add("key", "INSIRA_KEY")
-            config.add("owner", "INSIRA_Dono")
-            config.saveDefault()
+            val arquivo = File(plugin.dataFolder,"license.yml")
+            val config = YamlConfiguration.loadConfiguration(arquivo)
+
+            config.addDefault("key", "INSIRA_KEY")
+            config.addDefault("owner", "INSIRA_Dono")
+            config.options().copyDefaults(true)
+            config.save(arquivo)
             val key = config.getString("key")
             val owner = config.getString("owner")
             Bukkit.getScheduler().runTaskAsynchronously(plugin) {
@@ -102,14 +107,24 @@ object Licence {
     }
 
     object BungeeLicense {
+
+        fun Configuration.add(key : String, value:Any? ){
+            if (!contains(key)){
+                set(key,value)
+            }
+        }
+
         fun test(plugin: Plugin, activation: Runnable) {
             val pluginName = plugin.description.name
             ProxyServer.getInstance().console
                 .sendMessage(TextComponent("§aAutenticando o plugin $pluginName"))
-            val config = BungeeConfig("license.yml", plugin)
+            val arquivo = File(plugin.dataFolder,"license.yml")
+            val provider =
+                ConfigurationProvider.getProvider(net.md_5.bungee.config.YamlConfiguration::class.java)
+            val config = provider.load(arquivo)
             config.add("key", "INSIRA_KEY")
             config.add("owner", "INSIRA_Dono")
-            config.saveConfig()
+            provider.save(config, arquivo)
             val key = config.getString("key")
             val owner = config.getString("owner")
             val tag = "§b[" + plugin.description.name + "] §f"
