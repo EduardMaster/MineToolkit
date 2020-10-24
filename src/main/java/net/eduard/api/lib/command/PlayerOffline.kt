@@ -7,8 +7,10 @@ import java.io.Serializable
 import java.util.*
 
 @Storable.StorageAttributes(inline = true)
-class PlayerOffline(var name: String = "Eduard",
-                    uuid: UUID? = null): Serializable {
+class PlayerOffline(
+    var name: String = "Eduard",
+    uuid: UUID? = null
+) : Serializable {
 
     lateinit var uniqueId: UUID
 
@@ -29,13 +31,14 @@ class PlayerOffline(var name: String = "Eduard",
     }
 
     fun sendMessage(message: String) {
-        onlinePlayer?.sendMessage(message)
+        if (onlinePlayer != null || isOnline)
+            player.sendMessage(message)
     }
 
-    constructor(name : String): this(name,null)
+    constructor(name: String) : this(name, null)
 
     override fun toString(): String {
-        return ""+this.uniqueId
+        return "" + this.uniqueId
     }
 
     constructor(player: PlayerOnline<*>) : this(player.name, player.uniqueId) {
@@ -54,7 +57,7 @@ class PlayerOffline(var name: String = "Eduard",
 
     val player: PlayerOnline<*>
         get() {
-            if (onlinePlayer == null||onlinePlayer!!.isOffline) {
+            if (onlinePlayer == null || onlinePlayer!!.isOffline) {
                 onlinePlayer = try {
                     PlayerBukkit(Bukkit.getPlayer(name))
                 } catch (er: Error) {

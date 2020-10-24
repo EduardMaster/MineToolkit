@@ -16,7 +16,14 @@ abstract class PlayerOnline<PlayerClass>(name: String, uuid : UUID) : Sender(nam
 
     abstract val isOffline : Boolean
 
-    val offline = PlayerOffline(name,uuid)
+    val offline = PlayerOffline(this)
+
+    override fun equals(other: Any?): Boolean {
+        if (other is PlayerOnline<*>){
+            return this.offline == other.offline
+        }
+        return false
+    }
 
 
 }
