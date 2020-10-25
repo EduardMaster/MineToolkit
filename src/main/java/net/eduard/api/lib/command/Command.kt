@@ -26,8 +26,8 @@ open class Command(override var name: String = "comando", vararg aliases: String
     final override var aliases = mutableListOf<String>()
     override var description = "Descrição do comando"
 
-    var usage = ""
-
+    override var usage = ""
+    override var permission = ""
     @Transient
     override var subCommands = mutableListOf<Command>()
 
@@ -53,7 +53,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
         }
     }
 
-    override var permission = ""
+
     override var permissionMessage = MESSAGE_PERMISSION
     override var playerOnly = false
 
@@ -124,8 +124,10 @@ open class Command(override var name: String = "comando", vararg aliases: String
 
         if (sender.hasPermission(cmd.permission)) {
             cmd.onCommand(sender, args)
-        } else
+        } else {
+            sender.sendMessage("§cVocê precisa da permissão "+ cmd.permission)
             sender.sendMessage(cmd.permissionMessage)
+        }
 
     }
 
@@ -149,6 +151,14 @@ open class Command(override var name: String = "comando", vararg aliases: String
         }
         if (permission.isEmpty()){
             permission = autoPermission()
+        }
+        for (sub in subCommands){
+            if (sub.usage.isEmpty()){
+                sub.usage = sub.autoUsage()
+            }
+            if (sub.permission.isEmpty()){
+                sub.permission = sub.autoPermission()
+            }
         }
 
 
