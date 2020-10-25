@@ -17,7 +17,7 @@ import java.util.*
 @SuppressWarnings("unused")
 object Licence {
     private const val DEBUG = true
-    private const val SITE = "http://eduard.com.br/license/?"
+    private const val SITE = "https://eduard.com.br/license/?"
 
 
     private fun test(plugin: String, owner: String, key: String): PluginActivationStatus {
@@ -81,7 +81,7 @@ object Licence {
             val pluginName = plugin.name
             val tag = "§b[" + plugin.name + "] §f"
             Bukkit.getConsoleSender().sendMessage("$tag§eFazendo autenticacao do Plugin no site")
-            val arquivo = File(plugin.dataFolder,"license.yml")
+            val arquivo = File(plugin.dataFolder, "license.yml")
             val config = YamlConfiguration.loadConfiguration(arquivo)
 
             config.addDefault("key", "INSIRA_KEY")
@@ -97,9 +97,9 @@ object Licence {
                     Bukkit.getPluginManager().disablePlugin(plugin)
                 } else {
                     Bukkit.getScheduler().runTask(plugin) {
-                        fun run() {
-                            activation.run()
-                        }
+
+                        activation.run()
+
                     }
                 }
             }
@@ -108,9 +108,9 @@ object Licence {
 
     object BungeeLicense {
 
-        fun Configuration.add(key : String, value:Any? ){
-            if (!contains(key)){
-                set(key,value)
+        fun Configuration.add(key: String, value: Any?) {
+            if (!contains(key)) {
+                set(key, value)
             }
         }
 
@@ -118,7 +118,7 @@ object Licence {
             val pluginName = plugin.description.name
             ProxyServer.getInstance().console
                 .sendMessage(TextComponent("§aAutenticando o plugin $pluginName"))
-            val arquivo = File(plugin.dataFolder,"license.yml")
+            val arquivo = File(plugin.dataFolder, "license.yml")
             val provider =
                 ConfigurationProvider.getProvider(net.md_5.bungee.config.YamlConfiguration::class.java)
             val config = provider.load(arquivo)
