@@ -23,7 +23,6 @@ import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
 import net.eduard.api.lib.game.Schematic
-import net.eduard.api.lib.kotlin.examples.EventsAlterations
 import net.eduard.api.listener.*
 import net.eduard.api.server.EduardPlugin
 import net.eduard.api.server.currency.CurrencyController
@@ -109,14 +108,10 @@ class EduardAPI() : EduardPlugin() {
         log("Carregando dependencias")
         JHCashHook()
 
-        testingKotlin()
+
     }
 
-    private fun testingKotlin() {
-        log("Testando Kotlin")
 
-        EventsAlterations()
-    }
 
 
     override fun reload() {

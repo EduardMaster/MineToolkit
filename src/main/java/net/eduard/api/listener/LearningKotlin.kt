@@ -1,4 +1,4 @@
-package net.eduard.api.lib.kotlin.examples
+package net.eduard.api.listener
 
 import kotlin.math.pow
 

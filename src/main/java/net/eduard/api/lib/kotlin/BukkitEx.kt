@@ -1,13 +1,19 @@
 package net.eduard.api.lib.kotlin
 
+import net.eduard.api.lib.command.PlayerOffline
 import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.modules.FakePlayer
+import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.modules.MineReflect
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.CropState
 import org.bukkit.Material
 import org.bukkit.block.BlockState
 import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
@@ -20,6 +26,52 @@ import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.material.Crops
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
+
+inline fun Player.removeXP(amount: Double){
+    Mine.removeXP(this,amount)
+}
+inline fun Player.addHotBar(item : ItemStack){
+    Mine.setHotBar(this,item)
+}
+inline fun Player.changeTabName(tabName : String){
+    Mine.changeTabName(this,tabName)
+}
+inline fun Player.clearHotBar(){
+    Mine.clearHotBar(this)
+
+}
+inline fun LivingEntity.clearArmors(){
+    Mine.clearArmours(this)
+}
+inline fun Player.clearInventory(){
+    Mine.clearInventory(this)
+}
+inline fun Player.sendTitle(title : String, subTitle : String){
+    MineReflect.sendTitle(this, title,subTitle,20,20,20)
+}
+
+inline fun Player.sendTitle(title : String, subTitle : String, fadeInt : Int, stay: Int, fadeOut : Int){
+    MineReflect.sendTitle(this, title,subTitle,fadeInt,stay,fadeOut)
+}
+inline fun Player.sendActionBar(msg : String){
+    MineReflect.sendActionBar(this,msg)
+}
+inline fun Player.sendPacket(packet : Any){
+    MineReflect.sendPacket(this,packet)
+}
+inline fun Event.call(){
+    return Mine.callEvent(this)
+}
+
+inline val FakePlayer.offline : PlayerOffline
+    get() { return PlayerOffline(name,id)
+    }
+
+inline fun CommandSender.isPlayer(block: Player.() -> Unit){
+    if (Mine.onlyPlayer(this)){
+        block(this as Player)
+    }
+}
 
 fun Listener.register(plugin: JavaPlugin) = Bukkit.getPluginManager().registerEvents(this, plugin)
 
@@ -161,12 +213,14 @@ fun ItemStack.color(color: Color): ItemStack {
 }
 
 
+object BukkitAlterations : Listener
+
 fun <T : Event> KClass<T>.event(actionToDo: T.() -> Unit) {
     Bukkit.getPluginManager()
             .registerEvent(this.java,
-                    BukkitEventListener, EventPriority.NORMAL, { _, event ->
+                BukkitAlterations, EventPriority.NORMAL, { _, event ->
                 actionToDo(event as T)
-            }, BukkitEventListener.javaClass.plugin)
+            }, BukkitAlterations.javaClass.plugin)
 }
 
 
