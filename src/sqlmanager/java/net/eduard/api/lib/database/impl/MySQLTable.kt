@@ -64,7 +64,7 @@ class MySQLTable<T>(
     override fun findByColumn(columnName: String, columnValue: Any): T? {
         try {
             val prepare = connection.prepareStatement(
-                "SELECT * FROM $name WHERE $columnName = ?"
+                "SELECT * FROM $name WHERE $columnName = ? LIMIT 1"
             )
             prepare.setString(1, "" + columnValue)
             val query = prepare.executeQuery()

@@ -369,7 +369,7 @@ class DBManager(
      * @return Se contem
      */
     fun contains(table: String, where: String, vararg values: Any?): Boolean {
-        return contains("select * from $table where $where", *values)
+        return contains("select * from $table where $where limit 1", *values)
     }
 
     /**
@@ -520,7 +520,7 @@ class DBManager(
         return try {
             query(
                 query, *objects
-            )!!.executeQuery()
+            )?.executeQuery()
         } catch (e: Exception) {
             e.printStackTrace()
             null
