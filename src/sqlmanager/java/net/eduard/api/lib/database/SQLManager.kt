@@ -25,7 +25,7 @@ class SQLManager(var dbManager: DBManager) {
     }
 
     fun hasConnection(): Boolean {
-        return  dbManager.hasConnection()
+        return dbManager.hasConnection()
     }
 
     /**
@@ -139,7 +139,7 @@ class SQLManager(var dbManager: DBManager) {
         }
     }
 
-    fun <T : Any>  deleteTable(dataClass: Class<T>) {
+    fun <T : Any> deleteTable(dataClass: Class<T>) {
         if (hasConnection()) {
             dbManager.engineUsed.deleteTable(dataClass)
         }
@@ -148,6 +148,13 @@ class SQLManager(var dbManager: DBManager) {
     fun <T : Any> clearTable(dataClass: Class<T>) {
         if (hasConnection()) {
             dbManager.engineUsed.clearTable(dataClass)
+        }
+    }
+
+    fun <T : Any> createReferences(dataClass: Class<T>) {
+        if (hasConnection()) {
+            dbManager.engineUsed.getTable(dataClass)
+                .createReferences()
         }
     }
 }

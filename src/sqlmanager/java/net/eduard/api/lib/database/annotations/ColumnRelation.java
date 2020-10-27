@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ColumnRelation {
-    TableRelation value() default TableRelation.NONE;
+    TableRelation value() default TableRelation.ONE_TO_ANY;
 }

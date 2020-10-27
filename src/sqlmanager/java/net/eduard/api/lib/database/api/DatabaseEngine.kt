@@ -19,5 +19,5 @@ interface DatabaseEngine {
     fun <T> createTable(clz: Class<T>)
 
     fun convertToSQL(value : Any?) : String
-    fun convertToJava(string: String, column: DatabaseColumn): Any?
+    fun convertToJava(string: String, column: DatabaseColumn<*>): Any?
 }

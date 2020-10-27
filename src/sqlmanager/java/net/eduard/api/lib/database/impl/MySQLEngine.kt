@@ -12,7 +12,7 @@ import java.util.*
 
 class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     override val tables: MutableMap<Class<*>, DatabaseTable<*>> = mutableMapOf()
-
+    private val tablesByName = mutableMapOf<String, DatabaseTable<*>>()
     companion object {
         var logEnabled = false
     }
@@ -38,6 +38,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         }
         val table: DatabaseTable<T> = MySQLTable(connection, clz, this)
         tables[clz] = table
+        table.reload()
         return table
     }
 
@@ -45,10 +46,19 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         val table = getTable(clz)
         deleteTable(table.name)
     }
+    fun getTable(tableName: String): DatabaseTable<*> {
+        if (tablesByName.containsKey(tableName)){
+            return tablesByName[tableName]!!
+        }
+        val table= tables.values.first{it.name.equals(tableName,true)}
+        tablesByName[tableName.toLowerCase()] = table
+        return table
+    }
 
     override fun deleteTable(tableName: String) {
         try {
-
+            val table = getTable(tableName)
+            table.delete()
             val prepare = connection.prepareStatement(
                 "DROP TABLE $tableName"
             )
@@ -87,11 +97,9 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         try {
             val builder = StringBuilder("CREATE TABLE IF NOT EXISTS $tableName (")
             log("Criando tabela $tableName")
-            for (field in clz.declaredFields) {
+
+            for ((field,column) in table.columns) {
                 log("Coluna: ${field.name}")
-                val column = DatabaseColumn(field, this)
-
-
                 builder.append(column.name)
                 builder.append(" ")
                 builder.append(column.customType)
@@ -170,7 +178,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     }
 
 
-    override fun convertToJava(data: String, column: DatabaseColumn): Any? {
+    override fun convertToJava(data: String, column: DatabaseColumn<*>): Any? {
         val javaClass = column.javaType
 
         if (Extra.isWrapper(javaClass)) {

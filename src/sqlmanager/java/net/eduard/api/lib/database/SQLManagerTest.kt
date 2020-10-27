@@ -13,6 +13,19 @@ fun main() {
     testLag("Abrindo conexão") {
         db.openConnection()
     }
+    sqlManager.deleteTable(PartyUser::class.java)
+    sqlManager.deleteTable(Party::class.java)
+    testLag("Criando tabela party") {
+        sqlManager.createTable(Party::class.java)
+    }
+    testLag("Criando tabela Party membros"){
+        sqlManager.createTable(PartyUser::class.java)
+    }
+    testLag("Criando as conexões das 2 tabelas"){
+        sqlManager.createReferences(PartyUser::class.java)
+    }
+
+    /*
     testLag("Limpando a tabela") {
         sqlManager.clearTable(Jogador::class.java)
     }
@@ -63,6 +76,7 @@ fun main() {
     }
 
 
+    */
 
 }
 
@@ -75,6 +89,7 @@ fun main() {
     println("Tempo gasto do $actionName: ${dif}ms")
 
 }
+@TableName("parties_users")
 class PartyUser{
     @ColumnPrimary
     var id: Int = 0
@@ -86,6 +101,7 @@ class PartyUser{
     var party : Party? = null
 
 }
+@TableName("parties")
 class Party{
     @ColumnPrimary
     var id: Int = 0

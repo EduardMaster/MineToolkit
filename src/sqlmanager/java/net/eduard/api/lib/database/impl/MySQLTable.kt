@@ -19,7 +19,7 @@ class MySQLTable<T>(
 
 
 ) : DatabaseTable<T> {
-
+    var referencesRemoved = false
 
     fun log(str: String) {
         if (MySQLEngine.logEnabled)
@@ -30,9 +30,11 @@ class MySQLTable<T>(
             TableName::class.java
         )
     ) tableClass.getAnnotation(TableName::class.java).value else tableClass.simpleName
-    override val columns: MutableMap<Field, DatabaseColumn> = linkedMapOf()
+    override val columns: MutableMap<Field, DatabaseColumn<*>> = linkedMapOf()
 
-    init {
+
+    override fun reload() {
+        columns.clear()
         for (field in tableClass.declaredFields) {
             if (Modifier.isStatic(field.modifiers)) {
                 continue
@@ -43,7 +45,7 @@ class MySQLTable<T>(
             if (Modifier.isTransient(field.modifiers)) {
                 continue
             }
-            columns[field] = DatabaseColumn(field, engine)
+            columns[field] = DatabaseColumn(this, field, engine)
         }
     }
 
@@ -70,19 +72,54 @@ class MySQLTable<T>(
         }
         return list
     }
-    override fun createReferences(){
-        try{
 
-            for (column in columns.values){
-                if (column.isConstraint){
+    override fun delete() {
+        deleteReferences()
+        for (table in engine.tables.values) {
+            for (column in table.columns.values) {
+                if (column.isConstraint && column.javaType == tableClass) {
+                    table.deleteReferences()
+                }
+            }
+        }
 
-                    connection.
-                    prepareStatement("ALTER TABLE ${name} DROP FOREIGN KEY IF EXISTS ${column.foreignKeyName}")
+    }
+
+    override fun deleteReferences() {
+        if (referencesRemoved) return
+        referencesRemoved = true
+        try {
+
+            for (column in columns.values) {
+                if (column.isConstraint) {
+
+                    connection.prepareStatement(
+                        "ALTER TABLE $name " +
+                                "DROP FOREIGN KEY IF EXISTS ${column.foreignKeyName}"
+                    )
                         .executeUpdate()
-                    connection.
-                    prepareStatement("ALTER TABLE ${name} ADD CONSTRAINT ${column.foreignKeyName} FOREIGN KEY" +
-                            " ${column.name} REFERENCES ${column.table.name}.${column.table.primaryName} " +
-                            "ON DELETE SET NULL ON UPDATE SET NULL")
+
+                }
+                //ALTER TABLE `party_user` DROP FOREIGN KEY `party`; ALTER TABLE `party_user` ADD CONSTRAINT `party` FOREIGN KEY (`party_id`) REFERENCES `partu`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+            }
+        } catch (ex: SQLException) {
+            ex.printStackTrace()
+        }
+    }
+
+    override fun createReferences() {
+
+        try {
+            deleteReferences()
+            for (column in columns.values) {
+                if (column.isConstraint) {
+
+
+                    val text = "ALTER TABLE $name ADD CONSTRAINT ${column.foreignKeyName} FOREIGN KEY" +
+                            " (${column.name}) REFERENCES ${column.referenceTable.name}(${column.referenceTable.primaryName}) " +
+                            "ON DELETE SET NULL ON UPDATE SET NULL"
+                    println(text)
+                    connection.prepareStatement(text)
                         .executeUpdate()
 
 
@@ -93,6 +130,7 @@ class MySQLTable<T>(
             ex.printStackTrace()
         }
     }
+
     override fun findByColumn(columnName: String, columnValue: Any): T? {
         try {
             log("Selecionando 1 registro")
@@ -207,7 +245,7 @@ class MySQLTable<T>(
             val builder = StringBuilder("UPDATE $name SET ")
 
             for (column in columns.values) {
-                if (column.isPrimary&&column.isNumber)continue
+                if (column.isPrimary && column.isNumber) continue
                 builder.append("${column.name} = ?,")
             }
             builder.deleteCharAt(builder.length - 1)
@@ -218,7 +256,7 @@ class MySQLTable<T>(
                 .prepareStatement(builder.toString())
             var id = 1
             for ((field, column) in columns) {
-                if (column.isPrimary&&column.isNumber)continue
+                if (column.isPrimary && column.isNumber) continue
                 field.isAccessible = true
                 val fieldValue = field.get(data)
                 if (fieldValue == null || (column.isNumber && column.isPrimary)) {

@@ -11,17 +11,19 @@ interface DatabaseTable<T> {
     var connection : Connection
     val tableClass : Class<*>
     var newInstance : () -> T
-    val columns : MutableMap<Field,DatabaseColumn>
-    val primaryColumn: DatabaseColumn?
+    val columns : MutableMap<Field,DatabaseColumn<*>>
+    val primaryColumn: DatabaseColumn<*>?
         get() = columns.values.firstOrNull { it.isPrimary }
 
     val primaryName get() = primaryColumn?.name?:"ID"
-
+    fun reload()
     fun insert(data : T)
     fun update(data : T)
     fun delete(data : T)
     fun selectAll() : List<T>
     fun createReferences()
+    fun delete()
+    fun deleteReferences()
     fun findByColumn(columnName :String, columnValue : Any) : T?
     fun findByPrimary(primaryValue : Any) : T?
     fun updateCache(data : T, query : ResultSet)
