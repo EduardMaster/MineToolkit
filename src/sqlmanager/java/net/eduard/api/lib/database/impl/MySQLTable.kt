@@ -4,6 +4,7 @@ import net.eduard.api.lib.database.annotations.TableName
 import net.eduard.api.lib.database.api.DatabaseColumn
 import net.eduard.api.lib.database.api.DatabaseEngine
 import net.eduard.api.lib.database.api.DatabaseTable
+import net.eduard.api.lib.database.api.TableReference
 import java.lang.Exception
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -20,7 +21,8 @@ class MySQLTable<T>(
 
 ) : DatabaseTable<T> {
     var referencesRemoved = false
-
+    override val elements = mutableMapOf<Any, T>()
+    val references = mutableListOf<TableReference<T>>()
     fun log(str: String) {
         if (MySQLEngine.logEnabled)
             println("MySQLTable: $str")
@@ -34,8 +36,10 @@ class MySQLTable<T>(
 
 
     override fun reload() {
+        if (tableClass == String::class.java)return
         columns.clear()
         for (field in tableClass.declaredFields) {
+
             if (Modifier.isStatic(field.modifiers)) {
                 continue
             }
@@ -45,7 +49,11 @@ class MySQLTable<T>(
             if (Modifier.isTransient(field.modifiers)) {
                 continue
             }
-            columns[field] = DatabaseColumn(this, field, engine)
+
+            val column =DatabaseColumn(this, field, engine)
+            columns[field] =  column
+
+            field.isAccessible = true
         }
     }
 
@@ -183,6 +191,16 @@ class MySQLTable<T>(
 
         for ((field, column) in columns) {
             val str = query.getString(column.name)
+            if (column.isConstraint){
+                val key = query.getObject(column.name)
+                val value = column.referenceTable.elements[key]
+                if (value !=null) {
+                    field.set(data, value)
+                }else{
+                    references.add(TableReference(column,data, key))
+                }
+                continue;
+            }
             val converted = engine.convertToJava(str, column)
             try {
                 field.set(data, converted)
@@ -190,7 +208,17 @@ class MySQLTable<T>(
                 ex.printStackTrace()
             }
         }
+        if (primaryColumn!=null) {
+            elements[primaryColumn!!.field.get(data)] = data
+        }
 
+    }
+
+    override fun updateReferences() {
+        for (reference in references){
+            reference.update()
+        }
+        references.clear()
     }
 
     override fun insert(data: T) {
@@ -209,8 +237,14 @@ class MySQLTable<T>(
                 .prepareStatement(builder.toString(), Statement.RETURN_GENERATED_KEYS)
             var id = 1
             for ((field, column) in columns) {
-                field.isAccessible = true
+
                 val fieldValue = field.get(data)
+                if (column.isConstraint && fieldValue!= null){
+                    val primaryKey = column.referenceTable.primaryColumn!!.field.get(fieldValue)?:0
+                    prepare.setObject(id, primaryKey)
+                    id++
+                    continue
+                }
                 if (fieldValue == null || (column.isNumber && column.isPrimary)) {
                     prepare.setObject(id, null)
                 } else {
@@ -230,6 +264,10 @@ class MySQLTable<T>(
                     }
                 }
             }
+            if (primaryColumn!= null){
+                elements[primaryColumn!!.field.get(data)] = data
+            }
+
 
         } catch (ex: SQLException) {
             ex.printStackTrace()
@@ -259,6 +297,12 @@ class MySQLTable<T>(
                 if (column.isPrimary && column.isNumber) continue
                 field.isAccessible = true
                 val fieldValue = field.get(data)
+                if (column.isConstraint && fieldValue!= null){
+                    val primaryKey = column.referenceTable.primaryColumn!!.field.get(fieldValue)?:0
+                    prepare.setObject(id, primaryKey)
+                    id++
+                    continue
+                }
                 if (fieldValue == null || (column.isNumber && column.isPrimary)) {
                     prepare.setObject(id, null)
                 } else {

@@ -12,10 +12,12 @@ interface DatabaseTable<T> {
     val tableClass : Class<*>
     var newInstance : () -> T
     val columns : MutableMap<Field,DatabaseColumn<*>>
+    val elements : MutableMap<Any,T>
     val primaryColumn: DatabaseColumn<*>?
         get() = columns.values.firstOrNull { it.isPrimary }
 
     val primaryName get() = primaryColumn?.name?:"ID"
+    fun updateReferences()
     fun reload()
     fun insert(data : T)
     fun update(data : T)

@@ -13,6 +13,7 @@ import java.util.*
 class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     override val tables: MutableMap<Class<*>, DatabaseTable<*>> = mutableMapOf()
     private val tablesByName = mutableMapOf<String, DatabaseTable<*>>()
+
     companion object {
         var logEnabled = false
     }
@@ -20,6 +21,12 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     fun log(str: String) {
         if (logEnabled)
             println("MySQLEngine: $str")
+    }
+
+    override fun updateReferences() {
+        for (table in tables.values){
+            table.updateReferences()
+        }
     }
 
     override val types: MutableMap<Class<*>, String> = mutableMapOf(

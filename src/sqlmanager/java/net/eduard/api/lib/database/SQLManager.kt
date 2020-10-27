@@ -157,4 +157,10 @@ class SQLManager(var dbManager: DBManager) {
                 .createReferences()
         }
     }
+
+    fun updateReferences() {
+        if (hasConnection()) {
+            dbManager.engineUsed.updateReferences()
+        }
+    }
 }

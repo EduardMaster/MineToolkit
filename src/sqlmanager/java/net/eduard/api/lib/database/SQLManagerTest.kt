@@ -4,7 +4,9 @@ import net.eduard.api.lib.database.annotations.*
 import net.eduard.api.lib.database.impl.MySQLEngine
 import net.eduard.api.lib.modules.Extra
 
-lateinit var dados : List<Jogador>
+lateinit var dados: List<Jogador>
+lateinit var user: PartyUser
+lateinit var party: Party
 fun main() {
 
     val db = DBManager()
@@ -13,16 +15,41 @@ fun main() {
     testLag("Abrindo conexão") {
         db.openConnection()
     }
+    /*
     sqlManager.deleteTable(PartyUser::class.java)
     sqlManager.deleteTable(Party::class.java)
     testLag("Criando tabela party") {
         sqlManager.createTable(Party::class.java)
     }
-    testLag("Criando tabela Party membros"){
+    testLag("Criando tabela Party membros") {
         sqlManager.createTable(PartyUser::class.java)
     }
-    testLag("Criando as conexões das 2 tabelas"){
+    testLag("Criando as conexões das 2 tabelas") {
         sqlManager.createReferences(PartyUser::class.java)
+        sqlManager.createReferences(Party::class.java)
+    }
+    testLag("Inserindo party e usuario") {
+        user = PartyUser()
+        sqlManager.insertData(user)
+        party = Party(user)
+        sqlManager.insertData(party)
+
+
+    }
+    testLag("Atualizando usuario que não tinha party agora tem"){
+        sqlManager.updateData(user)
+    }
+    */
+
+    testLag("Trazendo usuario e Party do mysql"){
+        val user = sqlManager.getData(PartyUser::class.java,1)!!
+        println(user.party)
+        val party = sqlManager.getData(Party::class.java,1)!!
+        println(party.createBy)
+        sqlManager.updateReferences()
+        println("-----")
+        println(user.party)
+        println(party.createBy)
     }
 
     /*
@@ -80,7 +107,7 @@ fun main() {
 
 }
 
- inline fun testLag(actionName: String, execution: () -> Unit) {
+inline fun testLag(actionName: String, execution: () -> Unit) {
     println(" Inicio do $actionName")
     val init = System.currentTimeMillis()
     execution.invoke()
@@ -89,28 +116,41 @@ fun main() {
     println("Tempo gasto do $actionName: ${dif}ms")
 
 }
+
 @TableName("parties_users")
-class PartyUser{
+class PartyUser(userName: String = "Eduard") {
     @ColumnPrimary
     var id: Int = 0
+
     @ColumnUnique
     @ColumnSize(16)
-    var name = "Eduard"
+    var name = userName
+
     @ColumnRelation
     @ColumnName("party_id")
-    var party : Party? = null
+    var party: Party? = null
 
 }
+
 @TableName("parties")
-class Party{
+class Party(partyUser: PartyUser? = null) {
+    init {
+        if (partyUser != null) {
+            partyUser.party = this
+        }
+    }
+
     @ColumnPrimary
     var id: Int = 0
+
     @ColumnRelation
     @ColumnName("creator_id")
-    var createBy : PartyUser? = null
+    var createBy: PartyUser? = partyUser
+
     @ColumnRelation
     @ColumnName("leader_id")
-     var currentLeader : PartyUser? = null
+    var currentLeader: PartyUser? = partyUser
+
     @ColumnName("creation_time")
     var creationTime = System.currentTimeMillis()
     var capacity = 5
