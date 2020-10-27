@@ -3,28 +3,30 @@ package net.eduard.api
 import net.eduard.api.command.*
 import net.eduard.api.command.api.ApiCommand
 import net.eduard.api.command.map.MapCommand
-import net.eduard.api.core.BukkitReplacers
 import net.eduard.api.core.BukkitInfoGenerator
+import net.eduard.api.core.BukkitReplacers
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.hooks.JHCashHook
-import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.bungee.BungeeAPI
-import net.eduard.api.lib.modules.ServerAPI.BukkitControl
 import net.eduard.api.lib.config.Config
+import net.eduard.api.lib.config.StorageManager
+import net.eduard.api.lib.config.StorageType
 import net.eduard.api.lib.database.DBManager
+import net.eduard.api.lib.database.SQLManager
+import net.eduard.api.lib.game.Schematic
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
+import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.modules.Copyable.CopyDebug
-import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.modules.MineReflect
-import net.eduard.api.lib.modules.VaultAPI
+import net.eduard.api.lib.modules.ServerAPI.BukkitControl
+import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
-import net.eduard.api.lib.game.Schematic
-import net.eduard.api.listener.*
-import net.eduard.api.server.EduardPlugin
+import net.eduard.api.listener.EduWorldEditListener
+import net.eduard.api.listener.EduardAPIEvents
+import net.eduard.api.listener.PlayerTargetListener
+import net.eduard.api.listener.SupportActivations
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
@@ -32,6 +34,8 @@ import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.PlayerTargetPlayerTask
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -44,24 +48,67 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI() : EduardPlugin() {
+class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
+    override var isActivated = true
+    override var isFree = true
+    override var configs = Config(plugin, "config.yml")
+    override var storage = Config(plugin, "storage.yml")
+    override var messages = Config(plugin, "messages.yml")
 
+    override var dbManager = DBManager()
+    override lateinit var sqlManager : SQLManager
+    override lateinit var storageManager : StorageManager
+    override var databaseFile = File(this.pluginFolder, "data.db")
+    override fun onLoad() {
+
+        dbManager = DBManager()
+        configs = Config(this, "config.yml")
+        messages = Config(this, "messages.yml")
+        storage = Config(this, "storage.yml")
+        databaseFile = File(pluginFolder, "database.db")
+        configs.add("database-type", StorageType.YAML)
+        configs.add("log-enabled", true)
+        configs.add("database", dbManager)
+        configs.saveConfig()
+        dbManager = configs.get("database", DBManager::class.java)
+        sqlManager = SQLManager(dbManager)
+        storageManager = StorageManager(sqlManager)
+        storageManager.type = configs.get("database-type", StorageType::class.java)
+        if (db.isEnabled) {
+            db.openConnection()
+        }
+
+
+    }
 
     override fun console(message: String) {
         Bukkit.getConsoleSender().sendMessage(message)
     }
 
-    override fun getPlugin(): EduardPlugin {
-        return this
+    override fun deleteOldBackups() {
+
     }
 
+    override fun backup() {
+
+    }
+
+
     override val pluginFolder: File
-        get() = dataFolder
+        get() = plugin.dataFolder
+
+    override fun log(message: String) {
+
+    }
+
+    override fun error(message: String) {
+
+    }
 
 
     override fun onEnable() {
         instance = this
-        isFree = true
+
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
         StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
@@ -108,13 +155,12 @@ class EduardAPI() : EduardPlugin() {
         log("Carregando dependencias")
         JHCashHook()
 
-
+        MemoryCommand().registerCommand(plugin)
     }
 
 
-
-
     override fun reload() {
+
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
@@ -140,8 +186,10 @@ class EduardAPI() : EduardPlugin() {
         Mine.OPT_NO_DEATH_MESSAGE = configs.getBoolean("no-death-message")
         try {
             log("Carregando formato de dinheiro da config")
-            Extra.MONEY = DecimalFormat(configs.getString("money-format"),
-                    DecimalFormatSymbols.getInstance(Locale.forLanguageTag(configs.getString("money-format-locale"))))
+            Extra.MONEY = DecimalFormat(
+                configs.getString("money-format"),
+                DecimalFormatSymbols.getInstance(Locale.forLanguageTag(configs.getString("money-format-locale")))
+            )
             log("Formato valido")
         } catch (e: Exception) {
             error("Formato do dinheiro invalido " + configs.getString("money-format"))
@@ -152,6 +200,15 @@ class EduardAPI() : EduardPlugin() {
         OPT_SOUND_ERROR = configs.getSound("sound-error")
         OPT_SOUND_SUCCESS = configs.getSound("sound-success")
     }
+
+    override fun configDefault() {
+
+    }
+
+    override fun save() {
+
+    }
+
 
     override val pluginName: String
         get() = plugin.name
@@ -167,13 +224,33 @@ class EduardAPI() : EduardPlugin() {
 
     }
 
+    override fun unregisterTasks() {
+
+    }
+
+    override fun unregisterListeners() {
+
+    }
+
+    override fun unregisterServices() {
+
+    }
+
+    override fun unregisterCommands() {
+
+    }
+
+    override fun unregisterStorableClasses() {
+
+    }
+
+    override fun getPlugin(): Plugin {
+        return this.plugin
+    }
+
     companion object {
 
         lateinit var instance: EduardAPI
-            private set
-            @JvmStatic
-            get
-
 
         /**
          * Som para o Teleporte

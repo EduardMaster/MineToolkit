@@ -12,7 +12,7 @@ class BungeeEvents : Listener {
 
 
     val bungee get() = EduardAPIBungee.instance.bungeeDB
-    val db get() = EduardAPIBungee.instance.db
+    val db get() = EduardAPIBungee.instance.databaseManager
 
 
 

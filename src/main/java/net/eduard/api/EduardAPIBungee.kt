@@ -11,53 +11,60 @@ import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 
 
-class EduardAPIBungee(val plugin : Plugin) {
+class EduardAPIBungee(val plugin: Plugin) {
 
-    init{
+    init {
         instance = this
     }
-    companion object{
 
-        lateinit var instance : EduardAPIBungee
+    companion object {
+
+        lateinit var instance: EduardAPIBungee
     }
 
-    lateinit var db : DBManager
-    lateinit var config : Config
-    lateinit var bungeeDB : BungeeDB
-     fun onEnable() {
-        config = Config(plugin,"config.yml")
-         db = DBManager()
+    lateinit var databaseManager: DBManager
+    lateinit var config: Config
+    lateinit var bungeeDB: BungeeDB
+    fun onEnable() {
+        config = Config(plugin, "config.yml")
+        databaseManager = DBManager()
         reload()
 
         ProxyServer.getInstance().pluginManager
-               .registerListener(plugin,BungeeEvents())
-         ProxyServer.getInstance().pluginManager
-                .registerCommand(plugin, BungeeReloadCommand())
-    }
-    fun log(msg : String){
-        ProxyServer.getInstance().console.sendMessage("§f"+msg)
-    }
-    fun error(msg : String){
-        ProxyServer.getInstance().console.sendMessage("§c"+msg)
+            .registerListener(plugin, BungeeEvents())
+        ProxyServer.getInstance().pluginManager
+            .registerCommand(plugin, BungeeReloadCommand())
     }
 
-     fun reload() {
+    fun log(msg: String) {
+        ProxyServer.getInstance().console.sendMessage("§f" + msg)
+    }
 
-          bungeeDB = BungeeDB(db)
+    fun error(msg: String) {
+        ProxyServer.getInstance().console.sendMessage("§c" + msg)
+    }
 
-        if (db.isEnabled) {
+    fun reload() {
+
+        bungeeDB = BungeeDB(databaseManager)
+
+        if (databaseManager.isEnabled) {
             log("MySQL Ativado, iniciando conexao")
-            db.openConnection()
-            if (db.hasConnection()) {
+            databaseManager.openConnection()
+            if (databaseManager.hasConnection()) {
                 bungeeDB.createNetworkTables()
                 for (server in ProxyServer.getInstance().servers.values) {
                     if (!bungeeDB.serversContains(server.name)) {
-                        db.insert(bungeeDB.serverTable, server.name,
-                                server.address.address.hostAddress, server.address.port, 0, 0)
+                        databaseManager.insert(
+                            bungeeDB.serverTable, server.name,
+                            server.address.address.hostAddress, server.address.port, 0, 0
+                        )
                     } else {
-                        db.change(bungeeDB.serverTable, "host = ? , port = ?", "name = ?",
-                                server.address.address.hostAddress, server.address.port,
-                                server.name)
+                        databaseManager.change(
+                            bungeeDB.serverTable, "host = ? , port = ?", "name = ?",
+                            server.address.address.hostAddress, server.address.port,
+                            server.name
+                        )
                     }
                 }
             } else {
@@ -88,14 +95,10 @@ class EduardAPIBungee(val plugin : Plugin) {
     }
 
 
-
-     fun onDisable() {
-        db.closeConnection()
+    fun onDisable() {
+        databaseManager.closeConnection()
         BungeeAPI.getController().unregister()
     }
-
-
-
 
 
 }

@@ -1,6 +1,7 @@
 package net.eduard.api.command.api;
 
 import net.eduard.api.EduardAPI;
+import net.eduard.api.EduardAPIMain;
 import net.eduard.api.lib.manager.CommandManager;
 import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.server.EduardPlugin;
@@ -11,6 +12,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.*;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -59,13 +61,15 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         if (!pluginDir.isDirectory()) {
             return pre + red + "Plugin directory not found!";
         }
+        PluginLoader loader = ((JavaPlugin) EduardAPIMain.getPlugin(EduardAPIMain.class)).getPluginLoader();
         File pluginFile = new File(pluginDir, pl + ".jar");
         if (!pluginFile.isFile()) {
             for (File f : pluginDir.listFiles()) {
                 try {
                     if (f.getName().endsWith(".jar")) {
 
-                        PluginDescriptionFile pdf = EduardAPI.getInstance().getPlugin().getPluginLoader().getPluginDescription(f);
+                        PluginDescriptionFile pdf =loader
+                               . getPluginDescription(f);
                         if (pdf.getName().equalsIgnoreCase(pl)) {
                             pluginFile = f;
                             msg = "(via search) ";
@@ -85,7 +89,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         } catch (UnknownDependencyException e) {
             return pre + red + "File exists, but is missing a dependency!";
         } catch (InvalidPluginException e) {
-            EduardAPI.getInstance().getLogger().log(Level.SEVERE, "Tried to load invalid Plugin.\n", e);
+            System.out.println("Tried to load invalid Plugin.\n");
             return pre + red + "File exists, but isn't a loadable plugin file!";
         } catch (InvalidDescriptionException e) {
         }
@@ -102,7 +106,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         return null;
     }
 
-    private String pre = "[Loader]", red = "§c", green = "§a";
+    private final String pre = "[Loader]", red = "§c", green = "§a";
 
     private String unloadPlugin(String pl) {
 
@@ -118,7 +122,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
             try {
                 Field pluginsField = spm.getClass().getDeclaredField("plugins");
                 pluginsField.setAccessible(true);
-                plugins = (List) pluginsField.get(spm);
+                plugins = (List<Plugin>) pluginsField.get(spm);
 
                 Field lookupNamesField = spm.getClass().getDeclaredField("lookupNames");
                 lookupNamesField.setAccessible(true);

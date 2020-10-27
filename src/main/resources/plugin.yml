@@ -1,7 +1,7 @@
 name: EduardAPI
 description: API de desenvolvimento de plugins que facilita sua vida
-main: net.eduard.api.EduardAPI
-version: 1.7.5
+main: net.eduard.api.EduardAPIMain
+version: ${project.version}
 author: Eduard
 authors: [Eduard]
 softdepend: [Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]

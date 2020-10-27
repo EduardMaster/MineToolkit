@@ -13,21 +13,30 @@ import java.util.*
 class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     override val tables: MutableMap<Class<*>, DatabaseTable<*>> = mutableMapOf()
 
+    companion object {
+        var logEnabled = false
+    }
+
+    fun log(str: String) {
+        if (logEnabled)
+            println("MySQLEngine: $str")
+    }
+
     override val types: MutableMap<Class<*>, String> = mutableMapOf(
         String::class.java to "VARCHAR",
         Int::class.java to "INT",
-        Integer::class.java to "INT",
+        Integer::class.java to "INTEGER",
         Double::class.java to "DOUBLE",
         Float::class.java to "FLOAT",
         Boolean::class.java to "TINYINT",
         Long::class.java to "BIGINT"
     )
 
-    override fun <T> getTable( clz: Class<T>): DatabaseTable<T> {
-        if (tables.containsKey(clz)){
+    override fun <T> getTable(clz: Class<T>): DatabaseTable<T> {
+        if (tables.containsKey(clz)) {
             return tables[clz] as DatabaseTable<T>
         }
-        val table : DatabaseTable<T> = MySQLTable(connection, clz, this)
+        val table: DatabaseTable<T> = MySQLTable(connection, clz, this)
         tables[clz] = table
         return table
     }
@@ -70,19 +79,28 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         }
     }
 
-    override fun <T> createTable( clz: Class<T>) {
+
+    override fun <T> createTable(clz: Class<T>) {
         val table = getTable(clz)
         val tableName = table.name
 
         try {
             val builder = StringBuilder("CREATE TABLE IF NOT EXISTS $tableName (")
-
+            log("Criando tabela $tableName")
             for (field in clz.declaredFields) {
+                log("Coluna: ${field.name}")
                 val column = DatabaseColumn(field, this)
-                builder.append(",")
+
+
                 builder.append(column.name)
                 builder.append(" ")
-                if (column.isNullable) {
+                builder.append(column.customType)
+                if (!column.isNumber) {
+                    builder.append("(${column.size})")
+                }
+                builder.append(" ")
+
+                if (column.isNullable||column.isConstraint) {
                     builder.append("NULL")
                 } else builder.append("NOT NULL")
                 builder.append(" ")
@@ -90,19 +108,20 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                     builder.append("AUTO_INCREMENT")
                     builder.append(" ")
                 }
-
-                if (column.isUnique){
+                if (column.isUnique) {
                     builder.append("UNIQUE")
                     builder.append(" ")
                 }
 
-                if (column.isPrimary) {
+                if (!column.isConstraint&&column.isPrimary) {
                     builder.append("PRIMARY KEY")
                     builder.append(" ")
                 }
-
+                builder.append(",")
             }
+            builder.deleteCharAt(builder.length - 1)
             builder.append(")")
+            log("Query:$builder")
 
             val prepare = connection.prepareStatement(
                 builder.toString()
@@ -112,10 +131,12 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             prepare.executeUpdate()
 
 
+
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }
     }
+
 
     override fun convertToSQL(valor: Any?): String {
         var value: Any? = valor ?: return "NULL"
@@ -148,52 +169,11 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         return data("0")
     }
 
-    fun sqlTypeOf(javaClass: Class<*>, size: Int): String {
-        var javaClass = javaClass
-        val wrapper = Extra.getWrapper(javaClass)
-        if (wrapper != null) {
-            javaClass = wrapper
-        }
-        if (String::class.java == javaClass) {
-            return "VARCHAR($size)"
-        } else if (Int::class.java == javaClass) {
-            return "INTEGER"
-        } else if (Double::class.java == javaClass) {
-            return "DOUBLE"
-        } else if (Byte::class.java == javaClass) {
-            return "TINYINT"
-        } else if (Short::class.java == javaClass) {
-            return "SHORTINT"
-        } else if (Long::class.java == javaClass) {
-            return "BIGINT"
-        } else if (Boolean::class.java == javaClass) {
-            return "TINYINT(1)"
-        } else if (Char::class.java == javaClass) {
-            return "CHAR"
-        } else if (Number::class.java == javaClass) {
-            return "NUMERIC"
-        } else if (Float::class.java == javaClass) {
-            return "FLOAT"
-        } else if (UUID::class.java == javaClass) {
-            return "VARCHAR(40)"
-        } else if (Timestamp::class.java == javaClass) {
-            return "TIMESTAMP"
-        } else if (Calendar::class.java == javaClass) {
-            return "TIMESTAMP"
-        } else if (java.sql.Date::class.java == javaClass) {
-            return "DATE"
-        } else if (Date::class.java == javaClass) {
-            return "DATE"
-        } else if (Time::class.java == javaClass) {
-            return "TIME"
-        }
-        return "VARCHAR($size)"
-    }
 
     override fun convertToJava(data: String, column: DatabaseColumn): Any? {
         val javaClass = column.javaType
 
-        if (Extra.isWrapper(javaClass)){
+        if (Extra.isWrapper(javaClass)) {
             val wrapper = Extra.getWrapper(javaClass)
             return Extra.transform(data, wrapper)
         }

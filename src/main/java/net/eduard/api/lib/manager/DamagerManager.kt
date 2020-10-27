@@ -9,13 +9,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 /**
- * Sistema de verificar quem deu o ultimo Hit em você
+ * Sistema de verificar quem deu o ultimo Hit no jogador
  * @author Eduard
  */
 object DamagerManager : Listener {
 
     init{
-        register(EduardAPI.instance)
+        register(EduardAPI.instance.plugin)
     }
 
 

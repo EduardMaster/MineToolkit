@@ -21,6 +21,7 @@ interface DatabaseTable<T> {
     fun update(data : T)
     fun delete(data : T)
     fun selectAll() : List<T>
+    fun createReferences()
     fun findByColumn(columnName :String, columnValue : Any) : T?
     fun findByPrimary(primaryValue : Any) : T?
     fun updateCache(data : T, query : ResultSet)

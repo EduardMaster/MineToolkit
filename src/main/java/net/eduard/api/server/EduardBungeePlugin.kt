@@ -56,9 +56,9 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     final override lateinit var messages: Config
     final override lateinit var storage: Config
     final override lateinit var databaseFile : File
-    final override var dbManager: DBManager = DBManager()
-    final override var sqlManager: SQLManager = SQLManager()
-    final override var storageManager: StorageManager = StorageManager()
+    final override  var dbManager : DBManager = DBManager()
+    final override lateinit var sqlManager: SQLManager
+    final override lateinit var storageManager: StorageManager
     private val prefix get() = "[$pluginName] "
     override fun log(message: String) {
         console("§b$prefix§a$message")
@@ -91,11 +91,12 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
 
         configs.saveConfig()
         dbManager = config.get("database", DBManager::class.java)
+        sqlManager = SQLManager(dbManager)
+        storageManager = StorageManager(sqlManager)
         storageManager.type = config.get("database-type", StorageType::class.java)
         if (db.isEnabled) {
             db.openConnection()
-            sqlManager.dbManager=(dbManager)
-            storageManager.sqlManager = sqlManager
+
         }
 
 

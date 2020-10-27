@@ -244,7 +244,7 @@ class DBManager(
     }
 
     fun addReference(table: String, key: String, references: String) {
-        update("ALTER TABLE $table ADD FOREIGN KEY ($key) REFERENCES $references")
+        update("ALTER TABLE $table ADD FOREIGN KEY ($key) REFERENCES $references ON DELETE SET NULL ON UPDATE SET NULL" )
     }
 
     /**

@@ -24,6 +24,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.material.Crops
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
 
@@ -73,7 +74,7 @@ inline fun CommandSender.isPlayer(block: Player.() -> Unit){
     }
 }
 
-fun Listener.register(plugin: JavaPlugin) = Bukkit.getPluginManager().registerEvents(this, plugin)
+fun Listener.register(plugin: Plugin) = Bukkit.getPluginManager().registerEvents(this, plugin)
 
 fun CommandExecutor.register(cmd: String, plugin: JavaPlugin) {
     plugin.getCommand(cmd).executor = this

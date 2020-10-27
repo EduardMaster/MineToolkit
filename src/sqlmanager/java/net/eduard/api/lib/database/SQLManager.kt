@@ -5,17 +5,13 @@ import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
- *
+ * SQLManager é parecido com Hibernate porem com bem menas Features
  */
-class SQLManager {
-    lateinit var dbManager: DBManager
+class SQLManager(var dbManager: DBManager) {
+
+
     private val updatesQueue: Queue<Any> = ConcurrentLinkedQueue()
 
-
-    constructor() {}
-    constructor(dbManager: DBManager) {
-       this.dbManager = dbManager
-    }
 
     fun runUpdatesQueue(): Int {
         var amount = 0
@@ -29,7 +25,7 @@ class SQLManager {
     }
 
     fun hasConnection(): Boolean {
-        return this::dbManager.isInitialized && dbManager.hasConnection()
+        return  dbManager.hasConnection()
     }
 
     /**
@@ -56,7 +52,7 @@ class SQLManager {
     </E> */
     fun <E> getData(dataClass: Class<E>, primaryKeyValue: Any): E? {
         return if (hasConnection()) {
-            dbManager!!.engineUsed.getTable(dataClass)
+            dbManager.engineUsed.getTable(dataClass)
                 .findByPrimary(primaryKeyValue)
         } else null
     }
@@ -78,7 +74,7 @@ class SQLManager {
      * @param <E>
      * @return
     </E> */
-    fun <E> getAllData(
+    fun <E : Any> getAllData(
         dataClass: Class<E>,
         where: String,
         orderBy: String,
@@ -91,7 +87,7 @@ class SQLManager {
         } else ArrayList()
     }
 
-    fun <T : Any> insertData(data: T) {
+    fun <E : Any> insertData(data: E) {
         if (hasConnection()) {
             val dataClass = data.javaClass
             dbManager.engineUsed.getTable(dataClass)
@@ -106,7 +102,7 @@ class SQLManager {
      *
      * @param data
      */
-    fun updateDataQueue(data: Any) {
+    fun <E : Any> updateDataQueue(data: E) {
         if (updatesQueue.contains(data)) {
             return
         }
@@ -131,26 +127,25 @@ class SQLManager {
     fun <T : Any> deleteData(data: T) {
         if (hasConnection()) {
             if (hasConnection()) {
-
                 dbManager.engineUsed.getTable(data.javaClass)
                     .delete(data)
             }
         }
     }
 
-    fun <T> createTable(dataClass: Class<T>) {
+    fun <T : Any> createTable(dataClass: Class<T>) {
         if (hasConnection()) {
             dbManager.engineUsed.createTable(dataClass)
         }
     }
 
-    fun deleteTable(dataClass: Class<*>) {
+    fun <T : Any>  deleteTable(dataClass: Class<T>) {
         if (hasConnection()) {
             dbManager.engineUsed.deleteTable(dataClass)
         }
     }
 
-    fun clearTable(dataClass: Class<*>) {
+    fun <T : Any> clearTable(dataClass: Class<T>) {
         if (hasConnection()) {
             dbManager.engineUsed.clearTable(dataClass)
         }

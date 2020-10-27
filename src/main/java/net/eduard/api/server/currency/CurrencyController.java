@@ -1,7 +1,6 @@
 package net.eduard.api.server.currency;
 
 import net.eduard.api.EduardAPI;
-import net.eduard.api.server.currency.list.CurrencyVaultEconomy;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -48,9 +47,9 @@ public class CurrencyController {
 
 
     public void register(SimpleCurrencyHandler simpleCurrencyHandler) {
-        EduardAPI.getInstance().getConfigs().add("currency." + simpleCurrencyHandler.getName(), simpleCurrencyHandler);
-        EduardAPI.getInstance().getConfigs().saveConfig();
-        simpleCurrencyHandler = EduardAPI.getInstance().getConfigs().get("currency." + simpleCurrencyHandler.getName(), SimpleCurrencyHandler.class);
+        EduardAPI.instance.getConfigs().add("currency." + simpleCurrencyHandler.getName(), simpleCurrencyHandler);
+        EduardAPI.instance.getConfigs().saveConfig();
+        simpleCurrencyHandler = EduardAPI.instance.getConfigs().get("currency." + simpleCurrencyHandler.getName(), SimpleCurrencyHandler.class);
         System.out.println("Moeda registrada: " + simpleCurrencyHandler.getName());
         register(simpleCurrencyHandler.getName(), simpleCurrencyHandler);
     }

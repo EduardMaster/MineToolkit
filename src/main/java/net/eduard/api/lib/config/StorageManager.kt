@@ -5,7 +5,7 @@ import java.io.File
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
-class StorageManager {
+class StorageManager(private var sqlManager: SQLManager) {
     @Target(AnnotationTarget.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
     annotation class StoreKey
@@ -19,7 +19,7 @@ class StorageManager {
         Config(File("database/"),"storage.yml")
     }
 
-    var sqlManager = SQLManager()
+
 
     fun getPrimaryKey(any : Any) : Any?{
         for (field in any.javaClass.declaredFields){

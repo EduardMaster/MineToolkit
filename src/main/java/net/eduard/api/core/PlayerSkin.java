@@ -18,7 +18,7 @@ import java.util.Map;
 public class PlayerSkin {
     private static final HashMap<String, PlayerSkin> skins = new HashMap<>();
     private static final Map<Player, PlayerSkin> skinUsed = new HashMap<>();
-    private static final Config config = new Config(EduardAPI.getInstance(), "skins.yml");
+    private static final Config config = new Config(EduardAPI.instance, "skins.yml");
 
     public static void saveSkins() {
         for (PlayerSkin skin : skins.values()) {
@@ -52,7 +52,7 @@ public class PlayerSkin {
 
     public static void change(Player player, String skinName) {
         PlayerSkin skin = getSkin(skinName);
-        String defName = EduardAPI.getInstance().getString("custom-skin");
+        String defName = EduardAPI.instance.getString("custom-skin");
         if (defName.isEmpty()) {
             defName = "EduardKIllerPro";
         }
