@@ -4,9 +4,74 @@ import net.eduard.api.lib.database.annotations.*
 import net.eduard.api.lib.database.impl.MySQLEngine
 import net.eduard.api.lib.modules.Extra
 
-lateinit var dados: List<Jogador>
-lateinit var user: PartyUser
-lateinit var party: Party
+
+
+
+    @TableName("parties_users")
+    internal class PartyUser(userName: String = "Eduard") {
+        @ColumnPrimary
+        var id: Int = 0
+
+        @ColumnUnique
+        @ColumnSize(16)
+        var name = userName
+
+        @ColumnRelation
+        @ColumnName("party_id")
+        var party: Party? = null
+
+    }
+
+    @TableName("parties")
+    internal class Party(partyUser: PartyUser? = null) {
+        init {
+            if (partyUser != null) {
+                partyUser.party = this
+            }
+        }
+
+        @ColumnPrimary
+        var id: Int = 0
+
+        @ColumnRelation
+        @ColumnName("creator_id")
+        var createBy: PartyUser? = partyUser
+
+        @ColumnRelation
+        @ColumnName("leader_id")
+        var currentLeader: PartyUser? = partyUser
+
+        @ColumnName("creation_time")
+        var creationTime = System.currentTimeMillis()
+        var capacity = 5
+    }
+
+    @TableName("jogadores")
+  internal  data class Jogador(
+        @ColumnUnique
+        @ColumnSize(16)
+        var name: String = "Edu",
+        var saldo: Double = 10.0
+    ) : Cloneable {
+        @ColumnPrimary
+        var id: Int = 0
+        public override fun clone(): Jogador {
+            return super.clone() as Jogador
+        }
+
+        override fun toString(): String {
+            return "Jogador(id=$id, name='$name', saldo=$saldo)"
+        }
+
+
+    }
+
+
+
+
+internal lateinit var dados: List<Jogador>
+internal lateinit var user: PartyUser
+internal lateinit var party: Party
 fun main() {
 
     val db = DBManager()
@@ -117,61 +182,3 @@ inline fun testLag(actionName: String, execution: () -> Unit) {
 
 }
 
-@TableName("parties_users")
-class PartyUser(userName: String = "Eduard") {
-    @ColumnPrimary
-    var id: Int = 0
-
-    @ColumnUnique
-    @ColumnSize(16)
-    var name = userName
-
-    @ColumnRelation
-    @ColumnName("party_id")
-    var party: Party? = null
-
-}
-
-@TableName("parties")
-class Party(partyUser: PartyUser? = null) {
-    init {
-        if (partyUser != null) {
-            partyUser.party = this
-        }
-    }
-
-    @ColumnPrimary
-    var id: Int = 0
-
-    @ColumnRelation
-    @ColumnName("creator_id")
-    var createBy: PartyUser? = partyUser
-
-    @ColumnRelation
-    @ColumnName("leader_id")
-    var currentLeader: PartyUser? = partyUser
-
-    @ColumnName("creation_time")
-    var creationTime = System.currentTimeMillis()
-    var capacity = 5
-}
-
-@TableName("jogadores")
-class Jogador(
-    @ColumnUnique
-    @ColumnSize(16)
-    var name: String = "Edu",
-    var saldo: Double = 10.0
-) : Cloneable {
-    @ColumnPrimary
-    var id: Int = 0
-    public override fun clone(): Jogador {
-        return super.clone() as Jogador
-    }
-
-    override fun toString(): String {
-        return "Jogador(id=$id, name='$name', saldo=$saldo)"
-    }
-
-
-}

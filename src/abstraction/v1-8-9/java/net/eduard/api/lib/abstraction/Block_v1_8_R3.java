@@ -22,6 +22,7 @@ public class Block_v1_8_R3 extends CraftBlock implements  Block{
     public Block_v1_8_R3(int x, int y, int z, WorldServer worldServer) {
         super(null, x, y, z);
         this.worldServer = worldServer;
+
     }
     public Block_v1_8_R3(Location location) {
         this(location.getBlock());
@@ -71,13 +72,15 @@ public class Block_v1_8_R3 extends CraftBlock implements  Block{
 
 
         int combined = type + (data << 12);
-        IBlockData blockData = net.minecraft.server.v1_8_R3.Block.getByCombinedId(combined);
+        IBlockData blockData = net.minecraft.server.v1_8_R3.Block
+                .getByCombinedId(combined);
 
         if (blockData == section.getType(x, y, z)) {
             return false;
         }
 
         section.setType(x, y, z, blockData);
+
 
         if (applyPhysics) {
             worldServer.notify(new BlockPosition(getX(), getY(), getZ()));
@@ -92,7 +95,8 @@ public class Block_v1_8_R3 extends CraftBlock implements  Block{
     }
 
     private ChunkSection getSection() {
-        final Chunk chunk = worldServer.chunkProviderServer.originalGetChunkAt(getX() >> 4, getZ() >> 4);
+        final Chunk chunk = worldServer.chunkProviderServer
+                .originalGetChunkAt(getX() >> 4, getZ() >> 4);
 
         ChunkSection chunkSection = chunk.getSections()[getY() >> 4];
         if (chunkSection == null) {

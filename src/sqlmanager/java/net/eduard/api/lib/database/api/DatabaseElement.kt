@@ -1,16 +1,22 @@
 package net.eduard.api.lib.database.api
 
+import net.eduard.api.lib.database.SQLManager
+
 interface DatabaseElement {
 
-    var table : DatabaseTable<DatabaseElement>
+    val sqlManager : SQLManager
+
     fun insert(){
-        table.insert(this )
+        sqlManager.insertData(this )
     }
     fun delete(){
-        table.delete(this )
+        sqlManager.deleteData(this )
     }
     fun update(){
-        table.update(this )
+        sqlManager.updateData(this )
+    }
+    fun updateQueue(){
+        sqlManager.updateDataQueue(this)
     }
 
 
