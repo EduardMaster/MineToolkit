@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.eduard</groupId>
     <artifactId>sqlmanager</artifactId>
-    <name>EduardAPI SQLManager</name>
+    <name>EduardAPI SQLManager </name>
     <description>ORM like Hibernate</description>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>

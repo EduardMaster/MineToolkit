@@ -39,7 +39,6 @@ class MySQLTable<T>(
         if (tableClass == String::class.java)return
         columns.clear()
         for (field in tableClass.declaredFields) {
-
             if (Modifier.isStatic(field.modifiers)) {
                 continue
             }
@@ -49,7 +48,6 @@ class MySQLTable<T>(
             if (Modifier.isTransient(field.modifiers)) {
                 continue
             }
-
             val column =DatabaseColumn(this, field, engine)
             columns[field] =  column
 

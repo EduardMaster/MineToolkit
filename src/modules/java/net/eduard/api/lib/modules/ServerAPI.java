@@ -45,7 +45,7 @@ public final class ServerAPI {
     public enum ServerState {
         RESTARTING(3), IN_GAME(2), ONLINE(1), OFFLINE(0), DISABLED(-1);
 
-        private int value;
+        private final int value;
 
         public int getValue() {
             return this.value;
@@ -60,7 +60,7 @@ public final class ServerAPI {
     public enum ServerType {
         DEFAULT(0), LOBBY(1), SKYWARS_LOBBY(2), SKYWARS_ROOM(3);
 
-        private int value;
+        private final int value;
 
         public int getValue() {
             return this.value;
@@ -73,9 +73,9 @@ public final class ServerAPI {
     }
 
 
-    private static Map<String, Server> servers = new HashMap<>();
+    private static final Map<String, Server> servers = new HashMap<>();
     private static List<ServerPlayer> allPlayers = new ArrayList<>();
-    private static List<ServerReceiveMessage> receivers = new ArrayList<>();
+    private static final List<ServerReceiveMessage> receivers = new ArrayList<>();
     private static boolean bungee = false;
 
     // Na versão 1.16 do minecraft tem que colocar tudo minusculo
@@ -655,7 +655,7 @@ public final class ServerAPI {
             return this.type == type.getValue();
         }
 
-        private List<String> players = new ArrayList<>();
+        private final List<String> players = new ArrayList<>();
 
         public int getCount() {
             return this.count;
@@ -666,7 +666,7 @@ public final class ServerAPI {
         }
 
         public List<ServerAPI.ServerPlayer> getPlayersNames() {
-            List<ServerAPI.ServerPlayer> lista = new ArrayList<ServerPlayer>();
+            List<ServerAPI.ServerPlayer> lista = new ArrayList<>();
             for (ServerAPI.ServerPlayer player : ServerAPI.allPlayers) {
                 if (player.getServer() == this) {
                     lista.add(player);
