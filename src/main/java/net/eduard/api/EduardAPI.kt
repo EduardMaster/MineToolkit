@@ -11,7 +11,9 @@ import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.config.StorageType
+import net.eduard.api.lib.database.BukkitTypes
 import net.eduard.api.lib.database.DBManager
+import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.game.Schematic
 import net.eduard.api.lib.game.SoundEffect
@@ -60,7 +62,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
     override lateinit var storageManager : StorageManager
     override var databaseFile = File(this.pluginFolder, "data.db")
     override fun onLoad() {
-
+        BukkitTypes
+        HybridTypes
         dbManager = DBManager()
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")

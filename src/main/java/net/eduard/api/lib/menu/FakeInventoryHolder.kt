@@ -8,7 +8,7 @@ class FakeInventoryHolder(val menu: Menu) : InventoryHolder {
     var pageOpenned = 1
 
     override fun getInventory(): Inventory {
-        return inventory
+        return openInventory
     }
 
 }

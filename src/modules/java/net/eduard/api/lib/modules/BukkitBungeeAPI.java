@@ -17,7 +17,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -231,10 +230,6 @@ public final class BukkitBungeeAPI {
 		}
 		return player;
 	} 
-
-	static Player getFirstPlayer() {
-		return Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
-	}
 
 	private static PluginMessageListener listener;
 

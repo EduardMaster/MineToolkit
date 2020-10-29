@@ -3,15 +3,15 @@ package net.eduard.api.lib.database.impl
 import net.eduard.api.lib.database.api.DatabaseColumn
 import net.eduard.api.lib.database.api.DatabaseEngine
 import net.eduard.api.lib.database.api.DatabaseTable
+import net.eduard.api.lib.database.deserialization
+import net.eduard.api.lib.database.serialization
 import net.eduard.api.lib.modules.Extra
+import java.lang.Exception
 import java.sql.Connection
 import java.sql.SQLException
-import java.sql.Time
-import java.sql.Timestamp
-import java.util.*
 
 class MySQLEngine(override val connection: Connection) : DatabaseEngine {
-    override val tables: MutableMap<Class<*>, DatabaseTable<*>> = mutableMapOf()
+    override val tables: MutableMap<Class<*>, MySQLTable<*>> = mutableMapOf()
     private val tablesByName = mutableMapOf<String, DatabaseTable<*>>()
 
     companion object {
@@ -24,7 +24,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     }
 
     override fun updateReferences() {
-        for (table in tables.values){
+        for (table in tables.values) {
             table.updateReferences()
         }
     }
@@ -39,11 +39,11 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         Long::class.java to "BIGINT"
     )
 
-    override fun <T> getTable(clz: Class<T>): DatabaseTable<T> {
+    override fun <T> getTable(clz: Class<T>): MySQLTable<T> {
         if (tables.containsKey(clz)) {
-            return tables[clz] as DatabaseTable<T>
+            return tables[clz] as MySQLTable<T>
         }
-        val table: DatabaseTable<T> = MySQLTable(connection, clz, this)
+        val table= MySQLTable<T>(connection, clz, this)
         tables[clz] = table
         table.reload()
         return table
@@ -53,11 +53,12 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         val table = getTable(clz)
         deleteTable(table.name)
     }
+
     fun getTable(tableName: String): DatabaseTable<*> {
-        if (tablesByName.containsKey(tableName)){
+        if (tablesByName.containsKey(tableName)) {
             return tablesByName[tableName]!!
         }
-        val table= tables.values.first{it.name.equals(tableName,true)}
+        val table = tables.values.first { it.name.equals(tableName, true) }
         tablesByName[tableName.toLowerCase()] = table
         return table
     }
@@ -69,7 +70,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             val prepare = connection.prepareStatement(
                 "DROP TABLE $tableName"
             )
-            val query = prepare.executeUpdate()
+             prepare.executeUpdate()
 
 
         } catch (ex: SQLException) {
@@ -88,9 +89,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             val prepare = connection.prepareStatement(
                 "TRUNCATE TABLE $tableName"
             )
-            val query = prepare.executeUpdate()
-
-
+            prepare.executeUpdate()
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }
@@ -105,7 +104,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             val builder = StringBuilder("CREATE TABLE IF NOT EXISTS $tableName (")
             log("Criando tabela $tableName")
 
-            for ((field,column) in table.columns) {
+            for ((field, column) in table.columns) {
                 log("Coluna: ${field.name}")
                 builder.append(column.name)
                 builder.append(" ")
@@ -115,7 +114,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                 }
                 builder.append(" ")
 
-                if (column.isNullable||column.isConstraint) {
+                if (column.isNullable || column.isConstraint) {
                     builder.append("NULL")
                 } else builder.append("NOT NULL")
                 builder.append(" ")
@@ -128,7 +127,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                     builder.append(" ")
                 }
 
-                if (!column.isConstraint&&column.isPrimary) {
+                if (!column.isConstraint && column.isPrimary) {
                     builder.append("PRIMARY KEY")
                     builder.append(" ")
                 }
@@ -146,7 +145,6 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             prepare.executeUpdate()
 
 
-
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }
@@ -154,34 +152,9 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
 
 
     override fun convertToSQL(valor: Any?): String {
-        var value: Any? = valor ?: return "NULL"
+        val value: Any = valor ?: return "NULL"
+        return serialization[value::class.java]?.invoke(value)?:"$value"
 
-        if (javaClass == Boolean::class.java) {
-            value = if (value as Boolean) 1 else 0
-        } else if (javaClass == Date::class.java) {
-            value = java.sql.Date((value as Date).time)
-        } else if (value is Calendar) {
-            value = Timestamp(value.timeInMillis)
-        } else if (value is Timestamp || value is java.sql.Time) {
-        } else if (value is UUID) {
-            value = value.toString()
-        }
-        return "" + value
-    }
-
-    fun data(any: Any): String {
-        return "'$any'"
-    }
-
-    fun defaultFor(javaClass: Class<*>): String? {
-        if (Time::class.java == javaClass) {
-            return data(Time(System.currentTimeMillis()).toString())
-        } else if (Timestamp::class.java == javaClass || Calendar::class.java == javaClass) {
-            return "CURRENT_TIMESTAMP()"
-        } else if (Date::class.java == javaClass || java.sql.Date::class.java == javaClass) {
-            return data(java.sql.Date(System.currentTimeMillis()).toString())
-        }
-        return data("0")
     }
 
 
@@ -195,30 +168,12 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         if (javaClass.isEnum) {
             try {
                 return javaClass.getDeclaredField(data)[0]
-            } catch (e: NoSuchFieldException) {
-                e.printStackTrace()
-            } catch (e: IllegalAccessException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-        when (javaClass) {
-            Calendar::class.java -> {
-                val calendario = Calendar.getInstance()
-                calendario.timeInMillis = data.toLong()
-                return calendario
+        return deserialization[javaClass]?.invoke(data) ?: return data
 
-            }
-            Date::class.java -> {
-
-
-                return Date(data.toLong())
-
-            }
-            UUID::class.java -> {
-                return UUID.fromString(data)
-            }
-            else -> return data
-        }
     }
 
 

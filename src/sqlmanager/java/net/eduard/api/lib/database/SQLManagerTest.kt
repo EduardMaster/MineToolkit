@@ -1,11 +1,6 @@
 package net.eduard.api.lib.database
 
 import net.eduard.api.lib.database.annotations.*
-import net.eduard.api.lib.database.impl.MySQLEngine
-import net.eduard.api.lib.modules.Extra
-
-
-
 
     @TableName("parties_users")
     internal class PartyUser(userName: String = "Eduard") {
@@ -80,6 +75,7 @@ fun main() {
     testLag("Abrindo conexão") {
         db.openConnection()
     }
+
     /*
     sqlManager.deleteTable(PartyUser::class.java)
     sqlManager.deleteTable(Party::class.java)

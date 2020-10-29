@@ -1,7 +1,5 @@
 package net.eduard.api.lib.menu
 
-import net.eduard.api.lib.game.ItemBuilder
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -14,11 +12,6 @@ open class MenuButton(var name: String = "Botao"
                       block: (MenuButton.() -> Unit)? = null
 
 ) : Slot(positionX, positionY) {
-
-    companion object
-    {
-
-    }
 
 
 

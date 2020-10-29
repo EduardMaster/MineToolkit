@@ -5,7 +5,9 @@ import java.sql.Connection
 interface DatabaseEngine {
     val connection: Connection
     val types: MutableMap<Class<*>, String>
-    val tables : MutableMap<Class<*> , DatabaseTable<*>>
+    val tables : MutableMap<Class<*> , out DatabaseTable<*>>
+
+
 
     fun <T> getTable(
         clz: Class<T>
