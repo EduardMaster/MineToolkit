@@ -101,7 +101,10 @@ public final class Extra {
                 id++;
                 continue;
             }
-            text.append(" ").append(toChatMessage(arg));
+            if (id>init){
+                text.append(" ");
+            }
+            text.append(toChatMessage(arg));
             id++;
         }
         return text.toString();

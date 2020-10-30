@@ -33,7 +33,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
     @Transient
     var customCommand: CustomCommand? = null
-    private var commands: MutableMap<String, CommandManager> = HashMap()
+    var subCommands: MutableMap<String, CommandManager> = HashMap()
 
 
 
@@ -79,9 +79,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
     }
 
-    fun getCommands(): Map<String, CommandManager> {
-        return commands
-    }
+
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
 
@@ -90,7 +88,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         for (i in args.indices) {
             val arg = args[i].toLowerCase()
             var sub: CommandManager? = null
-            for (subcmd in cmd.getCommands().values) {
+            for (subcmd in cmd.subCommands.values) {
                 if (subcmd.name.equals(arg, ignoreCase = true)) {
                     sub = subcmd
                 }
@@ -135,7 +133,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             val arg = args[i].toLowerCase()
             vars.clear()
             var sub: CommandManager? = null
-            for (subcmd in cmd.getCommands().values) {
+            for (subcmd in cmd.subCommands.values) {
                 if (sender.hasPermission(subcmd.permission)) {
                     if (Extra.startWith(subcmd.name, arg)) {
                         vars.add(subcmd.name)
@@ -221,7 +219,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
     }
 
     fun register(sub: CommandManager): Boolean {
-        commands[sub.name] = sub
+        subCommands[sub.name] = sub
         sub.parent = this
         return true
     }
@@ -265,10 +263,10 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
 
     private fun updateSubs() {
-        for (sub in commands.values) {
+        for (sub in subCommands.values) {
             sub.parent = this
             log("O subcomando §e" + sub.name + " §ffoi registrado no comando §a" + name)
-            if (sub.commands.isNotEmpty())
+            if (sub.subCommands.isNotEmpty())
                 sub.updateSubs()
         }
     }

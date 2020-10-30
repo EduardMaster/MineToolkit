@@ -13,7 +13,7 @@ public class MapHelpCommand extends CommandManager {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		for (CommandManager sub : getParent().getCommands().values()) {
+		for (CommandManager sub : getParent().getSubCommands().values()) {
 			if (sender.hasPermission(sub.getPermission())) {
 				sender.sendMessage("§a"+ sub.getUsage() + " §8-§7 " + sub.getDescription());
 			}

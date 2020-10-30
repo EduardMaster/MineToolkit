@@ -15,7 +15,7 @@ public class ApiHelpCommand extends CommandManager {
 		
 	}
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		for (CommandManager sub : Companion.getCommand("api").getCommands().values()) {
+		for (CommandManager sub : Companion.getCommand("api").getSubCommands().values()) {
 			if (sender.hasPermission(sub.getPermission())) {
 				sender.sendMessage("§a"+ sub.getUsage() + " §8-§7 " + sub.getDescription());
 			}

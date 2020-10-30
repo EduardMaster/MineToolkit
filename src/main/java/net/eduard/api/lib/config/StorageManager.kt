@@ -56,7 +56,7 @@ class StorageManager(private var sqlManager: SQLManager) {
         }
     }
 
-    fun <T> load(clz: Class<T>, key : Any ): T? {
+    fun <T : Any> load(clz: Class<T>, key : Any ): T? {
         if (type.isSQL){
             return sqlManager.getData(clz, key)
         }
@@ -70,7 +70,7 @@ class StorageManager(private var sqlManager: SQLManager) {
 
     }
 
-    fun <T> loadAll(clz: Class<T>): List<T> {
+    fun <T: Any> loadAll(clz: Class<T>): List<T> {
         if (type.isSQL){
             return sqlManager.getAllData(clz)
         }

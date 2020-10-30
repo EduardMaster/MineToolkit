@@ -190,7 +190,7 @@ class MySQLTable<T : Any>(
         for ((field, column) in columns) {
             val str = query.getString(column.name)
             if (column.isConstraint){
-                val key = query.getObject(column.name)
+                val key = query.getObject(column.name) ?: continue
                 val value = column.referenceTable.elements[key]
                 if (value !=null) {
                     field.set(data, value)
@@ -305,14 +305,17 @@ class MySQLTable<T : Any>(
                 if (fieldValue == null || (column.isNumber && column.isPrimary)) {
                     prepare.setObject(id, null)
                 } else {
-                    prepare.setString(id, "" + fieldValue)
+                    val converted = engine.convertToSQL(fieldValue)
+                    prepare.setString(id, converted)
                 }
                 id++
             }
             if (primaryColumn != null) {
                 val primaryValue = primaryColumn!!.field.get(data)
+
                 if (primaryValue != null) {
-                    prepare.setObject(id, primaryValue)
+                    val converted = engine.convertToSQL(primaryValue)
+                    prepare.setObject(id, converted)
                 } else prepare.setInt(id, 1)
             } else
                 prepare.setInt(id, 1)
