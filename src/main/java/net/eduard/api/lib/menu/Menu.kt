@@ -47,6 +47,14 @@ open class Menu(
     }
 
 
+    @Transient
+    val playersWhoCanOpen = mutableListOf<Player>()
+
+    fun canOpen(player : Player): Boolean {
+        if (playersWhoCanOpen.isEmpty())return true
+        return playersWhoCanOpen.contains(player)
+    }
+
 
     @Transient
     var superiorMenu: Menu? = null
@@ -171,7 +179,7 @@ open class Menu(
                 return button
             }
         }
-        return null;
+        return null
     }
 
     fun getButton(icon: ItemStack, player: Player): MenuButton? {
@@ -254,7 +262,6 @@ open class Menu(
     }
 
     fun getFirstEmptySlot(page: Int): Int {
-
         for (slot in 0..(lineAmount * 9)) {
             getButton(page, slot) ?: return slot
         }
@@ -317,7 +324,9 @@ open class Menu(
     }
 
     open fun open(player: Player, pageOpened: Int): Inventory? {
-
+        if (!canOpen(player)){
+            return null
+        }
         if (openNeedPermission != null) {
             if (!player.hasPermission(openNeedPermission)) {
                 player.sendMessage(messagePermission)

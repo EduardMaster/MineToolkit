@@ -18,6 +18,9 @@ interface DatabaseElement {
     fun updateQueue(){
         sqlManager.updateDataQueue(this)
     }
+    fun updateCache(){
+        sqlManager.updateCache(this)
+    }
 
 
 }

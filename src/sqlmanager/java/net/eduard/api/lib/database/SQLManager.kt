@@ -36,7 +36,7 @@ class SQLManager(var dbManager: DBManager) {
      * @param <E>
      * @return
     </E> */
-    fun <E> getData(dataClass: Class<E>, fieldName: String, fieldValue: Any): E? {
+    fun <E : Any> getData(dataClass: Class<E>, fieldName: String, fieldValue: Any): E? {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
                 .findByColumn(fieldName, fieldValue)
@@ -50,14 +50,14 @@ class SQLManager(var dbManager: DBManager) {
      * @param <E>
      * @return
     </E> */
-    fun <E> getData(dataClass: Class<E>, primaryKeyValue: Any): E? {
+    fun <E : Any> getData(dataClass: Class<E>, primaryKeyValue: Any): E? {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
                 .findByPrimary(primaryKeyValue)
         } else null
     }
 
-    fun <E> getAllData(dataClass: Class<E>): List<E> {
+    fun <E : Any> getAllData(dataClass: Class<E>): List<E> {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
                 .selectAll()
@@ -161,6 +161,14 @@ class SQLManager(var dbManager: DBManager) {
     fun updateReferences() {
         if (hasConnection()) {
             dbManager.engineUsed.updateReferences()
+        }
+    }
+
+    fun updateCache(data: Any) {
+
+        if (hasConnection()) {
+            dbManager.engineUsed.updateCache(data)
+
         }
     }
 }

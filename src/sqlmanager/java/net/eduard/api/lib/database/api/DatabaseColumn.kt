@@ -5,12 +5,16 @@ import net.eduard.api.lib.database.dataSize
 import net.eduard.api.lib.modules.Extra
 import java.lang.reflect.Field
 
-class DatabaseColumn<T>(val table: DatabaseTable<T>, val field: Field, val engine: DatabaseEngine) {
+class DatabaseColumn<T : Any>(val table: DatabaseTable<T>, val field: Field, val engine: DatabaseEngine) {
 
     val isConstraint = field.isAnnotationPresent(ColumnRelation::class.java)
-    val javaType = Extra.getWrapperOrReturn(field.type)
+    val javaType = field.type
+    val wrapperType = Extra.getWrapperOrReturn(field.type)
     var sqlType = engine.types.getOrDefault(javaType, if (isConstraint)"INT" else "TEXT")
-    val isNumber = Number::class.java.isAssignableFrom(javaType)
+    val isWrapper = Extra.isWrapper(javaType)
+    val isBoolean = (wrapperType == java.lang.Boolean::class.java)
+    val isNumber = Number::class.java.isAssignableFrom(wrapperType)
+            || isBoolean
     val isPrimary = field.isAnnotationPresent(ColumnPrimary::class.java)
     val isNullable = field.isAnnotationPresent(ColumnNullable::class.java)
 
@@ -21,7 +25,7 @@ class DatabaseColumn<T>(val table: DatabaseTable<T>, val field: Field, val engin
 
 
     val size = if (field.isAnnotationPresent(ColumnSize::class.java))
-        field.getAnnotation(ColumnSize::class.java).value else dataSize[javaClass]?:11
+        field.getAnnotation(ColumnSize::class.java).value else dataSize[javaType]?:11
 
     val customType: String = if (field.isAnnotationPresent(
             ColumnType::

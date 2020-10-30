@@ -13,7 +13,7 @@ import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
 
-class MySQLTable<T>(
+class MySQLTable<T : Any>(
     override var connection: Connection
     , override val tableClass: Class<*>,
     override val engine: DatabaseEngine
@@ -137,7 +137,7 @@ class MySQLTable<T>(
         }
     }
 
-    override fun findByColumn(columnName: String, columnValue: Any): T? {
+    override fun findByColumn(columnName: String, columnValue: Any, cachedData : T?): T? {
         try {
             log("Selecionando 1 registro")
             val text = "SELECT * FROM $name WHERE $columnName = ? LIMIT 1"
@@ -148,7 +148,7 @@ class MySQLTable<T>(
             val query = prepare.executeQuery()
             log("Query: $text")
             if (query.next()) {
-                val newData = newInstance.invoke()
+                val newData = cachedData ?: newInstance.invoke()
                 updateCache(newData, query)
                 return newData
             }
@@ -159,8 +159,8 @@ class MySQLTable<T>(
         return null
     }
 
-    override fun findByPrimary(primaryValue: Any): T? {
-        return findByColumn(primaryName, primaryValue)
+    override fun findByPrimary(primaryValue: Any, cachedData : T?): T? {
+        return findByColumn(primaryName, primaryValue,cachedData )
 
     }
 
@@ -197,7 +197,7 @@ class MySQLTable<T>(
                 }else{
                     references.add(TableReference(column,data, key))
                 }
-                continue;
+                continue
             }
             val converted = engine.convertToJava(str, column)
             try {
@@ -246,7 +246,8 @@ class MySQLTable<T>(
                 if (fieldValue == null || (column.isNumber && column.isPrimary)) {
                     prepare.setObject(id, null)
                 } else {
-                    prepare.setString(id, "" + fieldValue)
+                    val converted = engine.convertToSQL(fieldValue)
+                    prepare.setString(id, converted)
                 }
                 id++
             }

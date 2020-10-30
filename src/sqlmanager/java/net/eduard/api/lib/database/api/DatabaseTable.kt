@@ -5,7 +5,7 @@ import java.sql.Connection
 import java.sql.ResultSet
 
 
-interface DatabaseTable<T> {
+interface DatabaseTable<T : Any> {
     val engine : DatabaseEngine
     val name : String
     var connection : Connection
@@ -26,8 +26,8 @@ interface DatabaseTable<T> {
     fun createReferences()
     fun delete()
     fun deleteReferences()
-    fun findByColumn(columnName :String, columnValue : Any) : T?
-    fun findByPrimary(primaryValue : Any) : T?
+    fun findByColumn(columnName :String, columnValue : Any , cachedData : T? = null) : T?
+    fun findByPrimary(primaryValue : Any, cachedData : T? = null) : T?
     fun updateCache(data : T, query : ResultSet)
     fun select(where: String , columnOrder : String, ascending : Boolean, limit : Int): List<T>
 

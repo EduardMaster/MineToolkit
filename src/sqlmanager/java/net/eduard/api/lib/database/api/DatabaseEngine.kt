@@ -9,16 +9,17 @@ interface DatabaseEngine {
 
 
 
-    fun <T> getTable(
-        clz: Class<T>
+    fun <T : Any> getTable(
+        clz: Class<T >
     ): DatabaseTable<T>
 
+    fun <T : Any> updateCache(data : T)
 
-    fun <T> deleteTable(clz: Class<T>)
-    fun <T> clearTable(clz: Class<T>)
+    fun <T : Any> deleteTable(clz: Class<T>)
+    fun <T : Any> clearTable(clz: Class<T>)
     fun deleteTable(tableName: String)
     fun clearTable(tableName: String)
-    fun <T> createTable(clz: Class<T>)
+    fun <T : Any> createTable(clz: Class<T>)
     fun updateReferences()
 
     fun convertToSQL(value : Any?) : String

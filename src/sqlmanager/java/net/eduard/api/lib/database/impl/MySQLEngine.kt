@@ -13,6 +13,11 @@ import java.sql.SQLException
 class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     override val tables: MutableMap<Class<*>, MySQLTable<*>> = mutableMapOf()
     private val tablesByName = mutableMapOf<String, DatabaseTable<*>>()
+    override fun <T : Any> updateCache(data: T) {
+        val clz = data.javaClass
+        val table = getTable(clz)
+        table.findByPrimary(table.primaryColumn!!.field.get(data), data)
+    }
 
     companion object {
         var logEnabled = false
@@ -37,19 +42,20 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         Float::class.java to "FLOAT",
         Boolean::class.java to "TINYINT",
         Long::class.java to "BIGINT"
+
     )
 
-    override fun <T> getTable(clz: Class<T>): MySQLTable<T> {
+    override fun <T : Any> getTable(clz: Class<T>): MySQLTable<T> {
         if (tables.containsKey(clz)) {
             return tables[clz] as MySQLTable<T>
         }
-        val table= MySQLTable<T>(connection, clz, this)
+        val table = MySQLTable<T>(connection, clz, this)
         tables[clz] = table
         table.reload()
         return table
     }
 
-    override fun <T> deleteTable(clz: Class<T>) {
+    override fun <T : Any> deleteTable(clz: Class<T>) {
         val table = getTable(clz)
         deleteTable(table.name)
     }
@@ -70,7 +76,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             val prepare = connection.prepareStatement(
                 "DROP TABLE $tableName"
             )
-             prepare.executeUpdate()
+            prepare.executeUpdate()
 
 
         } catch (ex: SQLException) {
@@ -78,7 +84,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         }
     }
 
-    override fun <T> clearTable(clz: Class<T>) {
+    override fun <T : Any> clearTable(clz: Class<T>) {
         val table = getTable(clz)
         clearTable(table.name)
     }
@@ -96,7 +102,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     }
 
 
-    override fun <T> createTable(clz: Class<T>) {
+    override fun <T : Any> createTable(clz: Class<T>) {
         val table = getTable(clz)
         val tableName = table.name
 
@@ -152,17 +158,20 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
 
 
     override fun convertToSQL(valor: Any?): String {
-        val value: Any = valor ?: return "NULL"
-        return serialization[value::class.java]?.invoke(value)?:"$value"
+        var value: Any = valor ?: return "NULL"
+        if (value is Boolean){
+            value = if (value) 1 else 0
+        }
+        return serialization[value::class.java]?.invoke(value) ?: "$value"
 
     }
 
 
     override fun convertToJava(data: String, column: DatabaseColumn<*>): Any? {
-        val javaClass = column.javaType
 
-        if (Extra.isWrapper(javaClass)) {
-            val wrapper = Extra.getWrapper(javaClass)
+
+        if (column.isWrapper) {
+            val wrapper = column.wrapperType
             return Extra.transform(data, wrapper)
         }
         if (javaClass.isEnum) {
@@ -172,7 +181,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                 e.printStackTrace()
             }
         }
-        return deserialization[javaClass]?.invoke(data) ?: return data
+        return deserialization[column.javaType]?.invoke(data) ?: data
 
     }
 
