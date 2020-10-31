@@ -1,9 +1,10 @@
 package net.eduard.api.lib.command
 
+import net.eduard.api.lib.hybrid.Hybrid
+import net.eduard.api.lib.hybrid.IPlayer
+import net.eduard.api.lib.hybrid.ISender
 import net.eduard.api.lib.modules.Extra
-import net.md_5.bungee.api.plugin.Plugin
-import org.bukkit.plugin.java.JavaPlugin
-import java.lang.Error
+import net.eduard.api.lib.plugin.IPluginInstance
 import java.util.ArrayList
 
 open class Command(override var name: String = "comando", vararg aliases: String) : ICommand {
@@ -28,6 +29,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
 
     override var usage = ""
     override var permission = ""
+
     @Transient
     override var subCommands = mutableListOf<Command>()
 
@@ -57,14 +59,19 @@ open class Command(override var name: String = "comando", vararg aliases: String
     override var permissionMessage = MESSAGE_PERMISSION
     override var playerOnly = false
 
-    open fun onCommand(sender: Sender, args: List<String>) {
-        if (sender is PlayerOnline<*>) {
-            onCommand(sender, args)
-        }
+    open fun onCommand(sender: IPlayer<*>, args: List<String>) {
+        sendUsage(sender)
 
     }
 
-    fun processTabComplete(sender: Sender, args: List<String>): List<String> {
+    open fun onCommand(sender: ISender, args: List<String>) {
+        if (sender is IPlayer<*>) {
+            onCommand(sender, args)
+        } else
+            sendUsage(sender)
+    }
+
+    fun processTabComplete(sender: ISender, args: List<String>): List<String> {
         val vars = ArrayList<String>()
         var cmd = this
         for (i in args.indices) {
@@ -99,7 +106,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
         return vars
     }
 
-    fun processCommand(sender: Sender, args: List<String>) {
+    fun processCommand(sender: ISender, args: List<String>) {
         var cmd = this
         for (i in args.indices) {
             val arg = args[i].toLowerCase()
@@ -125,60 +132,44 @@ open class Command(override var name: String = "comando", vararg aliases: String
         if (sender.hasPermission(cmd.permission)) {
             cmd.onCommand(sender, args)
         } else {
-            sender.sendMessage("§cVocê precisa da permissão "+ cmd.permission)
+            sender.sendMessage("§cVocê precisa da permissão " + cmd.permission)
             sender.sendMessage(cmd.permissionMessage)
         }
 
     }
 
-    fun sendUsage(sender: Sender) {
+    fun sendUsage(sender: ISender) {
         sender.sendMessage(usage)
     }
 
-    open fun onCommand(sender: PlayerOnline<*>, args: List<String>) {
-        sendUsage(sender)
-    }
 
     fun register(subCommand: Command) {
         subCommands.add(subCommand)
         subCommand.parent = this
     }
 
-    fun register(main: Any) {
+    fun register(main: IPluginInstance) {
 
-        if (usage.isEmpty()){
+        if (usage.isEmpty()) {
             usage = autoUsage()
         }
-        if (permission.isEmpty()){
+        if (permission.isEmpty()) {
             permission = autoPermission()
         }
-        for (sub in subCommands){
-            if (sub.usage.isEmpty()){
+        for (sub in subCommands) {
+            if (sub.usage.isEmpty()) {
                 sub.usage = sub.autoUsage()
             }
-            if (sub.permission.isEmpty()){
+            if (sub.permission.isEmpty()) {
                 sub.permission = sub.autoPermission()
             }
         }
-
-
-        try {
-            if (main is JavaPlugin) {
-                BukkitCommand(this).register(main)
-
-            }
-        } catch (er: Error) {
+        if (Hybrid.instance.isBungeecord) {
+            BungeeCommand(this).register(main)
+        } else {
+            BukkitCommand(this).register(main)
         }
-
-
-        try {
-            if (main is Plugin) {
-
-                BungeeCommand(this).register(main)
-            }
-        } catch (er: Error) {
-        }
-        ConsoleSender.sendMessage("Comando $name registrado para o plugin $main")
+        Hybrid.instance.console.sendMessage("Comando $name registrado para o plugin $main")
 
         COMMANDS.add(this)
 

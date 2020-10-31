@@ -17,6 +17,8 @@ import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.game.Schematic
 import net.eduard.api.lib.game.SoundEffect
+import net.eduard.api.lib.hybrid.BukkitServer
+import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.modules.*
@@ -51,12 +53,10 @@ import java.util.*
  * @since 0.5
  */
 class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
-    override var isActivated = true
-    override var isFree = true
+
     override var configs = Config(plugin, "config.yml")
     override var storage = Config(plugin, "storage.yml")
     override var messages = Config(plugin, "messages.yml")
-
     override var dbManager = DBManager()
     override lateinit var sqlManager : SQLManager
     override lateinit var storageManager : StorageManager
@@ -64,6 +64,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
     override fun onLoad() {
         BukkitTypes
         HybridTypes
+        Hybrid.instance = BukkitServer
         dbManager = DBManager()
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")

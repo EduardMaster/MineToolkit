@@ -12,8 +12,6 @@ import java.util.concurrent.TimeUnit
 
 interface IPlugin  : IPluginInstance{
 
-    var isActivated: Boolean
-    var isFree: Boolean
     var configs: Config
     var storage: Config
     var messages: Config

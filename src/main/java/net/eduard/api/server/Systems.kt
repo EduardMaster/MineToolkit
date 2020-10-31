@@ -10,6 +10,5 @@ object Systems {
 
     @JvmStatic
     var scoreSystem: ScoreSystem? = null
-    @JvmStatic
-    var generatorSystem: GeneratorSystem? = null
+
 }

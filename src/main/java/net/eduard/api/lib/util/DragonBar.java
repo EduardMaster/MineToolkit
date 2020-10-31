@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,7 +37,7 @@ public class DragonBar {
 					"percent cannot be greater than 100, percent = " + percent);
 		}
 
-		Dragon dragon = null;
+		Dragon dragon;
 
 		if ((this.dragonMap.containsKey(player.getName())) && (!reset)) {
 			dragon = this.dragonMap.get(player.getName());
@@ -48,7 +49,7 @@ public class DragonBar {
 			this.dragonMap.put(player.getName(), dragon);
 		}
 
-		if (text == "") {
+		if (text.equals("")) {
 			Object destroyPacket = dragon.getDestroyPacket();
 			sendPacket(player, destroyPacket);
 			this.dragonMap.remove(player.getName());
@@ -56,7 +57,7 @@ public class DragonBar {
 			dragon.setName(text);
 			dragon.setHealth(percent);
 			Object metaPacket = dragon.getMetaPacket(dragon.getWatcher());
-			Object teleportPacket = null;
+			Object teleportPacket;
 			try {
 				teleportPacket = dragon.getTeleportPacket(
 						player.getLocation().add(0.0D, +100.0D, 0.0D));
@@ -90,16 +91,8 @@ public class DragonBar {
 			Field con_field = nmsPlayer.getClass().getField("playerConnection");
 			Object con = con_field.get(nmsPlayer);
 			Method packet_method = getMethod(con.getClass(), "sendPacket");
-			packet_method.invoke(con, new Object[]{packet});
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
+			Objects.requireNonNull(packet_method).invoke(con, packet);
+		} catch (SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
 			e.printStackTrace();
 		}
 	}
@@ -134,12 +127,8 @@ public class DragonBar {
 		Object nms_entity = null;
 		Method entity_getHandle = getMethod(entity.getClass(), "getHandle");
 		try {
-			nms_entity = entity_getHandle.invoke(entity, new Object[0]);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+			nms_entity = Objects.requireNonNull(entity_getHandle).invoke(entity, new Object[0]);
+		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return nms_entity;
@@ -149,12 +138,8 @@ public class DragonBar {
 		Object nms_entity = null;
 		Method entity_getHandle = getMethod(entity.getClass(), "getHandle");
 		try {
-			nms_entity = entity_getHandle.invoke(entity, new Object[0]);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+			nms_entity = entity_getHandle.invoke(entity);
+		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return nms_entity;
@@ -185,7 +170,7 @@ public class DragonBar {
 	public static Method getMethod(Class<?> cl, String method, Integer args) {
 		for (Method m : cl.getMethods()) {
 			if ((m.getName().equals(method)) && (args
-					.equals(Integer.valueOf(m.getParameterTypes().length)))) {
+					.equals(m.getParameterTypes().length))) {
 				return m;
 			}
 		}
@@ -278,47 +263,44 @@ public class DragonBar {
 			Method setLocation = getMethod(EntityEnderDragon, "setLocation",
 					new Class[]{Double.TYPE, Double.TYPE, Double.TYPE,
 							Float.TYPE, Float.TYPE});
-			setLocation.invoke(this.dragon,
-					new Object[]{Integer.valueOf(this.x),
-							Integer.valueOf(this.y), Integer.valueOf(this.z),
-							Integer.valueOf(this.pitch),
-							Integer.valueOf(this.yaw)});
+			Objects.requireNonNull(setLocation).invoke(this.dragon,
+					this.x,
+					this.y, this.z,
+					this.pitch,
+					this.yaw);
 
 			Method setInvisible = getMethod(EntityEnderDragon, "setInvisible",
 					new Class[]{Boolean.TYPE});
-			setInvisible.invoke(this.dragon,
-					new Object[]{Boolean.valueOf(this.visible)});
+			Objects.requireNonNull(setInvisible).invoke(this.dragon,
+					this.visible);
 
 			Method setCustomName = getMethod(EntityEnderDragon, "setCustomName",
 					new Class[]{String.class});
-			setCustomName.invoke(this.dragon, new Object[]{this.name});
+			Objects.requireNonNull(setCustomName).invoke(this.dragon, this.name);
 
 			Method setHealth = getMethod(EntityEnderDragon, "setHealth",
 					new Class[]{Float.TYPE});
-			setHealth.invoke(this.dragon,
-					new Object[]{Float.valueOf(this.health)});
+			Objects.requireNonNull(setHealth).invoke(this.dragon,
+					this.health);
 
 			Field motX = getField(Entity, "motX");
-			motX.set(this.dragon, Byte.valueOf(this.xvel));
+			motX.set(this.dragon, this.xvel);
 
 			Field motY = getField(Entity, "motX");
-			motY.set(this.dragon, Byte.valueOf(this.yvel));
+			motY.set(this.dragon, this.yvel);
 
 			Field motZ = getField(Entity, "motX");
-			motZ.set(this.dragon, Byte.valueOf(this.zvel));
+			motZ.set(this.dragon, this.zvel);
 
 			Method getId = getMethod(EntityEnderDragon, "getId", new Class[0]);
-			this.id = ((Integer) getId.invoke(this.dragon, new Object[0]))
-					.intValue();
+			this.id = (Integer) Objects.requireNonNull(getId).invoke(this.dragon, new Object[0]);
 
 			Class<?> PacketPlayOutSpawnEntityLiving = getCraftClass(
 					"PacketPlayOutSpawnEntityLiving");
 
-			Object packet = PacketPlayOutSpawnEntityLiving
+			return PacketPlayOutSpawnEntityLiving
 					.getConstructor(new Class[]{EntityLiving})
-					.newInstance(new Object[]{this.dragon});
-
-			return packet;
+					.newInstance(this.dragon);
 		}
 
 		public Object getDestroyPacket() throws IllegalArgumentException,
@@ -416,12 +398,12 @@ public class DragonBar {
 			a.invoke(watcher, new Object[]{6,
 					Float.valueOf(this.health)});
 			a.invoke(watcher,
-					new Object[]{Integer.valueOf(7), Integer.valueOf(0)});
+					7, 0);
 			a.invoke(watcher,
-					new Object[]{Integer.valueOf(8), Byte.valueOf((byte) 0)});
-			a.invoke(watcher, new Object[]{Integer.valueOf(10), this.name});
+					8, (byte) 0);
+			a.invoke(watcher, 10, this.name);
 			a.invoke(watcher,
-					new Object[]{Integer.valueOf(11), Byte.valueOf((byte) 1)});
+					11, (byte) 1);
 			return watcher;
 		}
 

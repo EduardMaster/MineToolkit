@@ -1,6 +1,8 @@
 package net.eduard.api.lib.command
 
+import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.command.*
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
@@ -8,6 +10,12 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class BukkitCommand(val command: net.eduard.api.lib.command.Command)
     : Command(command.name), CommandExecutor, TabCompleter {
+
+
+    fun register(plugin : IPluginInstance){
+        register(plugin.plugin as JavaPlugin)
+    }
+
     fun register(plugin: JavaPlugin) {
         var cmd: Command? = plugin.getCommand(command.name)
         var registred = false
@@ -28,13 +36,16 @@ class BukkitCommand(val command: net.eduard.api.lib.command.Command)
 
     }
 
+
+
     override fun onCommand(sender: CommandSender, cmd: Command, label: String, args: Array<String>): Boolean {
 
         if (sender is Player) {
-            command.processCommand(PlayerBukkit(sender), args.toList())
-
+            command.processCommand(
+                Hybrid.instance.getPlayer(sender.name, sender.uniqueId),
+                args.toList())
         } else {
-            command.processCommand(ConsoleSender, args.toList())
+            command.processCommand(Hybrid.instance.console, args.toList())
         }
 
         return true
@@ -75,8 +86,8 @@ class BukkitCommand(val command: net.eduard.api.lib.command.Command)
 
         val result = command.processTabComplete(
                 if (sender is Player)
-                    PlayerBukkit(sender)
-                else ConsoleSender, args.toList())
+                    Hybrid.instance.getPlayer(sender.name, sender.uniqueId)
+                else  Hybrid.instance.console, args.toList())
         return if (result.isEmpty()) null
         else result
 

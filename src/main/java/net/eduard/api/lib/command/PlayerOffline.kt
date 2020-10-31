@@ -1,8 +1,8 @@
 package net.eduard.api.lib.command
 
+import net.eduard.api.lib.hybrid.Hybrid
+import net.eduard.api.lib.hybrid.IPlayer
 import net.eduard.api.lib.storage.Storable
-import net.md_5.bungee.api.ProxyServer
-import org.bukkit.Bukkit
 import java.io.Serializable
 import java.util.*
 
@@ -23,7 +23,7 @@ class PlayerOffline(
     }
 
     @Transient
-    private var onlinePlayer: PlayerOnline<*>? = null
+    private var onlinePlayer: IPlayer<*> = Hybrid.instance.getPlayer(name)
 
     fun setUUIDByName(): UUID {
         uniqueId = UUID.nameUUIDFromBytes(("OfflinePlayer:$name").toByteArray())
@@ -31,41 +31,25 @@ class PlayerOffline(
     }
 
     fun sendMessage(message: String) {
-        if (onlinePlayer != null || isOnline)
-            player.sendMessage(message)
+      player.sendMessage(message)
     }
 
     constructor(name: String) : this(name, null)
 
     override fun toString(): String {
-        return "" + this.uniqueId
+        return "$name;$uniqueId"
     }
 
-    constructor(player: PlayerOnline<*>) : this(player.name, player.uniqueId) {
+    constructor(player: IPlayer<*>) : this(player.name, player.uniqueId) {
         this.onlinePlayer = player
     }
 
     val isOnline: Boolean
-        get() {
-            return try {
-                Bukkit.getPlayer(name) != null
-            } catch (er: Error) {
-                ProxyServer.getInstance().getPlayer(name) != null
-            }
-        }
+        get() =onlinePlayer.isOnline
 
 
-    val player: PlayerOnline<*>
-        get() {
-            if (onlinePlayer == null || onlinePlayer!!.isOffline) {
-                onlinePlayer = try {
-                    PlayerBukkit(Bukkit.getPlayer(name))
-                } catch (er: Error) {
-                    PlayerBungee(ProxyServer.getInstance().getPlayer(name))
-                }
-            }
-            return onlinePlayer!!
-        }
+
+    val player: IPlayer<*> get() = onlinePlayer
 
     override fun equals(other: Any?): Boolean {
         if (other == null) return false

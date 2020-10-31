@@ -43,8 +43,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         return this
     }
 
-    override var isActivated = false
-    override var isFree: Boolean = false
+    var isFree: Boolean = false
     final override lateinit var configs: Config
     final override lateinit var messages: Config
     final override lateinit var storage: Config
@@ -52,7 +51,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     final override  var dbManager: DBManager = DBManager()
     final override lateinit var sqlManager: SQLManager
     final override lateinit var storageManager: StorageManager
-    private val prefix get() = "[$pluginName] "
+
 
 
     /**
@@ -223,17 +222,13 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
             e.printStackTrace()
         }
-
     }
-
     override fun save() {
 
     }
-
     override fun reload() {
 
     }
-
     override fun configDefault() {
 
     }

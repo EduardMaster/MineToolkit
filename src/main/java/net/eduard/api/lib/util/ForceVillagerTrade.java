@@ -28,8 +28,8 @@ import net.minecraft.server.v1_8_R3.MerchantRecipeList;
 */
 public class ForceVillagerTrade {
    
-    private String invname;
-    private MerchantRecipeList l = new MerchantRecipeList();
+    private final String invname;
+    private final MerchantRecipeList l = new MerchantRecipeList();
 
     /**
      * Não pode ter espaço

@@ -14,16 +14,17 @@ public class EduardAPIBungeeMain extends Plugin {
         new LibraryLoader(new File("libs/")).loadLibraries();
     }
 
-    public EduardAPIBungee bungee;
+    public EduardAPIBungee eduardAPIBungee;
+
     @Override
     public void onEnable() {
-        bungee = new EduardAPIBungee(this);
-        bungee.onEnable();
+        eduardAPIBungee = new EduardAPIBungee(this);
+        eduardAPIBungee.onEnable();
 
     }
 
     @Override
     public void onDisable() {
-        bungee.onDisable();
+        eduardAPIBungee.onDisable();
     }
 }

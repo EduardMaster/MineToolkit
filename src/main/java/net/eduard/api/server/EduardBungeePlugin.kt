@@ -50,8 +50,7 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     }
 
 
-    override var isActivated = false
-    override var isFree: Boolean = false
+
     final override lateinit var configs: Config
     final override lateinit var messages: Config
     final override lateinit var storage: Config

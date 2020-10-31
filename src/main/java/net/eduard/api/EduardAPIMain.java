@@ -12,16 +12,27 @@ public class EduardAPIMain extends JavaPlugin {
         new LibraryLoader(new File("libs/")).loadLibraries();
     }
 
-    public EduardAPI bungee;
+    public EduardAPI eduardAPI;
+
+
+    @Override
+    public void onLoad() {
+        eduardAPI = new EduardAPI(this);
+        eduardAPI.onLoad();
+
+    }
     @Override
     public void onEnable() {
-        bungee = new EduardAPI(this);
-        bungee.onEnable();
+        if (eduardAPI ==null){
+            eduardAPI = new EduardAPI(this);
+            eduardAPI.onLoad();
+        }
+        eduardAPI.onEnable();
 
     }
 
     @Override
     public void onDisable() {
-        bungee.onDisable();
+        eduardAPI.onDisable();
     }
 }

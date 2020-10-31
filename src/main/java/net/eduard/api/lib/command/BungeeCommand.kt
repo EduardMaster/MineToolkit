@@ -1,14 +1,18 @@
 package net.eduard.api.lib.command
 
+import net.eduard.api.lib.hybrid.Hybrid
+import net.eduard.api.lib.plugin.IPluginInstance
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Plugin
 
 class BungeeCommand(val command: net.eduard.api.lib.command.Command)
-    : Command(command.name, command.permission, *command.aliases.toTypedArray()) {
+    : Command(command.name, command.permission, *command.aliases.toTypedArray())  {
 
-
+    fun register(plugin : IPluginInstance){
+        register(plugin.plugin as Plugin)
+    }
     fun register(plugin : Plugin){
         plugin.proxy.pluginManager.registerCommand(plugin,this)
     }
@@ -16,9 +20,11 @@ class BungeeCommand(val command: net.eduard.api.lib.command.Command)
     override fun execute(sender: CommandSender, args: Array<String>) {
 
         if (sender is ProxiedPlayer) {
-            command.processCommand(PlayerBungee(sender), args.toList())
+            command.processCommand(Hybrid.instance.getPlayer(sender.name, sender.uniqueId),
+                args.toList())
         } else {
-            command.processCommand(ConsoleSender, args.toList())
+            command.processCommand(Hybrid.instance.console, args.toList())
         }
     }
+
 }
