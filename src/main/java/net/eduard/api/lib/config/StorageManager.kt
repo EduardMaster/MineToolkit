@@ -32,15 +32,11 @@ class StorageManager(private var sqlManager: SQLManager) {
     }
 
     fun insert(any: Any) {
-
         if (type.isSQL){
             sqlManager.insertData(any)
         }else{
             update(any)
         }
-
-
-
     }
     fun update(any : Any ){
         if (type.isSQL){

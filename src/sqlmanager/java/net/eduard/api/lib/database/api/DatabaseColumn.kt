@@ -43,7 +43,7 @@ class DatabaseColumn<T : Any>(val table: DatabaseTable<T>, val field: Field, val
     val isJson = field.isAnnotationPresent(ColumnJson::class.java)
     val referenceTable get() = engine.getTable(javaType)
     val foreignKeyName =
-        "${name}_x_" + referenceTable.name + "_" + referenceTable.primaryName
+        "${table.name}_${name}_x_" + referenceTable.name + "_" + referenceTable.primaryName
 
 /*
 

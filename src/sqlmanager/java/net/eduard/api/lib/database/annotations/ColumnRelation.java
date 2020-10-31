@@ -11,4 +11,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ColumnRelation {
     TableRelation value() default TableRelation.ONE_TO_ANY;
+    boolean external() default true;
 }

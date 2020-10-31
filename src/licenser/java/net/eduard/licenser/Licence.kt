@@ -12,6 +12,7 @@ import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 @SuppressWarnings("unused")
@@ -96,11 +97,7 @@ object Licence {
                 if (!result.isActive) {
                     Bukkit.getPluginManager().disablePlugin(plugin)
                 } else {
-                    Bukkit.getScheduler().runTask(plugin) {
-
-                        activation.run()
-
-                    }
+                    Bukkit.getScheduler().runTask(plugin, activation)
                 }
             }
         }
@@ -135,7 +132,9 @@ object Licence {
                     ProxyServer.getInstance().pluginManager.unregisterListeners(plugin)
                     ProxyServer.getInstance().pluginManager.unregisterCommands(plugin)
                 } else {
-                    activation.run()
+                    ProxyServer.getInstance().scheduler
+                        .schedule(plugin ,activation, 50, TimeUnit.MILLISECONDS)
+
                 }
             }
         }
