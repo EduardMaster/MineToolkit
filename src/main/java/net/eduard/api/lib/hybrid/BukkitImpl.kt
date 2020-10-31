@@ -1,14 +1,13 @@
 package net.eduard.api.lib.hybrid
 
 import net.eduard.api.lib.modules.BukkitBungeeAPI
-import net.md_5.bungee.api.connection.ProxiedPlayer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
 object BukkitServer : IServer{
     override fun getPlayer(name: String, uuid: UUID): IPlayer<*> {
-        return BungeePlayer(name,uuid)
+        return BukkitPlayer(name,uuid)
     }
 
     override fun getPlayer(name: String): IPlayer<Player> {

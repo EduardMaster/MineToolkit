@@ -51,7 +51,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
         return if (parent != null) {
             parent?.autoUsage() + " " + name
         } else {
-            "/$name help"
+            "/$name "
         }
     }
 
@@ -139,7 +139,11 @@ open class Command(override var name: String = "comando", vararg aliases: String
     }
 
     fun sendUsage(sender: ISender) {
-        sender.sendMessage(usage)
+        if (subCommands.isNotEmpty()) {
+            sender.sendMessage(usage)
+        }else{
+            sender.sendMessage("$usage help")
+        }
     }
 
 
