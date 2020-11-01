@@ -1,6 +1,6 @@
 package net.eduard.api.lib.kotlin
 
-import net.eduard.api.lib.command.PlayerOffline
+import net.eduard.api.lib.hybrid.PlayerUser
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.modules.Mine
@@ -64,8 +64,8 @@ inline fun Event.call(){
     return Mine.callEvent(this)
 }
 
-inline val FakePlayer.offline : PlayerOffline
-    get() { return PlayerOffline(name,id)
+inline val FakePlayer.offline : PlayerUser
+    get() { return PlayerUser(name, id)
     }
 
 inline fun CommandSender.isPlayer(block: Player.() -> Unit){

@@ -69,6 +69,9 @@ override var uuid: UUID) : IPlayer<ProxiedPlayer>{
        instance?.sendMessage(TextComponent(message))
     }
 
+    override fun sendMessage(message: TextComponent) {
+        instance?.sendMessage(message)
+    }
     override fun hasPermission(permission: String): Boolean {
         return instance?.hasPermission(permission)?: false
     }

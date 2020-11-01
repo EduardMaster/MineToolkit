@@ -1,13 +1,11 @@
-package net.eduard.api.lib.command
+package net.eduard.api.lib.hybrid
 
-import net.eduard.api.lib.hybrid.Hybrid
-import net.eduard.api.lib.hybrid.IPlayer
 import net.eduard.api.lib.storage.Storable
 import java.io.Serializable
 import java.util.*
 
 @Storable.StorageAttributes(inline = true)
-class PlayerOffline(
+class PlayerUser(
     var name: String = "Eduard",
     uuid: UUID? = null
 ) : Serializable {
@@ -54,7 +52,7 @@ class PlayerOffline(
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
         if (this === other) return true
-        if (other is PlayerOffline) {
+        if (other is PlayerUser) {
             return (name.equals(other.name, true))
         }
         return true

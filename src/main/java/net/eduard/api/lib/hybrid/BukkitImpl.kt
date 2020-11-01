@@ -1,6 +1,7 @@
 package net.eduard.api.lib.hybrid
 
 import net.eduard.api.lib.modules.BukkitBungeeAPI
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -53,7 +54,9 @@ override var uuid: UUID) : IPlayer<Player>{
         }
 
     }
-
+    override fun sendMessage(message: TextComponent) {
+        instance?.spigot()?.sendMessage(message)
+    }
     override fun search(): Player? {
        val trying = Bukkit.getPlayer(name)
         return trying ?: Bukkit.getPlayer(uuid)

@@ -1,6 +1,5 @@
 package net.eduard.api.lib.database
 
-import net.eduard.api.lib.command.PlayerOffline
 import net.eduard.api.lib.modules.FakePlayer
 import org.bukkit.Bukkit
 import org.bukkit.Location
