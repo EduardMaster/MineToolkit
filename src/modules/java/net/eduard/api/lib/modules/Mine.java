@@ -1119,6 +1119,7 @@ public final class Mine {
      *
      * @return O Hashmap onde estão registrados todos comandos e aliases
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Command> getCommands() {
         try {
             Object map = Extra.getFieldValue(Bukkit.getServer().getPluginManager(), "commandMap");
@@ -1337,10 +1338,13 @@ public final class Mine {
      * @param entityType Tipo de Entidade
      * @return o Dado ou nulo
      */
+    @SuppressWarnings("deprecated")
     public static EntityType parseEntityType(String entityType) {
         String str = entityType.replace("_", "").trim();
         for (EntityType type : EntityType.values()) {
-            if (str.equals("" + type.getTypeId())) {
+
+                    int id = type.getTypeId();
+            if (str.equals("" + id)) {
                 return type;
             }
             if (str.equalsIgnoreCase("" + type.getName())) {
@@ -2147,15 +2151,15 @@ public final class Mine {
     /**
      * Gera um Vector novo que terá a inteção de forçar um movimento até o Alvo (Local)
      *
-     * @param entity
-     * @param target
-     * @param staticX
-     * @param staticY
-     * @param staticZ
-     * @param addX
-     * @param addY
-     * @param addZ
-     * @return
+     * @param entity Entidade que será movida
+     * @param target Alvo
+     * @param staticX X Fixo
+     * @param staticY Y Fixo
+     * @param staticZ Z Fixo
+     * @param addX X Adicionado
+     * @param addY Y Adicionado
+     * @param addZ Z Adicionado
+     * @return Velocidade necessaria para chegar ate o alvo em 2 segundos
      */
     public static Vector getVelocity(Location entity, Location target, double staticX, double staticY, double staticZ,
                                      double addX, double addY, double addZ) {
@@ -2215,7 +2219,7 @@ public final class Mine {
     public static void fillInventoryBorders(Inventory inv, ItemStack item) {
         for (int id = 0; id < 9; id++) {
             inv.setItem(id, item);
-            ;
+
         }
         for (int id = inv.getSize() - 9; id < inv.getSize(); id++) {
             inv.setItem(id, item);
@@ -2229,6 +2233,14 @@ public final class Mine {
         }
     }
 
+    /**
+     * Criar novo livro
+     * @param name Nome do livro
+     * @param title Titulo do livro
+     * @param author Author do livro
+     * @param pages Paginas em texto
+     * @return Livro em forma de Item
+     */
     public static ItemStack newBook(String name, String title, String author, String... pages) {
         ItemStack item = newItem(Material.WRITTEN_BOOK, name);
         BookMeta meta = (BookMeta) item.getItemMeta();
@@ -2240,6 +2252,11 @@ public final class Mine {
         return item;
     }
 
+    /**
+     * Gera um mundo vazio
+     * @param worldName Nome do mundo
+     * @return Mundo vazio
+     */
     public static World newEmptyWorld(String worldName) {
         World world = loadWorld(worldName);
         world.setSpawnLocation(100, 100, 100);
@@ -2248,11 +2265,23 @@ public final class Mine {
         return world;
     }
 
+    /**
+     * Gera uma explosão no local
+     * @param location Local
+     * @param power Poder da explosão
+     * @param breakBlocks Se vai quebrar bloco ou não
+     * @param makeFire Se vai colocar fogo ou não
+     * @return Se conseguiu criar a explosão
+     */
     public static boolean newExplosion(Location location, float power, boolean breakBlocks, boolean makeFire) {
         return location.getWorld().createExplosion(location.getX(), location.getY(), location.getZ(), power,
                 breakBlocks, makeFire);
     }
 
+    /**
+     *
+     * @return Um Firework normal
+     */
     public static ItemStack newFirework() {
         ItemStack fire = new ItemStack(Material.FIREWORK);
         FireworkMeta meta = (FireworkMeta) fire.getItemMeta();
@@ -2261,11 +2290,33 @@ public final class Mine {
         return fire;
     }
 
+    /**
+     * Gera um Firework em forma de Item para se lançaado
+     * @param location Local
+     * @param high Altura do movimento
+     * @param color Cor do firework
+     * @param fade Cor quando esta acabando a animação
+     * @param trail Cor do rastro do foguete
+     * @param flicker Se vai fazer mini explosões 'track track'
+     * @return Foguete em forma de item
+     */
     public static Firework newFirework(Location location, int high, Color color, Color fade, boolean trail,
                                        boolean flicker) {
         return newFirework(location, high, color, fade, trail, flicker, FireworkEffect.Type.CREEPER);
     }
 
+
+     /**
+     * Gera um Firework em forma de Item para se lançaado
+     * @param location Local
+     * @param high Altura do movimento
+     * @param color Cor do firework
+     * @param fade Cor quando esta acabando a animação
+     * @param trail Cor do rastro do foguete
+     * @param flicker Se vai fazer mini explosões 'track track'
+     * @param type Tipo do Foguete
+     * @return Foguete em forma de item
+    */
     public static Firework newFirework(Location location, int high, Color color, Color fade, boolean trail,
                                        boolean flicker, FireworkEffect.Type type) {
         Firework firework = location.getWorld().spawn(location, Firework.class);
@@ -2309,10 +2360,10 @@ public final class Mine {
     /**
      * Metodo original getSkull se tornou newHeadSkin
      *
-     * @param nome
-     * @param amount
-     * @param lore
-     * @param url
+     * @param nome Nome da cabeça
+     * @param amount Quantidade
+     * @param lore Lore
+     * @param url Link da skin
      * @return Nova cabeça com nova skin
      */
     public static ItemStack newHeadSkin(String url, String nome, int amount, List<String> lore) {
@@ -2329,7 +2380,7 @@ public final class Mine {
         byte[] encodedData = Base64.getEncoder()
                 .encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
         profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
-        Field profileField = null;
+        Field profileField;
         try {
             profileField = itemMeta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
@@ -2394,9 +2445,9 @@ public final class Mine {
     /**
      * Cria um item da cabeça do Jogador
      *
-     * @param name
-     * @param skull
-     * @return
+     * @param name Nome do item
+     * @param skull Nome da cabeça
+     * @return Item cabeça feito
      */
 
     public static ItemStack newHead(String name, String skull, String... lore) {
@@ -2554,7 +2605,7 @@ public final class Mine {
         for (String line : lines) {
             String empty = ChatColor.values()[id - 1].toString();
             obj.getScore(new FakePlayer(line.isEmpty() ? empty : line)).setScore(id);
-            ;
+
             id--;
             if (id == 0) {
                 break;
@@ -2602,7 +2653,7 @@ public final class Mine {
     /**
      * Abrir um Menu Gui paginado
      *
-     * @return
+     * @return Inventario paginado
      */
     public static Inventory newMenu(Player player, List<ItemStack> items, int page, int amountPerPage, String title,
                                     int lineAmount, int inicialIndex, int backSlot, int advanceSlot) {
@@ -2667,7 +2718,7 @@ public final class Mine {
     /**
      * Retira a fome, recupera saturação e deixa sem exaustão
      *
-     * @param player
+     * @param player Jogador
      */
     public static void refreshFood(Player player) {
         player.setFoodLevel(20);
@@ -2688,7 +2739,7 @@ public final class Mine {
      * pega o estado da Planta
      *
      * @param state Planta blockstate
-     * @return
+     * @return Estado da planta
      */
     public static CropState getPlantState(BlockState state) {
 
@@ -2696,8 +2747,7 @@ public final class Mine {
         Material type = state.getType();
         if (type == Material.CROPS) {
             Crops crop = (Crops) state.getData();
-            CropState plantaEstado = crop.getState();
-            return plantaEstado;
+            return crop.getState();
 
         }
 
@@ -2889,7 +2939,9 @@ public final class Mine {
 
         try {
             Writer fileWriter = new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8")));
+                    new OutputStreamWriter(
+                            new FileOutputStream(file),
+                            StandardCharsets.UTF_8));
             fileWriter.write(config.saveToString());
             fileWriter.close();
         } catch (IOException e) {
@@ -2901,11 +2953,12 @@ public final class Mine {
     /**
      * Armazena os Itens do Jogador
      *
-     * @param player
+     * @param player Jogador
      */
     public static void saveItems(Player player) {
         saveArmours(player);
-        PLAYERS_ITEMS.put(player, player.getInventory().getContents());
+        PLAYERS_ITEMS.put(player, player.getInventory()
+                .getContents());
     }
 
 
@@ -2916,12 +2969,9 @@ public final class Mine {
      * @return Texto gerado
      */
     public static String saveVector(Vector vector) {
-        StringBuilder text = new StringBuilder();
-
-        text.append(vector.getX() + ",");
-        text.append(vector.getY() + ",");
-        text.append(vector.getZ());
-        return text.toString();
+        return vector.getX() + "," +
+                vector.getY() + "," +
+                vector.getZ();
     }
 
     /**
@@ -2932,7 +2982,6 @@ public final class Mine {
      */
     public static Vector toVector(String text) {
         String[] split = text.split(",");
-
         double x = Double.parseDouble(split[0]);
         double y = Double.parseDouble(split[1]);
         double z = Double.parseDouble(split[2]);
@@ -2946,7 +2995,6 @@ public final class Mine {
             sender.sendMessage(Mine.getReplacers(message, player));
         } else {
             sender.sendMessage(message);
-
         }
 
     }
@@ -3103,8 +3151,8 @@ public final class Mine {
     /**
      * Modifica um Item transformando ele na Cabeça do Jogador
      *
-     * @param item Item
-     * @param name
+     * @param item Item cabeça
+     * @param name Nome da cabeça
      * @return Nome do Jogador
      */
     public static ItemStack setHead(ItemStack item, String name) {
@@ -3172,7 +3220,7 @@ public final class Mine {
 
 
     public static List<String> toMessages(List<Object> list) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         for (Object line : list) {
             lines.add(toChatMessage(line.toString()));
         }
@@ -3269,6 +3317,7 @@ public final class Mine {
             case CONTACT:
                 return "Contato";
             case CUSTOM:
+            case WITHER:
                 return "Customizado";
 
             case DROWNING:
@@ -3307,8 +3356,6 @@ public final class Mine {
                 return "Refletido";
             case VOID:
                 return "Vazio";
-            case WITHER:
-                return "Customizado";
             default:
                 return "Outro";
 
@@ -3360,17 +3407,17 @@ public final class Mine {
                 lineColorChars += 2;
                 ++i;
             } else if ((c == ' ') || (c == '\n')) {
+                String[] split = word.toString()
+                        .split("(?<=\\G.{" + lineLength + "})");
                 if ((line.length() == 0) && (word.length() > lineLength)) {
-                    lines.addAll(Arrays.asList(word.toString()
-                            .split("(?<=\\G.{" + lineLength + "})")));
+                    lines.addAll(Arrays.asList(split));
                 } else if (line.length() + word.length() - lineColorChars == lineLength) {
                     line.append(word);
                     lines.add(line.toString());
                     line = new StringBuilder();
                     lineColorChars = 0;
                 } else if (line.length() + 1 + word.length() - lineColorChars > lineLength) {
-                    for (String partialWord : word.toString().split(
-                            "(?<=\\G.{" + lineLength + "})")) {
+                    for (String partialWord : split) {
                         lines.add(line.toString());
                         line = new StringBuilder(partialWord);
                     }

@@ -94,23 +94,23 @@ class MySQLTable<T : Any>(
     override fun deleteReferences() {
         if (referencesRemoved) return
         referencesRemoved = true
-        try {
+
 
             for (column in columns.values) {
                 if (column.isConstraint) {
-
+                    try {
                     connection.prepareStatement(
                         "ALTER TABLE $name " +
-                                "DROP FOREIGN KEY IF EXISTS ${column.foreignKeyName}"
+                                "DROP FOREIGN KEY ${column.foreignKeyName}"
                     )
                         .executeUpdate()
-
+                    } catch (ex: SQLException) {
+                        log("§cFalha ao deletar a Foreign key pois ela nao existe")
+                    }
                 }
                 //ALTER TABLE `party_user` DROP FOREIGN KEY `party`; ALTER TABLE `party_user` ADD CONSTRAINT `party` FOREIGN KEY (`party_id`) REFERENCES `partu`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
             }
-        } catch (ex: SQLException) {
-            ex.printStackTrace()
-        }
+
     }
 
     override fun createReferences() {

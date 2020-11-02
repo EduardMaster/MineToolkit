@@ -54,6 +54,18 @@ override var uuid: UUID) : IPlayer<Player>{
         }
 
     }
+
+
+    override fun hashCode(): Int {
+        return offline.hashCode()
+    }
+    override fun equals(other: Any?): Boolean {
+        if (other == null)return false
+        if (this === other) return true
+        if (other !is IPlayer<*>) return false
+        return other.offline == offline
+    }
+
     override fun sendMessage(message: TextComponent) {
         instance?.spigot()?.sendMessage(message)
     }
@@ -78,5 +90,6 @@ override var uuid: UUID) : IPlayer<Player>{
     override fun hasPermission(permission: String): Boolean {
         return instance?.hasPermission(permission)?: false
     }
+
 
 }

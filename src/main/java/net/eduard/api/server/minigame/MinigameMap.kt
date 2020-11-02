@@ -9,8 +9,6 @@ import org.bukkit.World
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.game.Schematic
 import net.eduard.api.lib.modules.Copyable
-import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboard
-
 /**
  * Mapa da Sala
  *

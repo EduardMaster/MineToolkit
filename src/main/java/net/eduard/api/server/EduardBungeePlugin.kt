@@ -2,22 +2,14 @@ package net.eduard.api.server
 
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
-import net.eduard.api.lib.config.StorageType
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
-import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPlugin
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.api.plugin.Plugin
-import java.io.File
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.text.SimpleDateFormat
-import java.util.concurrent.TimeUnit
 
 /**
  * Representa os Plugins meus feitos para o Bungeecord
@@ -26,6 +18,11 @@ import java.util.concurrent.TimeUnit
  */
 open class EduardBungeePlugin : Plugin(), IPlugin {
 
+    override var started = false
+
+    override fun onLoad() {
+        super<IPlugin>.onLoad()
+    }
 
     fun registerEvents(events: Listener) {
 
@@ -38,7 +35,6 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     override fun console(message: String) {
         ProxyServer.getInstance().console.sendMessage(TextComponent(message))
     }
-    private var started = false
 
     override val pluginName: String
         get() = plugin.description.name
@@ -50,11 +46,9 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     }
 
 
-
     final override lateinit var configs: Config
     final override lateinit var messages: Config
     final override lateinit var storage: Config
-    final override lateinit var databaseFile : File
     final override  var dbManager : DBManager = DBManager()
     final override lateinit var sqlManager: SQLManager
     final override lateinit var storageManager: StorageManager
@@ -70,66 +64,6 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     override fun onEnable() {
         if (!started) onLoad()
     }
-
-    override fun onLoad() {
-        started = true
-        configs = Config(this, "config.yml")
-        messages = Config(this, "messages.yml")
-        storage = Config(this, "storage.yml")
-        databaseFile = File(pluginFolder, "database.db")
-        config.add("database-type", StorageType.YAML)
-        config.add("log-enabled", true)
-        configs.add("auto-save", false)
-        configs.add("auto-save-seconds", 60)
-        configs.add("auto-save-lasttime", Extra.getNow())
-        configs.add("backup", false)
-        configs.add("backup-lasttime", Extra.getNow())
-        configs.add("backup-time", 1)
-        configs.add("backup-timeunit-type", "MINUTES")
-        configs.add("database", dbManager)
-
-        configs.saveConfig()
-        dbManager = config.get("database", DBManager::class.java)
-        sqlManager = SQLManager(dbManager)
-        storageManager = StorageManager(sqlManager)
-        storageManager.type = config.get("database-type", StorageType::class.java)
-        if (db.isEnabled) {
-            db.openConnection()
-
-        }
-
-
-    }
-    /**
-     * Gera backup dos arquivos config.yml, storage.yml e por ultimo database.db
-     */
-    override fun backup() {
-        configs.set("backup-lasttime", Extra.getNow())
-        try {
-            val simpleDateFormat = SimpleDateFormat("dd-MM-YYYY HH-mm-ss")
-            val pasta = File(pluginFolder,
-                    "/backup/" + simpleDateFormat.format(System.currentTimeMillis()) + "/")
-
-            pasta.mkdirs()
-
-            if (storage.existConfig() && storage.keys.isNotEmpty()) {
-
-                Files.copy(storage.file.toPath(), Paths.get(pasta.path, storage.name))
-            }
-            if (configs.existConfig() && storage.keys.isNotEmpty()) {
-
-                Files.copy(configs.file.toPath(), Paths.get(pasta.path, configs.name))
-            }
-            if (databaseFile.exists()) {
-                Files.copy(databaseFile.toPath(), Paths.get(pasta.path, databaseFile.name))
-            }
-        } catch (e: IOException) {
-
-            e.printStackTrace()
-        }
-
-    }
-
     override fun save() {
 
     }
@@ -163,22 +97,6 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
 
 
 
-
-
-    /**
-     * Deleta os backups dos dias anteriores
-     */
-    override fun deleteOldBackups() {
-        val pasta = File(pluginFolder, "/backup/")
-        pasta.mkdirs()
-        val lista = listOf(*pasta.listFiles()!!)
-        lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
-                .forEach {
-                    Extra.deleteFolder(it)
-                    if (it.exists())
-                        it.delete()
-                }
-    }
 
 
 

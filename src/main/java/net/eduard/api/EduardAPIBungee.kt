@@ -5,6 +5,7 @@ import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerState
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
+import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.hybrid.BungeeServer
 import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.listener.BungeeEvents
@@ -28,6 +29,8 @@ class EduardAPIBungee(val plugin: Plugin) {
     lateinit var config: Config
     lateinit var bungeeDB: BungeeDB
     fun onEnable() {
+        HybridTypes
+        Hybrid.instance = BungeeServer
         config = Config(plugin, "config.yml")
         databaseManager = DBManager()
         reload()
@@ -36,15 +39,15 @@ class EduardAPIBungee(val plugin: Plugin) {
             .registerListener(plugin, BungeeEvents())
         ProxyServer.getInstance().pluginManager
             .registerCommand(plugin, BungeeReloadCommand())
-        Hybrid.instance = BungeeServer
+
     }
 
     fun log(msg: String) {
-        ProxyServer.getInstance().console.sendMessage("§f" + msg)
+        ProxyServer.getInstance().console.sendMessage("§f$msg")
     }
 
     fun error(msg: String) {
-        ProxyServer.getInstance().console.sendMessage("§c" + msg)
+        ProxyServer.getInstance().console.sendMessage("§c$msg")
     }
 
     fun reload() {

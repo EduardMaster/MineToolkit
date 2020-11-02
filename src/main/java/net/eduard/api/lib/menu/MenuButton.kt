@@ -42,7 +42,7 @@ open class MenuButton(var name: String = "Botao"
         return iconPerPlayer?.invoke(player)?:icon
     }
 
-    var icon: ItemStack
+    var icon : ItemStack
         get() = item!!
         set(icon) {
             item = icon

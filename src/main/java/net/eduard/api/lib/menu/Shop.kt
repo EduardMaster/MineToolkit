@@ -337,7 +337,6 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
             val productButton = menuConfirmation!!.getButton("product")!!
             cancelButton.click = ClickEffect { event -> open(event.player) }
             confirmationButton.click = ClickEffect { event ->
-
                 val player = event.player
                 val produto = selectedProduct[player]!!
                 val type = trading[player]!!
@@ -346,7 +345,6 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                 } else if (type == TradeType.SELABLE) {
                     sell(player, produto, 1.0)
                 }
-
             }
         }
 
@@ -404,10 +402,12 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                     this.currency!!.remove(fake, nextUpgrade.price)
                     VaultAPI.getPermission().playerAdd(player, nextUpgrade.permission)
                     player.sendMessage(messageUpgradeBought
-                            .replace("\$product_name", nextUpgrade.displayName)
-                            .replace("\$product", nextUpgrade.name)
-
-                            .replace("\$level", "" + nextUpgrade.level))
+                            .replace("\$product_name",
+                                nextUpgrade.displayName)
+                            .replace("\$product",
+                                nextUpgrade.name)
+                            .replace("\$level",
+                                "" + nextUpgrade.level))
                 } else {
                     player.sendMessage(messageWithoutBalance)
                 }

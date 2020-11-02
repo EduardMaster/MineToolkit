@@ -225,6 +225,7 @@ fun <T : Event> KClass<T>.event(actionToDo: T.() -> Unit) {
 }
 
 
+
 inline fun <reified T : Event> event(noinline actionToDo: T.() -> Unit) {
     T::class.event(actionToDo)
 }

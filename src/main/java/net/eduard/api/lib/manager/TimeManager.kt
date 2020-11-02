@@ -28,7 +28,8 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
     var task: BukkitTask? = null
 
     val isRunning: Boolean
-        get() = existsTask() && Bukkit.getScheduler().isCurrentlyRunning(task!!.taskId)
+        get() = existsTask() &&
+                Bukkit.getScheduler().isCurrentlyRunning(task!!.taskId)
 
 
     /**
@@ -47,10 +48,10 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      *
      * @return Delay
      */
-    fun syncDelay(): BukkitTask? {
+    fun syncDelay(): BukkitTask {
         task = newTask(time,false,false,this)
         startedTime = Mine.getNow()
-        return task
+        return task!!
     }
 
     /**
@@ -59,10 +60,10 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      *
      * @return Timer
      */
-    fun syncTimer(): BukkitTask? {
+    fun syncTimer(): BukkitTask {
         task = newTask(time,true,false,this)
         startedTime = Mine.getNow()
-        return task
+        return task!!
     }
 
     /**
@@ -71,10 +72,10 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      *
      * @return Timer
      */
-    fun asyncTimer(): BukkitTask? {
+    fun asyncTimer(): BukkitTask {
         task = newTask(time,true,true,this)
         startedTime = Mine.getNow()
-        return task
+        return task!!
     }
 
     /**
@@ -83,10 +84,10 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      *
      * @return Delay
      */
-    fun asyncDelay(): BukkitTask? {
+    fun asyncDelay(): BukkitTask {
         task = newTask(time,false,true,this)
         startedTime = Mine.getNow()
-        return task
+        return task!!
     }
 
     /**

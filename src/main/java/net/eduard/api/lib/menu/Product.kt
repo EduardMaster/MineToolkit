@@ -3,7 +3,6 @@ package net.eduard.api.lib.menu
 import net.eduard.api.lib.game.EnchantGlow
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*

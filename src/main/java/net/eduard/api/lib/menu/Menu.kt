@@ -50,8 +50,8 @@ open class Menu(
     @Transient
     val playersWhoCanOpen = mutableListOf<Player>()
 
-    fun canOpen(player : Player): Boolean {
-        if (playersWhoCanOpen.isEmpty())return true
+    fun canOpen(player: Player): Boolean {
+        if (playersWhoCanOpen.isEmpty()) return true
         return playersWhoCanOpen.contains(player)
     }
 
@@ -59,7 +59,7 @@ open class Menu(
     @Transient
     var superiorMenu: Menu? = null
 
-    @Deprecated("Use multi button instead")
+
     @Transient
     var openHandler: (Menu.(Inventory, Player) -> Unit)? = null
 
@@ -90,6 +90,7 @@ open class Menu(
     var isPerPlayerInventory = false
     var openWithItem: ItemStack? = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
     var openWithCommand: String? = null
+    var openWithCommandText: String? = null
     var openNeedPermission: String? = null
     var messagePermission = "§cVocê precisa de permissão do Cargo Master para abrir este menu."
     var previousPage = Slot(
@@ -109,6 +110,7 @@ open class Menu(
     fun cantBeOpened() {
         openWithItem = null
         openWithCommand = null
+        openWithCommandText = null
     }
 
 
@@ -218,7 +220,7 @@ open class Menu(
     fun getSlotLimit(): Int {
         if (isAutoAlignItems) {
             if (lineAmount > 2) {
-                return ((lineAmount - 1) * 9) -1
+                return ((lineAmount - 1) * 9) - 1
             }
         }
         return (lineAmount * 9) - 1
@@ -239,6 +241,7 @@ open class Menu(
             button.index = lastSlot
         }
     }
+
     @Transient
     var lastPage = 1
 
@@ -300,9 +303,9 @@ open class Menu(
      * com 4 linhas com items e duas linhas vazias, e também com a
      * possibildade de deixar o meio sem items
      */
-    fun nextPosition(){
+    fun nextPosition() {
         lastSlot++
-        if (lastSlot < getSlotInicial()){
+        if (lastSlot < getSlotInicial()) {
             lastSlot = getSlotInicial()
         }
         if (autoAlignSkipCenter) {
@@ -316,7 +319,7 @@ open class Menu(
         if (Mine.isColumn(lastSlot, 1)) {
             lastSlot++
         }
-        if (lastSlot >= getSlotLimit()){
+        if (lastSlot >= getSlotLimit()) {
             lastPage++
             pageAmount++
             lastSlot = getSlotInicial()
@@ -324,7 +327,7 @@ open class Menu(
     }
 
     open fun open(player: Player, pageOpened: Int): Inventory? {
-        if (!canOpen(player)){
+        if (!canOpen(player)) {
             return null
         }
         if (openNeedPermission != null) {
@@ -368,7 +371,7 @@ open class Menu(
             if (this.superiorMenu != null) {
                 backPage.give(menu)
             }
-            update(menu, player,page)
+            update(menu, player, page)
 
 
             this.pageOpened[player] = page
@@ -384,7 +387,8 @@ open class Menu(
         }
         return null
     }
-    fun update(menu:Inventory , player : Player , page : Int){
+
+    fun update(menu: Inventory, player: Player, page: Int) {
         for (button in buttons) {
             if (button.page != page) continue
             var position = button.index
@@ -398,7 +402,7 @@ open class Menu(
             }
             val data = MineReflect.getData(icon)
             data.setString("button-name", button.name)
-            icon = MineReflect.setData(icon,data)
+            icon = MineReflect.setData(icon, data)
             menu.setItem(position, icon)
         }
     }
@@ -453,6 +457,19 @@ open class Menu(
         openWithCommand ?: return
 
         if (cmd.toLowerCase() == openWithCommand!!.toLowerCase()) {
+            event.isCancelled = true
+            open(player)
+        }
+    }
+
+    @EventHandler
+    fun onCommandText(event: PlayerCommandPreprocessEvent) {
+        val player = event.player
+        val message = event.message
+
+        openWithCommandText ?: return
+
+        if (message.toLowerCase().startsWith(openWithCommandText!!.toLowerCase())) {
             event.isCancelled = true
             open(player)
         }

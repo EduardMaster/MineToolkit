@@ -10,6 +10,7 @@ import java.io.File;
  * @author Eduard
  */
 public class EduardAPIBungeeMain extends Plugin {
+
     static{
         new LibraryLoader(new File("libs/")).loadLibraries();
     }

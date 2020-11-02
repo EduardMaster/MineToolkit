@@ -18,6 +18,7 @@ class MemoryCommand : CommandManager("memory", "memoria") {
         sender.sendMessage("§aMemoria Maxima: $maximoMemoria")
         sender.sendMessage("§aMemoria Usada: $memoriaUsada")
 
+
         return true
     }
 }

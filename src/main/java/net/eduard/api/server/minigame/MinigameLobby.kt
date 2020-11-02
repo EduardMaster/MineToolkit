@@ -5,10 +5,10 @@ import net.eduard.api.lib.database.annotations.TableName
 
 
 @TableName("minigame_lobbies")
-class MinigameLobby {
+class MinigameLobby( @ColumnPrimary
+                     var id: Int = 1) {
 
-    @ColumnPrimary
-    var id = 1
+
     var maxSlot: Int = 20
 
     @Transient

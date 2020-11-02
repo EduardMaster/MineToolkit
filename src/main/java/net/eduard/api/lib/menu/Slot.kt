@@ -35,8 +35,16 @@ open class Slot(
             this(positionX,positionY,item)
 
 
-    fun equals(item: ItemStack): Boolean {
-        return this.item == item
+    override fun equals(other: Any?): Boolean {
+        if (other == null)return false
+        if (other is Slot){
+            return positionX == other.positionX &&
+                    positionY == other.positionY
+        }
+        if (other is ItemStack){
+            return this.item == other
+        }
+        return false
     }
 
 
@@ -62,6 +70,12 @@ open class Slot(
         val clone = item?.clone()
         Mine.applyPlaceholders(clone, placeholders)
         menu.setItem(index, clone)
+    }
+
+    override fun hashCode(): Int {
+        var result = positionX
+        result = 31 * result + positionY
+        return result
     }
 
 }

@@ -35,6 +35,7 @@ import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.list.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
+import net.eduard.api.task.DatabaseUpdater
 import net.eduard.api.task.PlayerTargetPlayerTask
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -53,15 +54,15 @@ import java.util.*
  * @since 0.5
  */
 class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
-
+    override var started =false
     override var configs = Config(plugin, "config.yml")
     override var storage = Config(plugin, "storage.yml")
     override var messages = Config(plugin, "messages.yml")
     override var dbManager = DBManager()
     override lateinit var sqlManager : SQLManager
     override lateinit var storageManager : StorageManager
-    override var databaseFile = File(this.pluginFolder, "data.db")
     override fun onLoad() {
+        started  =true
         BukkitTypes
         HybridTypes
         Hybrid.instance = BukkitServer
@@ -69,7 +70,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")
         storage = Config(this, "storage.yml")
-        databaseFile = File(pluginFolder, "database.db")
+
         configs.add("database-type", StorageType.YAML)
         configs.add("log-enabled", true)
         configs.add("database", dbManager)
@@ -160,6 +161,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         JHCashHook()
 
         MemoryCommand().registerCommand(plugin)
+        DatabaseUpdater().asyncTimer()
+
     }
 
 
