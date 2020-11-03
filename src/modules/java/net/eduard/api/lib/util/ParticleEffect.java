@@ -1,4 +1,4 @@
-package net.eduard.api.lib.util.particle;
+package net.eduard.api.lib.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -218,8 +218,8 @@ public enum ParticleEffect {
 	  }
 	  public void display(Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount, Player players)
 	  {
-	    sendPacket(Arrays.asList(
-	      new Player[] { players }), instantiatePacket(this.name, center, offsetX, offsetY, offsetZ, speed, amount));
+	    sendPacket(Collections.singletonList(
+				players), instantiatePacket(this.name, center, offsetX, offsetY, offsetZ, speed, amount));
 	  }
 
 	  public void display(Location center, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount)
@@ -596,7 +596,7 @@ public enum ParticleEffect {
 		      setDeclaredValues(getClass(className, type), instance, pairs);
 		    }
 
-		    public static enum DataType
+		    public enum DataType
 		    {
 		      BYTE(Byte.TYPE, Byte.class), 
 		      SHORT(Short.TYPE, Short.class), 
@@ -618,7 +618,7 @@ public enum ParticleEffect {
 		          CLASS_MAP.put(t.reference, t);
 		        } }
 
-		      private DataType(Class<?> primitive, Class<?> reference)
+		      DataType(Class<?> primitive, Class<?> reference)
 		      {
 		        this.primitive = primitive;
 		        this.reference = reference;
@@ -674,7 +674,7 @@ public enum ParticleEffect {
 		      }
 		    }
 
-		    public final class FieldPair
+		    public static final class FieldPair
 		    {
 		      private final String name;
 		      private final Object value;
@@ -693,7 +693,7 @@ public enum ParticleEffect {
 		      }
 		    }
 
-		    public static enum PackageType
+		    public enum PackageType
 		    {
 		      MINECRAFT_SERVER("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().substring(23)), 
 		      CRAFTBUKKIT(Bukkit.getServer().getClass().getPackage().getName());
@@ -715,7 +715,7 @@ public enum ParticleEffect {
 		      }
 		    }
 
-		    public static enum PacketType
+		    public enum PacketType
 		    {
 		      HANDSHAKING_IN_SET_PROTOCOL("PacketHandshakingInSetProtocol"), 
 		      LOGIN_IN_ENCRYPTION_BEGIN("PacketLoginInEncryptionBegin"), 
@@ -824,7 +824,7 @@ public enum ParticleEffect {
 
 		      public String getName()
 		      {
-		        return getName();
+		        return name;
 		      }
 
 		      public Class<?> getPacket() throws Exception {

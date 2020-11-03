@@ -127,7 +127,7 @@ public class DragonBar {
 		Object nms_entity = null;
 		Method entity_getHandle = getMethod(entity.getClass(), "getHandle");
 		try {
-			nms_entity = Objects.requireNonNull(entity_getHandle).invoke(entity, new Object[0]);
+			nms_entity = Objects.requireNonNull(entity_getHandle).invoke(entity);
 		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
@@ -138,6 +138,7 @@ public class DragonBar {
 		Object nms_entity = null;
 		Method entity_getHandle = getMethod(entity.getClass(), "getHandle");
 		try {
+			assert entity_getHandle != null;
 			nms_entity = entity_getHandle.invoke(entity);
 		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
@@ -148,9 +149,7 @@ public class DragonBar {
 	public static Field getField(Class<?> cl, String field_name) {
 		try {
 			return cl.getDeclaredField(field_name);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
+		} catch (SecurityException | NoSuchFieldException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -158,10 +157,10 @@ public class DragonBar {
 
 	public static Method getMethod(Class<?> cl, String method,
 			Class<?>[] args) {
-		for (Method m : cl.getMethods()) {
-			if ((m.getName().equals(method))
-					&& (ClassListEqual(args, m.getParameterTypes()))) {
-				return m;
+		for (Method mtd : cl.getMethods()) {
+			if ((mtd.getName().equals(method))
+					&& (ClassListEqual(args, mtd.getParameterTypes()))) {
+				return mtd;
 			}
 		}
 		return null;
@@ -218,18 +217,13 @@ public class DragonBar {
 
 		private static final int MAX_HEALTH = 200;
 		private int id;
-		private int x;
-		private int y;
-		private int z;
-		private int pitch = 0;
-		private int yaw = 0;
-		private byte xvel = 0;
-		private byte yvel = 0;
-		private byte zvel = 0;
+		private final int x;
+		private final int y;
+		private final int z;
 		private float health;
-		private boolean visible = false;
+		private final boolean visible = false;
 		private String name;
-		private Object world;
+		private final Object world;
 		private Object dragon;
 
 		public Dragon(String name, Location loc, int percent) {
@@ -258,16 +252,18 @@ public class DragonBar {
 			Class<?> EntityEnderDragon = getCraftClass("EntityEnderDragon");
 			this.dragon = EntityEnderDragon
 					.getConstructor(new Class[]{getCraftClass("World")})
-					.newInstance(new Object[]{this.world});
+					.newInstance(this.world);
 
 			Method setLocation = getMethod(EntityEnderDragon, "setLocation",
 					new Class[]{Double.TYPE, Double.TYPE, Double.TYPE,
 							Float.TYPE, Float.TYPE});
+			int pitch = 0;
+			int yaw = 0;
 			Objects.requireNonNull(setLocation).invoke(this.dragon,
 					this.x,
 					this.y, this.z,
-					this.pitch,
-					this.yaw);
+					pitch,
+					yaw);
 
 			Method setInvisible = getMethod(EntityEnderDragon, "setInvisible",
 					new Class[]{Boolean.TYPE});
@@ -284,13 +280,19 @@ public class DragonBar {
 					this.health);
 
 			Field motX = getField(Entity, "motX");
-			motX.set(this.dragon, this.xvel);
+			byte xvel = 0;
+			assert motX != null;
+			motX.set(this.dragon, xvel);
 
 			Field motY = getField(Entity, "motX");
-			motY.set(this.dragon, this.yvel);
+			byte yvel = 0;
+			assert motY != null;
+			motY.set(this.dragon, yvel);
 
 			Field motZ = getField(Entity, "motX");
-			motZ.set(this.dragon, this.zvel);
+			byte zvel = 0;
+			assert motZ != null;
+			motZ.set(this.dragon, zvel);
 
 			Method getId = getMethod(EntityEnderDragon, "getId", new Class[0]);
 			this.id = (Integer) Objects.requireNonNull(getId).invoke(this.dragon, new Object[0]);
@@ -311,7 +313,7 @@ public class DragonBar {
 					"PacketPlayOutEntityDestroy");
 
 			Object packet = PacketPlayOutEntityDestroy
-					.getConstructor(new Class[0]).newInstance(new Object[0]);
+					.getConstructor(new Class[0]).newInstance();
 
 			Field a = PacketPlayOutEntityDestroy.getDeclaredField("a");
 			a.setAccessible(true);
@@ -329,12 +331,10 @@ public class DragonBar {
 			Class<?> PacketPlayOutEntityMetadata = getCraftClass(
 					"PacketPlayOutEntityMetadata");
 
-			Object packet = PacketPlayOutEntityMetadata.getConstructor(
+			return PacketPlayOutEntityMetadata.getConstructor(
 					new Class[]{Integer.TYPE, DataWatcher, Boolean.TYPE})
-					.newInstance(new Object[]{Integer.valueOf(this.id), watcher,
-							Boolean.valueOf(true)});
-
-			return packet;
+					.newInstance(this.id, watcher,
+							Boolean.TRUE);
 		}
 
 		public Object getTeleportPacket(Location loc)
@@ -344,19 +344,16 @@ public class DragonBar {
 			Class<?> PacketPlayOutEntityTeleport = getCraftClass(
 					"PacketPlayOutEntityTeleport");
 
-			Object packet = PacketPlayOutEntityTeleport
+			return PacketPlayOutEntityTeleport
 					.getConstructor(new Class[]{Integer.TYPE, Integer.TYPE,
 							Integer.TYPE, Integer.TYPE, Byte.TYPE, Byte.TYPE})
-					.newInstance(new Object[]{Integer.valueOf(this.id),
-							Integer.valueOf(loc.getBlockX() * 32),
-							Integer.valueOf(loc.getBlockY() * 32),
-							Integer.valueOf(loc.getBlockZ() * 32),
-							Byte.valueOf(
-									(byte) ((int) loc.getYaw() * 256 / 360)),
-							Byte.valueOf((byte) ((int) loc.getPitch() * 256
-									/ 360))});
-
-			return packet;
+					.newInstance(this.id,
+							loc.getBlockX() * 32,
+							loc.getBlockY() * 32,
+							loc.getBlockZ() * 32,
+							(byte) ((int) loc.getYaw() * 256 / 360),
+							(byte) ((int) loc.getPitch() * 256
+									/ 360));
 		}
 		public Object getTeleportPacket2(Location loc)
 				throws IllegalArgumentException, SecurityException,
@@ -365,19 +362,16 @@ public class DragonBar {
 			Class<?> PacketPlayOutEntityTeleport = getCraftClass(
 					"PacketPlayOutEntityTeleport");
 
-			Object packet = PacketPlayOutEntityTeleport
+			return PacketPlayOutEntityTeleport
 					.getConstructor(new Class[]{Integer.TYPE, Integer.TYPE,
 							Integer.TYPE, Integer.TYPE, Byte.TYPE, Byte.TYPE,Boolean.TYPE})
-					.newInstance(new Object[]{Integer.valueOf(this.id),
-							Integer.valueOf(loc.getBlockX() * 32),
-							Integer.valueOf(loc.getBlockY() * 32),
-							Integer.valueOf(loc.getBlockZ() * 32),
-							Byte.valueOf(
-									(byte) ((int) loc.getYaw() * 256 / 360)),
-							Byte.valueOf((byte) ((int) loc.getPitch() * 256
-									/ 360)),true});
-
-			return packet;
+					.newInstance(this.id,
+							loc.getBlockX() * 32,
+							loc.getBlockY() * 32,
+							loc.getBlockZ() * 32,
+							(byte) ((int) loc.getYaw() * 256 / 360),
+							(byte) ((int) loc.getPitch() * 256
+									/ 360),true);
 		}
 
 		public Object getWatcher()
@@ -388,15 +382,16 @@ public class DragonBar {
 			Class<?> DataWatcher = getCraftClass("DataWatcher");
 
 			Object watcher = DataWatcher.getConstructor(new Class[]{Entity})
-					.newInstance(new Object[]{this.dragon});
+					.newInstance(this.dragon);
 
 			Method a = getMethod(DataWatcher, "a",
 					new Class[]{Integer.TYPE, Object.class});
 
-			a.invoke(watcher, new Object[]{0,
-					(byte) (this.visible ? 0 : 32)});
-			a.invoke(watcher, new Object[]{6,
-					Float.valueOf(this.health)});
+			assert a != null;
+			a.invoke(watcher, 0,
+					(byte) (this.visible ? 0 : 32));
+			a.invoke(watcher, 6,
+					this.health);
 			a.invoke(watcher,
 					7, 0);
 			a.invoke(watcher,

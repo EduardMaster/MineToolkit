@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.util.Vector;
+
 /**
  * 
  * Sistema de geração de Cuboid
@@ -97,6 +98,7 @@ public class Cuboid implements Cloneable, ConfigurationSerializable, Iterable<Bl
 	}
 
 	public Location getLowerLocation() {
+
 		return this.minimumPoint.toLocation(this.getWorld());
 	}
 
@@ -149,8 +151,15 @@ public class Cuboid implements Cloneable, ConfigurationSerializable, Iterable<Bl
 
 	@Override
 	public Cuboid clone() {
+		try {
+			return (Cuboid) super.clone();
+
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
 		return new Cuboid(this);
 	}
+
 
 	@Override
 	public ListIterator<Block> iterator() {

@@ -163,10 +163,9 @@ public final class VaultAPI {
 
 	/**
 	 * Tenta Ativar o Sistema de Chat
-	 * 
-	 * @return Se ativou ou nao
+	 *
 	 */
-	private static boolean setupChat() {
+	private static void setupChat() {
 
 		RegisteredServiceProvider<Chat> chatProvider = Bukkit.getServer().getServicesManager()
 				.getRegistration(net.milkbowl.vault.chat.Chat.class);
@@ -174,15 +173,13 @@ public final class VaultAPI {
 			chat = chatProvider.getProvider();
 		}
 
-		return (chat != null);
 	}
 
 	/**
 	 * Tenta Ativar o Sistema de Economia
-	 * 
-	 * @return Se ativou ou nao
+	 *
 	 */
-	private static boolean setupEconomy() {
+	private static void setupEconomy() {
 
 		RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager()
 				.getRegistration(net.milkbowl.vault.economy.Economy.class);
@@ -190,22 +187,19 @@ public final class VaultAPI {
 			economy = economyProvider.getProvider();
 		}
 
-		return (economy != null);
 	}
 
 	/**
 	 * Tenta ativar o Sistema de permissões
-	 * 
-	 * @return Se Ativou ou nao
+	 *
 	 */
-	private static boolean setupPermissions() {
+	private static void setupPermissions() {
 
 		RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
 				.getRegistration(net.milkbowl.vault.permission.Permission.class);
 		if (permissionProvider != null) {
 			permission = permissionProvider.getProvider();
 		}
-		return (permission != null);
 	}
 
 	

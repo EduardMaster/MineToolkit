@@ -1,4 +1,4 @@
-package net.eduard.api.lib.util.particle;
+package net.eduard.api.lib.util;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;

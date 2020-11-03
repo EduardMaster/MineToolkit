@@ -180,10 +180,9 @@ final public class Schematic {
 						{
 //							Mine.console("erro "+typeId+ "   "+typeData);
 							block.setTypeIdAndData(typeId, typeData, false);
-						}else {
 						}
-					}else {
 					}
+					assert block != null;
 					if (block.getState() instanceof Chest) {
 						Chest chest = (Chest) block.getState();
 						chests.add(chest);

@@ -1,7 +1,5 @@
-package net.eduard.api.lib.licence;
+package net.eduard.api.lib.modules;
 
-import net.eduard.api.lib.config.BukkitConfig;
-import net.eduard.api.lib.config.BungeeConfig;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -9,9 +7,12 @@ import net.md_5.bungee.api.plugin.Plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Scanner;
 
 /**
@@ -21,13 +22,12 @@ import java.util.Scanner;
  * @author Eduard
  *
  */
-public class Licence {
+public class LicencePlugin {
 
-	private static String site = "link";
+	private static final String site = "link";
 
 	private static PluginActivationStatus test(String plugin, String owner, String key) {
 		try {
-			String tag = "[" + plugin + "] ";
 			String link = site + "key=" + key + "&plugin=" + plugin + "&owner=" + owner;
 			URLConnection connect = new URL(link).openConnection();
 			connect.setConnectTimeout(5000);
@@ -57,7 +57,7 @@ public class Licence {
 		}
 	}
 
-	private static enum PluginActivationStatus {
+	private enum PluginActivationStatus {
 
 		INVALID_KEY("§cNao foi encontrado esta Licensa no Sistema."),
 		WRONG_KEY("§cNao possui esta Licensa no Sistema."),
@@ -73,15 +73,12 @@ public class Licence {
 		private String message;
 		private boolean active;
 
-		private PluginActivationStatus() {
 
-		}
-
-		private PluginActivationStatus(String message) {
+		PluginActivationStatus(String message) {
 			setMessage(message);
 		}
 
-		private PluginActivationStatus(String message, boolean active) {
+		PluginActivationStatus(String message, boolean active) {
 			setMessage(message);
 			setActive(active);
 		}
@@ -102,6 +99,42 @@ public class Licence {
 			this.active = active;
 		}
 	}
+	private static class License{
+		private String owner="DONO";
+		private String key="KEY_RANDOM";
+
+
+		public License(File file){
+			if (file.exists()){
+				reload(file);
+			}else{
+				save(file);
+			}
+
+		}
+
+
+		public void save(File file){
+			try {
+				Files.write(file.toPath(),(owner+";"+key).getBytes( StandardCharsets.UTF_8));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+		public void reload(File file){
+			try {
+				String data = Files.readAllLines(file.toPath(),StandardCharsets.UTF_8).get(0);
+				String[] split = data.split(";");
+				owner = split[0];
+				key = split[1];
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
 
 	public static class BukkitTester {
 
@@ -110,16 +143,12 @@ public class Licence {
 			String pluginName = plugin.getName();
 			String tag = "§b[" + plugin.getName() + "] §f";
 			Bukkit.getConsoleSender().sendMessage(tag + "§eFazendo autenticacao do Plugin no site");
-			BukkitConfig config = new BukkitConfig("license.yml", plugin);
-			config.add("key", "INSIRA_KEY");
-			config.add("owner", "INSIRA_Dono");
-			config.saveDefault();
-			String key = config.getString("key");
-			String owner = config.getString("owner");
-			Bukkit.getScheduler().runTaskAsynchronously(plugin, (Runnable) () ->
+			License license = new License(new File(plugin.getDataFolder(),"license.txt"));
+
+			Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
 
 			{
-				PluginActivationStatus result = Licence.test(pluginName, owner, key);
+				PluginActivationStatus result = LicencePlugin.test(pluginName, license.owner,license.key);
 
 				Bukkit.getConsoleSender().sendMessage(tag + result.getMessage());
 				if (!result.isActive()) {
@@ -140,16 +169,12 @@ public class Licence {
 			String pluginName = plugin.getDescription().getName();
 			ProxyServer.getInstance().getConsole()
 					.sendMessage(new TextComponent("§aAutenticando o plugin " + pluginName));
-			BungeeConfig config = new BungeeConfig("license.yml", plugin);
-			config.add("key", "INSIRA_KEY");
-			config.add("owner", "INSIRA_Dono");
-			config.saveConfig();
-			String key = config.getString("key");
-			String owner = config.getString("onwer");
+			License license = new License(new File(plugin.getDataFolder(),"license.txt"));
+
 			String tag = "§b[" + plugin.getDescription().getName() + "] §f";
 			ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
 
-				PluginActivationStatus result = Licence.test(pluginName, owner, key);
+				PluginActivationStatus result = LicencePlugin.test(pluginName, license.owner, license.key);
 				ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(tag + result.getMessage()));
 				if (!result.isActive()) {
 					ProxyServer.getInstance().getPluginManager().unregisterListeners(plugin);

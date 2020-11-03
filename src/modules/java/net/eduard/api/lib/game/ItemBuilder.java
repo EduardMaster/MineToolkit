@@ -24,7 +24,7 @@ import org.bukkit.inventory.meta.SkullMeta;
  * Builder de Item que extende {@link ItemStack}
  * <br>Não é um padrão comum de Java
  * <br>
- * Método build() gerá um instancia nova de ItemStack
+ * Método build() gerá um instancia nova de ItemBuilder
  *
  * @author Eduard
  */

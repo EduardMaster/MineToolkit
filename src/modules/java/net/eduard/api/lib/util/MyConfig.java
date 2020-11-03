@@ -1,4 +1,4 @@
-package net.eduard.api.lib.util.myconfig;
+package net.eduard.api.lib.util;
 
 import java.io.File;
 import java.io.InputStream;
@@ -17,8 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MyConfig {
 	private int comments;
-	private MyConfigManager manager;
-	private File file;
+	private final MyConfigManager manager;
+	private final File file;
 	private FileConfiguration config;
 
 	@SuppressWarnings("deprecation")

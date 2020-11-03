@@ -1,4 +1,4 @@
-package net.eduard.api.lib.util.myconfig;
+package net.eduard.api.lib.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,7 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.bukkit.plugin.java.JavaPlugin;
 /**
@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Internet
  */
 public class MyConfigManager {
-	private JavaPlugin plugin;
+	private final JavaPlugin plugin;
 
 	public MyConfigManager(JavaPlugin plugin) {
 		this.plugin = plugin;
@@ -35,8 +35,8 @@ public class MyConfigManager {
 				setHeader(file, header);
 			}
 		}
-		MyConfig config = new MyConfig(getConfigContent(fileName), file, getCommentsNum(file), this.plugin);
-		return config;
+		return new MyConfig(getConfigContent(fileName), file,
+				getCommentsNum(file), this.plugin);
 	}
 
 	public MyConfig getNewConfig(String fileName) {
@@ -44,8 +44,8 @@ public class MyConfigManager {
 	}
 
 	private File getConfigFile(String file) {
-		if ((file.isEmpty()) || (file == null))
-			return null;
+		if ((file == null) || (file.isEmpty()))
+			return  new File("arquivo");
 		File configFile;
 		if (file.contains("/")) {
 			if (file.startsWith("/"))
@@ -84,7 +84,7 @@ public class MyConfigManager {
 			return;
 		}
 		try {
-			StringBuilder config = new StringBuilder("");
+			StringBuilder config = new StringBuilder();
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String currentLine;
 			while ((currentLine = reader.readLine()) != null) {
@@ -135,21 +135,20 @@ public class MyConfigManager {
 
 			String pluginName = getPluginName();
 
-			StringBuilder whole = new StringBuilder("");
+			StringBuilder whole = new StringBuilder();
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String currentLine;
 			while ((currentLine = reader.readLine()) != null) {
-				String currentLine1 = currentLine;
-				if (currentLine1.startsWith("#")) {
-					String addLine = currentLine1.replaceFirst("#", pluginName + "_COMMENT_" + commentNum + ":");
+				if (currentLine.startsWith("#")) {
+					String addLine = currentLine.replaceFirst("#", pluginName + "_COMMENT_" + commentNum + ":");
 					whole.append(addLine + "\n");
 					commentNum++;
 				} else {
-					whole.append(currentLine1 + "\n");
+					whole.append(currentLine + "\n");
 				}
 			}
 			String config = whole.toString();
-			InputStream configStream = new ByteArrayInputStream(config.getBytes(Charset.forName("UTF-8")));
+			InputStream configStream = new ByteArrayInputStream(config.getBytes(StandardCharsets.UTF_8));
 
 			reader.close();
 			return configStream;
@@ -169,8 +168,7 @@ public class MyConfigManager {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String currentLine;
 			while ((currentLine = reader.readLine()) != null) {
-				String currentLine1 = currentLine;
-				if (currentLine1.startsWith("#")) {
+				if (currentLine.startsWith("#")) {
 					comments++;
 				}
 			}
@@ -183,7 +181,8 @@ public class MyConfigManager {
 	}
 
 	public InputStream getConfigContent(String filePath) {
-		return getConfigContent(getConfigFile(filePath));
+		return getConfigContent(
+				getConfigFile(filePath));
 	}
 
 	private String prepareConfigString(String configString) {
@@ -191,7 +190,7 @@ public class MyConfigManager {
 		int headerLine = 0;
 
 		String[] lines = configString.split("\n");
-		StringBuilder config = new StringBuilder("");
+		StringBuilder config = new StringBuilder();
 		for (String line : lines) {
 			if (line.startsWith(getPluginName() + "_COMMENT")) {
 				String comment = "#" + line.trim().substring(line.indexOf(":") + 1);
@@ -250,8 +249,7 @@ public class MyConfigManager {
 			byte[] buf = new byte[1024];
 			int length;
 			while ((length = resource.read(buf)) > 0) {
-				int length1 = length;
-				out.write(buf, 0, length1);
+				out.write(buf, 0, length);
 			}
 			out.close();
 			resource.close();
