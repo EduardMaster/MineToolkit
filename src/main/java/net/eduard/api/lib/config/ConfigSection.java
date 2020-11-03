@@ -3,14 +3,12 @@ package net.eduard.api.lib.config;
 import java.util.*;
 import java.util.Map.Entry;
 
-import net.eduard.api.lib.storage.StorageObject;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.StorageInfo;
 
 /**
  * Interpretador de YAML proprio, Secao da {@link Config}
@@ -56,8 +54,8 @@ public class ConfigSection {
     /**
      * Usar builder porque da menos lag
      *
-     * @param amount
-     * @return
+     * @param amount Quantidade
+     * @return Texto com varios espaços
      */
     private static String getSpace(int amount) {
         StringBuilder builder = new StringBuilder();

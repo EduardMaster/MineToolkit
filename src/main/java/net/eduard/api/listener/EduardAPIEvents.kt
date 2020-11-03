@@ -27,32 +27,32 @@ import org.bukkit.scheduler.BukkitRunnable
 class EduardAPIEvents : EventsManager() {
     @EventHandler
     fun onChat(e : AsyncPlayerChatEvent){
-        val p = e.player
-        if (p.hasPermission("chat.color")){
+        val player = e.player
+        if (player.hasPermission("chat.color")){
             e.message = ChatColor.translateAlternateColorCodes('&',e.message)
         }
     }
 
     @EventHandler
     fun marketing(e: PlayerJoinEvent) {
-        val p = e.player
+        val player = e.player
         if (EduardAPI.instance.getBoolean("skins")) {
-            PlayerSkin.change(p, p.name)
+            PlayerSkin.change(player, player.name)
         }
-        if (p.hasPermission("eduard.plugins")) {
+        if (player.hasPermission("eduard.plugins")) {
             for (plugin in Bukkit.getPluginManager().plugins) {
                 if (plugin is EduardPlugin) {
                     if (plugin.isEnabled()) {
-                        p.sendMessage("§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
+                        player.sendMessage("§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
                                 + plugin.getDescription().version + "§a esta ativado.")
                     } else {
-                        p.sendMessage("§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
+                        player.sendMessage("§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
                                 + plugin.getDescription().version + "§c esta desativado.")
                     }
 
                 }
             }
-            p.sendMessage("§aCaso deseje comprar mais plugins entre em contato ou no site §bwww.eduard.com.br")
+            player.sendMessage("§aCaso deseje comprar mais plugins entre em contato ou no site §bwww.eduard.com.br")
         }
 
     }
@@ -106,7 +106,7 @@ class EduardAPIEvents : EventsManager() {
     fun onQuit(e: PlayerQuitEvent) {
         val p = e.player
         if (EduardAPI.instance.configs.getBoolean("custom-quit-message"))
-            e.quitMessage = Mine.MSG_ON_QUIT.replace("\$player", p.name)
+            e.quitMessage = EduardAPI.MSG_ON_QUIT.replace("\$player", p.name)
         if (Mine.OPT_NO_QUIT_MESSAGE) {
             e.quitMessage = ""
         }
@@ -121,7 +121,7 @@ class EduardAPIEvents : EventsManager() {
                 e.joinMessage = EduardAPI.instance.message("first-join-message").replace("\$player", p.name)
             }
         } else if (EduardAPI.instance.configs.getBoolean("custom-join-message")) {
-            e.joinMessage = Mine.MSG_ON_JOIN.replace("\$player", p.name)
+            e.joinMessage = EduardAPI.MSG_ON_JOIN.replace("\$player", p.name)
         }
 
 

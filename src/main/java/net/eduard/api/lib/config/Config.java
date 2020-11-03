@@ -3,10 +3,7 @@ package net.eduard.api.lib.config;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.modules.Extra;
@@ -21,9 +18,9 @@ public class Config {
 
     private transient ConfigSection root;
     private transient File file;
-    private transient File folder;
+    private final transient File folder;
     private transient Object plugin;
-    private String name;
+    private final String name;
     transient List<String> lines;
     private File getDataFolder() {
 
@@ -186,11 +183,8 @@ public class Config {
         } else if (!name.equals(other.name))
             return false;
         if (plugin == null) {
-            if (other.plugin != null)
-                return false;
-        } else if (!plugin.equals(other.plugin))
-            return false;
-        return true;
+            return other.plugin == null;
+        } else return plugin.equals(other.plugin);
     }
 
     public boolean existConfig() {
@@ -212,7 +206,7 @@ public class Config {
     public List<Config> getConfigsChildren() {
         ArrayList<Config> list = new ArrayList<>();
         if (Files.isDirectory(file.toPath())) {
-            for (String subFile : file.list()) {
+            for (String subFile : Objects.requireNonNull(file.list())) {
                 list.add(createConfig(name + subFile));
             }
         }

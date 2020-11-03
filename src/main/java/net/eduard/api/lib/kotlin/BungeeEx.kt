@@ -11,7 +11,7 @@ val String.bungeePlayer get() = ProxyServer.getInstance().getPlayer(this)
 
 val UUID.bungeePlayer get() = ProxyServer.getInstance().getPlayer(this)
 
-inline fun Listener.register(plugin : Plugin){
+fun Listener.register(plugin : Plugin){
     ProxyServer.getInstance().pluginManager.registerListener(plugin,this)
 }
 

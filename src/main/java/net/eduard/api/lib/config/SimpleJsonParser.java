@@ -115,10 +115,7 @@ public class SimpleJsonParser {
 	public Object parse() {
 		debug("TRYING TO PARSE");
 
-		while (true) {
-			if (index == jsonOriginal.length()) {
-				break;
-			}
+		while (index != jsonOriginal.length()) {
 			char letra = read();
 			if (letra == OBJECT_START) {
 				return parseObject();
@@ -127,11 +124,8 @@ public class SimpleJsonParser {
 			} else if (letra == STRING_START) {
 				return parseString();
 			} else if (letra == ENTRY_SEPARATOR) {
-				continue;
 			} else if (letra == SPACE) {
-				continue;
 			} else if (letra == ENTER) {
-				continue;
 			} else {
 				index--;
 				return readAnormalString();

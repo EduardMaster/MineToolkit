@@ -12,7 +12,7 @@ class BungeeEvents : Listener {
 
 
     val bungee get() = EduardAPIBungee.instance.bungeeDB
-    val db get() = EduardAPIBungee.instance.databaseManager
+    val dbManager get() = EduardAPIBungee.instance.databaseManager
 
 
 
@@ -21,9 +21,9 @@ class BungeeEvents : Listener {
     fun onJoin(e: PostLoginEvent) {
         val player = e.player
         // info("§aPostLoginEvent", player.getPendingConnection());
-        if (db.hasConnection()) {
+        if (dbManager.hasConnection()) {
             if (!bungee.playersContains(player.name)) {
-                db.insert("players", player.name, player.uniqueId, "")
+                dbManager.insert("players", player.name, player.uniqueId, "")
             }
         }
     }
@@ -33,7 +33,7 @@ class BungeeEvents : Listener {
         val serverName = e.target.name
         val playerUUID = e.player.uniqueId
         val playerAmount = e.target.players.size
-        if (db.hasConnection()) {
+        if (dbManager.hasConnection()) {
             ProxyServer.getInstance().scheduler.runAsync(EduardAPIBungee.instance.plugin) {
                 bungee.setPlayersAmount(serverName, playerAmount)
                 bungee.setPlayerServer(playerUUID, "")
@@ -45,7 +45,7 @@ class BungeeEvents : Listener {
         val serverName = e.server.info.name
         val playerUUID = e.player.uniqueId
         val playerAmount = e.server.info.players.size
-        if (db.hasConnection()) {
+        if (dbManager.hasConnection()) {
             ProxyServer.getInstance().scheduler.runAsync(EduardAPIBungee.instance.plugin) {
                 bungee.setPlayersAmount(serverName, playerAmount)
                 bungee.setPlayerServer(playerUUID, serverName)

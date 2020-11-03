@@ -18,18 +18,18 @@ class EduWorldEditListener : EventsManager() {
 
     @EventHandler
     fun onSelectPositions(e: PlayerInteractEvent) {
-        val p = e.player
-        if (p.gameMode == GameMode.CREATIVE) {
+        val player = e.player
+        if (player.gameMode == GameMode.CREATIVE) {
             if (e.item == null)
                 return
             if (e.item.type == Material.WOOD_AXE) {
-                val mapa = EduardAPI.getSchematic(p)
+                val mapa = EduardAPI.getSchematic(player)
                 if (e.action == Action.LEFT_CLICK_BLOCK) {
                     mapa.high = e.clickedBlock.location.toVector()
-                    p.sendMessage("§aPosição 1 setada!")
+                    player.sendMessage("§aPosição 1 setada!")
                 } else if (e.action == Action.RIGHT_CLICK_BLOCK) {
                     mapa.low = e.clickedBlock.location.toVector()
-                    p.sendMessage("§aPosição 2 setada!")
+                    player.sendMessage("§aPosição 2 setada!")
                 }
             }
         }

@@ -3,7 +3,6 @@ package net.eduard.api.lib.click;
 import org.bukkit.inventory.ItemStack;
 
 import net.eduard.api.lib.manager.EventsManager;
-import net.eduard.api.lib.storage.Storable;
 
 public abstract class PlayerInteract extends EventsManager {
 	

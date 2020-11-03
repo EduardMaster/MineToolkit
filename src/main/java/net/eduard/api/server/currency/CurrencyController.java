@@ -9,6 +9,8 @@ public class CurrencyController {
 
     private CurrencyController() {
     }
+    private final Map<String, CurrencyHandler> currencies = new LinkedHashMap<>();
+
 
     private static final CurrencyController INSTANCE = new CurrencyController();
 
@@ -32,9 +34,7 @@ public class CurrencyController {
     }
 
     public CurrencyHandler getCurrencyByIcon(ItemStack icon) {
-        Iterator<CurrencyHandler> it = currencies.values().iterator();
-        while (it.hasNext()) {
-            CurrencyHandler currencyHandler = it.next();
+        for (CurrencyHandler currencyHandler : currencies.values()) {
             if (icon.equals(currencyHandler.getIcon())) {
                 return currencyHandler;
             }
@@ -43,7 +43,6 @@ public class CurrencyController {
         return null;
     }
 
-    private Map<String, CurrencyHandler> currencies = new LinkedHashMap<>();
 
 
     public void register(SimpleCurrencyHandler simpleCurrencyHandler) {

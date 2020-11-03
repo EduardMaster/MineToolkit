@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class BukkitConfigs {
 
     private Plugin plugin;
 
-    private String name;
+    private final String name;
 
     private File file;
 
@@ -161,7 +162,7 @@ public class BukkitConfigs {
     public BukkitConfigs saveConfig() {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file, false);
-            fileOutputStream.write(config.saveToString().getBytes("UTF-8"));
+            fileOutputStream.write(config.saveToString().getBytes(StandardCharsets.UTF_8));
             fileOutputStream.close();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -216,7 +217,7 @@ public class BukkitConfigs {
     /**
      * Salva os padr§es da Config
      *
-     * @return
+     * @return A mesma classe
      */
     public BukkitConfigs saveDefault() {
         config.options().copyDefaults(true);
@@ -237,14 +238,13 @@ public class BukkitConfigs {
     }
 
     public void saveLocation(String path, Location location) {
-        StringBuilder text = new StringBuilder();
-        text.append(location.getWorld().getName() + ",");
-        text.append(location.getX() + ",");
-        text.append(location.getY() + ",");
-        text.append(location.getZ() + ",");
-        text.append(location.getYaw() + ",");
-        text.append(location.getPitch());
-        set(path, text.toString());
+        String text = location.getWorld().getName() + "," +
+                location.getX() + "," +
+                location.getY() + "," +
+                location.getZ() + "," +
+                location.getYaw() + "," +
+                location.getPitch();
+        set(path, text);
     }
 
     public static String toChatMessage(String text) {
@@ -315,17 +315,14 @@ public class BukkitConfigs {
                 section.set("name", meta.getDisplayName());
             }
             if (meta.hasLore()) {
-                List<String> lines = new ArrayList<>();
-                for (String line : meta.getLore()) {
-                    lines.add(line);
-                }
+                List<String> lines = new ArrayList<>(meta.getLore());
                 section.set("lore", lines);
             }
             if (meta.hasEnchants()) {
 
                 StringBuilder text = new StringBuilder();
                 for (Entry<Enchantment, Integer> enchant : item.getEnchantments().entrySet()) {
-                    text.append(enchant.getKey().getId() + "-" + enchant.getValue() + ",");
+                    text.append(enchant.getKey().getId()).append("-").append(enchant.getValue()).append(",");
                 }
                 section.set("enchants", text.toString());
             }
@@ -446,9 +443,7 @@ public class BukkitConfigs {
     }
 
     public boolean inInCooldown(Player player, String cooldown) {
-        if (getCooldown(player, cooldown) == -1)
-            return false;
-        return true;
+        return getCooldown(player, cooldown) != -1;
 
     }
 

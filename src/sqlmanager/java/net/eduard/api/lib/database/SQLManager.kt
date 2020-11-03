@@ -9,13 +9,12 @@ import java.util.concurrent.ConcurrentLinkedQueue
  */
 class SQLManager(var dbManager: DBManager) {
 
-
+    val queueRunsLimit = 100
     private val updatesQueue: Queue<Any> = ConcurrentLinkedQueue()
-
+    private val deletesQueue: Queue<Any> = ConcurrentLinkedQueue()
 
     fun runUpdatesQueue(): Int {
         var amount = 0
-        val queueRunsLimit = 100
         for (i in 0 until queueRunsLimit) {
             val data = updatesQueue.poll() ?: break
             updateData(data)
@@ -23,7 +22,15 @@ class SQLManager(var dbManager: DBManager) {
         }
         return amount
     }
-
+    fun runDeletesQueue(): Int {
+        var amount = 0
+        for (i in 0 until queueRunsLimit) {
+            val data = deletesQueue.poll() ?: break
+            deleteData(data)
+            amount++
+        }
+        return amount
+    }
     fun hasConnection(): Boolean {
         return dbManager.hasConnection()
     }

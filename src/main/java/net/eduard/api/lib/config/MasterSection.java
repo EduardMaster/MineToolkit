@@ -8,7 +8,7 @@ import java.util.Map;
  *
  */
 public class MasterSection {
-	private MasterConfig config;
+	private final MasterConfig config;
 	private Object value = new LinkedHashMap<>();
 	private MasterSection parent;
 	private String key;

@@ -195,20 +195,6 @@ public final class Mine {
     public static String MSG_NO_PERMISSION = "§cVoce não tem permissão para usar este comando!";
 
 
-    /**
-     * Mensagem de quando Entrar no Servidor
-     */
-    public static String MSG_ON_JOIN = "§6O jogador $player entrou no Jogo!";
-
-    /**
-     * Mensagem de quando Sair do Servidor
-     */
-    public static String MSG_ON_QUIT = "§6O jogador $player saiu no Jogo!";
-
-    /**
-     * Prefixo de Ajuda dos Comandos
-     */
-    public static String MSG_USAGE = "§FDigite: §c";
     public static boolean OPT_DEBUG_REPLACERS = true;
     /**
      * Lista de Comandos para efeito Positivo

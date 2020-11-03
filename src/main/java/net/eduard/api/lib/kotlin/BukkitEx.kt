@@ -1,3 +1,5 @@
+@file:Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+
 package net.eduard.api.lib.kotlin
 
 import net.eduard.api.lib.hybrid.PlayerUser
@@ -28,39 +30,39 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
 
-inline fun Player.removeXP(amount: Double){
+fun Player.removeXP(amount: Double){
     Mine.removeXP(this,amount)
 }
-inline fun Player.addHotBar(item : ItemStack){
+fun Player.addHotBar(item : ItemStack){
     Mine.setHotBar(this,item)
 }
-inline fun Player.changeTabName(tabName : String){
+fun Player.changeTabName(tabName : String){
     Mine.changeTabName(this,tabName)
 }
-inline fun Player.clearHotBar(){
+fun Player.clearHotBar(){
     Mine.clearHotBar(this)
 
 }
-inline fun LivingEntity.clearArmors(){
+fun LivingEntity.clearArmors(){
     Mine.clearArmours(this)
 }
-inline fun Player.clearInventory(){
+fun Player.clearInventory(){
     Mine.clearInventory(this)
 }
-inline fun Player.sendTitle(title : String, subTitle : String){
+fun Player.sendTitle(title : String, subTitle : String){
     MineReflect.sendTitle(this, title,subTitle,20,20,20)
 }
 
-inline fun Player.sendTitle(title : String, subTitle : String, fadeInt : Int, stay: Int, fadeOut : Int){
+fun Player.sendTitle(title : String, subTitle : String, fadeInt : Int, stay: Int, fadeOut : Int){
     MineReflect.sendTitle(this, title,subTitle,fadeInt,stay,fadeOut)
 }
-inline fun Player.sendActionBar(msg : String){
+fun Player.sendActionBar(msg : String){
     MineReflect.sendActionBar(this,msg)
 }
-inline fun Player.sendPacket(packet : Any){
+fun Player.sendPacket(packet : Any){
     MineReflect.sendPacket(this,packet)
 }
-inline fun Event.call(){
+fun Event.call(){
     return Mine.callEvent(this)
 }
 
@@ -81,7 +83,7 @@ fun CommandExecutor.register(cmd: String, plugin: JavaPlugin) {
 }
 
 
-val Class<*>.plugin: JavaPlugin
+val <T> Class<T>.plugin: JavaPlugin
     get() {
         if (!JavaPlugin::class.java.isAssignableFrom(this)) {
             return JavaPlugin.getProvidingPlugin(this)
@@ -89,7 +91,7 @@ val Class<*>.plugin: JavaPlugin
         return JavaPlugin.getPlugin(this as Class<out JavaPlugin>) as JavaPlugin
     }
 
-inline fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
+fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
 
 val BlockState.isCrop get() = type == Material.CROPS
 
@@ -150,41 +152,41 @@ var ItemStack.lore: List<String>
     }
 
 
-inline operator fun ItemStack.invoke(name: String): ItemStack {
+operator fun ItemStack.invoke(name: String): ItemStack {
     this.name = name
     return this
 }
 
-inline operator fun ItemStack.invoke(enchament: Enchantment, level: Int): ItemStack {
+operator fun ItemStack.invoke(enchament: Enchantment, level: Int): ItemStack {
     addUnsafeEnchantment(enchament, level)
     return this
 }
 
-inline operator fun ItemStack.minus(enchament: Enchantment): ItemStack {
+operator fun ItemStack.minus(enchament: Enchantment): ItemStack {
     removeEnchantment(enchament)
     return this
 }
 
-inline operator fun ItemStack.plus(amount: Int): ItemStack {
+operator fun ItemStack.plus(amount: Int): ItemStack {
     this.amount += amount
     return this
 }
 
-inline operator fun ItemStack.plus(map: Map<Enchantment, Int>): ItemStack {
+operator fun ItemStack.plus(map: Map<Enchantment, Int>): ItemStack {
     addUnsafeEnchantments(map)
     return this
 }
 
-inline infix fun Enchantment.level(level: Int): Map<Enchantment, Int> {
+infix fun Enchantment.level(level: Int): Map<Enchantment, Int> {
     return mapOf(this to level)
 }
 
-inline fun ItemStack.id(id: Int): ItemStack {
+fun ItemStack.id(id: Int): ItemStack {
     typeId = id
     return this
 }
 
-inline fun ItemStack.data(data: Int): ItemStack {
+fun ItemStack.data(data: Int): ItemStack {
     durability = data.toShort()
     return this
 }
@@ -194,12 +196,12 @@ fun ItemStack.addLore(vararg lore: String): ItemStack {
     return this
 }
 
-inline fun ItemStack.lore(vararg lore: String): ItemStack {
+fun ItemStack.lore(vararg lore: String): ItemStack {
     this.lore = lore.toList()
     return this
 }
 
-inline fun ItemStack.addEnchant(ench: Enchantment, level: Int): ItemStack {
+fun ItemStack.addEnchant(ench: Enchantment, level: Int): ItemStack {
     addUnsafeEnchantment(ench, level)
     return this
 }

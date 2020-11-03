@@ -12,8 +12,6 @@ public class PlayerClick extends PlayerInteract  {
 
 	private ClickComparationType comparationType =ClickComparationType.WITH_RIGHT;
 
-	private boolean compareClick = true;
-	
 	public PlayerClick() {
 		this(null);
 	}
@@ -36,9 +34,8 @@ public class PlayerClick extends PlayerInteract  {
 			if (!getItemComparationType().compare(getItem(), event.getItem()))
 				return;
 		}
-		if (compareClick)
-			if (!comparationType.compare(event.getAction().name()))
-				return;
+		if (!comparationType.compare(event.getAction().name()))
+			return;
 		event.setCancelled(true);
 		clickEffect.onClick(event.getPlayer(), event.getClickedBlock(),
 				getItem());

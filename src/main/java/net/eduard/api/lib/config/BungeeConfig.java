@@ -29,9 +29,9 @@ import net.md_5.bungee.config.YamlConfiguration;
  */
 public class BungeeConfig {
 
-	private Plugin plugin;
-	private String name;
-	private File file;
+	private final Plugin plugin;
+	private final String name;
+	private final File file;
 	private Configuration config;
 
 	public String getName() {

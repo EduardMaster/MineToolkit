@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -43,24 +43,24 @@ public class MasterConfig {
 
 	static char COMMENT = '#';
 //	private static char SAVE = '!';
-	private static char STRING_START = '\'';
-	private static char TEXT_START = '\"';
-	private static char STRING_END = '\'';
-	private static char TEXT_END = '\"';
-	private static char MAP_START = '{';
-	private static char MAP_END = '}';
-	private static char LIST_START = '[';
-	private static char LIST_END = ']';
-	private static char LIST_ITEM = '-';
-	private static char ENTRY_DELIMITER = ':';
-	private static char ITEM_DELIMITER = ',';
-	private static char SPACE = ' ';
-	private static char NEW_LINE = '\n';
-	private static int TAB_SIZE = 2;
+	private static final char STRING_START = '\'';
+	private static final char TEXT_START = '\"';
+	private static final char STRING_END = '\'';
+	private static final char TEXT_END = '\"';
+	private static final char MAP_START = '{';
+	private static final char MAP_END = '}';
+	private static final char LIST_START = '[';
+	private static final char LIST_END = ']';
+	private static final char LIST_ITEM = '-';
+	private static final char ENTRY_DELIMITER = ':';
+	private static final char ITEM_DELIMITER = ',';
+	private static final char SPACE = ' ';
+	private static final char NEW_LINE = '\n';
+	private static final int TAB_SIZE = 2;
 
 	protected Object value = null;
 	protected StringBuilder text = new StringBuilder();
-	private MasterSection root = new MasterSection(this, null, null);
+	private final MasterSection root = new MasterSection(this, null, null);
 
 	protected File folder;
 	protected File file;
@@ -141,7 +141,7 @@ public class MasterConfig {
 
 		BufferedReader reader;
 		try {
-			reader = Files.newBufferedReader(file.toPath(), Charset.forName("UTF-8"));
+			reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
 			text = new StringBuilder();
 			int first = 0;
 			String line = null;
@@ -163,7 +163,7 @@ public class MasterConfig {
 	protected void writeContentToFile() {
 		file.getParentFile().mkdirs();
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(file.toPath(), Charset.forName("UTF-8"));
+			BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8);
 			writer.write(text.toString());
 			writer.close();
 		} catch (Exception ex) {
@@ -387,7 +387,7 @@ public class MasterConfig {
 	@SuppressWarnings("rawtypes")
 	public MasterSection getConfig() {
 		if (value instanceof Map) {
-			root.setValue((Map) value);
+			root.setValue(value);
 		}
 		return root;
 	}
@@ -476,7 +476,7 @@ public class MasterConfig {
 	public Object readEntry(Map<String, Object> map) {
 		try {
 			if (getCurrentChar() == COMMENT) {
-				map.put("#" + map.size() + 1, (String) readObject());
+				map.put("#" + map.size() + 1, readObject());
 			} else {
 				String key = (String) readObject();
 				Object value = readObject();

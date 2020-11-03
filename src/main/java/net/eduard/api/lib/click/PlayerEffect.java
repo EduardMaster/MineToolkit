@@ -9,7 +9,7 @@ public interface PlayerEffect extends Consumer<Player> {
 
 	/**
 	 * Use Lambda em vez
-	 * @param player
+	 * @param player Jogador
 	 */
 	@Deprecated
 	default void effect(Player player){

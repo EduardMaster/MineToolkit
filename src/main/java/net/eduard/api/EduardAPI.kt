@@ -53,16 +53,17 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
-    override var started =false
+class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
+    override var started = false
     override var configs = Config(plugin, "config.yml")
     override var storage = Config(plugin, "storage.yml")
     override var messages = Config(plugin, "messages.yml")
     override var dbManager = DBManager()
-    override lateinit var sqlManager : SQLManager
-    override lateinit var storageManager : StorageManager
+    override lateinit var sqlManager: SQLManager
+    override lateinit var storageManager: StorageManager
     override fun onLoad() {
-        started  =true
+        instance = this
+        started = true
         BukkitTypes
         HybridTypes
         Hybrid.instance = BukkitServer
@@ -70,7 +71,6 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")
         storage = Config(this, "storage.yml")
-
         configs.add("database-type", StorageType.YAML)
         configs.add("log-enabled", true)
         configs.add("database", dbManager)
@@ -86,9 +86,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
 
     }
 
-    override fun console(message: String) {
-        Bukkit.getConsoleSender().sendMessage(message)
-    }
+
 
     override fun deleteOldBackups() {
 
@@ -103,24 +101,30 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         get() = plugin.dataFolder
 
     override fun log(message: String) {
-
+        console("§f$message")
     }
-
+    override fun console(message: String) {
+        Bukkit.getConsoleSender().sendMessage("§b[EduardAPI]§r $message")
+    }
     override fun error(message: String) {
-
+        console("§c$message")
     }
-
-
-    override fun onEnable() {
-        instance = this
-
+    fun storage(){
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
         StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
         BukkitStorables.load()
         StorageAPI.startGson()
         log("Storables do Bukkit carregado!")
-        MAPS_CONFIG = Config(this, "maps/")
+    }
+
+
+
+    override fun onEnable() {
+        if (!started) {
+            onLoad()
+        }
+        storage()
         VaultAPI.setupVault()
         BukkitControl.register(plugin)
         BukkitBungeeAPI.requestCurrentServer()
@@ -129,13 +133,50 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         StorageAPI.registerPackage(Minigame::class.java)
         reload()
+        commands()
+        events()
+        tasks()
+
+
+
+
+
+
+        console("§aCarregado com sucesso!")
+    }
+
+    fun tasks(){
         Mine.resetScoreboards()
         log("Scoreboards dos jogadores online resetadas!")
+
+        BukkitReplacers()
+        log("Replacers ativados")
+
+
+        BukkitInfoGenerator(this)
+        log("Base de dados de Enums do Bukkit gerado com sucesso")
+
+        log("Carregando Moedas")
+        CurrencyController.getInstance().register(CurrencyVaultEconomy())
+        JHCashHook()
+        log("Moedas carregadas")
+
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
         PlayerTargetPlayerTask().runTaskTimerAsynchronously(plugin, 20, 20)
         AutoSaveAndBackupTask().runTaskTimerAsynchronously(plugin, 20, 20)
-
+        DatabaseUpdater().asyncTimer()
+        log("Tasks ativados com sucesso")
+    }
+    fun events(){
+        log("Ativando listeners dos Eventos")
+        EduardAPIEvents().register(this)
+        SupportActivations().register(this)
+        EduWorldEditListener().register(this)
+        PlayerTargetListener().register(this)
+        log("Listeners dos Eventos ativados com sucesso")
+    }
+    fun commands(){
         log("Ativando comandos")
         ApiCommand().register()
         MapCommand().register()
@@ -144,26 +185,10 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         SoundCommand().register()
         SetXPCommand().register()
         SetSkinCommand().register()
-        log("Comandos ativados com sucesso")
-        log("Ativando listeners dos Eventos")
-        EduardAPIEvents().register(this)
-        SupportActivations().register(this)
-        EduWorldEditListener().register(this)
-        PlayerTargetListener().register(this)
-        log("Listeners dos Eventos ativados com sucesso")
-        log("Gerando Base de dados de Enums do Bukkit")
-        BukkitInfoGenerator(this)
-        log("Ativando replacers")
-        BukkitReplacers()
-        log("Carregado com sucesso!")
-        CurrencyController.getInstance().register(CurrencyVaultEconomy())
-        log("Carregando dependencias")
-        JHCashHook()
-
         MemoryCommand().registerCommand(plugin)
-        DatabaseUpdater().asyncTimer()
-
+        log("Comandos ativados com sucesso")
     }
+
 
 
     override fun reload() {
@@ -182,7 +207,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         PlayerSkin.reloadSkins()
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
         loadMaps()
-        log("Mapas carregados!")
+
         configs.add("sound-teleport", OPT_SOUND_TELEPORT)
         configs.add("sound-error", OPT_SOUND_ERROR)
         configs.add("sound-success", OPT_SOUND_SUCCESS)
@@ -201,12 +226,15 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         } catch (e: Exception) {
             error("Formato do dinheiro invalido " + configs.getString("money-format"))
         }
-        Mine.MSG_ON_JOIN = configs.message("on-join-message")
-        Mine.MSG_ON_QUIT = configs.message("on-quit-message")
+        MSG_ON_JOIN = configs.message("on-join-message")
+        MSG_ON_QUIT = configs.message("on-quit-message")
         OPT_SOUND_TELEPORT = configs.getSound("sound-teleport")
         OPT_SOUND_ERROR = configs.getSound("sound-error")
         OPT_SOUND_SUCCESS = configs.getSound("sound-success")
+
+        log("Recarregamento do EduardAPI concluido.")
     }
+
 
     override fun configDefault() {
 
@@ -228,12 +256,12 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         log("desativado com sucesso!")
         BungeeAPI.getController().unregister()
 
-
     }
 
     override fun unregisterTasks() {
 
     }
+
 
     override fun unregisterListeners() {
 
@@ -247,9 +275,6 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
 
     }
 
-    override fun unregisterStorableClasses() {
-
-    }
 
     override fun getPlugin(): Plugin {
         return this.plugin
@@ -274,7 +299,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
          */
         var OPT_SOUND_ERROR = SoundEffect.create("NOTE_BASS_DRUM")
 
-
+        val MAPS_FOLDER : File
+            get() = File(instance.pluginFolder, "maps/")
         /*
 
         Som do rosnar do gato
@@ -297,7 +323,20 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         private val DAY_IN_MILLIS = DAY_IN_TICKS * 50
 
          */
+        /**
+         * Mensagem de quando Entrar no Servidor
+         */
+        var MSG_ON_JOIN = "§6O jogador \$player entrou no Jogo!"
 
+        /**
+         * Mensagem de quando Sair do Servidor
+         */
+        var MSG_ON_QUIT = "§6O jogador \$player saiu no Jogo!"
+
+        /**
+         * Prefixo de Ajuda dos Comandos
+         */
+        var MSG_USAGE = "§FDigite: §c"
         fun getSchematic(player: Player): Schematic {
             var schema = MAPS_CACHE[player]
             if (schema == null) {
@@ -309,7 +348,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
 
         fun loadMaps() {
 
-            val file = MAPS_CONFIG.file
+            val file = MAPS_FOLDER
             file.mkdirs()
 
             if (file.listFiles() == null)
@@ -320,7 +359,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
                     MAPS[subfile.name.replace(".map", "")] = Schematic.load(subfile)
                 }
             }
-
+            instance.log("Mapas carregados!")
         }
 
         /*
@@ -329,18 +368,22 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin {
         var MAPS = mutableMapOf<String, Schematic>()
         var MAPS_CACHE: MutableMap<Player, Schematic> = HashMap()
 
-        lateinit var MAPS_CONFIG: Config
+
 
         /**
          * Salva todos os mapas no sistema de armazenamento
          */
         fun saveMaps() {
-            MAPS_CONFIG.file.mkdirs()
+            MAPS_FOLDER.mkdirs()
             for ((name, mapa) in MAPS) {
 
-                mapa.save(File(MAPS_CONFIG.file, "$name.map"))
+                mapa.save(File(MAPS_FOLDER, "$name.map"))
             }
         }
+    }
+
+    override fun getPluginConnected(): Plugin {
+        return plugin
     }
 
 }

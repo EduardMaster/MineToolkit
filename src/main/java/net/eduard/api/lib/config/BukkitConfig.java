@@ -34,7 +34,7 @@ public class BukkitConfig {
 
 	private Plugin plugin;
 
-	private String name;
+	private final String name;
 
 	private File file;
 

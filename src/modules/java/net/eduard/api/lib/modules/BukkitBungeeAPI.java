@@ -265,8 +265,8 @@ public final class BukkitBungeeAPI {
 		DataOutputStream msgout = new DataOutputStream(msgbytes);
 		try {
 			msgout.writeInt(data.length);
-			for (int i = 0; i < data.length; i++) {
-				msgout.writeUTF(data[i].toString());
+			for (Object datum : data) {
+				msgout.writeUTF(datum.toString());
 			}
 
 		} catch (IOException e) {

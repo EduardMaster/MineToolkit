@@ -20,13 +20,10 @@ object DamagerManager : Listener {
 
 
         fun getLastDamager(entity: Entity): Entity? {
-            val damager = lastPvP[entity]
-            if (damager != null) {
-                if (damager is Projectile) {
-                    val projectile = damager
-                    if (projectile.shooter != null && projectile is Entity) {
-                        return projectile.shooter as Entity
-                    }
+            val damager = lastPvP[entity]?:return null
+            if (damager is Projectile) {
+                if (damager.shooter != null) {
+                    return damager.shooter as Entity
                 }
             }
             return damager

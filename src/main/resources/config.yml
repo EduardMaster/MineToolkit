@@ -6,9 +6,9 @@ debug-commands: false
 debug-menu: false
 debug-replacers: false
 debug-db: false
-
 skins: false
 auto-respawn: true
+
 custom-skin: "EduardKillerPro"
 player target: "$player_name - $player_level"
 stack-design: "§aQuantidade: §f$stack"

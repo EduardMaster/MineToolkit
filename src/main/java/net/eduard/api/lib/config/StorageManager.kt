@@ -2,12 +2,10 @@ package net.eduard.api.lib.config
 
 import net.eduard.api.lib.database.SQLManager
 import java.io.File
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 
 class StorageManager(private var sqlManager: SQLManager) {
     @Target(AnnotationTarget.FIELD)
-    @Retention(RetentionPolicy.RUNTIME)
+    @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
     annotation class StoreKey
 
     var type = StorageType.YAML
