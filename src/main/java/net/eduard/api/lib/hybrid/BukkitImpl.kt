@@ -34,6 +34,9 @@ object BukkitConsole : ISender{
     }
 
     override fun hasPermission(permission: String) = true
+    override fun performCommand(command: String) {
+      Bukkit.dispatchCommand(Bukkit.getConsoleSender(),command)
+    }
 }
 
 
@@ -77,7 +80,7 @@ override var uuid: UUID) : IPlayer<Player>{
     get(){
         if (field==null){
             field = search()
-        }else if (!field!!.isOnline){
+        }else if (!(field!!.isOnline) || !field!!.isValid){
             field = search()
         }
        return field
@@ -89,6 +92,16 @@ override var uuid: UUID) : IPlayer<Player>{
 
     override fun hasPermission(permission: String): Boolean {
         return instance?.hasPermission(permission)?: false
+    }
+
+    override fun performCommand(command: String) {
+        if (instance!= null) {
+            Bukkit.dispatchCommand(instance, command)
+        }
+    }
+
+    override fun chat(message: String) {
+       instance?.chat(message)
     }
 
 

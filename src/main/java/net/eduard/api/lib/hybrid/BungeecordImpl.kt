@@ -26,13 +26,18 @@ object BungeeServer : IServer{
 
 object BungeeConsole : ISender{
     override val name: String
-        get() = "Console"
+        get() = "BungeeConsole"
 
     override fun sendMessage(message: String) {
         ProxyServer.getInstance().console.sendMessage(TextComponent(message))
     }
 
     override fun hasPermission(permission: String) = true
+    override fun performCommand(command: String) {
+        ProxyServer.getInstance().pluginManager
+            .dispatchCommand(ProxyServer.getInstance().console
+            , command)
+    }
 }
 
 
@@ -83,6 +88,20 @@ override var uuid: UUID) : IPlayer<ProxiedPlayer>{
     }
     override fun hasPermission(permission: String): Boolean {
         return instance?.hasPermission(permission)?: false
+    }
+
+    override fun performCommand(command: String) {
+        if (instance!=null) {
+            ProxyServer.getInstance().pluginManager
+                .dispatchCommand(
+                   instance
+                    , command
+                )
+        }
+    }
+
+    override fun chat(message: String) {
+        instance?.chat(message)
     }
 
 }

@@ -21,7 +21,7 @@ class PlayerUser(
     }
 
     @Transient
-    private var onlinePlayer: IPlayer<*> = Hybrid.instance.getPlayer(name)
+    private var onlinePlayer: IPlayer<*> = Hybrid.instance.getPlayer(name,uniqueId)
 
     fun setUUIDByName(): UUID {
         uniqueId = UUID.nameUUIDFromBytes(("OfflinePlayer:$name").toByteArray())

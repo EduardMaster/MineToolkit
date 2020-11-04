@@ -12,4 +12,7 @@ interface IPlayer<T : Any> : ISender {
     fun connect(serverName: String)
     val offline get() = PlayerUser(name, uuid)
     fun sendMessage(message : TextComponent)
+    fun chat(message : String)
+
+
 }

@@ -114,10 +114,11 @@ fun main() {
     }
     testLag("Criando tabela exemplo"){
         MySQLEngine.logEnabled = true
-        sqlManager.deleteTable(ExemploTable::class.java)
+      //  sqlManager.deleteTable(ExemploTable::class.java)
         sqlManager.createTable(ExemploTable::class.java)
         val valor = ExemploTable()
         sqlManager.insertData(valor)
+        valor.doublozin =500.0;
         sqlManager.updateCache(valor)
         println(valor)
     }

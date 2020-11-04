@@ -190,7 +190,11 @@ class MySQLTable<T : Any>(
         for ((field, column) in columns) {
             val str = query.getString(column.name)
             if (column.isConstraint){
-                val key = query.getObject(column.name) ?: continue
+                val key = query.getObject(column.name)
+                if (key == null){
+                    field.set(data, null)
+                    continue;
+                }
                 val value = column.referenceTable.elements[key]
                 if (value !=null) {
                     field.set(data, value)
