@@ -1,3 +1,5 @@
 *.class
 target/
 */target/
+*build/
+*.gradle/
