@@ -2,7 +2,7 @@ package net.eduard.api.core
 
 import com.mojang.authlib.GameProfile
 import net.eduard.api.lib.manager.EventsManager
-import net.eduard.api.lib.modules.Extra
+import lib.modules.Extra
 import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -180,8 +180,8 @@ class EntidadesNMSTeste : EventsManager() {
 
     fun clearSelector(selector: PathfinderGoalSelector) {
         try {
-            Extra.setFieldValue(selector, "b", UnsafeList<Any>())
-            Extra.setFieldValue(selector, "c", UnsafeList<Any>())
+            lib.modules.Extra.setFieldValue(selector, "b", UnsafeList<Any>())
+            lib.modules.Extra.setFieldValue(selector, "c", UnsafeList<Any>())
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

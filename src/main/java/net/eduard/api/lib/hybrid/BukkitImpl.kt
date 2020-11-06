@@ -1,6 +1,6 @@
 package net.eduard.api.lib.hybrid
 
-import net.eduard.api.lib.modules.BukkitBungeeAPI
+import lib.modules.BukkitBungeeAPI
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -53,7 +53,7 @@ override var uuid: UUID) : IPlayer<Player>{
     override fun connect(serverName: String) {
 
         if (instance!=null) {
-            BukkitBungeeAPI.connectToServer(instance, serverName)
+            lib.modules.BukkitBungeeAPI.connectToServer(instance, serverName)
         }
 
     }

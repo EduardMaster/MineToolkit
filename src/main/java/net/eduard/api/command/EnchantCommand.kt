@@ -1,8 +1,8 @@
 package net.eduard.api.command
 
 import net.eduard.api.lib.manager.CommandManager
-import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Extra
+import lib.modules.Mine
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -33,13 +33,13 @@ class EnchantCommand : CommandManager("enchantment") {
                     p.sendMessage(messageError)
                     return true
                 }
-                val enchant = Mine.getEnchant(args[0])
+                val enchant = lib.modules.Mine.getEnchant(args[0])
                 if (enchant == null) {
                     p.sendMessage(messageInvalid)
                 } else {
                     var nivel = 1
                     if (args.size >= 2) {
-                        nivel = Extra.toInt(args[1])
+                        nivel = lib.modules.Extra.toInt(args[1])
                     }
                     if (nivel == 0) {
                         p.itemInHand.removeEnchantment(enchant)
@@ -57,9 +57,9 @@ class EnchantCommand : CommandManager("enchantment") {
             argument = argument.trim { it <= ' ' }.replace("_", "")
             val list: MutableList<String> = ArrayList()
             for (enchant in Enchantment.values()) {
-                val text = Extra.toTitle(enchant.name, "")
+                val text = lib.modules.Extra.toTitle(enchant.name, "")
                 val line = enchant.name.trim { it <= ' ' }.replace("_", "")
-                if (Extra.startWith(line, argument)) {
+                if (lib.modules.Extra.startWith(line, argument)) {
                     list.add(text)
                 }
             }

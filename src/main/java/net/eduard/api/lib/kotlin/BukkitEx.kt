@@ -2,11 +2,12 @@
 
 package net.eduard.api.lib.kotlin
 
+import net.eduard.api.lib.command.PlayerOffline
 import net.eduard.api.lib.hybrid.PlayerUser
-import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.FakePlayer
-import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.modules.MineReflect
+import lib.modules.Extra
+import lib.modules.FakePlayer
+import lib.modules.Mine
+import lib.modules.MineReflect
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.CropState
@@ -30,48 +31,58 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
 
-fun Player.removeXP(amount: Double){
-    Mine.removeXP(this,amount)
-}
-fun Player.addHotBar(item : ItemStack){
-    Mine.setHotBar(this,item)
-}
-fun Player.changeTabName(tabName : String){
-    Mine.changeTabName(this,tabName)
-}
-fun Player.clearHotBar(){
-    Mine.clearHotBar(this)
-
-}
-fun LivingEntity.clearArmors(){
-    Mine.clearArmours(this)
-}
-fun Player.clearInventory(){
-    Mine.clearInventory(this)
-}
-fun Player.sendTitle(title : String, subTitle : String){
-    MineReflect.sendTitle(this, title,subTitle,20,20,20)
+fun Player.removeXP(amount: Double) {
+    lib.modules.Mine.removeXP(this, amount)
 }
 
-fun Player.sendTitle(title : String, subTitle : String, fadeInt : Int, stay: Int, fadeOut : Int){
-    MineReflect.sendTitle(this, title,subTitle,fadeInt,stay,fadeOut)
-}
-fun Player.sendActionBar(msg : String){
-    MineReflect.sendActionBar(this,msg)
-}
-fun Player.sendPacket(packet : Any){
-    MineReflect.sendPacket(this,packet)
-}
-fun Event.call(){
-    return Mine.callEvent(this)
+fun Player.addHotBar(item: ItemStack) {
+    lib.modules.Mine.setHotBar(this, item)
 }
 
-inline val FakePlayer.offline : PlayerUser
-    get() { return PlayerUser(name, id)
+fun Player.changeTabName(tabName: String) {
+    lib.modules.Mine.changeTabName(this, tabName)
+}
+
+fun Player.clearHotBar() {
+    lib.modules.Mine.clearHotBar(this)
+
+}
+
+fun LivingEntity.clearArmors() {
+    lib.modules.Mine.clearArmours(this)
+}
+
+fun Player.clearInventory() {
+    lib.modules.Mine.clearInventory(this)
+}
+
+fun Player.sendTitle(title: String, subTitle: String) {
+    lib.modules.MineReflect.sendTitle(this, title, subTitle, 20, 20, 20)
+}
+
+fun Player.sendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
+    lib.modules.MineReflect.sendTitle(this, title, subTitle, fadeInt, stay, fadeOut)
+}
+
+fun Player.sendActionBar(msg: String) {
+    lib.modules.MineReflect.sendActionBar(this, msg)
+}
+
+fun Player.sendPacket(packet: Any) {
+    lib.modules.MineReflect.sendPacket(this, packet)
+}
+
+fun Event.call() {
+    return lib.modules.Mine.callEvent(this)
+}
+
+inline val lib.modules.FakePlayer.offline: PlayerUser
+    get() {
+        return PlayerUser(name, id)
     }
 
-inline fun CommandSender.isPlayer(block: Player.() -> Unit){
-    if (Mine.onlyPlayer(this)){
+inline fun CommandSender.isPlayer(block: Player.() -> Unit) {
+    if (lib.modules.Mine.onlyPlayer(this)) {
         block(this as Player)
     }
 }
@@ -82,6 +93,8 @@ fun CommandExecutor.register(cmd: String, plugin: JavaPlugin) {
     plugin.getCommand(cmd).executor = this
 }
 
+val Player.offline get() = PlayerUser(this.name,this.uniqueId)
+
 
 val <T> Class<T>.plugin: JavaPlugin
     get() {
@@ -91,7 +104,7 @@ val <T> Class<T>.plugin: JavaPlugin
         return JavaPlugin.getPlugin(this as Class<out JavaPlugin>) as JavaPlugin
     }
 
-fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
+fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(lib.modules.Extra.getIndex(column, line), item)
 
 val BlockState.isCrop get() = type == Material.CROPS
 
@@ -140,9 +153,9 @@ var ItemStack.name: String
 
     }
 
-var ItemStack.lore: List<String>
+var ItemStack.lore: MutableList<String>
     get() {
-        return itemMeta.lore ?: listOf()
+        return itemMeta.lore ?: mutableListOf()
     }
     set(value) {
         val meta = itemMeta
@@ -192,12 +205,17 @@ fun ItemStack.data(data: Int): ItemStack {
 }
 
 fun ItemStack.addLore(vararg lore: String): ItemStack {
-    this.lore = lore.toList()
+    val list = this.lore
+    list.addAll(lore)
+    this.lore = list
     return this
 }
 
 fun ItemStack.lore(vararg lore: String): ItemStack {
-    this.lore = lore.toList()
+    val list = this.lore
+    list.clear()
+    list.addAll(lore)
+    this.lore = list
     return this
 }
 
@@ -220,12 +238,12 @@ object BukkitAlterations : Listener
 
 fun <T : Event> KClass<T>.event(actionToDo: T.() -> Unit) {
     Bukkit.getPluginManager()
-            .registerEvent(this.java,
-                BukkitAlterations, EventPriority.NORMAL, { _, event ->
+        .registerEvent(this.java,
+            BukkitAlterations, EventPriority.NORMAL, { _, event ->
                 actionToDo(event as T)
-            }, BukkitAlterations.javaClass.plugin)
+            }, BukkitAlterations.javaClass.plugin
+        )
 }
-
 
 
 inline fun <reified T : Event> event(noinline actionToDo: T.() -> Unit) {

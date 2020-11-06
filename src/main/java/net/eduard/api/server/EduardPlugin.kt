@@ -6,9 +6,9 @@ import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
-import net.eduard.api.lib.modules.BukkitTimeHandler
-import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
+import lib.modules.BukkitTimeHandler
+import lib.modules.Extra
+import lib.modules.Mine
 import net.eduard.api.lib.plugin.IPlugin
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
@@ -24,13 +24,13 @@ import java.util.concurrent.TimeUnit
  * @version 1.0
  * @since 2.0
  */
-open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
+open class EduardPlugin : JavaPlugin(), lib.modules.BukkitTimeHandler, IPlugin {
 
     var isFree: Boolean = false
     override var started = false
 
     override val pluginName: String
-        get() = Extra.getMethodInvoke(plugin, "getName" ) as String
+        get() = lib.modules.Extra.getMethodInvoke(plugin, "getName" ) as String
 
 
 
@@ -89,12 +89,12 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
 
     fun getClasses(pack: String): List<Class<*>> {
-        return Mine.getClasses(this, pack)
+        return lib.modules.Mine.getClasses(this, pack)
     }
 
 
     fun autosave() {
-        configs.set("auto-save-lasttime", Extra.getNow())
+        configs.set("auto-save-lasttime", lib.modules.Extra.getNow())
 
         save()
 
@@ -174,7 +174,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
         for (position in lista.size - 10 downTo 0) {
             val arquivo = lista[position]
-            Extra.deleteFolder(arquivo)
+            lib.modules.Extra.deleteFolder(arquivo)
             if (arquivo.exists())
                 arquivo.delete()
 
@@ -190,7 +190,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         val lista = listOf(*pasta.listFiles()!!)
         lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
                 .forEach {
-                    Extra.deleteFolder(it)
+                    lib.modules.Extra.deleteFolder(it)
                     if (it.exists())
                         it.delete()
                 }

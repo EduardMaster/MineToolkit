@@ -9,19 +9,19 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Mine
 import net.eduard.api.lib.click.PlayerInteract
 import net.eduard.api.lib.game.Explosion
-import net.eduard.api.lib.game.ItemBuilder
+import lib.game.ItemBuilder
 import net.eduard.api.lib.game.Jump
 import net.eduard.api.lib.manager.CooldownManager
 import net.eduard.api.lib.manager.EffectManager
 import net.eduard.api.lib.manager.EventsManager
-import net.eduard.api.lib.modules.BukkitTimeHandler
+import lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.storage.Storable
 import org.bukkit.plugin.Plugin
 
-open class KitAbility : EventsManager(), BukkitTimeHandler {
+open class KitAbility : EventsManager(), lib.modules.BukkitTimeHandler {
 
     @Transient
     var click: PlayerInteract? = null
@@ -30,7 +30,7 @@ open class KitAbility : EventsManager(), BukkitTimeHandler {
     val timesUsed = HashMap<Player, Int>()
     var name = "Kit"
     var price = 0.0
-    var icon = ItemBuilder(Material.DIAMOND_SWORD)
+    var icon = lib.game.ItemBuilder(Material.DIAMOND_SWORD)
     var isShowOnGui = true
     var isEnabled = true
     var activeCooldownOnPvP = false
@@ -95,12 +95,12 @@ open class KitAbility : EventsManager(), BukkitTimeHandler {
     }
 
     fun add(item: ItemStack) {
-        items.add(Mine.setName(item, "§b$name"))
+        items.add(lib.modules.Mine.setName(item, "§b$name"))
 
     }
 
     fun add(type: Material) {
-        items.add(Mine.newItem(type, "§b$name"))
+        items.add(lib.modules.Mine.newItem(type, "§b$name"))
 
     }
 
@@ -115,7 +115,7 @@ open class KitAbility : EventsManager(), BukkitTimeHandler {
 
     fun cooldown(player: Player): Boolean {
         if (!isEnabled) {
-            Mine.send(player, "")
+            lib.modules.Mine.send(player, "")
             return false
         }
         if (cooldown.onCooldown(player)) {
@@ -160,7 +160,7 @@ open class KitAbility : EventsManager(), BukkitTimeHandler {
     }
 
     fun setIcon(material: Material, data: Int, vararg lore: String) {
-        icon = ItemBuilder(material,1)
+        icon = lib.game.ItemBuilder(material, 1)
         icon.data(data)
         this.lore.addAll(lore)
     }

@@ -13,11 +13,11 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Mine
 import net.eduard.api.lib.manager.EventsManager
-import net.eduard.api.lib.modules.Copyable
-import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.MineReflect
+import lib.modules.Copyable
+import lib.modules.Extra
+import lib.modules.MineReflect
 import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
@@ -79,6 +79,7 @@ open class Menu(
     @Transient
     private val pageOpened = HashMap<Player, Int>()
 
+    var ignoreAutoAlign = false
     var pageAmount = 1
     var pagePrefix = ""
     var pageSuffix = "(\$page/\$max_page)"
@@ -88,21 +89,21 @@ open class Menu(
     var autoAlignSkipCenter = false
     var isCacheInventories: Boolean = false
     var isPerPlayerInventory = false
-    var openWithItem: ItemStack? = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
+    var openWithItem: ItemStack? = lib.modules.Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
     var openWithCommand: String? = null
     var openWithCommandText: String? = null
     var openNeedPermission: String? = null
     var messagePermission = "§cVocê precisa de permissão do Cargo Master para abrir este menu."
     var previousPage = Slot(
-        Mine.newItem(Material.ARROW, "§aVoltar Página.", 1, 0, "§7Clique para ir para a página anterior."), 1, 1
+        lib.modules.Mine.newItem(Material.ARROW, "§aVoltar Página.", 1, 0, "§7Clique para ir para a página anterior."), 1, 1
     )
     var backPage = Slot(
-        Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."),
+        lib.modules.Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."),
         1,
         3
     )
     var nextPage = Slot(
-        Mine.newItem(Material.ARROW, "§aPróxima Página.", 1, 0, "§7Clique para ir para a próxima página."), 9, 1
+        lib.modules.Mine.newItem(Material.ARROW, "§aPróxima Página.", 1, 0, "§7Clique para ir para a próxima página."), 9, 1
     )
     var buttons = mutableListOf<MenuButton>()
 
@@ -155,7 +156,7 @@ open class Menu(
 
     open fun copy(): Menu {
 
-        return Copyable.copyObject(this)
+        return lib.modules.Copyable.copyObject(this)
     }
 
 
@@ -163,7 +164,7 @@ open class Menu(
         val page = pageOpened[player] ?: 1
         val perPageItems = pageAmount - 1 * 7
         val skipValue = perPageItems * page - 1
-        val stream = buttons.stream().skip(skipValue.toLong()).filter { Mine.equals(it.getIcon(player), icon) }
+        val stream = buttons.stream().skip(skipValue.toLong()).filter { lib.modules.Mine.equals(it.getIcon(player), icon) }
             .findFirst()
         if (stream.isPresent)
             return stream.get()
@@ -174,7 +175,7 @@ open class Menu(
         val tempoAntes = System.currentTimeMillis()
 
         for (button in buttons) {
-            if (Mine.equals(button.getIcon(player), icon)) {
+            if (lib.modules.Mine.equals(button.getIcon(player), icon)) {
 
                 val tempoDepois = System.currentTimeMillis()
                 debug("§aTempo para percorrer todos items " + (tempoDepois - tempoAntes))
@@ -185,7 +186,7 @@ open class Menu(
     }
 
     fun getButton(icon: ItemStack, player: Player): MenuButton? {
-        val data = MineReflect.getData(icon)
+        val data = lib.modules.MineReflect.getData(icon)
         val buttonName = data.getString("button-name")
         return buttonsCache[buttonName]
     }
@@ -235,7 +236,8 @@ open class Menu(
         if (button.item != null) {
             buttonsCache[button.name] = button
         }
-        if (isAutoAlignItems) {
+
+        if (!button.fixed && isAutoAlignItems) {
             nextPosition()
             button.page = lastPage
             button.index = lastSlot
@@ -290,6 +292,7 @@ open class Menu(
         lastPage = 1
 
         for (button in buttons) {
+            if (button.fixed)continue
             nextPosition()
             button.index = lastSlot
             button.page = lastPage
@@ -309,14 +312,14 @@ open class Menu(
             lastSlot = getSlotInicial()
         }
         if (autoAlignSkipCenter) {
-            if (Mine.isColumn(lastSlot, 5)) {
+            if (lib.modules.Mine.isColumn(lastSlot, 5)) {
                 lastSlot++
             }
         }
-        if (Mine.isColumn(lastSlot, 9)) {
+        if (lib.modules.Mine.isColumn(lastSlot, 9)) {
             lastSlot++
         }
-        if (Mine.isColumn(lastSlot, 1)) {
+        if (lib.modules.Mine.isColumn(lastSlot, 1)) {
             lastSlot++
         }
         if (lastSlot >= getSlotLimit()) {
@@ -354,7 +357,7 @@ open class Menu(
 
             val prefix = pagePrefix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
             val suffix = pageSuffix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
-            var menuTitle = Extra.cutText(prefix + title + suffix, 32)
+            var menuTitle = lib.modules.Extra.cutText(prefix + title + suffix, 32)
             if (!isPageSystem) {
                 menuTitle = title
             }
@@ -375,9 +378,9 @@ open class Menu(
 
 
             this.pageOpened[player] = page
-            player.openInventory(menu)
-            openHandler?.invoke(this, menu, player)
 
+            openHandler?.invoke(this, menu, player)
+            player.openInventory(menu)
             if (isCacheInventories && !pagesCache.containsKey(page)) {
                 pagesCache[page] = menu
             }
@@ -391,6 +394,7 @@ open class Menu(
     fun update(menu: Inventory, player: Player, page: Int) {
         for (button in buttons) {
             if (button.page != page) continue
+
             var position = button.index
 
             if (position >= getSlotLimit()) {
@@ -398,13 +402,14 @@ open class Menu(
             }
             var icon = button.getIcon(player)
             if (isTranslateIcon) {
-                icon = Mine.getReplacers(icon, player)
+                icon = lib.modules.Mine.getReplacers(icon, player)
             }
-            val data = MineReflect.getData(icon)
+            val data = lib.modules.MineReflect.getData(icon)
             data.setString("button-name", button.name)
-            icon = MineReflect.setData(icon, data)
+            icon = lib.modules.MineReflect.setData(icon, data)
             menu.setItem(position, icon)
         }
+
     }
 
 
@@ -442,7 +447,7 @@ open class Menu(
         if (player.itemInHand == null)
             return
 
-        if (openWithItem != null && Mine.equals(player.itemInHand, openWithItem)) {
+        if (openWithItem != null && lib.modules.Mine.equals(player.itemInHand, openWithItem)) {
             e.isCancelled = true
             open(player)
         }
@@ -453,7 +458,7 @@ open class Menu(
     fun onCommand(event: PlayerCommandPreprocessEvent) {
         val player = event.player
         val message = event.message
-        val cmd = Extra.getCommandName(message)
+        val cmd = lib.modules.Extra.getCommandName(message)
         openWithCommand ?: return
 
         if (cmd.toLowerCase() == openWithCommand!!.toLowerCase()) {
@@ -565,7 +570,7 @@ open class Menu(
 
         fun debug(msg: String) {
             if (isDebug) {
-                Mine.console("§b[Menu] §7$msg")
+                lib.modules.Mine.console("§b[Menu] §7$msg")
             }
 
         }

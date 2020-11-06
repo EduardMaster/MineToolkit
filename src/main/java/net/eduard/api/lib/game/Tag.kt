@@ -1,6 +1,6 @@
 package net.eduard.api.lib.game
 
-import net.eduard.api.lib.modules.Copyable
+import lib.modules.Copyable
 
 /**
  * Representa uma Tag geralmente usado para Cargos de Permissão
@@ -15,7 +15,7 @@ class Tag(
         var rank: Int = 0
 ) {
     fun copy(): Tag {
-        return Copyable.copyObject(this)
+        return lib.modules.Copyable.copyObject(this)
     }
 
     override fun toString(): String {

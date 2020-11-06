@@ -4,7 +4,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Mine
 import net.eduard.api.lib.game.VisualEffect
 import net.eduard.api.lib.game.SoundEffect
 
@@ -26,7 +26,7 @@ open class EffectManager {
             if (!player.hasPermission(requirePermission))
                 return
         for (cmd in consoleCommandsToRun) {
-            Mine.makeCommand(cmd.replace("\$player", player.name))
+            lib.modules.Mine.makeCommand(cmd.replace("\$player", player.name))
         }
         for (cmd in playerCommandsToRun) {
             print("Tentando fazer comando $cmd")
@@ -37,7 +37,7 @@ open class EffectManager {
         if (closeInventory)
             player.closeInventory()
         if (clearInventory) {
-            Mine.clearInventory(player)
+            lib.modules.Mine.clearInventory(player)
         }
 
         visualEffectToShow?.create(player)

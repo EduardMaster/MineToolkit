@@ -1,6 +1,6 @@
 package net.eduard.api.lib.abstraction
 
-import net.eduard.api.lib.modules.MineReflect
+import lib.modules.MineReflect
 import org.bukkit.Location
 import org.bukkit.Material
 import java.lang.Exception
@@ -23,7 +23,7 @@ interface Block {
                 if (!Companion::blockClass.isInitialized) {
                     blockClass = Class.forName(
                         "net.eduard.api.lib.abstraction.Block_"
-                                + MineReflect.getVersion()
+                                + lib.modules.MineReflect.getVersion()
                     )
                 }
 

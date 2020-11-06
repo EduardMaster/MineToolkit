@@ -1,7 +1,7 @@
 package net.eduard.api.lib.game
 
-import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Extra
+import lib.modules.Mine
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -15,9 +15,9 @@ open class ItemRandom(
 {
     fun create(): ItemStack {
         if (item == null ) return ItemStack(Material.AIR)
-        if (Mine.getChance(chance)) {
+        if (lib.modules.Mine.getChance(chance)) {
             val clone = item!!.clone()
-            val amount = Extra.getRandomInt(minAmount, maxAmount)
+            val amount = lib.modules.Extra.getRandomInt(minAmount, maxAmount)
             clone.amount = amount
             return clone
         }

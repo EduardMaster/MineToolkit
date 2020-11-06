@@ -4,8 +4,8 @@ import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitTask
 
-import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.modules.BukkitTimeHandler
+import lib.modules.Mine
+import lib.modules.BukkitTimeHandler
 
 /**
  * Controlador de Tempo, classe que controla e ajuda na criação de
@@ -14,7 +14,8 @@ import net.eduard.api.lib.modules.BukkitTimeHandler
  *
  * @author Eduard
  */
-open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitTimeHandler {
+open class TimeManager(var time: Long = 20) : EventsManager(), Runnable,
+    lib.modules.BukkitTimeHandler {
 
 
     /**
@@ -50,7 +51,7 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      */
     fun syncDelay(): BukkitTask {
         task = newTask(time,false,false,this)
-        startedTime = Mine.getNow()
+        startedTime = lib.modules.Mine.getNow()
         return task!!
     }
 
@@ -62,7 +63,7 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      */
     fun syncTimer(): BukkitTask {
         task = newTask(time,true,false,this)
-        startedTime = Mine.getNow()
+        startedTime = lib.modules.Mine.getNow()
         return task!!
     }
 
@@ -74,7 +75,7 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      */
     fun asyncTimer(): BukkitTask {
         task = newTask(time,true,true,this)
-        startedTime = Mine.getNow()
+        startedTime = lib.modules.Mine.getNow()
         return task!!
     }
 
@@ -86,7 +87,7 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable, BukkitT
      */
     fun asyncDelay(): BukkitTask {
         task = newTask(time,false,true,this)
-        startedTime = Mine.getNow()
+        startedTime = lib.modules.Mine.getNow()
         return task!!
     }
 

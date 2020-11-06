@@ -1,8 +1,8 @@
 package net.eduard.api.lib.menu
 
-import net.eduard.api.lib.game.EnchantGlow
-import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
+import lib.game.EnchantGlow
+import lib.modules.Extra
+import lib.modules.Mine
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
@@ -84,7 +84,7 @@ open class Product(name: String = "Produto",
                 clone.amount = 64
             }
         }
-        val lore = Mine.getLore(clone)
+        val lore = lib.modules.Mine.getLore(clone)
         if (parentMenu != null) {
             if (parentMenu is Shop) {
                 var template: List<String>? = null
@@ -100,15 +100,15 @@ open class Product(name: String = "Produto",
                 for (line in template!!) {
                     lore.add(line.replace("\$product_name", name)
                             .replace("\$product_stock", "" + stock)
-                            .replace("\$product_buy_unit_price", Extra.formatMoney(unitBuyPrice))
-                            .replace("\$product_buy_pack_price", Extra.formatMoney(unitBuyPrice * 64))
-                            .replace("\$product_sell_unit_price", Extra.formatMoney(unitSellPrice))
-                            .replace("\$product_sell_pack_price", Extra.formatMoney(unitSellPrice * 64))
-                            .replace("\$product_sell_inventory_price", Extra.formatMoney(unitSellPrice * 64 * 4 * 9)))
+                            .replace("\$product_buy_unit_price", lib.modules.Extra.formatMoney(unitBuyPrice))
+                            .replace("\$product_buy_pack_price", lib.modules.Extra.formatMoney(unitBuyPrice * 64))
+                            .replace("\$product_sell_unit_price", lib.modules.Extra.formatMoney(unitSellPrice))
+                            .replace("\$product_sell_pack_price", lib.modules.Extra.formatMoney(unitSellPrice * 64))
+                            .replace("\$product_sell_inventory_price", lib.modules.Extra.formatMoney(unitSellPrice * 64 * 4 * 9)))
                 }
                 if (parentShop.isPermissionShop) {
                     if (player.hasPermission(permission)) {
-                        EnchantGlow.addGlow(clone)
+                        lib.game.EnchantGlow.addGlow(clone)
                         lore.add(parentShop.textAlreadyBought)
                     }
                 }
@@ -116,7 +116,7 @@ open class Product(name: String = "Produto",
         }
 
 
-        Mine.setLore(clone, lore)
+        lib.modules.Mine.setLore(clone, lore)
         return clone
     }
 

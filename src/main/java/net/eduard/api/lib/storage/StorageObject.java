@@ -3,7 +3,6 @@ package net.eduard.api.lib.storage;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceValue;

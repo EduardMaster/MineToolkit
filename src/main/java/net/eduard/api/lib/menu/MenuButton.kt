@@ -18,6 +18,8 @@ open class MenuButton(var name: String = "Botao"
 
     var menu: Menu? = null
 
+    var fixed = false
+
     init {
         block?.invoke(this)
         parentMenu?.addButton(this)

@@ -1,7 +1,7 @@
 package net.eduard.api.lib.command
 
 import net.eduard.api.lib.hybrid.Hybrid
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Mine
 import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.command.*
 import org.bukkit.command.Command
@@ -31,7 +31,7 @@ class BukkitCommand(val command: net.eduard.api.lib.command.Command)
         cmd.description = command.description
 
         if (!registred)
-            Mine.createCommand(plugin, this)
+            lib.modules.Mine.createCommand(plugin, this)
 
 
     }

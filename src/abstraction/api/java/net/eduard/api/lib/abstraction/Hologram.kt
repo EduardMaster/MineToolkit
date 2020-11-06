@@ -1,6 +1,6 @@
 package net.eduard.api.lib.abstraction
 
-import net.eduard.api.lib.modules.MineReflect
+import lib.modules.MineReflect
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.lang.Exception
@@ -29,7 +29,7 @@ interface Hologram {
             return try {
                 val holo = Class.
                 forName("net.eduard.api.lib.abstraction.Hologram_"
-                        + MineReflect.getVersion())
+                        + lib.modules.MineReflect.getVersion())
                         .newInstance() as Hologram
                 holo.setText(text)
                 holo

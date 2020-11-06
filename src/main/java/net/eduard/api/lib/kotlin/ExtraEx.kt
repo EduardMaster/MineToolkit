@@ -1,19 +1,19 @@
 package net.eduard.api.lib.kotlin
 
-import net.eduard.api.lib.modules.Extra
+import lib.modules.Extra
 
-fun Number.format() = Extra.formatMoney(this.toDouble())
+fun Number.format() = lib.modules.Extra.formatMoney(this.toDouble())
 
 fun Int.centralized(): Int {
     var valor = this
-    while (Extra.isColumn(valor, 1) || Extra.isColumn(valor, 9)) {
+    while (lib.modules.Extra.isColumn(valor, 1) || lib.modules.Extra.isColumn(valor, 9)) {
         valor++
     }
     return valor
 }
 
 fun String.formatColors(): String {
-    return Extra.formatColors(this)
+    return lib.modules.Extra.formatColors(this)
 }
 
 
@@ -22,14 +22,14 @@ fun Int.chance(): Boolean {
 }
 
 fun Double.chance(): Boolean {
-    return Extra.getChance(this)
+    return lib.modules.Extra.getChance(this)
 }
 
 fun String.cut(maxSize: Int): String {
-    return Extra.cutText(this, maxSize)
+    return lib.modules.Extra.cutText(this, maxSize)
 }
 
-fun String.lowerContains(msg: String) = Extra.contains(this, msg)
+fun String.lowerContains(msg: String) = lib.modules.Extra.contains(this, msg)
 
 inline operator fun <T : Any> T.invoke(block : T.() -> Unit) : T {
     block(this)

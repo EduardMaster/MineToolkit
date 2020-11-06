@@ -1,7 +1,7 @@
 package net.eduard.api.task
 
 import net.eduard.api.EduardAPI
-import net.eduard.api.lib.modules.Extra
+import lib.modules.Extra
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitRunnable
@@ -16,10 +16,10 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
 
             if (plugin is EduardPlugin) {
                 try {
-                    val agora = Extra.getNow()
+                    val agora = lib.modules.Extra.getNow()
                     if (plugin.db.hasConnection()) {
                         val amountUpdated = plugin.sqlManager.runUpdatesQueue()
-                        val tempoDepois = Extra.getNow()
+                        val tempoDepois = lib.modules.Extra.getNow()
                         val dif = tempoDepois - agora
                         if (amountUpdated > 0)
                             log("Atualizando $amountUpdated objetos na tabela (tempo levado: ${dif}ms)")
@@ -27,9 +27,9 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
                     if (plugin.isAutoSaving) {
                         if (plugin.autoSaveLastTime + plugin.autoSaveSeconds * 1000 < agora) {
                             log("Salvando dados do plugin §b" + plugin.name)
-                            val tempo1 = Extra.getNow()
+                            val tempo1 = lib.modules.Extra.getNow()
                             plugin.autosave()
-                            val tempo2 = Extra.getNow()
+                            val tempo2 = lib.modules.Extra.getNow()
                             log("Tempo levado para salvar os dados do plugin: §a" + (tempo2 - tempo1)
                                     + " milisegundos")
                             log("§7-----")
@@ -41,14 +41,14 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
                         if (plugin.backupLastTime + plugin.backupTimeUnitType.toMillis(plugin.backupTime) < agora) {
                             log("Iniciando sistema de backup para o plugin §b" + plugin.name)
                             log("Deletando backups dos dias anteriores")
-                            val tempo1 = Extra.getNow()
+                            val tempo1 = lib.modules.Extra.getNow()
                             plugin.deleteOldBackups()
-                            val tempo2 = Extra.getNow()
+                            val tempo2 = lib.modules.Extra.getNow()
                             log("Tempo levado para deletar os backups: §a" + (tempo2 - tempo1) + " milisegundos")
                             log("Fazendo backup ")
-                            val tempo3 = Extra.getNow()
+                            val tempo3 = lib.modules.Extra.getNow()
                             plugin.backup()
-                            val tempo4 = Extra.getNow()
+                            val tempo4 = lib.modules.Extra.getNow()
                             log("Backup finalizado tempo levado para fazer: §a" + (tempo4 - tempo3)
                                     + " milisegundos")
                             log("§7-----")

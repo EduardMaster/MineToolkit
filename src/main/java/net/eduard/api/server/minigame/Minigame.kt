@@ -4,13 +4,13 @@ import java.util.ArrayList
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
-import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.game.DisplayBoard
+import lib.modules.Mine
+import lib.game.DisplayBoard
 import net.eduard.api.lib.game.Kit
 import net.eduard.api.lib.manager.TimeManager
-import net.eduard.api.lib.modules.BukkitBungeeAPI
+import lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.config.Config
-import net.eduard.api.lib.modules.FakePlayer
+import lib.modules.FakePlayer
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.lang.Exception
@@ -31,9 +31,9 @@ open class Minigame : TimeManager {
     var isBungeecord = false
     var isLobby = false
     var bungeeLobby = "Lobby"
-    var scoreboardStarting = DisplayBoard("Minigame iniciando")
-    var scoreboardLobby = DisplayBoard("Minigame lobby")
-    var scoreboardPlaying = DisplayBoard("Minigame em jogo")
+    var scoreboardStarting = lib.game.DisplayBoard("Minigame iniciando")
+    var scoreboardLobby = lib.game.DisplayBoard("Minigame lobby")
+    var scoreboardPlaying = lib.game.DisplayBoard("Minigame em jogo")
     var maxPlayersPerLobby = 20
     var timeIntoStart = 60
     var timeIntoRestart = 20
@@ -50,7 +50,7 @@ open class Minigame : TimeManager {
     var lobby: Location? = null
 
     @Transient
-    var players: MutableMap<net.eduard.api.lib.modules.FakePlayer, MinigamePlayer> = mutableMapOf()
+    var players: MutableMap<lib.modules.FakePlayer, MinigamePlayer> = mutableMapOf()
 
 
     @Transient
@@ -112,7 +112,7 @@ open class Minigame : TimeManager {
      */
     fun connectAllPlayersToLobby() {
         for (player in players.values) {
-            BukkitBungeeAPI.connectToServer(player.player, bungeeLobby)
+            lib.modules.BukkitBungeeAPI.connectToServer(player.player, bungeeLobby)
         }
 
     }
@@ -211,7 +211,7 @@ open class Minigame : TimeManager {
      */
     fun broadcast(message: String) {
         for (player in playersOnline) {
-            player.sendMessage(messagePrefix + Mine.getReplacers(message, player))
+            player.sendMessage(messagePrefix + lib.modules.Mine.getReplacers(message, player))
         }
     }
 
@@ -283,7 +283,7 @@ open class Minigame : TimeManager {
      * @param player Jogador
      * @return Instancia de MinigamePlayer (MP)
      */
-    fun getPlayer(player: net.eduard.api.lib.modules.FakePlayer): MinigamePlayer {
+    fun getPlayer(player: lib.modules.FakePlayer): MinigamePlayer {
         var member = players[player]
         if (member == null) {
             member = MinigamePlayer()
@@ -297,7 +297,7 @@ open class Minigame : TimeManager {
     }
 
     fun getPlayer(player: Player): MinigamePlayer {
-        return getPlayer(net.eduard.api.lib.modules.FakePlayer(player))
+        return getPlayer(lib.modules.FakePlayer(player))
     }
 
     /**
@@ -408,7 +408,7 @@ open class Minigame : TimeManager {
      * @param player Jogador
      */
     open fun remove(player: Player) {
-        players.remove(FakePlayer(player))
+        players.remove(lib.modules.FakePlayer(player))
     }
 
     /**

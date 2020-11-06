@@ -1,7 +1,7 @@
 package net.eduard.api.lib.manager
 
 import net.eduard.api.lib.kotlin.formatColors
-import net.eduard.api.lib.modules.Extra
+import lib.modules.Extra
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -13,7 +13,7 @@ import org.bukkit.command.PluginCommand
 import org.bukkit.command.TabCompleter
 import org.bukkit.plugin.Plugin
 
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Mine
 import org.bukkit.plugin.java.JavaPlugin
 
 
@@ -42,7 +42,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
     var permission: String = ""
     var usage: String = ""
     var aliases: List<String> = ArrayList()
-    var permissionMessage = Mine.MSG_NO_PERMISSION
+    var permissionMessage = lib.modules.Mine.MSG_NO_PERMISSION
 
 
     val command: PluginCommand
@@ -75,7 +75,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
 
     fun broadcast(message: String) {
-        Mine.broadcast(message, permission)
+        lib.modules.Mine.broadcast(message, permission)
 
     }
 
@@ -135,14 +135,14 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             var sub: CommandManager? = null
             for (subcmd in cmd.subCommands.values) {
                 if (sender.hasPermission(subcmd.permission)) {
-                    if (Extra.startWith(subcmd.name, arg)) {
+                    if (lib.modules.Extra.startWith(subcmd.name, arg)) {
                         vars.add(subcmd.name)
                     }
                     if (subcmd.name.equals(arg, ignoreCase = true)) {
                         sub = subcmd
                     }
                     for (alias in subcmd.aliases) {
-                        if (Extra.startWith(alias, arg)) {
+                        if (lib.modules.Extra.startWith(alias, arg)) {
                             vars.add(alias)
                         }
                         if (alias.equals(arg, ignoreCase = true)) {
@@ -241,12 +241,12 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
         updateSubs()
         registerListener(plugin)
-        Mine.createCommand(plugin, command)
+        lib.modules.Mine.createCommand(plugin, command)
     }
 
     fun unregisterCommand() {
         if (customCommand != null)
-            Mine.removeCommand(name)
+            lib.modules.Mine.removeCommand(name)
 
     }
 
@@ -282,7 +282,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         fun log(msg: String) {
 
             if (isDebug)
-                Mine.console("§bCommandAPI §f$msg")
+                lib.modules.Mine.console("§bCommandAPI §f$msg")
         }
 
 

@@ -6,9 +6,9 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Mine
 import net.eduard.api.lib.game.Schematic
-import net.eduard.api.lib.modules.Copyable
+import lib.modules.Copyable
 /**
  * Mapa da Sala
  *
@@ -63,24 +63,24 @@ class MinigameMap(
             }
 
     fun copyWorld(map: MinigameMap) {
-        world = Mine.copyWorld(map.worldName, worldName)
+        world = lib.modules.Mine.copyWorld(map.worldName, worldName)
         fixWorld()
     }
 
     fun unloadWorld() {
 
-        Mine.unloadWorld(worldName, false)
+        lib.modules.Mine.unloadWorld(worldName, false)
     }
 
     fun clearWorld() {
-        Mine.deleteWorld(worldName)
-        world = Mine.newEmptyWorld(worldName)
+        lib.modules.Mine.deleteWorld(worldName)
+        world = lib.modules.Mine.newEmptyWorld(worldName)
     }
 
     fun loadWorld(): World {
         var mundo: World? = Bukkit.getWorld(worldName)
         if (mundo == null) {
-            mundo = Mine.loadWorld(worldName)
+            mundo = lib.modules.Mine.loadWorld(worldName)
         }
         return mundo!!
 
@@ -95,7 +95,7 @@ class MinigameMap(
     }
 
     fun copy(): MinigameMap {
-        return Copyable.copyObject(this)
+        return lib.modules.Copyable.copyObject(this)
 
     }
 

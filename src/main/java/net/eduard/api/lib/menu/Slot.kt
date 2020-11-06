@@ -1,9 +1,9 @@
 package net.eduard.api.lib.menu
 
 import net.eduard.api.lib.manager.EffectManager
-import net.eduard.api.lib.modules.Copyable
-import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Copyable
+import lib.modules.Extra
+import lib.modules.Mine
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.io.Serializable
@@ -24,10 +24,10 @@ open class Slot(
         get() = index
 
     var index: Int
-        get() = Extra.getIndex(positionX, positionY)
+        get() = lib.modules.Extra.getIndex(positionX, positionY)
         set(index) {
-            positionX = Extra.getColumn(index)
-            positionY = Extra.getLine(index)
+            positionX = lib.modules.Extra.getColumn(index)
+            positionY = lib.modules.Extra.getLine(index)
         }
 
 
@@ -54,7 +54,7 @@ open class Slot(
     }
 
     open fun copy(): Slot {
-        return Copyable.copyObject(this)
+        return lib.modules.Copyable.copyObject(this)
     }
 
     fun setPosition(collumn: Int, line: Int) {
@@ -68,7 +68,7 @@ open class Slot(
 
     fun give(menu: Inventory, placeholders: Map<String?, String?>?) {
         val clone = item?.clone()
-        Mine.applyPlaceholders(clone, placeholders)
+        lib.modules.Mine.applyPlaceholders(clone, placeholders)
         menu.setItem(index, clone)
     }
 

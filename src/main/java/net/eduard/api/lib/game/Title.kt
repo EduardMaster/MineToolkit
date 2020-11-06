@@ -1,7 +1,7 @@
 package net.eduard.api.lib.game
 
 import net.eduard.api.lib.kotlin.sendTitle
-import net.eduard.api.lib.modules.Copyable
+import lib.modules.Copyable
 import org.bukkit.entity.Player
 
 /**
@@ -17,7 +17,7 @@ class Title(
 ) {
 
     fun copy(): Title {
-        return Copyable.copyObject(this)
+        return lib.modules.Copyable.copyObject(this)
     }
 
 

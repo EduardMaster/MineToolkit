@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.server.PluginDisableEvent
 
-import net.eduard.api.lib.modules.Mine
+import lib.modules.Mine
 
 class Grappler : KitAbility() {
     @EventHandler
@@ -70,7 +70,7 @@ class Grappler : KitAbility() {
     @EventHandler
     fun event(e: PluginDisableEvent) {
         if (plugin == e.plugin)
-            for (p in Mine.getPlayers()) {
+            for (p in lib.modules.Mine.getPlayers()) {
                 if (hooks.containsKey(p)) {
                     hooks[p]!!.remove()
                     hooks.remove(p)
