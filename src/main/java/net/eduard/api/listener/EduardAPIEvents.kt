@@ -2,9 +2,10 @@ package net.eduard.api.listener
 
 import net.eduard.api.EduardAPI
 import net.eduard.api.lib.manager.EventsManager
-import lib.modules.Mine
-import lib.modules.MineReflect
+
 import net.eduard.api.core.PlayerSkin
+import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -59,16 +60,15 @@ class EduardAPIEvents : EventsManager() {
     @EventHandler
     fun onDeath(e: PlayerDeathEvent) {
         val player = e.entity
-        if (lib.modules.Mine.OPT_AUTO_RESPAWN) {
+        if (Mine.OPT_AUTO_RESPAWN) {
             if (player.hasPermission("eduard.autorespawn")) {
                 object : BukkitRunnable() {
                     override fun run() {
                         if (player.isDead) {
                             player.fireTicks = 0
                             try {
-                                lib.modules.MineReflect.makeRespawn(player)
+                                MineReflect.makeRespawn(player)
                             } catch (ex: Exception) {
-
                                 ex.printStackTrace()
                             }
 
@@ -80,7 +80,7 @@ class EduardAPIEvents : EventsManager() {
             }
 
         }
-        if (lib.modules.Mine.OPT_NO_DEATH_MESSAGE) {
+        if (Mine.OPT_NO_DEATH_MESSAGE) {
             e.deathMessage = null
         }
     }
@@ -107,7 +107,7 @@ class EduardAPIEvents : EventsManager() {
         val player = e.player
         if (EduardAPI.instance.configs.getBoolean("custom-quit-message"))
             e.quitMessage = EduardAPI.MSG_ON_QUIT.replace("\$player", player.name)
-        if (lib.modules.Mine.OPT_NO_QUIT_MESSAGE) {
+        if (Mine.OPT_NO_QUIT_MESSAGE) {
             e.quitMessage = ""
         }
     }
@@ -125,7 +125,7 @@ class EduardAPIEvents : EventsManager() {
         }
 
 
-        if (lib.modules.Mine.OPT_NO_JOIN_MESSAGE) {
+        if (Mine.OPT_NO_JOIN_MESSAGE) {
             e.joinMessage = null
             return
         }

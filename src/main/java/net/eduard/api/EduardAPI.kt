@@ -22,8 +22,6 @@ import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.modules.*
-import lib.modules.Copyable.CopyDebug
-import lib.modules.ServerAPI.BukkitControl
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.bukkit_storables.BukkitStorables
@@ -53,7 +51,7 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI(private val plugin: JavaPlugin) : IPlugin, lib.modules.BukkitTimeHandler {
+class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     override var started = false
     override var configs = Config(plugin, "config.yml")
     override var storage = Config(plugin, "storage.yml")
@@ -125,9 +123,9 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, lib.modules.BukkitTim
             onLoad()
         }
         storage()
-        lib.modules.VaultAPI.setupVault()
-        BukkitControl.register(plugin)
-        lib.modules.BukkitBungeeAPI.requestCurrentServer()
+        VaultAPI.setupVault()
+        ServerAPI.BukkitControl.register(plugin)
+        BukkitBungeeAPI.requestCurrentServer()
         BungeeAPI.getBukkit().plugin = plugin
         BungeeAPI.getBukkit().register()
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
@@ -146,7 +144,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, lib.modules.BukkitTim
     }
 
     fun tasks(){
-        lib.modules.Mine.resetScoreboards()
+        Mine.resetScoreboards()
         log("Scoreboards dos jogadores online resetadas!")
 
         BukkitReplacers()
@@ -201,24 +199,24 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, lib.modules.BukkitTim
         DBManager.setDebug(configs.getBoolean("debug-db"))
         Menu.isDebug = configs.getBoolean("debug-menu")
         CommandManager.isDebug = configs.getBoolean("debug-commands")
-        CopyDebug.setDebug(configs.getBoolean("debug-copyable"))
-        lib.modules.BukkitBungeeAPI.setDebug(configs.getBoolean("debug-bungee-bukkit"))
-        lib.modules.Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
+        Copyable.CopyDebug.setDebug(configs.getBoolean("debug-copyable"))
+        BukkitBungeeAPI.setDebug(configs.getBoolean("debug-bungee-bukkit"))
+       Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
         PlayerSkin.reloadSkins()
-        lib.modules.MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
+        MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
         loadMaps()
 
         configs.add("sound-teleport", OPT_SOUND_TELEPORT)
         configs.add("sound-error", OPT_SOUND_ERROR)
         configs.add("sound-success", OPT_SOUND_SUCCESS)
         configs.saveConfig()
-        lib.modules.Mine.OPT_AUTO_RESPAWN = configs.getBoolean("auto-respawn")
-        lib.modules.Mine.OPT_NO_JOIN_MESSAGE = configs.getBoolean("no-join-message")
-        lib.modules.Mine.OPT_NO_QUIT_MESSAGE = configs.getBoolean("no-quit-message")
-        lib.modules.Mine.OPT_NO_DEATH_MESSAGE = configs.getBoolean("no-death-message")
+        Mine.OPT_AUTO_RESPAWN = configs.getBoolean("auto-respawn")
+        Mine.OPT_NO_JOIN_MESSAGE = configs.getBoolean("no-join-message")
+        Mine.OPT_NO_QUIT_MESSAGE = configs.getBoolean("no-quit-message")
+        Mine.OPT_NO_DEATH_MESSAGE = configs.getBoolean("no-death-message")
         try {
             log("Carregando formato de dinheiro da config")
-            lib.modules.Extra.MONEY = DecimalFormat(
+            Extra.MONEY = DecimalFormat(
                 configs.getString("money-format"),
                 DecimalFormatSymbols.getInstance(Locale.forLanguageTag(configs.getString("money-format-locale")))
             )

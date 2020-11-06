@@ -1,9 +1,6 @@
 package net.eduard.api.server.minigame
 
-import net.eduard.api.lib.kotlin.offline
-import lib.modules.FakePlayer
-
-import lib.modules.Mine
+import net.eduard.api.lib.modules.FakePlayer
 
 /**
  * Jogador do Minigame
@@ -18,7 +15,7 @@ class MinigamePlayer() {
     var team: MinigameTeam? = null
     var game: MinigameRoom? = null
     var lobby: MinigameLobby? = null
-    var fakePlayer = lib.modules.FakePlayer("Eduard")
+    var fakePlayer = FakePlayer("Eduard")
 
     val isPlaying: Boolean
         get() = game != null
@@ -109,7 +106,7 @@ class MinigamePlayer() {
      * @param message Mensagem
      */
     fun send(message: String) {
-        player.sendMessage(lib.modules.Mine.getReplacers(message, player))
+        player.sendMessage(Mine.getReplacers(message, player))
     }
 
     override fun hashCode(): Int {

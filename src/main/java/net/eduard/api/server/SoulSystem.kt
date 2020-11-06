@@ -1,16 +1,16 @@
 package net.eduard.api.server
 
-import lib.modules.FakePlayer
+import net.eduard.api.lib.modules.FakePlayer
 
 
 interface SoulSystem {
 
-    fun addSouls(player: lib.modules.FakePlayer, amount: Double)
+    fun addSouls(player: FakePlayer, amount: Double)
 
-    fun removeSouls(player: lib.modules.FakePlayer, amount: Double)
+    fun removeSouls(player: FakePlayer, amount: Double)
 
-    fun getSouls(player: lib.modules.FakePlayer): Double
+    fun getSouls(player: FakePlayer): Double
 
-    fun setSouls(player: lib.modules.FakePlayer, amount: Double)
+    fun setSouls(player: FakePlayer, amount: Double)
 
 }

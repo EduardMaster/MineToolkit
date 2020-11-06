@@ -2,12 +2,12 @@
 
 package net.eduard.api.lib.kotlin
 
-import net.eduard.api.lib.command.PlayerOffline
 import net.eduard.api.lib.hybrid.PlayerUser
-import lib.modules.Extra
-import lib.modules.FakePlayer
-import lib.modules.Mine
-import lib.modules.MineReflect
+import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.modules.FakePlayer
+import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.modules.MineReflect
+
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.CropState
@@ -32,57 +32,57 @@ import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
 
 fun Player.removeXP(amount: Double) {
-    lib.modules.Mine.removeXP(this, amount)
+    Mine.removeXP(this, amount)
 }
 
 fun Player.addHotBar(item: ItemStack) {
-    lib.modules.Mine.setHotBar(this, item)
+    Mine.setHotBar(this, item)
 }
 
 fun Player.changeTabName(tabName: String) {
-    lib.modules.Mine.changeTabName(this, tabName)
+    Mine.changeTabName(this, tabName)
 }
 
 fun Player.clearHotBar() {
-    lib.modules.Mine.clearHotBar(this)
+    Mine.clearHotBar(this)
 
 }
 
 fun LivingEntity.clearArmors() {
-    lib.modules.Mine.clearArmours(this)
+    Mine.clearArmours(this)
 }
 
 fun Player.clearInventory() {
-    lib.modules.Mine.clearInventory(this)
+    Mine.clearInventory(this)
 }
 
 fun Player.sendTitle(title: String, subTitle: String) {
-    lib.modules.MineReflect.sendTitle(this, title, subTitle, 20, 20, 20)
+    MineReflect.sendTitle(this, title, subTitle, 20, 20, 20)
 }
 
 fun Player.sendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
-    lib.modules.MineReflect.sendTitle(this, title, subTitle, fadeInt, stay, fadeOut)
+    MineReflect.sendTitle(this, title, subTitle, fadeInt, stay, fadeOut)
 }
 
 fun Player.sendActionBar(msg: String) {
-    lib.modules.MineReflect.sendActionBar(this, msg)
+    MineReflect.sendActionBar(this, msg)
 }
 
 fun Player.sendPacket(packet: Any) {
-    lib.modules.MineReflect.sendPacket(this, packet)
+    MineReflect.sendPacket(this, packet)
 }
 
 fun Event.call() {
-    return lib.modules.Mine.callEvent(this)
+    return Mine.callEvent(this)
 }
 
-inline val lib.modules.FakePlayer.offline: PlayerUser
+inline val FakePlayer.offline: PlayerUser
     get() {
         return PlayerUser(name, id)
     }
 
 inline fun CommandSender.isPlayer(block: Player.() -> Unit) {
-    if (lib.modules.Mine.onlyPlayer(this)) {
+    if (Mine.onlyPlayer(this)) {
         block(this as Player)
     }
 }
@@ -104,7 +104,7 @@ val <T> Class<T>.plugin: JavaPlugin
         return JavaPlugin.getPlugin(this as Class<out JavaPlugin>) as JavaPlugin
     }
 
-fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(lib.modules.Extra.getIndex(column, line), item)
+fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
 
 val BlockState.isCrop get() = type == Material.CROPS
 

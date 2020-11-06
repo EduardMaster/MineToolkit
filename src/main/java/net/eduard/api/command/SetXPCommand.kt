@@ -1,7 +1,7 @@
 package net.eduard.api.command
 
 import net.eduard.api.lib.manager.CommandManager
-import lib.modules.Extra
+import net.eduard.api.lib.modules.Extra
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -14,7 +14,7 @@ class SetXPCommand : CommandManager("setexperience") {
             if (args.isEmpty()) {
                 return false
             } else {
-                var amount = lib.modules.Extra.fromMoneyToDouble(args[0])
+                var amount = Extra.fromMoneyToDouble(args[0])
                 p.totalExperience = 0
                 p.exp = 0f
                 p.level = 0

@@ -3,7 +3,7 @@ package net.eduard.api.lib.command
 import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.hybrid.IPlayer
 import net.eduard.api.lib.hybrid.ISender
-import lib.modules.Extra
+import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPluginInstance
 import java.util.ArrayList
 
@@ -80,14 +80,14 @@ open class Command(override var name: String = "comando", vararg aliases: String
             var sub: Command? = null
             for (subcmd in cmd.subCommands) {
                 if (sender.hasPermission(subcmd.permission)) {
-                    if (lib.modules.Extra.startWith(subcmd.name, arg)) {
+                    if (Extra.startWith(subcmd.name, arg)) {
                         vars.add(subcmd.name)
                     }
                     if (subcmd.name.equals(arg, ignoreCase = true)) {
                         sub = subcmd
                     }
                     for (alias in subcmd.aliases) {
-                        if (lib.modules.Extra.startWith(alias, arg)) {
+                        if (Extra.startWith(alias, arg)) {
                             vars.add(alias)
                         }
                         if (alias.equals(arg, ignoreCase = true)) {

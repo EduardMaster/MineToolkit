@@ -1,7 +1,7 @@
 package net.eduard.api.lib.database
 
-import lib.modules.Extra
-import lib.modules.FakePlayer
+import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.modules.FakePlayer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
@@ -34,18 +34,18 @@ object BukkitTypes {
                 x, y, z
             )
         }
-        save<lib.modules.FakePlayer>(75) {
+        save<FakePlayer>(75) {
             "$name;$uniqueId"
         }
         load {
             val split = it.split(";")
-            lib.modules.FakePlayer(split[0], UUID.fromString(split[1]))
+            FakePlayer(split[0], UUID.fromString(split[1]))
         }
         save<Enchantment> {
             "$id"
         }
         load {
-            Enchantment.getById(lib.modules.Extra.toInt(it))
+            Enchantment.getById(Extra.toInt(it))
         }
 
     }

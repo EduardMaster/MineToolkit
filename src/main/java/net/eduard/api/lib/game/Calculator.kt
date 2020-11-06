@@ -1,6 +1,6 @@
 package net.eduard.api.lib.game
 
-import lib.modules.Extra
+import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.Storable.StorageAttributes
 
 @StorageAttributes(inline = true)
@@ -23,7 +23,7 @@ class Calculator(
     fun getValue(level: Double): Double {
         val result = perLevel * level + base
         val variationNumber = variation + variationPerLevel * level
-        val random = lib.modules.Extra.getRandomDouble(-variationNumber, variationNumber)
+        val random = Extra.getRandomDouble(-variationNumber, variationNumber)
         var resultFinal = result + random // + extra;
         if (limit > 0 && resultFinal > limit) {
             return limit

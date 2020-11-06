@@ -2,8 +2,9 @@ package net.eduard.api.server.minigame
 
 
 import net.eduard.api.lib.game.ItemRandom
-import lib.modules.Extra
-import lib.modules.Mine
+import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.modules.Mine
+
 import org.bukkit.Material
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -23,7 +24,7 @@ class MinigameChest {
             inv.clear()
         }
         if (items.isEmpty()){
-            lib.modules.Mine.console("§cMinigamechest is Empty not filling chests")
+            Mine.console("§cMinigamechest is Empty not filling chests")
             return
         }
         var itemsSorted = 0
@@ -31,7 +32,7 @@ class MinigameChest {
             var item: ItemStack? = null
             var itemrandom: ItemRandom? = null
             if (isRandomItems) {
-                itemrandom = lib.modules.Extra.getRandom(items)
+                itemrandom = Extra.getRandom(items)
             } else {
                 if (itemsSorted < items.size) {
                     itemrandom = items[itemsSorted]
@@ -53,7 +54,7 @@ class MinigameChest {
             val contents = inv.contents
             for (i in contents.indices) {
                 val itemStack = contents[i]
-                var temp = lib.modules.Extra.getRandomInt(1, contents.size)
+                var temp =Extra.getRandomInt(1, contents.size)
                 temp--
                 val tempItem = contents[temp]
                 contents[i] = tempItem

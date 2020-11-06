@@ -1,19 +1,19 @@
 package net.eduard.api.server
 
-import lib.modules.FakePlayer
+import net.eduard.api.lib.modules.FakePlayer
 
 
 interface CashSystem {
 
-    fun addCash(player: lib.modules.FakePlayer, amount: Double)
+    fun addCash(player: FakePlayer, amount: Double)
 
-    fun removeCash(player: lib.modules.FakePlayer, amount: Double)
+    fun removeCash(player: FakePlayer, amount: Double)
 
-    fun getCash(player: lib.modules.FakePlayer): Double
+    fun getCash(player: FakePlayer): Double
 
-    fun setCash(player: lib.modules.FakePlayer, amount: Double)
+    fun setCash(player: FakePlayer, amount: Double)
 
-    fun hasCash(player: lib.modules.FakePlayer, amount: Double): Boolean {
+    fun hasCash(player: FakePlayer, amount: Double): Boolean {
         return getCash(player) >= amount
     }
 

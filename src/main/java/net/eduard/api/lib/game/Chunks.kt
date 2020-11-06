@@ -1,6 +1,6 @@
 package net.eduard.api.lib.game
 
-import lib.modules.Copyable
+import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.storage.Storable.StorageAttributes
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
@@ -25,7 +25,7 @@ class Chunks() {
     }
 
     fun copy(): Chunks {
-        return lib.modules.Copyable.copyObject(this)
+        return Copyable.copyObject(this)
     }
 
     fun newChunk(x: Int, z: Int): Chunks {

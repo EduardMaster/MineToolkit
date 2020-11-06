@@ -1,10 +1,9 @@
 package net.eduard.api.lib.game
 
-import lib.modules.Mine
+import net.eduard.api.lib.modules.Mine
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class Kit() {
@@ -44,7 +43,7 @@ class Kit() {
     var isAutoEquip = true
 
 
-    var icon : ItemStack = lib.game.ItemBuilder(Material.DIAMOND_SWORD).name("§aKit")
+    var icon : ItemStack = ItemBuilder(Material.DIAMOND_SWORD).name("§aKit")
     var items = mutableListOf<ItemStack>()
     var upgrades = mutableListOf<KitUpgrade>()
 
@@ -53,7 +52,7 @@ class Kit() {
     fun give(p: Player, level: Int = 1) {
         val inv = p.inventory
         if (isClearInventory) {
-            lib.modules.Mine.clearInventory(p)
+            Mine.clearInventory(p)
         }
         if (level == 1)
             for (item in items) {
@@ -95,7 +94,7 @@ class Kit() {
                 }
             }
         }
-        if (isFillSoup) lib.modules.Mine.fill(inv, ItemStack(Material.MUSHROOM_SOUP))
+        if (isFillSoup)Mine.fill(inv, ItemStack(Material.MUSHROOM_SOUP))
     }
 
     fun getUpgrade(level: Int) = upgrades.first { it.level == level }
