@@ -5,7 +5,7 @@ import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.config.StorageType
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
-import lib.modules.Extra
+import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.StorageAPI
 import java.io.File
 import java.io.IOException
@@ -33,9 +33,9 @@ interface IPlugin : IPluginInstance {
         configs.add("log-enabled", true)
         configs.add("auto-save", false)
         configs.add("auto-save-seconds", 60)
-        configs.add("auto-save-lasttime", lib.modules.Extra.getNow())
+        configs.add("auto-save-lasttime", Extra.getNow())
         configs.add("backup", false)
-        configs.add("backup-lasttime", lib.modules.Extra.getNow())
+        configs.add("backup-lasttime", Extra.getNow())
         configs.add("backup-time", 1)
         configs.add("backup-timeunit-type", "MINUTES")
         configs.add("database", dbManager)
@@ -60,7 +60,7 @@ interface IPlugin : IPluginInstance {
      * Gera backup dos arquivos config.yml, storage.yml e por ultimo database.db
      */
     fun backup() {
-        configs.set("backup-lasttime", lib.modules.Extra.getNow())
+        configs.set("backup-lasttime", Extra.getNow())
         try {
             val simpleDateFormat = SimpleDateFormat("dd-MM-YYYY HH-mm-ss")
             val pasta = File(pluginFolder,
@@ -106,7 +106,7 @@ interface IPlugin : IPluginInstance {
     val pluginName : String
     val pluginFolder get() : File{
         return try {
-            lib.modules.Extra.getMethodInvoke(plugin, "getDataFolder") as File
+          Extra.getMethodInvoke(plugin, "getDataFolder") as File
         }catch (ex: Exception){
             File("plugins", pluginName)
         }
@@ -203,7 +203,7 @@ interface IPlugin : IPluginInstance {
         val lista = listOf(*pasta.listFiles()!!)
         lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
             .forEach {
-                lib.modules.Extra.deleteFolder(it)
+              Extra.deleteFolder(it)
                 if (it.exists())
                     it.delete()
             }

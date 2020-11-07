@@ -1,6 +1,8 @@
 package net.eduard.api.server.minigame
 
+import net.eduard.api.lib.kotlin.offline
 import net.eduard.api.lib.modules.FakePlayer
+import net.eduard.api.lib.modules.Mine
 
 /**
  * Jogador do Minigame

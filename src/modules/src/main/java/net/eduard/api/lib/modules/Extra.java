@@ -480,7 +480,7 @@ public final class Extra {
             if (array[t] == '&') {
                 for (char c : chars) {
                     if (c == array[(t + 1)]) {
-                        array[t] = '§';
+                        array[t] = '\u00a7';
                     }
                 }
             }

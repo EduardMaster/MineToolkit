@@ -2,7 +2,7 @@ package net.eduard.api.lib.game;
 
 import java.util.Random;
 
-import lib.modules.EmptyWorldGenerator;
+import net.eduard.api.lib.modules.EmptyWorldGenerator;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;

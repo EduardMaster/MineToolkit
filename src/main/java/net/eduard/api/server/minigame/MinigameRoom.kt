@@ -1,7 +1,7 @@
 package net.eduard.api.server.minigame
 
 import net.eduard.api.lib.database.annotations.TableName
-import lib.modules.Extra
+import net.eduard.api.lib.modules.Extra
 
 import org.bukkit.entity.Player
 
@@ -107,7 +107,7 @@ class MinigameRoom {
     fun broadcast(message: String) {
         for (player in players) {
 
-            player.send(minigame.messagePrefix + message.replace("\$time", lib.modules.Extra.formatSeconds1(time)).replace("\$max", "" + map.maxPlayersAmount)
+            player.send(minigame.messagePrefix + message.replace("\$time", Extra.formatSeconds1(time)).replace("\$max", "" + map.maxPlayersAmount)
                     .replace("\$players", "" + players.size))
         }
     }

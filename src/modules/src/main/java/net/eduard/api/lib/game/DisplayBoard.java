@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lib.modules.Extra;
-import lib.modules.Mine;
-import lib.modules.FakePlayer;
+import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.modules.FakePlayer;
+import net.eduard.api.lib.modules.Mine;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;

@@ -1,6 +1,6 @@
 package net.eduard.api.lib.menu
 
-import lib.game.ItemBuilder
+import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.kotlin.player
 import net.eduard.api.lib.manager.CurrencyManager
 import net.eduard.api.lib.modules.*
@@ -112,13 +112,13 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
             button("upgrade") {
                 setPosition(3, 2)
-                icon = lib.game.ItemBuilder(Material.ANVIL).name("§aEvoluir")
+                icon = ItemBuilder(Material.ANVIL).name("§aEvoluir")
             }
 
 
             button("product") {
                 setPosition(5, 2)
-                icon = lib.game.ItemBuilder(Material.STONE)
+                icon = ItemBuilder(Material.STONE)
             }
 
         }
@@ -129,14 +129,14 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
             cantBeOpened()
             button("confirmar") {
                 setPosition(3, 2)
-                icon = lib.game.ItemBuilder(Material.WOOL)
+                icon = ItemBuilder(Material.WOOL)
                         .data(5)
                         .name("§a§lCONFIRMAR")
                         .lore("§aClique para confirmar a transação.")
             }
 
             button("cancelar") {
-                icon = lib.game.ItemBuilder(Material.WOOL)
+                icon = ItemBuilder(Material.WOOL)
                         .data(14)
                         .name("§c§lCANCELAR")
                         .lore("§cClique para cancelar a transação.")
@@ -145,7 +145,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
             button("product") {
                 setPosition(5, 2)
-                icon = lib.game.ItemBuilder(Material.STONE)
+                icon = ItemBuilder(Material.STONE)
             }
         }
 
@@ -153,7 +153,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
 
     override fun copy(): Shop {
-        return lib.modules.Copyable.copyObject(this)
+        return Copyable.copyObject(this)
     }
 
     fun organize() {
@@ -172,7 +172,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         val p = e.player
         if (selectingAmount.containsKey(p)) {
             val product = selectingAmount[p]!!
-            var amount = lib.modules.Extra.fromMoneyToDouble(e.message)
+            var amount = Extra.fromMoneyToDouble(e.message)
             amount = Math.abs(amount)
             selectingAmount.remove(p)
             val trade = trading[p]
@@ -188,7 +188,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     fun buy(player: Player, product: Product, value: Double) {
         var amount = value
-        val fake = lib.modules.FakePlayer(player)
+        val fake = FakePlayer(player)
         val priceUnit = product.unitBuyPrice
         if (product.isLimited && amount > product.stock) {
             amount = product.stock
@@ -217,7 +217,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         evento.type = TradeType.BUYABLE
         evento.priceTotal = priceFinal
         evento.shop = this@Shop
-        lib.modules.Mine.callEvent(evento)
+        Mine.callEvent(evento)
         if (evento.isCancelled) {
             return
         }
@@ -229,13 +229,13 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         }
         product.stock = evento.newStock
         for (cmd in product.commands) {
-            lib.modules.Mine.runCommand(cmd.replace("\$player", player.name).replace("\$formated_amount", lib.modules.Extra.formatMoney(amount)).replace("\$amount", "" + amount))
+            Mine.runCommand(cmd.replace("\$player", player.name).replace("\$formated_amount", Extra.formatMoney(amount)).replace("\$amount", "" + amount))
         }
-        player.sendMessage(messageBoughtItem.replace("\$amount", lib.modules.Extra.formatMoney(amount)).replace("\$product",
+        player.sendMessage(messageBoughtItem.replace("\$amount", Extra.formatMoney(amount)).replace("\$product",
                 "" + product.name))
         if (isPermissionShop) {
-            if (lib.modules.VaultAPI.hasVault() && lib.modules.VaultAPI.hasPermission()) {
-                lib.modules.VaultAPI.getPermission().playerAdd(null, fake, product.permission)
+            if (VaultAPI.hasVault() && VaultAPI.hasPermission()) {
+                VaultAPI.getPermission().playerAdd(null, fake, product.permission)
             }
             return
         }
@@ -244,12 +244,12 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         }
         var clone = product.product!!.clone()
         if (evento.amount > PLAYER_INVENTORY_LIMIT) {
-            clone = lib.modules.MineReflect.toStack(clone, evento.amount)
+            clone = MineReflect.toStack(clone, evento.amount)
         } else {
             clone.amount = evento.amount.toInt()
         }
-        if (lib.modules.Mine.isFull(player.inventory)) {
-            val inv = lib.modules.Mine.newInventory("Pegue seus items comprados", 6 * 9)
+        if (Mine.isFull(player.inventory)) {
+            val inv = Mine.newInventory("Pegue seus items comprados", 6 * 9)
             inv.addItem(clone)
             player.openInventory(inv)
             player.sendMessage("§cPegue seus items comprados e coloca no seu inventário.")
@@ -261,7 +261,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     fun sell(player: Player, product: Product?, value: Double) {
         var amount = value
-        val fake = lib.modules.FakePlayer(player)
+        val fake = FakePlayer(player)
         val priceUnit = product!!.unitSellPrice
         if (amount > product.stock) {
             amount = product.stock
@@ -280,14 +280,14 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         evento.priceTotal = finalPrice
         evento.shop = this@Shop
         //
-        lib.modules.Mine.callEvent(evento)
+        Mine.callEvent(evento)
         if (evento.isCancelled) {
             return
         }
         if (evento.amount > PLAYER_INVENTORY_LIMIT) {
             evento.amount = PLAYER_INVENTORY_LIMIT.toDouble()
         }
-        lib.modules.Mine.remove(player.inventory, product.product, evento.amount.toInt())
+        Mine.remove(player.inventory, product.product, evento.amount.toInt())
         player.sendMessage(messageSoldItem.replace("\$amount", "" + amount).replace("\$product",
                 product.name))
         currency!!.add(fake, finalPrice)
@@ -353,14 +353,14 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
             menuUpgrades!!.openHandler = { inventory, player ->
 
                 val product = selectedProduct[player]!!
-                var slot = lib.modules.Extra.getIndex(3, 4)
+                var slot = Extra.getIndex(3, 4)
                 val productButton = menuUpgrades?.getButton("product")!!
 
 
                 inventory.setItem(productButton.index, product.icon)
 
                 for (upgrade in product.upgrades) {
-                    val icon = lib.game.ItemBuilder(Material.STAINED_GLASS_PANE)
+                    val icon = ItemBuilder(Material.STAINED_GLASS_PANE)
                             .data(14)
                             .name("§6Upgrade §e" + upgrade.displayName)
                     if (upgrade.hasBought(player)) {
@@ -393,14 +393,14 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         val upgradeButton = menuUpgrades?.getButton("upgrade") ?: return
         upgradeButton.click = ClickEffect { event ->
             val player = event.player
-            val fake = lib.modules.FakePlayer(player)
+            val fake = FakePlayer(player)
             val product = selectedProduct[player]!!
             val nextUpgrade = product.getNextUpgrade(player)
             if (nextUpgrade != null) {
                 if (this.currency!!.contains(fake, nextUpgrade.price)) {
 
                     this.currency!!.remove(fake, nextUpgrade.price)
-                    lib.modules.VaultAPI.getPermission().playerAdd(player, nextUpgrade.permission)
+                    VaultAPI.getPermission().playerAdd(player, nextUpgrade.permission)
                     player.sendMessage(messageUpgradeBought
                             .replace("\$product_name",
                                 nextUpgrade.displayName)
@@ -466,7 +466,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
                                 "" + product.name).replace("\$trader", "vender"))
                         return@ClickEffect
                     }
-                    var amount = lib.modules.Mine.getTotalAmount(player.inventory, product.product)
+                    var amount = Mine.getTotalAmount(player.inventory, product.product)
                     if (event.click == ClickType.LEFT || event.click == ClickType.LEFT) {
                         if (amount > 64) {
                             amount = 64

@@ -10,12 +10,12 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
-import lib.modules.Mine
 import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.menu.Slot
 import net.eduard.api.lib.menu.ClickEffect
-import lib.modules.VaultAPI
+import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.plugin.IPluginInstance
 
 class KitManager : EventsManager() {
@@ -35,12 +35,12 @@ class KitManager : EventsManager() {
     var msgNoKitBuyed = "§§Voce nao tem dinheiro para comprar o kit §e\$kit"
     var msgShopTitle = "§cKit §4§l\$kit §cseu pre§o: §a§l\$price"
     var msgKitDisabled = "§cHabilidade \$kit desativada temporariamente!"
-    var itemSoup = lib.modules.Mine.newItem(Material.MUSHROOM_SOUP, "§6Sopa")
-    var itemEmptySlot = lib.modules.Mine.newItem(Material.STAINED_GLASS_PANE, " ", 15)
-    var itemHotBar = lib.modules.Mine.newItem(Material.STAINED_GLASS_PANE, "§6§lKit§f§lPvP", 10)
+    var itemSoup = Mine.newItem(Material.MUSHROOM_SOUP, "§6Sopa")
+    var itemEmptySlot = Mine.newItem(Material.STAINED_GLASS_PANE, " ", 15)
+    var itemHotBar = Mine.newItem(Material.STAINED_GLASS_PANE, "§6§lKit§f§lPvP", 10)
     var globalItems: MutableList<ItemStack> = ArrayList()
-    var openKits = Slot(lib.modules.Mine.newItem(Material.CHEST, "§6§lSelecionar Kit"), 0)
-    var openShop = Slot(lib.modules.Mine.newItem(Material.EMERALD, "§6§lComprar Kit"), 8)
+    var openKits = Slot(Mine.newItem(Material.CHEST, "§6§lSelecionar Kit"), 0)
+    var openShop = Slot(Mine.newItem(Material.EMERALD, "§6§lComprar Kit"), 8)
     var kitsShop = Menu("§8Loja de Kits", 6)
     var kitsSelection = Menu("§8Seus  Kits", 6)
 
@@ -125,7 +125,7 @@ class KitManager : EventsManager() {
         openShop.give(inv)
         openKits.give(inv)
         if (isFillHotBar) {
-            lib.modules.Mine.addHotBar(player, itemHotBar)
+            Mine.addHotBar(player, itemHotBar)
         }
 
     }
@@ -145,7 +145,7 @@ class KitManager : EventsManager() {
             return
         val kit = playersKits[player]!!
         removeKits(player)
-        lib.modules.Mine.refreshAll(player)
+        Mine.refreshAll(player)
         val inv = player.inventory
         for (item in kit.items) {
             inv.addItem(item)
@@ -159,8 +159,8 @@ class KitManager : EventsManager() {
             inv.addItem(item)
         }
         if (isGiveSoups) {
-            lib.modules.Mine.fill(inv, itemSoup)
-            lib.modules.Mine.setEquip(player, Color.GREEN, "§4§lINSANE")
+            Mine.fill(inv, itemSoup)
+            Mine.setEquip(player, Color.GREEN, "§4§lINSANE")
         }
         player.sendMessage(msgKitGived.replace("\$kit", kit.name))
     }
@@ -201,10 +201,10 @@ class KitManager : EventsManager() {
 
 
     fun buyKit(player: Player, kit: KitAbility) {
-        if (lib.modules.VaultAPI.hasVault()) {
-            if (lib.modules.VaultAPI.getEconomy().has(player, kit.price)) {
-                lib.modules.VaultAPI.getEconomy().withdrawPlayer(player, kit.price)
-                lib.modules.VaultAPI.getPermission().playerAdd(player, kit.permission)
+        if (VaultAPI.hasVault()) {
+            if (VaultAPI.getEconomy().has(player, kit.price)) {
+                VaultAPI.getEconomy().withdrawPlayer(player, kit.price)
+                VaultAPI.getPermission().playerAdd(player, kit.permission)
                 player.sendMessage(msgKitBuyed.replace("\$kit", kit.name))
             } else {
                 player.sendMessage(msgNoKitBuyed.replace("\$kit", kit.name))
