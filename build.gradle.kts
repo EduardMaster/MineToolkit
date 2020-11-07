@@ -4,6 +4,7 @@ plugins {
     java
     kotlin("jvm") version "1.3.72"
     id("com.github.johnrengelman.shadow") version "6.1.0"
+    `maven-publish`
 }
 
 group = "net.eduard"
@@ -38,10 +39,25 @@ tasks.withType<ShadowJar>{
 }
 
 tasks {
+    compileJava{
+
+    }
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
+
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+}
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "net.eduard"
+            artifactId = "eduardapi"
+            version = project.version as String
+
+            from(components["java"])
+        }
     }
 }

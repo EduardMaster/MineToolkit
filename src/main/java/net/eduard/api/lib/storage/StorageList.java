@@ -55,6 +55,9 @@ final public class StorageList extends StorageBase<List<?>, Object> {
     public Object store(StorageInfo info, List<?> data) {
         StorageInfo listInfo = info.clone();
         listInfo.setType(info.getListType());
+        if (listInfo.getType() == null){
+            listInfo.setType(String.class);
+        }
         listInfo.updateByType();
         listInfo.updateByStoreClass();
         listInfo.updateByField();

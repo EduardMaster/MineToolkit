@@ -21,7 +21,10 @@ final public class StorageInfo implements Cloneable {
     }
 
     public Class<?> getListType() {
-        return Extra.getTypeKey(field.getGenericType());
+        if (field != null) {
+            return Extra.getTypeKey(field.getGenericType());
+        }
+        return null;
     }
 
     public Class<?> getArrayType() {

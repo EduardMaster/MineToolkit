@@ -40,13 +40,13 @@ public class ConfigSection {
 
     private static String getPath(String path) {
         if (path.startsWith("#")) {
-            path.replaceFirst("#", "$");
+            path= path.replaceFirst("#", "$");
         }
         if (path.startsWith("-")) {
-            path.replaceFirst("-", "$");
+            path=path.replaceFirst("-", "$");
         }
         if (path.contains(":")) {
-            path.replace(":", "$");
+            path=path.replace(":", "$");
         }
         return path;
     }
@@ -67,8 +67,9 @@ public class ConfigSection {
 
     private static int getSpace(String line) {
         int value = 0;
-        while (line.startsWith("  ")) {
-            line = line.replaceFirst("  ", "");
+        String space = "  ";
+        while (line.startsWith(space)) {
+            line = line.replaceFirst(space, "");
             value++;
         }
         return value;
@@ -80,8 +81,7 @@ public class ConfigSection {
             return "";
         }
         String[] split = line.split(":");
-        String result = line.replaceFirst(split[0] + ":", "").replaceFirst(" ", "");
-        return result;
+        return line.replaceFirst(split[0] + ":", "").replaceFirst(" ", "");
 
     }
 
@@ -255,8 +255,9 @@ public class ConfigSection {
         return getSection(path).getItem();
     }
 
-    public <CustomType> CustomType get(String path, Class<CustomType> claz) {
-        return (CustomType) getSection(path).getValue(claz);
+    public <T> T get(String path, Class<T> claz) {
+
+        return (T) getSection(path).getValue(claz);
     }
 
     public String getKey() {
@@ -368,7 +369,7 @@ public class ConfigSection {
         return getValue(null);
     }
 
-    public Object getValue(Class<?> claz) {
+    public <T> Object getValue(Class<T> claz) {
 
         Object data = isMap() ? toMap() : get();
 

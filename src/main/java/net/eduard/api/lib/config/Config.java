@@ -319,9 +319,7 @@ public class Config {
     public void setHeader(String... header) {
         if (header != null) {
             root.comments.clear();
-            for (String item : header) {
-                root.comments.add(item);
-            }
+            root.comments.addAll(Arrays.asList(header));
         }
     }
 
