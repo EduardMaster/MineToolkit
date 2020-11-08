@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @since Lib v1.0
  *
  */
+@SuppressWarnings("unused")
 public abstract class Cooldowns {
 	public static abstract class CooldownEvent extends BukkitRunnable {
 
@@ -57,7 +58,7 @@ public abstract class Cooldowns {
 	 * KEY = UUID = Id do Jogador<br>
 	 * VALUE = CooldownEvent = Evento do Cooldown<br>
 	 */
-	private Map<UUID, CooldownEvent> cooldowns = new HashMap<>();
+	private final Map<UUID, CooldownEvent> cooldowns = new HashMap<>();
 
 	/**
 	 * Metodo abstrato para oque vai acontecer quando sair do Cooldown

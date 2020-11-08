@@ -50,8 +50,8 @@ public class Scoreboards {
         return scoreboard;
     }
 
-    private Map<Integer, OfflinePlayer> fakes = new HashMap<>();
-    private Map<Integer, Team> teams = new HashMap<>();
+    private final Map<Integer, OfflinePlayer> fakes = new HashMap<>();
+    private final Map<Integer, Team> teams = new HashMap<>();
 
     public static String cutText(String text, int lenght) {
         return text.length() > lenght ? text.substring(0, lenght) : text;

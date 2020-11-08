@@ -28,18 +28,8 @@ class Grappler : KitAbility() {
                     } else if (event.action == Action.RIGHT_CLICK_AIR) {
                         if (hooks.containsKey(player)) {
                             val hook = hooks[player]
-                            if (hook!!.isHooked) {
-                                player.fallDistance = -10f
-                                //								Location target = hook.getBukkitEntity()
-                                //										.getLocation();
-                                //								Vector velocity = GrapplerHook.moveTo(
-                                //										player.getLocation(), target, 0.5, 1.5,
-                                //										0.5, 0.04, 0.06, 0.04);
-                                //								player.setVelocity(velocity);
-                            } else {
-                                player.sendMessage(
-                                        "§6O gancho nao se prendeu em nada!")
-                            }
+                            player.sendMessage(
+                                    "§6O gancho nao se prendeu em nada!")
                         }
                     }
                 } else {

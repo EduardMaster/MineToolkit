@@ -209,7 +209,7 @@ public class MineReflect {
             Method setTag = Extra.getMethod(MineReflect.classMineItemStack, "setTag", MineReflect.classMineNBTTagCompound);
             setTag.invoke(itemCopia, data.getNBT());
             Method asCraftMirror = Extra.getMethod(MineReflect.classCraftItemStack, "asCraftMirror", MineReflect.classMineItemStack);
-            Object itemModified = asCraftMirror.invoke(0, itemCopia);
+            Object itemModified; //= asCraftMirror.invoke(0, itemCopia);
 
             Method asBukkitCopy = Extra.getMethod(MineReflect.classCraftItemStack, "asBukkitCopy", MineReflect.classMineItemStack);
             itemModified = asBukkitCopy.invoke(0, itemCopia);

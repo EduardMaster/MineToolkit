@@ -1,37 +1,34 @@
 package net.eduard.api.server.minigame
 
-import net.eduard.api.lib.database.annotations.TableName
 import net.eduard.api.lib.storage.Storable.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 
-import net.eduard.api.lib.game.Schematic
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Mine
 
 /**
- * Mapa da Sala
+ * Representa o Mapa da Sala do Minigame
  *
  * @author Eduard-PC
  */
 
-@TableName("minigame_maps")
+
 @StorageAttributes(indentificate = true)
-class MinigameMap(
-
-
-        @Transient
-        var minigame: Minigame? = null,
+class MinigameMap (
+        mini : Minigame? = null,
         var name: String = "mapa",
         var displayName: String = "mapinha"
 ) {
+    @Transient
+    lateinit var minigame : Minigame
     init {
-        minigame?.maps?.add(this)
-
+        mini?.maps?.add(this)
+        if (mini!=null) {
+            minigame = mini
+        }
     }
-
-
     var teamSize = 1
     var minPlayersAmount = 2
     var maxPlayersAmount = 20
@@ -40,16 +37,28 @@ class MinigameMap(
     var spawn: Location? = null
     var lobby: Location? = null
     var locations = mutableMapOf<String, Location>()
-    var bases = mutableListOf<Schematic>()
-    var spawns = mutableListOf<Location>()
-    var map: Schematic? = null
-    var feast: Schematic? = null
-    var feastLocation: Location? = null
 
+    var spawns = mutableListOf<Location>()
+    var map: GameSchematic? = null
+    var feast: GameSchematic? = null
     var worldName = defaultWorldName()
 
+    val hasFeast get() = feast != null
+
+
+    val hasLobby get() = lobby != null
+
+
+    val hasSpawn get() = spawn != null
+
+
+    val hasSpawns get() = spawns.isNotEmpty()
+
+
+    val hasSchematic get() = this.map != null
+
     fun defaultWorldName(): String {
-        return "${minigame?.name}/map/$name"
+        return "${minigame.name}/map/$name"
     }
 
     val isSolo get() = teamSize == 1
@@ -135,23 +144,6 @@ class MinigameMap(
 
     }
 
-
-    val hasFeast get() = feast != null
-
-
-    val hasLobby get() = lobby != null
-
-
-    val hasBases get() = this.bases.isNotEmpty()
-
-
-    val hasSpawn get() = spawn != null
-
-
-    val hasSpawns get() = spawns.isNotEmpty()
-
-
-    val hasSchematic get() = this.map != null
 
 
 }

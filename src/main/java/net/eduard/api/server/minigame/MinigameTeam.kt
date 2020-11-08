@@ -1,19 +1,19 @@
 package net.eduard.api.server.minigame
 
-import org.bukkit.entity.Player
-
 /**
- * Time do Jogador em um Minigame
+ * Representa o Time do Jogador em um Minigame
  *
  * @author Eduard
  */
-class MinigameTeam {
+class MinigameTeam(
+    var game: MinigameRoom
+){
 
-    var game: MinigameRoom? = null
+
     var name: String = "Time1"
-    var points: Int = 0
+    var points = 0
     var players = mutableListOf<MinigamePlayer>()
-    var maxSize: Int = 0
+    var maxSize = 0
 
     val kills: Int
         get() = players.sumBy { it.kills }
@@ -35,11 +35,6 @@ class MinigameTeam {
         points++
     }
 
-    constructor()
-    constructor(game: MinigameRoom) {
-        game.teams.add(this)
-        this.game = game
-    }
 
     fun join(player: MinigamePlayer) {
         players.add(player)
@@ -59,11 +54,6 @@ class MinigameTeam {
 
     fun getPlayers(state: MinigamePlayerState): List<MinigamePlayer> {
         return players.filter { it.state == state }
-    }
-
-
-    fun getPlayersOnline(state: MinigamePlayerState): List<Player> {
-        return getPlayers(state).filter { it.isOnline }.map { it.player }
     }
 
     fun leaveAll() {

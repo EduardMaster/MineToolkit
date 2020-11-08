@@ -187,7 +187,7 @@ class KitManager : EventsManager() {
     fun selectKit(player: Player, kit: KitAbility?) {
         player.closeInventory()
         playersKits[player] = kit!!
-        player.sendMessage(msgKitSelected.replace("\$kit", kit!!.name))
+        player.sendMessage(msgKitSelected.replace("\$kit", kit.name))
         if (isOnSelectGainKit) {
             gainKit(player)
         }

@@ -15,7 +15,7 @@ import net.eduard.api.lib.database.BukkitTypes
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
-import net.eduard.api.lib.game.Schematic
+import net.eduard.api.server.minigame.GameSchematic
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.hybrid.BukkitServer
 import net.eduard.api.lib.hybrid.Hybrid
@@ -335,10 +335,10 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
          * Prefixo de Ajuda dos Comandos
          */
         var MSG_USAGE = "§FDigite: §c"
-        fun getSchematic(player: Player): Schematic {
+        fun getSchematic(player: Player): GameSchematic {
             var schema = MAPS_CACHE[player]
             if (schema == null) {
-                schema = Schematic()
+                schema = GameSchematic()
                 MAPS_CACHE[player] = schema
             }
             return schema
@@ -354,7 +354,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
             for (subfile in file.listFiles()!!) {
                 if (!subfile.isDirectory) {
-                    MAPS[subfile.name.replace(".map", "")] = Schematic.load(subfile)
+                    MAPS[subfile.name.replace(".map", "")] = GameSchematic.load(subfile)
                 }
             }
             instance.log("Mapas carregados!")
@@ -363,8 +363,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         /*
         * Mapa de Arenas registradas
         */
-        var MAPS = mutableMapOf<String, Schematic>()
-        var MAPS_CACHE: MutableMap<Player, Schematic> = HashMap()
+        var MAPS = mutableMapOf<String, GameSchematic>()
+        var MAPS_CACHE: MutableMap<Player, GameSchematic> = HashMap()
 
 
 

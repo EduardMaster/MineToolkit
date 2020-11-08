@@ -21,6 +21,7 @@ import java.util.List;
  * @since Lib v1.0 <br> EduardAPI 4.0
  *
  */
+@SuppressWarnings("unused")
 public final class VaultAPI {
 	/**
 	 * Força o ativamento do Vault

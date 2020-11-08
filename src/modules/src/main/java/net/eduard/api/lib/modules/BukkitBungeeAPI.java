@@ -27,6 +27,7 @@ import com.google.common.io.ByteStreams;
  * @since 2.3
  *
  */
+@SuppressWarnings("unused")
 public final class BukkitBungeeAPI {
 	private static String currentServer = "lobby";
 	private static final Map<String, SimpleServer> servers = new HashMap<>();

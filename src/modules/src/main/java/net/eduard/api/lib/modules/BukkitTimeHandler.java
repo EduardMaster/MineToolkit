@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitTask;
  *
  * @author Eduard
  */
+@SuppressWarnings("unused")
 public interface BukkitTimeHandler {
 
     /**

@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * https://bukkit.org/threads/tut-custom-yaml-configurations-with-comments.142592/
  * @author Internet
  */
+@SuppressWarnings("unused")
 public class MyConfig {
 	private int comments;
 	private final MyConfigManager manager;

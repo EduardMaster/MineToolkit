@@ -1,19 +1,19 @@
 package net.eduard.api.server.minigame
 
-import net.eduard.api.lib.database.annotations.ColumnPrimary
-import net.eduard.api.lib.database.annotations.TableName
+/**
+ * Representa o lobby do minigame , precisa ser extendido
+ */
+open class MinigameLobby() {
 
-
-@TableName("minigame_lobbies")
-class MinigameLobby( @ColumnPrimary
-                     var id: Int = 1) {
-
-
-    var maxSlot: Int = 20
+     open var id = 0
+     open var maxSlot = 20
 
     @Transient
-    var players = mutableListOf<MinigamePlayer>()
-    var playersAmount = players.size
+    open var players = mutableListOf<MinigamePlayer>()
+
+    open var playersAmount = 0
+
+
     fun join(player: MinigamePlayer) {
         for (loopPlayer in players) {
             loopPlayer.show(player)
@@ -31,7 +31,6 @@ class MinigameLobby( @ColumnPrimary
             loopPlayer.hide(gamePlayer)
             gamePlayer.hide(loopPlayer)
         }
-
     }
 
 }

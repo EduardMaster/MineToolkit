@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
  * *@author Eduard
  * *@since 24/01/2020
  */
-@SuppressWarnings({"unused","deprecated"})
+@SuppressWarnings({"unused", "deprecated"})
 public final class Mine {
 
 
@@ -926,8 +926,8 @@ public final class Mine {
     /**
      * Retorna um RADAR
      *
-     * @param inDegrees Raio em Graus
-     * @param colorActive Cores
+     * @param inDegrees    Raio em Graus
+     * @param colorActive  Cores
      * @param colorDefault Cor padrão
      * @return Radar em forma de texto
      */
@@ -938,8 +938,8 @@ public final class Mine {
     /**
      * Retorna um RADAR
      *
-     * @param inDegrees Raio em Graus
-     * @param colorActive Cores
+     * @param inDegrees    Raio em Graus
+     * @param colorActive  Cores
      * @param colorDefault Cor padrão
      * @return Radar em forma de texto
      */
@@ -950,8 +950,8 @@ public final class Mine {
     /**
      * Retorna um RADAR
      *
-     * @param point Ponteiro
-     * @param colorActive Cores
+     * @param point        Ponteiro
+     * @param colorActive  Cores
      * @param colorDefault Cor padrão
      * @return Radar em forma de texto
      */
@@ -963,8 +963,8 @@ public final class Mine {
     /**
      * Retorna um RADAR
      *
-     * @param point Ponteiro
-     * @param colorActive Cores
+     * @param point        Ponteiro
+     * @param colorActive  Cores
      * @param colorDefault Cor padrão
      * @return Radar em forma de texto
      */
@@ -1092,6 +1092,7 @@ public final class Mine {
 
     /**
      * Sistema de pegar classe apartir de textos, ou objetos normais, ou classes
+     *
      * @param object Objeto ou Classe, ou texto
      * @return Classe encontrada
      * @throws Exception Falha ao pegar a classes apartir do objeto passado
@@ -1101,7 +1102,6 @@ public final class Mine {
     }
 
     /**
-     *
      * @return O Hashmap onde estão registrados todos comandos e aliases
      */
     @SuppressWarnings("unchecked")
@@ -1323,16 +1323,18 @@ public final class Mine {
      * @param entityType Tipo de Entidade
      * @return o Dado ou nulo
      */
-    @SuppressWarnings("deprecated")
+
     public static EntityType parseEntityType(String entityType) {
         String str = entityType.replace("_", "").trim();
         for (EntityType type : EntityType.values()) {
 
-                    int id = type.getTypeId();
+            int id = type.getTypeId();
             if (str.equals("" + id)) {
                 return type;
             }
-            if (str.equalsIgnoreCase("" + type.getName())) {
+
+            String nome = type.getName();
+            if (str.equalsIgnoreCase("" + nome)) {
                 return type;
             }
             if (str.equalsIgnoreCase(type.name().replace("_", ""))) {
@@ -1769,9 +1771,9 @@ public final class Mine {
     /**
      * Retorna um alvo apartir do Jogador , onde ele estiver mirando
      *
-     * @param entity Entidade
+     * @param entity   Entidade
      * @param entities Entidades
-     * @param <T> Entidade Alvo encontrada
+     * @param <T>      Entidade Alvo encontrada
      * @return Entidade Alvo encontrada se exister
      */
     @SuppressWarnings("unchecked")
@@ -1836,7 +1838,7 @@ public final class Mine {
     public static int getTotalAmount(Inventory inventory, ItemStack item) {
 
         int amount = 0;
-        if (item == null){
+        if (item == null) {
             return 0;
         }
         for (ItemStack itemLoop : inventory.all(item.getType()).values()) {
@@ -2098,7 +2100,7 @@ public final class Mine {
      * Isto Significa que na teoria não pode levar Hit até acabar este tempo
      *
      * @param seconds Tempo (em segundos)
-     * @param player Jogador
+     * @param player  Jogador
      */
     public static void makeInvunerable(Player player, int seconds) {
         player.setNoDamageTicks(seconds * 20);
@@ -2136,14 +2138,14 @@ public final class Mine {
     /**
      * Gera um Vector novo que terá a inteção de forçar um movimento até o Alvo (Local)
      *
-     * @param entity Entidade que será movida
-     * @param target Alvo
+     * @param entity  Entidade que será movida
+     * @param target  Alvo
      * @param staticX X Fixo
      * @param staticY Y Fixo
      * @param staticZ Z Fixo
-     * @param addX X Adicionado
-     * @param addY Y Adicionado
-     * @param addZ Z Adicionado
+     * @param addX    X Adicionado
+     * @param addY    Y Adicionado
+     * @param addZ    Z Adicionado
      * @return Velocidade necessaria para chegar ate o alvo em 2 segundos
      */
     public static Vector getVelocity(Location entity, Location target, double staticX, double staticY, double staticZ,
@@ -2160,14 +2162,14 @@ public final class Mine {
      * Cria um Vector forçando a entidade a ser jogado na direção do Alvo <br>
      * Este método tem a variação de ser bem mais configuravel
      *
-     * @param entity Entidade
-     * @param target Alvo
+     * @param entity  Entidade
+     * @param target  Alvo
      * @param staticX Variação X
      * @param staticY Variação Y
      * @param staticZ Variação Z
-     * @param addX Adicional X
-     * @param addY Adicional Y
-     * @param addZ Adicional Z
+     * @param addX    Adicional X
+     * @param addY    Adicional Y
+     * @param addZ    Adicional Z
      */
     public static void moveTo(Entity entity, Location target, double staticX, double staticY, double staticZ,
                               double addX, double addY, double addZ) {
@@ -2208,22 +2210,22 @@ public final class Mine {
         }
         for (int id = inv.getSize() - 9; id < inv.getSize(); id++) {
             inv.setItem(id, item);
-            ;
+
         }
         for (int id = 9; id < inv.getSize(); id += 9) {
             inv.setItem(id, item);
-            ;
             inv.setItem(id - 1, item);
-            ;
+
         }
     }
 
     /**
      * Criar novo livro
-     * @param name Nome do livro
-     * @param title Titulo do livro
+     *
+     * @param name   Nome do livro
+     * @param title  Titulo do livro
      * @param author Author do livro
-     * @param pages Paginas em texto
+     * @param pages  Paginas em texto
      * @return Livro em forma de Item
      */
     public static ItemStack newBook(String name, String title, String author, String... pages) {
@@ -2239,6 +2241,7 @@ public final class Mine {
 
     /**
      * Gera um mundo vazio
+     *
      * @param worldName Nome do mundo
      * @return Mundo vazio
      */
@@ -2252,10 +2255,11 @@ public final class Mine {
 
     /**
      * Gera uma explosão no local
-     * @param location Local
-     * @param power Poder da explosão
+     *
+     * @param location    Local
+     * @param power       Poder da explosão
      * @param breakBlocks Se vai quebrar bloco ou não
-     * @param makeFire Se vai colocar fogo ou não
+     * @param makeFire    Se vai colocar fogo ou não
      * @return Se conseguiu criar a explosão
      */
     public static boolean newExplosion(Location location, float power, boolean breakBlocks, boolean makeFire) {
@@ -2264,7 +2268,6 @@ public final class Mine {
     }
 
     /**
-     *
      * @return Um Firework normal
      */
     public static ItemStack newFirework() {
@@ -2277,12 +2280,13 @@ public final class Mine {
 
     /**
      * Gera um Firework em forma de Item para se lançaado
+     *
      * @param location Local
-     * @param high Altura do movimento
-     * @param color Cor do firework
-     * @param fade Cor quando esta acabando a animação
-     * @param trail Cor do rastro do foguete
-     * @param flicker Se vai fazer mini explosões 'track track'
+     * @param high     Altura do movimento
+     * @param color    Cor do firework
+     * @param fade     Cor quando esta acabando a animação
+     * @param trail    Cor do rastro do foguete
+     * @param flicker  Se vai fazer mini explosões 'track track'
      * @return Foguete em forma de item
      */
     public static Firework newFirework(Location location, int high, Color color, Color fade, boolean trail,
@@ -2291,17 +2295,18 @@ public final class Mine {
     }
 
 
-     /**
+    /**
      * Gera um Firework em forma de Item para se lançaado
+     *
      * @param location Local
-     * @param high Altura do movimento
-     * @param color Cor do firework
-     * @param fade Cor quando esta acabando a animação
-     * @param trail Cor do rastro do foguete
-     * @param flicker Se vai fazer mini explosões 'track track'
-     * @param type Tipo do Foguete
+     * @param high     Altura do movimento
+     * @param color    Cor do firework
+     * @param fade     Cor quando esta acabando a animação
+     * @param trail    Cor do rastro do foguete
+     * @param flicker  Se vai fazer mini explosões 'track track'
+     * @param type     Tipo do Foguete
      * @return Foguete em forma de item
-    */
+     */
     public static Firework newFirework(Location location, int high, Color color, Color fade, boolean trail,
                                        boolean flicker, FireworkEffect.Type type) {
         Firework firework = location.getWorld().spawn(location, Firework.class);
@@ -2329,7 +2334,7 @@ public final class Mine {
             byte[] encodedData = Base64.getEncoder()
                     .encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
             profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
-            Field profileField = null;
+            Field profileField;
             try {
                 profileField = meta.getClass().getDeclaredField("profile");
                 profileField.setAccessible(true);
@@ -2345,10 +2350,10 @@ public final class Mine {
     /**
      * Metodo original getSkull se tornou newHeadSkin
      *
-     * @param nome Nome da cabeça
+     * @param nome   Nome da cabeça
      * @param amount Quantidade
-     * @param lore Lore
-     * @param url Link da skin
+     * @param lore   Lore
+     * @param url    Link da skin
      * @return Nova cabeça com nova skin
      */
     public static ItemStack newHeadSkin(String url, String nome, int amount, List<String> lore) {
@@ -2430,7 +2435,7 @@ public final class Mine {
     /**
      * Cria um item da cabeça do Jogador
      *
-     * @param name Nome do item
+     * @param name  Nome do item
      * @param skull Nome da cabeça
      * @return Item cabeça feito
      */
@@ -2758,7 +2763,7 @@ public final class Mine {
      * @param item      Item
      */
     public static void remove(Inventory inventory, ItemStack item) {
-        if (item == null)return;
+        if (item == null) return;
         for (Entry<Integer, ? extends ItemStack> map : inventory.all(item.getType()).entrySet()) {
             if (item.isSimilar(map.getValue())) {
                 inventory.clear(map.getKey());

@@ -3,12 +3,14 @@ package net.eduard.api.server.minigame
 import net.eduard.api.lib.kotlin.offline
 import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.modules.Mine
+import org.bukkit.entity.Player
 
 /**
  * Jogador do Minigame
  *
  * @author Eduard
  */
+@Suppress("unused")
 class MinigamePlayer() {
     var kills: Int = 0
     var deaths: Int = 0
@@ -18,8 +20,10 @@ class MinigamePlayer() {
     var game: MinigameRoom? = null
     var lobby: MinigameLobby? = null
     var fakePlayer = FakePlayer("Eduard")
+    val player get() = fakePlayer.player
+    val offline get() = fakePlayer.offline
 
-    val isPlaying: Boolean
+    val isPlaying
         get() = game != null
 
     val name get() = fakePlayer.name
@@ -35,9 +39,6 @@ class MinigamePlayer() {
     val isInLobby: Boolean
         get() = lobby != null
 
-    val player get() = fakePlayer.player
-
-    val offline get() = fakePlayer.offline
 
     fun show(gamePlayer: MinigamePlayer) {
 
@@ -118,20 +119,15 @@ class MinigamePlayer() {
         return result
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (this === obj)
+    override fun equals(other: Any?): Boolean {
+        if (this === other)
             return true
-        if (obj == null)
+        if (other == null)
             return false
-        if (javaClass != obj.javaClass)
-            return false
-        val other = obj as MinigamePlayer?
-        if (player == null) {
-            if (other!!.player != null)
-                return false
-        } else if (player != other!!.player)
-            return false
-        return true
+        if (other !is MinigamePlayer) {
+            return false;
+        }
+        return fakePlayer == other.fakePlayer
     }
 
     /**
@@ -187,15 +183,16 @@ class MinigamePlayer() {
      * Sair da Sala atual
      */
     fun leaveGame() {
-        if (isPlaying) {
-            game!!.leave(this)
-        }
+        game?.leave(this)
 
     }
 
     fun leaveLobby() {
         lobby?.leave(this)
+    }
 
+    fun sendMessage(message: String) {
+        player.sendMessage(message)
     }
 
 }

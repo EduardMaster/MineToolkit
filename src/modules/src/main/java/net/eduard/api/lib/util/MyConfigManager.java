@@ -39,6 +39,11 @@ public class MyConfigManager {
 				getCommentsNum(file), this.plugin);
 	}
 
+	/**
+	 *
+	 * @param fileName Nome
+	 * @return novo MyConfig
+	 */
 	public MyConfig getNewConfig(String fileName) {
 		return getNewConfig(fileName, null);
 	}
@@ -106,7 +111,7 @@ public class MyConfigManager {
 					if (line.length() % 2 != 0) {
 						finalLine.append(" ");
 					}
-					config.append("# < " + finalLine.toString() + " > #\n");
+					config.append("# < ").append(finalLine.toString()).append(" > #\n");
 				}
 			}
 			config.append("# +----------------------------------------------------+ #");

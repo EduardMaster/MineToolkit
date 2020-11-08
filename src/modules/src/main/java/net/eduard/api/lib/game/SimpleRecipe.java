@@ -35,7 +35,7 @@ public class SimpleRecipe {
     }
 
     private ItemStack result = null;
-    private List<ItemStack> items = new ArrayList<>();
+    private final List<ItemStack> items = new ArrayList<>();
 
     public SimpleRecipe() {
 

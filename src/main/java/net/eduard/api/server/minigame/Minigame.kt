@@ -16,13 +16,15 @@ import java.io.File
 import java.lang.Exception
 
 /**
- * Representa um Jogo <br></br>
+ * Representa um Minigame ou Evento <br></br>
+ * Nomes anteriores<br>
  * MinigameSetup 1.0
  *
  * @version 2.0
  * @since EduardAPI 2.0
  * @author Eduard
  */
+@Suppress("unused")
 open class Minigame : TimeManager {
 
     var name = "Minigame"
@@ -50,7 +52,7 @@ open class Minigame : TimeManager {
     var lobby: Location? = null
 
     @Transient
-    var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
+    open var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
 
 
     @Transient
@@ -95,13 +97,6 @@ open class Minigame : TimeManager {
     val map: MinigameMap?
         get() = getMap(name)
 
-    /**
-     * Pega os jogadores que estão jogando
-     *
-     * @return Lista de Jogadores ([Player])
-     */
-    val playersOnline: List<Player>
-        get() = players.values.filter { it.isOnline }.map { it.player!! }
 
 
     val isSetting: Boolean
@@ -123,7 +118,7 @@ open class Minigame : TimeManager {
     fun teleportAllPlayersToLobby() {
 
 
-        lobby ?: playersOnline.forEach { it.teleport(lobby) }
+        lobby ?: players.values.forEach { it.player.teleport(lobby) }
 
     }
 
@@ -210,8 +205,8 @@ open class Minigame : TimeManager {
      * @param message Mensagem
      */
     fun broadcast(message: String) {
-        for (player in playersOnline) {
-            player.sendMessage(messagePrefix + Mine.getReplacers(message, player))
+        for (minigamePlayer in players.values) {
+            minigamePlayer.sendMessage(messagePrefix + Mine.getReplacers(message, minigamePlayer.player))
         }
     }
 

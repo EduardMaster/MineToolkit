@@ -28,6 +28,7 @@ import org.bukkit.inventory.meta.SkullMeta;
  *
  * @author Eduard
  */
+@SuppressWarnings("unused")
 public class ItemBuilder extends ItemStack {
     public ItemBuilder() {
         this(Material.STONE, 1);

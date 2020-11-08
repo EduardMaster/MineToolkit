@@ -37,6 +37,7 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
  * @author Eduard
  * @version 1.6
  */
+@SuppressWarnings({"unused","beta","deprecated"})
 public final class ServerAPI {
     private static ServerControl control;
     private static boolean registred;

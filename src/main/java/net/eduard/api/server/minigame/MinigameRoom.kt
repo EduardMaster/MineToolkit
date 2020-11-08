@@ -1,6 +1,5 @@
 package net.eduard.api.server.minigame
 
-import net.eduard.api.lib.database.annotations.TableName
 import net.eduard.api.lib.modules.Extra
 
 import org.bukkit.entity.Player
@@ -13,8 +12,8 @@ import org.bukkit.Bukkit
  *
  * @author Eduard-PC
  */
-@TableName("minigame_rooms")
-class MinigameRoom {
+@Suppress("unused")
+open class MinigameRoom {
 
     @Transient
     lateinit var minigame: Minigame
@@ -48,13 +47,12 @@ class MinigameRoom {
         restarting()
     }
 
-
-
     fun reset() {
         mapUsed.resetWorld()
     }
 
     var isEnabled: Boolean = false
+
     var mode = MinigameMode.NORMAL
 
     var id: Int = 0
@@ -72,12 +70,6 @@ class MinigameRoom {
 
     @Transient
     var mapUsed: MinigameMap = map
-
-    @Transient
-    var secondWinner: MinigamePlayer? = null
-
-    @Transient
-    var thirdWinner: MinigamePlayer? = null
 
     @Transient
     var players = mutableListOf<MinigamePlayer>()

@@ -18,8 +18,7 @@ public class EmptyWorldGenerator extends ChunkGenerator {
 	@Deprecated
 	public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ,
 			ChunkGenerator.BiomeGrid biomeGrid) {
-		byte[][] result = new byte[world.getMaxHeight() / 16][];
-		return result;
+		return new byte[world.getMaxHeight() / 16][];
 	}
 
 	@Override

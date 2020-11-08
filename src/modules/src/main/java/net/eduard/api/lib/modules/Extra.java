@@ -40,6 +40,7 @@ import com.google.gson.JsonParser;
  * @version 2.0
  * @since Lib v2.0
  */
+@SuppressWarnings("unused")
 public final class Extra {
 
     public static Object transform(Object object, Class<?> type) throws Exception {
@@ -1219,6 +1220,7 @@ public final class Extra {
      * @return Valor da classe
      */
     public static double getValueOf(Class<?> claz, ArrayList<Class<?>> blacklist, boolean debug) {
+        if (claz == null)return 0;
         double finalValue = 0.1;
         // sem esta verificação dependo pode ultrapassar as casas da centena vale muito
 
@@ -1337,7 +1339,7 @@ public final class Extra {
      *
      * @param before  (Antes)
      * @param seconds (Cooldown)
-     * @return
+     * @return Se esta em CD
      */
     public static boolean inCooldown(long before, long seconds) {
 

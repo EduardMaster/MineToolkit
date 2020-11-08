@@ -1,20 +1,15 @@
-package net.eduard.api.core;
+package net.eduard.api.lib.util;
 
-import java.lang.reflect.Field;
-import java.util.UUID;
-
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.util.UnsafeList;
 import org.bukkit.entity.LivingEntity;
-
-import net.minecraft.server.v1_8_R3.EntityInsentient;
-import net.minecraft.server.v1_8_R3.PathEntity;
-import net.minecraft.server.v1_8_R3.PathfinderGoal;
-import net.minecraft.server.v1_8_R3.PathfinderGoalFloat;
-import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
+import java.util.UUID;
 
 public class PetsAPI {
 
@@ -52,9 +47,9 @@ public class PetsAPI {
 	        }
 	    }
 	    public static class PathfinderGoalWalktoTile extends PathfinderGoal {
-	        private EntityInsentient entity;
+	        private final EntityInsentient entity;
 	        private PathEntity path;
-	        private UUID uuid;
+	        private final UUID uuid;
 
 	        public PathfinderGoalWalktoTile(EntityInsentient entitycreature, UUID playerUUID) {
 	            this.entity = entitycreature;

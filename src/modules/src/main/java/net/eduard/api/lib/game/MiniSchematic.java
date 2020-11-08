@@ -1,31 +1,31 @@
 package net.eduard.api.lib.game;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
+import net.eduard.api.lib.modules.Copyable;
+import net.eduard.api.lib.modules.Mine;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.util.Vector;
 
-import net.eduard.api.lib.modules.Mine;
-import net.eduard.api.lib.modules.Copyable;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Schematic do WorldEdit Compacto
- * 
+ * <br>
+ * Antigo nome Schematic
+ * versão de Schematic do Worldedit
+ * mais compacto
+ *
  * @author Eduard
  *
  */
-final public class Schematic {
+@SuppressWarnings("unused")
+final public class MiniSchematic {
 
 	private Vector relative, low, high;
 	private transient int count;
@@ -65,7 +65,7 @@ final public class Schematic {
 		return y * width * length + z * width + x;
 	}
 
-	public Schematic() {
+	public MiniSchematic() {
 	}
 
 
@@ -85,7 +85,7 @@ final public class Schematic {
 		copy(relativeLocation, low.toLocation(world), high.toLocation(world));
 	}
 
-	public Schematic copy() {
+	public MiniSchematic copy() {
 		return Copyable.copyObject(this);
 	}
 
@@ -178,7 +178,7 @@ final public class Schematic {
 					if (block != null) {
 						if (block.getTypeId() != typeId || block.getData() != typeData)
 						{
-//							Mine.console("erro "+typeId+ "   "+typeData);
+
 							block.setTypeIdAndData(typeId, typeData, false);
 						}
 					}
@@ -206,7 +206,6 @@ final public class Schematic {
 			file.getParentFile().mkdirs();
 			FileOutputStream s = new FileOutputStream(file);
 			DataOutputStream d = new DataOutputStream(new GZIPOutputStream(s));
-			
 			d.writeShort(width);
 			d.writeShort(height);
 			d.writeShort(length);
@@ -224,23 +223,20 @@ final public class Schematic {
 		}
 	}
 
-	public Schematic reload(File file) {
+	public MiniSchematic reload(File file) {
 		try {
 			FileInputStream s = new FileInputStream(file);
 			DataInputStream d = new DataInputStream(new GZIPInputStream(s));
-			// int len = d.readShort();
-			// byte[] bytes = new byte[len];
-			// d.readFully(bytes);
-			
+
+
 			this.width = d.readShort();
 			this.height = d.readShort();
 			this.length = d.readShort();
 			int size = d.readInt();
-			// System.out.println(width+" "+height+" "+length+" "+world+" "+size);
+
 			this.blocksId = new byte[size];
 			d.readFully(blocksId);
 
-			//
 			size = d.readInt();
 			this.blocksData = new byte[size];
 			d.readFully(blocksData);
@@ -267,8 +263,8 @@ final public class Schematic {
 		this.count = count;
 	}
 
-	public static Schematic load(File subfile) {
-		return new Schematic().reload(subfile);
+	public static MiniSchematic load(File subfile) {
+		return new MiniSchematic().reload(subfile);
 	}
 
 	public Vector getRelative() {

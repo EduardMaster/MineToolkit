@@ -56,7 +56,7 @@ public class LicencePlugin {
 			return PluginActivationStatus.ERROR;
 		}
 	}
-
+	@SuppressWarnings("unused")
 	private enum PluginActivationStatus {
 
 		INVALID_KEY("§cNao foi encontrado esta Licensa no Sistema."),

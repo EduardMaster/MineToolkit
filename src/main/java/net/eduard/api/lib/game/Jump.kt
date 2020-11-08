@@ -3,6 +3,8 @@ package net.eduard.api.lib.game
 import org.bukkit.entity.Entity
 import org.bukkit.util.Vector
 
+
+
 class Jump {
     var isWithHigh = true
     var isHighFirst = false

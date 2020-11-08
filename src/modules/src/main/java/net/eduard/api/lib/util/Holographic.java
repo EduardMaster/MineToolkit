@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 /**
  * @author Internet
  */
+@SuppressWarnings("unused")
 public class Holographic
 {
   private List<Object> destroyCache;

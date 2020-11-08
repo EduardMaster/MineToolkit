@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
  * @version 1.0
  *
  */
+@SuppressWarnings("unused")
 public enum ItemCategory {
 
 	WEAPON, ARMOUR, BLOCK, ORE, TOOL, OTHER, FARM, FOOD, SPAWNER, SKULL, POTION, ENCHANTED_BOOK;
