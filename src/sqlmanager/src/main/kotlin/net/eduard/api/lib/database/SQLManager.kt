@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 /**
  * SQLManager é parecido com Hibernate porem com bem menas Features
  */
+@Suppress("unused")
 class SQLManager(var dbManager: DBManager) {
 
     val queueRunsLimit = 100

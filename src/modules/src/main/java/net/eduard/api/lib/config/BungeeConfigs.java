@@ -21,11 +21,12 @@ import net.md_5.bungee.config.YamlConfiguration;
  * @author Eduard
  * @version 1.0
  */
+@SuppressWarnings("unused")
 public class BungeeConfigs {
 
-	private Plugin plugin;
-	private String name;
-	private File file;
+	private final Plugin plugin;
+	private final String name;
+	private final File file;
 	private Configuration config;
 
 	public String getName() {

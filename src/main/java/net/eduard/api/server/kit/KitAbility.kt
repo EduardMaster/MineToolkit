@@ -20,7 +20,7 @@ import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.storage.Storable
 import org.bukkit.plugin.Plugin
-
+@Suppress("unused")
 open class KitAbility : EventsManager(), BukkitTimeHandler {
 
     @Transient

@@ -33,7 +33,7 @@ open class MinigameRoom {
         this.time = minigame.timeIntoStart
     }
 
-    fun start() {
+    open fun start() {
         mapUsed = map.copy()
         mapUsed.minigame = minigame
         mapUsed.worldName = "${minigame.name}/room/$id"
@@ -42,31 +42,28 @@ open class MinigameRoom {
 
     }
 
-    fun stop() {
+    open fun stop() {
         mapUsed.unloadWorld()
         restarting()
     }
 
-    fun reset() {
+    open fun reset() {
         mapUsed.resetWorld()
     }
 
-    var isEnabled: Boolean = false
+    open var isEnabled: Boolean = false
 
-    var mode = MinigameMode.NORMAL
+    open var mode = MinigameMode.NORMAL
 
-    var id: Int = 0
+    open var id: Int = 0
+
+    open var ip: String = "127.0.0.1"
+
+    open var port: Int = Bukkit.getPort()
 
     var time: Int = 0
-
-    var ip: String = "127.0.0.1"
-
-    var port: Int = Bukkit.getPort()
-
-
-    var round: Int = 0
-
-    var state = MinigameState.STARTING
+    open var round: Int = 0
+    open var state = MinigameState.STARTING
 
     @Transient
     var mapUsed: MinigameMap = map
@@ -131,24 +128,24 @@ open class MinigameRoom {
         return players.filter { p -> p.state == state }
     }
 
-    fun checkEnd(): Boolean {
+    open  fun checkEnd(): Boolean {
         return time == minigame.timeIntoGameOver
     }
 
-    fun checkWinner(): Boolean {
+    open fun checkWinner(): Boolean {
         return getPlayers(MinigamePlayerState.NORMAL).size == 1
     }
 
-    fun checkTeamWinner(): Boolean {
+    open  fun checkTeamWinner(): Boolean {
 
         return teams.filter{ it.getPlayers(MinigamePlayerState.NORMAL).isNotEmpty() }.size == 1
     }
 
-    fun checkForceStart(): Boolean {
+    open  fun checkForceStart(): Boolean {
         return players.size >= map.neededPlayersAmount && time > minigame.timeOnForceTimer
     }
 
-    fun forceGameStart() {
+    open  fun forceGameStart() {
         time = minigame.timeOnForceTimer
     }
 
@@ -157,7 +154,7 @@ open class MinigameRoom {
      *
      * @return
      */
-    fun advance(): Int {
+    open  fun advance(): Int {
         return ++time
     }
 
@@ -166,14 +163,14 @@ open class MinigameRoom {
      *
      * @return
      */
-    fun decrease(): Int {
+    open fun decrease(): Int {
         return --time
     }
 
     /**
      * Coloca o estado desta sala em Jogando (A batalha vai começar)
      */
-    fun startGame() {
+    open  fun startGame() {
         time = minigame.timeOnStartTimer
         state = MinigameState.PLAYING
     }
@@ -181,7 +178,7 @@ open class MinigameRoom {
     /**
      * Coloca o estado desta sala em Equipando (Pre jogo de muitos minigames)
      */
-    fun startPreGame() {
+    open fun startPreGame() {
         time = minigame.timeIntoPlay
         state = MinigameState.EQUIPPING
     }
@@ -190,7 +187,7 @@ open class MinigameRoom {
      * Coloca o estado desta sala em Acabando (estado usado em alguns eventos
      * apenas)
      */
-    fun ending() {
+    open fun ending() {
         time = minigame.timeOnRestartTimer
         state = MinigameState.ENDING
     }
@@ -199,7 +196,7 @@ open class MinigameRoom {
      * Coloca o estado desta sala em Reiniciando <br></br>
      * 'quando fazer eventos use este estado para saber que o evento esta desligado'
      */
-    fun restarting() {
+    open fun restarting() {
         state = MinigameState.RESTARTING
         time = minigame.timeIntoRestart
     }
@@ -207,7 +204,7 @@ open class MinigameRoom {
     /**
      * Coloca o estado desta sala em Iniciando
      */
-    fun restart() {
+    open  fun restart() {
         state = MinigameState.STARTING
         time = minigame.timeIntoStart
     }
@@ -217,7 +214,7 @@ open class MinigameRoom {
      *
      * @param player
      */
-    fun leave(player: MinigamePlayer) {
+    open  fun leave(player: MinigamePlayer) {
         players.remove(player)
         player.game = null
         for (jogador in players) {
@@ -226,20 +223,20 @@ open class MinigameRoom {
         }
     }
 
-    fun leaveAll() {
+    open  fun leaveAll() {
         players.forEach { it.game = null }
         players.clear()
     }
 
 
-    fun isState(state: MinigameState): Boolean {
+    open  fun isState(state: MinigameState): Boolean {
         return this.state === state
     }
 
     /**
      * Remove os jogadores de todos os Times
      */
-    fun emptyTeams() {
+    open  fun emptyTeams() {
         for (team in teams) {
             team.leaveAll()
         }
@@ -251,7 +248,7 @@ open class MinigameRoom {
      *
      * @param player Jogador
      */
-    fun join(player: MinigamePlayer) {
+    open fun join(player: MinigamePlayer) {
         player.join(this)
     }
 
@@ -260,7 +257,7 @@ open class MinigameRoom {
      *
      * @return
      */
-    fun hasSpace(): Boolean {
+    open fun hasSpace(): Boolean {
         return players.size < map.maxPlayersAmount
     }
 

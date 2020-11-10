@@ -124,7 +124,7 @@ class MySQLTable<T : Any>(
                     val text = "ALTER TABLE $name ADD CONSTRAINT ${column.foreignKeyName} FOREIGN KEY" +
                             " (${column.name}) REFERENCES ${column.referenceTable.name}(${column.referenceTable.primaryName}) " +
                             "ON DELETE SET NULL ON UPDATE SET NULL"
-                    println(text)
+                    log(text)
                     connection.prepareStatement(text)
                         .executeUpdate()
 

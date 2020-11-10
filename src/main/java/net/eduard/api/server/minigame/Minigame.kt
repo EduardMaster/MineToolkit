@@ -52,7 +52,7 @@ open class Minigame : TimeManager {
     var lobby: Location? = null
 
     @Transient
-    open var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
+    var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
 
 
     @Transient
@@ -68,13 +68,13 @@ open class Minigame : TimeManager {
     var kits: MutableList<Kit> = ArrayList()
 
     @Transient
-    var lobbies: MutableList<MinigameLobby> = ArrayList()
+    open var lobbies: MutableList<MinigameLobby> = ArrayList()
 
     @Transient
     var maps: MutableList<MinigameMap> = ArrayList()
 
     @Transient
-    var rooms: MutableList<MinigameRoom> = ArrayList()
+    open var rooms: MutableList<MinigameRoom> = ArrayList()
 
 
     /**
@@ -83,10 +83,10 @@ open class Minigame : TimeManager {
      * @return Sala
      */
     //		getRooms().get(0);
-    val game: MinigameRoom?
+    open val game: MinigameRoom?
         get() = rooms.firstOrNull()
 
-    val mainLobby: MinigameLobby
+    open val mainLobby: MinigameLobby
         get() = if (lobbies.size > 0) lobbies[0] else newLobby(1)
 
     /**
@@ -96,7 +96,6 @@ open class Minigame : TimeManager {
      */
     val map: MinigameMap?
         get() = getMap(name)
-
 
 
     val isSetting: Boolean
@@ -129,6 +128,7 @@ open class Minigame : TimeManager {
         messagePrefix = "§8[§b$name§8]§f"
         lobbies.add(MinigameLobby())
     }
+
     constructor(name: String, plugin: JavaPlugin) : this(name) {
         this.plugin = plugin
     }
@@ -194,7 +194,7 @@ open class Minigame : TimeManager {
      *
      * @return Minigame criado com mapa já configurado
      */
-    fun uniqueGame(): MinigameRoom {
+    open fun uniqueGame(): MinigameRoom {
         return MinigameRoom(this, MinigameMap(this, name))
     }
 
@@ -216,7 +216,7 @@ open class Minigame : TimeManager {
      * @param id ID
      * @return Sala
      */
-    fun getRoom(id: Int) = rooms.firstOrNull { it.id == id }
+    open fun getRoom(id: Int) = rooms.firstOrNull { it.id == id }
 
 
     /**
@@ -235,7 +235,7 @@ open class Minigame : TimeManager {
      * @param id  ID
      * @return Nova Sala
      */
-    fun createRoom(map: MinigameMap, id: Int) = MinigameRoom(this, map)
+    open fun createRoom(map: MinigameMap, id: Int) = MinigameRoom(this, map)
 
 
     /**
@@ -244,7 +244,7 @@ open class Minigame : TimeManager {
      * @param player Jogador
      * @return Sala do jogador
      */
-    fun getGame(player: Player): MinigameRoom? {
+    open fun getGame(player: Player): MinigameRoom? {
         return getPlayer(player).game
     }
 
@@ -254,7 +254,7 @@ open class Minigame : TimeManager {
      * @param name Nome
      * @return
      */
-    fun getGame(name: String): MinigameRoom? {
+    open fun getGame(name: String): MinigameRoom? {
         for (room in rooms) {
             if (room.map.name.equals(name, ignoreCase = true)) {
                 return room
@@ -263,7 +263,7 @@ open class Minigame : TimeManager {
         return null
     }
 
-    fun newLobby(id: Int): MinigameLobby {
+    open fun newLobby(id: Int): MinigameLobby {
 
         val lobby = MinigameLobby()
         lobby.id = id
@@ -364,8 +364,8 @@ open class Minigame : TimeManager {
      * @param player Jogador
      */
     fun joinPlayer(game: MinigameRoom, player: Player) {
-        val p = getPlayer(player)
-        p.join(game)
+        val minigamePlayer = getPlayer(player)
+        minigamePlayer.join(game)
 
     }
 
@@ -376,8 +376,8 @@ open class Minigame : TimeManager {
      * @param player Jogador
      */
     fun joinPlayer(team: MinigameTeam, player: Player) {
-        val p = getPlayer(player)
-        p.join(team)
+        val minigamePlayer = getPlayer(player)
+        minigamePlayer.join(team)
     }
 
     /**
@@ -386,13 +386,13 @@ open class Minigame : TimeManager {
      * @param player Jogador
      */
     fun leavePlayer(player: Player) {
-        val p = getPlayer(player)
-        if (p.isPlaying) {
-            p.game?.leave(p)
+        val minigamePlayer = getPlayer(player)
+        if (minigamePlayer.isPlaying) {
+            minigamePlayer.game?.leave(minigamePlayer)
         }
 
-        if (p.hasTeam()) {
-            p.team?.leave(p)
+        if (minigamePlayer.hasTeam()) {
+            minigamePlayer.team?.leave(minigamePlayer)
         }
 
     }
@@ -411,7 +411,7 @@ open class Minigame : TimeManager {
      *
      * @param game Sala
      */
-    fun removeGame(game: MinigameRoom) {
+    open fun removeGame(game: MinigameRoom) {
         this.rooms.remove(game)
     }
 
@@ -420,7 +420,7 @@ open class Minigame : TimeManager {
      *
      * @param id
      */
-    fun removeGame(id: Int) {
+    open fun removeGame(id: Int) {
         val game = getRoom(id)
         this.rooms.remove(game)
     }
@@ -441,93 +441,122 @@ open class Minigame : TimeManager {
     }
 
     open fun save() {
-
-
         try {
-
-            for (mapa in maps) {
-
-                val config = Config(plugin, "maps/${mapa.name.toLowerCase()}.yml")
-
-                config.set("", mapa)
-                config.saveConfig()
-
-            }
-            for (lobby in lobbies) {
-
-                val config = Config(plugin, "lobby/lobby-${lobby.id}.yml")
-
-                config.set("", lobby)
-                config.saveConfig()
-
-            }
-            for (sala in rooms) {
-                val config = Config(plugin, "rooms/${sala.id}.yml")
-                config.set(sala)
-                config.saveConfig()
-
-            }
-            val configChest = Config(plugin, "chests/normal.yml")
-            configChest.set(chests)
-            configChest.saveConfig()
-
-            val configFeast = Config(plugin, "chests/feast.yml")
-            configFeast.set(chestsFeast)
-            configFeast.saveConfig()
-
-            val configMiniFeast = Config(plugin, "chests/mini-feast.yml")
-            configMiniFeast.set(chestMiniFeast)
-            configMiniFeast.saveConfig()
-
-            val kitsConfig = Config(plugin, "kits/kits.yml");
-
-            for (kit in kits) {
-                kitsConfig.set(kit.name, kit)
-            }
-            kitsConfig.saveConfig()
-
+            saveMaps()
+            saveLobbies()
+            saveRooms()
+            saveChests()
+            saveKits()
         } catch (erro: Exception) {
             erro.printStackTrace()
         }
     }
 
+    fun saveChests() {
+        val configChest = Config(plugin, "chests/normal.yml")
+        configChest.set(chests)
+        configChest.saveConfig()
+
+        val configFeast = Config(plugin, "chests/feast.yml")
+        configFeast.set(chestsFeast)
+        configFeast.saveConfig()
+
+        val configMiniFeast = Config(plugin, "chests/mini-feast.yml")
+        configMiniFeast.set(chestMiniFeast)
+        configMiniFeast.saveConfig()
+    }
+
+    fun saveRooms() {
+        for (room in rooms) {
+            val config = Config(plugin, "rooms/${room.id}.yml")
+            config.set(room)
+            config.saveConfig()
+
+        }
+    }
+
+    fun saveLobbies() {
+        for (lobby in lobbies) {
+
+            val config = Config(plugin, "lobby/lobby-${lobby.id}.yml")
+
+            config.set("", lobby)
+            config.saveConfig()
+
+        }
+    }
+
+    fun saveMaps() {
+
+        for (mapa in maps) {
+            val config = Config(plugin, "maps/${mapa.name.toLowerCase()}.yml")
+            config.set(mapa)
+            config.saveConfig()
+
+        }
+    }
+
+    fun saveKits() {
+        val kitsConfig = Config(plugin, "kits/kits.yml");
+        for (kit in kits) {
+            kitsConfig.set(kit.name, kit)
+        }
+        kitsConfig.saveConfig()
+    }
 
     open fun reload() {
-        val pastaMapas = File(plugin.dataFolder, "maps/")
-        pastaMapas.mkdirs()
+        reloadKits()
+        reloadChests()
+        reloadLobbies()
+        reloadMaps()
+        reloadRooms()
+    }
 
-        val pastaSalas = File(plugin.dataFolder, "rooms/")
-        pastaSalas.mkdirs()
-
-        val pastaLobbies = File(plugin.dataFolder, "lobby/")
-        pastaLobbies.mkdirs()
-
-
-        for (arquivoNome: String in pastaMapas.list()!!) {
-            val config = Config(plugin, "maps/$arquivoNome")
-            val mapa = config.get(MinigameMap::class.java)
-            mapa.minigame = this
-            maps.add(mapa)
-        }
-        for (arquivoNome: String in pastaSalas.list()!!) {
-            val config = Config(plugin, "rooms/$arquivoNome")
-            val room = config.get(MinigameRoom::class.java)
-            room.minigame = this
-            rooms.add(room)
-        }
-        for (arquivoNome: String in pastaLobbies.list()!!) {
-            val config = Config(plugin, "lobby/$arquivoNome")
-            val lobby = config.get(MinigameLobby::class.java)
-
-            lobbies.add(lobby)
-        }
+    fun reloadKits() {
         kits.clear()
         val kitsConfig = Config(plugin, "kits/kits.yml");
         for (id in kitsConfig.keys) {
             val kit = kitsConfig.get(id, Kit::class.java)
             kits.add(kit)
         }
+    }
 
+    fun reloadMaps() {
+        val pastaMapas = File(plugin.dataFolder, "maps/")
+        pastaMapas.mkdirs()
+        for (arquivoNome: String in pastaMapas.list()!!) {
+            val config = Config(plugin, "maps/$arquivoNome")
+            val mapa = config.get(MinigameMap::class.java)
+            mapa.minigame = this
+            maps.add(mapa)
+        }
+    }
+
+    fun reloadLobbies() {
+        val pastaLobbies = File(plugin.dataFolder, "lobby/")
+        pastaLobbies.mkdirs()
+        for (arquivoNome: String in pastaLobbies.list()!!) {
+            val config = Config(plugin, "lobby/$arquivoNome")
+            val lobby = config.get(MinigameLobby::class.java)
+
+            lobbies.add(lobby)
+        }
+
+    }
+
+    fun reloadRooms() {
+        val pastaSalas = File(plugin.dataFolder, "rooms/")
+        pastaSalas.mkdirs()
+        for (arquivoNome: String in pastaSalas.list()!!) {
+            val config = Config(plugin, "rooms/$arquivoNome")
+            val room = config.get(MinigameRoom::class.java)
+            room.minigame = this
+            rooms.add(room)
+        }
+    }
+
+
+    fun reloadChests() {
         chests = Config(plugin, "chests/normal.yml").get(MinigameChest::class.java)
         chestsFeast = Config(plugin, "chests/feast.yml").get(MinigameChest::class.java)
         chestMiniFeast = Config(plugin, "chests/mini-feast.yml").get(MinigameChest::class.java)

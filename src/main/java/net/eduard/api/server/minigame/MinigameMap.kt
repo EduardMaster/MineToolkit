@@ -41,7 +41,13 @@ class MinigameMap (
     var spawns = mutableListOf<Location>()
     var map: GameSchematic? = null
     var feast: GameSchematic? = null
-    var worldName = defaultWorldName()
+    var worldName = "world-map"
+        get(){
+            if (field == "world-map"){
+                field = defaultWorldName()
+            }
+           return field
+        }
 
     val hasFeast get() = feast != null
 

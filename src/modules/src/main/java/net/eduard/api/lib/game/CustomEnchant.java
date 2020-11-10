@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  * @author Eduard
  * @version 1.0
  */
+@SuppressWarnings("unused")
 public abstract class CustomEnchant extends EnchantmentWrapper {
 
     private String name;

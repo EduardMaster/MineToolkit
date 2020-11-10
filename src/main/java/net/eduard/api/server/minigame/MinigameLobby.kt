@@ -5,13 +5,14 @@ package net.eduard.api.server.minigame
  */
 open class MinigameLobby() {
 
-     open var id = 0
-     open var maxSlot = 20
-
-    @Transient
-    open var players = mutableListOf<MinigamePlayer>()
-
+    open var id = 1
+    open var serverName = "lobby-01"
     open var playersAmount = 0
+    open var playersLimit = 20
+    @Transient
+    var players = mutableListOf<MinigamePlayer>()
+
+
 
 
     fun join(player: MinigamePlayer) {
@@ -21,7 +22,7 @@ open class MinigameLobby() {
         }
         player.lobby = this
         if (!players.contains(player))
-        players.add(player)
+            players.add(player)
     }
 
     fun leave(gamePlayer: MinigamePlayer) {

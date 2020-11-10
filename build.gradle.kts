@@ -3,8 +3,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     java
     kotlin("jvm") version "1.3.72"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
     `maven-publish`
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+
 }
 
 group = "net.eduard"
@@ -25,10 +26,9 @@ dependencies {
     compileOnly("org.bukkit:spigot:1.8.9")
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT")
-
-    implementation("net.eduard:modules:1.0-SNAPSHOT")
-    implementation("net.eduard:sqlmanager:1.0-SNAPSHOT")
-    implementation("net.eduard.abstraction:complete:1.0-SNAPSHOT")
+    api("net.eduard:modules:1.0-SNAPSHOT")
+    api("net.eduard:sqlmanager:1.0-SNAPSHOT")
+    api("net.eduard.abstraction:complete:1.0-SNAPSHOT")
     compileOnly(kotlin("stdlib"))
 
     testCompile("junit", "junit", "4.12")
@@ -50,14 +50,19 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
 }
+/*
+val sources by tasks.registering(Jar::class) {
+    baseName = project.name
+    classifier = "sources"
+    version = null
+    from(sourceSets.main.get().allSource)
+}
+*/
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "net.eduard"
-            artifactId = "eduardapi"
-            version = project.version as String
-
             from(components["java"])
+            //artifact(sources.get())
         }
     }
 }

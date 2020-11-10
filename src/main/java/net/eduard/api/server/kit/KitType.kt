@@ -4,6 +4,7 @@ package net.eduard.api.server.kit
  * Lista de Kits mais conhecidos do HG e KitPvP
  * @author Eduard
  */
+@Suppress("unused")
 enum class KitType {
     DEFAULT, ASSASSIN, SCOUT, FORGER, CANNIBAL, CULTIVATOR, REAPER,
     ZEUS, INFERNOR, BOMBER, C4, RYU, FORCE_FIELD, SWITCHER, TELEPORTER,

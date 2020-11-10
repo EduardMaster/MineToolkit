@@ -135,8 +135,10 @@ public class StorageObject extends StorageBase<Object, Object> {
             try {
                 debug(">> NEW INSTANCE");
                 instance = claz.newInstance();
-            } catch (Exception ignored) {
 
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+                debug(">> NEW INSTANCE FAIL");
             }
         }
 

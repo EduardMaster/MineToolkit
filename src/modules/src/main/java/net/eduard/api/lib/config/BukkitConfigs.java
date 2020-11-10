@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.eduard.api.lib.modules.Extra;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -33,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @version 1.0
  * @since Lib v1.0
  */
+@SuppressWarnings({"unused","unchecked"})
 public class BukkitConfigs {
 
     private Plugin plugin;
@@ -137,9 +137,8 @@ public class BukkitConfigs {
     /**
      * Recarrega a config pelo conteudo do Arquivo
      *
-     * @return Config
      */
-    public BukkitConfigs reloadConfig() {
+    public void reloadConfig() {
         file = new File(plugin.getDataFolder(), name);
 
         config = YamlConfiguration.loadConfiguration(file);
@@ -147,19 +146,17 @@ public class BukkitConfigs {
         InputStream defaults = plugin.getResource(file.getName());
         if (defaults != null) {
 
-            @SuppressWarnings("deprecation")
+
             YamlConfiguration loadConfig = YamlConfiguration.loadConfiguration(defaults);
             config.setDefaults(loadConfig);
         }
-        return this;
     }
 
     /**
      * Salva Config em forma de Texto no Arquivo
      *
-     * @return Config
      */
-    public BukkitConfigs saveConfig() {
+    public void saveConfig() {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file, false);
             fileOutputStream.write(config.saveToString().getBytes(StandardCharsets.UTF_8));
@@ -167,7 +164,6 @@ public class BukkitConfigs {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return this;
     }
 
     /**
@@ -448,7 +444,7 @@ public class BukkitConfigs {
     }
 
     public String getCooldownFormated(Player player, String cooldown) {
-        return Extra.formatTime(getCooldown(player, cooldown));
+        return ""+getCooldown(player, cooldown);
     }
 
     public long getCooldown(Player player, String cooldown) {

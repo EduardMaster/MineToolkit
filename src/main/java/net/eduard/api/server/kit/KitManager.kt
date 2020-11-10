@@ -17,7 +17,7 @@ import net.eduard.api.lib.menu.ClickEffect
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.plugin.IPluginInstance
-
+@Suppress("unused")
 class KitManager : EventsManager() {
 
     @Transient
