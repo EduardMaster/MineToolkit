@@ -87,7 +87,7 @@ open class Minigame : TimeManager {
         get() = rooms.firstOrNull()
 
     open val mainLobby: MinigameLobby
-        get() = if (lobbies.size > 0) lobbies[0] else newLobby(1)
+        get() = if (lobbies.isNotEmpty()) lobbies[0] else newLobby(1)
 
     /**
      * Pega o mapa referente a sala principal do Minigame
@@ -104,7 +104,7 @@ open class Minigame : TimeManager {
     /**
      * Conecta todos jogadores no servidor Lobby
      */
-    fun connectAllPlayersToLobby() {
+    open fun connectAllPlayersToLobby() {
         for (player in players.values) {
             BukkitBungeeAPI.connectToServer(player.player, bungeeLobby)
         }
@@ -126,7 +126,7 @@ open class Minigame : TimeManager {
     constructor(name: String) {
         this.name = name
         messagePrefix = "§8[§b$name§8]§f"
-        lobbies.add(MinigameLobby())
+
     }
 
     constructor(name: String, plugin: JavaPlugin) : this(name) {
@@ -533,6 +533,7 @@ open class Minigame : TimeManager {
     }
 
     fun reloadLobbies() {
+        lobbies.clear()
         val pastaLobbies = File(plugin.dataFolder, "lobby/")
         pastaLobbies.mkdirs()
         for (arquivoNome: String in pastaLobbies.list()!!) {

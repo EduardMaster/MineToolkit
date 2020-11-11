@@ -48,11 +48,15 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         get() = plugin.dataFolder
 
     override fun log(message: String) {
-        ProxyServer.getInstance().console.sendMessage("§f$message")
+        console("§f$message")
+    }
+
+    override fun console(message: String) {
+        ProxyServer.getInstance().console.sendMessage("§b[EduardAPI]§r $message")
     }
 
     override fun error(message: String) {
-        ProxyServer.getInstance().console.sendMessage("§c$message")
+       console("§c$message")
     }
 
     override fun reload() {

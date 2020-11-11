@@ -8,6 +8,7 @@ import net.eduard.api.core.BukkitReplacers
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.hooks.JHCashHook
 import net.eduard.api.lib.bungee.BungeeAPI
+import net.eduard.api.lib.bungee.ServerSpigot
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.config.StorageType
@@ -116,8 +117,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         commands()
         events()
         tasks()
-
-
+        loadServers()
 
 
 
@@ -168,6 +168,13 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         MemoryCommand().registerCommand(plugin)
         log("Comandos ativados com sucesso")
     }
+    fun loadServers(){
+        if (sqlManager.hasConnection()){
+            for (server in sqlManager.getAllData(ServerSpigot::class.java)){
+                BungeeAPI.getServers()[server.name.toLowerCase()] = server
+            }
+        }
+    }
 
 
 
@@ -184,7 +191,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         CommandManager.isDebug = configs.getBoolean("debug-commands")
         Copyable.CopyDebug.setDebug(configs.getBoolean("debug-copyable"))
         BukkitBungeeAPI.setDebug(configs.getBoolean("debug-bungee-bukkit"))
-       Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
+        Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
         PlayerSkin.reloadSkins()
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
         loadMaps()

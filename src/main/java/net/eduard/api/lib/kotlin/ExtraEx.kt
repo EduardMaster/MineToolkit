@@ -5,9 +5,9 @@ import net.eduard.api.lib.modules.Extra
 fun Number.format() = Extra.formatMoney(this.toDouble())
 
 fun <T : Any> Array<T>.shuffle() : Array<T>{
-    for (index in 0..size){
+    for (index in 0 until size){
         val temp = this[index]
-        val sorted= Extra.getRandomInt(1,size)
+        val sorted= Extra.getRandomInt(1,size) - 1
         this[index] = this[sorted]
         this[sorted] = temp
 

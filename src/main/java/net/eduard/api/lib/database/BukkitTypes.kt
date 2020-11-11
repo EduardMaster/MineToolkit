@@ -34,14 +34,14 @@ object BukkitTypes {
                 x, y, z
             )
         }
-        save<FakePlayer>(75) {
+        save<FakePlayer>(100) {
             "$name;$uniqueId"
         }
         load {
             val split = it.split(";")
             FakePlayer(split[0], UUID.fromString(split[1]))
         }
-        save<Enchantment> {
+        save<Enchantment>(100) {
             "$id"
         }
         load {
