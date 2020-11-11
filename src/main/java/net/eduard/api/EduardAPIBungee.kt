@@ -2,29 +2,37 @@ package net.eduard.api
 
 import net.eduard.api.command.bungee.BungeeReloadCommand
 import net.eduard.api.lib.bungee.BungeeAPI
+import net.eduard.api.lib.bungee.ServerSpigot
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.hybrid.BungeeServer
 import net.eduard.api.lib.hybrid.Hybrid
+import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
+import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.listener.BungeeEvents
 import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
 
 
+@Suppress("deprecated")
 class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     companion object {
         lateinit var instance: EduardAPIBungee
     }
+
     init {
         instance = this
     }
-
-
-
 
 
     override var started = false
@@ -48,13 +56,90 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     }
 
     override fun reload() {
+        log("Inicio do Recarregamento do EduardAPI")
+        configs.reloadConfig()
+        messages.reloadConfig()
+        configDefault()
+        log("Ativando debug de sistemas caso marcado na config como 'true'")
+        StorageAPI.setDebug(configs.getBoolean("debug-storage"))
+        DBManager.setDebug(configs.getBoolean("debug-database"))
+
+     // configs.getBoolean("debug-commands")
+        Copyable.CopyDebug.setDebug(configs.getBoolean("debug-copyable"))
+       // Extra.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
+
+
+        try {
+            log("Carregando formato de dinheiro da config")
+            Extra.MONEY = DecimalFormat(
+                configs.getString("money-format"),
+                DecimalFormatSymbols.getInstance(Locale.forLanguageTag(configs.getString("money-format-locale")))
+            )
+            log("Formato valido")
+        } catch (exception: Exception) {
+            error("Formato do dinheiro invalido " + configs.getString("money-format"))
+        }
+
+        log("Recarregamento do EduardAPI concluido.")
+
         if (dbManager.hasConnection()) {
             log("MySQL Ativado, iniciando conexao")
+            sqlManager.createTable(ServerSpigot::class.java)
+            val servers = sqlManager.getAllData(ServerSpigot::class.java)
+            for (server in servers) {
+                BungeeAPI.getServers()[server.name.toLowerCase()] = server
+            }
+
+
+            for (server in ProxyServer.getInstance().servers.values) {
+                val spigot = BungeeAPI.getServers()[server.name.toLowerCase()]
+                if (spigot == null) {
+                    val servidor = BungeeAPI.getServer(server.name)
+                    servidor.host = server.address.hostName
+                    servidor.port = server.address.port
+                    servidor.players = server.players.stream()
+                        .map { obj: ProxiedPlayer -> obj.name }
+                        .collect(Collectors.toList())
+                    servidor.count = server.players.size
+                    sqlManager.insertData(servidor)
+                }
+            }
 
         }
     }
 
+    override fun onEnable() {
+        super.onLoad()
+        Hybrid.instance = BungeeServer
+        BungeeAPI.getBungee().register(plugin)
+        reload()
+
+        ProxyServer.getInstance().pluginManager
+            .registerListener(plugin, BungeeEvents())
+        ProxyServer.getInstance().pluginManager
+            .registerCommand(plugin, BungeeReloadCommand())
+
+        ProxyServer.getInstance().scheduler.schedule(plugin, {
+            for (server in ProxyServer.getInstance().servers.values) {
+                val spigot = BungeeAPI.getServers()[server.name.toLowerCase()]?:continue
+                sqlManager.updateData(spigot)
+            }
+        },
+        1,1,TimeUnit.SECONDS)
+    }
+
     override fun configDefault() {
+        configs.add("debug-storage", false)
+        configs.add("debug-copyable", false)
+        configs.add("debug-commands", false)
+        configs.add("debug-replacers", false)
+        configs.add("debug-database", false)
+
+        configs.add("money-format", "###,###.##")
+        configs.add("money-format-locale", "PT-BR")
+
+        configs.saveConfig()
+
 
     }
 
@@ -86,19 +171,6 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
     override fun getPlugin(): Any {
         return plugin
-    }
-
-    override fun onEnable() {
-        super.onLoad()
-        Hybrid.instance = BungeeServer
-
-        reload()
-
-        ProxyServer.getInstance().pluginManager
-            .registerListener(plugin, BungeeEvents())
-        ProxyServer.getInstance().pluginManager
-            .registerCommand(plugin, BungeeReloadCommand())
-
     }
 
 

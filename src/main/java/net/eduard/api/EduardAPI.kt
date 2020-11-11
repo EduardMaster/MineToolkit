@@ -107,10 +107,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         }
         storage()
         VaultAPI.setupVault()
-        ServerAPI.BukkitControl.register(plugin)
         BukkitBungeeAPI.requestCurrentServer()
-        BungeeAPI.getBukkit().plugin = plugin
-        BungeeAPI.getBukkit().register()
+        BungeeAPI.getBukkit().register(plugin)
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         StorageAPI.registerPackage(Minigame::class.java)
         reload()
@@ -177,9 +175,10 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
+        configDefault()
         log("Ativando debug de sistemas caso marcado na config como 'true'")
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
-        DBManager.setDebug(configs.getBoolean("debug-db"))
+        DBManager.setDebug(configs.getBoolean("debug-database"))
         Menu.isDebug = configs.getBoolean("debug-menu")
         CommandManager.isDebug = configs.getBoolean("debug-commands")
         Copyable.CopyDebug.setDebug(configs.getBoolean("debug-copyable"))
@@ -218,6 +217,43 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
     override fun configDefault() {
+
+        configs.add("debug-bungee-bukkit",false)
+        configs.add("debug-storage", false)
+        configs.add("debug-copyable",false )
+        configs.add("debug-commands", false )
+        configs.add("debug-replacers", false)
+        configs.add("debug-database",false )
+        configs.add("debug-menu",false )
+        configs.add("skins",false )
+        configs.add("auto-respawn",true )
+
+        configs.add("custom-skin","EduardKillerPro" )
+        configs.add("player target","\$player_name - \$player_level" )
+        configs.add("stack-design", "§aQuantidade: §f\$stack")
+        configs.add("money-format", "###,###.##")
+        configs.add("money-format-locale","PT-BR" )
+        configs.add("no-join-message",true )
+        configs.add("custom-join-message",false )
+        configs.add("custom-first-join-message",false )
+        configs.add("on-join-message", "&6O jogador &e\$player &6entrou no server")
+        configs.add("first-join-message","&6Seja bem vindo ao servidor!!" )
+        configs.add("no-quit-message", true )
+        configs.add("custom-quit-message", false )
+        configs.add("on-quit-message", "&6O jogador &e\$player &6saiu do server" )
+        configs.add("no-quit-message", true )
+        configs.add("no-death-message", true )
+        configs.add("custom-death-message", false )
+        configs.add("on-death-player-message", "&6O jogador &e\$killer matou o jogador \$player" )
+
+        configs.add(" custom-motd", false )
+        configs.add("custom-motd-amount",-1 )
+        configs.add("motd", listOf( "Seja bem vindo","Ao meu servidor!") )
+
+        configs.saveConfig()
+
+
+
 
     }
 

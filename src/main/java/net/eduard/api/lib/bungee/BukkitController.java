@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class BukkitController implements ServerController {
+public class BukkitController implements ServerController<Plugin> {
 
     private Plugin plugin;
 
@@ -56,10 +56,11 @@ public class BukkitController implements ServerController {
 
 
     @Override
-    public void register() {
+    public void register(Plugin pl) {
+        setPlugin(pl);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, BungeeAPI.getChannel());
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, BungeeAPI.getChannel(), listener);
-        Bukkit.getConsoleSender().sendMessage("§aRegistrando sistema de conexão com Bungeecoard via Plugin Messaging");
+        Bukkit.getConsoleSender().sendMessage("§eRegistrando sistema de conexao com Bungeecoard via Plugin Messaging");
 
     }
 
@@ -79,8 +80,8 @@ public class BukkitController implements ServerController {
     }
 
     @Override
-    public void connect(String player, String serverType, ServerState serverState) {
-        sendMessage("connect", player + " " + serverType + " " + serverState);
+    public void connect(String player, String serverType, String subType) {
+        sendMessage("connect", player + " " + serverType + " " + subType);
 
     }
 

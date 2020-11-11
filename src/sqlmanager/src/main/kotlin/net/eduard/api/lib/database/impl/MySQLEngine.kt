@@ -178,9 +178,10 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             val wrapper = column.wrapperType
             return Extra.transform(data, wrapper)
         }
-        if (javaClass.isEnum) {
+        if (column.isEnum) {
             try {
-                return javaClass.getDeclaredField(data)[0]
+                return column.javaType.getDeclaredField(data.toUpperCase()
+                    .replace(" ","_"))[0]
             } catch (e: Exception) {
                 e.printStackTrace()
             }

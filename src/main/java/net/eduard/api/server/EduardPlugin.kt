@@ -31,7 +31,8 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
     override val pluginName: String
         get() = Extra.getMethodInvoke(plugin, "getName" ) as String
-
+    override val pluginFolder: File
+        get() = plugin.dataFolder
 
 
     override fun getPlugin(): EduardPlugin {

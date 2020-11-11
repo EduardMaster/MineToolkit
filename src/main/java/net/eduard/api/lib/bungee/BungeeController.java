@@ -4,9 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import net.eduard.api.lib.modules.Extra;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -14,9 +11,9 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
-public class BungeeController implements ServerController {
+public class BungeeController implements ServerController<Plugin> {
 
-    private Plugin plugin;
+
     private final BungeeMessageListener listener = new BungeeMessageListener(this);
     private final BungeeStatusUpdater updater = new BungeeStatusUpdater();
     private ScheduledTask task;
@@ -69,7 +66,7 @@ public class BungeeController implements ServerController {
         } else if (server.equals("bungeecord")) {
             if (tag.equals("connect")) {
                 String[] split = line.split(" ");
-                connect(split[0], split[1], ServerState.valueOf(split[2]));
+                connect(split[0], split[1], split[2]);
             } else {
                 for (ServerMessageHandler handler : BungeeAPI.getHandlers()) {
                     handler.onMessage(server, tag, line);
@@ -82,22 +79,17 @@ public class BungeeController implements ServerController {
 
     }
 
-
+    private Plugin plugin;
     @Override
-    public void register() {
+    public void register(Plugin pl) {
+        setPlugin(pl);
         ProxyServer.getInstance().registerChannel(BungeeAPI.getChannel());
         ProxyServer.getInstance().getPluginManager().registerListener(plugin, listener);
-        for (ServerInfo server : ProxyServer.getInstance().getServers().values()) {
-            ServerSpigot servidor = BungeeAPI.getServer(server.getName());
-            servidor.setHost(server.getAddress().getHostName());
-            servidor.setPort(server.getAddress().getPort());
-            servidor.setPlayers(server.getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()));
-            servidor.setCount(server.getPlayers().size());
-        }
+
         task = ProxyServer.getInstance().getScheduler().schedule(plugin, updater, 1, 1, TimeUnit.SECONDS);
         ProxyServer.getInstance().getConsole().
                 sendMessage(new TextComponent(
-                        "§aRegistrando sistema de Conexão com servidores Spigot via Plugin Messager"));
+                        "§aRegistrando sistema de Conexao com servidores Spigot via Plugin Messager"));
 
     }
 
@@ -118,15 +110,16 @@ public class BungeeController implements ServerController {
 
 
     @Override
-    public void connect(String player, String serverType, ServerState serverState) {
-        ProxiedPlayer p = ProxyServer.getInstance().getPlayer(player);
-        if (p != null) {
-            for (ServerSpigot server : BungeeAPI.getServers().values()) {
-                if (server.getState() == serverState
-                        && server.getType().equalsIgnoreCase(serverType)
-                        && server.getCount() < server.getMax()) {
-                    ServerInfo sv = ProxyServer.getInstance().getServerInfo(server.getName());
-                    p.connect(sv);
+    public void connect(String playerName, String serverType, String subType) {
+        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerName);
+        if (player != null) {
+            for (ServerSpigot spigot : BungeeAPI.getServers().values()) {
+                if (spigot.getSubType().equalsIgnoreCase(subType)
+                        && spigot.getType().equalsIgnoreCase(serverType)
+                        && spigot.getCount() < spigot.getMax()) {
+                    ServerInfo server = ProxyServer.getInstance()
+                            .getServerInfo(spigot.getName());
+                    player.connect(server);
                     break;
                 }
             }

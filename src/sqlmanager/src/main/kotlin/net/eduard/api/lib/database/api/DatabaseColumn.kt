@@ -7,11 +7,13 @@ import java.lang.reflect.Field
 
 class DatabaseColumn<T : Any>(val table: DatabaseTable<T>, val field: Field, val engine: DatabaseEngine) {
 
+
     val isConstraint = field.isAnnotationPresent(ColumnRelation::class.java)
     val javaType = field.type
     val wrapperType = Extra.getWrapperOrReturn(field.type)
     var sqlType = engine.types.getOrDefault(javaType, if (isConstraint)"INT" else "TEXT")
     val isWrapper = Extra.isWrapper(javaType)
+    val isEnum get() = javaType.isEnum
     val isBoolean = (wrapperType == java.lang.Boolean::class.java)
     val isNumber = Number::class.java.isAssignableFrom(wrapperType)
             || isBoolean

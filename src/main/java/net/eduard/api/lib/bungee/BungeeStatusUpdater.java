@@ -24,7 +24,10 @@ public class BungeeStatusUpdater implements Runnable {
                             server.setState(ServerState.OFFLINE);
                         }
                     } else {
-                        server.setMax(result.getPlayers().getMax());
+                        if (server.getMax() == 1) {
+                            server.setMax(result.getPlayers().getMax());
+                        }
+
                         if ((server.isOffline()) || (server.isRestarting())) {
                             server.setState(ServerState.ONLINE);
                         }
@@ -32,18 +35,19 @@ public class BungeeStatusUpdater implements Runnable {
                 });
             }
             server.setCount(servidor.getPlayers().size());
-            server.setPlayers(servidor.getPlayers().stream().map(CommandSender::getName).collect(Collectors.toList()));
+            server.setPlayers(servidor.getPlayers()
+                    .stream().map(CommandSender::getName).collect(Collectors.toList()));
 
             if (!servidor.getPlayers().isEmpty() && quantidadeDePlayers != server.getCount()) {
-
                 try {
                     ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
                     ObjectOutputStream out = new ObjectOutputStream(arrayOut);
                     out.writeUTF(server.getName());
                     out.writeUTF("server-update");
                     out.writeObject(server);
-                    for (ServerInfo sv : ProxyServer.getInstance().getServers().values()) {
-                        sv.sendData(BungeeAPI.getChannel(), arrayOut.toByteArray());
+                    for (ServerInfo serverInfo : ProxyServer.getInstance().getServers().values()) {
+                        serverInfo.sendData(BungeeAPI.getChannel(),
+                                arrayOut.toByteArray());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

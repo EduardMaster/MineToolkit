@@ -1,31 +1,19 @@
 package net.eduard.api.listener
 
-import net.eduard.api.EduardAPIBungee
-import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.event.*
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 
 
-@SuppressWarnings("unused")
+@Suppress("unused")
 class BungeeEvents : Listener {
-
-
-    val bungee get() = EduardAPIBungee.instance.bungeeDB
-    val dbManager get() = EduardAPIBungee.instance.databaseManager
-
 
 
 
     @EventHandler
     fun onJoin(e: PostLoginEvent) {
         val player = e.player
-        // info("§aPostLoginEvent", player.getPendingConnection());
-        if (dbManager.hasConnection()) {
-            if (!bungee.playersContains(player.name)) {
-                dbManager.insert("players", player.name, player.uniqueId, "")
-            }
-        }
+
     }
 
     @EventHandler
@@ -33,24 +21,15 @@ class BungeeEvents : Listener {
         val serverName = e.target.name
         val playerUUID = e.player.uniqueId
         val playerAmount = e.target.players.size
-        if (dbManager.hasConnection()) {
-            ProxyServer.getInstance().scheduler.runAsync(EduardAPIBungee.instance.plugin) {
-                bungee.setPlayersAmount(serverName, playerAmount)
-                bungee.setPlayerServer(playerUUID, "")
-            }
-        }
+
+
     }
     @EventHandler
     fun event(e: ServerConnectedEvent) {
         val serverName = e.server.info.name
         val playerUUID = e.player.uniqueId
         val playerAmount = e.server.info.players.size
-        if (dbManager.hasConnection()) {
-            ProxyServer.getInstance().scheduler.runAsync(EduardAPIBungee.instance.plugin) {
-                bungee.setPlayersAmount(serverName, playerAmount)
-                bungee.setPlayerServer(playerUUID, serverName)
-            }
-        }
+
     }
 
     @EventHandler

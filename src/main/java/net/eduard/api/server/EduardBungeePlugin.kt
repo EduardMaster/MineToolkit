@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.api.plugin.Plugin
+import java.io.File
 
 /**
  * Representa os Plugins meus feitos para o Bungeecord
@@ -38,6 +39,8 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
 
     override val pluginName: String
         get() = plugin.description.name
+    override val pluginFolder: File
+        get() = plugin.dataFolder
 
     val config get() = configs
 

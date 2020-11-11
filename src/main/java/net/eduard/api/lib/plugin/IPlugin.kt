@@ -28,6 +28,7 @@ interface IPlugin : IPluginInstance {
     fun onLoad() {
         HybridTypes
         if (started)return
+        dbManager = DBManager()
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")
         storage = Config(this, "storage.yml")

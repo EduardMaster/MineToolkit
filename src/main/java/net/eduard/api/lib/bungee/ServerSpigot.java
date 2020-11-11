@@ -1,5 +1,6 @@
 package net.eduard.api.lib.bungee;
 
+import net.eduard.api.lib.database.annotations.ColumnPrimary;
 import net.eduard.api.lib.database.annotations.TableName;
 
 import java.io.Serializable;
@@ -8,16 +9,24 @@ import java.util.List;
 
 @TableName("network_servers")
 public class ServerSpigot implements Serializable {
+
+    @ColumnPrimary
     private String name = "lobby01";
     private String type = "lobby";
     private String subType = "principal";
-    private int max = 80;
+    private int max = 1;
     private int count;
     private ServerState state = ServerState.OFFLINE;
     private String host = "localhost";
     private int port = 25565;
 
-    private List<String> players = new ArrayList<>();
+
+   transient private List<String> players = new ArrayList<>();
+
+
+    public ServerSpigot(){
+
+    }
 
     public ServerSpigot(String name) {
         this.name = name;
