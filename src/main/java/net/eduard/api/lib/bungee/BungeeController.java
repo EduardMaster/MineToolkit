@@ -69,7 +69,7 @@ public class BungeeController implements ServerController {
         } else if (server.equals("bungeecord")) {
             if (tag.equals("connect")) {
                 String[] split = line.split(" ");
-                connect(split[0], Extra.toInt(split[1]), Extra.toInt(split[2]));
+                connect(split[0], split[1], ServerState.valueOf(split[2]));
             } else {
                 for (ServerMessageHandler handler : BungeeAPI.getHandlers()) {
                     handler.onMessage(server, tag, line);
@@ -118,12 +118,12 @@ public class BungeeController implements ServerController {
 
 
     @Override
-    public void connect(String player, int serverType, int serverState) {
+    public void connect(String player, String serverType, ServerState serverState) {
         ProxiedPlayer p = ProxyServer.getInstance().getPlayer(player);
         if (p != null) {
             for (ServerSpigot server : BungeeAPI.getServers().values()) {
                 if (server.getState() == serverState
-                        && server.getType() == serverType
+                        && server.getType().equalsIgnoreCase(serverType)
                         && server.getCount() < server.getMax()) {
                     ServerInfo sv = ProxyServer.getInstance().getServerInfo(server.getName());
                     p.connect(sv);
@@ -135,7 +135,7 @@ public class BungeeController implements ServerController {
     }
 
     @Override
-    public void setState(String serverName, int state) {
+    public void setState(String serverName, ServerState state) {
         ServerSpigot server = BungeeAPI.getServer(serverName);
         server.setState(state);
     }

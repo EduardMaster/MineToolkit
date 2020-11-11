@@ -102,7 +102,7 @@ public final class Extra {
                 id++;
                 continue;
             }
-            if (id>init){
+            if (id > init) {
                 text.append(" ");
             }
             text.append(toChatMessage(arg));
@@ -174,7 +174,7 @@ public final class Extra {
 
     public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
     public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
-    public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+    public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
     private static final Map<String, String> REPLACERS = new LinkedHashMap<>();
 
 
@@ -218,15 +218,15 @@ public final class Extra {
     public static String allatoriOfucation(String str) {
         int tamanhoDoTexto = str.length();
         char[] umaArrayDeLetras = new char[tamanhoDoTexto];
-        int TamanhoDoTextoMenosUm = tamanhoDoTexto - 1;
+        int tamanhoDoTextoMenosUm = tamanhoDoTexto - 1;
         while (true) {
-            if (TamanhoDoTextoMenosUm >= 0) {
-                int PenultimoCaractere = str.charAt(TamanhoDoTextoMenosUm);
-                int TamanhoDoTextoMenusUmSomadoComMaisUm = TamanhoDoTextoMenosUm + -1;
+            if (tamanhoDoTextoMenosUm >= 0) {
+                int PenultimoCaractere = str.charAt(tamanhoDoTextoMenosUm);
+                int TamanhoDoTextoMenusUmSomadoComMaisUm = tamanhoDoTextoMenosUm + -1;
                 int NaoSeiSeEhUmNUmeroOuUmChar = (char) (PenultimoCaractere ^ 56);
-                umaArrayDeLetras[TamanhoDoTextoMenosUm] = (char) NaoSeiSeEhUmNUmeroOuUmChar;
+                umaArrayDeLetras[tamanhoDoTextoMenosUm] = (char) NaoSeiSeEhUmNUmeroOuUmChar;
                 if (TamanhoDoTextoMenusUmSomadoComMaisUm >= 0) {
-                    TamanhoDoTextoMenosUm = TamanhoDoTextoMenusUmSomadoComMaisUm + -1;
+                    tamanhoDoTextoMenosUm = TamanhoDoTextoMenusUmSomadoComMaisUm + -1;
                     int nesteNumeroEuNaoEntendiOqueEleEh = str.charAt(TamanhoDoTextoMenusUmSomadoComMaisUm);
                     int NaoSeiSeEhUmNUmeroOuUmChar2 = (char) (nesteNumeroEuNaoEntendiOqueEleEh ^ 70);
                     umaArrayDeLetras[TamanhoDoTextoMenusUmSomadoComMaisUm] = (char) NaoSeiSeEhUmNUmeroOuUmChar2;
@@ -265,8 +265,7 @@ public final class Extra {
         at = new StringBuilder();
         buffer.add("|                                                   |");
         int j = paragraph.length;
-        for (int i = 0; i < j; i++) {
-            String s = paragraph[i];
+        for (String s : paragraph) {
             at.append("| ");
             int left = 49;
             for (int t = 0; t < s.length(); t++) {
@@ -291,7 +290,7 @@ public final class Extra {
         buffer.add("+---------------------------------------------------+");
 
         System.out.println(" ");
-        for (String line : buffer.toArray(new String[buffer.size()])) {
+        for (String line : buffer.toArray(new String[0])) {
             System.out.println(line);
         }
         System.out.println(" ");
@@ -361,22 +360,25 @@ public final class Extra {
      * Detela a pasta e todos os arquivos dentro
      *
      * @param file Pasta
+     * @return Quantidade de arquivos deletados
      */
-    public static void deleteFolder(File file) {
+    public static int deleteFolder(File file) {
+        int deleted = 0;
         if (file.exists()) {
             File[] files = file.listFiles();
             if (files != null) {
                 for (File value : files) {
                     if (value.isDirectory()) {
-                        deleteFolder(value);
-                        value.delete();
-                    } else {
-                        value.delete();
+                        deleted += deleteFolder(value);
+                    } else if (value.delete()) {
+                        deleted++;
                     }
                 }
+            } else if (file.delete()) {
+                deleted++;
             }
-            file.delete();
         }
+        return deleted;
     }
 
     /**
@@ -620,8 +622,8 @@ public final class Extra {
         boolean isRound = (d * 10) % 10 == 0;
 
 
-        return (d < 1000 ? ((d > 99.9 || isRound || (!isRound && d > 9.99) ? (int) d : d + "") + " " + letras[iteration])
-                : formatMoney3(d, iteration + 1));
+        return d < 1000 ? (d > 99.9 || isRound || d > 9.99 ? (int) d : d + "") + " " + letras[iteration]
+                : formatMoney3(d, iteration + 1);
     }
 
     /**
@@ -697,7 +699,7 @@ public final class Extra {
             // ".jar").replaceFirst("file:", "");
             Enumeration<JarEntry> entries = jar.entries();
             while (entries.hasMoreElements()) {
-                JarEntry entry = (JarEntry) entries.nextElement();
+                JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
                 if ((entryName.endsWith(".class")) && (entryName.startsWith(relPath)) && !entryName.contains("$")) {
                     String classeName = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
@@ -971,6 +973,7 @@ public final class Extra {
 
     /**
      * Retorna o construtor vazio da classe
+     *
      * @param clz Classe com o Construtor vazio
      * @param <T> Classe
      * @return Construtor da classe com zero parametros
@@ -1220,7 +1223,7 @@ public final class Extra {
      * @return Valor da classe
      */
     public static double getValueOf(Class<?> claz, ArrayList<Class<?>> blacklist, boolean debug) {
-        if (claz == null)return 0;
+        if (claz == null) return 0;
         double finalValue = 0.1;
         // sem esta verificação dependo pode ultrapassar as casas da centena vale muito
 
@@ -1393,7 +1396,7 @@ public final class Extra {
             }
             scanner.close();
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return false;
     }
@@ -1487,8 +1490,7 @@ public final class Extra {
             key = UUID.randomUUID().toString();
         } else if (type == KeyType.LETTER) {
             final StringBuilder buffer = new StringBuilder();
-            String characters = "";
-            characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             final int charactersLength = characters.length();
             for (int i = 0; i < maxSize; ++i) {
                 final double index = Math.random() * charactersLength;
@@ -1497,8 +1499,7 @@ public final class Extra {
             key = buffer.toString();
         } else if (type == KeyType.NUMERIC) {
             final StringBuilder buffer = new StringBuilder();
-            String characters = "";
-            characters = "0123456789";
+            String characters = "0123456789";
             final int charactersLength = characters.length();
             for (int i = 0; i < maxSize; ++i) {
                 final double index = Math.random() * charactersLength;
@@ -1507,8 +1508,7 @@ public final class Extra {
             key = buffer.toString();
         } else if (type == KeyType.ALPHANUMERIC) {
             final StringBuilder buffer = new StringBuilder();
-            String characters = "";
-            characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             final int charactersLength = characters.length();
             for (int i = 0; i < maxSize; ++i) {
                 final double index = Math.random() * charactersLength;
@@ -2010,6 +2010,7 @@ public final class Extra {
      * @param zipFilePath   Arquivo
      * @param destDirectory Destino
      */
+    @SuppressWarnings("unused")
     public static void unzip(String zipFilePath, String destDirectory) {
         try {
             File destDir = new File(destDirectory);

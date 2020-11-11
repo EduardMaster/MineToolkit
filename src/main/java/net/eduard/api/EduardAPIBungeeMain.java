@@ -18,8 +18,17 @@ public class EduardAPIBungeeMain extends Plugin {
     public EduardAPIBungee eduardAPIBungee;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         eduardAPIBungee = new EduardAPIBungee(this);
+        eduardAPIBungee.onLoad();
+    }
+
+    @Override
+    public void onEnable() {
+        if (eduardAPIBungee == null){
+            eduardAPIBungee = new EduardAPIBungee(this);
+            eduardAPIBungee.onLoad();
+        }
         eduardAPIBungee.onEnable();
 
     }

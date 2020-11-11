@@ -1,10 +1,6 @@
 package net.eduard.api.lib.modules;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,9 +13,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 /**
  * API de controlar o BungeeCord pelo Servidor Spigot
  * @author Eduard
@@ -37,6 +30,7 @@ public final class BukkitBungeeAPI {
 	}
 
 	public static int getPlayerCount(String server) {
+
 		return getServer(server).playerCount;
 	}
 
@@ -57,40 +51,41 @@ public final class BukkitBungeeAPI {
 				return;
 			}
 			try {
-				ByteArrayDataInput data = ByteStreams.newDataInput(message);
-				String request = data.readUTF();
+				ByteArrayInputStream stream = new ByteArrayInputStream(message);
+				DataInputStream dataReader = new DataInputStream(stream);
+				String request = dataReader.readUTF();
 				if (isPlayerCountRequest(request)) {
-					String server = data.readUTF();
-					getServer(server).playerCount = data.readInt();
+					String server = dataReader.readUTF();
+					getServer(server).playerCount = dataReader.readInt();
 				} else if (isServersRequest(request)) {
-					String[] servers = data.readUTF().split(", ");
+					String[] servers = dataReader.readUTF().split(", ");
 					log("§aRESPONSE SERVERS: §F" + Arrays.asList(servers));
 					for (String server : servers) {
 						getServer(server);
 					}
 				} else if (isPlayerListRequest(request)) {
-					String server = data.readUTF();
-					String[] players = data.readUTF().split(", ");
+					String server = dataReader.readUTF();
+					String[] players = dataReader.readUTF().split(", ");
 					List<String> list = Arrays.asList(players);
 					getServer(server).players = list;
 					log("§aRESPONSE PLAYERS FROM SERVER §F" + server + " : " + list);
 				} else if (isServerRequest(request)) {
-					currentServer = data.readUTF();
+					currentServer = dataReader.readUTF();
 				} else if (isServerIpRequest(request)) {
-					String serverName = data.readUTF();
-					String ip = data.readUTF();
-					int port = data.readUnsignedShort();
+					String serverName = dataReader.readUTF();
+					String ip = dataReader.readUTF();
+					int port = dataReader.readUnsignedShort();
 					SimpleServer server = getServer(serverName);
 					server.host = ip;
 					server.port = port;
 				} else if (isUUIDRequest(request)) {
-					getPlayer(player.getName()).uuid = data.readUTF();
+					getPlayer(player.getName()).uuid = dataReader.readUTF();
 				} else if (isUUIDOtherRequest(request)) {
-					String playerName = data.readUTF();
-					getPlayer(playerName).uuid = data.readUTF();
+					String playerName = dataReader.readUTF();
+					getPlayer(playerName).uuid = dataReader.readUTF();
 				} else if (isPlayerIpRequest(request)) {
-					String ip = data.readUTF();
-					int port = data.readInt();
+					String ip = dataReader.readUTF();
+					int port = dataReader.readInt();
 					SimplePlayer fake = getPlayer(player.getName());
 					fake.host = ip;
 					fake.port = port;
@@ -232,18 +227,18 @@ public final class BukkitBungeeAPI {
 		return player;
 	} 
 
-	private static PluginMessageListener listener;
+	private static final PluginMessageListener listener;
 
 	public static Plugin getInstance() {
 		return JavaPlugin.getProvidingPlugin(BukkitBungeeAPI.class);
 	}
 
-	static void sendMessage(ByteArrayDataOutput message) {
+	static void sendMessage(ByteArrayOutputStream message) {
 		Bukkit.getServer().sendPluginMessage(getInstance(), "BungeeCord", message.toByteArray());
 
 	}
 
-	static void sendMessage(Player player, ByteArrayDataOutput message) {
+	static void sendMessage(Player player, ByteArrayOutputStream message) {
 		player.sendPluginMessage(getInstance(), "BungeeCord", message.toByteArray());
 	}
 
@@ -251,56 +246,72 @@ public final class BukkitBungeeAPI {
 	 * String server to send to, ALL to send to every server (except the one sending
 	 * the plugin message), or ONLINE to send to every server that's online (except
 	 * the one sending the plugin message)
-	 * 
-	 * @param subChannel
-	 * @param server
-	 * @param data
+	 *
+	 * @param subChannel Nome do subchannel
+	 * @param server Servidor que vai ler estes dados
+	 * @param data Lista de objetos
 	 */
 	public static void forwardToServer(String subChannel, String server, Object... data) {
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("Forward"); // So BungeeCord knows to forward it
-		out.writeUTF(server);
-		out.writeUTF(subChannel); // The channel name to check if this your data
-
-		ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
-		DataOutputStream msgout = new DataOutputStream(msgbytes);
 		try {
-			msgout.writeInt(data.length);
-			for (Object datum : data) {
-				msgout.writeUTF(datum.toString());
-			}
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} // You can do anything you want with msgout
+			dataWriter.writeUTF("Forward"); // So BungeeCord knows to forward it
+			dataWriter.writeUTF(server);
+			dataWriter.writeUTF(subChannel); // The channel name to check if this your data
 
-		out.writeShort(msgbytes.toByteArray().length);
-		out.write(msgbytes.toByteArray());
+			ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
+			DataOutputStream msgout = new DataOutputStream(msgbytes);
+			try {
+				msgout.writeInt(data.length);
+				for (Object datum : data) {
+					msgout.writeUTF(datum.toString());
+				}
 
-		sendMessage(out);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} // You can do anything you want with msgout
+
+			dataWriter.writeShort(msgbytes.toByteArray().length);
+			dataWriter.write(msgbytes.toByteArray());
+
+			sendMessage(stream);
+		}catch (Exception ignored){
+		}
+
+
 	}
 
 	public static void forwardToPlayer(String playerName, String subChannel, Object... data) {
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("ForwardToPlayer"); // So BungeeCord knows to forward it
-		out.writeUTF(playerName);
-		out.writeUTF(subChannel); // The channel name to check if this your data
 
-		ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
-		DataOutputStream msgout = new DataOutputStream(msgbytes);
 		try {
-			msgout.writeInt(data.length);
-			for (Object datum : data) {
-				msgout.writeUTF(datum.toString());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} // You can do anything you want with msgout
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
 
-		out.writeShort(msgbytes.toByteArray().length);
-		out.write(msgbytes.toByteArray());
+			dataWriter.writeUTF("ForwardToPlayer"); // So BungeeCord knows to forward it
+			dataWriter.writeUTF(playerName);
+			dataWriter.writeUTF(subChannel); // The channel name to check if this your data
 
-		sendMessage(out);
+
+			ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
+			DataOutputStream msgout = new DataOutputStream(msgbytes);
+			try {
+				msgout.writeInt(data.length);
+				for (Object dataLoop : data) {
+					msgout.writeUTF(dataLoop.toString());
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			} // You can do anything you want with msgout
+
+			dataWriter.writeShort(msgbytes.toByteArray().length);
+			dataWriter.write(msgbytes.toByteArray());
+
+			sendMessage(stream);
+		}catch (Exception ignored){
+		}
+
 	}
 
 	static {
@@ -318,60 +329,67 @@ public final class BukkitBungeeAPI {
 
 	public static void connectToServer(Player player, String server) {
 		log("CONNECT TO §E" + server + "§F PLAYER §E" + player.getName());
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("Connect");
-		out.writeUTF(server);
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
 
-		sendMessage(player, out);
+			dataWriter.writeUTF("Connect");
+			dataWriter.writeUTF(server);
+
+			sendMessage(player,stream);
+		}catch (Exception ignored){
+		}
+
+
 	}
 
 	public static void connectToServer(String playerName, String server) {
 		log("CONNECT TO §E" + server + "§F PLAYER §E" + playerName);
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("ConnectOther");
-		out.writeUTF(playerName);
-		out.writeUTF(server);
-		sendMessage(out);
-	}
-
-	static String[] readMessage(ByteArrayDataInput data) {
-		short len = data.readShort();
-		byte[] msgbytes = new byte[len];
-
-		data.readFully(msgbytes);
-		String[] result = null;
-		DataInputStream msgIn = new DataInputStream(new ByteArrayInputStream(msgbytes));
 		try {
-			result = new String[msgIn.readInt()];
-			for (int i = 0; i < result.length; i++) {
-				String somedata = msgIn.readUTF();
-				result[i] = somedata;
-			}
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			result = new String[0];
+			dataWriter.writeUTF("ConnectOther");
+			dataWriter.writeUTF(playerName);
+			dataWriter.writeUTF(server);
+			sendMessage(stream);
+		}catch (Exception ignored){
 		}
-		return result;
+
 	}
+
+
 
 	public static void kickPlayer(String playerName, String reason) {
 		log("KICK §e" + playerName + "'§E REASON §F" + reason);
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("KickPlayer");
-		out.writeUTF(playerName);
-		out.writeUTF(reason);
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
 
-		sendMessage(out);
+			dataWriter.writeUTF("KickPlayer");
+			dataWriter.writeUTF(playerName);
+			dataWriter.writeUTF(reason);
+			sendMessage(stream);
+		}catch (Exception ignored){
+		}
+
+
+
 	}
 
 	public static void sendMessage(String playerName, String message) {
 		log("CHAT §E" + playerName + "§F MESSAGE §E" + message);
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("Message");
-		out.writeUTF(playerName);
-		out.writeUTF(message);
-		sendMessage(out);
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
+
+			dataWriter.writeUTF("Message");
+			dataWriter.writeUTF(playerName);
+			dataWriter.writeUTF(message);
+			sendMessage(stream);
+		}catch (Exception ignored){
+		}
+
 	}
 
 	public static boolean isServersRequest(String request) {
@@ -384,14 +402,17 @@ public final class BukkitBungeeAPI {
 	}
 
 	public static boolean isServerRequest(String request) {
+
 		return request.equals("GetServer");
 	}
 
 	public static boolean isPlayerListRequest(String request) {
+
 		return request.equals("PlayerList");
 	}
 
 	public static boolean isPlayerCountRequest(String request) {
+
 		return request.equals("PlayerCount");
 	}
 
@@ -422,63 +443,115 @@ public final class BukkitBungeeAPI {
 
 	public static void requestServersNames() {
 		log("REQUEST SERVERS NAMES");
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("GetServers");
-		sendMessage(out);
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
+
+			dataWriter.writeUTF("GetServers");
+			sendMessage(stream);
+		}catch (Exception ignored){
+
+		}
 	}
 
 	public static void requestServerIp(String server) {
 		log("REQUEST IP FROM SERVER §e" + server);
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("ServerIP");
-		out.writeUTF(server);
-		sendMessage(out);
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
+
+			dataWriter.writeUTF("ServerIP");
+			dataWriter.writeUTF(server);
+			sendMessage(stream);
+		}catch (Exception ignored){
+
+		}
+
+
 	}
 
 	public static void requestPlayerCount(String server) {
 		log("REQUEST PLAYER COUNT FROM SERVER §e" + server);
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("PlayerCount");
-		out.writeUTF(server);
-		sendMessage(out);
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
+
+			dataWriter.writeUTF("PlayerCount");
+			dataWriter.writeUTF(server);
+			sendMessage(stream);
+		}catch (Exception ignored){
+
+		}
 	}
 
 	public static void requestPlayerId(Player player) {
 		log("REQUEST ID FROM PLAYER §e" + player.getName());
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("UUID");
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
 
-		sendMessage(player, out);
+			dataWriter.writeUTF("UUID");
+
+			sendMessage(player,stream);
+		}catch (Exception ignored){
+		}
+
 	}
 
 	public static void requestPlayerId(String playerName) {
 		log("REQUEST ID FROM TARGET PLAYER §e" + playerName);
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("UUIDOther");
-		out.writeUTF(playerName);
-		sendMessage(out);
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
+
+			dataWriter.writeUTF("UUIDOther");
+			dataWriter.writeUTF(playerName);
+			sendMessage(stream);
+		}catch (Exception ignored){
+		}
+
 	}
 
 	public static void requestPlayerIp(Player player) {
 		log("REQUEST IP FROM PLAYER §e" + player.getName());
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("IP");
-		player.sendPluginMessage(getInstance(), "BungeeCord", out.toByteArray());
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
+
+			dataWriter.writeUTF("IP");
+
+			sendMessage(player,stream);
+		}catch (Exception ignored){
+		}
+
 	}
 
 	public static void requestPlayerList(String server) {
 		log("REQUEST PLAYERS FROM SERVER §E" + server);
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("PlayerList");
-		out.writeUTF(server);
-		sendMessage(out);
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
+
+			dataWriter.writeUTF("PlayerList");
+			dataWriter.writeUTF(server);
+
+			sendMessage(stream);
+		}catch (Exception ignored){
+		}
+
 	}
 
 	public static void requestCurrentServer() {
 		log("REQUEST CURRENT SERVER");
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("GetServer");
-		sendMessage(out);
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream dataWriter = new DataOutputStream(stream);
+			dataWriter.writeUTF("GetServer");
+
+			sendMessage(stream);
+		}catch (Exception ignored){
+		}
+
 	}
 
 }

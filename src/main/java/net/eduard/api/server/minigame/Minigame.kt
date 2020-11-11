@@ -68,13 +68,13 @@ open class Minigame : TimeManager {
     var kits: MutableList<Kit> = ArrayList()
 
     @Transient
-    open var lobbies: MutableList<MinigameLobby> = ArrayList()
+    var lobbies: MutableList<MinigameLobby> = ArrayList()
 
     @Transient
     var maps: MutableList<MinigameMap> = ArrayList()
 
     @Transient
-    open var rooms: MutableList<MinigameRoom> = ArrayList()
+    var rooms: MutableList<MinigameRoom> = ArrayList()
 
 
     /**

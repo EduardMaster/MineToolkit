@@ -5,10 +5,10 @@ package net.eduard.api.server.minigame
  */
 open class MinigameLobby() {
 
-    open var id = 1
-    open var serverName = "lobby-01"
-    open var playersAmount = 0
-    open var playersLimit = 20
+    var id = 1
+    var serverName = "lobby-01"
+    var playersAmount = 0
+    var playersLimit = 20
     @Transient
     var players = mutableListOf<MinigamePlayer>()
 

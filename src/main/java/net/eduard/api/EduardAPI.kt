@@ -61,25 +61,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     override lateinit var storageManager: StorageManager
     override fun onLoad() {
         instance = this
-        started = true
+        super.onLoad()
         BukkitTypes
-        HybridTypes
-        Hybrid.instance = BukkitServer
-        dbManager = DBManager()
-        configs = Config(this, "config.yml")
-        messages = Config(this, "messages.yml")
-        storage = Config(this, "storage.yml")
-        configs.add("database-type", StorageType.YAML)
-        configs.add("log-enabled", true)
-        configs.add("database", dbManager)
-        configs.saveConfig()
-        dbManager = configs.get("database", DBManager::class.java)
-        sqlManager = SQLManager(dbManager)
-        storageManager = StorageManager(sqlManager)
-        storageManager.type = configs.get("database-type", StorageType::class.java)
-        if (db.isEnabled) {
-            db.openConnection()
-        }
 
 
     }

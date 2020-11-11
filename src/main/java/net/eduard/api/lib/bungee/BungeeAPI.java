@@ -23,16 +23,24 @@ public final class BungeeAPI {
         return server;
     }
 
-    public static int getPlayersAmount(int serverType){
+    public static int getPlayersAmount(String serverType){
         int amount = 0;
         for (ServerSpigot server : servers.values()){
-            if (server.getType() == serverType) {
+            if (server.getType().equals(serverType)) {
                 amount += server.getCount();
             }
         }
         return amount;
     }
-
+    public static int getPlayersAmount(String serverType , String subType){
+        int amount = 0;
+        for (ServerSpigot server : servers.values()){
+            if (server.getType().equals(serverType)) {
+                amount += server.getCount();
+            }
+        }
+        return amount;
+    }
 
     static {
         try {

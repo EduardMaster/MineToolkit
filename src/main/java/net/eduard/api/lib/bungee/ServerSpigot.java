@@ -1,28 +1,27 @@
 package net.eduard.api.lib.bungee;
 
+import net.eduard.api.lib.database.annotations.TableName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@TableName("network_servers")
 public class ServerSpigot implements Serializable {
-
-    private int max;
-    private String name;
-    private int type;
+    private String name = "lobby01";
+    private String type = "lobby";
+    private String subType = "principal";
+    private int max = 80;
     private int count;
-    private int state;
-    private String host;
-    private int port;
+    private ServerState state = ServerState.OFFLINE;
+    private String host = "localhost";
+    private int port = 25565;
+
     private List<String> players = new ArrayList<>();
 
     public ServerSpigot(String name) {
         this.name = name;
     }
-
-    public void setState(ServerState state) {
-        this.state = state.getValue();
-    }
-
 
     public List<String> getPlayers() {
         return players;
@@ -33,10 +32,6 @@ public class ServerSpigot implements Serializable {
     }
 
 
-    public boolean isState(ServerState state) {
-        return this.state == state.getValue();
-    }
-
     public int getCount() {
         return count;
     }
@@ -46,6 +41,13 @@ public class ServerSpigot implements Serializable {
     }
 
 
+    public ServerState getState() {
+        return state;
+    }
+
+    public void setState(ServerState state) {
+        this.state = state;
+    }
 
     public boolean canConnect() {
         return isOnline() && !isFull() && !isRestarting() && !isGameStarted();
@@ -54,6 +56,10 @@ public class ServerSpigot implements Serializable {
 
     public boolean isRestarting() {
         return isState(ServerState.RESTARTING);
+    }
+
+    private boolean isState(ServerState state) {
+        return this.state == state;
     }
 
     public boolean isGameStarted() {
@@ -96,21 +102,6 @@ public class ServerSpigot implements Serializable {
         this.name = name;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-    }
 
     public String getHost() {
         return host;
@@ -128,5 +119,20 @@ public class ServerSpigot implements Serializable {
         this.port = port;
     }
 
+    public String getSubType() {
+        return subType;
+    }
+
+    public void setSubType(String subType) {
+        this.subType = subType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }
 

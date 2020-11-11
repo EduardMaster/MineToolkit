@@ -4,6 +4,7 @@ import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.config.StorageType
 import net.eduard.api.lib.database.DBManager
+import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.StorageAPI
@@ -25,7 +26,8 @@ interface IPlugin : IPluginInstance {
     var storageManager : StorageManager
 
     fun onLoad() {
-
+        HybridTypes
+        if (started)return
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")
         storage = Config(this, "storage.yml")
@@ -39,12 +41,11 @@ interface IPlugin : IPluginInstance {
         configs.add("backup-time", 1)
         configs.add("backup-timeunit-type", "MINUTES")
         configs.add("database", dbManager)
-
         configs.saveConfig()
         dbManager = configs.get("database", DBManager::class.java)
-
         sqlManager = SQLManager(dbManager)
         storageManager = StorageManager(sqlManager)
+        started = true
         storageManager.type = configs.get("database-type", StorageType::class.java)
         if (db.isEnabled) {
             db.openConnection()
@@ -104,13 +105,7 @@ interface IPlugin : IPluginInstance {
 
 
     val pluginName : String
-    val pluginFolder get() : File{
-        return try {
-          Extra.getMethodInvoke(plugin, "getDataFolder") as File
-        }catch (ex: Exception){
-            File("plugins", pluginName)
-        }
-    }
+    val pluginFolder : File
     fun log(message : String)
     fun error(message : String)
     fun console(message : String){
@@ -187,6 +182,7 @@ interface IPlugin : IPluginInstance {
 
     val canBackup: Boolean
         get() = configs.getBoolean("backup")
+
     fun disconnectDB() {
         db.closeConnection()
     }

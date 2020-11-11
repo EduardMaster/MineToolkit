@@ -26,12 +26,14 @@ public class FakePlayer implements OfflinePlayer {
 
 
     public void setIdByName() {
-        this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
+        this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name)
+                .getBytes(StandardCharsets.UTF_8));
     }
 
 
     public void setIdByNameLowerCase() {
-        this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(StandardCharsets.UTF_8));
+        this.id = UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                name.toLowerCase()).getBytes(StandardCharsets.UTF_8));
     }
 
     public void fixUUID() {
@@ -44,10 +46,7 @@ public class FakePlayer implements OfflinePlayer {
     }
     public void sendMessage(String message)
     {
-        Player player = getPlayer();
-        if (player!=null){
-            player.sendMessage(message);
-        }
+        consume(p ->  p.sendMessage(message));
     }
     public void consume(Consumer<Player> playerConsume){
         Player player = getPlayer();

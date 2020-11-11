@@ -79,13 +79,13 @@ public class BukkitController implements ServerController {
     }
 
     @Override
-    public void connect(String player, int serverType, int serverState) {
+    public void connect(String player, String serverType, ServerState serverState) {
         sendMessage("connect", player + " " + serverType + " " + serverState);
 
     }
 
     @Override
-    public void setState(String server, int state) {
+    public void setState(String server, ServerState state) {
 
         sendMessage("set-state", server + " " + state);
     }

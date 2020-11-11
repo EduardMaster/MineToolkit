@@ -2,37 +2,96 @@ package net.eduard.api
 
 import net.eduard.api.command.bungee.BungeeReloadCommand
 import net.eduard.api.lib.bungee.BungeeAPI
-import net.eduard.api.lib.bungee.ServerState
 import net.eduard.api.lib.config.Config
+import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.DBManager
-import net.eduard.api.lib.database.HybridTypes
+import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.hybrid.BungeeServer
 import net.eduard.api.lib.hybrid.Hybrid
+import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.listener.BungeeEvents
-import net.eduard.api.server.BungeeDB
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
+import java.io.File
 
 
-class EduardAPIBungee(val plugin: Plugin) {
-
+class EduardAPIBungee(val plugin: Plugin) : IPlugin {
+    companion object {
+        lateinit var instance: EduardAPIBungee
+    }
     init {
         instance = this
     }
 
-    companion object {
 
-        lateinit var instance: EduardAPIBungee
+
+
+
+    override var started = false
+    override lateinit var configs: Config
+    override lateinit var storage: Config
+    override lateinit var messages: Config
+    override lateinit var dbManager: DBManager
+    override lateinit var sqlManager: SQLManager
+    override lateinit var storageManager: StorageManager
+    override val pluginName: String
+        get() = plugin.description.name
+    override val pluginFolder: File
+        get() = plugin.dataFolder
+
+    override fun log(message: String) {
+        ProxyServer.getInstance().console.sendMessage("§f$message")
     }
 
-    lateinit var databaseManager: DBManager
-    lateinit var config: Config
-    lateinit var bungeeDB: BungeeDB
-    fun onEnable() {
-        HybridTypes
+    override fun error(message: String) {
+        ProxyServer.getInstance().console.sendMessage("§c$message")
+    }
+
+    override fun reload() {
+        if (dbManager.hasConnection()) {
+            log("MySQL Ativado, iniciando conexao")
+
+        }
+    }
+
+    override fun configDefault() {
+
+    }
+
+    override fun save() {
+
+    }
+
+
+    override fun onDisable() {
+        BungeeAPI.getController().unregister()
+
+    }
+
+    override fun unregisterTasks() {
+
+    }
+
+    override fun unregisterListeners() {
+
+    }
+
+    override fun unregisterServices() {
+
+    }
+
+    override fun unregisterCommands() {
+
+    }
+
+    override fun getPlugin(): Any {
+        return plugin
+    }
+
+    override fun onEnable() {
+        super.onLoad()
         Hybrid.instance = BungeeServer
-        config = Config(plugin, "config.yml")
-        databaseManager = DBManager()
+
         reload()
 
         ProxyServer.getInstance().pluginManager
@@ -40,70 +99,6 @@ class EduardAPIBungee(val plugin: Plugin) {
         ProxyServer.getInstance().pluginManager
             .registerCommand(plugin, BungeeReloadCommand())
 
-    }
-
-    fun log(msg: String) {
-        ProxyServer.getInstance().console.sendMessage("§f$msg")
-    }
-
-    fun error(msg: String) {
-        ProxyServer.getInstance().console.sendMessage("§c$msg")
-    }
-
-    fun reload() {
-
-        bungeeDB = BungeeDB(databaseManager)
-
-        if (databaseManager.isEnabled) {
-            log("MySQL Ativado, iniciando conexao")
-            databaseManager.openConnection()
-            if (databaseManager.hasConnection()) {
-                bungeeDB.createNetworkTables()
-                for (server in ProxyServer.getInstance().servers.values) {
-                    if (!bungeeDB.serversContains(server.name)) {
-                        databaseManager.insert(
-                            bungeeDB.serverTable, server.name,
-                            server.address.address.hostAddress, server.address.port, 0, 0
-                        )
-                    } else {
-                        databaseManager.change(
-                            bungeeDB.serverTable, "host = ? , port = ?", "name = ?",
-                            server.address.address.hostAddress, server.address.port,
-                            server.name
-                        )
-                    }
-                }
-            } else {
-                error("Falha ao conectar com ao MySQL")
-            }
-        } else {
-            error("MySQL desativado algumas coisas da EduardBungeeAPI estarao desativado")
-        }
-        for (server in ProxyServer.getInstance().servers.values) {
-            config.add("servers." + server.name + ".enabled", true)
-            config.add("servers." + server.name + ".type", 0)
-        }
-        config.saveConfig()
-        val bungee = BungeeAPI.getBungee()
-        bungee.plugin = plugin
-        bungee.register()
-        for (serverName in config.getSection("servers").keys) {
-            val enabled = config.getBoolean("servers.$serverName.enabled")
-            val type = config.getInt("servers.$serverName.type")
-            val server = BungeeAPI.getServer(serverName)
-            server.type = type
-            if (enabled) {
-                server.setState(ServerState.OFFLINE)
-            } else {
-                server.setState(ServerState.DISABLED)
-            }
-        }
-    }
-
-
-    fun onDisable() {
-        databaseManager.closeConnection()
-        BungeeAPI.getController().unregister()
     }
 
 
