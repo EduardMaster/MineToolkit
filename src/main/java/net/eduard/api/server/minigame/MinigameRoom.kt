@@ -19,7 +19,7 @@ open class MinigameRoom {
     @Transient
     lateinit var minigame: Minigame
     @ColumnPrimary
-    open var id: Int = 0
+    var id: Int = 0
 
     @StorageAttributes(reference = true)
     var map: MinigameMap = MinigameMap()

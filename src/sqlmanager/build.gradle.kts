@@ -15,9 +15,11 @@ repositories {
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    compileOnly(kotlin("stdlib-jdk8"))
-    compileOnly("net.eduard:modules:1.0-SNAPSHOT")
-    testCompile("junit", "junit", "4.12")
+    api(kotlin("stdlib-jdk8"))
+    api("net.eduard:modules:1.0-SNAPSHOT")
+    testImplementation("org.bukkit:spigot:1.8.9")
+    testImplementation("junit", "junit", "4.12")
+
 }
 
 tasks {

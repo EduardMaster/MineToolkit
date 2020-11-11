@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import net.eduard.api.lib.modules.Extra;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -65,8 +67,8 @@ public class BungeeController implements ServerController<Plugin> {
             }
         } else if (server.equals("bungeecord")) {
             if (tag.equals("connect")) {
-                String[] split = line.split(" ");
-                connect(split[0], split[1], split[2]);
+                String[] args = line.split(" ");
+                connect(args[0], args[1], args[2] , Extra.toInt(args[3]));
             } else {
                 for (ServerMessageHandler handler : BungeeAPI.getHandlers()) {
                     handler.onMessage(server, tag, line);
@@ -110,11 +112,11 @@ public class BungeeController implements ServerController<Plugin> {
 
 
     @Override
-    public void connect(String playerName, String serverType, String subType) {
+    public void connect(String playerName, String serverType, String subType,int teamSize) {
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerName);
         if (player != null) {
             for (ServerSpigot spigot : BungeeAPI.getServers().values()) {
-                if (spigot.getSubType().equalsIgnoreCase(subType)
+                if (spigot.getTeamSize() == teamSize&&spigot.getSubType().equalsIgnoreCase(subType)
                         && spigot.getType().equalsIgnoreCase(serverType)
                         && spigot.getCount() < spigot.getMax()) {
                     ServerInfo server = ProxyServer.getInstance()

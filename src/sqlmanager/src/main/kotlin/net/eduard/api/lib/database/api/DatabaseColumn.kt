@@ -11,7 +11,7 @@ class DatabaseColumn<T : Any>(val table: DatabaseTable<T>, val field: Field, val
     val isConstraint = field.isAnnotationPresent(ColumnRelation::class.java)
     val javaType = field.type
     val wrapperType = Extra.getWrapperOrReturn(field.type)
-    var sqlType = engine.types.getOrDefault(javaType, if (isConstraint)"INT" else "TEXT")
+    var sqlType = engine.types.getOrDefault(javaType, if (isConstraint)"INT" else "VARCHAR")
     val isWrapper = Extra.isWrapper(javaType)
     val isEnum get() = javaType.isEnum
     val isBoolean = (wrapperType == java.lang.Boolean::class.java)
@@ -35,7 +35,8 @@ class DatabaseColumn<T : Any>(val table: DatabaseTable<T>, val field: Field, val
         )
     ) field.getAnnotation(ColumnType::class.java).value else sqlType
 
-    val customDefaultValue: String? = if (field.isAnnotationPresent(
+    val customDefaultValue: String? =
+        if (field.isAnnotationPresent(
             ColumnValue::
             class.java
         )

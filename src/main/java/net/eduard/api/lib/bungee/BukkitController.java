@@ -80,8 +80,8 @@ public class BukkitController implements ServerController<Plugin> {
     }
 
     @Override
-    public void connect(String player, String serverType, String subType) {
-        sendMessage("connect", player + " " + serverType + " " + subType);
+    public void connect(String player, String serverType, String subType, int teamSize) {
+        sendMessage("connect", player + " " + serverType + " " + subType + " "+teamSize);
 
     }
 

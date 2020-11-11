@@ -62,6 +62,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     override fun onLoad() {
         instance = this
         super.onLoad()
+
         BukkitTypes
 
 
@@ -103,7 +104,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
     override fun onEnable() {
         if (!started) {
-            onLoad()
+            this.onLoad()
         }
         storage()
         VaultAPI.setupVault()

@@ -16,6 +16,7 @@ public class ServerSpigot implements Serializable {
     private String subType = "principal";
     private int max = 1;
     private int count;
+    private int teamSize = 1;
     private ServerState state = ServerState.OFFLINE;
     private String host = "localhost";
     private int port = 25565;
@@ -26,6 +27,13 @@ public class ServerSpigot implements Serializable {
 
     public ServerSpigot(){
 
+    }
+
+    public boolean isSolo(){
+        return teamSize == 1;
+    }
+    public boolean isDuo(){
+        return teamSize == 2;
     }
 
     public ServerSpigot(String name) {
@@ -142,6 +150,14 @@ public class ServerSpigot implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getTeamSize() {
+        return teamSize;
+    }
+
+    public void setTeamSize(int teamSize) {
+        this.teamSize = teamSize;
     }
 }
 
