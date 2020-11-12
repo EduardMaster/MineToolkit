@@ -37,10 +37,10 @@ open class Minigame : TimeManager {
     var scoreboardLobby = DisplayBoard("Minigame lobby")
     var scoreboardPlaying = DisplayBoard("Minigame em jogo")
     var maxPlayersPerLobby = 20
-    var timeIntoStart = 60
-    var timeIntoRestart = 20
-    var timeIntoGameOver = 15 * 60
-    var timeIntoPlay = 2 * 60
+    var timeIntoStart = 20
+    var timeIntoRestart = 6
+    var timeIntoGameOver = 10 * 60
+    var timeIntoPlay = 5
     var timeOnStartTimer = 0
     var timeOnRestartTimer = 40
     var timeOnForceTimer = 10

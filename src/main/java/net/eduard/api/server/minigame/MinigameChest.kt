@@ -13,14 +13,15 @@ import org.bukkit.inventory.Inventory
  */
 class MinigameChest {
     var refilTime = 2 * 60
-    var maxItems = 10
-    var isAcumulateItems = false
-    var isShuffleItems = true
-    var isNoRepeatItems = true
+    var maxItems = 6
+    var canAcumulate = false
+    var needShuffle = true
+    var canRepeat = false
     var items = mutableListOf<ItemRandom>()
 
     fun fill(inv: Inventory) {
-        if (!isAcumulateItems) {
+        val list = items.toMutableList()
+        if (!canAcumulate) {
             inv.clear()
         }
         if (items.isEmpty()){
@@ -29,14 +30,18 @@ class MinigameChest {
         }
 
         for (itemsSorted in 0..maxItems) {
-            val itemRandom = items.randomByPercent { chance }
+            val itemRandom = list.randomByPercent { chance }
             val item = itemRandom.createRandom()
+            if (!canRepeat){
+                list.remove(itemRandom)
+            }
             inv.setItem(inv.firstEmpty(), item)
+            if (list.isEmpty()){
+                break
+            }
         }
-        if (isNoRepeatItems) {
-            inv.contents = inv.contents.distinct().toTypedArray()
-        }
-        if (isShuffleItems) {
+
+        if (needShuffle) {
             inv.contents.shuffle()
         }
     }

@@ -172,6 +172,7 @@ class MinigamePlayer() {
      * @return
      */
     fun canBattle(player: MinigamePlayer): Boolean {
+        if (player == this) return true
         if (hasTeam() && player.hasTeam()) {
             if (team == player.team)
                 return false

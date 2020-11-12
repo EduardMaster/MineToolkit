@@ -21,11 +21,11 @@ fun <T : Any> List<T>.randomByPercent(getDouble : (T.() -> Double)) : T {
     var dataMinChance = 0.0
     val percentSorted = percentMax * Math.random()
     for (data in this){
-        val dataMaxChance =  dataMinChance + dataMinChance
+        val dataMaxChance =  dataMinChance + getDouble.invoke(data)
         if (percentSorted > dataMinChance && percentSorted < dataMaxChance){
             return data
         }
-        dataMinChance+= getDouble(data)
+        dataMinChance = dataMaxChance
     }
 
     return this[0]
