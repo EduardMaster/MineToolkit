@@ -33,6 +33,8 @@ class GameSchematic(var name : String = "Mapinha") {
         }
     }
 
+
+
     @Transient
     var start = 0L
 
@@ -41,9 +43,20 @@ class GameSchematic(var name : String = "Mapinha") {
     val past get() = end - start
 
 
+
     var relative = Vector(0, 100, 0)
     var low = Vector(-10, 100, -10)
     var high = Vector(10, 100, 10)
+
+
+    fun inside(location: Location) : Boolean {
+        val x = location.blockX
+        val y = location.blockY
+        val z = location.blockZ
+        return (low.blockX >= x && high.blockX  <= x &&
+                low.blockY >= y && high.blockY <= y
+                && low.blockZ >= z && high.blockZ <= z)
+    }
 
     @Transient
     var count = 0
@@ -94,20 +107,15 @@ class GameSchematic(var name : String = "Mapinha") {
         val size = width * height * length
         blocksId = ByteArray(size)
         blocksData = ByteArray(size)
+
         val worldUsed = relativeLocation.world
         for (x in 0 until width) {
             for (y in 0 until height) {
                 for (z in 0 until length) {
                     count++
-                    val index = getIndex(
-                        x,
-                        y,
-                        z,
-                        width.toInt(),
-                        length.toInt()
-                    )
-                    val block = worldUsed.getBlockAt(
-                        lowLoc.blockX + x, lowLoc.blockY + y,
+                    val index = getIndex( x, y, z, width.toInt(), length.toInt())
+                    val block = worldUsed.getBlockAt(lowLoc.blockX + x,
+                        lowLoc.blockY + y,
                         lowLoc.blockZ + z
                     )
                     val id = block.typeId
@@ -122,7 +130,6 @@ class GameSchematic(var name : String = "Mapinha") {
         }
         end = System.currentTimeMillis()
         log("Copiando blocos do schematic $name tempo levado ${past}ms")
-
     }
 
     fun paste(newRelative: Location, minusLag: Boolean = false) {
@@ -138,9 +145,7 @@ class GameSchematic(var name : String = "Mapinha") {
                 for (z in 0 until length) {
                     count++
                     val index = getIndex(
-                        x,
-                        y,
-                        z,
+                        x,y,z,
                         width.toInt(),
                         length.toInt()
                     )
@@ -174,8 +179,6 @@ class GameSchematic(var name : String = "Mapinha") {
                             chests.add(chest)
                         }
                     }
-
-
                 }
             }
         }
@@ -221,7 +224,6 @@ class GameSchematic(var name : String = "Mapinha") {
 
     fun reload(stream: InputStream): GameSchematic {
         try {
-
             val dataReader = DataInputStream(GZIPInputStream(stream))
             width = dataReader.readShort()
             height = dataReader.readShort()

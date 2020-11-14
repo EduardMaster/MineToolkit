@@ -27,6 +27,7 @@ import org.bukkit.inventory.ShapelessRecipe;
  * @version 1.0
  * @since 1.0
  */
+@SuppressWarnings("unused")
 public class SimpleRecipe {
     public boolean addRecipe() {
         if (getResult() == null)

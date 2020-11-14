@@ -12,6 +12,7 @@ import org.bukkit.generator.ChunkGenerator;
  * @author Eduard
  *
  */
+@SuppressWarnings("unused")
 public class PlotWorldGenerator extends EmptyWorldGenerator {
 
 	@Override

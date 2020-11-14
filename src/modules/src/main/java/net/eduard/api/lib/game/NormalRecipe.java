@@ -15,6 +15,7 @@ import org.bukkit.inventory.ShapedRecipe;
  * @author Eduard
  * @see SimpleRecipe
  */
+@SuppressWarnings("unused")
 public class NormalRecipe   {
 	/**
 	 * Retorna false se não tiver Recipe pronto

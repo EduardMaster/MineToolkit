@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
  * @author Eduard
  * @version 1.2
  */
+@SuppressWarnings("unused")
 public class FakePlayer implements OfflinePlayer {
 
 

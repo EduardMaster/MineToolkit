@@ -15,8 +15,9 @@ repositories {
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    api(kotlin("stdlib-jdk8"))
-    api("net.eduard:modules:1.0-SNAPSHOT")
+
+    compileOnly(kotlin("stdlib-jdk8"))
+    compileOnly("net.eduard:modules:1.0-SNAPSHOT")
     testImplementation("org.bukkit:spigot:1.8.9")
     testImplementation("junit", "junit", "4.12")
 
