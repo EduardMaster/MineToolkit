@@ -1,30 +1,34 @@
 package net.eduard.api.test
 
 import java.io.File
-import java.io.FileOutputStream
 import java.io.RandomAccessFile
 import java.lang.Exception
 
 
 class SimpleTable(var file : File) {
-
+    val writer : RandomAccessFile
+        init{
+        val fileMion = File(file,"data")
+            fileMion.delete()
+            fileMion.createNewFile()
+       writer = RandomAccessFile(fileMion, "rw")
+    }
     fun insert(amount : Int){
         file.mkdirs()
         val fileMion = File(file,"data")
-        val writer = FileOutputStream(fileMion)
         for(id in 1..amount){
-          //  File(file,"$id.data").writeText("OI")
             writer.write("AU".toByteArray())
+
         }
-        writer.close()
+
+
     }
     fun update(id : Int, str : String){
-        val fileMion = File(file,"data")
-        val writer = RandomAccessFile(fileMion, "rw")
+
         try {
             writer.seek((id-1)*2L)
             writer.write(str.toByteArray())
-            writer.close()
+
         }catch (ex : Exception){
             ex.printStackTrace()
         }

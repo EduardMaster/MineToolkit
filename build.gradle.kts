@@ -28,10 +28,11 @@ dependencies {
     compileOnly("net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT")
     api("net.eduard:modules:1.0-SNAPSHOT")
     api("net.eduard:sqlmanager:1.0-SNAPSHOT")
-    compileOnly("net.eduard.abstraction:complete:1.0-SNAPSHOT")
+    api("net.eduard.abstraction:complete:1.0-SNAPSHOT")
     compileOnly(kotlin("stdlib"))
     testImplementation("junit", "junit", "4.12")
     testImplementation(kotlin("stdlib"))
+
 }
 tasks.withType<ShadowJar>{
     destinationDir = file("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\plugins\\")

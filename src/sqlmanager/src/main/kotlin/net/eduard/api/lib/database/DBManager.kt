@@ -18,7 +18,7 @@ import java.sql.*
 
  * @author Eduard
  */
-@SuppressWarnings("unchecked", "unused")
+@Suppress("unchecked", "unused")
 class DBManager(
 
     var user: String = "root",

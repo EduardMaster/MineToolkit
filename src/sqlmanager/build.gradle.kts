@@ -19,6 +19,7 @@ dependencies {
     compileOnly(kotlin("stdlib-jdk8"))
     compileOnly("net.eduard:modules:1.0-SNAPSHOT")
     testImplementation("org.bukkit:spigot:1.8.9")
+    testImplementation(kotlin("stdlib-jdk8"))
     testImplementation("junit", "junit", "4.12")
 
 }

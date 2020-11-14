@@ -53,9 +53,9 @@ class GameSchematic(var name : String = "Mapinha") {
         val x = location.blockX
         val y = location.blockY
         val z = location.blockZ
-        return (low.blockX >= x && high.blockX  <= x &&
-                low.blockY >= y && high.blockY <= y
-                && low.blockZ >= z && high.blockZ <= z)
+        return (low.blockX < x && high.blockX  > x &&
+                low.blockY < y && high.blockY > y
+                && low.blockZ < z && high.blockZ > z)
     }
 
     @Transient
@@ -169,7 +169,7 @@ class GameSchematic(var name : String = "Mapinha") {
                     if (block != null) {
                         if (block.typeId != typeId.toInt() || block.data != typeData) {
                             val bloco = Block.get(block.location) ?: continue
-                            bloco.setTypeAndData(
+                            bloco.setTypeAndData (
                                 Material.getMaterial(typeId.toInt())
                                 , typeData.toInt()
                             )
