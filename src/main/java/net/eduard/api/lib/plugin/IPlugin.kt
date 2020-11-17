@@ -17,17 +17,17 @@ import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
 interface IPlugin : IPluginInstance {
-    var started : Boolean
+    var started: Boolean
     var configs: Config
     var storage: Config
     var messages: Config
     var dbManager: DBManager
-    var sqlManager : SQLManager
-    var storageManager : StorageManager
+    var sqlManager: SQLManager
+    var storageManager: StorageManager
 
     fun onLoad() {
         HybridTypes
-        if (started)return
+        if (started) return
         dbManager = DBManager()
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")
@@ -51,11 +51,7 @@ interface IPlugin : IPluginInstance {
         if (db.isEnabled) {
             db.openConnection()
         }
-
-
     }
-
-
 
 
     /**
@@ -65,51 +61,42 @@ interface IPlugin : IPluginInstance {
         configs.set("backup-lasttime", Extra.getNow())
         try {
             val simpleDateFormat = SimpleDateFormat("dd-MM-YYYY HH-mm-ss")
-            val pasta = File(pluginFolder,
-                "/backup/" + simpleDateFormat.format(System.currentTimeMillis()) + "/")
-
+            val pasta = File(
+                pluginFolder,
+                "/backup/" + simpleDateFormat.format(System.currentTimeMillis()) + "/"
+            )
             pasta.mkdirs()
-
             if (storage.existConfig() && storage.keys.isNotEmpty()) {
-
                 Files.copy(storage.file.toPath(), Paths.get(pasta.path, storage.name))
             }
             if (configs.existConfig() && storage.keys.isNotEmpty()) {
-
                 Files.copy(configs.file.toPath(), Paths.get(pasta.path, configs.name))
             }
         } catch (e: IOException) {
-
             e.printStackTrace()
         }
     }
 
 
-
-     fun unregisterStorableClasses() {
+    fun unregisterStorableClasses() {
         StorageAPI.debug("- CLASSES FROM PLUGIN $pluginName")
-        val it = StorageAPI.getStorages().keys.iterator()
-        var amount = 0
-        while (it.hasNext()) {
-            val next = it.next()
-            val loader = next.classLoader
-            if (loader != null) {
-                if (loader == javaClass.classLoader) {
-                    StorageAPI.getAliases().remove(next)
-                    amount++
-                    it.remove()
-                }
-            }
+        val loader = javaClass.classLoader
+        val classes = StorageAPI.getAliases().keys.filter { it.classLoader == loader }
+        for (clz in classes ){
+            StorageAPI.getStorages().remove(clz)
+            StorageAPI.getAliases().remove(clz)
         }
+
+        val amount = classes.size
         StorageAPI.debug("- CLASSES WITH SAME LOADER OF $pluginName : $amount")
     }
 
 
-    val pluginName : String
-    val pluginFolder : File
-    fun log(message : String)
-    fun error(message : String)
-    fun console(message : String){
+    val pluginName: String
+    val pluginFolder: File
+    fun log(message: String)
+    fun error(message: String)
+    fun console(message: String) {
         println(message)
     }
 
@@ -119,9 +106,6 @@ interface IPlugin : IPluginInstance {
     fun save()
     fun onActivation() {}
     fun onDisable()
-
-
-
     fun unregisterTasks()
     fun unregisterListeners()
     fun unregisterServices()
@@ -131,7 +115,6 @@ interface IPlugin : IPluginInstance {
         set(data) {
             dbManager = data
         }
-
 
 
     fun getBoolean(path: String): Boolean {
@@ -159,7 +142,7 @@ interface IPlugin : IPluginInstance {
         return configs.message(path)
     }
 
-    val isLogEnabled : Boolean
+    val isLogEnabled: Boolean
         get() = configs.getBoolean("log-enabled")
 
 
@@ -187,6 +170,7 @@ interface IPlugin : IPluginInstance {
     fun disconnectDB() {
         db.closeConnection()
     }
+
     fun registerPackage(packname: String) {
         StorageAPI.registerPackage(javaClass, packname)
     }
@@ -200,7 +184,7 @@ interface IPlugin : IPluginInstance {
         val lista = listOf(*pasta.listFiles()!!)
         lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
             .forEach {
-              Extra.deleteFolder(it)
+                Extra.deleteFolder(it)
                 if (it.exists())
                     it.delete()
             }

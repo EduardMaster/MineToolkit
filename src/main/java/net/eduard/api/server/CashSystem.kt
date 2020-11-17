@@ -2,7 +2,6 @@ package net.eduard.api.server
 
 import net.eduard.api.lib.modules.FakePlayer
 
-
 interface CashSystem {
 
     fun addCash(player: FakePlayer, amount: Double)

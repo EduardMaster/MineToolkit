@@ -36,7 +36,7 @@ dependencies {
 }
 tasks.withType<ShadowJar>{
     destinationDir = file("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\plugins\\")
-
+    name
 }
 
 tasks {

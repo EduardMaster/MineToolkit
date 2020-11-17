@@ -20,7 +20,6 @@ public class CurrencyController {
 
     public CurrencyHandler getNextCurrency(CurrencyHandler currencyHandler) {
         Iterator<CurrencyHandler> it = currencies.values().iterator();
-
         while (it.hasNext()) {
             CurrencyHandler handler = it.next();
             if (currencyHandler.equals(handler)) {
@@ -35,7 +34,7 @@ public class CurrencyController {
 
     public CurrencyHandler getCurrencyByIcon(ItemStack icon) {
         for (CurrencyHandler currencyHandler : currencies.values()) {
-            if (icon.equals(currencyHandler.getIcon())) {
+            if (currencyHandler.getIcon().equals(icon)) {
                 return currencyHandler;
             }
         }

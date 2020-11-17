@@ -5,8 +5,8 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.*
 
+@Suppress("unused")
 open class Product(name: String = "Produto",
                    shop: Shop? = null)
     : MenuButton(name, parentMenu = shop) {
@@ -30,8 +30,8 @@ open class Product(name: String = "Produto",
     var isLimited = false
     var stock = 0.0
     var tradeType = TradeType.BUYABLE
-    var permission: String = "produto.permissao"
-    var commands: MutableList<String> = ArrayList()
+    var permission = "produto.permissao"
+    var commands = mutableListOf<String>()
     var upgrades = mutableListOf<ProductUpgrade>()
     val hasUpgrades get() = upgrades.isNotEmpty()
     @Transient

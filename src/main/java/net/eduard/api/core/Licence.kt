@@ -1,4 +1,4 @@
-package net.eduard.licenser
+package net.eduard.api.core
 
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
@@ -40,7 +40,8 @@ object Licence {
             }
             scan.close()
             try {
-                PluginActivationStatus.valueOf(readingSite.toString().toUpperCase().replace(" ", "_"))
+                PluginActivationStatus.valueOf(readingSite.toString()
+                    .toUpperCase().replace(" ", "_"))
             } catch (ex: Exception) {
                 if (DEBUG) {
                     ex.printStackTrace()
@@ -66,7 +67,7 @@ object Licence {
         WRONG_KEY("§cNao possui esta Licensa no Sistema."),
         KEY_TO_WRONG_PLUGIN("§cA Licensa usada nao serve para este plugin."),
         KEY_TO_WRONG_OWNER("§cA Licensa usada nao serve para este Dono"),
-        INVALID_IP("§cEste IP usado nao corresponde ao IP da Licensa"),
+        INVALID_IP("§cEste IP usado nao corresponde ao IP da Licença"),
         ERROR("§cO plugin nao ativou pois deu algum tipo de erro ao receber a resposta do Site"),
         SITE_OFF("§eO Sistema de licença nao respondeu, §aplugin ativado para testes", true),
         PLUGIN_ACTIVATED(

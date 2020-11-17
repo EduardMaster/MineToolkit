@@ -26,7 +26,6 @@ public interface CurrencyHandler {
         return check(player, amount);
     }
 
-
     boolean remove(FakePlayer player, double amount);
 
     boolean add(FakePlayer player, double amount);

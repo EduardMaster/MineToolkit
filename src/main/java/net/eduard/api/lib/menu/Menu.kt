@@ -29,6 +29,7 @@ import java.lang.Exception
  *
  * @author Eduard
  */
+@Suppress("unused")
 open class Menu(
 
     var title: String = "Menu",

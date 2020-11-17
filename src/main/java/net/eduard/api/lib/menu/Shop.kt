@@ -16,6 +16,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
+@Suppress("unused")
 @StorageAttributes(indentificate = true)
 open class Shop(name: String = "Loja", lineAmount: Int = 3
                 , block: (Shop.() -> Unit)? = null) : Menu(name, lineAmount) {

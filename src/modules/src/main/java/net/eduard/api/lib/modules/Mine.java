@@ -2782,7 +2782,8 @@ public final class Mine {
      */
     public static void remove(Inventory inventory, ItemStack item, int amount) {
         for (Entry<Integer, ? extends ItemStack> map : inventory.all(item.getType()).entrySet()) {
-            if (map.getValue().isSimilar(item)) {
+
+            if (item.isSimilar(map.getValue())) {
                 ItemStack currentItem = map.getValue();
                 if (currentItem.getAmount() <= amount) {
                     amount -= currentItem.getAmount();
@@ -2818,10 +2819,6 @@ public final class Mine {
         } else {
             console("§bCommandAPI §fnao foi encontrado a aliase §a" + aliase + "§f do comando §b" + cmdName);
         }
-    }
-
-    public static String removeBrackets(String... message) {
-        return Extra.removeBrackets(message);
     }
 
     public static void removeCommand(String name) {
@@ -3383,7 +3380,7 @@ public final class Mine {
             return new String[]{rawString};
         }
 
-        char[] rawChars = new StringBuilder().append(rawString).append(' ').toString().toCharArray();
+        char[] rawChars = (rawString + ' ').toCharArray();
         StringBuilder word = new StringBuilder();
         StringBuilder line = new StringBuilder();
         List<String> lines = new LinkedList<>();

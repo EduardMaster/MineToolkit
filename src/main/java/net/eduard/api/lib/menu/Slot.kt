@@ -8,6 +8,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.io.Serializable
 
+
 open class Slot(
         var positionX : Int = 0,
         var positionY : Int = 0,
