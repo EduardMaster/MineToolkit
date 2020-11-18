@@ -5,7 +5,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import java.lang.Exception
 
-interface Block {
+interface Blocks {
 
     fun setType(material: Material)
     fun setTypeAndData(material: Material, data: Int)
@@ -17,20 +17,16 @@ interface Block {
     companion object {
 
         private lateinit var blockClass: Class<*>
-        fun get(location: Location): Block? {
+        fun get(location: Location): Blocks? {
             return try {
-
                 if (!Companion::blockClass.isInitialized) {
                     blockClass = Class.forName(
-                        "net.eduard.api.lib.abstraction.Block_"
+                        "net.eduard.api.lib.abstraction.Blocks_"
                                 +MineReflect.getVersion()
                     )
                 }
-
-
                 blockClass.getDeclaredConstructor(Location::class.java)
-                    .newInstance(location) as Block
-
+                    .newInstance(location) as Blocks
 
             } catch (e: Exception) {
                 null

@@ -12,22 +12,22 @@ import org.jetbrains.annotations.NotNull;
  * @author SaiintBrisson
  *
  */
-public class Block_v1_8_R3 extends CraftBlock implements  Block{
+public class Blocks_v1_8_R3 extends CraftBlock implements Blocks {
 
 
     private transient final WorldServer worldServer;
 
     public WorldServer getWorldServer(){return worldServer;}
 
-    public Block_v1_8_R3(int x, int y, int z, WorldServer worldServer) {
+    public Blocks_v1_8_R3(int x, int y, int z, WorldServer worldServer) {
         super(null, x, y, z);
         this.worldServer = worldServer;
-
     }
-    public Block_v1_8_R3(Location location) {
+    public Blocks_v1_8_R3(Location location) {
         this(location.getBlock());
     }
-    public Block_v1_8_R3(org.bukkit.block.Block block) {
+
+    public Blocks_v1_8_R3(org.bukkit.block.Block block) {
         this(block.getX(), block.getY(), block.getZ(), ((CraftWorld) block.getWorld()).getHandle());
     }
 
@@ -46,9 +46,9 @@ public class Block_v1_8_R3 extends CraftBlock implements  Block{
         final ChunkSection section = getSection();
 
         final IBlockData type = section.getType(getX() & 0xF, getY() & 0xF, getZ() & 0xF);
-        final net.minecraft.server.v1_8_R3.Block block = type.getBlock();
+        final Block block = type.getBlock();
 
-        return net.minecraft.server.v1_8_R3.Block.getId(block);
+        return Block.getId(block);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Block_v1_8_R3 extends CraftBlock implements  Block{
         final ChunkSection section = getSection();
 
         final IBlockData type = section.getType(getX() & 0xF, getY() & 0xF, getZ() & 0xF);
-        final net.minecraft.server.v1_8_R3.Block block = type.getBlock();
+        final Block block = type.getBlock();
 
         return (byte) block.toLegacyData(type);
     }
@@ -91,7 +91,7 @@ public class Block_v1_8_R3 extends CraftBlock implements  Block{
 
     @Override
     public org.bukkit.block.Block getRelative(int modX, int modY, int modZ) {
-        return new Block_v1_8_R3(getX() + modX, getY() + modY, getZ() + modZ, worldServer);
+        return new Blocks_v1_8_R3(getX() + modX, getY() + modY, getZ() + modZ, worldServer);
     }
 
     private ChunkSection getSection() {

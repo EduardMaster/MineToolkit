@@ -1,6 +1,6 @@
 package net.eduard.api.server.minigame
 
-import net.eduard.api.lib.abstraction.Block
+import net.eduard.api.lib.abstraction.Blocks
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Mine
 import org.bukkit.Bukkit
@@ -168,7 +168,7 @@ class GameSchematic(var name : String = "Mapinha") {
                     }
                     if (block != null) {
                         if (block.typeId != typeId.toInt() || block.data != typeData) {
-                            val bloco = Block.get(block.location) ?: continue
+                            val bloco = Blocks.get(block.location) ?: continue
                             bloco.setTypeAndData (
                                 Material.getMaterial(typeId.toInt())
                                 , typeData.toInt()

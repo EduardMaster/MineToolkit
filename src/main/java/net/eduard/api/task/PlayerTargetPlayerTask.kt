@@ -8,13 +8,13 @@ import org.bukkit.scheduler.BukkitRunnable
 
 class PlayerTargetPlayerTask : BukkitRunnable() {
     override fun run() {
-        for (p in Mine.getPlayers()) {
+        for (player in Mine.getPlayers()) {
             try {
                 val target =
-                        Mine.getTarget(p, Mine.getPlayerAtRange(p.location, 100.0)) ?: continue
+                        Mine.getTarget(player, Mine.getPlayerAtRange(player.location, 100.0)) ?: continue
 
                 PlayerTargetPlayerEvent(
-                    target, p).call()
+                    target, player).call()
             } catch (ex: Exception) {
                 EduardAPI.instance.log("Erro ao causar o Evento PlayerTargetEvent ")
                 ex.printStackTrace()
