@@ -23,7 +23,6 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
     init {
         block?.invoke(this)
     }
-
     fun product(name: String = "Produto", block: (Product.() -> Unit)? = null): Product {
         val product = Product(name, this)
         block?.invoke(product)
@@ -170,18 +169,18 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
     @EventHandler
     fun chat(e: AsyncPlayerChatEvent) {
-        val p = e.player
-        if (selectingAmount.containsKey(p)) {
-            val product = selectingAmount[p]!!
+        val player = e.player
+        if (selectingAmount.containsKey(player)) {
+            val product = selectingAmount[player]!!
             var amount = Extra.fromMoneyToDouble(e.message)
             amount = Math.abs(amount)
-            selectingAmount.remove(p)
-            val trade = trading[p]
-            trading.remove(p)
+            selectingAmount.remove(player)
+            val trade = trading[player]
+            trading.remove(player)
             if (trade === TradeType.BUYABLE) {
-                buy(p, product, amount)
+                buy(player, product, amount)
             } else if (trade === TradeType.SELABLE) {
-                sell(p, product, amount)
+                sell(player, product, amount)
             }
             e.isCancelled = true
         }
@@ -220,6 +219,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         evento.shop = this@Shop
         Mine.callEvent(evento)
         if (evento.isCancelled) {
+            debug("Cancelando a troca")
             return
         }
         if (currency!!.contains(fake, evento.priceTotal)) {
@@ -230,7 +230,9 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         }
         product.stock = evento.newStock
         for (cmd in product.commands) {
-            Mine.runCommand(cmd.replace("\$player", player.name).replace("\$formated_amount", Extra.formatMoney(amount)).replace("\$amount", "" + amount))
+            val cmdExecuted = cmd.replace("\$player", player.name).replace("\$formated_amount", Extra.formatMoney(amount)).replace("\$amount", "" + amount)
+            debug("CMD: $cmdExecuted")
+            Mine.runCommand(cmdExecuted)
         }
         player.sendMessage(messageBoughtItem.replace("\$amount", Extra.formatMoney(amount)).replace("\$product",
                 "" + product.name))
@@ -426,7 +428,12 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
             if (event.currentItem == null) return@ClickEffect
 
-            val product = getProduct(event.currentItem, player) ?: return@ClickEffect
+            val product = getProduct(event.currentItem, player)
+            if (product == null){
+
+                debug("Produto pelo Icone nulo")
+                return@ClickEffect
+            }
             if (menuConfirmation != null) {
                 trading[player] = product.tradeType
                 selectedProduct[player] = product

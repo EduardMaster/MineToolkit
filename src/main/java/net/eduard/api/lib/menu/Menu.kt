@@ -97,7 +97,7 @@ open class Menu(
     var openNeedPermission: String? = null
     var messagePermission = "§cVocê precisa de permissão do Cargo Master para abrir este menu."
     var previousPage = Slot(
-       Mine.newItem(Material.ARROW, "§aVoltar Página.", 1, 0, "§7Clique para ir para a página anterior."), 1, 1
+        Mine.newItem(Material.ARROW, "§aVoltar Página.", 1, 0, "§7Clique para ir para a página anterior."), 1, 1
     )
     var backPage = Slot(
         Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."),
@@ -235,9 +235,9 @@ open class Menu(
         buttons.add(button)
         button.parentMenu = this
 
-        if (button.item != null) {
-            buttonsCache[button.name] = button
-        }
+
+        buttonsCache[button.name] = button
+
 
         if (!button.fixed && isAutoAlignItems) {
             nextPosition()
@@ -294,7 +294,7 @@ open class Menu(
         lastPage = 1
 
         for (button in buttons) {
-            if (button.fixed)continue
+            if (button.fixed) continue
             nextPosition()
             button.index = lastSlot
             button.page = lastPage
@@ -448,7 +448,7 @@ open class Menu(
         val player = e.player
         if (player.itemInHand == null)
             return
-        if (e.action == Action.PHYSICAL)return
+        if (e.action == Action.PHYSICAL) return
         if (openWithItem != null && Mine.equals(player.itemInHand, openWithItem)) {
             e.isCancelled = true
             open(player)
@@ -572,7 +572,7 @@ open class Menu(
 
         fun debug(msg: String) {
             if (isDebug) {
-               Mine.console("§b[Menu] §7$msg")
+                Mine.console("§b[Menu] §7$msg")
             }
 
         }
