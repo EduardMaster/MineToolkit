@@ -1,5 +1,6 @@
 package net.eduard.api.lib.abstraction;
 
+import net.eduard.api.lib.modules.Mine;
 import net.eduard.api.lib.modules.MineReflect;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -39,7 +40,6 @@ final public class MinecraftReflect extends Minecraft {
 
     @Override
     public void setPlayerSkin(Player player, String newSkin) {
-
 
     }
 
@@ -88,6 +88,7 @@ final public class MinecraftReflect extends Minecraft {
 
     @Override
     public void disableAI(Entity entity) {
+
         MineReflect.disableAI(entity);
     }
 }

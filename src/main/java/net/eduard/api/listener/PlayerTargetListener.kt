@@ -8,6 +8,7 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.MineReflect
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
+import org.bukkit.event.player.PlayerMoveEvent
 
 /**
  * Listener feito apenas para o Evento PlayerTargetEvent que ocorre a cada 1s
@@ -18,13 +19,16 @@ import org.bukkit.event.EventPriority
  */
 class PlayerTargetListener : EventsManager() {
 
+
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onTarget(e: PlayerTargetPlayerEvent) {
         val player = e.target
-        Minecraft.getInstance().sendActionBar(e.player,
-           Mine.getReplacers(
-                EduardAPI.instance.
-                message("player target"), player))
- }
+        Minecraft.getInstance().sendActionBar(
+            e.player,
+            Mine.getReplacers(
+                EduardAPI.instance.message("player target"), player
+            )
+        )
+    }
 
 }

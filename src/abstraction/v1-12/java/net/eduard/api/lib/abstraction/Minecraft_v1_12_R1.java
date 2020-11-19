@@ -3,9 +3,9 @@ package net.eduard.api.lib.abstraction;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import net.eduard.api.lib.abstraction.Minecraft;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.modules.MineReflect;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,7 +27,7 @@ import java.util.Set;
  * @author Eduard
  */
 final public class Minecraft_v1_12_R1 extends Minecraft {
-    private static Map<String, Object> particles = new HashMap<>();
+    private static final Map<String, Object> particles = new HashMap<>();
 
     public Minecraft_v1_12_R1() {
         if (particles.isEmpty())
@@ -55,7 +55,7 @@ final public class Minecraft_v1_12_R1 extends Minecraft {
     }
 
 
-    private static Set<String> blockedMessage = new HashSet<>();
+    private static final Set<String> blockedMessage = new HashSet<>();
 
     @Override
     public void sendParticle(Player player, String name, Location location, int amount, float xOffset, float yOffset, float zOffset, float speed) {
@@ -221,10 +221,10 @@ final public class Minecraft_v1_12_R1 extends Minecraft {
 
     @Override
     public void sendActionBar(Player player, String message) {
-        PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(new ChatComponentText(message));
+        PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(new ChatComponentText(message),ChatMessageType.GAME_INFO);
         sendPacket(packetPlayOutChat, player);
-
     }
+
 
     @Override
     public void disableAI(Entity entity) {

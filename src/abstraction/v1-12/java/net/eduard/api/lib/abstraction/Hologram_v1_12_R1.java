@@ -24,9 +24,9 @@ public class Hologram_v1_12_R1 implements Hologram {
     private EntityArmorStand holo;
     private String text;
     private final List<String> seeingHolo = new ArrayList<>();
-    private static boolean debug = false;
 
     private static void log(String msg) {
+        boolean debug = false;
         if (debug)
             System.out.println("[Hologram_v1_8_R3] " + msg);
 

@@ -6,28 +6,23 @@ import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * nome Original NMSBlock da API que SaiintBrisson fez, como não entendi
- * o algoritimo não alterei nada ainda embreve vou
- * @author SaiintBrisson
- *
- */
-public class Block_v1_12_R1 extends CraftBlock implements Blocks {
+
+public class Blocks_v1_12_R1 extends CraftBlock implements Blocks {
 
 
     private transient final WorldServer worldServer;
 
     public WorldServer getWorldServer(){return worldServer;}
 
-    public Block_v1_12_R1(int x, int y, int z, WorldServer worldServer) {
+    public Blocks_v1_12_R1(int x, int y, int z, WorldServer worldServer) {
         super(null, x, y, z);
         this.worldServer = worldServer;
 
     }
-    public Block_v1_12_R1(Location location) {
+    public Blocks_v1_12_R1(Location location) {
         this(location.getBlock());
     }
-    public Block_v1_12_R1(org.bukkit.block.Block block) {
+    public Blocks_v1_12_R1(org.bukkit.block.Block block) {
         this(block.getX(), block.getY(), block.getZ(), ((CraftWorld) block.getWorld()).getHandle());
     }
 
@@ -91,7 +86,7 @@ public class Block_v1_12_R1 extends CraftBlock implements Blocks {
 
     @Override
     public org.bukkit.block.Block getRelative(int modX, int modY, int modZ) {
-        return new Block_v1_12_R1(getX() + modX, getY() + modY, getZ() + modZ, worldServer);
+        return new Blocks_v1_12_R1(getX() + modX, getY() + modY, getZ() + modZ, worldServer);
     }
 
     private ChunkSection getSection() {
