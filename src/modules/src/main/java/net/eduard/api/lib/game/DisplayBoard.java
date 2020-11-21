@@ -25,7 +25,9 @@ import org.bukkit.scoreboard.Team;
  * @author Eduard
  */
 @SuppressWarnings("unused")
-public class DisplayBoard {
+public class DisplayBoard implements  Cloneable {
+
+
     /**
      * Construtor vazio setando o nome da Scoreboard de '§6§lScoreboard'
      */
@@ -44,6 +46,91 @@ public class DisplayBoard {
         setTitle(title);
         getLines().addAll(Arrays.asList(lines));
         getScoreboard();
+    }
+
+    public static class DisplayBoardScrollPart implements  Cloneable{
+        private List<String> lines = new ArrayList<>();
+        public List<String> getLines() {
+            return lines;
+        }
+    }
+
+    public DisplayBoardScroll addScroll(int size) {
+        DisplayBoardScroll scroll = new DisplayBoardScroll();
+        scroll.setStartPosition(15 - getLines().size());
+        for (int index = 0; index < size; index++) {
+            add("Scroll-"+index);
+        }
+        getScrolls().add(scroll);
+        return scroll;
+    }
+
+    public static class DisplayBoardScroll implements  Cloneable {
+
+        private int startPosition = 15;
+        private int ticks = 5;
+        private transient int current = 0;
+        private transient long lastModification = 0;
+        private List<DisplayBoardScrollPart> parts = new ArrayList<>();
+
+        public int getTicks() {
+            return ticks;
+        }
+
+        public void setTicks(int ticks) {
+            this.ticks = ticks;
+        }
+
+        public void setStartPosition(int startPosition) {
+            this.startPosition = startPosition;
+        }
+
+        public List<DisplayBoardScrollPart> getParts() {
+            return parts;
+        }
+
+        public void add(String... lines) {
+            DisplayBoardScrollPart part = new DisplayBoardScrollPart();
+            int start = startPosition;
+            for (String line : lines) {
+                part.getLines().add(line);
+                start--;
+            }
+            parts.add(part);
+
+        }
+
+
+        public int getStartPosition() {
+            return startPosition;
+        }
+
+        public DisplayBoardScrollPart get() {
+            if (parts.isEmpty()) {
+                return null;
+            }
+            long duration = ticks * 50;
+            long now =System.currentTimeMillis();
+            if (lastModification + duration < now) {
+                current++;
+                if (current >= parts.size()) {
+                    current = 0;
+                }
+                lastModification = now;
+            }
+            return parts.get(current);
+        }
+
+    }
+
+
+    public DisplayBoard clone()  {
+       try {
+           return (DisplayBoard) super.clone();
+       }catch (Exception ex){
+           ex.printStackTrace();
+       }
+       return null;
     }
 
     /**
@@ -80,6 +167,13 @@ public class DisplayBoard {
      * Linhas da Scoreboard
      */
     private List<String> lines = new ArrayList<>();
+
+    private List<DisplayBoardScroll> scrolls = new ArrayList<>();
+
+    public List<DisplayBoardScroll> getScrolls() {
+        return scrolls;
+    }
+
     /**
      * Barra de vida encima da cabeça do jogador
      */
@@ -111,18 +205,15 @@ public class DisplayBoard {
      */
 
     private transient Map<Integer, OfflinePlayer> fakes = new HashMap<>();
-    /**
-     *
-     */
+
 
     private transient Map<Integer, Team> teams = new HashMap<>();
 
     private transient Map<Integer, String> texts = new HashMap<>();
 
-    public DisplayBoard hide() {
 
+    public void hide() {
         objective.setDisplaySlot(null);
-        return this;
     }
 
     public boolean isShowing() {
@@ -131,24 +222,18 @@ public class DisplayBoard {
 
     /**
      * Ativa a scoreboard
-     *
-     * @return A classe
      */
-    public DisplayBoard show() {
+    public void show() {
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        return this;
     }
 
     /**
      * Remove todas as linhas da Scoreboard
-     *
-     * @return
      */
-    public DisplayBoard clear() {
+    public void clear() {
         for (int id = 15; id > 0; id--) {
             remove(id);
         }
-        return this;
     }
 
     /**
@@ -178,7 +263,7 @@ public class DisplayBoard {
                 } else {
                     scoreboard.resetScores(fake);
                 }
-            }else needUpdate = false;
+            } else needUpdate = false;
         }
         FakePlayer fake = new FakePlayer(center);
         if (needUpdate) {
@@ -197,25 +282,37 @@ public class DisplayBoard {
      * Returna uma Copia da Scoreboard
      */
     public DisplayBoard copy() {
-        DisplayBoard board = new DisplayBoard(this.title);
-        board.getLines().addAll(this.lines);
-
-        return board;
+        return clone();
+    }
+    private int toIndex(int position){
+        return 15 - position;
     }
 
+    public void updateScrolls(){
+        for (DisplayBoardScroll scroll : getScrolls()) {
+            DisplayBoardScrollPart part = scroll.get();
+            int position = scroll.getStartPosition();
+            for (String line : part.getLines()) {
+                getLines().set(toIndex(position), line);
+                position--;
+            }
+        }
+    }
 
-    public DisplayBoard update(Player player) {
+    public void update(Player player) {
+        updateScrolls();
         int id = 15;
         for (String line : this.lines) {
             set(id, Mine.getReplacers(line, player));
             id--;
         }
+
         setDisplay(Mine.getReplacers(title, player));
         removeTrash();
-        return this;
     }
 
-    public DisplayBoard update() {
+    public void update() {
+        updateScrolls();
         setDisplay(title);
         int id = 15;
         for (String line : lines) {
@@ -225,23 +322,21 @@ public class DisplayBoard {
 
         removeTrash();
 
-        return this;
     }
 
-    protected void toTrash(OfflinePlayer player){
+    protected void toTrash(OfflinePlayer player) {
         objective.getScore(player).setScore(-1);
     }
 
-    protected void removeTrash(){
-        for (OfflinePlayer player : scoreboard.getPlayers()){
-            if (objective.getScore(player).getScore() == -1){
+    protected void removeTrash() {
+        for (OfflinePlayer player : scoreboard.getPlayers()) {
+            if (objective.getScore(player).getScore() == -1) {
                 scoreboard.resetScores(player);
             }
         }
     }
 
     public Scoreboard getScoreboard() {
-
         if (scoreboard == null) {
             if (Bukkit.getScoreboardManager() != null) {
                 this.fakes = new HashMap<>();
@@ -282,45 +377,39 @@ public class DisplayBoard {
      * Aplica a Scoreboard no Jogador
      *
      * @param player Jogador
-     * @return A classe
      */
-    public DisplayBoard apply(Player player) {
+    public void apply(Player player) {
         player.setScoreboard(scoreboard);
-        return this;
+
     }
 
-    public DisplayBoard updateHealthBar(Player player) {
+    public void updateHealthBar(Player player) {
+
         player.setHealth(player.getMaxHealth() - 1);
-        return this;
     }
 
     /**
      * Deixa a linha da Scoreboard vazia
      *
      * @param slot Linha
-     * @return
      */
-    public DisplayBoard empty(int slot) {
+    public void empty(int slot) {
         set(id(slot), "");
 
-        return this;
     }
 
     /**
      * Remove a linha da Scoreboard
      *
      * @param slot Linha
-     * @return
      */
-    public DisplayBoard clear(int slot) {
+    public void clear(int slot) {
         int id = id(slot);
         remove(id);
-        return this;
     }
 
-    public DisplayBoard setDisplay(String name) {
+    public void setDisplay(String name) {
         objective.setDisplayName(Extra.cutText(name, TITLE_LIMIT));
-        return this;
     }
 
     public boolean remove(int id) {
@@ -380,8 +469,8 @@ public class DisplayBoard {
 
     }
 
-    protected int id(int slot) {
-        return slot <= 0 ? 1 : slot >= 15 ? 15 : slot;
+    private int id(int slot) {
+        return slot <= 0 ? 1 : Math.min(slot, 15);
     }
 
     public String getDisplay() {
@@ -456,9 +545,9 @@ public class DisplayBoard {
         this.health = health;
     }
 
+
     public void add(String line) {
         getLines().add(line);
-
     }
 
     public boolean isHealthBarEnabled() {

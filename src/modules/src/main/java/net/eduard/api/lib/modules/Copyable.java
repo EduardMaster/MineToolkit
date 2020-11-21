@@ -111,10 +111,7 @@ public interface Copyable {
                         field.setAccessible(true);
                         try {
                             Object value = field.get(object);
-
                             field.set(newInstance, copyObject(value));
-
-
                         } catch (Exception e) {
                             debug("VARIABLE FAILED " + field.getName());
                         }
@@ -125,7 +122,6 @@ public interface Copyable {
                 object = newInstance;
             } catch (Exception e) {
                 debug("FAIL " + claz.getSimpleName());
-
             }
 
         }

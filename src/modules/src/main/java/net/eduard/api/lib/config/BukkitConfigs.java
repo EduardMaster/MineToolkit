@@ -140,13 +140,9 @@ public class BukkitConfigs {
      */
     public void reloadConfig() {
         file = new File(plugin.getDataFolder(), name);
-
         config = YamlConfiguration.loadConfiguration(file);
-
         InputStream defaults = plugin.getResource(file.getName());
         if (defaults != null) {
-
-
             YamlConfiguration loadConfig = YamlConfiguration.loadConfiguration(defaults);
             config.setDefaults(loadConfig);
         }
