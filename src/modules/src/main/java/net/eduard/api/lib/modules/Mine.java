@@ -45,14 +45,10 @@ import java.util.stream.Collectors;
 
 
 /**
- * API principal da Lib contendo muitos codigos bons e utilitarios
- * <br>Sistema para guardar dados extras nos{@link ItemStack}
+ * API de controle do Bukkit com métodos adicionais
  *
  * @author Eduard
  * @version 3.0
- * <p>
- * *
- * *
  * *@author Eduard
  * *@since 24/01/2020
  */

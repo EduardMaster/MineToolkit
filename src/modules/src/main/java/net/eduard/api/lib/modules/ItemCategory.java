@@ -7,7 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Sistema de categorização de Itens baseado no seu {@link Material}
+ * API de categorização de Itens baseado no seu Material
  * 
  * @author Eduard
  * @version 1.0

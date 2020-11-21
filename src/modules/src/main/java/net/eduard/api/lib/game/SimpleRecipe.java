@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 
 /**
- * Representa um Craft simples, um craft que pode ser feito do mesmo jeito em posições diferentes da bancada
+ * API de criação de Craft solto não importanto os Slots
  * <br>
  * Esta classe possuiu ao longo do tempo varios nomes e estava em packages diferentes
  * <br>

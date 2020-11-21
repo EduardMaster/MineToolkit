@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 
 /**
- * Representa um Craft composto com posições e items fixos
+ * API de criação de Craft predefinido com Slots e Items expecificos
  * @version 1.0
  * @since 1.0 
  * @author Eduard

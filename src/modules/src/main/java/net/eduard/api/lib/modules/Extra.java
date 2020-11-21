@@ -38,7 +38,6 @@ import com.google.gson.JsonParser;
  *
  * @author Eduard
  * @version 2.0
- * @since Lib v2.0
  */
 @SuppressWarnings("unused")
 public final class Extra {

@@ -10,7 +10,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.*;
 
 /**
- * Sistema de Scoreboard simples
+ * API de Scoreboard com menas opções que DisplayBoard,
+ * mais funciona muito bem.
  *
  * @author Eduard
  * @version 1.0

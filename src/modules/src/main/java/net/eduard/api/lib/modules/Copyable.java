@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Sistema de copiar objetos mais funcional do que o método clone() do prório Java
+ * API de copiar objetos mais funcional que o clone() do implements Cloneable
  *
  * @author Eduard
  * @version 1.4

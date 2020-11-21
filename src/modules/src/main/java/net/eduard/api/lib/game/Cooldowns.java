@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * API de Cooldown para Habilidades e Kits
+ * API de criação de Cooldown para Habilidades e Kits
  * 
  * @author Eduard
  * @version 1.0

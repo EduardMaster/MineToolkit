@@ -8,7 +8,7 @@ import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 
 /**
- * Gerador de Mundo Vazio
+ * API de criação de Mundo Vazio
  * 
  * @author Eduard
  *

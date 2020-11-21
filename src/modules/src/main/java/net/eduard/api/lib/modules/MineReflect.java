@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * Classe que constitui métodos com Reflection para funções que não possui na Bukkit API
+ * API que tem métodos que usa Reflection para funções que não possui na Bukkit API
  * <br>
  * Nome antigo: RexAPI
  *

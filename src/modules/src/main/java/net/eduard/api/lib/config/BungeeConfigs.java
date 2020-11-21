@@ -17,7 +17,7 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 /**
- * Sistema de Criar BukkitConfigs no BungeeCord
+ *API de criação de Configuração além da config.yml, para BungeeCord
  * @author Eduard
  * @version 1.0
  */
@@ -77,14 +77,14 @@ public class BungeeConfigs {
 		return ConfigurationProvider.getProvider(YamlConfiguration.class);
 	}
 
-	public BungeeConfigs saveConfig() {
+	public void saveConfig() {
 		try {
 			getProvider().save(config, file);
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		return this;
+
 	}
 
 	public String message(String path) {
@@ -121,8 +121,7 @@ public class BungeeConfigs {
 	}
 
 	public Object get(String path) {
-		Object obj = config.get(path);
-		return obj;
+		return config.get(path);
 	}
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getValues(Configuration config) {

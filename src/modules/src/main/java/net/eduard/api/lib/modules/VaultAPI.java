@@ -14,11 +14,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * API para a utilização do Vault com um formato mais simples de entender <br>
+ * API de utilização do Vault
  * 
  * @author Eduard
  * @version 2.0
- * @since Lib v1.0 <br> EduardAPI 4.0
+ * @since Inicio
  *
  */
 @SuppressWarnings("unused")

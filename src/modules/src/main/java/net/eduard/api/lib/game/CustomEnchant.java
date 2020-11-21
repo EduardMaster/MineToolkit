@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- * Criador de Encantamentos
+ * API de criação de novos Encantamentos
  *
  * @author Eduard
  * @version 1.0

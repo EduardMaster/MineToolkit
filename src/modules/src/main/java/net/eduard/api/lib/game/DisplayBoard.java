@@ -21,8 +21,13 @@ import org.bukkit.scoreboard.Team;
 
 /**
  * API de criação de Scoreboard feita para facilitar sua vida
+ * <br>
+ * Updates
+ * <br>
+ * v1.1 Suporte a Animação de Frames a cada ticks
  *
  * @author Eduard
+ * @version 1.1
  */
 @SuppressWarnings("unused")
 public class DisplayBoard implements  Cloneable {

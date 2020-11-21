@@ -8,9 +8,10 @@ import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 
 /**
- * Gerador de Mundo Plano
+ * API de criação de Mundo Plano
  * 
  * @author Eduard
+ * @version 1.0
  *
  */
 public class FlatWorldGenerator extends EmptyWorldGenerator {

@@ -7,10 +7,10 @@ import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 
 /**
- * Gerador de Mundo Plano
+ * API de criação de Mundo de Plot (Incompleto)
  * 
  * @author Eduard
- *
+ * @version 0.5
  */
 @SuppressWarnings("unused")
 public class PlotWorldGenerator extends EmptyWorldGenerator {

@@ -8,7 +8,7 @@ import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Representa o Encantamento Glow, um Encantamento sem Nome
+ * API de Encantamento Invisivel ou Sem Nome (Glow)
  * 
  * @author Eduard
  * @version 1.1

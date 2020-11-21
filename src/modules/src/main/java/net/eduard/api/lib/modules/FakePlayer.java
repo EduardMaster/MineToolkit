@@ -12,7 +12,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 /**
- * Representa um Jogador Offline, implementa @{@link OfflinePlayer}
+ * API de criação de Jogador Offline melhor para uso de Scoreboard
  *
  * @author Eduard
  * @version 1.2

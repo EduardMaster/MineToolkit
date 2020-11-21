@@ -26,7 +26,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * API simplificada de criar Config
+ * API de criação de Configuração além da config.yml, para Bukkit
  *
  * @author Eduard
  * @version 1.0
@@ -209,12 +209,10 @@ public class BukkitConfigs {
     /**
      * Salva os padr§es da Config
      *
-     * @return A mesma classe
      */
-    public BukkitConfigs saveDefault() {
+    public void saveDefault() {
         config.options().copyDefaults(true);
         saveConfig();
-        return this;
     }
 
     public Location toLocation(String path) {
