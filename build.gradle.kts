@@ -30,6 +30,7 @@ dependencies {
     api("net.eduard:sqlmanager:1.0-SNAPSHOT")
     api("net.eduard.abstraction:complete:1.0-SNAPSHOT")
     compileOnly(kotlin("stdlib"))
+    testImplementation("org.bukkit:spigot:1.8.9")
     testImplementation("junit", "junit", "4.12")
     testImplementation(kotlin("stdlib"))
 

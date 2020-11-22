@@ -6,18 +6,21 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import net.eduard.api.lib.modules.Extra;
+import org.bukkit.Bukkit;
+
 @SuppressWarnings({"deprecated"})
 public final class StorageInline extends StorageBase<Object, String> {
 
-    StorageInline(){}
+    StorageInline() {
+    }
 
     public Object restore(StorageInfo info, String data) {
         if (data == null)
             return null;
+
         Object resultadoFinal = null;
         try {
             resultadoFinal = info.getStore().newInstance();
-
         } catch (Exception ignored) {
         }
         if (resultadoFinal == null) {
@@ -34,7 +37,8 @@ public final class StorageInline extends StorageBase<Object, String> {
         }
 
 
-        String[] split = ((String) data).split(";");
+        String[] split = data.split(";");
+        debug("~~ SPLIT SIZE: " + Arrays.asList(split).size());
         int index = 0;
         for (Field field : info.getType().getDeclaredFields()) {
             if (Modifier.isTransient(field.getModifiers())) {
@@ -53,8 +57,8 @@ public final class StorageInline extends StorageBase<Object, String> {
                 Storable<?> store = StorageAPI.getStore(field.getType());
 
                 Object fieldFinalValue = split[index];
-                debug("SPLIT PART " + fieldFinalValue + " - " + index);
-                if (fieldFinalValue.equals("-")) {
+                debug("~~ SPLIT PART[" + index + "] " + fieldFinalValue + "!");
+                if (fieldFinalValue.equals("null")) {
                     fieldFinalValue = null;
                 } else if (fieldFinalValue.toString().isEmpty()) {
 
@@ -83,7 +87,9 @@ public final class StorageInline extends StorageBase<Object, String> {
                         mapa.put(chave, value);
                     }
                     fieldFinalValue = mapa;
-                } else if (store != null) {
+                } else if (Extra.isWrapper(field.getType())) {
+                    fieldFinalValue = StorageAPI.transform(fieldFinalValue, Objects.requireNonNull(Extra.getWrapper(field.getType())));
+                } else {
 
                     StorageInfo fieldInfo = info.clone();
                     fieldInfo.setField(field);
@@ -92,34 +98,50 @@ public final class StorageInline extends StorageBase<Object, String> {
                     fieldInfo.updateByStoreClass();
                     fieldInfo.updateByField();
                     fieldInfo.setInline(true);
-                    StringBuilder b = new StringBuilder();
-                    String currentText = fieldFinalValue.toString();
+                    StringBuilder builder = new StringBuilder();
+                    String currentText;
 
 
-                    boolean ended = false;
+                    int findEnd = 0;
                     while (true) {
-                        currentText = split[index];
-                        ended = currentText.endsWith("}");
-                        currentText = currentText.replace("{", "");
-                        if (ended) {
-                            currentText = currentText.replace("}", "");
+                        if (index >= split.length) {
+                            break;
                         }
-                        b.append(currentText).append(";");
+                        currentText = split[index];
 
+                        char[] chars = currentText.toCharArray();
+                        for (char currentChar : chars) {
+                            if (currentChar == '{') {
+                                if (findEnd > 0) {
+                                    builder.append(currentChar);
+                                }
+                                findEnd++;
 
-                        if (ended) break;
-                        else index++;
+                            }
+                            else if (currentChar == '}') {
+                                findEnd--;
+                                if (findEnd != 0) {
+                                    builder.append(currentChar);
+                                }
+                            }else{
+                                builder.append(currentChar);
+                            }
+                        }
+                        builder.append(";");
+
+                        if (findEnd == 0) {
+                            break;
+                        } else {
+                            index++;
+                        }
+
                     }
-                    b.deleteCharAt(b.length() - 1);
-                    debug("TRYING TO RESTORE A INLINE INSIDE INLINE");
-                    debug("FOR THIS TEXT: " + b.toString());
-                    fieldFinalValue = StorageAPI.STORE_OBJECT.restore(fieldInfo, b.toString());
+                    builder.deleteCharAt(builder.length() - 1);
+                    debug(">> INLINE INSIDE INLINE: " + builder.toString());
+
+                    fieldFinalValue = StorageAPI.STORE_OBJECT.restore(fieldInfo, builder.toString());
 
 
-                } else if (Extra.isWrapper(field.getType())) {
-                    fieldFinalValue = StorageAPI.transform(fieldFinalValue, Objects.requireNonNull(Extra.getWrapper(field.getType())));
-                } else {
-                    fieldFinalValue = null;
                 }
                 field.set(resultadoFinal, fieldFinalValue);
             } catch (Exception ex) {
@@ -154,7 +176,7 @@ public final class StorageInline extends StorageBase<Object, String> {
             try {
                 Object fieldValue = field.get(data);
                 if (fieldValue == null) {
-                    builder.append("-;");
+                    builder.append("null;");
 
                 } else {
 
@@ -182,15 +204,16 @@ public final class StorageInline extends StorageBase<Object, String> {
                         }
 
                     } else {
-                        builder.append("{");
+
                         StorageInfo fieldInfo = info.clone();
                         fieldInfo.setField(field);
                         fieldInfo.setType(clz);
                         fieldInfo.updateByType();
-                        fieldInfo.updateByStoreClass();
                         fieldInfo.updateByField();
+                        fieldInfo.updateByStoreClass();
                         fieldInfo.setInline(true);
 
+                        builder.append("{");
                         Object result = StorageAPI.STORE_OBJECT.store(fieldInfo, fieldValue);
                         builder.append(result);
                         builder.append("}");

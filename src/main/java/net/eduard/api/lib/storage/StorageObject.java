@@ -6,6 +6,7 @@ import java.util.*;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.references.ReferenceValue;
+import org.bukkit.Bukkit;
 
 public class StorageObject extends StorageBase<Object, Object> {
 
@@ -34,8 +35,8 @@ public class StorageObject extends StorageBase<Object, Object> {
                     try {
                         id = Extra.toInt(split[1]);
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
 
                 } else {
@@ -84,6 +85,7 @@ public class StorageObject extends StorageBase<Object, Object> {
         alias = StorageAPI.getAlias(claz);
 
         Storable<?> store = StorageAPI.getStore(claz);
+
 
         Class<?> wrapper = Extra.getWrapper(claz);
 
@@ -136,8 +138,8 @@ public class StorageObject extends StorageBase<Object, Object> {
                 debug(">> NEW INSTANCE");
                 instance = claz.newInstance();
 
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
                 debug(">> NEW INSTANCE FAIL");
             }
         }

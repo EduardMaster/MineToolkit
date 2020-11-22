@@ -30,7 +30,7 @@ class Blocks{
             stream.writeInt(list.size)
             calcLag("For") {
                 for (block in list) {
-                   block.write(stream)
+                    block.write(stream)
                 }
             }
         }else {

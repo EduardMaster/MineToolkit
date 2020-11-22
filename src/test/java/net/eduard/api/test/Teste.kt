@@ -50,11 +50,11 @@ class Teste {
         calcLag("Escrever") {
 
 
-            for(index in 0 until 1000000){
+            for (index in 0 until 1000000) {
                 writer.write(index)
                 array[index] = 1
             }
-           // blocks.write(file)
+            // blocks.write(file)
         }
         calcLag("Escrever2") {
             writer.write(array)
@@ -62,7 +62,7 @@ class Teste {
         }
         writer.close()
         calcLag("Ler") {
-          //  blocks.read(file)
+            //  blocks.read(file)
         }
 
     }
