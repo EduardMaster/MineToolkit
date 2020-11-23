@@ -1,4 +1,4 @@
-package net.eduard.api.lib.storage.bukkit_storables;
+package net.eduard.api.lib.storage.storables;
 
 import net.eduard.api.lib.storage.annotations.StorageAttributes;
 import org.bukkit.Bukkit;

@@ -1,11 +1,18 @@
 package net.eduard.api.lib.storage.references;
 
-import java.lang.reflect.Field;
+import net.eduard.api.lib.storage.api.StorageInfo;
+
 
 public abstract class ReferenceBase<T> {
-    private Field field;
+    private StorageInfo info;
     private Object instance;
     private T restore;
+
+
+    public ReferenceBase(StorageInfo info, Object instance) {
+        setInstance(instance);
+        setInfo(info);
+    }
 
     public T getRestore() {
         return restore;
@@ -15,41 +22,21 @@ public abstract class ReferenceBase<T> {
         this.restore = restore;
     }
 
-
-    public ReferenceBase(T restore, Field field, Object instance) {
-        super();
-        this.field = field;
-        this.instance = instance;
-        setRestore(restore);
-    }
-
-    public ReferenceBase(Field field, Object instance) {
-        super();
-        this.field = field;
-        this.instance = instance;
-    }
-
-
     public abstract void update();
-
-
-    public Field getField() {
-        return field;
-    }
-
-    public void setField(Field field) {
-        this.field = field;
-    }
-
 
     public Object getInstance() {
         return instance;
     }
 
-
     public void setInstance(Object instance) {
         this.instance = instance;
     }
 
+    public StorageInfo getInfo() {
+        return info;
+    }
 
+    public void setInfo(StorageInfo info) {
+        this.info = info;
+    }
 }

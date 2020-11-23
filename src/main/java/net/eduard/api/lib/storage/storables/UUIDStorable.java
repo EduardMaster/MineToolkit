@@ -1,4 +1,4 @@
-package net.eduard.api.lib.storage.java_storables;
+package net.eduard.api.lib.storage.storables;
 
 import java.util.UUID;
 

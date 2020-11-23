@@ -1,7 +1,8 @@
 package net.eduard.api.lib.game
 
 import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.storage.Storable.StorageAttributes
+import net.eduard.api.lib.storage.annotations.StorageAttributes
+
 
 @StorageAttributes(inline = true)
 class Calculator(

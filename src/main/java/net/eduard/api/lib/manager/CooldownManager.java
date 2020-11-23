@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.annotations.StorageAttributes;
 import org.bukkit.entity.Player;
 
 import net.eduard.api.lib.modules.Mine;
@@ -14,7 +14,7 @@ public class CooldownManager {
     private String msgOnCooldown;
     private String msgOverCooldown;
     private String msgStartCooldown;
-    @Storable.StorageAttributes(reference = true)
+    @StorageAttributes(reference = true)
     private final Map<UUID, TimeManager> cooldowns = new HashMap<>();
 
     public CooldownManager() {

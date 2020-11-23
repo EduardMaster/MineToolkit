@@ -1,10 +1,10 @@
 package net.eduard.api.lib.hybrid
 
-import net.eduard.api.lib.storage.Storable
+import net.eduard.api.lib.storage.annotations.StorageAttributes
 import java.io.Serializable
 import java.util.*
 
-@Storable.StorageAttributes(inline = true)
+@StorageAttributes(inline = true)
 class PlayerUser(
     var name: String = "Eduard",
     uuid: UUID? = null

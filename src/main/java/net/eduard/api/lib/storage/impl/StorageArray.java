@@ -20,7 +20,7 @@ public class StorageArray extends StorageBase<Object,Object> {
 		StorageInfo arrayInfo = info.clone();
 		arrayInfo.setType(arrayType);
 		arrayInfo.updateByType();
-		arrayInfo.updateByStoreClass();
+		arrayInfo.updateByStorable();
 		if (data instanceof List) {
 			List<?> list = (List<?>) data;
 			array = Array.newInstance(arrayType, list.size());
@@ -48,7 +48,7 @@ public class StorageArray extends StorageBase<Object,Object> {
 		StorageInfo arrayInfo = info.clone();
 		arrayInfo.setType(arrayType);
 		arrayInfo.updateByType();
-		arrayInfo.updateByStoreClass();
+		arrayInfo.updateByStorable();
 		int arraySize = Array.getLength(data);
 		List<Object> newList = new ArrayList<>();
 		for (int index = 0; index < arraySize; index++) {

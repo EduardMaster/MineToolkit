@@ -18,26 +18,28 @@ final public class StorageMap extends StorageBase<Map<?,?> , Object> {
         StorageInfo mapInfoKey = info.clone();
         mapInfoKey.setType(info.getMapKey());
         mapInfoKey.updateByType();
-        mapInfoKey.updateByStoreClass();
+        mapInfoKey.updateByStorable();
 
         StorageInfo mapInfoValue = info.clone();
         mapInfoValue.setType(info.getMapValue());
         mapInfoValue.updateByType();
-        mapInfoValue.updateByStoreClass();
+        mapInfoValue.updateByStorable();
         mapInfoValue.updateByField();
 
         if (info.isReference()) {
             if (data instanceof Map) {
                 @SuppressWarnings("unchecked")
-                Map<String, Object> oldMap = (Map<String, Object>) data;
-                Map<Object, Integer> newMap = new HashMap<>();
-                for (Entry<String, Object> entry : oldMap.entrySet()) {
-                    newMap.put(StorageAPI.STORE_OBJECT.restore(mapInfoKey,entry.getKey()), StorageAPI.getObjectIdByReference(entry.getValue().toString()));
+                Map<Object, Object> oldMap = (Map<Object, Object>) data;
+                Map<Object, Object> newMap = new HashMap<>();
+                for (Entry<Object, Object> entry : oldMap.entrySet()) {
+                    newMap.put(StorageAPI.STORE_OBJECT
+                                    .restore(mapInfoKey,entry.getKey()),
+                            StorageAPI.STORE_OBJECT.restore(mapInfoValue,entry.getValue()));
                 }
-                Map<Object, Object> mapinha = new HashMap<>();
-                StorageAPI.newReference(new ReferenceMap(newMap, mapinha));
+                Map<Object, Object> realMap = new HashMap<>();
+                StorageAPI.newReference(new ReferenceMap(info, mapInfoKey, mapInfoValue, newMap, realMap));
                 debug("Restoring referenced map");
-                return mapinha;
+                return realMap;
             }
             return null;
         }
@@ -61,12 +63,12 @@ final public class StorageMap extends StorageBase<Map<?,?> , Object> {
         StorageInfo mapInfoKey = info.clone();
         mapInfoKey.setType(info.getMapKey());
         mapInfoKey.updateByType();
-        mapInfoKey.updateByStoreClass();
+        mapInfoKey.updateByStorable();
 
         StorageInfo mapInfoValue = info.clone();
         mapInfoValue.setType(info.getMapValue());
         mapInfoValue.updateByType();
-        mapInfoValue.updateByStoreClass();
+        mapInfoValue.updateByStorable();
         mapInfoValue.updateByField();
 
         Map<String, Object> newMap = new HashMap<>();

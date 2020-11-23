@@ -16,7 +16,7 @@ final public class StorageList extends StorageBase<List<?>, Object> {
         StorageInfo listInfo = info.clone();
         listInfo.setType(info.getListType());
         listInfo.updateByType();
-        listInfo.updateByStoreClass();
+        listInfo.updateByStorable();
         listInfo.updateByField();
 
         debug(">> LIST RESTORATION");
@@ -24,14 +24,13 @@ final public class StorageList extends StorageBase<List<?>, Object> {
             debug("  IS REFERENCE LIST");
             if (data instanceof List) {
                 List<?> oldList = (List<?>) data;
-                List<Integer> newList = new ArrayList<>();
+                List<Object> newList = new ArrayList<>();
                 for (Object item : oldList) {
-
-                    newList.add(StorageAPI.getObjectIdByReference(item.toString()));
+                    newList.add(StorageAPI.STORE_OBJECT.restore(listInfo, item));
                 }
-                List<Object> list = new ArrayList<>();
-                StorageAPI.newReference(new ReferenceList(newList, list));
-                return list;
+                List<Object> realList = new ArrayList<>();
+                StorageAPI.newReference(new ReferenceList(listInfo,newList, realList));
+                return realList;
             }
             return null;
 
@@ -62,7 +61,7 @@ final public class StorageList extends StorageBase<List<?>, Object> {
             listInfo.setType(String.class);
         }
         listInfo.updateByType();
-        listInfo.updateByStoreClass();
+        listInfo.updateByStorable();
         listInfo.updateByField();
 
         debug("<< LIST STORATION");

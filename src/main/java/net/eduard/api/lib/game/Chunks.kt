@@ -1,7 +1,7 @@
 package net.eduard.api.lib.game
 
 import net.eduard.api.lib.modules.Copyable
-import net.eduard.api.lib.storage.Storable.StorageAttributes
+import net.eduard.api.lib.storage.annotations.StorageAttributes
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location

@@ -98,7 +98,7 @@ public final class StorageInline extends StorageBase<Object, String> {
                     fieldInfo.setField(field);
                     fieldInfo.setType(field.getType());
                     fieldInfo.updateByType();
-                    fieldInfo.updateByStoreClass();
+                    fieldInfo.updateByStorable();
                     fieldInfo.updateByField();
                     fieldInfo.setInline(true);
                     StringBuilder builder = new StringBuilder();
@@ -213,7 +213,7 @@ public final class StorageInline extends StorageBase<Object, String> {
                         fieldInfo.setType(clz);
                         fieldInfo.updateByType();
                         fieldInfo.updateByField();
-                        fieldInfo.updateByStoreClass();
+                        fieldInfo.updateByStorable();
                         fieldInfo.setInline(true);
 
                         builder.append("{");

@@ -1,12 +1,12 @@
 package net.eduard.api.server.minigame
 
-import net.eduard.api.lib.storage.Storable.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.storage.annotations.StorageAttributes
 
 /**
  * Representa o Mapa da Sala do Minigame

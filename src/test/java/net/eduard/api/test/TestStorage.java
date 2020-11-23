@@ -1,7 +1,12 @@
 package net.eduard.api.test;
 
+import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.annotations.StorageIndex;
+import net.eduard.api.lib.storage.annotations.StorageReference;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 public class TestStorage {
 
@@ -49,8 +54,60 @@ public class TestStorage {
     }
 
 
+    public static class Jogador {
+
+        @StorageIndex
+        String nome;
+
+        @StorageReference
+        Servidor server;
+
+        @Override
+        public String toString() {
+            return "Jogador{" +
+                    "nome='" + nome + '\'' +
+                    ", server=" + server +
+                    '}';
+        }
+    }
+
+    public static class Servidor{
+
+        @StorageIndex
+        int id;
+
+        @StorageReference
+        ArrayList<Jogador> players = new ArrayList<>();
+
+        @Override
+        public String toString() {
+            return "Servidor{" +
+                    "id=" + id +
+                    ", players=" + players +
+                    '}';
+        }
+    }
+
+
     @Test
-    public void testStorage(){
+    public void testReference(){
+
+        Jogador jogador1 = new Jogador();
+        jogador1.nome="Eduard";
+        Servidor server = new Servidor();
+        server.id = 15;
+        jogador1.server = server;
+        System.out.println(StorageAPI.store(Jogador.class, jogador1));
+    //    System.out.println(StorageAPI.store(Servidor.class, server));
+
+
+    }
+
+
+
+
+    @Test
+    public void testInline(){
 
         {
             Schematic sc = new Schematic();
@@ -62,10 +119,6 @@ public class TestStorage {
             System.out.println(StorageAPI.restoreInline(Schematic.class, data));
 
         }
-
-
-
-
     }
 
 }

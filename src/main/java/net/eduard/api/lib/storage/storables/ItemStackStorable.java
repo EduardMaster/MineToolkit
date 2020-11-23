@@ -1,4 +1,4 @@
-package net.eduard.api.lib.storage.bukkit_storables;
+package net.eduard.api.lib.storage.storables;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;

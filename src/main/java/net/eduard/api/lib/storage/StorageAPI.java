@@ -6,23 +6,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
 import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.storage.api.StorageClassInfo;
 import net.eduard.api.lib.storage.api.StorageInfo;
-import net.eduard.api.lib.storage.java_storables.TimeStampStorable;
-import net.eduard.api.lib.storage.java_storables.UUIDStorable;
+import net.eduard.api.lib.storage.storables.TimeStampStorable;
+import net.eduard.api.lib.storage.storables.UUIDStorable;
 import net.eduard.api.lib.storage.references.ReferenceBase;
 import net.eduard.api.lib.storage.impl.*;
 
@@ -37,7 +32,6 @@ import net.eduard.api.lib.storage.impl.*;
 public final class StorageAPI {
 
     private StorageAPI() {
-
     }
 
     public static final StorageObject STORE_OBJECT = new StorageObject();
@@ -45,41 +39,39 @@ public final class StorageAPI {
     public static final StorageEnum STORE_ENUM = new StorageEnum();
     public static final StorageInline STORE_INLINE = new StorageInline();
     public static final StorageMap STORE_MAP = new StorageMap();
-    public  static final StorageArray STORE_ARRAY = new StorageArray();
-
+    public static final StorageArray STORE_ARRAY = new StorageArray();
     private static boolean debug = true;
     public static final String STORE_KEY = "=";
-    public static final String REFER_KEY = "@";
-    private static final Map<Class<?>, Storable<?>> storages = new LinkedHashMap<>();
-    private static final Map<Class<?>, String> aliases = new LinkedHashMap<>();
-    private static final Map<Integer, Object> objects = new LinkedHashMap<>();
+    private static final Map<Class<?>, StorageClassInfo> classInfoByClass = new LinkedHashMap<>();
+    private static final Map<String, StorageClassInfo> classInfoByAlias = new LinkedHashMap<>();
     private static final List<ReferenceBase<?>> references = new ArrayList<>();
 
-    public static Map<Class<?>, Storable<?>> getStorages() {
-        return storages;
+
+    public static StorageClassInfo getClassInfo(Class<?> clz){
+        if (clz == null)return null;
+        StorageClassInfo classInfo = classInfoByClass.get(clz);
+        if (classInfo == null){
+            classInfo = new StorageClassInfo(clz);
+            classInfoByClass.put(clz, classInfo);
+            classInfoByAlias.put(classInfo.getAlias(), classInfo);
+        }
+        return classInfo;
+    }
+    public static Map<Object,Object> getCacheOf(Class<?> clz){
+        return getClassInfo(clz).getCache();
+
+    }
+    public static Object getObjectByKey(Class<?> clz , Object key){
+        return getCacheOf(clz).get(key);
+    }
+    public static Object getKeyOfObject(Object object){
+        return getClassInfo(object.getClass()).getPrimary(object);
     }
 
-    static boolean isStorable(Class<?> claz) {
+   public  static boolean isStorable(Class<?> claz) {
         return Storable.class.isAssignableFrom(claz);
     }
 
-    public static Object getObjectById(int id) {
-        return objects.get(id);
-    }
-
-    private static final Random random = new Random();
-
-    private static int randomId() {
-        return random.nextInt(100000);
-    }
-
-    public static int newId() {
-        int id;
-        do {
-            id = randomId();
-        } while (objects.containsKey(id));
-        return id;
-    }
 
     /**
      * Atualiza as Referencias criadas e usadas na config
@@ -93,28 +85,18 @@ public final class StorageAPI {
         }
     }
 
-    public static void newReference(ReferenceBase<?> refer) {
-        references.add(refer);
+    public static void newReference(ReferenceBase<?> reference) {
+        references.add(reference);
         debug("<<----->> REFERENCE LINKED");
     }
 
-    public static int getIdByObject(Object object) {
-        for (Entry<Integer, Object> entry : objects.entrySet()) {
-            if (entry.getValue().equals(object)) {
-                return entry.getKey();
-            }
-        }
-        int id = newId();
-        objects.put(id, object);
-        debug("<<>>" + object.getClass().getSimpleName() + "@" + id);
-        return id;
-    }
+
 
     public static Object store(Class<?> claz, Object object) {
         autoRegisterClass(claz);
         StorageInfo info = new StorageInfo(claz);
         info.updateByType();
-        info.updateByStoreClass();
+        info.updateByStorable();
         return STORE_OBJECT.store(info, object);
     }
 
@@ -123,7 +105,7 @@ public final class StorageAPI {
         StorageInfo info = new StorageInfo(field.getType());
         info.setField(field);
         info.updateByType();
-        info.updateByStoreClass();
+        info.updateByStorable();
         info.updateByField();
         return STORE_OBJECT.store(info, object);
     }
@@ -131,12 +113,9 @@ public final class StorageAPI {
     public static String storeInline(Class<?> claz, Object object) {
         autoRegisterClass(claz);
         StorageInfo info = new StorageInfo(claz);
-
         info.updateByType();
-        info.updateByStoreClass();
+        info.updateByStorable();
         info.setInline(true);
-
-
         return "" + STORE_OBJECT.store(info, object);
     }
 
@@ -145,23 +124,19 @@ public final class StorageAPI {
             autoRegisterClass(claz);
         }
         StorageInfo info = new StorageInfo(claz);
-
         info.setIndentifiable(true);
-
         if (claz != null) {
             info.updateByType();
-            info.updateByStoreClass();
+            info.updateByStorable();
         }
         return STORE_OBJECT.restore(info, object);
     }
 
     public static Object restoreField(Field field, Object object) {
-        Class<?> claz = field.getType();
-        autoRegisterClass(claz);
-        StorageInfo info = new StorageInfo(claz);
-        info.setField(field);
+        autoRegisterClass(field.getType());
+        StorageInfo info = new StorageInfo(field);
         info.updateByType();
-        info.updateByStoreClass();
+        info.updateByStorable();
         info.updateByField();
         return STORE_OBJECT.restore(info, object);
     }
@@ -171,30 +146,18 @@ public final class StorageAPI {
             autoRegisterClass(claz);
         }
         StorageInfo info = new StorageInfo(claz);
-        if (claz != null) {
-            info.updateByType();
-            info.updateByStoreClass();
-        }
+        info.updateByType();
+        info.updateByStorable();
         info.setInline(true);
         return STORE_OBJECT.restore(info, object);
 
     }
 
 
-    public static void register(Class<? extends Storable<?>> claz) {
-
-        autoRegisterClass(claz);
-    }
-
-    public static void register(Class<? extends Storable<?>> claz, String alias) {
-        autoRegisterClass(claz, alias);
-        registerAlias(claz, alias);
-    }
-
-    public static void register(Class<?> claz, Storable<?> storable) {
-        storages.put(claz, storable);
-        aliases.put(claz, claz.getSimpleName());
-        debug("++ CLASS " + claz.getSimpleName());
+    public static void registerStorable(Class<?> claz, Storable<?> storable) {
+        StorageClassInfo info = getClassInfo(claz);
+        info.setStorable(storable);
+        debug("++ CLASS " + info.getAlias());
     }
 
     public static void registerPackage(Class<?> clazzForPackage) {
@@ -203,7 +166,6 @@ public final class StorageAPI {
 
     public static void registerPackage(Class<?> clazzPlugin, String pack) {
         debug("<> PACKAGE " + pack);
-
         List<Class<?>> classes = Extra.getClasses(clazzPlugin, pack);
         for (Class<?> claz : classes) {
             autoRegisterClass(claz);
@@ -221,18 +183,18 @@ public final class StorageAPI {
             if (Extra.isWrapper(claz)) {
                 return null;
             } else if (Modifier.isAbstract(claz.getModifiers())) {
-                debug("== ABSTRACT CLASS " + claz.getSimpleName());
+                debug("== ABSTRACT CLASS " + alias);
             } else if (claz.isEnum()) {
-                debug("== ENUM CLASS " + claz.getSimpleName());
+                debug("== ENUM CLASS " + alias);
             } else if (claz.isAnonymousClass()) {
-                debug("== ANONYMOUS CLASS " + claz.getSimpleName());
+                debug("== ANONYMOUS CLASS " + alias);
             } else if (claz.isInterface()) {
-                debug("== INTERFACE " + claz.getSimpleName());
+                debug("== INTERFACE " + alias);
             } else if (isStorable(claz)) {
                 store = (Storable<?>) claz.newInstance();
-                register(claz, store);
+                registerStorable(claz, store);
             } else {
-                debug("== AUTO CLASS " + claz.getSimpleName());
+                debug("++ AUTO CLASS " + alias);
                 registerAlias(claz, alias);
             }
 
@@ -243,51 +205,39 @@ public final class StorageAPI {
     }
 
     /**
-     * Registra todas classes internas com StorageAPI#autoRegisterClass
+     * Desregistra uma classe
      *
-     * @param claz Classe com classes internas
+     * @param clz Classe
      */
-    public static void registerClasses(Class<?> claz) {
-        debug("<> CLASSES " + claz.getName());
-        for (Class<?> anotherClass : claz.getDeclaredClasses()) {
-            autoRegisterClass(anotherClass);
+    public static void unregisterStorable(Class<?> clz) {
+        StorageClassInfo info = classInfoByClass.get(clz);
+        if (info!=null){
+            classInfoByClass.remove(clz);
+            classInfoByAlias.remove(info.getAlias());
+            debug("- CLASS " + info.getAlias());
         }
-    }
-
-    public static void registerObject(int id, Object object) {
-        objects.put(id, object);
-        debug("+ OBJECT " + getAlias(object.getClass()) + "@" + id);
-    }
-
-    /**
-     * Desregistra um Objeto pelo seu ID unico
-     * @param id ID unico
-     */
-    public static void unregisterObjectById(int id) {
-        objects.remove(id);
-        debug("- OBJECT @" + id);
-    }
-
-    /**
-     * Desregistra uma classe
-     *
-     * @param object Objeto
-     */
-    public static void unregisterObject(Object object) {
-        objects.remove(object);
-        debug("- OBJECT " + getAlias(object.getClass()));
-    }
-
-    /**
-     * Desregistra uma classe
-     *
-     * @param claz Classe
-     */
-    public static void unregisterStorable(Class<?> claz) {
-        storages.remove(claz);
-        debug("- CLASS " + claz.getName());
 
     }
+
+    public static void unregisterPlugin(Class<?> pluginClass){
+        StorageAPI.debug("- CLASSES FROM PLUGIN "+pluginClass);
+        ClassLoader loader = pluginClass.getClassLoader();
+        Iterator<Entry<String, StorageClassInfo>> it = classInfoByAlias.entrySet().iterator();
+
+        int amount = 0;
+        while (it.hasNext()){
+            Entry<String, StorageClassInfo> entry = it.next();
+            if (entry.getKey().getClass().getClassLoader() == loader) {
+                StorageClassInfo info = entry.getValue();
+                info.getCache().clear();
+                classInfoByClass.remove(info.getCurrentClass());
+                it.remove();
+                amount++;
+            }
+        }
+        StorageAPI.debug("- CLASSES WITH SAME LOADER OF $pluginName : "+amount);
+    }
+
 
 
     public static Object transform(Object object, Class<?> type) throws Exception {
@@ -299,69 +249,43 @@ public final class StorageAPI {
         return value;
     }
 
-    public static int getObjectIdByReference(String reference) {
-        if (reference.contains(StorageAPI.REFER_KEY)) {
-            return Extra.toInt(reference.split(REFER_KEY)[1]);
-        }
-        return Extra.toInt(reference);
-    }
-
-    public static Storable<?> getStore(Class<?> claz) {
-        if (claz == null)
+    public static Storable<?> getStore(Class<?> clz) {
+        if (clz == null)
             return null;
 
-        Storable<?> store = storages.get(claz);
-
-
+        Storable<?> store = getClassInfo(clz).getStorable();
         if (store == null) {
-            for (Entry<Class<?>, Storable<?>> entry : storages.entrySet()) {
+            for (Entry<Class<?>, StorageClassInfo> entry : classInfoByClass.entrySet()) {
                 Class<?> loopClass = entry.getKey();
-                if (loopClass.isAssignableFrom(claz)) {
-                    store = entry.getValue();
-                } else if (claz.isAssignableFrom(loopClass)) {
-                    store = entry.getValue();
+                StorageClassInfo info = entry.getValue();
+                if (loopClass.isAssignableFrom(clz)) {
+                    store = info.getStorable();
+                } else if (clz.isAssignableFrom(loopClass)) {
+                    store = info.getStorable();
                 }
-
             }
         }
         return store;
 
     }
 
-    public static String getAlias(Class<?> claz) {
-        return aliases.getOrDefault(claz, getClassName(claz));
-
+    public static String getAlias(Class<?> clz) {
+        return getClassInfo(clz).getAlias();
     }
 
-    public static String getClassName(Class<?> claz) {
-        try {
 
-            return claz.getSimpleName();
-        } catch (Error err) {
-            return claz.toString();
-        }
-    }
 
     public static Class<?> getClassByAlias(String alias) {
-        for (Entry<Class<?>, String> entry : aliases.entrySet()) {
-            if (entry.getValue().equals(alias)) {
-                return entry.getKey();
-            }
-        }
-        return null;
+        return classInfoByAlias.get(alias).getCurrentClass();
     }
 
     public static boolean isRegistred(Class<?> claz) {
-        return storages.containsKey(claz);
-    }
-
-    public static Map<Class<?>, String> getAliases() {
-        return aliases;
+        return classInfoByClass.containsKey(claz);
     }
 
     static {
-        StorageAPI.register(UUID.class, new UUIDStorable());
-        StorageAPI.register(Timestamp.class, new TimeStampStorable());
+        StorageAPI.registerStorable(UUID.class, new UUIDStorable());
+        StorageAPI.registerStorable(Timestamp.class, new TimeStampStorable());
     }
 
     public static void debug(String msg) {
@@ -370,7 +294,7 @@ public final class StorageAPI {
     }
 
     public static void registerAlias(Class<?> claz, String alias) {
-        aliases.put(claz, alias);
+        getClassInfo(claz).setAlias(alias);
     }
 
     public static boolean isDebug() {
@@ -384,39 +308,37 @@ public final class StorageAPI {
     private static Gson gson;
 
     public static void startGson() {
-        GsonBuilder b = new GsonBuilder()
-
+        GsonBuilder builder = new GsonBuilder()
                 .serializeSpecialFloatingPointValues()
                 .enableComplexMapKeySerialization();
-        storages.forEach((key, value) -> {
-            if (value instanceof JsonSerializer && value instanceof JsonDeserializer) {
-                b.registerTypeAdapter(key, value);
+        classInfoByClass.forEach((key, value) -> {
+            Storable<?> storable = value.getStorable();
+            if (storable!=null) {
+                if (storable instanceof JsonSerializer && storable instanceof JsonDeserializer) {
+                    builder.registerTypeAdapter(key, value);
+                }
             }
         });
-        gson = b.create();
-
-
+        gson = builder.create();
     }
-
     public static Gson getGson() {
         return gson;
     }
-
-    public static <E> E loadGson(File arquivo, Class<E> clz) {
+    public static <E> E loadGson(File file, Class<E> clz) {
         try {
-            return gson.fromJson(new String(Files.readAllBytes(arquivo.toPath())), clz);
+            return gson.fromJson(new String(Files.readAllBytes(file.toPath())), clz);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static void saveGson(File arquivo, Object data) {
+    public static void saveGson(File file, Object data) {
         try {
-            Files.write(arquivo.toPath(), gson.toJson(data).getBytes());
+            Files.write(file.toPath(), gson.toJson(data).getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+
 }

@@ -5,7 +5,7 @@ import net.eduard.api.lib.modules.Extra
 
 import org.bukkit.entity.Player
 
-import net.eduard.api.lib.storage.Storable.*
+import net.eduard.api.lib.storage.annotations.StorageAttributes
 import org.bukkit.Bukkit
 
 /**

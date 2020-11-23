@@ -18,7 +18,7 @@ import net.eduard.api.lib.manager.EffectManager
 import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.storage.Storable
+import net.eduard.api.lib.storage.annotations.StorageAttributes
 import org.bukkit.plugin.Plugin
 @Suppress("unused")
 open class KitAbility : EventsManager(), BukkitTimeHandler {
@@ -79,7 +79,7 @@ open class KitAbility : EventsManager(), BukkitTimeHandler {
 
 
 
-    @Storable.StorageAttributes(reference = true)
+    @StorageAttributes(reference = true)
     var kits: List<KitAbility> = ArrayList()
 
     @Transient

@@ -10,7 +10,6 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.StorageAPI
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
@@ -79,16 +78,7 @@ interface IPlugin : IPluginInstance {
 
 
     fun unregisterStorableClasses() {
-        StorageAPI.debug("- CLASSES FROM PLUGIN $pluginName")
-        val loader = javaClass.classLoader
-        val classes = StorageAPI.getAliases().keys.filter { it.classLoader == loader }
-        for (clz in classes ){
-            StorageAPI.getStorages().remove(clz)
-            StorageAPI.getAliases().remove(clz)
-        }
-
-        val amount = classes.size
-        StorageAPI.debug("- CLASSES WITH SAME LOADER OF $pluginName : $amount")
+        StorageAPI.unregisterPlugin(javaClass)
     }
 
 

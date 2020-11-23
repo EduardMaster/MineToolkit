@@ -1,4 +1,4 @@
-package net.eduard.api.lib.storage.bukkit_storables;
+package net.eduard.api.lib.storage.storables;
 
 import com.google.gson.*;
 import net.eduard.api.lib.storage.StorageAPI;
@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import net.eduard.api.lib.storage.Storable;
-import org.bukkit.OfflinePlayer;
 
 import java.lang.reflect.Type;
 import java.util.Map;

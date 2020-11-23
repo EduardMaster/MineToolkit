@@ -1,14 +1,14 @@
-package net.eduard.api.lib.storage.bukkit_storables;
+package net.eduard.api.lib.storage.storables;
 
 import java.lang.reflect.Type;
 import java.util.UUID;
 
 import com.google.gson.*;
+import net.eduard.api.lib.storage.annotations.StorageAttributes;
 import org.bukkit.OfflinePlayer;
 
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(inline = true)
 public class OfflinePlayerStorable implements Storable<OfflinePlayer>, JsonSerializer<OfflinePlayer>, JsonDeserializer<OfflinePlayer> {

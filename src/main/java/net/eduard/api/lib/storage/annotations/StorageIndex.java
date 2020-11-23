@@ -6,5 +6,5 @@ import java.lang.annotation.Target;
 
 @Target({java.lang.annotation.ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@interface StorageIndex {
+public @interface StorageIndex {
 }

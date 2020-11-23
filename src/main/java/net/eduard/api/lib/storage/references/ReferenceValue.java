@@ -1,25 +1,22 @@
 package net.eduard.api.lib.storage.references;
 
-import java.lang.reflect.Field;
 
 import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.api.StorageInfo;
 
-public class ReferenceValue extends ReferenceBase<Integer> {
+public class ReferenceValue extends ReferenceBase<Object> {
 
 
-    public ReferenceValue(int id, Field field, Object instance) {
-        super(field, instance);
-        setRestore(id);
+    public ReferenceValue(StorageInfo info, Object instance, Object key) {
+        super(info, instance);
+        setRestore(key);
     }
-
 
     public void update() {
         try {
-
-            getField().set(getInstance(), StorageAPI.getObjectById(getRestore()));
-
+            Object reference = StorageAPI.getObjectByKey(getInfo().getType() , getRestore());
+            getInfo().getField().set(getInstance(), reference);
         } catch (Exception e) {
-
             e.printStackTrace();
         }
     }

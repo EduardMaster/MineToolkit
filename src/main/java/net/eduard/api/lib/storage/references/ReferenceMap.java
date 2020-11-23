@@ -1,26 +1,30 @@
 package net.eduard.api.lib.storage.references;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.api.StorageInfo;
 
-public class ReferenceMap extends ReferenceBase<Map<Object,Integer>>{
+public class ReferenceMap extends ReferenceBase<Map<Object,Object>>{
 
-	public ReferenceMap(Map<Object,Integer> map, Object instance) {
-		super(map,null, instance);
-
+	private Map<Object,Object> realMap;
+	private StorageInfo keyInfo;
+	private StorageInfo valueInfo;
+	public ReferenceMap(StorageInfo mapInfo, StorageInfo keyInfo, StorageInfo valueInfo, Map<Object,Object> references,
+						Map<Object,Object> realMap) {
+		super(mapInfo, null);
+		setRestore(references);
+		this.realMap = realMap;
 	}
 
-
+	@Override
 	public void update() {
-		@SuppressWarnings("unchecked")
-		Map<Object,Object>newMap =  (Map<Object, Object>) getInstance();
-		for (Entry<Object, Integer> entry : getRestore().entrySet()) {
-			newMap.put(entry.getKey(), StorageAPI.getObjectById(entry.getValue()));
+		for (Entry<Object,Object> entry : getRestore().entrySet()){
+
 		}
-		
-		
+
 	}
 
 

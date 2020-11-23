@@ -5,7 +5,7 @@ import net.eduard.api.lib.kotlin.player
 import net.eduard.api.lib.manager.CurrencyManager
 import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPluginInstance
-import net.eduard.api.lib.storage.Storable.StorageAttributes
+import net.eduard.api.lib.storage.annotations.StorageAttributes
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.CurrencyHandler
 import org.bukkit.Material

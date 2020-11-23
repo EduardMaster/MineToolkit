@@ -1,11 +1,11 @@
-package net.eduard.api.lib.storage.bukkit_storables;
+package net.eduard.api.lib.storage.storables;
 
+import net.eduard.api.lib.storage.annotations.StorageAttributes;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(inline = true)
 public class ChunkStorable implements Storable<Chunk> {
