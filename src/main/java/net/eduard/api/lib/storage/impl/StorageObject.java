@@ -1,16 +1,19 @@
-package net.eduard.api.lib.storage;
+package net.eduard.api.lib.storage.impl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
 import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.api.StorageBase;
+import net.eduard.api.lib.storage.api.StorageInfo;
 import net.eduard.api.lib.storage.references.ReferenceValue;
-import org.bukkit.Bukkit;
 
 public class StorageObject extends StorageBase<Object, Object> {
 
-    StorageObject() {
+    public StorageObject() {
     }
 
     @SuppressWarnings("unchecked")
@@ -21,7 +24,6 @@ public class StorageObject extends StorageBase<Object, Object> {
             debug(">> DATA NULL");
             return null;
         }
-
         int id = 0;
         String alias;
         if (data instanceof Map) {
@@ -34,15 +36,12 @@ public class StorageObject extends StorageBase<Object, Object> {
                     alias = split[0];
                     try {
                         id = Extra.toInt(split[1]);
-
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-
                 } else {
                     alias = text;
                 }
-
                 Class<?> tempClass = StorageAPI.getClassByAlias(alias);
                 if (tempClass != null) {
                     debug(">> RESTORED TYPE " + tempClass.getSimpleName());
@@ -52,16 +51,14 @@ public class StorageObject extends StorageBase<Object, Object> {
                 debug(">> RESTORED ID " + id);
 
             }
-
-
         }
         if (claz == null) {
             debug(">> CLASS NULL ");
             return null;
         }
+
         if (claz.isEnum()) {
             debug(">> ENUM " + data);
-
             return StorageAPI.STORE_ENUM.restore(info, data.toString());
         }
         if (Extra.isList(claz)) {
@@ -72,23 +69,13 @@ public class StorageObject extends StorageBase<Object, Object> {
             debug(">> MAP " + data);
             return StorageAPI.STORE_MAP.restore(info, data);
         }
-
         if (info.isReference()) {
-
             debug(">> REFERENCE " + data);
             return StorageAPI.getObjectIdByReference(data.toString());
-
-
         }
-
-
         alias = StorageAPI.getAlias(claz);
-
         Storable<?> store = StorageAPI.getStore(claz);
-
-
         Class<?> wrapper = Extra.getWrapper(claz);
-
         if (wrapper != null) {
             try {
                 debug(">> RESTORING DATA FROM " + data);
@@ -101,22 +88,16 @@ public class StorageObject extends StorageBase<Object, Object> {
                 e.printStackTrace();
             }
         }
-
         Object instance = null;
-
-
 		/* mesmo se a Storable esteja nula vai continuar recarregando da config
 		if (store == null) {
 			debug(">> NULL STORABLE ");
 			return null;
 		}
 		*/
-
-
         if (info.isInline()) {
             if (store != null) {
                 instance = store.restore(data.toString());
-
             }
             if (instance == null) {
                 debug(">> INLINE  " + data);
@@ -124,8 +105,6 @@ public class StorageObject extends StorageBase<Object, Object> {
             } else {
                 debug(">> INLINE CUSTOM " + data);
             }
-
-
             return instance;
         }
         if (id == 0) {
@@ -143,7 +122,6 @@ public class StorageObject extends StorageBase<Object, Object> {
                 debug(">> NEW INSTANCE FAIL");
             }
         }
-
         if (instance == null) {
             // Sem instancia não tem como retornar objeto
             return null;
@@ -153,15 +131,11 @@ public class StorageObject extends StorageBase<Object, Object> {
                 return null;
             }
         }
-
         Map<?, ?> map = (Map<?, ?>) data;
-
         if (info.isIndentifiable())
             StorageAPI.registerObject(id, instance);
         while (!claz.equals(Object.class)) {
-
             for (Field field : claz.getDeclaredFields()) {
-
                 if (Modifier.isStatic(field.getModifiers()))
                     continue;
                 if (Modifier.isTransient(field.getModifiers()))
@@ -173,7 +147,6 @@ public class StorageObject extends StorageBase<Object, Object> {
                     continue;
                 }
                 field.setAccessible(true);
-
                 try {
 
                     Object fieldMapValue = map.get(field.getName());
@@ -231,13 +204,10 @@ public class StorageObject extends StorageBase<Object, Object> {
         if (data == null)
             return null;
         Class<?> claz = data.getClass();
-
         String alias = StorageAPI.getAlias(claz);
         if (claz.isEnum()) {
             debug("<< ENUM " + data);
-
             return StorageAPI.STORE_ENUM.store(info, (Enum<?>) data);
-
         }
         if (claz.isArray()) {
             debug("<< ARRAY " + data);
@@ -245,23 +215,18 @@ public class StorageObject extends StorageBase<Object, Object> {
         }
         if (Extra.isList(claz)) {
             debug("<< LIST " + new ArrayList<>((List<?>) data));
-
             return StorageAPI.STORE_LIST.store(info, (List<?>) data);
         }
         if (Extra.isMap(claz)) {
             return StorageAPI.STORE_MAP.store(info, (Map<?, ?>) data);
         }
         Storable<Object> store = (Storable<Object>) getStore(claz);
-
-
         /* Se caso a Storable for nula ainda sim vai continuar
         if (store == null) {
             return data;
         }
          */
-
         if (info.isReference()) {
-
             String text = alias + StorageAPI.REFER_KEY + StorageAPI.getIdByObject(data);
             debug("<< REFERENCE " + text);
             return text;
@@ -271,7 +236,6 @@ public class StorageObject extends StorageBase<Object, Object> {
             return data;
         }
         if (info.isInline()) {
-
             Object result = null;
             if (store != null) {
                 result = store.store(data);
@@ -284,46 +248,27 @@ public class StorageObject extends StorageBase<Object, Object> {
                 return result;
             }
         }
-
         try {
             Map<String, Object> map = new LinkedHashMap<>();
-            if (info.isIndentifiable()) {
-                debug("<< INDENTIFIABLE " + claz);
-                map.put(StorageAPI.STORE_KEY, alias + StorageAPI.REFER_KEY + StorageAPI.getIdByObject(data));
-            } else {
-                map.put(StorageAPI.STORE_KEY, alias);
-            }
+            boolean saveType = false;
 
+            if (info.getField()!=null && info.getField().getType() != claz  ){
+                saveType = true;
+            }
+            if (saveType) {
+                if (info.isIndentifiable()) {
+                    debug("<< INDENTIFIABLE " + claz);
+                    map.put(StorageAPI.STORE_KEY, alias + StorageAPI.REFER_KEY + StorageAPI.getIdByObject(data));
+                } else {
+                    map.put(StorageAPI.STORE_KEY, alias);
+                }
+            }
             List<Class<?>> classes = new ArrayList<>();
             while (!claz.equals(Object.class)) {
                 classes.add(claz);
                 claz = claz.getSuperclass();
             }
             Collections.reverse(classes);
-
-            //
-            /*
-            classes.stream()
-                    .flatMap(aClass ->
-                            Arrays.stream(aClass.getDeclaredFields())
-                                    .peek(field -> {
-                                        field.setAccessible(true);
-                                    })
-                    )
-                    .filter(field -> !Modifier.isStatic(field.getModifiers())
-                            && !Modifier.isTransient(field.getModifiers())
-                            && !Modifier.isFinal(field.getModifiers())
-                            && !Modifier.isNative(field.getModifiers()))
-                    .forEach(field -> {
-
-
-                    });
-
-
-
-             */
-            //
-
             for (Class<?> clz : classes) {
                 claz = clz;
                 for (Field field : claz.getDeclaredFields()) {
@@ -354,10 +299,8 @@ public class StorageObject extends StorageBase<Object, Object> {
 
                     debug("<< VARIABLE " + field.getName() + " " + fieldValue.getClass().getSimpleName());
                     Object fieldResult = StorageAPI.STORE_OBJECT.store(infoField, fieldValue);
-
                     if (fieldResult != null)
                         map.put(field.getName(), fieldResult);
-
                 }
 
             }

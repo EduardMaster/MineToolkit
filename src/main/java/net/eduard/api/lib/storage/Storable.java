@@ -2,10 +2,6 @@ package net.eduard.api.lib.storage;
 
 import net.eduard.api.lib.modules.Extra;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.Map;
 
 /**
@@ -16,19 +12,6 @@ import java.util.Map;
  * @see Extra
  */
 public interface Storable<T> {
-
-
-    @Target({java.lang.annotation.ElementType.FIELD, ElementType.TYPE})
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface StorageAttributes {
-
-        boolean reference() default false;
-
-        boolean indentificate() default false;
-
-        boolean inline() default false;
-
-    }
 
     /**
      * Cria um Objeto pelo Mapa
@@ -60,9 +43,8 @@ public interface Storable<T> {
     default T newInstance() {
         try {
             return (T) Extra.getNew(getClass());
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return null;
     }

@@ -1,12 +1,15 @@
-package net.eduard.api.lib.storage;
+package net.eduard.api.lib.storage.impl;
 
 
 import java.util.*;
 
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.api.StorageBase;
+import net.eduard.api.lib.storage.api.StorageInfo;
 import net.eduard.api.lib.storage.references.ReferenceList;
 
 final public class StorageList extends StorageBase<List<?>, Object> {
-    StorageList(){}
+    public  StorageList(){}
 
     @Override
     public List<?> restore(StorageInfo info, Object data) {

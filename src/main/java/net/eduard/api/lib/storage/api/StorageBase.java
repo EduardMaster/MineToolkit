@@ -1,4 +1,7 @@
-package net.eduard.api.lib.storage;
+package net.eduard.api.lib.storage.api;
+
+import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAPI;
 
 public abstract class StorageBase<DataType, StorageType> {
 
@@ -17,6 +20,4 @@ public abstract class StorageBase<DataType, StorageType> {
 	public String getAlias(Class<?> claz) {
 		return StorageAPI.getAlias(claz);
 	}
-
-
 }

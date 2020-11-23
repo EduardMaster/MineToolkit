@@ -1,6 +1,9 @@
-package net.eduard.api.lib.storage;
+package net.eduard.api.lib.storage.api;
 
 import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.annotations.StorageAttributes;
 
 import java.lang.reflect.Field;
 
@@ -54,8 +57,8 @@ final public class StorageInfo implements Cloneable {
     }
 
     public void updateByType() {
-        if (getType().isAnnotationPresent(Storable.StorageAttributes.class)) {
-            Storable.StorageAttributes atr = getType().getAnnotation(Storable.StorageAttributes.class);
+        if (getType().isAnnotationPresent(StorageAttributes.class)) {
+           StorageAttributes atr = getType().getAnnotation(StorageAttributes.class);
             update(atr);
         }
     }
@@ -63,14 +66,14 @@ final public class StorageInfo implements Cloneable {
     public void updateByStoreClass() {
         Storable<?> store = getStore(getType());
         if (store != null) {
-            if (store.getClass().isAnnotationPresent(Storable.StorageAttributes.class)) {
-                Storable.StorageAttributes atr = store.getClass().getAnnotation(Storable.StorageAttributes.class);
+            if (store.getClass().isAnnotationPresent(StorageAttributes.class)) {
+                StorageAttributes atr = store.getClass().getAnnotation(StorageAttributes.class);
                 update(atr);
             }
         }
     }
 
-    public void update(Storable.StorageAttributes atr) {
+    public void update(StorageAttributes atr) {
         setReference(atr.reference());
         setInline(atr.inline());
         setIndentifiable(atr.indentificate());
@@ -78,8 +81,8 @@ final public class StorageInfo implements Cloneable {
 
     public void updateByField() {
         if (getField() != null) {
-            if (getField().isAnnotationPresent(Storable.StorageAttributes.class)) {
-                Storable.StorageAttributes atr = getField().getAnnotation(Storable.StorageAttributes.class);
+            if (getField().isAnnotationPresent(StorageAttributes.class)) {
+                StorageAttributes atr = getField().getAnnotation(StorageAttributes.class);
                 update(atr);
             }
         }
@@ -104,7 +107,6 @@ final public class StorageInfo implements Cloneable {
     public void setType(Class<?> type) {
         this.type = type;
     }
-
 
     public boolean isReference() {
         return reference;

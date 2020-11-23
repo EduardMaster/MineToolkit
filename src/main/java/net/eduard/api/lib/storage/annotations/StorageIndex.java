@@ -1,4 +1,4 @@
-package net.eduard.api.lib.storage;
+package net.eduard.api.lib.storage.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

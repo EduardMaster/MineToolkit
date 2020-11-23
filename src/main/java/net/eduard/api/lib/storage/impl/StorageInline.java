@@ -1,4 +1,4 @@
-package net.eduard.api.lib.storage;
+package net.eduard.api.lib.storage.impl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -6,12 +6,15 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import net.eduard.api.lib.modules.Extra;
-import org.bukkit.Bukkit;
+import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.api.StorageBase;
+import net.eduard.api.lib.storage.api.StorageInfo;
 
 @SuppressWarnings({"deprecated"})
 public final class StorageInline extends StorageBase<Object, String> {
 
-    StorageInline() {
+    public StorageInline() {
     }
 
     public Object restore(StorageInfo info, String data) {

@@ -3,7 +3,7 @@ package net.eduard.api.lib.storage.java_storables;
 import java.util.UUID;
 
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.Storable.*;
+import net.eduard.api.lib.storage.annotations.StorageAttributes;
 
 
 @StorageAttributes(inline = true)

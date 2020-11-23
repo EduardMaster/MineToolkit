@@ -1,10 +1,10 @@
 package net.eduard.api.lib.storage.bukkit_storables;
 
+import net.eduard.api.lib.storage.annotations.StorageAttributes;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.Storable.*;
 
 @StorageAttributes(inline = true)
 public class WorldStorable implements Storable<World> {

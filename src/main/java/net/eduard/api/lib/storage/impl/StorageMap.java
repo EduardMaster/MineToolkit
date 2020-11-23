@@ -1,17 +1,20 @@
-package net.eduard.api.lib.storage;
+package net.eduard.api.lib.storage.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.api.lib.storage.api.StorageBase;
+import net.eduard.api.lib.storage.api.StorageInfo;
 import net.eduard.api.lib.storage.references.ReferenceMap;
 
 final public class StorageMap extends StorageBase<Map<?,?> , Object> {
 
-    StorageMap(){}
+    public  StorageMap(){}
 
     @Override
-    public Map<?,?> restore(StorageInfo info,Object data) {
+    public Map<?,?> restore(StorageInfo info, Object data) {
         StorageInfo mapInfoKey = info.clone();
         mapInfoKey.setType(info.getMapKey());
         mapInfoKey.updateByType();

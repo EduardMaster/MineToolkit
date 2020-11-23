@@ -20,9 +20,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
 import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.storage.api.StorageInfo;
 import net.eduard.api.lib.storage.java_storables.TimeStampStorable;
 import net.eduard.api.lib.storage.java_storables.UUIDStorable;
 import net.eduard.api.lib.storage.references.ReferenceBase;
+import net.eduard.api.lib.storage.impl.*;
 
 /**
  * Sistema automatico de Armazenamento em Mapas que podem ser usados em JSON,
@@ -38,12 +40,12 @@ public final class StorageAPI {
 
     }
 
-    static final StorageObject STORE_OBJECT = new StorageObject();
-    static final StorageList STORE_LIST = new StorageList();
-    static final StorageEnum STORE_ENUM = new StorageEnum();
-    static final StorageInline STORE_INLINE = new StorageInline();
-    static final StorageMap STORE_MAP = new StorageMap();
-    static final StorageArray STORE_ARRAY = new StorageArray();
+    public static final StorageObject STORE_OBJECT = new StorageObject();
+    public static final StorageList STORE_LIST = new StorageList();
+    public static final StorageEnum STORE_ENUM = new StorageEnum();
+    public static final StorageInline STORE_INLINE = new StorageInline();
+    public static final StorageMap STORE_MAP = new StorageMap();
+    public  static final StorageArray STORE_ARRAY = new StorageArray();
 
     private static boolean debug = true;
     public static final String STORE_KEY = "=";

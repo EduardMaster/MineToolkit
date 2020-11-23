@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import com.google.gson.*;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.Storable.*;
+import net.eduard.api.lib.storage.annotations.StorageAttributes;
 
 @StorageAttributes(inline = true)
 public class TimeStampStorable implements Storable<Timestamp>  , JsonDeserializer<Timestamp>, JsonSerializer<Timestamp> {
