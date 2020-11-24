@@ -9,7 +9,7 @@ class Teste {
         return y * width * length + z * width + x
     }
 
-    @Test
+
     fun simpleDB() {
         val file = File("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\Testes Schematics\\teste\\")
         file.mkdirs()
@@ -25,20 +25,8 @@ class Teste {
 
 
     }
-    @Test
-    fun testandoIndex2() {
-        /*
-        val width = 10
-        val length = 10
 
-        for (x in 0..5) {
-            for (z in 0..5) {
-                println("x=$x z=$z result="+getIndex(x, 5, z, width, length))
-            }
-        }
-        */
-    }
-    @Test
+
     fun testandoIndex() {
         val blocks = Blocks()
         blocks.listRecreate()

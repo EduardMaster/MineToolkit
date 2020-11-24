@@ -8,6 +8,7 @@ import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.api.StorageBase;
+import net.eduard.api.lib.storage.api.StorageClassInfo;
 import net.eduard.api.lib.storage.api.StorageInfo;
 import net.eduard.api.lib.storage.references.ReferenceValue;
 
@@ -58,7 +59,7 @@ public class StorageObject extends StorageBase<Object, Object> {
         if (info.isReference()) {
             debug(">> REFERENCE " + data);
 
-           return  StorageAPI.STORE_MAP.restore(info.getClassInfo().getIndex(), data);
+            return StorageAPI.STORE_OBJECT.restore(info.getClassInfo().getIndex(), data);
 
         }
         alias = StorageAPI.getAlias(claz);
@@ -147,11 +148,12 @@ public class StorageObject extends StorageBase<Object, Object> {
                     debug(">> VARIABLE " + field.getName() + " " + infoField.getAlias());
                     Object restoredValue = StorageAPI.STORE_OBJECT.restore(infoField, fieldMapValue);
 
-                    if (infoField.isReference() && restoredValue != null) {
-                        Object object = StorageAPI.getObjectByKey(claz, data);
+                    if (infoField.isReference() && restoredValue != null && (!infoField.isList())) {
+
+                        Object object = StorageAPI.getObjectByKey(infoField.getType(), restoredValue);
 
                         if (object == null) {
-                            StorageAPI.newReference(new ReferenceValue(infoField, instance, fieldMapValue));
+                            StorageAPI.newReference(new ReferenceValue(infoField, instance, restoredValue));
                             continue;
                         }
                         field.set(instance, object);
@@ -219,10 +221,14 @@ public class StorageObject extends StorageBase<Object, Object> {
             return data;
         }
          */
-        if (info.isReference()) {
-             data = StorageAPI.getKeyOfObject(data);
-            debug("<< REFERENCE " + data);
 
+
+        if (info.isReference()) {
+            Object key = StorageAPI.getKeyOfObject(data);
+            debug("<< REFERENCE " + data);
+            StorageClassInfo classInfo = StorageAPI.getClassInfo(claz);
+            classInfo.getCache().put(key, data);
+            return StorageAPI.STORE_OBJECT.store(classInfo.getIndex() , key);
         }
         Class<?> wrapper = Extra.getWrapper(claz);
         if (wrapper != null) {
@@ -250,7 +256,6 @@ public class StorageObject extends StorageBase<Object, Object> {
             }
             if (saveType) {
                 map.put(StorageAPI.STORE_KEY, alias);
-
             }
             List<Class<?>> classes = new ArrayList<>();
             while (!claz.equals(Object.class)) {
@@ -274,6 +279,7 @@ public class StorageObject extends StorageBase<Object, Object> {
                     if (Modifier.isNative(field.getModifiers())) {
                         continue;
                     }
+
                     Object fieldValue = field.get(data);
                     if (fieldValue == null) {
                         continue;

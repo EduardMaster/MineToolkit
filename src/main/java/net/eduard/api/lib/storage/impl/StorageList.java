@@ -9,7 +9,8 @@ import net.eduard.api.lib.storage.api.StorageInfo;
 import net.eduard.api.lib.storage.references.ReferenceList;
 
 final public class StorageList extends StorageBase<List<?>, Object> {
-    public  StorageList(){}
+    public StorageList() {
+    }
 
     @Override
     public List<?> restore(StorageInfo info, Object data) {
@@ -21,15 +22,28 @@ final public class StorageList extends StorageBase<List<?>, Object> {
 
         debug(">> LIST RESTORATION");
         if (listInfo.isReference()) {
-            debug("  IS REFERENCE LIST");
+            debug(">> IS REFERENCE LIST");
             if (data instanceof List) {
                 List<?> oldList = (List<?>) data;
                 List<Object> newList = new ArrayList<>();
-                for (Object item : oldList) {
-                    newList.add(StorageAPI.STORE_OBJECT.restore(listInfo, item));
-                }
                 List<Object> realList = new ArrayList<>();
-                StorageAPI.newReference(new ReferenceList(listInfo,newList, realList));
+                debug(">> LIST SIZE "+ oldList.size());
+                for (Object item : oldList) {
+                    Object key = StorageAPI.STORE_OBJECT.restore(listInfo, item);
+
+                    debug(">> ITEM KEY "+ key );
+
+                    Object object = StorageAPI.getObjectByKey(listInfo.getType(), key);
+                    if (object != null) {
+                        debug(">> HAS INSTANCE");
+                        realList.add(object);
+                    } else {
+                        debug(">> HAS NOT INSTANCE");
+                        newList.add(key);
+                    }
+                }
+
+                StorageAPI.newReference(new ReferenceList(listInfo, newList, realList));
                 return realList;
             }
             return null;
@@ -57,7 +71,7 @@ final public class StorageList extends StorageBase<List<?>, Object> {
     public Object store(StorageInfo info, List<?> data) {
         StorageInfo listInfo = info.clone();
         listInfo.setType(info.getListType());
-        if (listInfo.getType() == null){
+        if (listInfo.getType() == null) {
             listInfo.setType(String.class);
         }
         listInfo.updateByType();

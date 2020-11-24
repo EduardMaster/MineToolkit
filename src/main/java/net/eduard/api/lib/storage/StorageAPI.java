@@ -25,9 +25,7 @@ import net.eduard.api.lib.storage.impl.*;
  * Sistema automatico de Armazenamento em Mapas que podem ser usados em JSON,
  * SQL, YAML<br>
  *
- * @author Eduard
- * @version 1.3
- * @since Lib v1.0
+ * @version 1.4
  */
 public final class StorageAPI {
 
@@ -87,7 +85,7 @@ public final class StorageAPI {
 
     public static void newReference(ReferenceBase<?> reference) {
         references.add(reference);
-        debug("<<----->> REFERENCE LINKED");
+        debug("++ REFERENCE");
     }
 
 
@@ -216,8 +214,9 @@ public final class StorageAPI {
             classInfoByAlias.remove(info.getAlias());
             debug("- CLASS " + info.getAlias());
         }
-
     }
+
+
 
     public static void unregisterPlugin(Class<?> pluginClass){
         StorageAPI.debug("- CLASSES FROM PLUGIN "+pluginClass);
@@ -273,8 +272,6 @@ public final class StorageAPI {
         return getClassInfo(clz).getAlias();
     }
 
-
-
     public static Class<?> getClassByAlias(String alias) {
         return classInfoByAlias.get(alias).getCurrentClass();
     }
@@ -324,6 +321,7 @@ public final class StorageAPI {
     public static Gson getGson() {
         return gson;
     }
+
     public static <E> E loadGson(File file, Class<E> clz) {
         try {
             return gson.fromJson(new String(Files.readAllBytes(file.toPath())), clz);

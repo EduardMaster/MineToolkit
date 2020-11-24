@@ -83,7 +83,7 @@ public class TestStorage {
         public String toString() {
             return "Servidor{" +
                     "id=" + id +
-                    ", players=" + players +
+                    ", players=" + players.size() +
                     '}';
         }
     }
@@ -97,16 +97,22 @@ public class TestStorage {
         Servidor server = new Servidor();
         server.id = 15;
         jogador1.server = server;
-        System.out.println(StorageAPI.store(Jogador.class, jogador1));
-    //    System.out.println(StorageAPI.store(Servidor.class, server));
-
-
+        server.players.add(jogador1);
+        Object result = StorageAPI.store(Jogador.class, jogador1);
+        System.out.println(result);
+        System.out.println("----");
+        System.out.println(StorageAPI.restore(Jogador.class,result));
+        System.out.println("----");
+        result = StorageAPI.store(Servidor.class, server);
+        System.out.println(result);
+        System.out.println("----");
+        System.out.println(StorageAPI.restore(Servidor.class,result));
     }
 
 
 
 
-    @Test
+
     public void testInline(){
 
         {

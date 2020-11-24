@@ -43,7 +43,9 @@ public class StorageClassInfo {
                 info.updateByStorable();
                 info.updateByField();
                 if (info.isIndentifiable()){
+                    field.setAccessible(true);
                     index = info;
+                    break;
                 }
             }
         }

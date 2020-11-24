@@ -10,6 +10,7 @@ import net.eduard.api.lib.storage.annotations.StorageReference;
 import java.lang.reflect.Field;
 
 final public class StorageInfo implements Cloneable {
+
     public StorageInfo(Class<?> claz) {
         setType(claz);
     }
@@ -19,7 +20,6 @@ final public class StorageInfo implements Cloneable {
         setType(field.getType());
     }
 
-    private transient StorageInfo parent;
     private Class<?> type;
     private boolean reference;
     private boolean inline;
@@ -178,13 +178,6 @@ final public class StorageInfo implements Cloneable {
         this.indentifiable = indentifiable;
     }
 
-    public StorageInfo getParent() {
-        return parent;
-    }
-
-    public void setParent(StorageInfo parent) {
-        this.parent = parent;
-    }
 
 
 }
