@@ -142,8 +142,7 @@ public class BungeeConfig {
 		try {
 			Field field = config.getClass().getDeclaredField("self");
 			field.setAccessible(true);
-			Map<String, Object> map = (Map<String, Object>) field.get(config);
-			return map;
+			return (Map<String, Object>) field.get(config);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

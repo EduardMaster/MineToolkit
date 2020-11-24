@@ -130,10 +130,10 @@ public class Config {
         }
     }
 
-    public <ClasseRetorno> ClasseRetorno get( Class<ClasseRetorno> clazz) {
+    public <E> E get(Class<E> clazz) {
         return root.get("", clazz);
     }
-    public <ClasseRetorno> ClasseRetorno get(String path, Class<ClasseRetorno> clazz) {
+    public <E> E get(String path, Class<E> clazz) {
         return root.get(path, clazz);
     }
 
@@ -308,7 +308,7 @@ public class Config {
 
     public ConfigSection set(String path, Object value) {
 
-        return root.set(path, value, new String[0]);
+        return root.set(path, value);
     }
 
     public ConfigSection set(String path, Object value, String... comments)
