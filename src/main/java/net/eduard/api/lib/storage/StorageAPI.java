@@ -312,7 +312,7 @@ public final class StorageAPI {
             Storable<?> storable = value.getStorable();
             if (storable!=null) {
                 if (storable instanceof JsonSerializer && storable instanceof JsonDeserializer) {
-                    builder.registerTypeAdapter(key, value);
+                    builder.registerTypeAdapter(key, storable);
                 }
             }
         });

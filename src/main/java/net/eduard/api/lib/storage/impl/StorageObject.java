@@ -251,7 +251,7 @@ public class StorageObject extends StorageBase<Object, Object> {
             Map<String, Object> map = new LinkedHashMap<>();
             boolean saveType = false;
 
-            if (info.getField() != null && info.getField().getType() != claz) {
+            if (info.getType()!= null && info.getType() != claz) {
                 saveType = true;
             }
             if (saveType) {

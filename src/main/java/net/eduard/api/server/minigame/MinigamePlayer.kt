@@ -12,9 +12,11 @@ import org.bukkit.entity.Player
  */
 @Suppress("unused")
 class MinigamePlayer() {
-    var kills: Int = 0
-    var deaths: Int = 0
-    var streak: Int = 0
+
+    var kills = 0
+    var deaths = 0
+    var streak = 0
+    var assists = 0
     var state = MinigamePlayerState.NORMAL
     var team: MinigameTeam? = null
     var game: MinigameRoom? = null
@@ -72,6 +74,10 @@ class MinigamePlayer() {
      */
     fun addDeath() {
         deaths++
+    }
+
+    fun addAssist(){
+        assists++
     }
 
     /**
