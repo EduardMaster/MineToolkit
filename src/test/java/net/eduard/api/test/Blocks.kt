@@ -128,7 +128,7 @@ class Blocks{
         var y = 0
         var z = 0
         fun write(stream: DataOutputStream) {
-            stream.write(id)
+            stream.writeShort(id)
             if (id != 0) {
                 stream.write(data)
             }

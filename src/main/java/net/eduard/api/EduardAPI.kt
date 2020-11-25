@@ -354,40 +354,13 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
          */
         var MSG_ON_QUIT = "§6O jogador \$player saiu no Jogo!"
 
-        /**
-         * Prefixo de Ajuda dos Comandos
-         */
-        var MSG_USAGE = "§FDigite: §c"
-        fun getSchematic(player: Player): GameSchematic {
-            var schema = MAPS_CACHE[player]
-            if (schema == null) {
-                schema = GameSchematic()
-                MAPS_CACHE[player] = schema
-            }
-            return schema
-        }
+
+
 
         fun loadMaps() {
-
-            val file = MAPS_FOLDER
-            file.mkdirs()
-
-            if (file.listFiles() == null)
-                return
-
-            for (subfile in file.listFiles()!!) {
-                if (!subfile.isDirectory) {
-                    MAPS[subfile.name.replace(".map", "")] = GameSchematic.load(subfile)
-                }
-            }
+            GameSchematic.loadAll(MAPS_FOLDER)
             instance.log("Mapas carregados!")
         }
-
-        /*
-        * Mapa de Arenas registradas
-        */
-        var MAPS = mutableMapOf<String, GameSchematic>()
-        var MAPS_CACHE: MutableMap<Player, GameSchematic> = HashMap()
 
 
 
@@ -395,11 +368,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
          * Salva todos os mapas no sistema de armazenamento
          */
         fun saveMaps() {
-            MAPS_FOLDER.mkdirs()
-            for ((name, mapa) in MAPS) {
-
-                mapa.save(File(MAPS_FOLDER, "$name.map"))
-            }
+            GameSchematic.saveAll(MAPS_FOLDER)
+            instance.log("Mapas salvados!")
         }
     }
 

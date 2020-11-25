@@ -6,12 +6,6 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * nome Original NMSBlock da API que SaiintBrisson fez, como não entendi
- * o algoritimo não alterei nada ainda embreve vou
- * @author SaiintBrisson
- *
- */
 public class Blocks_v1_8_R3 extends CraftBlock implements Blocks {
 
 
@@ -83,12 +77,16 @@ public class Blocks_v1_8_R3 extends CraftBlock implements Blocks {
 
 
         if (applyPhysics) {
+
             worldServer.notify(new BlockPosition(getX(), getY(), getZ()));
         }
 
         return true;
     }
-
+    @Override
+    public void setTypeAndData(@NotNull org.bukkit.Material material, int data) {
+        setTypeIdAndData(material.getId(), (byte) data, true);
+    }
     @Override
     public org.bukkit.block.Block getRelative(int modX, int modY, int modZ) {
         return new Blocks_v1_8_R3(getX() + modX, getY() + modY, getZ() + modZ, worldServer);
@@ -108,8 +106,5 @@ public class Blocks_v1_8_R3 extends CraftBlock implements Blocks {
         return chunkSection;
     }
 
-    @Override
-    public void setTypeAndData(@NotNull org.bukkit.Material material, int data) {
-        setTypeIdAndData(material.getId(), (byte) data, false);
-    }
+
 }

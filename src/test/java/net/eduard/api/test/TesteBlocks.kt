@@ -1,13 +1,13 @@
 package net.eduard.api.test;
 
 import org.junit.Test
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 import java.io.File
 import java.io.RandomAccessFile
 
 class Teste {
-    fun getIndex(x: Int, y: Int, z: Int, width: Int, length: Int): Int {
-        return y * width * length + z * width + x
-    }
+
 
 
     fun simpleDB() {
@@ -27,26 +27,27 @@ class Teste {
     }
 
 
+    @Test
     fun testandoIndex() {
         val blocks = Blocks()
         blocks.listRecreate()
 
-
+        val size = 1000000
         val file = File("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\Testes Schematics\\teste.map")
-        val array = ByteArray(200000000)
+
         val writer = RandomAccessFile(file,"rw")
+        val byteWrite = ByteArrayOutputStream(size*2)
+        val dataWriter = DataOutputStream(byteWrite)
         calcLag("Escrever") {
-
-
-            for (index in 0 until 1000000) {
-                writer.write(index)
-                array[index] = 1
+            for (index in 0 until size) {
+                writer.writeShort(1)
             }
-            // blocks.write(file)
         }
         calcLag("Escrever2") {
-            writer.write(array)
-
+            for (index in 0 until size) {
+                dataWriter.writeShort(1)
+            }
+            writer.write(byteWrite.toByteArray())
         }
         writer.close()
         calcLag("Ler") {

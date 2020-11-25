@@ -172,10 +172,10 @@ class MinigamePlayer() {
     }
 
     /**
-     * Verifica se o jogador pode batalhar com o outro jogador
+     *
      *
      * @param player Jogador
-     * @return
+     * @return Se o jogador pode batalhar com o outro jogador
      */
     fun canBattle(player: MinigamePlayer): Boolean {
         if (player == this) return true

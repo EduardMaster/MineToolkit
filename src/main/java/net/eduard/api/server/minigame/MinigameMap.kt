@@ -1,12 +1,12 @@
 package net.eduard.api.server.minigame
 
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 
 import net.eduard.api.lib.modules.Copyable
-import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.storage.annotations.StorageAttributes
+import org.bukkit.block.Chest
+import org.bukkit.util.Vector
 
 /**
  * Representa o Mapa da Sala do Minigame
@@ -16,20 +16,25 @@ import net.eduard.api.lib.storage.annotations.StorageAttributes
 
 
 @StorageAttributes(indentificate = true)
-class MinigameMap (
-        mini : Minigame? = null,
-        var name: String = "mapa",
-        var displayName: String = "mapinha"
+class MinigameMap(
+    mini: Minigame? = null,
+    var name: String = "mapa",
+    var displayName: String = "mapinha"
 ) {
     @Transient
-    lateinit var minigame : Minigame
+    lateinit var minigame: Minigame
+
     init {
         mini?.maps?.add(this)
-        if (mini!=null) {
+        if (mini != null) {
             minigame = mini
         }
     }
+
     var teamSize = 1
+
+    var feastRadius = 50
+    val feastCenter get() = Location(world,0.0,200.0,0.0)
     var minPlayersAmount = 2
     var maxPlayersAmount = 20
     var neededPlayersAmount = 16
@@ -37,19 +42,28 @@ class MinigameMap (
     var spawn: Location? = null
     var lobby: Location? = null
     var locations = mutableMapOf<String, Location>()
-
     var spawns = mutableListOf<Location>()
-    var map: GameSchematic? = null
-    var feast: GameSchematic? = null
-    var worldName = "world-map"
-        get(){
-            if (field == "world-map"){
-                field = defaultWorldName()
-            }
-           return field
-        }
+    val map: GameSchematic
+        get() = GameSchematic.getSchematic(mapName())
 
-    val hasFeast get() = feast != null
+
+
+
+    @Transient
+    val allChests = mutableListOf<Chest>()
+    @Transient
+    val feastChests = mutableListOf<Chest>()
+
+    fun mapName() = minigame.name + "-" + name
+
+
+    val world get() = worldUsed.load()
+
+    var worldName
+        get() = worldUsed.worldName
+        set(value) {
+            worldUsed.worldName = value
+        }
 
 
     val hasLobby get() = lobby != null
@@ -61,52 +75,30 @@ class MinigameMap (
     val hasSpawns get() = spawns.isNotEmpty()
 
 
-    val hasSchematic get() = this.map != null
-
     fun defaultWorldName(): String {
         return "${minigame.name}/map/$name"
     }
 
     val isSolo get() = teamSize == 1
-
-    @Transient
-    var world: World? = null
-            get() {
-                if (field == null){
-                    field = loadWorld()
-                }
-                return field
-            }
+    val isDuo get() = teamSize == 2
 
     fun copyWorld(map: MinigameMap) {
-        world = Mine.copyWorld(map.worldName, worldName)
+        worldUsed.copy(map.worldName)
         fixWorld()
     }
+    fun insideFeast(location: Location) = location.distanceSquared(feastCenter) < (feastRadius*feastRadius)
 
-    fun unloadWorld() {
 
-        Mine.unloadWorld(worldName, false)
-    }
+    fun unloadWorld() = worldUsed.unload()
 
-    fun clearWorld() {
-        Mine.deleteWorld(worldName)
-        world = Mine.newEmptyWorld(worldName)
-    }
 
-    fun loadWorld(): World {
-        var mundo: World? = Bukkit.getWorld(worldName)
-        if (mundo == null) {
-            mundo = Mine.loadWorld(worldName)
-        }
-        return mundo!!
+    fun loadWorld() = worldUsed.load()
 
-    }
 
-    fun fixWorld() = world(world!!)
+    fun fixWorld() = world(world)
 
     fun resetWorld() {
-        unloadWorld()
-        world = loadWorld()
+        worldUsed.reset()
         fixWorld()
     }
 
@@ -133,6 +125,14 @@ class MinigameMap (
         return this
     }
 
+    var worldUsed = MinigameWorld()
+        get() {
+            if (field.nameNotSet()) {
+                field.worldName = defaultWorldName()
+            }
+            return field
+        }
+
     fun paste(relative: Location) {
         world(relative.world)
 
@@ -146,10 +146,9 @@ class MinigameMap (
         for (spawn in spawns) {
             spawn.add(dif)
         }
-        map!!.paste(relative, true)
+        map.paste(relative, true)
 
     }
-
 
 
 }

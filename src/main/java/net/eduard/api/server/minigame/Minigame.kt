@@ -25,10 +25,11 @@ import java.lang.Exception
  * @author Eduard
  */
 @Suppress("unused")
-open class Minigame : TimeManager {
+open class Minigame( var name: String = "Minigame",
+                     var messagePrefix: String = "§8[§b$name§8]§f") : TimeManager() {
 
-    var name = "Minigame"
-    var messagePrefix = "[Minigame] "
+
+
     var isEnabled = true
     var isBungeecord = false
     var isLobby = false
@@ -50,6 +51,7 @@ open class Minigame : TimeManager {
     @Transient
     var setting: MinigameMap? = null
     var lobby: Location? = null
+    var mapsWorld = MinigameWorld("$name-Maps")
 
     @Transient
     var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
@@ -121,17 +123,6 @@ open class Minigame : TimeManager {
 
     }
 
-    constructor()
-
-    constructor(name: String) {
-        this.name = name
-        messagePrefix = "§8[§b$name§8]§f"
-
-    }
-
-    constructor(name: String, plugin: JavaPlugin) : this(name) {
-        this.plugin = plugin
-    }
 
     /**
      * Cria um Mapa

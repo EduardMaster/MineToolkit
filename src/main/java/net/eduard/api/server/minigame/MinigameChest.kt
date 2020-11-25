@@ -25,7 +25,7 @@ class MinigameChest {
             inv.clear()
         }
         if (items.isEmpty()){
-            Mine.console("§cMinigamechest is Empty not filling chests")
+            Mine.console("§cMinigameChest is Empty not filling chests")
             return
         }
 
