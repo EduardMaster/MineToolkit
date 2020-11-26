@@ -11,6 +11,7 @@ import net.eduard.api.lib.game.Kit
 import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.storage.annotations.StorageIndex
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.lang.Exception
@@ -25,13 +26,17 @@ import java.lang.Exception
  * @author Eduard
  */
 @Suppress("unused")
-open class Minigame( var name: String = "Minigame",
+
+open class Minigame(
+    @StorageIndex
+    var name: String = "Minigame",
                      var messagePrefix: String = "§8[§b$name§8]§f") : TimeManager() {
 
 
 
     var isEnabled = true
     var isBungeecord = false
+    var worldBased = false
     var isLobby = false
     var bungeeLobby = "Lobby"
     var scoreboardStarting = DisplayBoard("Minigame iniciando")

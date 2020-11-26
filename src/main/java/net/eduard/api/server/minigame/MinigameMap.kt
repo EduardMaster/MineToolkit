@@ -5,8 +5,8 @@ import org.bukkit.World
 
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.storage.annotations.StorageAttributes
+import net.eduard.api.lib.storage.annotations.StorageIndex
 import org.bukkit.block.Chest
-import org.bukkit.util.Vector
 
 /**
  * Representa o Mapa da Sala do Minigame
@@ -15,9 +15,10 @@ import org.bukkit.util.Vector
  */
 
 
-@StorageAttributes(indentificate = true)
+
 class MinigameMap(
     mini: Minigame? = null,
+    @StorageIndex
     var name: String = "mapa",
     var displayName: String = "mapinha"
 ) {
@@ -34,7 +35,7 @@ class MinigameMap(
     var teamSize = 1
 
     var feastRadius = 50
-    val feastCenter get() = Location(world,0.0,200.0,0.0)
+    val feastCenter get() = Location(world, 0.0, 200.0, 0.0)
     var minPlayersAmount = 2
     var maxPlayersAmount = 20
     var neededPlayersAmount = 16
@@ -47,23 +48,26 @@ class MinigameMap(
         get() = GameSchematic.getSchematic(mapName())
 
 
-
-
     @Transient
     val allChests = mutableListOf<Chest>()
+
     @Transient
     val feastChests = mutableListOf<Chest>()
 
     fun mapName() = minigame.name + "-" + name
 
 
-    val world get() = worldUsed.load()
+    val world: World
+        get() = worldUsed.loadOrGet()
+
 
     var worldName
         get() = worldUsed.worldName
         set(value) {
             worldUsed.worldName = value
         }
+
+    fun fixWorld() = world(world)
 
 
     val hasLobby get() = lobby != null
@@ -86,16 +90,15 @@ class MinigameMap(
         worldUsed.copy(map.worldName)
         fixWorld()
     }
-    fun insideFeast(location: Location) = location.distanceSquared(feastCenter) < (feastRadius*feastRadius)
+
+    fun insideFeast(location: Location) = location.distanceSquared(feastCenter) < (feastRadius * feastRadius)
 
 
     fun unloadWorld() = worldUsed.unload()
 
 
-    fun loadWorld() = worldUsed.load()
+    fun loadWorld() = worldUsed.loadOrGet()
 
-
-    fun fixWorld() = world(world)
 
     fun resetWorld() {
         worldUsed.reset()
@@ -109,6 +112,7 @@ class MinigameMap(
 
 
     fun world(world: World): MinigameMap {
+        this.worldName = world.name
         for (spawn in this.spawns) {
             spawn.world = world
         }
@@ -135,19 +139,16 @@ class MinigameMap(
 
     fun paste(relative: Location) {
         world(relative.world)
-
-        val dif = relative.clone().subtract(map!!.relative)
-        if (hasSpawn) {
-            this.spawn!!.add(dif)
-        }
-        if (hasLobby) {
-            this.lobby!!.add(dif)
-        }
+        val dif = relative.clone().subtract(map.relative)
+        this.spawn?.add(dif)
+        this.lobby?.add(dif)
         for (spawn in spawns) {
             spawn.add(dif)
         }
         map.paste(relative, true)
-
+        allChests.clear()
+        allChests.addAll(map.chests)
+        feastChests.addAll(map.feastChests(feastCenter,feastRadius))
     }
 
 

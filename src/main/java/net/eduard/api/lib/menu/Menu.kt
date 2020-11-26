@@ -420,9 +420,11 @@ open class Menu(
     }
 
     open fun registerMenu(plugin: IPluginInstance) {
+
         registerListener(plugin.plugin as JavaPlugin)
         registeredMenus.add(this)
         for (button in buttons) {
+            buttonsCache[button.name] = button
             button.parentMenu = this
             if (button.isCategory) {
                 button.menu?.superiorMenu = this
@@ -517,7 +519,7 @@ open class Menu(
                 }
 
                 if (button != null) {
-                    debug("Button is not null")
+
                     if (button.click != null) {
                         debug("Button make click effect")
                         button.click?.accept(event)

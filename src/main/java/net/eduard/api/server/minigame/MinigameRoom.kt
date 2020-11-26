@@ -6,6 +6,8 @@ import net.eduard.api.lib.modules.Extra
 import org.bukkit.entity.Player
 
 import net.eduard.api.lib.storage.annotations.StorageAttributes
+import net.eduard.api.lib.storage.annotations.StorageIndex
+import net.eduard.api.lib.storage.annotations.StorageReference
 import org.bukkit.Bukkit
 
 /**
@@ -21,7 +23,7 @@ open class MinigameRoom {
     @ColumnPrimary
     var id: Int = 0
 
-    @StorageAttributes(reference = true)
+    @StorageReference
     var map: MinigameMap = MinigameMap()
 
     constructor()
@@ -39,7 +41,12 @@ open class MinigameRoom {
         mapUsed = map.copy()
         mapUsed.minigame = minigame
         mapUsed.worldName = "${minigame.name}/room/$id"
-        mapUsed.copyWorld(map)
+        if (minigame.worldBased) {
+            mapUsed.copyWorld(map)
+        }else{
+            mapUsed.resetWorld()
+            mapUsed.paste(mapUsed.feastCenter)
+        }
         restart()
 
     }

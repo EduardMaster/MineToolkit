@@ -2,7 +2,6 @@ package net.eduard.api.server.minigame
 
 import net.eduard.api.lib.modules.Mine
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.World
 
 /**
@@ -15,14 +14,19 @@ class MinigameWorld( var worldName: String = "minigame-map") {
 
     @Transient
     var world : World? = null
-    fun load() : World{
+    fun loadOrGet() : World{
         if (world!= null){
-            return world!!
+            if (world!!.name.equals(worldName, true)) {
+                return world!!
+            }
         }
         world = Bukkit.getWorld(worldName)
         if (world == null) {
             world = Mine.loadWorld(worldName)
-            world?.setSpawnLocation(0,200,0)
+
+        }
+        if (world?.spawnLocation == null?:false) {
+            world?.setSpawnLocation(0, 200, 0)
         }
         notSave()
         return world!!
@@ -47,11 +51,11 @@ class MinigameWorld( var worldName: String = "minigame-map") {
     }
     fun reset(){
         unload()
-        load()
+        loadOrGet()
     }
     fun clear(){
         delete()
-        load()
+        loadOrGet()
     }
     fun copy(sourceWorld : String){
         world = Mine.copyWorld(sourceWorld ,worldName)
