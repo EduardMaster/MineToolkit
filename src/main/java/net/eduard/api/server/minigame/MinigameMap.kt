@@ -97,14 +97,16 @@ class MinigameMap(
     fun unloadWorld() = worldUsed.unload()
 
 
-    fun loadWorld() = worldUsed.loadOrGet()
 
 
     fun resetWorld() {
         worldUsed.reset()
         fixWorld()
     }
-
+    fun clearWorld() {
+        worldUsed.clear()
+        fixWorld()
+    }
     fun copy(): MinigameMap {
         return Copyable.copyObject(this)
 
@@ -149,6 +151,7 @@ class MinigameMap(
         allChests.clear()
         allChests.addAll(map.chests)
         feastChests.addAll(map.feastChests(feastCenter,feastRadius))
+        allChests.removeAll(feastChests)
     }
 
 

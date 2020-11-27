@@ -2,6 +2,7 @@ package net.eduard.api.lib.game
 
 import net.eduard.api.lib.kotlin.sendTitle
 import net.eduard.api.lib.modules.Copyable
+import net.eduard.api.lib.modules.Mine
 import org.bukkit.entity.Player
 
 /**
@@ -9,11 +10,11 @@ import org.bukkit.entity.Player
  */
 class Title(
 
-        var title: String = "Titulo",
-        var subTitle: String = "Subtitulo",
-        var fadeIn: Int = 20,
-        var stay: Int = 20,
-        var fadeOut: Int = 20
+    var title: String = "Titulo",
+    var subTitle: String = "",
+    var fadeIn: Int = 20,
+    var stay: Int = 20,
+    var fadeOut: Int = 20
 ) {
 
     fun copy(): Title {
@@ -21,9 +22,8 @@ class Title(
     }
 
 
-    fun create(player: Player): Title {
-        player.sendTitle(title, subTitle, fadeIn, stay, fadeOut)
-        return this
+    fun create(player: Player) {
+        player.sendTitle(Mine.getReplacers(title, player), Mine.getReplacers(subTitle, player), fadeIn, stay, fadeOut)
     }
 
 }

@@ -20,6 +20,7 @@ open class MinigameRoom {
 
     @Transient
     lateinit var minigame: Minigame
+
     @ColumnPrimary
     var id: Int = 0
 
@@ -43,8 +44,8 @@ open class MinigameRoom {
         mapUsed.worldName = "${minigame.name}/room/$id"
         if (minigame.worldBased) {
             mapUsed.copyWorld(map)
-        }else{
-            mapUsed.resetWorld()
+        } else {
+            mapUsed.clearWorld()
             mapUsed.paste(mapUsed.feastCenter)
         }
         restart()
@@ -57,7 +58,11 @@ open class MinigameRoom {
     }
 
     open fun reset() {
-        mapUsed.resetWorld()
+        if (minigame.worldBased) {
+            mapUsed.resetWorld()
+        } else {
+            mapUsed.clearWorld()
+        }
     }
 
     var isEnabled: Boolean = false
@@ -67,6 +72,7 @@ open class MinigameRoom {
     var round: Int = 0
     var state = MinigameState.STARTING
     var time: Int = 0
+
     @Transient
     var mapUsed: MinigameMap = map
 
@@ -97,8 +103,11 @@ open class MinigameRoom {
      */
     fun broadcast(message: String) {
         for (player in players) {
-            player.send(minigame.messagePrefix + message.replace("\$time", Extra.formatSeconds1(time)).replace("\$max", "" + map.maxPlayersAmount)
-                    .replace("\$players", "" + players.size))
+            player.send(
+                minigame.messagePrefix + message.replace("\$time", Extra.formatSeconds1(time))
+                    .replace("\$max", "" + map.maxPlayersAmount)
+                    .replace("\$players", "" + players.size)
+            )
         }
     }
 
@@ -139,8 +148,10 @@ open class MinigameRoom {
 
     fun checkTeamWinner(): Boolean {
 
-        return teams.filter{ it.getPlayers(MinigamePlayerState.NORMAL)
-            .isNotEmpty() }.size == 1
+        return teams.filter {
+            it.getPlayers(MinigamePlayerState.NORMAL)
+                .isNotEmpty()
+        }.size == 1
     }
 
     fun checkForceStart(): Boolean {
