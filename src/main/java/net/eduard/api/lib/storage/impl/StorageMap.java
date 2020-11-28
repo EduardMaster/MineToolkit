@@ -70,11 +70,13 @@ final public class StorageMap extends StorageBase<Map<?,?> , Object> {
         mapInfoValue.updateByType();
         mapInfoValue.updateByStorable();
         mapInfoValue.updateByField();
-
+        debug("<< MAP KEY TYPE: " + mapInfoKey.getAlias());
+        debug("<< MAP VALUE TYPE: " + mapInfoValue.getAlias());
         Map<String, Object> newMap = new HashMap<>();
         for (Entry<?, ?> entry : data.entrySet()) {
+            debug("<< KEY FROM MAP");
             String key = StorageAPI.STORE_OBJECT.store(mapInfoKey,entry.getKey()).toString();
-
+            debug("<< VALUE FROM MAP");
             Object value = StorageAPI.STORE_OBJECT.store(mapInfoValue,entry.getValue());
             newMap.put(key, value);
         }

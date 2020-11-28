@@ -1,6 +1,7 @@
 package net.eduard.api.lib.storage.api;
 
 import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAPI;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class StorageClassInfo {
 
     public String getAlias() {
         if (alias == null){
-            alias = getCurrentClass().getSimpleName();
+            alias = StorageAPI.getClassName(getCurrentClass());
         }
         return alias;
     }

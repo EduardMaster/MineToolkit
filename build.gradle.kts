@@ -29,10 +29,15 @@ dependencies {
     api("net.eduard:modules:1.0-SNAPSHOT")
     api("net.eduard:sqlmanager:1.0-SNAPSHOT")
     api("net.eduard.abstraction:complete:1.0-SNAPSHOT")
+
     compileOnly(kotlin("stdlib"))
-    testCompileOnly("org.bukkit:spigot:1.8.9")
-    testApi("junit", "junit", "4.12")
     testCompileOnly(kotlin("stdlib"))
+    testCompileOnly("junit", "junit", "4.12")
+    /*
+  testCompileOnly("org.bukkit:spigot:1.8.9")
+
+
+  **/
 
 }
 tasks.withType<ShadowJar>{
@@ -52,19 +57,11 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
 }
-/*
-val sources by tasks.registering(Jar::class) {
-    baseName = project.name
-    classifier = "sources"
-    version = null
-    from(sourceSets.main.get().allSource)
-}
-*/
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
-            //artifact(sources.get())
         }
     }
 }

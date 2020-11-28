@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
+import net.eduard.api.lib.hybrid.Hybrid;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.api.StorageClassInfo;
 import net.eduard.api.lib.storage.api.StorageInfo;
@@ -45,28 +46,47 @@ public final class StorageAPI {
     private static final List<ReferenceBase<?>> references = new ArrayList<>();
 
 
-    public static StorageClassInfo getClassInfo(Class<?> clz){
-        if (clz == null)return null;
+    public static String getClassName(Class<?> claz) {
+        try {
+            return claz.getSimpleName();
+        } catch (Error error) {
+            try {
+                return claz.getName();
+            } catch (Error error2) {
+                try {
+                    return claz.getTypeName();
+                } catch (Error error3) {
+                    return claz.getCanonicalName();
+                }
+            }
+        }
+    }
+
+    public static StorageClassInfo getClassInfo(Class<?> clz) {
+        if (clz == null) return null;
         StorageClassInfo classInfo = classInfoByClass.get(clz);
-        if (classInfo == null){
+        if (classInfo == null) {
             classInfo = new StorageClassInfo(clz);
             classInfoByClass.put(clz, classInfo);
             classInfoByAlias.put(classInfo.getAlias(), classInfo);
         }
         return classInfo;
     }
-    public static Map<Object,Object> getCacheOf(Class<?> clz){
+
+    public static Map<Object, Object> getCacheOf(Class<?> clz) {
         return getClassInfo(clz).getCache();
 
     }
-    public static Object getObjectByKey(Class<?> clz , Object key){
+
+    public static Object getObjectByKey(Class<?> clz, Object key) {
         return getCacheOf(clz).get(key);
     }
-    public static Object getKeyOfObject(Object object){
+
+    public static Object getKeyOfObject(Object object) {
         return getClassInfo(object.getClass()).getPrimary(object);
     }
 
-   public  static boolean isStorable(Class<?> claz) {
+    public static boolean isStorable(Class<?> claz) {
         return Storable.class.isAssignableFrom(claz);
     }
 
@@ -87,7 +107,6 @@ public final class StorageAPI {
         references.add(reference);
         debug("++ REFERENCE");
     }
-
 
 
     public static Object store(Class<?> claz, Object object) {
@@ -158,6 +177,7 @@ public final class StorageAPI {
         debug("++ CLASS " + info.getAlias());
     }
 
+
     public static void registerPackage(Class<?> clazzForPackage) {
         registerPackage(clazzForPackage, clazzForPackage.getPackage().getName());
     }
@@ -171,8 +191,7 @@ public final class StorageAPI {
     }
 
     public static Storable<?> autoRegisterClass(Class<?> claz) {
-
-        return autoRegisterClass(claz, claz.getSimpleName());
+        return autoRegisterClass(claz, getClassName(claz));
     }
 
     public static Storable<?> autoRegisterClass(Class<?> claz, String alias) {
@@ -209,7 +228,7 @@ public final class StorageAPI {
      */
     public static void unregisterStorable(Class<?> clz) {
         StorageClassInfo info = classInfoByClass.get(clz);
-        if (info!=null){
+        if (info != null) {
             classInfoByClass.remove(clz);
             classInfoByAlias.remove(info.getAlias());
             debug("- CLASS " + info.getAlias());
@@ -217,14 +236,13 @@ public final class StorageAPI {
     }
 
 
-
-    public static void unregisterPlugin(Class<?> pluginClass){
-        StorageAPI.debug("- CLASSES FROM PLUGIN "+pluginClass);
+    public static void unregisterPlugin(Class<?> pluginClass) {
+        StorageAPI.debug("- CLASSES FROM PLUGIN " + pluginClass);
         ClassLoader loader = pluginClass.getClassLoader();
         Iterator<Entry<String, StorageClassInfo>> it = classInfoByAlias.entrySet().iterator();
-
+        String alias = getClassName(pluginClass);
         int amount = 0;
-        while (it.hasNext()){
+        while (it.hasNext()) {
             Entry<String, StorageClassInfo> entry = it.next();
             if (entry.getKey().getClass().getClassLoader() == loader) {
                 StorageClassInfo info = entry.getValue();
@@ -234,13 +252,12 @@ public final class StorageAPI {
                 amount++;
             }
         }
-        StorageAPI.debug("- CLASSES WITH SAME LOADER OF $pluginName : "+amount);
+        StorageAPI.debug("- CLASSES WITH SAME LOADER OF: " + alias + " AMOUNT: " + amount);
     }
 
 
-
     public static Object transform(Object object, Class<?> type) throws Exception {
-        String fieldTypeName = Extra.toTitle(type.getSimpleName());
+        String fieldTypeName = Extra.toTitle(getClassName(type));
         Object value = Extra.getMethodInvoke(Extra.class, "to" + fieldTypeName, Extra.getParameters(Object.class), object);
         if (value instanceof String) {
             value = Extra.toChatMessage((String) value);
@@ -251,19 +268,24 @@ public final class StorageAPI {
     public static Storable<?> getStore(Class<?> clz) {
         if (clz == null)
             return null;
-
-        Storable<?> store = getClassInfo(clz).getStorable();
-        if (store == null) {
+        StorageClassInfo mainInfo = getClassInfo(clz);
+        Storable<?> store = mainInfo.getStorable();
+        if (store == null&& (!clz.isEnum()) && !Extra.isWrapper(clz)) {
+            debug("GETTING STORABLE FROM MAP FOR CLASS: " + StorageAPI.getClassName(clz));
             for (Entry<Class<?>, StorageClassInfo> entry : classInfoByClass.entrySet()) {
                 Class<?> loopClass = entry.getKey();
                 StorageClassInfo info = entry.getValue();
+                if (loopClass.equals(clz)) continue;
                 if (loopClass.isAssignableFrom(clz)) {
                     store = info.getStorable();
+                    debug("requiredClass extends LoopClass: " + StorageAPI.getClassName(loopClass));
                 } else if (clz.isAssignableFrom(loopClass)) {
                     store = info.getStorable();
+                    debug("LoopClass extends requiredClass: " + StorageAPI.getClassName(loopClass));
                 }
             }
         }
+        mainInfo.setStorable(store);
         return store;
 
     }
@@ -286,8 +308,18 @@ public final class StorageAPI {
     }
 
     public static void debug(String msg) {
+        int limit = 120;
+        if (msg.length() > limit) {
+            msg = msg.substring(0, limit) + "...";
+        }
         if (debug)
-            System.out.println("[Storage] " + msg);
+            console("[StorageAPI] " + msg);
+    }
+
+    public static void console(String msg) {
+
+        System.out.println(msg);
+
     }
 
     public static void registerAlias(Class<?> claz, String alias) {
@@ -310,7 +342,7 @@ public final class StorageAPI {
                 .enableComplexMapKeySerialization();
         classInfoByClass.forEach((key, value) -> {
             Storable<?> storable = value.getStorable();
-            if (storable!=null) {
+            if (storable != null) {
                 if (storable instanceof JsonSerializer && storable instanceof JsonDeserializer) {
                     builder.registerTypeAdapter(key, storable);
                 }
@@ -318,6 +350,7 @@ public final class StorageAPI {
         });
         gson = builder.create();
     }
+
     public static Gson getGson() {
         return gson;
     }

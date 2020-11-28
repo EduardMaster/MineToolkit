@@ -27,7 +27,7 @@ class Grappler : KitAbility() {
                         hooks[player] = GrapplerHook(player, 1.5)
                     } else if (event.action == Action.RIGHT_CLICK_AIR) {
                         if (hooks.containsKey(player)) {
-                            val hook = hooks[player]
+                            //val hook = hooks[player]
                             player.sendMessage(
                                     "§6O gancho nao se prendeu em nada!")
                         }

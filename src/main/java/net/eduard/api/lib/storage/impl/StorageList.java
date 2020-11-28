@@ -19,10 +19,10 @@ final public class StorageList extends StorageBase<List<?>, Object> {
         listInfo.updateByType();
         listInfo.updateByStorable();
         listInfo.updateByField();
+        debug(">> LIST TYPE: " + listInfo.getAlias());
 
-        debug(">> LIST RESTORATION");
         if (listInfo.isReference()) {
-            debug(">> IS REFERENCE LIST");
+            debug(">> BY REFERENCE LIST");
             if (data instanceof List) {
                 List<?> oldList = (List<?>) data;
                 List<Object> newList = new ArrayList<>();
@@ -35,10 +35,10 @@ final public class StorageList extends StorageBase<List<?>, Object> {
 
                     Object object = StorageAPI.getObjectByKey(listInfo.getType(), key);
                     if (object != null) {
-                        debug(">> HAS INSTANCE");
+                        debug(">> ITEM REFERENCE EXISTS");
                         realList.add(object);
                     } else {
-                        debug(">> HAS NOT INSTANCE");
+                        debug(">> ITEM REFERENCE NOT LOEADED");
                         newList.add(key);
                     }
                 }
@@ -52,12 +52,13 @@ final public class StorageList extends StorageBase<List<?>, Object> {
         List<Object> newList = new ArrayList<>();
         if (data instanceof List) {
             List<?> listOld = (List<?>) data;
+            debug(">> LIST BY LIST");
             for (Object item : listOld) {
                 newList.add(StorageAPI.STORE_OBJECT.restore(listInfo, item));
             }
         } else if (data instanceof Map) {
             Map<?, ?> mapOld = (Map<?, ?>) data;
-            debug("RESTORING LIST BY MAP");
+            debug(">> LIST BY MAP");
             for (Object item : mapOld.values()) {
                 Object objeto = StorageAPI.STORE_OBJECT.restore(listInfo, item);
                 newList.add(objeto);
@@ -77,13 +78,17 @@ final public class StorageList extends StorageBase<List<?>, Object> {
         listInfo.updateByType();
         listInfo.updateByStorable();
         listInfo.updateByField();
-
-        debug("<< LIST STORATION");
         List<Object> newList = new ArrayList<>();
-
+        debug("<< LIST TYPE: " + listInfo.getAlias());
         for (Object item : data) {
-            Object dado = StorageAPI.STORE_OBJECT.store(listInfo, item);
-            newList.add(dado);
+            try {
+                debug("<< AS ITEM FROM LIST");
+                Object dado = StorageAPI.STORE_OBJECT.store(listInfo, item);
+                newList.add(dado);
+            }catch (Exception ex){
+                ex.printStackTrace();
+                debug("<< SAVE ITEM FROM LIST FAIL");
+            }
         }
         return newList;
 

@@ -9,7 +9,7 @@ import net.md_5.bungee.event.EventHandler
 class BungeeEvents : Listener {
 
 
-
+/*
     @EventHandler
     fun onJoin(e: PostLoginEvent) {
         val player = e.player
@@ -96,4 +96,5 @@ class BungeeEvents : Listener {
     @EventHandler
     fun event(e: TabCompleteEvent) {
     }
+    */
 }

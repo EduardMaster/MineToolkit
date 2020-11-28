@@ -20,7 +20,7 @@ public final class StorageInline extends StorageBase<Object, String> {
     public Object restore(StorageInfo info, String data) {
         if (data == null)
             return null;
-
+        debug(">> INLINE TYPE: " + StorageAPI.getClassName(info.getType()));
         Object resultadoFinal = null;
         try {
             resultadoFinal = info.getStore().newInstance();
@@ -28,8 +28,6 @@ public final class StorageInline extends StorageBase<Object, String> {
         }
         if (resultadoFinal == null) {
             try {
-
-
                 resultadoFinal = Extra.getEmptyConstructor(info.getType()).newInstance();
             } catch (Exception ignored) {
             }
@@ -41,7 +39,7 @@ public final class StorageInline extends StorageBase<Object, String> {
 
 
         String[] split = data.split(";");
-        debug("~~ SPLIT SIZE: " + Arrays.asList(split).size());
+        debug("~~ SPLIT SIZE: " +split.length);
         int index = 0;
         for (Field field : info.getType().getDeclaredFields()) {
             if (Modifier.isTransient(field.getModifiers())) {
@@ -55,7 +53,7 @@ public final class StorageInline extends StorageBase<Object, String> {
             if (Modifier.isFinal(field.getModifiers()))
                 continue;
             field.setAccessible(true);
-
+            debug(">> INLINE VARIABLE " + field.getName());
             try {
                 Storable<?> store = StorageAPI.getStore(field.getType());
 
@@ -161,6 +159,7 @@ public final class StorageInline extends StorageBase<Object, String> {
     @Override
     public String store(StorageInfo info, Object data) {
 
+        debug("<< INLINE TYPE: " + StorageAPI.getClassName(data.getClass()));
         StringBuilder builder = new StringBuilder();
 
         for (Field field : info.getType().getDeclaredFields()) {
@@ -175,18 +174,21 @@ public final class StorageInline extends StorageBase<Object, String> {
             if (Modifier.isFinal(field.getModifiers()))
                 continue;
             field.setAccessible(true);
-            Class<?> clz = field.getType();
+            debug("<< INLINE VARIABLE " + field.getName());
+
+
+            Class<?> fieldType = field.getType();
             try {
                 Object fieldValue = field.get(data);
                 if (fieldValue == null) {
                     builder.append("null;");
 
                 } else {
+                    debug("<< INLINE VARIABLE TYPE: " + StorageAPI.getClassName(fieldValue.getClass()));
 
-
-                    if (Extra.isWrapper(clz)) {
+                    if (Extra.isWrapper(fieldType)) {
                         builder.append(fieldValue);
-                    } else if (Extra.isList(field.getType())) {
+                    } else if (Extra.isList(fieldType)) {
                         int index = 0;
                         for (Object object : (List<Object>) fieldValue) {
                             if (index > 0) {
@@ -196,7 +198,7 @@ public final class StorageInline extends StorageBase<Object, String> {
                             builder.append(object);
                         }
 
-                    } else if (Extra.isMap(field.getType())) {
+                    } else if (Extra.isMap(fieldType)) {
                         int index = 0;
                         for (Entry<Object, Object> entrada : ((Map<Object, Object>) fieldValue).entrySet()) {
                             if (index > 0) {
@@ -210,7 +212,7 @@ public final class StorageInline extends StorageBase<Object, String> {
 
                         StorageInfo fieldInfo = info.clone();
                         fieldInfo.setField(field);
-                        fieldInfo.setType(clz);
+                        fieldInfo.setType(fieldType);
                         fieldInfo.updateByType();
                         fieldInfo.updateByField();
                         fieldInfo.updateByStorable();
@@ -218,6 +220,7 @@ public final class StorageInline extends StorageBase<Object, String> {
 
                         builder.append("{");
                         Object result = StorageAPI.STORE_OBJECT.store(fieldInfo, fieldValue);
+                        debug("<< INLINE INSIDE INLINE: " +result);
                         builder.append(result);
                         builder.append("}");
 
