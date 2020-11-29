@@ -289,10 +289,18 @@ public class StorageObject extends StorageBase<Object, Object> {
 
             boolean saveType = false;
 
-            if (info.getType() != null && info.getType() != claz) {
+            if (info.getType() != claz|| info.isIndentifiable()) {
                 saveType = true;
             }
+            /*
+            else{
+                debug("Why not save type alias?");
+                debug("<< Info Type "+ info.getType());
+                debug("<< Class Type "+ claz);
+                debug("<< Info indentifiable? "+ info.isIndentifiable());
+            }*/
             if (saveType) {
+                debug("<< AS TYPE ALIAS "+ alias);
                 map.put(StorageAPI.STORE_KEY, alias);
             }
             List<Class<?>> classes = new ArrayList<>();

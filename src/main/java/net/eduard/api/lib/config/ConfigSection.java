@@ -335,12 +335,9 @@ public class ConfigSection {
         return getMap().entrySet();
     }
 
-    public SoundEffect getSound() {
-        return (SoundEffect) getValue();
-    }
 
     public SoundEffect getSound(String path) {
-        return getSection(path).getSound();
+        return get(path , SoundEffect.class);
     }
 
     public String getString() {

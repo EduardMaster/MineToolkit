@@ -3,9 +3,11 @@ package net.eduard.api.server.currency.list;
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.game.ItemBuilder;
 import net.eduard.api.lib.modules.VaultAPI;
+import net.eduard.api.lib.storage.annotations.StorageAttributes;
 import net.eduard.api.server.currency.SimpleCurrencyHandler;
 import org.bukkit.Material;
 
+@StorageAttributes(indentificate = true)
 public class CurrencyVaultEconomy extends SimpleCurrencyHandler {
 
     public CurrencyVaultEconomy(){

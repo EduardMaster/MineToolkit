@@ -1,9 +1,11 @@
 package net.eduard.api.server.currency.list;
 
 import net.eduard.api.lib.modules.FakePlayer;
+import net.eduard.api.lib.storage.annotations.StorageAttributes;
 import net.eduard.api.server.Systems;
 import net.eduard.api.server.currency.SimpleCurrencyHandler;
 
+@StorageAttributes(indentificate = true)
 public class CurrencyEduCash extends SimpleCurrencyHandler {
 
     public CurrencyEduCash(){

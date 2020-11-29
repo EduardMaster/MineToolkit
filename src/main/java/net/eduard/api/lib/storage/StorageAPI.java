@@ -270,16 +270,16 @@ public final class StorageAPI {
             return null;
         StorageClassInfo mainInfo = getClassInfo(clz);
         Storable<?> store = mainInfo.getStorable();
-        if (store == null&& (!clz.isEnum()) && !Extra.isWrapper(clz)) {
+        if (store == null && (!clz.isEnum()) && !Extra.isWrapper(clz)) {
             debug("GETTING STORABLE FROM MAP FOR CLASS: " + StorageAPI.getClassName(clz));
             for (Entry<Class<?>, StorageClassInfo> entry : classInfoByClass.entrySet()) {
                 Class<?> loopClass = entry.getKey();
                 StorageClassInfo info = entry.getValue();
                 if (loopClass.equals(clz)) continue;
-                if (loopClass.isAssignableFrom(clz)) {
+                if (loopClass.isAssignableFrom(clz) && info.getStorable() != null) {
                     store = info.getStorable();
                     debug("requiredClass extends LoopClass: " + StorageAPI.getClassName(loopClass));
-                } else if (clz.isAssignableFrom(loopClass)) {
+                } else if (clz.isAssignableFrom(loopClass) && info.getStorable() != null) {
                     store = info.getStorable();
                     debug("LoopClass extends requiredClass: " + StorageAPI.getClassName(loopClass));
                 }
