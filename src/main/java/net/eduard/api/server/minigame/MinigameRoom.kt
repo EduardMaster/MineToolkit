@@ -62,6 +62,7 @@ open class MinigameRoom {
             mapUsed.resetWorld()
         } else {
             mapUsed.clearWorld()
+            mapUsed.paste(mapUsed.feastCenter)
         }
     }
 

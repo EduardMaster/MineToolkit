@@ -6,7 +6,9 @@ import org.bukkit.World
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.storage.annotations.StorageAttributes
 import net.eduard.api.lib.storage.annotations.StorageIndex
+import org.bukkit.Bukkit
 import org.bukkit.block.Chest
+import org.bukkit.util.Vector
 
 /**
  * Representa o Mapa da Sala do Minigame
@@ -34,8 +36,10 @@ class MinigameMap(
 
     var teamSize = 1
 
-    var feastRadius = 50
+    var feastRadius = 20
     val feastCenter get() = Location(world, 0.0, 200.0, 0.0)
+    @Transient
+    var lastRelative = Vector(0,0,0)
     var minPlayersAmount = 2
     var maxPlayersAmount = 20
     var neededPlayersAmount = 16
@@ -139,19 +143,29 @@ class MinigameMap(
             return field
         }
 
+    fun debug(msg : String){
+        Bukkit.getConsoleSender().sendMessage("§b[MinigameMap] §f$msg")
+    }
     fun paste(relative: Location) {
+
+        val modified = (relative.toVector().distance(lastRelative) > 0)
+        lastRelative = relative.toVector()
         world(relative.world)
         val dif = relative.clone().subtract(map.relative)
-        this.spawn?.add(dif)
-        this.lobby?.add(dif)
-        for (spawn in spawns) {
-            spawn.add(dif)
-        }
+
         map.paste(relative, true)
         allChests.clear()
         allChests.addAll(map.chests)
         feastChests.addAll(map.feastChests(feastCenter,feastRadius))
         allChests.removeAll(feastChests)
+
+        if (modified) {
+            this.spawn?.add(dif)
+            this.lobby?.add(dif)
+            for (spawn in spawns) {
+                spawn.add(dif)
+            }
+        }
     }
 
 
