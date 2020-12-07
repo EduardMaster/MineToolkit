@@ -74,7 +74,7 @@ class EduardAPIEvents : EventsManager() {
 
                         }
                     }
-                }.runTask(plugin)
+                }.runTaskLater(plugin,2)
 
 
             }

@@ -68,7 +68,7 @@ public class BungeeController implements ServerController<Plugin> {
         } else if (server.equals("bungeecord")) {
             if (tag.equals("connect")) {
                 String[] args = line.split(" ");
-                connect(args[0], args[1], args[2] , Extra.toInt(args[3]));
+                connect(args[0], args[1], args[2], Extra.toInt(args[3]));
             } else {
                 for (ServerMessageHandler handler : BungeeAPI.getHandlers()) {
                     handler.onMessage(server, tag, line);
@@ -82,6 +82,7 @@ public class BungeeController implements ServerController<Plugin> {
     }
 
     private Plugin plugin;
+
     @Override
     public void register(Plugin pl) {
         setPlugin(pl);
@@ -112,12 +113,15 @@ public class BungeeController implements ServerController<Plugin> {
 
 
     @Override
-    public void connect(String playerName, String serverType, String subType,int teamSize) {
+    public void connect(String playerName, String serverType, String subType, int teamSize) {
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerName);
         if (player != null) {
+            ProxyServer.getInstance().getConsole().sendMessage("§cConnecting player "+player.getName()
+                    +" para o servidor do tipo "+serverType +" e subtipo "+subType);
             for (ServerSpigot spigot : BungeeAPI.getServers().values()) {
-                if (spigot.getTeamSize() == teamSize&&spigot.getSubType().equalsIgnoreCase(subType)
+                if (spigot.getTeamSize() == teamSize && spigot.getSubType().equalsIgnoreCase(subType)
                         && spigot.getType().equalsIgnoreCase(serverType)
+                        && spigot.getState() == ServerState.ONLINE
                         && spigot.getCount() < spigot.getMax()) {
                     ServerInfo server = ProxyServer.getInstance()
                             .getServerInfo(spigot.getName());

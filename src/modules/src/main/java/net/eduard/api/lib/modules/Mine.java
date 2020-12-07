@@ -18,6 +18,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.material.Crops;
+import org.bukkit.material.MaterialData;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 
@@ -2912,7 +2913,7 @@ public final class Mine {
     /**
      * Armazena as armaduras do Jogador
      *
-     * @param player
+     * @param player Jogador
      */
     public static void saveArmours(Player player) {
         PLAYERS_ARMOURS.put(player, player.getInventory().getArmorContents());
@@ -2998,14 +2999,23 @@ public final class Mine {
 
     public static List<Location> setBox(Location playerLocation, double higher, double lower, double size,
                                         Material wall, Material up, Material down, boolean clearInside) {
+        return setBox(playerLocation, higher, lower, size, new MaterialData(wall), new MaterialData(up), new MaterialData(down), clearInside
+        );
+
+    }
+
+    public static List<Location> setBox(Location playerLocation, double higher, double lower, double size,
+                                        MaterialData wall, MaterialData up, MaterialData down, boolean clearInside) {
         return getBox(playerLocation, higher, lower, size, location -> {
 
             if (location.getBlockY() == playerLocation.getBlockY() + higher) {
-                location.getBlock().setType(up);
+                location.getBlock().setType(up.getItemType());
+                location.getBlock().setData(up.getData());
                 return true;
             }
             if (location.getBlockY() == playerLocation.getBlockY() - lower) {
-                location.getBlock().setType(down);
+                location.getBlock().setType(down.getItemType());
+                location.getBlock().setData(down.getData());
                 return true;
             }
 
@@ -3013,7 +3023,8 @@ public final class Mine {
                     || location.getBlockZ() == playerLocation.getBlockZ() + size
                     || location.getBlockX() == playerLocation.getBlockX() - size
                     || location.getBlockZ() == playerLocation.getBlockZ() - size) {
-                location.getBlock().setType(wall);
+                location.getBlock().setType(down.getItemType());
+                location.getBlock().setData(down.getData());
                 return true;
             }
             if (clearInside) {
