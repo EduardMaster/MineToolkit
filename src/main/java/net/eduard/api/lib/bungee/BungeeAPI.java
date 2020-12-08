@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class BungeeAPI {
-    BungeeAPI(){}
+    BungeeAPI() {
+    }
 
     private final static String channel = "bukkit:bungee";
     private final static Map<String, ServerSpigot> servers = new HashMap<>();
@@ -23,28 +24,31 @@ public final class BungeeAPI {
         return server;
     }
 
-    public static int getPlayersAmount(String serverType){
+    public static int getPlayersAmount(String serverType) {
         int amount = 0;
-        for (ServerSpigot server : servers.values()){
+        for (ServerSpigot server : servers.values()) {
             if (server.getType().equalsIgnoreCase(serverType)) {
                 amount += server.getCount();
             }
         }
         return amount;
     }
-    public static int getPlayersAmount(String serverType, int teamSize){
+
+    public static int getPlayersAmount(String serverType, int teamSize) {
         int amount = 0;
-        for (ServerSpigot server : servers.values()){
-            if (server.getType().equalsIgnoreCase(serverType)
-            && server.getTeamSize() == teamSize) {
+        for (ServerSpigot server : servers.values()) {
+            if (!server.getSubType().equalsIgnoreCase("lobby")
+                    && server.getType().equalsIgnoreCase(serverType)
+                    && server.getTeamSize() == teamSize) {
                 amount += server.getCount();
             }
         }
         return amount;
     }
-    public static int getPlayersAmount(String serverType , String subType){
+
+    public static int getPlayersAmount(String serverType, String subType) {
         int amount = 0;
-        for (ServerSpigot server : servers.values()){
+        for (ServerSpigot server : servers.values()) {
             if (server.getType().equalsIgnoreCase(serverType) &&
                     subType.equalsIgnoreCase(server.getSubType())) {
                 amount += server.getCount();

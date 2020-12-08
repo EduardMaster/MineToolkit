@@ -131,7 +131,12 @@ public class DisplayBoard implements  Cloneable {
 
     public DisplayBoard clone()  {
        try {
-           return (DisplayBoard) super.clone();
+           DisplayBoard clone = (DisplayBoard) super.clone();
+           clone.scoreboard = null;
+           clone.objective = null;
+           clone.health = null;
+           clone.getScoreboard();
+           return clone;
        }catch (Exception ex){
            ex.printStackTrace();
        }

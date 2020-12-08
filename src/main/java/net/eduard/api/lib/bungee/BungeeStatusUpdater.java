@@ -2,6 +2,7 @@ package net.eduard.api.lib.bungee;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 
 import java.io.ByteArrayOutputStream;
@@ -38,8 +39,11 @@ public class BungeeStatusUpdater implements Runnable {
             server.setPlayers(servidor.getPlayers()
                     .stream().map(CommandSender::getName).collect(Collectors.toList()));
 
-            if (!servidor.getPlayers().isEmpty() && quantidadeDePlayers != server.getCount()) {
+            if (quantidadeDePlayers != server.getCount()) {
                 try {
+                    ProxyServer.getInstance().getConsole().sendMessage(
+                            new TextComponent("§aEnviando updates do Servidor "+server.getName() +" para todos servidores")
+                    );
                     ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
                     ObjectOutputStream out = new ObjectOutputStream(arrayOut);
                     out.writeUTF(server.getName());
