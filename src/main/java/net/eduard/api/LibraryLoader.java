@@ -20,10 +20,10 @@ public class LibraryLoader {
 
         log("Starting loading libraries");
         for (File file : Objects.requireNonNull(pastaLibs.listFiles())){
-            log("Verifying if is a Jar: "+file.getName());
+
             if (file.getName().endsWith(".jar")){
                 try {
-                    log("Loading jar..");
+                    log("Loading jar: "+file.getName());
                     addClassPath(getJarUrl(file));
                 } catch (IOException e) {
                     e.printStackTrace();

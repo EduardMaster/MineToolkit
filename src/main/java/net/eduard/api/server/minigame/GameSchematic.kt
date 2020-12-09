@@ -81,7 +81,7 @@ class GameSchematic(var name : String = "Mapinha") {
             return GameSchematic(name).reload(subfile)
         }
         fun log(message : String){
-            Bukkit.getConsoleSender().sendMessage("§e[GameSchematic] §f"
+            Bukkit.getConsoleSender().sendMessage("§b[GameSchematic] §f"
             + message)
         }
     }
@@ -278,8 +278,8 @@ class GameSchematic(var name : String = "Mapinha") {
                 blocksWrited++
 
             }
-            log("Escreveu $blocksWrited no arquivo")
-            log("Escreveu ${byteArrayWriter.size()} bytes no arquivo")
+            //log("Escreveu $blocksWrited no arquivo")
+            //log("Escreveu ${byteArrayWriter.size()} bytes no arquivo")
             dataWriter.writeInt(byteArrayWriter.size())
             dataWriter.write(byteArrayWriter.toByteArray())
             byteArrayDataWriter.close()
@@ -308,7 +308,7 @@ class GameSchematic(var name : String = "Mapinha") {
             height = dataReader.readShort()
             length = dataReader.readShort()
             val size = dataReader.readInt()/3
-            log("Size of blocks $size")
+           // log("Size of blocks $size")
             blocks = Array(size){BlockInfo()}
             val array = ByteArray(size*3)
             dataReader.readFully(array)

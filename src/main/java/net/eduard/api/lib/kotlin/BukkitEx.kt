@@ -7,11 +7,8 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.MineReflect
+import org.bukkit.*
 
-import org.bukkit.Bukkit
-import org.bukkit.Color
-import org.bukkit.CropState
-import org.bukkit.Material
 import org.bukkit.block.BlockState
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -37,6 +34,9 @@ fun Player.removeXP(amount: Double) {
 
 fun Player.addHotBar(item: ItemStack) {
     Mine.setHotBar(this, item)
+}
+fun String.colored(): String {
+    return ChatColor.translateAlternateColorCodes('&', this)
 }
 
 fun Player.changeTabName(tabName: String) {

@@ -552,18 +552,19 @@ public final class Extra {
     public static String formatMoney(double numero) {
 
         List<String> classificacoes = Arrays.asList("", "k", "m", "b", "t", "q", "qq", "s", "ss", "O", "n", "d", "un", "dd", "td", "qd", "qqd", "sd", "ssd", "od", "nd", "vd");
-        DecimalFormat formatador = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.US));
+        DecimalFormat formatador = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR")));
 
         String numeroFormatado = formatador.format(numero);
 
 
         char separador = formatador.getDecimalFormatSymbols().getGroupingSeparator();
 
-        String[] conjuntoDeTresCasas = numeroFormatado.split("" + separador);
+        // necessario dar Scape no separator se não o Split não funciona em casos q o separator seja um 'Ponto final'
+        String[] conjuntoDeTresCasas = numeroFormatado.split("\\" + separador);
         int tamanho = conjuntoDeTresCasas.length;
         if (tamanho <= 1) {
 
-            return numeroFormatado;
+            return MONEY.format(numero);
         }
 
         String sigla = classificacoes.get(classificacoes.size() - 1);

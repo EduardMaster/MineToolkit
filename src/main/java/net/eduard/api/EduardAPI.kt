@@ -57,6 +57,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     override lateinit var sqlManager: SQLManager
     override lateinit var storageManager: StorageManager
     override fun onLoad() {
+        StorageAPI.setDebug(false)
         instance = this
         super.onLoad()
 
@@ -100,6 +101,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
     override fun onEnable() {
+
         if (!started) {
             this.onLoad()
         }
@@ -107,7 +109,6 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         VaultAPI.setupVault()
         BukkitBungeeAPI.requestCurrentServer()
         BungeeAPI.getBukkit().register(plugin)
-        StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         StorageAPI.registerPackage(Minigame::class.java)
         reload()
         commands()
@@ -118,7 +119,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
 
-        console("§aCarregado com sucesso!")
+        log("§aCarregado com sucesso!")
     }
 
     fun tasks(){
@@ -201,14 +202,21 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         Mine.OPT_NO_QUIT_MESSAGE = configs.getBoolean("no-quit-message")
         Mine.OPT_NO_DEATH_MESSAGE = configs.getBoolean("no-death-message")
         try {
-            log("Carregando formato de dinheiro da config")
+            log("Carregando formatador de dinheiro")
+            val format = configs.getString("money-format")
+            val locale =   DecimalFormatSymbols.getInstance(Locale.forLanguageTag(configs.getString("money-format-locale")))
+
             Extra.MONEY = DecimalFormat(
-                configs.getString("money-format"),
-                DecimalFormatSymbols.getInstance(Locale.forLanguageTag(configs.getString("money-format-locale")))
+                format ,
+              locale
             )
-            log("Formato valido")
+            log("Formatador de dinheiro: $format")
+            log("Locale do Formatador de dinheiro: $locale")
+            log("Formatando numero 1m: "+ Extra.MONEY.format(1000000))
+            log("Formatando numero 1000,50: "+ Extra.MONEY.format(1000.500))
         } catch (e: Exception) {
             error("Formato do dinheiro invalido " + configs.getString("money-format"))
+
         }
         MSG_ON_JOIN = configs.message("on-join-message")
         MSG_ON_QUIT = configs.message("on-quit-message")
@@ -250,7 +258,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         configs.add("custom-death-message", false )
         configs.add("on-death-player-message", "&6O jogador &e\$killer matou o jogador \$player" )
 
-        configs.add(" custom-motd", false )
+        configs.add("custom-motd", false )
         configs.add("custom-motd-amount",-1 )
         configs.add("motd", listOf( "Seja bem vindo","Ao meu servidor!") )
 
