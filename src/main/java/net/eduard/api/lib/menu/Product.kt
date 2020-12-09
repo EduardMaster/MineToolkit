@@ -3,13 +3,15 @@ package net.eduard.api.lib.menu
 import net.eduard.api.lib.game.EnchantGlow
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 @Suppress("unused")
-open class Product(name: String = "Produto",
-                   shop: Shop? = null)
-    : MenuButton(name, parentMenu = shop) {
+open class Product(
+    name: String = "Produto",
+    shop: Shop? = null
+) : MenuButton(name, parentMenu = shop) {
 
     constructor(shopping: Shop) : this(shop = shopping)
 
@@ -34,6 +36,7 @@ open class Product(name: String = "Produto",
     var commands = mutableListOf<String>()
     var upgrades = mutableListOf<ProductUpgrade>()
     val hasUpgrades get() = upgrades.isNotEmpty()
+
     @Transient
     lateinit var realProduct: Any
     var product: ItemStack? = null
@@ -42,6 +45,14 @@ open class Product(name: String = "Produto",
             if (item == null) {
                 item = value?.clone()
             }
+        }
+        get() {
+            if (field != null) {
+                if (item == null) {
+                    item = field
+                }
+            }
+            return field
         }
     val parentShop: Shop
         get() = parentMenu as Shop
@@ -73,14 +84,12 @@ open class Product(name: String = "Produto",
     }
 
 
-
-
     override fun getIcon(player: Player): ItemStack {
-
+        product
         var clone = super.getIcon(player).clone()
         clone = clone.clone()
         if (isLimited) {
-            if (clone.amount > 64){
+            if (clone.amount > 64) {
                 clone.amount = 64
             }
         }
@@ -98,17 +107,19 @@ open class Product(name: String = "Produto",
                     template = parentShop.sellBuyTemplate
                 }
                 for (line in template!!) {
-                    lore.add(line.replace("\$product_name", name)
+                    lore.add(
+                        line.replace("\$product_name", name)
                             .replace("\$product_stock", "" + stock)
                             .replace("\$product_buy_unit_price", Extra.formatMoney(unitBuyPrice))
                             .replace("\$product_buy_pack_price", Extra.formatMoney(unitBuyPrice * 64))
                             .replace("\$product_sell_unit_price", Extra.formatMoney(unitSellPrice))
                             .replace("\$product_sell_pack_price", Extra.formatMoney(unitSellPrice * 64))
-                            .replace("\$product_sell_inventory_price", Extra.formatMoney(unitSellPrice * 64 * 4 * 9)))
+                            .replace("\$product_sell_inventory_price", Extra.formatMoney(unitSellPrice * 64 * 4 * 9))
+                    )
                 }
                 if (parentShop.isPermissionShop) {
                     if (player.hasPermission(permission)) {
-                       EnchantGlow.addGlow(clone)
+                        EnchantGlow.addGlow(clone)
                         lore.add(parentShop.textAlreadyBought)
                     }
                 }

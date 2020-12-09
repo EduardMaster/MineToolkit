@@ -1,5 +1,6 @@
 package net.eduard.api.lib.menu
 
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -45,7 +46,7 @@ open class MenuButton(var name: String = "Botao"
     }
 
     var icon : ItemStack
-        get() = item!!
+        get() = item?:ItemStack(Material.AIR)
         set(icon) {
             item = icon
         }

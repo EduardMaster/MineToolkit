@@ -4,7 +4,7 @@ import net.eduard.api.server.PluginHook
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.server.currency.list.CurrencyJHCash
 
-class JHCashHook : PluginHook("JH_SHOP") {
+class JHCashHook : PluginHook("JH_Shop") {
     override fun onPluginActive() {
         CurrencyController.getInstance().register(CurrencyJHCash())
     }
