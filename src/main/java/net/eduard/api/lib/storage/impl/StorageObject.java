@@ -300,6 +300,7 @@ public class StorageObject extends StorageBase<Object, Object> {
                 debug("<< Info indentifiable? "+ info.isIndentifiable());
             }*/
             if (saveType) {
+                alias = StorageAPI.getAlias(claz);
                 debug("<< AS TYPE ALIAS "+ alias);
                 map.put(StorageAPI.STORE_KEY, alias);
             }

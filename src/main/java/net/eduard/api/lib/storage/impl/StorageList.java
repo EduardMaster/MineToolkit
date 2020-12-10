@@ -83,6 +83,7 @@ final public class StorageList extends StorageBase<List<?>, Object> {
         for (Object item : data) {
             try {
                 debug("<< AS ITEM FROM LIST");
+
                 Object dado = StorageAPI.STORE_OBJECT.store(listInfo, item);
                 newList.add(dado);
             }catch (Exception ex){

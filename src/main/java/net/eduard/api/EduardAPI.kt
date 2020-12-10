@@ -18,6 +18,8 @@ import net.eduard.api.server.minigame.GameSchematic
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
+import net.eduard.api.lib.menu.Product
+import net.eduard.api.lib.menu.Shop
 import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.storage.StorageAPI
@@ -93,6 +95,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
         StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
+
         BukkitStorables.load()
         StorageAPI.startGson()
         log("Storables do Bukkit carregado!")

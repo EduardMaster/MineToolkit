@@ -420,7 +420,24 @@ open class Menu(
     }
 
     open fun registerMenu(plugin: IPluginInstance) {
+        var id = 1
+        val namesUsed = mutableSetOf<String>()
 
+        for (button in buttons) {
+            val lastEquals = (namesUsed.contains(button.name))
+            if (button.name == "Produto" || lastEquals) {
+                button.name = "Produto-$id"
+
+            }
+            if (button.name == "Botao" || lastEquals) {
+                button.name = "Botao-$id"
+            }
+            if (!lastEquals){
+                namesUsed.add(button.name)
+            }
+
+            id++
+        }
         registerListener(plugin.plugin as JavaPlugin)
         registeredMenus.add(this)
         for (button in buttons) {
