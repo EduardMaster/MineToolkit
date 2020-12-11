@@ -48,7 +48,7 @@ class BukkitReplacers {
         Mine.addReplacer("\$player_health") { it.health.format() }
         Mine.addReplacer("\$player_max_health") { it.maxHealth.format() }
         Mine.addReplacer("\$player_level") { it.level }
-        Mine.addReplacer("\$player_xp") { it.totalExperience.toLong().format()}
+        Mine.addReplacer("\$player_xp") { it.totalExperience.format()}
         Mine.addReplacer("\$player_kills") { it.getStatistic(Statistic.PLAYER_KILLS) }
         Mine.addReplacer("\$player_deaths") { it.getStatistic(Statistic.DEATHS) }
         Mine.addReplacer("\$player_kdr") { p ->

@@ -1,5 +1,6 @@
 package net.eduard.api.lib.menu
 
+import net.eduard.api.lib.game.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -28,6 +29,11 @@ open class MenuButton(var name: String = "Botao"
 
     }
 
+    fun menu(title : String,lineAmount : Int, body: Menu.() -> Unit){
+        this.menu = Menu(title, lineAmount)
+        body(this.menu!!)
+    }
+
     constructor(parent: Menu) : this(parentMenu = parent)
 
 
@@ -46,9 +52,9 @@ open class MenuButton(var name: String = "Botao"
     }
 
     var icon : ItemStack
-        get() = item?:ItemStack(Material.AIR)
-        set(icon) {
-            item = icon
+        get() = item?:ItemBuilder(Material.BARRIER).name("§cItem nulo")
+        set(itemParameter) {
+            item = itemParameter
         }
 
 
