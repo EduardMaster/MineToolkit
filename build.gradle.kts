@@ -26,8 +26,8 @@ dependencies {
     compileOnly("org.bukkit:spigot:1.8.9")
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT")
-    api("net.eduard:modules:1.0-SNAPSHOT")
-    api("net.eduard:sqlmanager:1.0-SNAPSHOT")
+    api(project(":modules"))
+    api(project(":sqlmanager"))
     api("net.eduard.abstraction:complete:1.0-SNAPSHOT")
 
     compileOnly(kotlin("stdlib"))
@@ -46,9 +46,7 @@ tasks.withType<ShadowJar>{
 }
 
 tasks {
-    compileJava{
 
-    }
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
 

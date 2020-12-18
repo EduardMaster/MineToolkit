@@ -23,7 +23,7 @@ class TestandoSQLManager {
     internal lateinit var dados: List<Jogador>
     internal lateinit var user: PartyUser
     internal lateinit var party: Party
-    @Test
+   // @Test
     fun testando(){
 
         testLag("Criando tabela exemplo") {

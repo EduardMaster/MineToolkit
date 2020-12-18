@@ -1,5 +1,7 @@
 package net.eduard.api;
 
+import org.bukkit.craftbukkit.v1_8_R3.command.CraftConsoleCommandSender;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -16,11 +18,8 @@ public class LibraryLoader {
     public void loadLibraries(){
         File pastaLibs = libFile;
         pastaLibs.mkdirs();
-
-
         log("Starting loading libraries");
         for (File file : Objects.requireNonNull(pastaLibs.listFiles())){
-
             if (file.getName().endsWith(".jar")){
                 try {
                     log("Loading jar: "+file.getName());
@@ -35,7 +34,6 @@ public class LibraryLoader {
 
     public void log(String msg)
     {
-
         String name = "EduardAPI JarLoader";
         System.out.println("["+ name +"] "+msg);
     }

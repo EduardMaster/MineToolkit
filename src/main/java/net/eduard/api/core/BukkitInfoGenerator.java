@@ -33,7 +33,7 @@ public class BukkitInfoGenerator {
 
     public BukkitInfoGenerator(EduardAPI plugin) {
         setPlugin(plugin);
-        File pasta = new File(plugin.getPluginFolder(), "database");
+        File pasta = new File(plugin.getPluginFolder(), "database/");
         pasta.mkdirs();
         if (Objects.requireNonNull(pasta.listFiles()).length == 0) {
             saveEnum(DamageCause.class);
@@ -55,7 +55,7 @@ public class BukkitInfoGenerator {
 
     private void saveClassLikeEnum(Class<?> value) {
         try {
-            Config config = new Config(plugin,"database/"+ value.getSimpleName() + ".yml");
+            Config config = new Config(plugin, "database/" + value.getSimpleName() + ".yml");
             for (Field field : value.getFields()) {
                 if (field.getType().equals(value)) {
                     Object obj = field.get(value);
@@ -83,7 +83,7 @@ public class BukkitInfoGenerator {
     private void saveEnum(Class<?> value, String... ignoredMethods) {
         try {
 
-            Config config = new Config(plugin,"database/"+ value.getSimpleName() + ".yml");
+            Config config = new Config(plugin, "database/" + value.getSimpleName() + ".yml");
             boolean used = false;
             for (Object part : value.getEnumConstants()) {
                 try {

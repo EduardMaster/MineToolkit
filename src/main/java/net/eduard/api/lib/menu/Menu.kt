@@ -1,5 +1,6 @@
 package net.eduard.api.lib.menu
 
+import net.eduard.api.lib.game.SoundEffect
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -19,6 +20,7 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.lib.plugin.IPluginInstance
+import org.bukkit.Sound
 import org.bukkit.event.block.Action
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
@@ -99,6 +101,17 @@ open class Menu(
     var previousPage = Slot(
         Mine.newItem(Material.ARROW, "§aVoltar Página.", 1, 0, "§7Clique para ir para a página anterior."), 1, 1
     )
+    var previousPageSound: SoundEffect? = null
+    var nextPageSound: SoundEffect? = null
+    var backPageSound: SoundEffect? = null
+
+    fun enableSounds() {
+        previousPageSound = SoundEffect(Sound.CLICK, 2f, 2f)
+        nextPageSound = SoundEffect(Sound.CLICK, 2f, 2f)
+        backPageSound = SoundEffect(Sound.CLICK, 2f, 2f)
+    }
+
+
     var backPage = Slot(
         Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."),
         1,
@@ -432,7 +445,7 @@ open class Menu(
             if (button.name == "Botao" || lastEquals) {
                 button.name = "Botao-$id"
             }
-            if (!lastEquals){
+            if (!lastEquals) {
                 namesUsed.add(button.name)
             }
 
@@ -514,13 +527,16 @@ open class Menu(
                 var button: MenuButton? = null
                 if (itemClicked != null) {
                     if (previousPage.item == itemClicked) {
+                        previousPageSound?.create(player)
                         open(player, (--page))
                         return
                     } else if (nextPage.item == itemClicked) {
+                        nextPageSound?.create(player)
                         open(player, (++page))
                         return
                     } else if (backPage.item == itemClicked) {
                         if (superiorMenu != null) {
+                            backPageSound?.create(player)
                             superiorMenu?.open(player)
                         }
                         return
@@ -597,6 +613,5 @@ open class Menu(
         }
 
     }
-
 
 }

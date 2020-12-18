@@ -14,7 +14,29 @@ fun <T : Any> Array<T>.shuffle() : Array<T>{
     }
     return this
 }
+fun String.toLore(maxCharsPerLine: Int = 70): MutableList<String> {
+    val list = mutableListOf<String>()
+    if (contains(" ")) {
+        var charCount = 0
+        val words = split(" ")
+        val text = StringBuilder()
+        for (word in words) {
+            charCount += word.count()
+            if (charCount >= maxCharsPerLine) {
+                charCount=0
+                text.append(word)
+                list.add(text.toString())
+                text.clear()
+            } else {
+                text.append("$word ")
+            }
+        }
+    } else {
+        list.add(this)
+    }
 
+    return list
+}
 
 fun <T : Any> List<T>.randomByPercent(getDouble : (T.() -> Double)) : T {
     val percentMax = sumByDouble(getDouble)

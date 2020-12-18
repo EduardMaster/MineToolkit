@@ -1,10 +1,9 @@
 package net.eduard.api.test;
 
-import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.annotations.StorageIndex;
 import net.eduard.api.lib.storage.annotations.StorageReference;
-import org.junit.Test;
+
 
 import java.util.ArrayList;
 
@@ -89,7 +88,7 @@ public class TestStorage {
     }
 
 
-    @Test
+
     public void testReference(){
 
         Jogador jogador1 = new Jogador();

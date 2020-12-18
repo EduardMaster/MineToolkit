@@ -58,6 +58,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      * @param message Mensagem
      */
     override fun log(message: String) {
+
         if (isLogEnabled)
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §f$message")
     }

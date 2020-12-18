@@ -27,7 +27,7 @@ class Teste {
     }
 
 
-    @Test
+
     fun testandoIndex() {
         val blocks = Blocks()
         blocks.listRecreate()
