@@ -19,7 +19,7 @@ dependencies {
 
     compileOnly(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("stdlib-jdk8"))
-    compileOnly(project(":modules"))
+    compileOnly(project(":eduardutils"))
     testImplementation("org.bukkit:spigot:1.8.9")
     testImplementation("junit", "junit", "4.12")
 

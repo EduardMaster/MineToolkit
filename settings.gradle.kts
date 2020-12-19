@@ -1,3 +1,4 @@
 rootProject.name = "eduardapi"
-include(":modules")
+include(":eduardutils")
 include(":sqlmanager")
+
