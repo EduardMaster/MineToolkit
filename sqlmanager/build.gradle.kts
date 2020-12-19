@@ -1,7 +1,7 @@
 plugins {
     java
     kotlin("jvm")
-
+    `maven-publish`
 
 }
 
@@ -25,10 +25,27 @@ dependencies {
 
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "net.eduard"
+            artifactId = "sqlmanager"
+            version = project.version as String
+
+            from(components["java"])
+        }
+    }
+}
+
 tasks {
+    compileJava{
+        options.encoding = "UTF-8"
+    }
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
+
     }
+
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
