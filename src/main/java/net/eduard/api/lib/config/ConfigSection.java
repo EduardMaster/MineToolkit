@@ -281,12 +281,9 @@ public class ConfigSection {
         return list;
     }
 
-    public Location getLocation() {
-        return (Location) getValue();
-    }
 
     public Location getLocation(String path) {
-        return getSection(path).getLocation();
+        return get(path,Location.class);
     }
 
     public Long getLong() {

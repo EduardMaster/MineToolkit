@@ -40,9 +40,9 @@ interface IPlugin : IPluginInstance {
         configs.add("backup-lasttime", Extra.getNow())
         configs.add("backup-time", 1)
         configs.add("backup-timeunit-type", "MINUTES")
-        configs.add("net/eduard/api/lib/database", dbManager)
+        configs.add("database", dbManager)
         configs.saveConfig()
-        dbManager = configs.get("net/eduard/api/lib/database", DBManager::class.java)
+        dbManager = configs.get("database", DBManager::class.java)
         sqlManager = SQLManager(dbManager)
         storageManager = StorageManager(sqlManager)
         started = true

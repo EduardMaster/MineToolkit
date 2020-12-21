@@ -36,6 +36,7 @@ public class MaterialDataStorable implements Storable<MaterialData> {
                 return  new MaterialData(Material.getMaterial(Extra.toInt(string)));
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return newInstance();
     }
