@@ -23,8 +23,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 /**
  * API de criação de Items<br>
  * Método build() gerá um instancia nova de ItemBuilder
- * @version 1.5
+ *
  * @author Eduard
+ * @version 1.5
  */
 @SuppressWarnings("unused")
 public class ItemBuilder extends ItemStack {
@@ -83,26 +84,32 @@ public class ItemBuilder extends ItemStack {
 
     }
 
-    public ItemBuilder skin(String skinUrl) {
+    public ItemBuilder texture(String textureBase64) {
         type(Material.SKULL_ITEM);
         data(SkullType.PLAYER.ordinal());
         SkullMeta itemMeta = (SkullMeta) getItemMeta();
 
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-        byte[] encodedData = Base64.getEncoder()
-                .encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", skinUrl).getBytes());
-        profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
-        Field profileField;
+        GameProfile profile = new GameProfile(UUID.randomUUID(), "Notch");
+
+        profile.getProperties().put("textures",
+                new Property("textures", textureBase64));
+
         try {
-            profileField = itemMeta.getClass().getDeclaredField("profile");
+            Field profileField = itemMeta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             profileField.set(itemMeta, profile);
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
         setItemMeta(itemMeta);
-
         return this;
+    }
+
+    public ItemBuilder skin(String skinUrl) {
+        byte[] encodedData = Base64.getEncoder()
+                .encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", skinUrl).getBytes());
+
+        return texture(new String(encodedData));
     }
 
     public ItemBuilder amount(int amount) {

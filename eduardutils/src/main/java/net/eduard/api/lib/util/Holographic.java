@@ -25,7 +25,7 @@ public class Holographic
   private static final String path =
           Bukkit.getServer().getClass().getPackage().getName();
   private static final String version = path.substring(path.lastIndexOf(".")
-          + 1, path.length());
+          + 1);
   private static Class<?> nmsEntity;
   private static Class<?> craftWorld;
   private static Class<?> packetClass;

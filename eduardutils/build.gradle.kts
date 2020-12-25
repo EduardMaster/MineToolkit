@@ -6,13 +6,11 @@ plugins {
 
 group = "net.eduard"
 version = "1.0-SNAPSHOT"
-
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
     mavenLocal()
-
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://jitpack.io/")
@@ -30,9 +28,8 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "net.eduard"
-            artifactId = "modules"
+            artifactId = "eduardutils"
             version = project.version as String
-
             from(components["java"])
         }
     }
@@ -44,9 +41,7 @@ tasks {
     }
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
-
     }
-
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }

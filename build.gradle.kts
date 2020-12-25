@@ -19,7 +19,6 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://jitpack.io/")
 }
-
 dependencies {
     compileOnly("net.bukkitplugin:jhcash:6.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
@@ -29,24 +28,14 @@ dependencies {
     api(project(":eduardutils"))
     api(project(":sqlmanager"))
     api("net.eduard.abstraction:complete:1.0-SNAPSHOT")
-
     compileOnly(kotlin("stdlib"))
     testCompileOnly(kotlin("stdlib"))
     testCompileOnly("junit", "junit", "4.12")
-    /*
-  testCompileOnly("org.bukkit:spigot:1.8.9")
-
-
-  **/
-
 }
 tasks.withType<ShadowJar>{
     destinationDir = file("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\plugins\\")
-
 }
-
 tasks {
-
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
 

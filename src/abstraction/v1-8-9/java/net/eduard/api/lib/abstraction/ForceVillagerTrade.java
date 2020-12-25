@@ -1,4 +1,4 @@
-package net.eduard.api.lib.util;
+package net.eduard.api.lib.abstraction;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -29,7 +29,7 @@ import net.minecraft.server.v1_8_R3.MerchantRecipeList;
 public class ForceVillagerTrade {
    
     private final String invname;
-    private final MerchantRecipeList l = new MerchantRecipeList();
+    private final MerchantRecipeList list = new MerchantRecipeList();
 
     /**
      * Não pode ter espaço
@@ -47,7 +47,7 @@ public class ForceVillagerTrade {
      * addTrade(...).addTrade(...).addTrade(...).openTrade(player);
      */
     public ForceVillagerTrade addTrande(ItemStack in, ItemStack out) {
-        l.add(new MerchantRecipe(CraftItemStack.asNMSCopy(in), CraftItemStack
+        list.add(new MerchantRecipe(CraftItemStack.asNMSCopy(in), CraftItemStack
                 .asNMSCopy(out)));
         return this;
     }
@@ -61,7 +61,7 @@ public class ForceVillagerTrade {
      */
     public ForceVillagerTrade addTrande(ItemStack inOne, ItemStack inTwo,
             ItemStack out) {
-        l.add(new MerchantRecipe(CraftItemStack.asNMSCopy(inOne),
+        list.add(new MerchantRecipe(CraftItemStack.asNMSCopy(inOne),
                 CraftItemStack.asNMSCopy(inTwo), CraftItemStack.asNMSCopy(out)));
         return this;
     }
@@ -74,7 +74,7 @@ public class ForceVillagerTrade {
         e.openTrade(new IMerchant() {
             @Override
             public MerchantRecipeList getOffers(EntityHuman arg0) {
-                return l;
+                return list;
             }
 
             @Override

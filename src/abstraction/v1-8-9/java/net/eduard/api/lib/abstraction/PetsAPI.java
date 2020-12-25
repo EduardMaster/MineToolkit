@@ -1,4 +1,4 @@
-package net.eduard.api.lib.util;
+package net.eduard.api.lib.abstraction;
 
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
