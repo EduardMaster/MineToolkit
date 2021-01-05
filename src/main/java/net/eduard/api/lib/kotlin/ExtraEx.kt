@@ -37,7 +37,7 @@ fun String.toLore(maxCharsPerLine: Int = 70, loreColor: String = "§7"): Mutable
         }
     } else {
 
-        list.add("$loreColor" + this)
+        list.add(loreColor + this)
     }
 
     return list

@@ -1,5 +1,6 @@
 package net.eduard.api.lib.config;
 
+import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -40,13 +41,13 @@ public class ConfigSection {
 
     private static String getPath(String path) {
         if (path.startsWith("#")) {
-            path= path.replaceFirst("#", "$");
+            path = path.replaceFirst("#", "$");
         }
         if (path.startsWith("-")) {
-            path=path.replaceFirst("-", "$");
+            path = path.replaceFirst("-", "$");
         }
         if (path.contains(":")) {
-            path=path.replace(":", "$");
+            path = path.replace(":", "$");
         }
         return path;
     }
@@ -283,7 +284,7 @@ public class ConfigSection {
 
 
     public Location getLocation(String path) {
-        return get(path,Location.class);
+        return get(path, Location.class);
     }
 
     public Long getLong() {
@@ -312,12 +313,12 @@ public class ConfigSection {
     }
 
     public ConfigSection getSection(String path) {
-        if (path.isEmpty()){
+        if (path.isEmpty()) {
             return this;
         }
         path = getPath(path);
         if (path.contains(".")) {
-            String[] split = path.replace(".", ",").split(",");
+            String[] split = path.split("\\.");
             String restPath = path.replaceFirst(split[0] + ".", "");
             return getSection(split[0]).getSection(restPath);
         } else {
@@ -334,11 +335,14 @@ public class ConfigSection {
 
 
     public SoundEffect getSound(String path) {
-        return get(path , SoundEffect.class);
+        return get(path, SoundEffect.class);
     }
 
     public String getString() {
-        return removeQuotes(Extra.toString(object)).replace("/*", "\n").replace("\\n", "\n").replace("<br>", "\n")
+        return removeQuotes(Extra.toString(object))
+                .replace("/*", "\n")
+                .replace("\\n", "\n")
+                .replace("<br>", "\n")
                 .replace("/n", "\n");
     }
 
@@ -462,9 +466,6 @@ public class ConfigSection {
         for (String comment : comments) {
             lines.add(space + "# " + comment);
         }
-        if (spaceId == -1) {
-            lines.add("");
-        }
         if (isList()) {
             lines.add(space + key + ": []");
             for (Object text : getList()) {
@@ -476,7 +477,7 @@ public class ConfigSection {
             }
             for (ConfigSection section : getMap().values()) {
                 section.save(lines, spaceId + 1);
-                for (int i = 0; i < lineSpaces; i++) {
+                for (int spaceCreatorIndex = 0; spaceCreatorIndex < lineSpaces; spaceCreatorIndex++) {
                     lines.add("");
                 }
             }
@@ -493,49 +494,39 @@ public class ConfigSection {
 
         int spaceId = 0;
         ConfigSection path = this;
-        boolean headerSeted = false;
+
         List<String> currentComments = new ArrayList<>();
         // int index = 0;
         for (String line : lines) {
             // System.err.println("-> " + line);
             String space = getSpace(spaceId);
-            if (!headerSeted
-                    && (line.isEmpty() || (line.length() == 1 && !Character.isLetter(line.toCharArray()[0])))) {
-                headerSeted = true;
-                // System.out.println("index " + index);
-                // index++;
-                continue;
-            }
-            if (!headerSeted && isComment(line)) {
-                comments.add(getComment(line));
-            }
-            if (headerSeted) {
-                if (isList(line)) {
-                    path.getList().add(getList(line));
-                } else if (isComment(line)) {
-                    currentComments.add(getComment(line));
-                } else if (isSection(line)) {
-                    if (!line.startsWith("  ")) {
-                        spaceId = 0;
-                        path = this;
-                    } else if (!line.startsWith(space)) {
-                        int time = getSpace(line);
-                        while (time < spaceId) {
-                            path = path.father;
-                            spaceId--;
-                            // time = getSpace(line);
-                        }
-                    }
-                    space = getSpace(spaceId);
-                    path = path.getSection(getKey(line, space));
-                    path.set(getValue(line, space));
-                    path.comments.addAll(currentComments);
-                    currentComments.clear();
-                    spaceId++;
-                    // nao desencadeia apenas muda o percurso
 
+            if (isList(line)) {
+                path.getList().add(getList(line));
+            } else if (isComment(line)) {
+                currentComments.add(getComment(line));
+            } else if (isSection(line)) {
+                if (!line.startsWith("  ")) {
+                    spaceId = 0;
+                    path = this;
+                } else if (!line.startsWith(space)) {
+                    int time = getSpace(line);
+                    while (time < spaceId) {
+                        path = path.father;
+                        spaceId--;
+                        // time = getSpace(line);
+                    }
                 }
+                space = getSpace(spaceId);
+                path = path.getSection(getKey(line, space));
+                path.set(getValue(line, space));
+                path.comments.addAll(currentComments);
+                currentComments.clear();
+                spaceId++;
+                // nao desencadeia apenas muda o percurso
+
             }
+
             // index++;
         }
 

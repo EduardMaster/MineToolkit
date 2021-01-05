@@ -2,6 +2,7 @@
 
 package net.eduard.api.lib.kotlin
 
+import net.eduard.api.lib.game.EnchantGlow
 import net.eduard.api.lib.hybrid.PlayerUser
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.FakePlayer
@@ -21,6 +22,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.material.Crops
@@ -35,6 +37,7 @@ fun Player.removeXP(amount: Double) {
 fun Player.addHotBar(item: ItemStack) {
     Mine.setHotBar(this, item)
 }
+
 fun String.colored(): String {
     return ChatColor.translateAlternateColorCodes('&', this)
 }
@@ -93,7 +96,7 @@ fun CommandExecutor.register(cmd: String, plugin: JavaPlugin) {
     plugin.getCommand(cmd).executor = this
 }
 
-val Player.offline get() = PlayerUser(this.name,this.uniqueId)
+val Player.offline get() = PlayerUser(this.name, this.uniqueId)
 
 
 val <T> Class<T>.plugin: JavaPlugin
@@ -141,6 +144,66 @@ inline fun Inventory.item(position: Int, block: ItemStack.() -> Unit): ItemStack
     return item
 
 }
+
+val enchantmentsPrefix = "§k§f"
+val enchantmentsNames = mutableMapOf(
+    Enchantment.DAMAGE_ALL to "Afiada",
+    Enchantment.ARROW_DAMAGE to "Força",
+    Enchantment.ARROW_FIRE to "Chama",
+    Enchantment.ARROW_INFINITE to "Flecha Infinita",
+    Enchantment.ARROW_KNOCKBACK to "Flecha Repulsiva",
+    Enchantment.SILK_TOUCH to "Toque Suave",
+    Enchantment.LUCK to "Sorte em Pescaria",
+    Enchantment.DAMAGE_UNDEAD to "Dano contra Mortos-vivos",
+    Enchantment.DAMAGE_ARTHROPODS to "Dano contra Aranhas",
+    Enchantment.DIG_SPEED to "Eficiência",
+    Enchantment.DURABILITY to "Durabilidade",
+    Enchantment.OXYGEN to "Respiração",
+    Enchantment.THORNS to "Espinhos",
+    Enchantment.LOOT_BONUS_BLOCKS to "Fortuna",
+    Enchantment.LOOT_BONUS_MOBS to "Pilhagem",
+    Enchantment.FIRE_ASPECT to "Aspecto Flamejante",
+    Enchantment.DEPTH_STRIDER to "Passos Profundos",
+    Enchantment.KNOCKBACK to "Repulsão",
+    Enchantment.LURE to "Pescaria Eficiênte",
+    Enchantment.WATER_WORKER to "Eficiência de baixo d'agua",
+    Enchantment.PROTECTION_ENVIRONMENTAL to "Proteção",
+    Enchantment.PROTECTION_EXPLOSIONS to "Proteção contra Explosões",
+    Enchantment.PROTECTION_FALL to "Proteção contra Queda",
+    Enchantment.PROTECTION_FIRE to "Proteção contra Fogo",
+    Enchantment.PROTECTION_PROJECTILE to "Proteção contra Projéteis"
+)
+
+val Enchantment.nameBR get() = enchantmentsNames[this]?:name
+
+
+
+fun ItemStack.displayEnchants(): ItemStack {
+    val meta = itemMeta
+    val lore = meta.lore ?: mutableListOf<String>()
+
+    val it = lore.iterator()
+    while (it.hasNext()) {
+        val line = it.next()
+        if (line.startsWith(enchantmentsPrefix)) {
+            it.remove()
+        }
+    }
+    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+
+    for ((enchant, level) in enchantments) {
+        if (level == 0) continue
+        if (enchant == EnchantGlow.getGlow()) continue
+        val name = enchant.nameBR
+        lore.add("$enchantmentsPrefix§7$name §3$level")
+    }
+    meta.lore = lore
+    itemMeta = meta
+
+    return this
+
+}
+
 
 var ItemStack.name: String
     get() {
@@ -238,7 +301,8 @@ object BukkitAlterations : Listener
 
 fun <T : Event> KClass<T>.event(actionToDo: T.() -> Unit) {
     Bukkit.getPluginManager()
-        .registerEvent(this.java,
+        .registerEvent(
+            this.java,
             BukkitAlterations, EventPriority.NORMAL, { _, event ->
                 actionToDo(event as T)
             }, BukkitAlterations.javaClass.plugin

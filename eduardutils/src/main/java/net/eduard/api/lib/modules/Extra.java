@@ -318,15 +318,15 @@ public final class Extra {
     public static void copyAsUTF8(InputStream is, File file) throws IOException {
         if (is == null)
             return;
-        InputStreamReader in = new InputStreamReader(is, StandardCharsets.UTF_8);
-        BufferedReader br = new BufferedReader(in);
+        InputStreamReader streamReader = new InputStreamReader(is, StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(streamReader);
         List<String> lines = new ArrayList<>();
         String line;
-        while ((line = br.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             lines.add(line);
         }
-        br.close();
-        in.close();
+        reader.close();
+        streamReader.close();
         is.close();
         Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
 
@@ -339,7 +339,8 @@ public final class Extra {
      * @param file Arquivo
      * @throws IOException Erro
      */
-    public static void copyAsUTF8(Path path, File file) throws IOException {
+    public static void copyAsUTF8(Path path, File file)
+            throws IOException {
         List<String> lines = Files.readAllLines(path);
         Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
     }
