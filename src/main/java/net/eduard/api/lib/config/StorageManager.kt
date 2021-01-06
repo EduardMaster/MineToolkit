@@ -14,7 +14,7 @@ class StorageManager(private var sqlManager: SQLManager) {
 
     fun config(clz : Class<*>) : Config{
         return configBases[clz]?:
-        Config(File("net/eduard/api/lib/database/"),"storage.yml")
+        Config(File("database/"),"storage.yml")
     }
 
 

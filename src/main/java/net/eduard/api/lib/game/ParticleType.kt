@@ -1,7 +1,6 @@
 package net.eduard.api.lib.game
 
 import org.bukkit.Material
-import org.bukkit.entity.EntityType
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.Potion
 import org.bukkit.potion.PotionType

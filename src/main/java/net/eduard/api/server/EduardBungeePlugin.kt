@@ -25,6 +25,7 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
         super<IPlugin>.onLoad()
     }
 
+
     fun registerEvents(events: Listener) {
 
         ProxyServer.getInstance().pluginManager.registerListener(this, events)

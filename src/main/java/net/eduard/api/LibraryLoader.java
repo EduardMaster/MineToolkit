@@ -1,7 +1,5 @@
 package net.eduard.api;
 
-import org.bukkit.craftbukkit.v1_8_R3.command.CraftConsoleCommandSender;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -39,10 +37,6 @@ public class LibraryLoader {
     }
 
 
-
-
-
-
     public static URL getJarUrl(final File file) throws IOException {
         return new URL("jar:" + file.toURI().toURL().toExternalForm() + "!/");
     }
@@ -55,8 +49,8 @@ public class LibraryLoader {
                     URL.class);
             method.setAccessible(true);
             method.invoke(sysloader, url);
-        } catch (final Throwable t) {
-            t.printStackTrace();
+        } catch (final Throwable err) {
+            err.printStackTrace();
             throw new IOException("Error adding " + url
                     + " to system classloader");
         }

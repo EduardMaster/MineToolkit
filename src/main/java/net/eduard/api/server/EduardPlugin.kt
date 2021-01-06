@@ -30,7 +30,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     override var started = false
 
     override val pluginName: String
-        get() = Extra.getMethodInvoke(plugin, "getName" ) as String
+        get() = Extra.getMethodInvoke(plugin, "getName") as String
     override val pluginFolder: File
         get() = plugin.dataFolder
 
@@ -46,10 +46,9 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     final override lateinit var configs: Config
     final override lateinit var messages: Config
     final override lateinit var storage: Config
-    final override  var dbManager: DBManager = DBManager()
+    final override var dbManager: DBManager = DBManager()
     final override lateinit var sqlManager: SQLManager
     final override lateinit var storageManager: StorageManager
-
 
 
     /**
@@ -85,8 +84,10 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      */
     override fun onEnable() {
         if (!started) onLoad()
-        log("Foi ativado na v" + description.version + " um plugin "
-                + (if (isFree) "§aGratuito" else "§bPago") + "§f feito pelo Eduard")
+        log(
+            "Foi ativado na v" + description.version + " um plugin "
+                    + (if (isFree) "§aGratuito" else "§bPago") + "§f feito pelo Eduard"
+        )
     }
 
 
@@ -142,8 +143,10 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         unregisterStorableClasses()
         unregisterMenus()
         unregisterCommands()
-        log("Foi desativado na v" + description.version + " um plugin "
-                + if (isFree) "§aGratuito" else "§bPago")
+        log(
+            "Foi desativado na v" + description.version + " um plugin "
+                    + if (isFree) "§aGratuito" else "§bPago"
+        )
 
     }
 
@@ -151,16 +154,14 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     override fun save() {
 
     }
+
     override fun reload() {
 
     }
+
     override fun configDefault() {
 
     }
-
-
-
-
 
 
     /**
@@ -168,12 +169,9 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      */
     private fun deleteLastBackups() {
         val pasta = File(pluginFolder, "/backup/")
-
         pasta.mkdirs()
         val lista = mutableListOf(*pasta.listFiles()!!)
         lista.sortBy { it.lastModified() }
-
-
         for (position in lista.size - 10 downTo 0) {
             val arquivo = lista[position]
             Extra.deleteFolder(arquivo)
@@ -191,11 +189,11 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         pasta.mkdirs()
         val lista = listOf(*pasta.listFiles()!!)
         lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
-                .forEach {
-                    Extra.deleteFolder(it)
-                    if (it.exists())
-                        it.delete()
-                }
+            .forEach {
+                Extra.deleteFolder(it)
+                if (it.exists())
+                    it.delete()
+            }
     }
 
 }
