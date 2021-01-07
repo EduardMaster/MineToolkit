@@ -68,9 +68,8 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         DBManager.setDebug(configs.getBoolean("debug-database"))
 
-     // configs.getBoolean("debug-commands")
+        //configs.getBoolean("debug-commands")
         Copyable.CopyDebug.setDebug(configs.getBoolean("debug-copyable"))
-       // Extra.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
 
 
         try {
