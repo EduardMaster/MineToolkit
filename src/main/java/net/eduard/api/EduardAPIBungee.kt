@@ -122,6 +122,8 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         ProxyServer.getInstance().pluginManager
             .registerCommand(plugin, BungeeReloadCommand())
 
+
+        /*
         ProxyServer.getInstance().scheduler.schedule(plugin, {
             for (server in ProxyServer.getInstance().servers.values) {
                 val spigot = BungeeAPI.getServers()[server.name.toLowerCase()]?:continue
@@ -129,6 +131,8 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
             }
         },
         1,1,TimeUnit.SECONDS)
+
+        */
     }
 
     override fun configDefault() {

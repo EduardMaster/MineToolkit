@@ -1,8 +1,6 @@
 package net.eduard.api.listener
 
-import net.md_5.bungee.api.event.*
 import net.md_5.bungee.api.plugin.Listener
-import net.md_5.bungee.event.EventHandler
 
 
 @Suppress("unused")

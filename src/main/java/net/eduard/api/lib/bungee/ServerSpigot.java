@@ -1,6 +1,7 @@
 package net.eduard.api.lib.bungee;
 
 import net.eduard.api.lib.database.annotations.ColumnPrimary;
+import net.eduard.api.lib.database.annotations.ColumnSize;
 import net.eduard.api.lib.database.annotations.TableName;
 
 import java.io.Serializable;
@@ -10,9 +11,12 @@ import java.util.List;
 @TableName("network_servers")
 public class ServerSpigot implements Serializable {
 
+    @ColumnSize(100)
     @ColumnPrimary
     private String name = "lobby01";
+    @ColumnSize(100)
     private String type = "lobby";
+    @ColumnSize(100)
     private String subType = "principal";
     private int max = 1;
     private int count;

@@ -12,10 +12,10 @@ open class EffectManager {
 
     var requirePermission: String? = null
     var messageToSend: String? = null
-    val playerCommandsToRun = mutableListOf<String>()
-    val consoleCommandsToRun = mutableListOf<String>()
-    val itemsToGive = mutableListOf<ItemStack>()
-    val potionsToApply = mutableListOf<PotionEffect>()
+    var playerCommandsToRun = mutableListOf<String>()
+    var consoleCommandsToRun = mutableListOf<String>()
+    var itemsToGive = mutableListOf<ItemStack>()
+    var potionsToApply = mutableListOf<PotionEffect>()
     var soundToPlay: SoundEffect? = null
     var visualEffectToShow: VisualEffect? = null
     var closeInventory: Boolean = false
