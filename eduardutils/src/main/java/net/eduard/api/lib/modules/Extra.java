@@ -559,9 +559,9 @@ public final class Extra {
 
 
         char separador = formatador.getDecimalFormatSymbols().getGroupingSeparator();
-
+        char scaper = '\\';
         // necessario dar Scape no separator se não o Split não funciona em casos q o separator seja um 'Ponto final'
-        String[] conjuntoDeTresCasas = numeroFormatado.split("\\" + separador);
+        String[] conjuntoDeTresCasas = numeroFormatado.split(String.valueOf(scaper + separador));
         int tamanho = conjuntoDeTresCasas.length;
         if (tamanho <= 1) {
 
@@ -635,12 +635,13 @@ public final class Extra {
      */
     public static String formatTime(long time) {
         if (time == 0L) {
-            return "never";
+            return "Nunca";
         }
         long day = TimeUnit.MILLISECONDS.toDays(time);
         long hours = TimeUnit.MILLISECONDS.toHours(time) - day * 24L;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - TimeUnit.MILLISECONDS.toHours(time) * 60L;
         long seconds = TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MILLISECONDS.toMinutes(time) * 60L;
+        long ticks = (1000 - (time % 1000L)) / 50;
         StringBuilder sb = new StringBuilder();
         if (day > 0L) {
             sb.append(day).append(" ").append(day == 1L ? "dia" : "dias").append(" ");
@@ -651,11 +652,12 @@ public final class Extra {
         if (minutes > 0L) {
             sb.append(minutes).append(" ").append(minutes == 1L ? "minuto" : "minutos").append(" ");
         }
-        if (seconds > 0L) {
-            sb.append(seconds).append(" ").append(seconds == 1L ? "segundo" : "segundos");
+        if (seconds >= 0L) {
+            sb.append(seconds).append(".").append(ticks).append(" ").append(seconds == 1L ? "segundo" : "segundos");
+
         }
-        String diff = sb.toString();
-        return diff.isEmpty() ? "agora" : diff;
+        String tempoFormatado = sb.toString();
+        return tempoFormatado.isEmpty() ? "Agora" : tempoFormatado;
     }
 
 
