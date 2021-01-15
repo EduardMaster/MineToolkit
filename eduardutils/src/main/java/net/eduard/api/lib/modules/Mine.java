@@ -1720,22 +1720,22 @@ public final class Mine {
             return "";
         }
         List<String> placeHoldersFound = new ArrayList<>();
-        text.
+        // necessario continuar para tirar o lag
 
         for (Entry<String, Replacer> value : replacers.entrySet()) {
-            if (text.contains(value.getKey())) {
-                try {
-                    text = text.replace(value.getKey(), "" + value.getValue().getText(player));
 
-                } catch (Exception ex) {
-                    if (OPT_DEBUG_REPLACERS) {
-                        Mine.console("§cREPLACER ERROR: §f" + value.getKey());
-                        ex.printStackTrace();
-                    }
+            try {
+                text = text.replace(value.getKey(), "" + value.getValue().getText(player));
 
+            } catch (Exception ex) {
+                if (OPT_DEBUG_REPLACERS) {
+                    Mine.console("§cREPLACER ERROR: §f" + value.getKey());
+                    ex.printStackTrace();
                 }
 
             }
+
+
         }
 
         return text;
