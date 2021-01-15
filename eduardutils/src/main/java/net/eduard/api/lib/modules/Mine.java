@@ -1719,6 +1719,8 @@ public final class Mine {
         if (player == null) {
             return "";
         }
+        List<String> placeHoldersFound = new ArrayList<>();
+        text.
 
         for (Entry<String, Replacer> value : replacers.entrySet()) {
             if (text.contains(value.getKey())) {

@@ -52,7 +52,7 @@ open class Menu(
 
 
     @Transient
-    val playersWhoCanOpen = mutableListOf<Player>()
+    val playersWhoCanOpen = mutableSetOf<Player>()
 
     fun canOpen(player: Player): Boolean {
         if (playersWhoCanOpen.isEmpty()) return true
@@ -62,6 +62,9 @@ open class Menu(
 
     @Transient
     var superiorMenu: Menu? = null
+
+    @Transient
+    var titlePerPlayer: (Player.() -> String)? = null
 
 
     @Transient
@@ -98,6 +101,7 @@ open class Menu(
     var openWithCommandText: String? = null
     var openNeedPermission: String? = null
     var messagePermission = "§cVocê precisa de permissão do Cargo Master para abrir este menu."
+
     var previousPage = Slot(
         Mine.newItem(Material.ARROW, "§aVoltar Página.", 1, 0, "§7Clique para ir para a página anterior."), 1, 1
     )
@@ -139,6 +143,7 @@ open class Menu(
             pagePrefix + title + pageSuffix
         } else title
 
+
     val firstEmptySlotOnInventories: Int
         get() {
             var page = 1
@@ -170,7 +175,6 @@ open class Menu(
     }
 
     open fun copy(): Menu {
-
         return Copyable.copyObject(this)
     }
 
@@ -188,10 +192,8 @@ open class Menu(
 
     fun getButtonUsingFor(icon: ItemStack, player: Player): MenuButton? {
         val tempoAntes = System.currentTimeMillis()
-
         for (button in buttons) {
             if (Mine.equals(button.getIcon(player), icon)) {
-
                 val tempoDepois = System.currentTimeMillis()
                 debug("§aTempo para percorrer todos items " + (tempoDepois - tempoAntes))
                 return button
@@ -369,13 +371,17 @@ open class Menu(
                 lineAmount = 1
             }
 
+            val currentTitle = titlePerPlayer?.invoke(player)?:title
+            val prefix = pagePrefix.replace("\$max_page", "" + pageAmount)
+                .replace("\$page", "" + page)
+            val suffix = pageSuffix.replace("\$max_page", "" + pageAmount)
+                .replace("\$page", "" + page)
+            val menuTitle = Extra.cutText(
+                if (isPageSystem) {
+                    prefix + currentTitle + suffix
+                } else currentTitle, 32
+            )
 
-            val prefix = pagePrefix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
-            val suffix = pageSuffix.replace("\$max_page", "" + pageAmount).replace("\$page", "" + page)
-            var menuTitle = Extra.cutText(prefix + title + suffix, 32)
-            if (!isPageSystem) {
-                menuTitle = title
-            }
             val fakeHolder = FakeInventoryHolder(this)
             val menu = Bukkit.createInventory(fakeHolder, 9 * lineAmount, menuTitle)
             fakeHolder.openInventory = menu

@@ -114,7 +114,7 @@ public class DisplayBoard implements  Cloneable {
             if (parts.isEmpty()) {
                 return null;
             }
-            long duration = ticks * 50;
+            long duration = ticks * 50L;
             long now =System.currentTimeMillis();
             if (lastModification + duration < now) {
                 current++;
