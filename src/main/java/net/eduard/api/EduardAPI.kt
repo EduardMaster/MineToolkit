@@ -244,7 +244,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         configs.add("auto-respawn",true )
 
         configs.add("custom-skin","EduardKillerPro" )
-        configs.add("player target","\$player_name - \$player_level" )
+        configs.add("player target","{player_name} - {player_level}" )
         configs.add("stack-design", "§aQuantidade: §f\$stack")
         configs.add("money-format", "###,###.##")
         configs.add("money-format-locale","PT-BR" )

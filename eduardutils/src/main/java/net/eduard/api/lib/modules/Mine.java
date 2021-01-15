@@ -1716,28 +1716,50 @@ public final class Mine {
     }
 
     public static String getReplacers(String text, Player player) {
+        return getReplacers(player, text, '{', '}');
+    }
+
+    public static String getReplacers(Player player, String text, char startChar, char endChar) {
         if (player == null) {
             return "";
         }
         List<String> placeHoldersFound = new ArrayList<>();
+        boolean readingStart = true;
+
+        StringBuilder keyCreation = new StringBuilder();
+        char[] chars = text.toCharArray();
+        for (int currentChar = 0; currentChar < text.length(); currentChar++) {
+            char current = chars[currentChar];
+            if (readingStart && current == startChar) {
+                keyCreation.delete(0, keyCreation.length());
+                readingStart = false;
+            } else if (!readingStart && current == endChar) {
+                readingStart = true;
+                placeHoldersFound.add(keyCreation.toString());
+                keyCreation.delete(0, keyCreation.length());
+
+            } else {
+                keyCreation.append(current);
+
+            }
+
+        }
+
         // necessario continuar para tirar o lag
+        for (String key : placeHoldersFound) {
 
-        for (Entry<String, Replacer> value : replacers.entrySet()) {
-
+            Replacer replacer = replacers.get(key);
             try {
-                text = text.replace(value.getKey(), "" + value.getValue().getText(player));
-
+                text = text.replace(startChar + key + endChar, "" + replacer.getText(player));
             } catch (Exception ex) {
                 if (OPT_DEBUG_REPLACERS) {
-                    Mine.console("§cREPLACER ERROR: §f" + value.getKey());
-                    ex.printStackTrace();
+                    Mine.console("§cREPLACER ERROR: §f" + startChar + key + endChar);
+                    //ex.printStackTrace();
                 }
 
             }
 
-
         }
-
         return text;
     }
 
@@ -2147,7 +2169,8 @@ public final class Mine {
      * @param addZ    Z Adicionado
      * @return Velocidade necessaria para chegar ate o alvo em 2 segundos
      */
-    public static Vector getVelocity(Location entity, Location target, double staticX, double staticY, double staticZ,
+    public static Vector getVelocity(Location entity, Location target, double staticX, double staticY,
+                                     double staticZ,
                                      double addX, double addY, double addZ) {
         double distance = target.distance(entity);
         double x = (staticX + (addX * distance)) * ((target.getX() - entity.getX()) / distance);
@@ -2644,7 +2667,8 @@ public final class Mine {
      *
      * @return Inventario paginado
      */
-    public static Inventory newMenu(Player player, List<ItemStack> items, int page, int amountPerPage, String title,
+    public static Inventory newMenu(Player player, List<ItemStack> items, int page, int amountPerPage, String
+            title,
                                     int lineAmount, int inicialIndex, int backSlot, int advanceSlot) {
         int quantidadeDePaginas = items.size() / amountPerPage;
         int inicial = (page - 1) * amountPerPage;
