@@ -10,6 +10,7 @@ import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPlugin
+import net.eduard.api.lib.plugin.PluginSettings
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
@@ -46,6 +47,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     final override lateinit var configs: Config
     final override lateinit var messages: Config
     final override lateinit var storage: Config
+    final override lateinit var settings: PluginSettings
     final override var dbManager: DBManager = DBManager()
     final override lateinit var sqlManager: SQLManager
     final override lateinit var storageManager: StorageManager
@@ -57,8 +59,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      * @param message Mensagem
      */
     override fun log(message: String) {
-
-        if (isLogEnabled)
+        if (settings.debug)
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §f$message")
     }
 
@@ -72,7 +73,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      * @param message Mensagem
      */
     override fun error(message: String) {
-        if (isLogEnabled)
+        if (settings.debug)
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §c$message")
     }
 
@@ -97,7 +98,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
 
     fun autosave() {
-        configs.set("auto-save-lasttime", Extra.getNow())
+        settings.lastSave =  Extra.getNow()
 
         save()
 

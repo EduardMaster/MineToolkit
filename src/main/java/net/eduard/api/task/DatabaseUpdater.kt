@@ -9,6 +9,7 @@ class DatabaseUpdater  : TimeManager(1){
     override fun run() {
         for (plugin in Bukkit.getPluginManager().plugins){
             if (plugin is EduardPlugin){
+                plugin.sqlManager.runDeletesQueue()
                 plugin.sqlManager.runUpdatesQueue()
             }
         }

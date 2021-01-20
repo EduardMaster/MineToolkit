@@ -10,18 +10,25 @@ group = "net.eduard.sqlmanager"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    mavenCentral()
+
+
+
     mavenLocal()
+    mavenCentral()
 }
 java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
 
-    compileOnly(kotlin("stdlib-jdk8"))
-    testImplementation(kotlin("stdlib-jdk8"))
+    compileOnly(kotlin("stdlib"))
     compileOnly(project(":eduardutils"))
     testImplementation("org.bukkit:spigot:1.8.9")
     testImplementation("junit", "junit", "4.12")
+    testImplementation(kotlin("stdlib"))
+    testImplementation(project(":eduardutils"))
+
+
 
 }
 

@@ -25,8 +25,8 @@ class MinigameWorld( var worldName: String = "minigame-map") {
             world = Mine.loadWorld(worldName)
 
         }
-        if (world?.spawnLocation == null?:false) {
-            world?.setSpawnLocation(0, 200, 0)
+        if (world != null && world!!.spawnLocation == null) {
+            world!!.setSpawnLocation(0, 200, 0)
         }
         notSave()
         return world!!

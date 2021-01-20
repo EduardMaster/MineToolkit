@@ -2,7 +2,6 @@ package net.eduard.api.lib.plugin
 
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
-import net.eduard.api.lib.config.StorageType
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
@@ -23,6 +22,7 @@ interface IPlugin : IPluginInstance {
     var dbManager: DBManager
     var sqlManager: SQLManager
     var storageManager: StorageManager
+    var settings: PluginSettings
 
     fun onLoad() {
         HybridTypes
@@ -31,22 +31,16 @@ interface IPlugin : IPluginInstance {
         configs = Config(this, "config.yml")
         messages = Config(this, "messages.yml")
         storage = Config(this, "storage.yml")
-        configs.add("database-type", StorageType.YAML)
-        configs.add("log-enabled", true)
-        configs.add("auto-save", false)
-        configs.add("auto-save-seconds", 60)
-        configs.add("auto-save-lasttime", Extra.getNow())
-        configs.add("backup", false)
-        configs.add("backup-lasttime", Extra.getNow())
-        configs.add("backup-time", 1)
-        configs.add("backup-timeunit-type", "MINUTES")
+        settings = PluginSettings()
+        configs.add("settings", settings)
         configs.add("database", dbManager)
         configs.saveConfig()
+        settings =  configs.get("settings", PluginSettings::class.java)
         dbManager = configs.get("database", DBManager::class.java)
         sqlManager = SQLManager(dbManager)
         storageManager = StorageManager(sqlManager)
         started = true
-        storageManager.type = configs.get("database-type", StorageType::class.java)
+        storageManager.type = settings.storeType
         if (db.isEnabled) {
             db.openConnection()
         }
@@ -57,7 +51,8 @@ interface IPlugin : IPluginInstance {
      * Gera backup dos arquivos config.yml, storage.yml e por ultimo database.db
      */
     fun backup() {
-        configs.set("backup-lasttime", Extra.getNow())
+        settings.lastBackup = Extra.getNow()
+
         try {
             val simpleDateFormat = SimpleDateFormat("dd-MM-YYYY HH-mm-ss")
             val pasta = File(
@@ -131,31 +126,6 @@ interface IPlugin : IPluginInstance {
 
         return configs.message(path)
     }
-
-    val isLogEnabled: Boolean
-        get() = configs.getBoolean("log-enabled")
-
-
-    val autoSaveSeconds: Long
-        get() = configs.getLong("auto-save-seconds")!!
-
-    val isAutoSaving: Boolean
-        get() = configs.getBoolean("auto-save")
-
-    val backupTime: Long
-        get() = configs.getLong("backup-time")!!
-
-    val backupLastTime: Long
-        get() = configs.getLong("backup-lasttime")
-
-    val autoSaveLastTime: Long
-        get() = configs.getLong("auto-save-lasttime")
-
-    val backupTimeUnitType: TimeUnit
-        get() = TimeUnit.valueOf(configs.getString("backup-timeunit-type").toUpperCase())
-
-    val canBackup: Boolean
-        get() = configs.getBoolean("backup")
 
     fun disconnectDB() {
         db.closeConnection()

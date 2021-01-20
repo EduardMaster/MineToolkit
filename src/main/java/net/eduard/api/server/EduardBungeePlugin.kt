@@ -5,6 +5,7 @@ import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.plugin.IPlugin
+import net.eduard.api.lib.plugin.PluginSettings
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Command
@@ -56,6 +57,7 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     final override  var dbManager : DBManager = DBManager()
     final override lateinit var sqlManager: SQLManager
     final override lateinit var storageManager: StorageManager
+    final override lateinit var settings: PluginSettings
     private val prefix get() = "[$pluginName] "
     override fun log(message: String) {
         console("§b$prefix§a$message")

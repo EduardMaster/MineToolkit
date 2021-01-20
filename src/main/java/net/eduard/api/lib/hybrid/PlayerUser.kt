@@ -2,6 +2,7 @@ package net.eduard.api.lib.hybrid
 
 import net.eduard.api.lib.storage.annotations.StorageAttributes
 import java.io.Serializable
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 @StorageAttributes(inline = true)
@@ -21,15 +22,17 @@ class PlayerUser(
     }
 
     @Transient
-    private var onlinePlayer: IPlayer<*> = Hybrid.instance.getPlayer(name,uniqueId)
+    private var onlinePlayer: IPlayer<*> = Hybrid.instance.getPlayer(name, uniqueId)
 
     fun setUUIDByName(): UUID {
-        uniqueId = UUID.nameUUIDFromBytes(("OfflinePlayer:$name").toByteArray())
+        uniqueId = UUID.nameUUIDFromBytes(
+            ("OfflinePlayer:$name").toByteArray(StandardCharsets.UTF_8)
+        )
         return uniqueId
     }
 
     fun sendMessage(message: String) {
-      player.sendMessage(message)
+        player.sendMessage(message)
     }
 
     constructor(name: String) : this(name, null)
@@ -43,8 +46,7 @@ class PlayerUser(
     }
 
     val isOnline: Boolean
-        get() =onlinePlayer.isOnline
-
+        get() = onlinePlayer.isOnline
 
 
     val player: IPlayer<*> get() = onlinePlayer

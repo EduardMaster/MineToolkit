@@ -144,7 +144,7 @@ class MySQLTable<T : Any>(
             val prepare = connection.prepareStatement(
                 text
             )
-            prepare.setString(1, "" + columnValue)
+            prepare.setString(1, engine.convertToSQL(columnValue))
             val query = prepare.executeQuery()
             log("Query: $text")
             if (query.next()) {
@@ -339,9 +339,11 @@ class MySQLTable<T : Any>(
                 "DELETE FROM $name WHERE ${primaryColumn?.name ?: "ID"} = ?"
             )
             if (primaryColumn != null) {
-                prepare.setString(1, "" + primaryColumn!!.field.get(data))
+                prepare.setString(1, engine.convertToSQL(primaryColumn!!.field.get(data)))
+                elements.remove(primaryColumn!!.field.get(data))
             } else {
                 prepare.setString(1, "1")
+                elements.remove(1)
             }
             prepare.executeUpdate()
 

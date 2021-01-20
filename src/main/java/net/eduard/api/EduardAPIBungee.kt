@@ -11,6 +11,7 @@ import net.eduard.api.lib.hybrid.BungeeServer
 import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
+import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.listener.BungeeEvents
 import net.md_5.bungee.api.ProxyServer
@@ -42,6 +43,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     override lateinit var dbManager: DBManager
     override lateinit var sqlManager: SQLManager
     override lateinit var storageManager: StorageManager
+    override lateinit var settings: PluginSettings
     override val pluginName: String
         get() = plugin.description.name
     override val pluginFolder: File

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -45,13 +46,14 @@ public class FakePlayer implements OfflinePlayer {
             setIdByName();
         }
     }
-    public void sendMessage(String message)
-    {
-        consume(p ->  p.sendMessage(message));
+
+    public void sendMessage(String message) {
+        consume(p -> p.sendMessage(message));
     }
-    public void consume(Consumer<Player> playerConsume){
+
+    public void consume(Consumer<Player> playerConsume) {
         Player player = getPlayer();
-        if (player!= null){
+        if (player != null) {
             playerConsume.accept(player);
         }
     }
@@ -70,13 +72,17 @@ public class FakePlayer implements OfflinePlayer {
     }
 
     public FakePlayer(String name) {
-        this.name = name;
+        setName(name);
         fixUUID();
     }
 
     public FakePlayer(String name, UUID id) {
         setName(name);
-        this.setId(id);
+        if (id != null) {
+            setId(id);
+        } else {
+            setIdByName();
+        }
     }
 
 
@@ -89,16 +95,16 @@ public class FakePlayer implements OfflinePlayer {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FakePlayer that = (FakePlayer) o;
-        return Objects.equals(name, that.name);
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        FakePlayer otherPlayer = (FakePlayer) other;
+        return name.equalsIgnoreCase(otherPlayer.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name.toLowerCase());
+        return name.toLowerCase().hashCode();
     }
 
     @Override
@@ -176,17 +182,17 @@ public class FakePlayer implements OfflinePlayer {
 
     public boolean isWhitelisted() {
 
-        return false;
+        return true;
     }
 
 
-    public void setBanned(boolean bol) {
+    public void setBanned(boolean flag) {
 
 
     }
 
 
-    public void setWhitelisted(boolean bol) {
+    public void setWhitelisted(boolean flag) {
 
 
     }

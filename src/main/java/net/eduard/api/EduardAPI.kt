@@ -18,10 +18,9 @@ import net.eduard.api.server.minigame.GameSchematic
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
-import net.eduard.api.lib.menu.Product
-import net.eduard.api.lib.menu.Shop
 import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
+import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.storables.BukkitStorables
 import net.eduard.api.listener.EduWorldEditListener
@@ -35,7 +34,6 @@ import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.DatabaseUpdater
 import net.eduard.api.task.PlayerTargetPlayerTask
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -55,6 +53,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     override var configs = Config(plugin, "config.yml")
     override var storage = Config(plugin, "storage.yml")
     override var messages = Config(plugin, "messages.yml")
+    override lateinit var settings: PluginSettings
     override var dbManager = DBManager()
     override lateinit var sqlManager: SQLManager
     override lateinit var storageManager: StorageManager
@@ -104,7 +103,6 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
     override fun onEnable() {
-
         if (!started) {
             this.onLoad()
         }
@@ -118,10 +116,6 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         events()
         tasks()
         loadServers()
-
-
-
-
         log("§aCarregado com sucesso!")
     }
 

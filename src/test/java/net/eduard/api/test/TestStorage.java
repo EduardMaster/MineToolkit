@@ -4,15 +4,12 @@ import net.eduard.api.lib.storage.StorageAPI;
 import net.eduard.api.lib.storage.annotations.StorageIndex;
 import net.eduard.api.lib.storage.annotations.StorageReference;
 
-
 import java.util.ArrayList;
-
 public class TestStorage {
 
     public static class Schematic {
         BlockLoc pos1;
         BlockLoc pos2;
-
         @Override
         public String toString() {
             return "Schematic{" +
@@ -30,7 +27,6 @@ public class TestStorage {
         int x=5;
         int y=5;
         int z=5;
-
         public BlockLoc(){
 
         }

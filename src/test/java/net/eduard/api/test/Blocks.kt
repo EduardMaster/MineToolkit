@@ -1,6 +1,5 @@
 package net.eduard.api.test
 
-
 import java.io.*
 import java.lang.Exception
 
@@ -87,7 +86,6 @@ class Blocks{
     }
 
     fun write(file: File) {
-
         write(DataOutputStream(FileOutputStream(file)))
     }
 

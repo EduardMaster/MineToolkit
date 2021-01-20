@@ -30,10 +30,15 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
 
+/**
+ * Atalho para Mine.removeXP
+ */
 fun Player.removeXP(amount: Double) {
     Mine.removeXP(this, amount)
 }
-
+/**
+ * Atalho para Mine.addHotBar
+ */
 fun Player.addHotBar(item: ItemStack) {
     Mine.setHotBar(this, item)
 }
@@ -41,40 +46,59 @@ fun Player.addHotBar(item: ItemStack) {
 fun String.colored(): String {
     return ChatColor.translateAlternateColorCodes('&', this)
 }
-
+/**
+ * Atalho para Mine.changeTabName
+ */
 fun Player.changeTabName(tabName: String) {
     Mine.changeTabName(this, tabName)
 }
-
+/**
+ * Atalho para Mine.clearHotBar
+ */
 fun Player.clearHotBar() {
     Mine.clearHotBar(this)
 
 }
-
+/**
+ * Atalho para Mine.clearArmors
+ */
 fun LivingEntity.clearArmors() {
     Mine.clearArmours(this)
 }
-
+/**
+ * Atalho para Mine.clearInventory
+ */
 fun Player.clearInventory() {
     Mine.clearInventory(this)
 }
 
+/**
+ * Atalho para MineReflect.sendTitle
+ */
 fun Player.sendTitle(title: String, subTitle: String) {
     MineReflect.sendTitle(this, title, subTitle, 20, 20, 20)
 }
-
+/**
+ * Atalho para MineReflect.sendTitle
+ */
 fun Player.sendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
     MineReflect.sendTitle(this, title, subTitle, fadeInt, stay, fadeOut)
 }
-
+/**
+ * Atalho para MineReflect.sendActionBar
+ */
 fun Player.sendActionBar(msg: String) {
     MineReflect.sendActionBar(this, msg)
 }
-
+/**
+ * Atalho para MineReflect.sendPacket
+ */
 fun Player.sendPacket(packet: Any) {
     MineReflect.sendPacket(this, packet)
 }
-
+/**
+ * Atalho para Mine.callEvent
+ */
 fun Event.call() {
     return Mine.callEvent(this)
 }
@@ -83,6 +107,10 @@ inline val FakePlayer.offline: PlayerUser
     get() {
         return PlayerUser(name, id)
     }
+
+inline val Player.fake: FakePlayer
+    get() = FakePlayer(this)
+
 
 inline fun CommandSender.isPlayer(block: Player.() -> Unit) {
     if (Mine.onlyPlayer(this)) {
@@ -174,8 +202,7 @@ val enchantmentsNames = mutableMapOf(
     Enchantment.PROTECTION_PROJECTILE to "Proteção contra Projéteis"
 )
 
-val Enchantment.nameBR get() = enchantmentsNames[this]?:name
-
+val Enchantment.nameBR get() = enchantmentsNames[this] ?: name
 
 
 fun ItemStack.displayEnchants(): ItemStack {

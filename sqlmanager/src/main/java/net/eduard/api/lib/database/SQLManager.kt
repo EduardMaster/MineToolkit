@@ -23,6 +23,7 @@ class SQLManager(var dbManager: DBManager) {
         }
         return amount
     }
+
     fun runDeletesQueue(): Int {
         var amount = 0
         for (i in 0 until queueRunsLimit) {
@@ -32,6 +33,7 @@ class SQLManager(var dbManager: DBManager) {
         }
         return amount
     }
+
     fun hasConnection(): Boolean {
         return dbManager.hasConnection()
     }
@@ -116,6 +118,13 @@ class SQLManager(var dbManager: DBManager) {
         }
         updatesQueue.add(data)
     }
+    /**
+     *
+     * @param data
+     */
+    fun <E : Any> deleteDataQueue(data: E) {
+        deletesQueue.add(data)
+    }
 
     /**
      *
@@ -124,20 +133,19 @@ class SQLManager(var dbManager: DBManager) {
     </T> */
     fun <T : Any> updateData(data: T) {
         if (hasConnection()) {
-            if (hasConnection()) {
-                val dataClass = data.javaClass
-                dbManager.engineUsed.getTable(dataClass)
-                    .update(data)
-            }
+
+            val dataClass = data.javaClass
+            dbManager.engineUsed.getTable(dataClass)
+                .update(data)
+
         }
     }
 
     fun <T : Any> deleteData(data: T) {
         if (hasConnection()) {
-            if (hasConnection()) {
-                dbManager.engineUsed.getTable(data.javaClass)
-                    .delete(data)
-            }
+            dbManager.engineUsed.getTable(data.javaClass)
+                .delete(data)
+
         }
     }
 
@@ -173,10 +181,8 @@ class SQLManager(var dbManager: DBManager) {
     }
 
     fun updateCache(data: Any) {
-
         if (hasConnection()) {
             dbManager.engineUsed.updateCache(data)
-
         }
     }
 }
