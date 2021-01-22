@@ -73,20 +73,18 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
 
     public boolean register() {
         if (Enchantment.getByName(getName()) != null) return false;
-        setRegistred(true);
         try {
-            try {
-                Field acceptingNew = Enchantment.class.getDeclaredField("acceptingNew");
-                acceptingNew.setAccessible(true);
-                acceptingNew.set(null, true);
-                Enchantment.registerEnchantment(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Field acceptingNew = Enchantment.class.getDeclaredField("acceptingNew");
+            acceptingNew.setAccessible(true);
+            acceptingNew.set(null, true);
+            Enchantment.registerEnchantment(this);
+            setRegistred(true);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return true;
+
+        return false;
 
     }
 
