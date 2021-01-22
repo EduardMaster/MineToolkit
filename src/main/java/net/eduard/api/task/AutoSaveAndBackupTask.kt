@@ -18,13 +18,7 @@ class AutoSaveAndBackupTask : BukkitRunnable() {
                 val pluginSettings = plugin.settings
                 try {
                     val agora = Extra.getNow()
-                    if (plugin.db.hasConnection()) {
-                        val amountUpdated = plugin.sqlManager.runUpdatesQueue()
-                        val tempoDepois = Extra.getNow()
-                        val dif = tempoDepois - agora
-                        if (amountUpdated > 0)
-                            log("Atualizando $amountUpdated objetos na tabela (tempo levado: ${dif}ms)")
-                    }
+
                     if (pluginSettings.autoSave) {
                         if (pluginSettings.lastSave + pluginSettings.autoBackupSeconds * 1000 < agora) {
                             log("Salvando dados do plugin §b" + plugin.name)
