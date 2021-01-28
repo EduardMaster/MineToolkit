@@ -22,16 +22,16 @@ class DatabaseUpdater : TimeManager(20) {
                         val amountUpdated = plugin.sqlManager.runUpdatesQueue()
                         val tempoDepois = Extra.getNow()
                         val tempoPassado = tempoDepois - agora
-                        if (amountUpdated>0)
-                        log("Atualizando $amountUpdated objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
+                        if (amountUpdated > 0)
+                            log("Atualizando $amountUpdated objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
                     }
                     run {
                         val agora = Extra.getNow()
                         val amountDeleted = plugin.sqlManager.runDeletesQueue()
                         val tempoDepois = Extra.getNow()
                         val tempoPassado = tempoDepois - agora
-                        if (amountDeleted>0)
-                        log("Deletando $amountDeleted objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
+                        if (amountDeleted > 0)
+                            log("Deletando $amountDeleted objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
                     }
                 }
 

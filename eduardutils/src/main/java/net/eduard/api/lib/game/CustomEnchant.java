@@ -39,12 +39,13 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
             Map<?, ?> byName = (Map<?, ?>) byNameField.get(null);
             byId.remove(getId());
             byName.remove(getName());
+            setRegistred(false);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setRegistred(false);
 
-        return true;
+        return false;
     }
 
     @Override

@@ -7,7 +7,32 @@ import net.eduard.database.tables.PartyUserExample
 import net.eduard.database.tables.PlayerExample
 import org.junit.Test
 import java.util.*
+class SimpleUser(var name: String = "Eduard",
+                 var uuid: UUID? = null){
 
+
+    init{
+        if (uuid == null){
+            uuid = UUID.nameUUIDFromBytes("FakeUUID$name".toByteArray())
+        }
+    }
+
+    override fun toString(): String {
+        return "PlayerConta(name='$name', uuid=$uuid)"
+    }
+}
+
+
+inline fun testLag(actionName: String, execution: () -> Unit) {
+
+    println(" Inicio do $actionName")
+    val init = System.currentTimeMillis()
+    execution.invoke()
+    val end = System.currentTimeMillis()
+    val dif = end - init
+    println("Tempo gasto do $actionName: ${dif}ms")
+
+}
 class TestandoSQLManager {
 
 
@@ -28,6 +53,8 @@ class TestandoSQLManager {
             db.openConnection()
         }
     }
+
+
 
     @Test
     fun testando() {

@@ -24,6 +24,14 @@ public final class BungeeAPI {
         return server;
     }
 
+    public static int getPlayersAmount() {
+        int amount = 0;
+        for (ServerSpigot server : servers.values()) {
+            amount+=server.getCount();
+        }
+        return amount;
+    }
+
     public static int getPlayersAmount(String serverType) {
         int amount = 0;
         for (ServerSpigot server : servers.values()) {
