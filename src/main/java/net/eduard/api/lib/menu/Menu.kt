@@ -90,7 +90,6 @@ open class Menu(
     var pageAmount = 1
     var pagePrefix = ""
     var pageSuffix = "(\$page/\$max_page)"
-
     var isTranslateIcon: Boolean = false
     var isAutoAlignItems: Boolean = false
     var autoAlignSkipCenter = false
@@ -246,14 +245,9 @@ open class Menu(
 
 
     fun addButton(button: MenuButton) {
-
         buttons.add(button)
         button.parentMenu = this
-
-
         buttonsCache[button.name] = button
-
-
         if (!button.fixed && isAutoAlignItems) {
             nextPosition()
             button.page = lastPage
@@ -292,7 +286,6 @@ open class Menu(
     }
 
     fun isFull(page: Int): Boolean {
-
         for (slot in 0..(lineAmount * 9)) {
             getButton(page, slot) ?: return false
         }
@@ -304,10 +297,8 @@ open class Menu(
     }
 
     fun updateButtonPositions() {
-
         lastSlot = getSlotInicial() - 1
         lastPage = 1
-
         for (button in buttons) {
             if (button.fixed) continue
             nextPosition()
@@ -371,7 +362,7 @@ open class Menu(
                 lineAmount = 1
             }
 
-            val currentTitle = titlePerPlayer?.invoke(player)?:title
+            val currentTitle = titlePerPlayer?.invoke(player) ?: title
             val prefix = pagePrefix.replace("\$max_page", "" + pageAmount)
                 .replace("\$page", "" + page)
             val suffix = pageSuffix.replace("\$max_page", "" + pageAmount)
@@ -487,10 +478,11 @@ open class Menu(
         if (player.itemInHand == null)
             return
         if (e.action == Action.PHYSICAL) return
-        if (openWithItem != null && Mine.equals(player.itemInHand, openWithItem)) {
-            e.isCancelled = true
-            open(player)
-        }
+        if (openWithItem != null) return
+        if (!Mine.equals(player.itemInHand, openWithItem)) return
+        e.isCancelled = true
+        open(player)
+
 
     }
 
@@ -500,8 +492,7 @@ open class Menu(
         val message = event.message
         val cmd = Extra.getCommandName(message)
         openWithCommand ?: return
-
-        if (cmd.toLowerCase() == openWithCommand!!.toLowerCase()) {
+        if (cmd.equals(openWithCommand!!, true)) {
             event.isCancelled = true
             open(player)
         }
@@ -522,64 +513,63 @@ open class Menu(
 
     @EventHandler
     fun onClick(event: InventoryClickEvent) {
-        if (event.whoClicked is Player) {
-            val player = event.whoClicked as Player
-            if (isOpen(player, event.inventory)) {
-                debug("Nome do Menu: " + event.inventory.name)
-                event.isCancelled = true
-                val slot = event.rawSlot
-                var page: Int = getPageOpen(player)
-                val itemClicked = event.currentItem
-                var button: MenuButton? = null
-                if (itemClicked != null) {
-                    if (previousPage.item == itemClicked) {
-                        previousPageSound?.create(player)
-                        open(player, (--page))
-                        return
-                    } else if (nextPage.item == itemClicked) {
-                        nextPageSound?.create(player)
-                        open(player, (++page))
-                        return
-                    } else if (backPage.item == itemClicked) {
-                        if (superiorMenu != null) {
-                            backPageSound?.create(player)
-                            superiorMenu?.open(player)
-                        }
-                        return
-                    } else {
-                        button = getButton(itemClicked, player)
-
-                        debug("Button by Item " + if (button == null) "is Null" else "is not null")
-                    }
+        if (event.whoClicked !is Player) return
+        val player = event.whoClicked as Player
+        if (!isOpen(player, event.inventory)) return
+        debug("Nome do Menu: " + event.inventory.name)
+        event.isCancelled = true
+        val slot = event.rawSlot
+        var page: Int = getPageOpen(player)
+        val itemClicked = event.currentItem
+        var button: MenuButton? = null
+        if (itemClicked != null) {
+            if (previousPage.item == itemClicked) {
+                previousPageSound?.create(player)
+                open(player, (--page))
+                return
+            } else if (nextPage.item == itemClicked) {
+                nextPageSound?.create(player)
+                open(player, (++page))
+                return
+            } else if (backPage.item == itemClicked) {
+                if (superiorMenu != null) {
+                    backPageSound?.create(player)
+                    superiorMenu?.open(player)
                 }
-                if (button == null) {
-                    button = getButton(page, slot)
-                    debug("Button by Slot " + if (button == null) "is Null" else "is not null")
-                }
+                return
+            } else {
+                button = getButton(itemClicked, player)
 
-                if (button != null) {
-
-                    if (button.click != null) {
-                        debug("Button make click effect")
-                        button.click?.accept(event)
-                    }
-                    if (button.effects != null) {
-                        debug("Button make Editable Effects")
-                        button.effects?.playEffects(player)
-                    }
-
-                    if (button.isCategory) {
-                        button.menu?.open(player)
-                        debug("Button open another menu")
-                        return
-                    }
-                }
-                if (effect != null) {
-                    debug("Played menu effect")
-                    effect?.accept(event)
-                }
+                debug("Button by Item " + if (button == null) "is Null" else "is not null")
             }
         }
+        if (button == null) {
+            button = getButton(page, slot)
+            debug("Button by Slot " + if (button == null) "is Null" else "is not null")
+        }
+
+        if (button != null) {
+            if (button.click != null) {
+                debug("Button make click effect")
+                button.click?.accept(event)
+            }
+            if (button.effects != null) {
+                debug("Button make Editable Effects")
+                button.effects?.playEffects(player)
+            }
+
+            if (button.isCategory) {
+                button.menu?.open(player)
+                debug("Button open another menu")
+                return
+            }
+        }
+        if (effect != null) {
+            debug("Played menu effect")
+            effect?.accept(event)
+        }
+
+
     }
 
 

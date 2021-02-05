@@ -29,6 +29,7 @@ public class CurrencyController {
                 return currencies.values().iterator().next();
             }
         }
+
         return null;
     }
 
