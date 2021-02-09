@@ -550,5 +550,8 @@ class DBManager(
         fun debug(msg: String) {
             if (isDebugging) println("[DB] $msg")
         }
+        init{
+            javaTypes()
+        }
     }
 }

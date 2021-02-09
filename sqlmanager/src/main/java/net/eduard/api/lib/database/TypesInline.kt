@@ -29,7 +29,7 @@ inline fun <reified T> load(noinline loadAs: (String) -> T) {
 
 
 fun javaTypes() {
-    save<UUID>(50) {
+    save<UUID>(100) {
         toString()
     }
     load { UUID.fromString(it) }
