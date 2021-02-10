@@ -25,14 +25,16 @@ class DBManager(
     var pass: String = "",
     var database: String = "mine",
     var host: String = "localhost"
+
 ) {
 
-
+    var autoReconnect = true
     var isEnabled = false
     var port = "3306"
 
     var engine =
         SQLEngineType.MYSQL
+
     @Transient
     lateinit var engineUsed: DatabaseEngine
 
@@ -43,7 +45,6 @@ class DBManager(
      */
     @Transient
     lateinit var connection: Connection
-
 
 
     /**
@@ -84,7 +85,7 @@ class DBManager(
      * @return Mesma instacia da classe DBManager
      */
     fun openConnection(): DBManager {
-        if (!hasConnection()) {
+        if (!hasConnectionInFact()) {
             try {
                 connection = connect()
                 if (engine === SQLEngineType.MYSQL) {
@@ -103,12 +104,13 @@ class DBManager(
         return this
     }
 
+
     /**
      * Ve se a conexao nao esta nula
      *
      * @return Se a conexao existe
      */
-    fun hasConnection(): Boolean {
+    fun hasConnectionInFact(): Boolean {
         try {
             return this::connection.isInitialized && !(connection.isClosed)
         } catch (ex: SQLException) {
@@ -117,8 +119,24 @@ class DBManager(
         return false
     }
 
-
-
+    /**
+     * Ve se a conexao nao esta nula
+     *
+     * @return Se a conexao existe
+     */
+    fun hasConnection(): Boolean {
+        try {
+            var have = hasConnectionInFact()
+            if (!have && autoReconnect) {
+                openConnection()
+                have = hasConnectionInFact()
+            }
+            return have
+        } catch (ex: SQLException) {
+            ex.printStackTrace()
+        }
+        return false
+    }
 
 
     /**
@@ -150,9 +168,11 @@ class DBManager(
      * @param values Valores
      */
     fun createTable(table: String, values: String) {
-        val builder = StringBuilder("CREATE TABLE IF NOT EXISTS $table (" +
+        val builder = StringBuilder(
+            "CREATE TABLE IF NOT EXISTS $table (" +
 
-                " ID INT AUTO_INCREMENT PRIMARY KEY,")
+                    " ID INT AUTO_INCREMENT PRIMARY KEY,"
+        )
 
         builder.append(values)
         builder.append(")")
@@ -193,7 +213,7 @@ class DBManager(
 
             builder.append("? ,")
         }
-        builder.deleteCharAt(builder.length-1)
+        builder.deleteCharAt(builder.length - 1)
 
         builder.append(")")
         return update(
@@ -244,7 +264,7 @@ class DBManager(
     }
 
     fun addReference(table: String, key: String, references: String) {
-        update("ALTER TABLE $table ADD FOREIGN KEY ($key) REFERENCES $references ON DELETE SET NULL ON UPDATE SET NULL" )
+        update("ALTER TABLE $table ADD FOREIGN KEY ($key) REFERENCES $references ON DELETE SET NULL ON UPDATE SET NULL")
     }
 
     /**
@@ -431,7 +451,7 @@ class DBManager(
         where: String,
         vararg objects: Any?
     ): Double {
-        return getData(Double::class.java, table, column, where, *objects)?: 1.0
+        return getData(Double::class.java, table, column, where, *objects) ?: 1.0
     }
 
     fun getInt(
@@ -440,7 +460,7 @@ class DBManager(
         where: String,
         vararg objects: Any?
     ): Int {
-        return getData(Int::class.java, table, column, where, *objects)?:1
+        return getData(Int::class.java, table, column, where, *objects) ?: 1
     }
 
     fun <T> getData(
@@ -452,9 +472,9 @@ class DBManager(
     ): T? {
         var result: T? = null
         if (hasConnection()) try {
-            val queryResult = selectAll(table, where, *objects)?:return null
+            val queryResult = selectAll(table, where, *objects) ?: return null
             if (queryResult.next()) {
-                result = queryResult.getObject(column,type) as T
+                result = queryResult.getObject(column, type) as T
             }
             queryResult.close()
         } catch (e: Exception) {
@@ -483,7 +503,7 @@ class DBManager(
             var id = 1
             for (replacer in objects) {
                 try {
-                    if (replacer== null)continue
+                    if (replacer == null) continue
                     val data: Any = engineUsed.convertToSQL(replacer)
                     state.setObject(id, data)
                 } catch (e: SQLException) {
@@ -550,7 +570,8 @@ class DBManager(
         fun debug(msg: String) {
             if (isDebugging) println("[DB] $msg")
         }
-        init{
+
+        init {
             javaTypes()
         }
     }

@@ -27,7 +27,7 @@ class DatabaseColumn<T : Any>(val table: DatabaseTable<T>, val field: Field, val
 
 
     val size = if (field.isAnnotationPresent(ColumnSize::class.java))
-        field.getAnnotation(ColumnSize::class.java).value else dataSize[javaType]?:11
+        field.getAnnotation(ColumnSize::class.java).value else dataSize[javaType]?:100
 
     val customType: String = if (field.isAnnotationPresent(
             ColumnType::
