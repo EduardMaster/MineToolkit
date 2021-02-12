@@ -474,11 +474,13 @@ open class Menu(
 
     @EventHandler
     fun onClick(e: PlayerInteractEvent) {
+
+
         val player = e.player
         if (player.itemInHand == null)
             return
         if (e.action == Action.PHYSICAL) return
-        if (openWithItem != null) return
+        if (openWithItem == null) return
         if (!Mine.equals(player.itemInHand, openWithItem)) return
         e.isCancelled = true
         open(player)
