@@ -10,28 +10,52 @@ import java.util.concurrent.ConcurrentLinkedQueue
 @Suppress("unused")
 class SQLManager(var dbManager: DBManager) {
 
-    val queueRunsLimit = 100
-    private val updatesQueue: Queue<Any> = ConcurrentLinkedQueue()
-    private val deletesQueue: Queue<Any> = ConcurrentLinkedQueue()
 
-    fun runUpdatesQueue(): Int {
+    enum class SQLAction {
+        UPDATE, DELETE, INSERT, UPDATE_CACHE
+    }
+
+    class DataChanged(val data: Any, val action: SQLAction)
+
+    val actions: Queue<DataChanged> = ConcurrentLinkedQueue()
+
+    val queueRunsLimit = 100
+
+
+    fun runChanges(): Int {
         var amount = 0
+        val updatesDone = mutableListOf<Any>()
+        val deletesDone = mutableListOf<Any>()
         for (i in 0 until queueRunsLimit) {
-            val data = updatesQueue.poll() ?: break
-            updateData(data)
+            val dataChange = actions.poll() ?: break
+            if (dataChange.action == SQLAction.UPDATE) {
+                if (updatesDone.contains(dataChange.data)) {
+                    continue
+                }
+                updatesDone.add(dataChange.data)
+                updateData(dataChange.data)
+            } else if (dataChange.action == SQLAction.DELETE) {
+                if (deletesDone.contains(dataChange.data)) {
+                    continue
+                }
+                deletesDone.add(dataChange.data)
+                deleteData(dataChange.data)
+            } else if (dataChange.action == SQLAction.INSERT) {
+                insertData(dataChange.data)
+            } else if (dataChange.action == SQLAction.UPDATE_CACHE) {
+                updateCache(dataChange.data)
+            }
             amount++
         }
         return amount
     }
 
+    fun runUpdatesQueue(): Int {
+        return runChanges()
+    }
+
     fun runDeletesQueue(): Int {
-        var amount = 0
-        for (i in 0 until queueRunsLimit) {
-            val data = deletesQueue.poll() ?: break
-            deleteData(data)
-            amount++
-        }
-        return amount
+        return 0
     }
 
     fun hasConnection(): Boolean {
@@ -113,17 +137,23 @@ class SQLManager(var dbManager: DBManager) {
      * @param data
      */
     fun <E : Any> updateDataQueue(data: E) {
-        if (updatesQueue.contains(data)) {
-            return
-        }
-        updatesQueue.add(data)
+        actions.offer(DataChanged(data, SQLAction.UPDATE))
     }
+
     /**
      *
      * @param data
      */
     fun <E : Any> deleteDataQueue(data: E) {
-        deletesQueue.add(data)
+        actions.offer(DataChanged(data, SQLAction.DELETE))
+    }
+
+    /**
+     *
+     * @param data
+     */
+    fun <E : Any> insertDataQueue(data: E) {
+        actions.offer(DataChanged(data, SQLAction.INSERT))
     }
 
     /**
