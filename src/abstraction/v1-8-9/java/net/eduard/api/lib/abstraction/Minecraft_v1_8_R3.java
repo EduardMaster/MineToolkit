@@ -23,6 +23,8 @@ import net.eduard.api.lib.modules.Extra;
 import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand.EnumClientCommand;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
 
+import static net.eduard.api.lib.modules.MineReflect.isAbove1_8;
+
 /**
  * @author Eduard
  */
@@ -227,9 +229,32 @@ final public class Minecraft_v1_8_R3 extends Minecraft {
     }
 
     @Override
-    public void disableAI(Entity entity) {
+    public void setTabList(Player player, String header, String footer) {
+        PacketPlayOutPlayerListHeaderFooter packet
+                = new PacketPlayOutPlayerListHeaderFooter();
+        try {
+            IChatBaseComponent headerComponent =
+                    new ChatComponentText(header);
 
-        MineReflect.disableAI(entity);
+            Field headerField = packet.getClass().getDeclaredField("a");
+            headerField.setAccessible(true);
+            headerField.set(packet , headerComponent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            IChatBaseComponent footerComponent =
+                    new ChatComponentText(footer);
+
+            Field headerField = packet.getClass().getDeclaredField("b");
+            headerField.setAccessible(true);
+            headerField.set(packet ,footerComponent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sendPacket(player,packet);
+
 
     }
+
 }
