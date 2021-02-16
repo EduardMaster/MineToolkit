@@ -12,7 +12,7 @@ class PlayerTargetPlayerTask : BukkitRunnable() {
             try {
                 val target =
                         Mine.getTarget(player, Mine.getPlayerAtRange(player.location, 100.0)) ?: continue
-
+                if (target.hasMetadata("NPC"))continue
                 PlayerTargetPlayerEvent(
                     target, player).call()
             } catch (ex: Exception) {
