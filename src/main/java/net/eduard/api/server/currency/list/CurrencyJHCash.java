@@ -7,7 +7,7 @@ import net.eduard.api.server.currency.SimpleCurrencyHandler;
 import org.bukkit.Material;
 
 @StorageAttributes(indentificate = true)
-public  class CurrencyJHCash extends SimpleCurrencyHandler {
+public class CurrencyJHCash extends SimpleCurrencyHandler {
     public CurrencyJHCash() {
         setName("JHCash");
         setDisplayName("Sistema de Cash");

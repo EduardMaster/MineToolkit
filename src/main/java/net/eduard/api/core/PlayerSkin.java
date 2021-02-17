@@ -107,8 +107,8 @@ public class PlayerSkin {
 
         System.out.println("Atualizando skin do "+player.getName());
 
-        Minecraft.getInstance().respawnPlayer(player);
-        Minecraft.getInstance().reloadPlayer(player);
+        Minecraft.instance.respawnPlayer(player);
+        Minecraft.instance.reloadPlayer(player);
 
 
 

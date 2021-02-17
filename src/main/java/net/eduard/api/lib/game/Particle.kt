@@ -17,7 +17,7 @@ class Particle(
 
     fun create(player: Player, local: Location): Particle {
 
-        Minecraft.getInstance().sendParticle(player, particle.particleName, local, amount,xRandom,yRandom,zRandom,speed)
+        Minecraft.instance.sendParticle(player, particle.particleName, local, amount,xRandom,yRandom,zRandom,speed)
         return this
     }
 

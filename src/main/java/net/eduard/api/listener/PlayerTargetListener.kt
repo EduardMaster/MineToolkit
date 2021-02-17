@@ -22,7 +22,7 @@ class PlayerTargetListener : EventsManager() {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onTarget(e: PlayerTargetPlayerEvent) {
-        Minecraft.getInstance().sendActionBar(
+        Minecraft.instance.sendActionBar(
             e.player,
             Mine.getReplacers(
                 EduardAPI.instance.getString("player target"), e.target
