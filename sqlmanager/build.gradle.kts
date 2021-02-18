@@ -4,9 +4,7 @@ plugins {
     `maven-publish`
 }
 
-group = "net.eduard.lib"
-version = "1.0-SNAPSHOT"
-group = "net.eduard.lib"
+group = "net.eduard"
 version = "1.0-SNAPSHOT"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
@@ -28,15 +26,14 @@ publishing {
             groupId = "net.eduard"
             artifactId = "sqlmanager"
             version = project.version as String
-
             from(components["java"])
         }
     }
 }
+
 repositories {
     mavenCentral()
     mavenLocal()
-
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }

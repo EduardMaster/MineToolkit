@@ -1,6 +1,7 @@
 plugins {
     java
     kotlin("jvm")
+    `maven-publish`
 }
 
 group = "net.eduard.lib"
@@ -14,7 +15,16 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
 }
-
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "net.eduard"
+            artifactId = "eduardnms"
+            version = project.version as String
+            from(components["java"])
+        }
+    }
+}
 repositories {
     mavenCentral()
     mavenLocal()

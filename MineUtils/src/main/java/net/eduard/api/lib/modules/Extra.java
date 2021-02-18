@@ -199,7 +199,6 @@ public final class Extra {
         REPLACERS.put("#p", "#mPacket");
         REPLACERS.put("#m", "net.minecraft.server.#v.");
         REPLACERS.put("#c", "org.bukkit.craftbukkit.#v.");
-        REPLACERS.put("#s", "org.bukkit.");
     }
 
     /**
@@ -238,7 +237,7 @@ public final class Extra {
      * @param title     Titulo do Texto
      */
     public static void box(String[] paragraph, String title) {
-        ArrayList<String> buffer = new ArrayList<String>();
+        ArrayList<String> buffer = new ArrayList<>();
         StringBuilder at = new StringBuilder();
 
         int side1 = (int) Math.round(25.0D - (title.length() + 4) / 2.0D);
@@ -452,7 +451,7 @@ public final class Extra {
         try {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
             byte[] bytesIn = new byte[4096];
-            int read = 0;
+            int read;
             while ((read = zipIn.read(bytesIn)) != -1) {
                 bos.write(bytesIn, 0, read);
             }
@@ -478,6 +477,7 @@ public final class Extra {
                 for (char c : chars) {
                     if (c == array[(t + 1)]) {
                         array[t] = '\u00a7';
+                        break;
                     }
                 }
             }
@@ -1897,7 +1897,7 @@ public final class Extra {
     }
 
     public static List<String> toMessages(List<Object> list) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         for (Object line : list) {
             lines.add(toChatMessage(line.toString()));
         }
