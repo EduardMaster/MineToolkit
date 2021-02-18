@@ -25,7 +25,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "net.eduard"
-            artifactId = "eduardutils"
+            artifactId = "mineutils"
             version = project.version as String
             from(components["java"])
         }

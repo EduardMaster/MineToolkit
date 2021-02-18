@@ -1,11 +1,11 @@
 plugins {
     java
-   kotlin("jvm")
+    kotlin("jvm")
+    `maven-publish`
 }
 
 group = "net.eduard.lib"
 version = "1.0-SNAPSHOT"
-
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 tasks {
     compileKotlin {
@@ -15,6 +15,17 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
 }
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "net.eduard.minenms"
+            artifactId = "impl_1_12"
+            version = project.version as String
+            from(components["java"])
+        }
+    }
+}
+
 
 repositories {
     mavenCentral()

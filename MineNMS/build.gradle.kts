@@ -18,8 +18,8 @@ tasks {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "net.eduard"
-            artifactId = "eduardnms"
+            groupId = "net.eduard.minenms"
+            artifactId = "api"
             version = project.version as String
             from(components["java"])
         }
