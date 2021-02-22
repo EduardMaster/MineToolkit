@@ -55,7 +55,26 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unused", "deprecated"})
 public final class Mine {
 
+    /**
+     * Interface de criar Replacer (Placeholders)
+     *
+     * @author Eduard
+     */
+    public interface Replacer extends Function<Player, Object> {
+        /**
+         * Retorna o valor do Placeholder
+         *
+         * @param player Jogador
+         * @return O placeholder
+         * @deprecated Use Lambda da classe {@link Function}
+         */
+        @Deprecated
+        default Object getText(Player player) {
+            return this.apply(player);
+        }
 
+
+    }
     /**
      * Metodo muito importante para verificar se o cara esta realmente acertando o alvo
      *
@@ -101,26 +120,7 @@ public final class Mine {
 
     }
 
-    /**
-     * Interface de criar Replacer (Placeholders)
-     *
-     * @author Eduard
-     */
-    public interface Replacer extends Function<Player, Object> {
-        /**
-         * Retorna o valor do Placeholder
-         *
-         * @param player Jogador
-         * @return O placeholder
-         * @deprecated Use Lambda da classe {@link Function}
-         */
-        @Deprecated
-        default Object getText(Player player) {
-            return this.apply(player);
-        }
 
-
-    }
 
 
     /**

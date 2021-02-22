@@ -24,7 +24,7 @@ import java.util.Scanner;
  */
 public class LicencePlugin {
 
-	private static final String site = "link";
+	private static final String   site = "link";
 
 	private static PluginActivationStatus test(String plugin, String owner, String key) {
 		try {

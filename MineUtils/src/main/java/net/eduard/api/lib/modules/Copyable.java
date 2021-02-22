@@ -15,7 +15,7 @@ import java.util.Map.Entry;
  *
  * @author Eduard
  * @version 1.4
- * @see Extra
+ *  Extra
  */
 @SuppressWarnings("unchecked")
 public interface Copyable {

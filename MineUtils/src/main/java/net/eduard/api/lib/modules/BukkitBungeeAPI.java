@@ -18,6 +18,14 @@ import java.util.*;
  */
 @SuppressWarnings("unused")
 public final class BukkitBungeeAPI {
+	private static boolean debug = true;
+
+	public static void log(String message) {
+
+		if (debug)
+			Bukkit.getConsoleSender().sendMessage("§7[§8BukkitBungeeAPI§7] §f" + message);
+	}
+
 	private static String currentServer = "lobby";
 	private static final Map<String, SimpleServer> servers = new HashMap<>();
 	private static final Map<String, SimplePlayer> players = new HashMap<>();
@@ -94,13 +102,6 @@ public final class BukkitBungeeAPI {
 
 	}
 
-	private static boolean debug = true;
-
-	public static void log(String message) {
-
-		if (debug)
-			Bukkit.getConsoleSender().sendMessage("§7[§8BukkitBungeeAPI§7] §f" + message);
-	}
 
 	public static class SimpleServer {
 		private String name;
