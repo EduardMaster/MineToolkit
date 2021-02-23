@@ -1,4 +1,4 @@
-package net.eduard.api.server.currency.list;
+package net.eduard.api.supports;
 
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.annotations.StorageAttributes;

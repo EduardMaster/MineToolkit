@@ -2,12 +2,10 @@ package net.eduard.api.lib.manager;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import net.eduard.api.lib.modules.FakePlayer;
 import net.eduard.api.lib.storage.annotations.StorageAttributes;
 import net.eduard.api.server.currency.SimpleCurrencyHandler;
 import org.bukkit.inventory.ItemStack;
-
 
 public class CurrencyManager extends SimpleCurrencyHandler {
 

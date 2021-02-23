@@ -1,4 +1,4 @@
-package net.eduard.api.server
+package net.eduard.api.hooks
 
 import org.bukkit.Bukkit
 

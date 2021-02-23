@@ -1,6 +1,5 @@
 package net.eduard.api.listener
 
-import net.eduard.api.EduardAPI
 import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.server.minigame.GameSchematic
 import org.bukkit.GameMode

@@ -18,18 +18,17 @@ object DamagerManager : Listener {
         register(EduardAPI.instance.plugin)
     }
 
-
-        fun getLastDamager(entity: Entity): Entity? {
-            val damager = lastPvP[entity]?:return null
-            if (damager is Projectile) {
-                if (damager.shooter != null) {
-                    return damager.shooter as Entity
-                }
+    fun getLastDamager(entity: Entity): Entity? {
+        val damager = lastPvP[entity]?:return null
+        if (damager is Projectile) {
+            if (damager.shooter != null) {
+                return damager.shooter as Entity
             }
-            return damager
         }
+        return damager
+    }
 
-        private val lastPvP: MutableMap<Entity, Entity> = HashMap()
+    private val lastPvP: MutableMap<Entity, Entity> = HashMap()
 
 
 

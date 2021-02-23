@@ -28,7 +28,7 @@ import net.eduard.api.listener.EduardAPIEvents
 import net.eduard.api.listener.PlayerTargetListener
 import net.eduard.api.listener.SupportActivations
 import net.eduard.api.server.currency.CurrencyController
-import net.eduard.api.server.currency.list.CurrencyVaultEconomy
+import net.eduard.api.supports.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.DatabaseUpdater
