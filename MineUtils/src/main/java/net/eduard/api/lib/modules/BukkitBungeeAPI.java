@@ -247,13 +247,13 @@ public final class BukkitBungeeAPI {
 	public static void sendMissingMessages(Player player){
 		log("TRYING SEND MISSING MESSAGES");
 		if (needSend.isEmpty())return;
-		//Bukkit.getScheduler().runTaskLater(plugin, () -> {
+		Bukkit.getScheduler().runTaskLater(plugin, () -> {
 			log("SENDING "+needSend.size()+ " MISSING MESSAGES" );
 			while(!needSend.isEmpty()){
 				ByteArrayOutputStream message = needSend.remove();
 				sendMessage(player, message);
 			}
-		//},1);
+		},1);
 
 	}
 	public static Plugin getInstance() {
