@@ -1,4 +1,6 @@
 package net.eduard.api.lib.abstraction
+import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.modules.MineReflect
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
@@ -78,7 +80,7 @@ abstract class Minecraft {
     abstract fun disableAI(entity: Entity)
 
     companion object {
-        fun getVersion() = "1_8_9_R0"
+        fun getVersion() = MineReflect.getVersion()
         /**
          * Inicia automaticamente uma istancia da versão atual do servidor
          *

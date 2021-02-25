@@ -1,7 +1,7 @@
 package net.eduard.api.listener
 
 import net.eduard.api.lib.manager.EventsManager
-import net.eduard.api.hooks.PluginHook
+import net.eduard.api.server.PluginHook
 import org.bukkit.event.EventHandler
 import org.bukkit.event.server.PluginEnableEvent
 

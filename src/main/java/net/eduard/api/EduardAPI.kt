@@ -108,6 +108,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         }
         storage()
         VaultAPI.setupVault()
+        BukkitBungeeAPI.register(plugin)
         BukkitBungeeAPI.requestCurrentServer()
         BungeeAPI.getBukkit().register(plugin)
         StorageAPI.registerPackage(Minigame::class.java)

@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":MineUtils"))
+    implementation(project(":JavaUtils"))
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT")
     compileOnly(kotlin("stdlib"))

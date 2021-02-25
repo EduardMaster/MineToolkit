@@ -2,6 +2,10 @@ package net.eduard.api.lib.modules;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -21,9 +25,8 @@ public final class BukkitBungeeAPI {
 	private static boolean debug = true;
 
 	public static void log(String message) {
-
 		if (debug)
-			Bukkit.getConsoleSender().sendMessage("§7[§8BukkitBungeeAPI§7] §f" + message);
+			Bukkit.getConsoleSender().sendMessage("§e[BukkitBungeeAPI] §f" + message);
 	}
 
 	private static String currentServer = "lobby";
@@ -46,7 +49,13 @@ public final class BukkitBungeeAPI {
 		return getPlayer(player).server;
 	}
 
-	private static class BukkitListener implements PluginMessageListener {
+	private static class BukkitBungeeListener implements PluginMessageListener, Listener {
+
+		@EventHandler
+		public void event(PlayerJoinEvent e){
+			sendMissingMessages(e.getPlayer());
+		}
+
 
 		@Override
 		public void onPluginMessageReceived(String channel, Player player, byte[] message) {
@@ -96,7 +105,7 @@ public final class BukkitBungeeAPI {
 				}
 
 			} catch (Exception e) {
-				log("Deu erro na linha "+e.getLocalizedMessage());
+				e.printStackTrace();
 			}
 		}
 
@@ -224,18 +233,35 @@ public final class BukkitBungeeAPI {
 		return player;
 	} 
 
-	private static final PluginMessageListener listener;
-
+	private static  BukkitBungeeListener listener;
+	private static Queue<ByteArrayOutputStream> needSend = new ArrayDeque<>();
+	public static void sendMissingMessages(Player player){
+		log("TRYING SEND MISSING MESSAGES");
+		if (needSend.isEmpty())return;
+		log("SENDING "+needSend.size()+ " MISSING MESSAGES" );
+		while(!needSend.isEmpty()){
+			ByteArrayOutputStream message = needSend.remove();
+			sendMessage(player, message);
+		}
+	}
 	public static Plugin getInstance() {
-		return JavaPlugin.getProvidingPlugin(BukkitBungeeAPI.class);
+		return plugin;
 	}
 
-	static void sendMessage(ByteArrayOutputStream message) {
-		Bukkit.getServer().sendPluginMessage(getInstance(), "BungeeCord", message.toByteArray());
+	public static void sendMessage(ByteArrayOutputStream message) {
+
+		if (Bukkit.getOnlinePlayers().size() == 0){
+			log("PUTTING THIS MESSAGE IN THE QUEUE");
+			needSend.add(message);
+		}else{
+			sendMessage(Bukkit.getOnlinePlayers().iterator().next() , message);
+		}
+
+
 
 	}
 
-	static void sendMessage(Player player, ByteArrayOutputStream message) {
+	public static void sendMessage(Player player, ByteArrayOutputStream message) {
 		player.sendPluginMessage(getInstance(), "BungeeCord", message.toByteArray());
 	}
 
@@ -275,8 +301,6 @@ public final class BukkitBungeeAPI {
 			sendMessage(stream);
 		}catch (Exception ignored){
 		}
-
-
 	}
 
 	public static void forwardToPlayer(String playerName, String subChannel, Object... data) {
@@ -311,17 +335,21 @@ public final class BukkitBungeeAPI {
 
 	}
 
-	static {
-		Plugin plugin = getInstance();
-		listener = new BukkitListener();
+	public static void register(Plugin plugin){
+		BukkitBungeeAPI.plugin = plugin;
+		listener = new BukkitBungeeListener();
+		Bukkit.getPluginManager().registerEvents(listener , plugin);
 		Bukkit.getMessenger().registerIncomingPluginChannel(plugin, "BungeeCord", listener);
 		Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");
-	}
+		log("Registrando Sistema");
 
+	}
+	private static Plugin plugin;
 	public static void unregister() {
-		Plugin plugin = getInstance();
+		HandlerList.unregisterAll(listener);
 		Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin, "BungeeCord", listener);
 		Bukkit.getMessenger().unregisterOutgoingPluginChannel(plugin, "BungeeCord");
+		log("Desregistrando Sistema");
 	}
 
 	public static void connectToServer(Player player, String server) {
