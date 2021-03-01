@@ -2,7 +2,7 @@ package net.eduard.api.command.map
 
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.modules.Mine
-import net.eduard.api.server.minigame.GameSchematic
+import net.eduard.api.server.minigame.MinigameSchematic
 
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -16,7 +16,7 @@ class MapPos1Command : CommandManager("pos1", "setpos1", "setlow") {
         if (Mine.onlyPlayer(sender)) {
             val player = sender as Player
             val schema =
-                GameSchematic.getSchematic(player)
+                MinigameSchematic.getSchematic(player)
             schema.low = player.location.toVector()
             player.sendMessage("§bEduardAPI §aPosicão 1 setada!")
         }

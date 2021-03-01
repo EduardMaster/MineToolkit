@@ -4,7 +4,6 @@ import org.bukkit.Location
 import org.bukkit.World
 
 import net.eduard.api.lib.modules.Copyable
-import net.eduard.api.lib.storage.annotations.StorageAttributes
 import net.eduard.api.lib.storage.annotations.StorageIndex
 import org.bukkit.Bukkit
 import org.bukkit.block.Chest
@@ -19,20 +18,13 @@ import org.bukkit.util.Vector
 
 
 class MinigameMap(
-    mini: Minigame? = null,
+
     @StorageIndex
     var name: String = "mapa",
     var displayName: String = "mapinha"
 ) {
     @Transient
     lateinit var minigame: Minigame
-
-    init {
-        mini?.maps?.add(this)
-        if (mini != null) {
-            minigame = mini
-        }
-    }
 
     var teamSize = 1
 
@@ -48,8 +40,8 @@ class MinigameMap(
     var lobby: Location? = null
     var locations = mutableMapOf<String, Location>()
     var spawns = mutableListOf<Location>()
-    val map: GameSchematic
-        get() = GameSchematic.getSchematic(mapName())
+    val map: MinigameSchematic
+        get() = MinigameSchematic.getSchematic(mapName())
 
 
     @Transient

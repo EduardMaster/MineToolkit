@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
  * @author Eduard
  */
 @Suppress("unused")
-class MinigamePlayer() {
+open class MinigamePlayer() {
 
     var kills = 0
     var deaths = 0

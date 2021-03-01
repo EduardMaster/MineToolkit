@@ -1,12 +1,17 @@
 package net.eduard.api.server.minigame
 
+
 /**
  *
  * Estado do Minigame
  * @author Eduard
  */
-enum class MinigameState {
+enum class MinigameState( var displayName: String){
 
-    STARTING, EQUIPPING, PLAYING, ENDING, RESTARTING
+    STARTING("Iniciando"),
+    EQUIPPING("Pre-Jogo"),
+    PLAYING("Em-Jogo"),
+    ENDING("Acabando"),
+    RESTARTING("Reiniciando")
 
 }

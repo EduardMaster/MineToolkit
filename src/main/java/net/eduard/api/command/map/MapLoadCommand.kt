@@ -2,7 +2,7 @@ package net.eduard.api.command.map
 
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.modules.Mine
-import net.eduard.api.server.minigame.GameSchematic
+import net.eduard.api.server.minigame.MinigameSchematic
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -18,8 +18,8 @@ class MapLoadCommand : CommandManager("load", "carregar") {
             if (Mine.onlyPlayer(sender)) {
                 val player = sender as Player
                 val name = args[1].toLowerCase()
-                if (GameSchematic.exists(name)) {
-                    GameSchematic.loadToCache(player, name)
+                if (MinigameSchematic.exists(name)) {
+                    MinigameSchematic.loadToCache(player, name)
                     player.sendMessage("§bEduardAPI §aMapa carregado com sucesso!")
                 } else {
                     player.sendMessage("§bEduardAPI §aMapa invalido: §2" + args[1])

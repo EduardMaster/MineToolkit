@@ -12,7 +12,6 @@ import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.storage.annotations.StorageIndex
-import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.lang.Exception
 
@@ -30,28 +29,16 @@ import java.lang.Exception
 open class Minigame(
     @StorageIndex
     var name: String = "Minigame",
-                     var messagePrefix: String = "§8[§b$name§8]§f") : TimeManager() {
-
-
+    var messagePrefix: String = "§8[§b$name§8]§f"
+) : TimeManager() {
 
     var isEnabled = true
     var isBungeecord = false
     var worldBased = false
     var isLobby = false
     var bungeeLobby = "Lobby"
-    var scoreboardStarting = DisplayBoard("Minigame iniciando")
     var scoreboardLobby = DisplayBoard("Minigame lobby")
-    var scoreboardPlaying = DisplayBoard("Minigame em jogo")
     var maxPlayersPerLobby = 20
-    var timeIntoStart = 20
-    var timeIntoRestart = 6
-    var timeIntoGameOver = 10 * 60
-    var timeIntoPlay = 5
-    var timeOnStartTimer = 0
-    var timeOnRestartTimer = 40
-    var timeOnForceTimer = 10
-    var timeOnStartingToBroadcast = 15
-    var timeOnEquipingToBroadcast = 1
 
     @Transient
     var setting: MinigameMap? = null
@@ -62,17 +49,6 @@ open class Minigame(
     var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
 
 
-    @Transient
-    var chests = MinigameChest()
-
-    @Transient
-    var chestsFeast = MinigameChest()
-
-    @Transient
-    var chestMiniFeast = MinigameChest()
-
-    @Transient
-    var kits: MutableList<Kit> = ArrayList()
 
     @Transient
     var lobbies: MutableList<MinigameLobby> = ArrayList()
@@ -83,7 +59,7 @@ open class Minigame(
     @Transient
     var rooms: MutableList<MinigameRoom> = ArrayList()
 
-
+    var modes = mutableListOf<MinigameMode>()
     /**
      * Pega a primera sala existente do Minigame
      *
@@ -94,7 +70,9 @@ open class Minigame(
         get() = rooms.firstOrNull()
 
     open val mainLobby: MinigameLobby
-        get() = if (lobbies.isNotEmpty()) lobbies[0] else newLobby(1)
+        get() = if (lobbies.isNotEmpty()) lobbies[0] else createLobby(1)
+    open val mode: MinigameMode?
+     get() = modes.firstOrNull()
 
     /**
      * Pega o mapa referente a sala principal do Minigame
@@ -103,6 +81,8 @@ open class Minigame(
      */
     val map: MinigameMap?
         get() = getMap(name)
+
+    fun getMode(name : String) = modes.first{ it.modeName.equals(name, true)}
 
 
     val isSetting: Boolean
@@ -117,15 +97,17 @@ open class Minigame(
         }
 
     }
+    fun register(mode : MinigameMode){
+        modes.add(mode)
+        mode.minigame = this
+
+    }
 
     /**
      * Teleporta todos os jogadores para o Local do Lobby
      */
     fun teleportAllPlayersToLobby() {
-
-
         lobby ?: players.values.forEach { it.player.teleport(lobby) }
-
     }
 
 
@@ -135,16 +117,15 @@ open class Minigame(
      * @param nome Nome
      * @return Mapa Novo
      */
-    fun createMap(nome: String) = MinigameMap(this, nome)
+    fun createMap(nome: String) : MinigameMap {
+        val map = MinigameMap( nome)
+        map.minigame = this
+        maps.add(map)
+        return map
+    }
 
 
-    /**
-     * Timer do Minigame define oque acontece a cada segundo que se passa do
-     * Minigame em cada Sala
-     *
-     * @param room Sala
-     */
-    open fun event(room: MinigameRoom) {}
+
 
     /**
      * Pega o mapa existente pelo seu nome
@@ -152,13 +133,8 @@ open class Minigame(
      * @param name Nome
      * @return Mapa
      */
-    fun getMap(name: String): MinigameMap? {
-        for (map in maps) {
-            if (map.name.equals(name, ignoreCase = true)) {
-                return map
-            }
-        }
-        return null
+    open fun getMap(name: String): MinigameMap? {
+        return maps.firstOrNull { it.name.equals( name,true) }
     }
 
     /**
@@ -177,12 +153,7 @@ open class Minigame(
      * @return
      */
     fun hasMap(name: String): Boolean {
-        for (map in maps) {
-            if (map.name.equals(name, ignoreCase = true)) {
-                return true
-            }
-        }
-        return false
+        return getMap(name) != null
     }
 
     /**
@@ -191,7 +162,7 @@ open class Minigame(
      * @return Minigame criado com mapa já configurado
      */
     open fun uniqueGame(): MinigameRoom {
-        return MinigameRoom(this, MinigameMap(this, name))
+        return createRoom(createMap(name), mode!!)
     }
 
 
@@ -202,7 +173,9 @@ open class Minigame(
      */
     fun broadcast(message: String) {
         for (minigamePlayer in players.values) {
-            minigamePlayer.sendMessage(messagePrefix + Mine.getReplacers(message, minigamePlayer.player))
+            minigamePlayer.sendMessage(messagePrefix +
+                    Mine.getReplacers(message, minigamePlayer.player))
+
         }
     }
 
@@ -221,7 +194,7 @@ open class Minigame(
      * @param id ID
      * @return Sala
      */
-    fun hasRoom(id: Int) = getRoom(id) != null
+    open fun hasRoom(id: Int) = getRoom(id) != null
 
 
     /**
@@ -231,7 +204,18 @@ open class Minigame(
      * @param id  ID
      * @return Nova Sala
      */
-    open fun createRoom(map: MinigameMap, id: Int) = MinigameRoom(this, map)
+    open fun createRoom(map: MinigameMap, mode : MinigameMode) : MinigameRoom{
+        val room = MinigameRoom()
+        room.minigame = this
+        room.id = rooms.size + 1
+        rooms.add(room)
+        room.map = map
+        this.isEnabled = true
+        this.time = mode.timeIntoStart.toLong()
+        return room
+    }
+
+
 
 
     /**
@@ -259,7 +243,7 @@ open class Minigame(
         return null
     }
 
-    open fun newLobby(id: Int): MinigameLobby {
+    open fun createLobby(id: Int): MinigameLobby {
 
         val lobby = MinigameLobby()
         lobby.id = id
@@ -267,6 +251,8 @@ open class Minigame(
         return lobby
 
     }
+
+
 
     /**
      * Pega o MinigamePlayer referente ao jogador e se caso não exista cria um
@@ -432,7 +418,7 @@ open class Minigame(
         for (room in rooms) {
             if (!room.isEnabled)
                 continue
-            this.event(room)
+            room.mode.event(room)
         }
     }
 
@@ -441,26 +427,17 @@ open class Minigame(
             saveMaps()
             saveLobbies()
             saveRooms()
-            saveChests()
-            saveKits()
+
+            for (mode in modes){
+                mode.saveChests()
+                mode.saveKits()
+            }
+
         } catch (erro: Exception) {
             erro.printStackTrace()
         }
     }
 
-    fun saveChests() {
-        val configChest = Config(plugin, "chests/normal.yml")
-        configChest.set(chests)
-        configChest.saveConfig()
-
-        val configFeast = Config(plugin, "chests/feast.yml")
-        configFeast.set(chestsFeast)
-        configFeast.saveConfig()
-
-        val configMiniFeast = Config(plugin, "chests/mini-feast.yml")
-        configMiniFeast.set(chestMiniFeast)
-        configMiniFeast.saveConfig()
-    }
 
     fun saveRooms() {
         for (room in rooms) {
@@ -492,29 +469,18 @@ open class Minigame(
         }
     }
 
-    fun saveKits() {
-        val kitsConfig = Config(plugin, "kits/kits.yml");
-        for (kit in kits) {
-            kitsConfig.set(kit.name, kit)
-        }
-        kitsConfig.saveConfig()
-    }
-
     open fun reload() {
-        reloadKits()
-        reloadChests()
+        for (mode in modes){
+            mode.minigame = this
+            mode.reloadChests()
+            mode.reloadKits()
+        }
+
+
+
         reloadLobbies()
         reloadMaps()
         reloadRooms()
-    }
-
-    fun reloadKits() {
-        kits.clear()
-        val kitsConfig = Config(plugin, "kits/kits.yml");
-        for (id in kitsConfig.keys) {
-            val kit = kitsConfig.get(id, Kit::class.java)
-            kits.add(kit)
-        }
     }
 
     fun reloadMaps() {
@@ -553,11 +519,5 @@ open class Minigame(
     }
 
 
-    fun reloadChests() {
-        chests = Config(plugin, "chests/normal.yml").get(MinigameChest::class.java)
-        chestsFeast = Config(plugin, "chests/feast.yml").get(MinigameChest::class.java)
-        chestMiniFeast = Config(plugin, "chests/mini-feast.yml").get(MinigameChest::class.java)
-
-    }
 
 }

@@ -1,7 +1,7 @@
 package net.eduard.api.listener
 
 import net.eduard.api.lib.manager.EventsManager
-import net.eduard.api.server.minigame.GameSchematic
+import net.eduard.api.server.minigame.MinigameSchematic
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
@@ -23,7 +23,7 @@ class EduWorldEditListener : EventsManager() {
             if (e.item == null)
                 return
             if (e.item.type == Material.WOOD_AXE) {
-                val mapa = GameSchematic.getSchematic(player)
+                val mapa = MinigameSchematic.getSchematic(player)
                 if (e.action == Action.LEFT_CLICK_BLOCK) {
                     mapa.high = e.clickedBlock.location.toVector()
                     player.sendMessage("§aPosição 1 setada!")

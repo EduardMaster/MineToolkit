@@ -1,6 +1,5 @@
 package net.eduard.api.server.minigame
 
-import net.eduard.api.EduardAPI
 import net.eduard.api.lib.abstraction.Blocks
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Mine
@@ -20,23 +19,23 @@ import java.util.zip.GZIPOutputStream
  *
  * @author Eduard
  */
-class GameSchematic(var name : String = "Mapinha") {
+class MinigameSchematic(var name : String = "Mapinha") {
     class BlockInfo(){
         var id : Short = 1
         var data : Byte = 0
 
     }
     companion object {
+        lateinit var MAPS_FOLDER : File
 
-
-        private val cache = mutableMapOf<Player,GameSchematic>()
-        private val schematics = mutableMapOf<String,GameSchematic>()
+        private val cache = mutableMapOf<Player,MinigameSchematic>()
+        private val schematics = mutableMapOf<String,MinigameSchematic>()
 
         fun isEditing(player  : Player) = cache.containsKey(player)
 
         fun exists(name : String) = schematics.containsKey(name)
         fun loadToCache(player : Player,name : String){
-            cache[player] = schematics[name] as GameSchematic
+            cache[player] = schematics[name] as MinigameSchematic
         }
 
         fun loadAll(folder : File){
@@ -55,17 +54,17 @@ class GameSchematic(var name : String = "Mapinha") {
         fun saveAll(folder : File){
             folder.mkdirs()
             for ((name, schematic) in schematics) {
-                schematic.save(File(EduardAPI.MAPS_FOLDER,
+                schematic.save(File(MAPS_FOLDER,
                     "$name.map"))
             }
 
         }
         fun getSchematic(name: String) = schematics[name]!!
 
-        fun getSchematic(player: Player): GameSchematic {
+        fun getSchematic(player: Player): MinigameSchematic {
             var gameSchematic = cache[player]
             if (gameSchematic == null) {
-                gameSchematic = GameSchematic()
+                gameSchematic = MinigameSchematic()
                 cache[player] = gameSchematic
             }
             return gameSchematic
@@ -76,9 +75,9 @@ class GameSchematic(var name : String = "Mapinha") {
             return y * width * length + z * width + x
         }
 
-        fun load(subfile: File): GameSchematic {
+        fun load(subfile: File): MinigameSchematic {
             val name = subfile.name.replace(".map", "")
-            return GameSchematic(name).reload(subfile)
+            return MinigameSchematic(name).reload(subfile)
         }
         fun log(message : String){
             Bukkit.getConsoleSender().sendMessage("§b[GameSchematic] §f"
@@ -147,7 +146,7 @@ class GameSchematic(var name : String = "Mapinha") {
         copy(relativeLocation, low.toLocation(world), high.toLocation(world))
     }
 
-    fun copy(): GameSchematic {
+    fun copy(): MinigameSchematic {
         return Copyable.copyObject(this)
     }
 
@@ -301,7 +300,7 @@ class GameSchematic(var name : String = "Mapinha") {
         save(stream)
     }
 
-    fun reload(stream: InputStream): GameSchematic {
+    fun reload(stream: InputStream): MinigameSchematic {
         try {
             val dataReader = DataInputStream(GZIPInputStream(stream))
             width = dataReader.readShort()
@@ -330,7 +329,7 @@ class GameSchematic(var name : String = "Mapinha") {
         return this
     }
 
-    fun reload(file: File): GameSchematic {
+    fun reload(file: File): MinigameSchematic {
         val fileReader = FileInputStream(file)
         reload(fileReader)
         return this

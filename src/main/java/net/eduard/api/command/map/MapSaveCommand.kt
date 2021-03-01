@@ -3,8 +3,8 @@ package net.eduard.api.command.map
 import net.eduard.api.EduardAPI
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.modules.Mine
-import net.eduard.api.server.minigame.GameSchematic
-import net.eduard.api.server.minigame.GameSchematic.Companion.isEditing
+import net.eduard.api.server.minigame.MinigameSchematic
+import net.eduard.api.server.minigame.MinigameSchematic.Companion.isEditing
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -26,10 +26,10 @@ class MapSaveCommand : CommandManager("save", "salvar") {
                     player.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy")
                     return true
                 }
-                val schema = GameSchematic.getSchematic(player)
+                val schema = MinigameSchematic.getSchematic(player)
                 schema.name = args[1].toLowerCase()
                 schema.register()
-                schema.save(File(EduardAPI.MAPS_FOLDER,schema.name+".map"))
+                schema.save(File(MinigameSchematic.MAPS_FOLDER,schema.name+".map"))
 
                 player.sendMessage("§bEduardAPI §aMapa salvado com sucesso!")
             }

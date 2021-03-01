@@ -14,7 +14,7 @@ import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.BukkitTypes
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
-import net.eduard.api.server.minigame.GameSchematic
+import net.eduard.api.server.minigame.MinigameSchematic
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
@@ -106,6 +106,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         if (!started) {
             this.onLoad()
         }
+        MinigameSchematic.MAPS_FOLDER =File(EduardAPI.instance.pluginFolder, "maps/")
         storage()
         VaultAPI.setupVault()
         BukkitBungeeAPI.register(plugin)
@@ -326,8 +327,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
          */
         var OPT_SOUND_ERROR = SoundEffect.create("NOTE_BASS_DRUM")
 
-        val MAPS_FOLDER : File
-            get() = File(instance.pluginFolder, "maps/")
+
         /*
 
         Som do rosnar do gato
@@ -364,7 +364,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
         fun loadMaps() {
-            GameSchematic.loadAll(MAPS_FOLDER)
+            MinigameSchematic.loadAll(MinigameSchematic.MAPS_FOLDER)
             instance.log("Mapas carregados!")
         }
 
@@ -374,7 +374,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
          * Salva todos os mapas no sistema de armazenamento
          */
         fun saveMaps() {
-            GameSchematic.saveAll(MAPS_FOLDER)
+            MinigameSchematic.saveAll(MinigameSchematic.MAPS_FOLDER)
             instance.log("Mapas salvados!")
         }
     }

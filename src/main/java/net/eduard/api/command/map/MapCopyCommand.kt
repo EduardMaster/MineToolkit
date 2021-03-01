@@ -2,7 +2,7 @@ package net.eduard.api.command.map
 
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.modules.Mine
-import net.eduard.api.server.minigame.GameSchematic
+import net.eduard.api.server.minigame.MinigameSchematic
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -15,7 +15,7 @@ class MapCopyCommand : CommandManager("copy", "copiar") {
         if (Mine.onlyPlayer(sender)) {
             val player = sender as Player
             val schema  =
-                GameSchematic.getSchematic(player)
+                MinigameSchematic.getSchematic(player)
             schema.copy(player.location)
             player.sendMessage("§bEduardAPI §aMapa copiado!")
         }

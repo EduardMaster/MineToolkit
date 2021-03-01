@@ -16,10 +16,13 @@ import org.bukkit.Bukkit
  * @author Eduard-PC
  */
 @Suppress("unused")
-open class MinigameRoom {
+open class MinigameRoom() {
 
     @Transient
     lateinit var minigame: Minigame
+
+    @StorageReference
+    lateinit var mode: MinigameMode
 
     @ColumnPrimary
     var id: Int = 0
@@ -27,16 +30,6 @@ open class MinigameRoom {
     @StorageReference
     var map: MinigameMap = MinigameMap()
 
-    constructor()
-
-    constructor(minigame: Minigame, map: MinigameMap) {
-        this.minigame = minigame
-        this.id = minigame.rooms.size + 1
-        this.minigame.rooms.add(this)
-        this.map = map
-        this.isEnabled = true
-        this.time = minigame.timeIntoStart
-    }
 
     open fun start() {
         mapUsed = map.copy()
@@ -67,7 +60,6 @@ open class MinigameRoom {
     }
 
     var isEnabled: Boolean = false
-    var mode = MinigameMode.NORMAL
     var ip: String = "127.0.0.1"
     var port: Int = Bukkit.getPort()
     var round: Int = 0
@@ -90,7 +82,8 @@ open class MinigameRoom {
         get() = players.filter { it.isOnline }.map { it.player!! }
 
     val teamWinner: MinigameTeam?
-        get() = teams.firstOrNull { it.getPlayers(MinigamePlayerState.NORMAL).isNotEmpty() }
+        get() = teams.firstOrNull { it.getPlayers(MinigamePlayerState.NORMAL)
+            .isNotEmpty() }
 
 
     val winner: MinigamePlayer
@@ -105,7 +98,8 @@ open class MinigameRoom {
     fun broadcast(message: String) {
         for (player in players) {
             player.send(
-                minigame.messagePrefix + message.replace("\$time", Extra.formatSeconds1(time))
+                minigame.messagePrefix + message
+                    .replace("\$time", Extra.formatSeconds1(time))
                     .replace("\$max", "" + map.maxPlayersAmount)
                     .replace("\$players", "" + players.size)
             )
@@ -123,16 +117,18 @@ open class MinigameRoom {
      * @return
      */
     fun isPlaying(player: Player): Boolean {
-        return players.stream().filter { p -> p.player == player }.findFirst().isPresent
+        return players.any{ p -> p.player == player }
+
     }
 
     fun getTeams(state: MinigamePlayerState): List<MinigameTeam> {
-        return teams.filter { it.getPlayers(state).isNotEmpty() }
+        return teams.filter { it.getPlayers(state)
+            .isNotEmpty() }
     }
 
     fun getPlayersOnline(state: MinigamePlayerState): List<Player> {
-
-        return players.filter { p -> p.state == state && p.isOnline }.map { it.player }
+        return players.filter { p -> p.state == state && p.isOnline }
+            .map { it.player }
     }
 
     fun getPlayers(state: MinigamePlayerState): List<MinigamePlayer> {
@@ -140,7 +136,7 @@ open class MinigameRoom {
     }
 
     fun checkEnd(): Boolean {
-        return time == minigame.timeIntoGameOver
+        return time == mode.timeIntoGameOver
     }
 
     fun checkWinner(): Boolean {
@@ -148,7 +144,6 @@ open class MinigameRoom {
     }
 
     fun checkTeamWinner(): Boolean {
-
         return teams.filter {
             it.getPlayers(MinigamePlayerState.NORMAL)
                 .isNotEmpty()
@@ -156,11 +151,12 @@ open class MinigameRoom {
     }
 
     fun checkForceStart(): Boolean {
-        return players.size >= map.neededPlayersAmount && time > minigame.timeOnForceTimer
+        return players.size >= map.neededPlayersAmount &&
+                time > mode.timeOnForceTimer
     }
 
     fun forceGameStart() {
-        time = minigame.timeOnForceTimer
+        time = mode.timeOnForceTimer
     }
 
     /**
@@ -185,7 +181,7 @@ open class MinigameRoom {
      * Coloca o estado desta sala em Jogando (A batalha vai começar)
      */
     fun startGame() {
-        time = minigame.timeOnStartTimer
+        time = mode.timeOnStartTimer
         state = MinigameState.PLAYING
     }
 
@@ -193,7 +189,7 @@ open class MinigameRoom {
      * Coloca o estado desta sala em Equipando (Pre jogo de muitos minigames)
      */
     fun startPreGame() {
-        time = minigame.timeIntoPlay
+        time = mode.timeIntoPlay
         state = MinigameState.EQUIPPING
     }
 
@@ -202,7 +198,7 @@ open class MinigameRoom {
      * apenas)
      */
     fun ending() {
-        time = minigame.timeOnRestartTimer
+        time = mode.timeOnRestartTimer
         state = MinigameState.ENDING
     }
 
@@ -212,7 +208,7 @@ open class MinigameRoom {
      */
     fun restarting() {
         state = MinigameState.RESTARTING
-        time = minigame.timeIntoRestart
+        time = mode.timeIntoRestart
     }
 
     /**
@@ -220,7 +216,7 @@ open class MinigameRoom {
      */
     fun restart() {
         state = MinigameState.STARTING
-        time = minigame.timeIntoStart
+        time = mode.timeIntoStart
     }
 
     /**

@@ -2,7 +2,7 @@ package net.eduard.api.command.map
 
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.modules.Mine
-import net.eduard.api.server.minigame.GameSchematic
+import net.eduard.api.server.minigame.MinigameSchematic
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -16,12 +16,12 @@ class MapPasteCommand : CommandManager("paste", "colar") {
     ): Boolean {
         if (Mine.onlyPlayer(sender)) {
             val player = sender as Player
-            if (!GameSchematic.isEditing(player)) {
+            if (!MinigameSchematic.isEditing(player)) {
                 player.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy")
                 return true
             }
-            val map: GameSchematic =
-                GameSchematic.getSchematic(player)
+            val map: MinigameSchematic =
+                MinigameSchematic.getSchematic(player)
             map.paste(player.location, false)
             player.sendMessage(
                 "§bEduardAPI §aMapa colado com sucesso! §2(\$blocks)"

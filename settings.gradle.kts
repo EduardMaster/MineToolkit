@@ -6,3 +6,5 @@ include(":MineNMS-1_12")
 include("MineUtils")
 include(":SQLManager")
 include("JavaUtils")
+include("Minigame")
+findProject(":Minigame")?.name = "minigame"
