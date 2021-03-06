@@ -112,7 +112,8 @@ class DBManager(
      */
     fun hasConnectionInFact(): Boolean {
         try {
-            return this::connection.isInitialized && !(connection.isClosed)
+
+            return this::connection.isInitialized&&  connection.isValid(1000) && !(connection.isClosed)
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }

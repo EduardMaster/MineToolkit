@@ -54,15 +54,13 @@ class BukkitReplacers {
         Mine.addReplacer("player_kdr") { p ->
             val kill = p.getStatistic(Statistic.PLAYER_KILLS)
             val death = p.getStatistic(Statistic.DEATHS)
-            if (kill == 0) return@addReplacer 0
-            if (death == 0) return@addReplacer 0
+            if (kill == 0||death == 0) return@addReplacer 0
             kill / death
         }
         Mine.addReplacer("player_kill/death") { player ->
             val kill = player.getStatistic(Statistic.PLAYER_KILLS)
             val death = player.getStatistic(Statistic.DEATHS)
-            if (kill == 0) return@addReplacer 0
-            if (death == 0) return@addReplacer 0
+            if (kill == 0||death == 0) return@addReplacer 0
             kill / death
         }
         Mine.addReplacer("player_loc_x") { it.location.x }
