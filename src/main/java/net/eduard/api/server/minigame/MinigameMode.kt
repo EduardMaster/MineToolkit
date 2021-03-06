@@ -60,9 +60,12 @@ open class MinigameMode() {
     }
 
     fun saveChests() {
-        Config(folder, "chests-normal.yml").save(chests)
-        Config(folder, "chests-feast.yml").save(chestsFeast)
-        Config(folder, "chests-mini-feast.yml").save(chestMiniFeast)
+        Config(folder, "chests-normal.yml")
+            .save(chests)
+        Config(folder, "chests-feast.yml")
+            .save(chestsFeast)
+        Config(folder, "chests-mini-feast.yml")
+            .save(chestMiniFeast)
     }
 
     fun saveKits() {

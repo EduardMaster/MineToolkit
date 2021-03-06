@@ -3,13 +3,16 @@ package net.eduard.api.server.currency;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class SimpleCurrencyHandler implements  CurrencyHandler {
+public abstract class SimpleCurrencyHandler implements CurrencyHandler {
     private String name;
     private ItemStack icon;
     private String symbol;
     private String displayName;
 
     public SimpleCurrencyHandler(){
+
+
+
         setName("MoedaCustom");
         setIcon(new ItemStack(Material.DIAMOND_BLOCK));
         setSymbol("$");

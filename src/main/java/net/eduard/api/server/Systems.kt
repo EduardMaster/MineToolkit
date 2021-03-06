@@ -11,4 +11,7 @@ object Systems {
     @JvmStatic
     var scoreSystem: ScoreSystem? = null
 
+    @JvmStatic
+    var tagSystem: TagSystem? = null
+
 }

@@ -8,6 +8,7 @@ import java.util.*;
 public class CurrencyController {
 
     private CurrencyController() {
+
     }
     private final Map<String, CurrencyHandler> currencies = new LinkedHashMap<>();
 

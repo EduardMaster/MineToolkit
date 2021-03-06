@@ -431,7 +431,8 @@ open class Minigame(
     }
 
     fun saveModes() {
-        File(plugin.dataFolder, "modes/").saveListInFolder(modes){modeName}
+        File(plugin.dataFolder, "modes/")
+            .saveListInFolder(modes){modeName}
         for (mode in modes) {
             mode.saveChests()
             mode.saveKits()
@@ -440,7 +441,8 @@ open class Minigame(
 
 
     fun saveRooms() {
-        File(plugin.dataFolder, "rooms/").saveListInFolder(rooms) { id.toString() }
+        File(plugin.dataFolder, "rooms/")
+            .saveListInFolder(rooms) { id.toString() }
     }
 
     fun saveLobbies() {
@@ -463,8 +465,6 @@ open class Minigame(
             mode.reloadChests()
             mode.reloadKits()
         }
-
-
 
         reloadLobbies()
         reloadMaps()
