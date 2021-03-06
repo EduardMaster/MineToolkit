@@ -162,6 +162,7 @@ final public class StorageInfo implements Cloneable {
     public void setType(Class<?> type) {
         this.type = type;
     }
+
     public boolean isInline() {
         return inline;
     }

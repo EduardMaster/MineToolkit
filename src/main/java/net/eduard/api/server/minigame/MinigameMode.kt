@@ -5,7 +5,7 @@ import net.eduard.api.lib.game.DisplayBoard
 import net.eduard.api.lib.game.Kit
 import net.eduard.api.lib.storage.annotations.StorageIndex
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Modo do Minigame
@@ -14,8 +14,14 @@ import java.util.ArrayList
 open class MinigameMode() {
     @Transient
     lateinit var minigame: Minigame
+
     @StorageIndex
-    var modeName = "Normal"
+    var uuid = UUID.randomUUID()
+    var name = "Normal"
+    var modeName get() = name
+            set(newName){
+                name = newName
+            }
     var timeIntoStart = 20
     var timeIntoRestart = 6
     var timeIntoGameOver = 10 * 60

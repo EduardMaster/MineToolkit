@@ -4,6 +4,7 @@ import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,12 @@ public class StorageClassInfo {
 
     public Object getPrimary(Object instance){
         try {
-            return getIndex().getField().get(instance);
+
+            System.out.println("Index: "+ getIndex());
+
+            return getIndex()
+                    .getField()
+                    .get(instance);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return null;
@@ -38,17 +44,35 @@ public class StorageClassInfo {
 
     public StorageInfo getIndex() {
         if (index == null){
-            for (Field field : getCurrentClass().getDeclaredFields()){
-                StorageInfo info = new StorageInfo(field);
-                info.updateByType();
-                info.updateByStorable();
-                info.updateByField();
-                if (info.isIndentifiable()){
+            // Busca o Index field das classes supers
+            Class<?> clz = getCurrentClass();
+            while(!clz.equals(Object.class)){
+                for (Field field : clz.getDeclaredFields()){
+                    if (Modifier.isStatic(field.getModifiers()))
+                        continue;
+                    if (Modifier.isTransient(field.getModifiers()))
+                        continue;
+                    if (Modifier.isFinal(field.getModifiers())) {
+                        continue;
+                    }
+                    if (Modifier.isNative(field.getModifiers())) {
+                        continue;
+                    }
                     field.setAccessible(true);
-                    index = info;
-                    break;
+                    StorageInfo info = new StorageInfo(field);
+
+                    info.updateByType();
+                    info.updateByStorable();
+                    info.updateByField();
+                    if (info.isIndentifiable()){
+                        index = info;
+                        break;
+                    }
                 }
+                clz = clz.getSuperclass();
             }
+
+
         }
         return index;
     }

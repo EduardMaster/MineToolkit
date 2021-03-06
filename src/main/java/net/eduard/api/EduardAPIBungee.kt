@@ -90,8 +90,8 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         if (dbManager.hasConnection()) {
             log("MySQL Ativado, iniciando conexao")
             sqlManager.createTable(ServerSpigot::class.java)
-            val servers = sqlManager.getAllData(ServerSpigot::class.java)
-            for (server in servers) {
+
+            for (server in sqlManager.getAllData(ServerSpigot::class.java)) {
                 BungeeAPI.getServers()[server.name.toLowerCase()] = server
             }
 
@@ -102,9 +102,8 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
                     val servidor = BungeeAPI.getServer(server.name)
                     servidor.host = server.address.hostName
                     servidor.port = server.address.port
-                    servidor.players = server.players.stream()
-                        .map { obj: ProxiedPlayer -> obj.name }
-                        .collect(Collectors.toList())
+                    servidor.players = server.players
+                        .map { it.name }
                     servidor.count = server.players.size
                     sqlManager.insertData(servidor)
                 }

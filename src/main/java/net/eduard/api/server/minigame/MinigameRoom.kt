@@ -24,6 +24,7 @@ open class MinigameRoom() {
     @StorageReference
     lateinit var mode: MinigameMode
 
+    @StorageIndex
     @ColumnPrimary
     var id: Int = 0
 
