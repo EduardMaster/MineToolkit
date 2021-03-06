@@ -29,6 +29,9 @@ import java.util.stream.Collectors
 class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     companion object {
         lateinit var instance: EduardAPIBungee
+        init{
+            Hybrid.instance = BungeeServer
+        }
     }
 
     init {
@@ -113,8 +116,9 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     }
 
     override fun onEnable() {
+
         super.onLoad()
-        Hybrid.instance = BungeeServer
+
         BungeeAPI.getBungee().register(plugin)
         reload()
 

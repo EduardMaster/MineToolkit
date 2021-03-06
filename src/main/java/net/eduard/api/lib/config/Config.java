@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
 
-import net.eduard.api.lib.game.SoundEffect;
+import net.eduard.api.lib.hybrid.Hybrid;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.plugin.IPlugin;
 
@@ -23,7 +23,6 @@ public class Config {
     private final String name;
     transient List<String> lines;
     private File getDataFolder() {
-
         try {
             return (File) Extra.getMethodInvoke(plugin,"getDataFolder");
         } catch (Exception e) {
@@ -71,23 +70,25 @@ public class Config {
     }
 
     public void log(String msg) {
-        System.out.println("[Config] " + msg);
+        Hybrid.instance.getConsole()
+                .sendMessage("§b[ConfigAPI] §3("+ name + ") §f" + msg);
     }
 
     public void saveDefaultConfig() {
         file.getParentFile().mkdirs();
-
         if (!file.exists()) {
-            log("<- SAVING DEFAULT " + name);
             if (Extra.isDirectory(file)) {
                 file.mkdirs();
             } else {
-
                 if (plugin != null) {
                     try {
-                        InputStream is = Extra.getResource(plugin.getClass().getClassLoader(), name);
-                        if (is != null) {
-                            Extra.copyAsUTF8(is, file);
+                        log("COPYING DEFAULT...");
+                        InputStream defaultResourceFile = Extra.getResource(plugin.getClass().getClassLoader(), name);
+                        if (defaultResourceFile != null) {
+                            Extra.copyAsUTF8(defaultResourceFile, file);
+                            log("DEFAULT COPIED!");
+                        }else{
+                            log("DEFAULT NOT FOUNDED!");
                         }
 
                     } catch (Exception ex) {
@@ -100,12 +101,16 @@ public class Config {
     }
 
     public void saveConfig() {
-        log("<- SAVING " + name);
-        lines.clear();
-        root.save(lines, -1);
+
+        log("SAVING...");
         try {
             if (!Extra.isDirectory(file)) {
+                lines.clear();
+                root.save(lines, -1);
                 Extra.writeLines(file, lines);
+                log("SAVED!");
+            }else{
+                log("NOT SAVED!");
             }
 
         } catch (Exception ex) {
@@ -116,13 +121,16 @@ public class Config {
 
     public void reloadConfig() {
         try {
-            log("<- RELOADING " + name);
             saveDefaultConfig();
 
-            if (file.isFile()) {
+            if (file.isFile() && file.exists()) {
+                log("RELOADING...");
                 lines = Extra.readLines(file);
                 root.getMap().clear();
                 root.reload(lines);
+                log("RELOADED!");
+            }else{
+                log("NOT RELOADED!");
             }
 
         } catch (Exception ex) {
@@ -263,10 +271,6 @@ public class Config {
 
     public ConfigSection getSection(String path) {
         return root.getSection(path);
-    }
-
-    public SoundEffect getSound(String path) {
-        return root.getSound(path);
     }
 
     public String getString(String path) {

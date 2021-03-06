@@ -3,6 +3,10 @@ package net.eduard.api.server.minigame
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.game.DisplayBoard
 import net.eduard.api.lib.game.Kit
+import net.eduard.api.lib.kotlin.reload
+import net.eduard.api.lib.kotlin.reloadListFromFolder
+import net.eduard.api.lib.kotlin.save
+import net.eduard.api.lib.kotlin.saveListInFolder
 import net.eduard.api.lib.storage.annotations.StorageIndex
 import java.io.File
 import java.util.*
@@ -18,10 +22,7 @@ open class MinigameMode() {
     @StorageIndex
     var uuid = UUID.randomUUID()
     var name = "Normal"
-    var modeName get() = name
-            set(newName){
-                name = newName
-            }
+    val modeName get() = name.replace(" ","_").toLowerCase();
     var timeIntoStart = 20
     var timeIntoRestart = 6
     var timeIntoGameOver = 10 * 60
@@ -34,7 +35,7 @@ open class MinigameMode() {
     var scoreboardStarting = DisplayBoard("Minigame iniciando")
     var scoreboardPlaying = DisplayBoard("Minigame em jogo")
     val plugin get() = minigame.plugin
-    val folder get() = File(plugin.dataFolder, "$modeName/")
+    val folder get() = File(plugin.dataFolder, "modes/$modeName/")
 
     @Transient
     var chests = MinigameChest()
@@ -59,44 +60,28 @@ open class MinigameMode() {
     }
 
     fun saveChests() {
-        val configChest = Config(folder, "chests/normal.yml")
-        configChest.set(chests)
-        configChest.saveConfig()
-
-        val configFeast = Config(folder, "chests/feast.yml")
-        configFeast.set(chestsFeast)
-        configFeast.saveConfig()
-
-        val configMiniFeast = Config(folder, "chests/mini-feast.yml")
-        configMiniFeast.set(chestMiniFeast)
-        configMiniFeast.saveConfig()
+        Config(folder, "chests-normal.yml").save(chests)
+        Config(folder, "chests-feast.yml").save(chestsFeast)
+        Config(folder, "chests-mini-feast.yml").save(chestMiniFeast)
     }
 
     fun saveKits() {
-        val kitsConfig = Config(folder, "kits/kits.yml");
-        for (kit in kits) {
-            kitsConfig.set(kit.name, kit)
+        File(folder,"kits").saveListInFolder(kits){
+            name
         }
-        kitsConfig.saveConfig()
     }
 
 
     fun reloadKits() {
         kits.clear()
-        val kitsConfig = Config(folder, "kits/kits.yml");
-        for (id in kitsConfig.keys) {
-            val kit = kitsConfig.get(id, Kit::class.java)
-            kits.add(kit)
-        }
+        kits.addAll(File(folder,"kits").reloadListFromFolder())
+
     }
 
     fun reloadChests() {
-        chests = Config(folder, "chests/normal.yml")
-            .get(MinigameChest::class.java)
-        chestsFeast = Config(folder, "chests/feast.yml")
-            .get(MinigameChest::class.java)
-        chestMiniFeast = Config(folder, "chests/mini-feast.yml")
-            .get(MinigameChest::class.java)
+        chests = Config(folder, "chests-normal.yml").reload()
+        chestsFeast = Config(folder, "chests-feast.yml").reload()
+        chestMiniFeast = Config(folder, "chests-mini-feast.yml").reload()
 
     }
 

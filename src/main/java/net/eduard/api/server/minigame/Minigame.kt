@@ -1,19 +1,17 @@
 package net.eduard.api.server.minigame
 
-import java.util.ArrayList
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
 import net.eduard.api.lib.manager.TimeManager
-import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.game.DisplayBoard
-import net.eduard.api.lib.game.Kit
+import net.eduard.api.lib.kotlin.reloadListFromFolder
+import net.eduard.api.lib.kotlin.saveListInFolder
 import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.storage.annotations.StorageIndex
 import java.io.File
-import java.lang.Exception
 
 /**
  * Representa um Minigame ou Evento <br></br>
@@ -49,17 +47,18 @@ open class Minigame(
     var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
 
 
+    @Transient
+    var lobbies = mutableListOf<MinigameLobby>()
 
     @Transient
-    var lobbies: MutableList<MinigameLobby> = ArrayList()
+    var maps= mutableListOf<MinigameMap>()
 
     @Transient
-    var maps: MutableList<MinigameMap> = ArrayList()
+    var rooms= mutableListOf<MinigameRoom>()
 
     @Transient
-    var rooms: MutableList<MinigameRoom> = ArrayList()
-
     var modes = mutableListOf<MinigameMode>()
+
     /**
      * Pega a primera sala existente do Minigame
      *
@@ -72,7 +71,7 @@ open class Minigame(
     open val mainLobby: MinigameLobby
         get() = if (lobbies.isNotEmpty()) lobbies[0] else createLobby(1)
     open val mode: MinigameMode?
-     get() = modes.firstOrNull()
+        get() = modes.firstOrNull()
 
     /**
      * Pega o mapa referente a sala principal do Minigame
@@ -82,7 +81,7 @@ open class Minigame(
     val map: MinigameMap?
         get() = getMap(name)
 
-    fun getMode(name : String) = modes.first{ it.modeName.equals(name, true)}
+    fun getMode(name: String) = modes.firstOrNull { it.name.equals(name, true) }
 
 
     val isSetting: Boolean
@@ -97,7 +96,8 @@ open class Minigame(
         }
 
     }
-    fun register(mode : MinigameMode){
+
+    fun register(mode: MinigameMode) {
         modes.add(mode)
         mode.minigame = this
 
@@ -117,14 +117,12 @@ open class Minigame(
      * @param nome Nome
      * @return Mapa Novo
      */
-    fun createMap(nome: String) : MinigameMap {
-        val map = MinigameMap( nome)
+    fun createMap(nome: String): MinigameMap {
+        val map = MinigameMap(nome)
         map.minigame = this
         maps.add(map)
         return map
     }
-
-
 
 
     /**
@@ -134,7 +132,7 @@ open class Minigame(
      * @return Mapa
      */
     open fun getMap(name: String): MinigameMap? {
-        return maps.firstOrNull { it.name.equals( name,true) }
+        return maps.firstOrNull { it.name.equals(name, true) }
     }
 
     /**
@@ -173,8 +171,10 @@ open class Minigame(
      */
     fun broadcast(message: String) {
         for (minigamePlayer in players.values) {
-            minigamePlayer.sendMessage(messagePrefix +
-                    Mine.getReplacers(message, minigamePlayer.player))
+            minigamePlayer.sendMessage(
+                messagePrefix +
+                        Mine.getReplacers(message, minigamePlayer.player)
+            )
 
         }
     }
@@ -204,7 +204,7 @@ open class Minigame(
      * @param id  ID
      * @return Nova Sala
      */
-    open fun createRoom(map: MinigameMap, mode : MinigameMode) : MinigameRoom{
+    open fun createRoom(map: MinigameMap, mode: MinigameMode): MinigameRoom {
         val room = MinigameRoom()
         room.minigame = this
         room.id = rooms.size + 1
@@ -214,8 +214,6 @@ open class Minigame(
         this.time = mode.timeIntoStart.toLong()
         return room
     }
-
-
 
 
     /**
@@ -243,6 +241,9 @@ open class Minigame(
         return null
     }
 
+    /**
+     * Cria um lobby com ID novo
+     */
     open fun createLobby(id: Int): MinigameLobby {
 
         val lobby = MinigameLobby()
@@ -251,7 +252,6 @@ open class Minigame(
         return lobby
 
     }
-
 
 
     /**
@@ -423,54 +423,42 @@ open class Minigame(
     }
 
     open fun save() {
-        try {
-            saveMaps()
-            saveLobbies()
-            saveRooms()
+        saveLobbies()
+        saveModes()
+        saveMaps()
+        saveRooms()
 
-            for (mode in modes){
-                mode.saveChests()
-                mode.saveKits()
-            }
+    }
 
-        } catch (erro: Exception) {
-            erro.printStackTrace()
+    fun saveModes() {
+        File(plugin.dataFolder, "modes/").saveListInFolder(modes){modeName}
+        for (mode in modes) {
+            mode.saveChests()
+            mode.saveKits()
         }
     }
 
 
     fun saveRooms() {
-        for (room in rooms) {
-            val config = Config(plugin, "rooms/${room.id}.yml")
-            config.set(room)
-            config.saveConfig()
-
-        }
+        File(plugin.dataFolder, "rooms/").saveListInFolder(rooms) { id.toString() }
     }
 
     fun saveLobbies() {
-        for (lobby in lobbies) {
+        File(plugin.dataFolder, "lobby/")
+            .saveListInFolder(lobbies) {
+            id.toString() }
 
-            val config = Config(plugin, "lobby/lobby-${lobby.id}.yml")
-
-            config.set("", lobby)
-            config.saveConfig()
-
-        }
     }
 
+
     fun saveMaps() {
+        File(plugin.dataFolder, "maps/").saveListInFolder(maps) { name.toLowerCase()
+            .replace(" ","_") }
 
-        for (mapa in maps) {
-            val config = Config(plugin, "maps/${mapa.name.toLowerCase()}.yml")
-            config.set(mapa)
-            config.saveConfig()
-
-        }
     }
 
     open fun reload() {
-        for (mode in modes){
+        for (mode in modes) {
             mode.minigame = this
             mode.reloadChests()
             mode.reloadKits()
@@ -483,41 +471,34 @@ open class Minigame(
         reloadRooms()
     }
 
-    fun reloadMaps() {
-        val pastaMapas = File(plugin.dataFolder, "maps/")
-        pastaMapas.mkdirs()
-        for (arquivoNome: String in pastaMapas.list()!!) {
-            val config = Config(plugin, "maps/$arquivoNome")
-            val mapa = config.get(MinigameMap::class.java)
-            mapa.minigame = this
-            maps.add(mapa)
+    fun reloadModes() {
+        modes.clear()
+        modes.addAll(File(plugin.dataFolder, "modes/").reloadListFromFolder())
+        modes.forEach {
+            it.minigame = this
+            it.reloadChests()
+            it.reloadKits()
         }
+
+    }
+
+    fun reloadMaps() {
+        maps.clear()
+        maps.addAll(File(plugin.dataFolder, "maps/").reloadListFromFolder())
+        maps.forEach { it.minigame = this }
     }
 
     fun reloadLobbies() {
         lobbies.clear()
-        val pastaLobbies = File(plugin.dataFolder, "lobby/")
-        pastaLobbies.mkdirs()
-        for (arquivoNome: String in pastaLobbies.list()!!) {
-            val config = Config(plugin, "lobby/$arquivoNome")
-            val lobby = config.get(MinigameLobby::class.java)
-
-            lobbies.add(lobby)
-        }
-
+        lobbies.addAll(File(plugin.dataFolder, "lobby/").reloadListFromFolder())
     }
+
 
     fun reloadRooms() {
-        val pastaSalas = File(plugin.dataFolder, "rooms/")
-        pastaSalas.mkdirs()
-        for (arquivoNome: String in pastaSalas.list()!!) {
-            val config = Config(plugin, "rooms/$arquivoNome")
-            val room = config.get(MinigameRoom::class.java)
-            room.minigame = this
-            rooms.add(room)
-        }
+        rooms.clear()
+        rooms.addAll(File(plugin.dataFolder, "rooms/").reloadListFromFolder())
+        rooms.forEach { it.minigame = this }
     }
-
 
 
 }

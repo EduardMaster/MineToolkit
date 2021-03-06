@@ -5,8 +5,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 import java.io.File;
 
 /**
- * Para fazer plugins usando esta dependencia , lembre-se de colocar depends: [EduardAPI]
- * em vez de depend: [EduardAPI] na bungee.yml
+ * Para fazer plugins usando esta dependencia , lembre-se de colocar 'depends: [EduardAPI]'
+ * em vez de 'depend: [EduardAPI]' na bungee.yml
  * @author Eduard
  */
 public class EduardAPIBungeeMain extends Plugin {

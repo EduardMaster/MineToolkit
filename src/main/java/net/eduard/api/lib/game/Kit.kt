@@ -34,7 +34,7 @@ class Kit() {
         return upgrade
     }
 
-    var name: String = "kit"
+    var name = "kit"
     var menuPosition = 10
     var cooldown: Long = TimeUnit.HOURS.toMillis(1)
     var price = 1000.0

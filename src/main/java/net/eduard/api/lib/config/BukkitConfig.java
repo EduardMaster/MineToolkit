@@ -1,7 +1,6 @@
 package net.eduard.api.lib.config;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -94,18 +93,11 @@ public class BukkitConfig {
 	public BukkitConfig reloadConfig() {
 		file = new File(plugin.getDataFolder(), name);
 		plugin.getDataFolder().mkdirs();
-		if (!file.exists())
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		if (file.isDirectory())return this;
-		config = Mine.loadConfig(file);
+		file.getParentFile().mkdirs();
+		if (file.exists() && file.isFile())
+			config = Mine.loadConfig(file);
 		InputStream defaults = plugin.getResource(file.getName());
 		if (defaults != null) {
-			@SuppressWarnings("deprecation")
 			YamlConfiguration loadConfig = YamlConfiguration.loadConfiguration(defaults);
 			config.setDefaults(loadConfig);
 		}
@@ -227,10 +219,8 @@ public class BukkitConfig {
 			obj = toMap(path);
 		}
 		if (obj instanceof Map) {
-
 		}
 		return StorageAPI.restore(null, obj);
-		// return StorageAPI.restoreValue(obj);
 	}
 
 	public Map<String, Object> toMap(String path) {

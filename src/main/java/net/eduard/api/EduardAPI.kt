@@ -16,6 +16,8 @@ import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.server.minigame.MinigameSchematic
 import net.eduard.api.lib.game.SoundEffect
+import net.eduard.api.lib.hybrid.BukkitServer
+import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.modules.*
@@ -49,6 +51,7 @@ import java.util.*
  * @since 0.5
  */
 class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
+
     override var started = false
     override var configs = Config(plugin, "config.yml")
     override var storage = Config(plugin, "storage.yml")
@@ -60,6 +63,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     override fun onLoad() {
         StorageAPI.setDebug(false)
         instance = this
+
         super.onLoad()
 
         BukkitTypes
@@ -221,9 +225,9 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         }
         MSG_ON_JOIN = configs.message("on-join-message")
         MSG_ON_QUIT = configs.message("on-quit-message")
-        OPT_SOUND_TELEPORT = configs.getSound("sound-teleport")
-        OPT_SOUND_ERROR = configs.getSound("sound-error")
-        OPT_SOUND_SUCCESS = configs.getSound("sound-success")
+        OPT_SOUND_TELEPORT = configs.get("sound-teleport", SoundEffect::class.java)
+        OPT_SOUND_ERROR = configs.get("sound-error", SoundEffect::class.java)
+        OPT_SOUND_SUCCESS = configs.get("sound-success", SoundEffect::class.java)
 
         log("Recarregamento do EduardAPI concluido.")
     }
@@ -313,7 +317,9 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     companion object {
 
         lateinit var instance: EduardAPI
-
+        init {
+            Hybrid.instance = BukkitServer
+        }
         /**
          * Som para o Teleporte
          */

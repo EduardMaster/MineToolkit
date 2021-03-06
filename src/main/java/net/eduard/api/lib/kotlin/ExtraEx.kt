@@ -2,6 +2,8 @@ package net.eduard.api.lib.kotlin
 
 import net.eduard.api.lib.modules.Extra
 
+
+
 fun Number.format() = Extra.formatMoney(this.toDouble())
 
 fun <T : Any> Array<T>.shuffle(): Array<T> {

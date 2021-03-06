@@ -2067,9 +2067,9 @@ public final class Mine {
      */
     public static YamlConfiguration loadConfig(File file) {
         YamlConfiguration config = new YamlConfiguration();
-        FileInputStream fileinputstream;
+
         try {
-            fileinputstream = new FileInputStream(file);
+            FileInputStream fileinputstream = new FileInputStream(file);
             config.load(new InputStreamReader(fileinputstream, StandardCharsets.UTF_8));
         } catch (Exception ex) {
             ex.printStackTrace();
