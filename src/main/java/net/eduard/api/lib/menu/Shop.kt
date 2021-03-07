@@ -2,12 +2,12 @@ package net.eduard.api.lib.menu
 
 import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.kotlin.player
-import net.eduard.api.lib.manager.CurrencyManager
+import net.eduard.api.server.currency.CurrencyManager
 import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.storage.annotations.StorageAttributes
-import net.eduard.api.server.currency.CurrencyController
-import net.eduard.api.server.currency.CurrencyHandler
+
+import net.eduard.api.server.CurrencySystem
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -33,11 +33,10 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
     var currencyType = "VaultEconomy"
 
     @Transient
-    var currency: CurrencyHandler? = null
+    var currency: CurrencySystem? = null
         get() {
-
             if (field == null) {
-                field = CurrencyController.getInstance().getCurrencyHandler(currencyType)
+                field = CurrencyManager.getCurrency(currencyType)
             }
             return field
 
@@ -213,7 +212,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         } else {
             evento.newStock = product.stock
         }
-        evento.balance = currency!![fake]
+        evento.balance = currency!!.get(fake)
         evento.type = TradeType.BUYABLE
         evento.priceTotal = priceFinal
         evento.shop = this@Shop
@@ -278,7 +277,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
         evento.product = product
         evento.amount = amount
         evento.newStock = product.stock - amount
-        evento.balance = currency!![fake]
+        evento.balance = currency!!.get(fake)
         evento.type = TradeType.SELABLE
         evento.priceTotal = finalPrice
         evento.shop = this@Shop

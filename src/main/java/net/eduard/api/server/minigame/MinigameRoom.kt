@@ -66,6 +66,7 @@ open class MinigameRoom() {
     var round: Int = 0
     var state = MinigameState.STARTING
     var time: Int = 0
+    var maxRounds = 3
 
     @Transient
     var mapUsed: MinigameMap = map

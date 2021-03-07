@@ -12,7 +12,7 @@ import org.bukkit.util.Vector
 /**
  * Representa o Mapa da Sala do Minigame
  *
- * @author Eduard-PC
+ * @author Eduard
  */
 
 
@@ -26,7 +26,6 @@ class MinigameMap(
     @Transient
     lateinit var minigame: Minigame
 
-    var teamSize = 1
 
     var feastRadius = 20
     val feastCenter get() = Location(world, 0.0, 200.0, 0.0)
@@ -35,7 +34,6 @@ class MinigameMap(
     var minPlayersAmount = 2
     var maxPlayersAmount = 20
     var neededPlayersAmount = 16
-    var maxRounds = 3
     var spawn: Location? = null
     var lobby: Location? = null
     var locations = mutableMapOf<String, Location>()
@@ -43,58 +41,31 @@ class MinigameMap(
     val map: MinigameSchematic
         get() = MinigameSchematic.getSchematic(mapName())
 
-
     @Transient
     val allChests = mutableListOf<Chest>()
-
     @Transient
     val feastChests = mutableListOf<Chest>()
-
     fun mapName() = minigame.name + "-" + name
-
-
     val world: World
         get() = worldUsed.loadOrGet()
-
-
     var worldName
         get() = worldUsed.worldName
         set(value) {
             worldUsed.worldName = value
         }
-
     fun fixWorld() = world(world)
-
-
     val hasLobby get() = lobby != null
-
-
     val hasSpawn get() = spawn != null
-
-
     val hasSpawns get() = spawns.isNotEmpty()
-
-
     fun defaultWorldName(): String {
         return "${minigame.name}/map/$name"
     }
-
-    val isSolo get() = teamSize == 1
-    val isDuo get() = teamSize == 2
-
     fun copyWorld(map: MinigameMap) {
         worldUsed.copy(map.worldName)
         fixWorld()
     }
-
     fun insideFeast(location: Location) = location.distanceSquared(feastCenter) < (feastRadius * feastRadius)
-
-
     fun unloadWorld() = worldUsed.unload()
-
-
-
-
     fun resetWorld() {
         worldUsed.reset()
         fixWorld()
@@ -107,8 +78,6 @@ class MinigameMap(
         return Copyable.copyObject(this)
 
     }
-
-
     fun world(world: World): MinigameMap {
         this.worldName = world.name
         for (spawn in this.spawns) {
@@ -126,7 +95,6 @@ class MinigameMap(
 
         return this
     }
-
     var worldUsed = MinigameWorld()
         get() {
             if (field.nameNotSet()) {
@@ -134,7 +102,6 @@ class MinigameMap(
             }
             return field
         }
-
     fun debug(msg : String){
         Bukkit.getConsoleSender().sendMessage("§b[MinigameMap] §f$msg")
     }
@@ -159,6 +126,4 @@ class MinigameMap(
             }
         }
     }
-
-
 }

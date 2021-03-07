@@ -5,6 +5,7 @@ object Systems {
 
     @JvmStatic
     var cashSystem: CashSystem? = null
+
     @JvmStatic
     var soulSystem: SoulSystem? = null
 
