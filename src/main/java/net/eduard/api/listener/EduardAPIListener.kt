@@ -25,12 +25,12 @@ import org.bukkit.scheduler.BukkitRunnable
  *
  * @author Eduard
  */
-class EduardAPIEvents : EventsManager() {
+class EduardAPIListener : EventsManager() {
     @EventHandler
-    fun onChat(e : AsyncPlayerChatEvent){
+    fun onChat(e: AsyncPlayerChatEvent) {
         val player = e.player
-        if (player.hasPermission("chat.color")){
-            e.message = ChatColor.translateAlternateColorCodes('&',e.message)
+        if (player.hasPermission("chat.color")) {
+            e.message = ChatColor.translateAlternateColorCodes('&', e.message)
         }
     }
 
@@ -42,41 +42,42 @@ class EduardAPIEvents : EventsManager() {
         }
         if (player.hasPermission("eduard.plugins")) {
             for (plugin in Bukkit.getPluginManager().plugins) {
-                if (plugin is EduardPlugin) {
-                    if (plugin.isEnabled()) {
-                        player.sendMessage("§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
-                                + plugin.getDescription().version + "§a esta ativado.")
-                    } else {
-                        player.sendMessage("§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
-                                + plugin.getDescription().version + "§c esta desativado.")
-                    }
-
+                if (plugin !is EduardPlugin) continue
+                if (plugin.isEnabled()) {
+                    player.sendMessage(
+                        "§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
+                                + plugin.getDescription().version + "§a esta ativado."
+                    )
+                } else {
+                    player.sendMessage(
+                        "§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
+                                + plugin.getDescription().version + "§c esta desativado."
+                    )
                 }
+
+
             }
             player.sendMessage("§aCaso deseje comprar mais plugins entre em contato ou no site §bwww.eduard.com.br")
         }
 
     }
+
     @EventHandler
     fun onDeath(e: PlayerDeathEvent) {
         val player = e.entity
         if (Mine.OPT_AUTO_RESPAWN) {
             if (player.hasPermission("eduard.autorespawn")) {
-                object : BukkitRunnable() {
-                    override fun run() {
-                        if (player.isDead) {
-                            player.fireTicks = 0
-                            try {
-                                MineReflect.makeRespawn(player)
-                            } catch (ex: Exception) {
-                                ex.printStackTrace()
-                            }
-
+                EduardAPI.instance.asyncDelay(2){
+                    if (player.isDead) {
+                        player.fireTicks = 0
+                        try {
+                            MineReflect.makeRespawn(player)
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
                         }
+
                     }
-                }.runTaskLater(plugin,2)
-
-
+                }
             }
 
         }

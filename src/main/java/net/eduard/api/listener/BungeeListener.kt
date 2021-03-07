@@ -4,7 +4,7 @@ import net.md_5.bungee.api.plugin.Listener
 
 
 @Suppress("unused")
-class BungeeEvents : Listener {
+class BungeeListener : Listener {
 
 
 /*

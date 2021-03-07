@@ -50,11 +50,6 @@ class PlayerSkin {
         Minecraft.instance.respawnPlayer(player)
         Minecraft.instance.reloadPlayer(player)
 
-
-        /*
-
-
-         */
     }
 
     fun update() {
@@ -107,9 +102,13 @@ class PlayerSkin {
             skinUsed[player] = skin
         }
 
+
+
+        /*
         private const val LINK_MOJANG_UUID = "https://api.mojang.com/users/rofiles/minecraft/"
         private const val LINK_MOJANG_SKIN = "https://sessionserver.mojang.com/session/minecraft/profile/"
         private const val LINK_MCAPI_UUID = "https://mcapi.ca/name/uuid/"
         private const val LINK_MCAPI_SKIN = "http://mcapi.ca/uuid/player/"
+        */
     }
 }

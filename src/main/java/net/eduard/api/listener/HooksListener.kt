@@ -5,7 +5,7 @@ import net.eduard.api.server.PluginHook
 import org.bukkit.event.EventHandler
 import org.bukkit.event.server.PluginEnableEvent
 
-class SupportActivations : EventsManager() {
+class HooksListener : EventsManager() {
 
 
     @EventHandler

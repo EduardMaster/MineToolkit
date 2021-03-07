@@ -21,7 +21,7 @@ import java.io.File
 open class EduardBungeePlugin : Plugin(), IPlugin {
 
     override var started = false
-
+    var isFree= false
     override fun onLoad() {
         super<IPlugin>.onLoad()
     }

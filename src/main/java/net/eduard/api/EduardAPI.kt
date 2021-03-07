@@ -25,10 +25,7 @@ import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.storables.BukkitStorables
-import net.eduard.api.listener.EduWorldEditListener
-import net.eduard.api.listener.EduardAPIEvents
-import net.eduard.api.listener.PlayerTargetListener
-import net.eduard.api.listener.SupportActivations
+import net.eduard.api.listener.*
 import net.eduard.api.server.currency.CurrencyController
 import net.eduard.api.supports.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
@@ -150,10 +147,11 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     }
     fun events(){
         log("Ativando listeners dos Eventos")
-        EduardAPIEvents().register(this)
-        SupportActivations().register(this)
+        EduardAPIListener().register(this)
+        HooksListener().register(this)
         EduWorldEditListener().register(this)
         PlayerTargetListener().register(this)
+        BukkitPlugins().register(this)
         log("Listeners dos Eventos ativados com sucesso")
     }
     fun commands(){

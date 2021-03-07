@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
  */
 open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
-    var isFree: Boolean = false
+    var isFree= false
     override var started = false
 
     override val pluginName: String
@@ -189,7 +189,8 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         val pasta = File(pluginFolder, "/backup/")
         pasta.mkdirs()
         val lista = listOf(*pasta.listFiles()!!)
-        lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
+        lista.filter { it.lastModified() + TimeUnit.DAYS
+            .toMillis(1) <= System.currentTimeMillis() }
             .forEach {
                 Extra.deleteFolder(it)
                 if (it.exists())

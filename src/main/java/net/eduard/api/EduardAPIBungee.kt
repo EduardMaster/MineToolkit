@@ -13,16 +13,13 @@ import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
-import net.eduard.api.listener.BungeeEvents
+import net.eduard.api.listener.BungeeListener
 import net.md_5.bungee.api.ProxyServer
-import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
 
 
 @Suppress("deprecated")
@@ -123,7 +120,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         reload()
 
         ProxyServer.getInstance().pluginManager
-            .registerListener(plugin, BungeeEvents())
+            .registerListener(plugin, BungeeListener())
         ProxyServer.getInstance().pluginManager
             .registerCommand(plugin, BungeeReloadCommand())
 
