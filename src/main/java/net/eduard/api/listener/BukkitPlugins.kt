@@ -1,6 +1,7 @@
 package net.eduard.api.listener
 
 import net.eduard.api.core.Licence
+import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
@@ -16,19 +17,18 @@ class BukkitPlugins : EventsManager(){
         if (e.plugin !is EduardPlugin)return
         val plugin = (e.plugin as EduardPlugin)
         if (plugin.isFree)return
-        val pluginName = plugin.name
-        val tag = "§b[" + plugin.name + "] §f"
-        Bukkit.getConsoleSender().sendMessage("$tag§eFazendo autenticacao do Plugin no site")
-        val arquivo = File(plugin.dataFolder, "license.yml")
-        val config = YamlConfiguration.loadConfiguration(arquivo)
 
-        config.addDefault("key", "INSIRA_KEY")
-        config.addDefault("owner", "INSIRA_Dono")
-        config.options().copyDefaults(true)
-        config.save(arquivo)
+        val pluginName = plugin.name
+        val tag = "§b[" + plugin.name + "]§f"
+        Bukkit.getConsoleSender().sendMessage("$tag Verificando licenca do Plugin no site")
+        val config = Config(plugin , "license.yml")
+
+        config.add("key", "INSIRA_KEY")
+        config.add("owner", "INSIRA_Dono")
+        config.saveConfig()
         val key = config.getString("key")
         val owner = config.getString("owner")
-        Bukkit.getScheduler().runTaskAsynchronously(plugin) {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, Runnable {
             val result = Licence.test(pluginName, owner, key)
             Bukkit.getConsoleSender().sendMessage(tag + result.message)
             if (!result.isActive) {
@@ -38,7 +38,7 @@ class BukkitPlugins : EventsManager(){
                     plugin.onActivation()
                 }
             }
-        }
+        },5)
     }
 
 

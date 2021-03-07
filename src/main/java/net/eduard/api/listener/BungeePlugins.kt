@@ -25,18 +25,16 @@ class BungeePlugins : Runnable{
                 if (disabled.contains(plugin))continue
                 if (activated.contains(plugin))continue
                 val pluginName = plugin.description.name
+                val tag = "§b[" + plugin.description.name + "] §f"
                 ProxyServer.getInstance().console
-                    .sendMessage(TextComponent("§aAutenticando o plugin $pluginName"))
-                val arquivo = File(plugin.dataFolder, "license.yml")
-                val provider =
-                    ConfigurationProvider.getProvider(YamlConfiguration::class.java)
-                val config = provider.load(arquivo)
+                    .sendMessage(TextComponent("$tag Verificando licenca do Plugin no site"))
+
                 config.add("key", "INSIRA_KEY")
                 config.add("owner", "INSIRA_Dono")
-                provider.save(config, arquivo)
+                config.saveConfig()
                 val key = config.getString("key")
                 val owner = config.getString("owner")
-                val tag = "§b[" + plugin.description.name + "] §f"
+
                 ProxyServer.getInstance().scheduler.runAsync(plugin) {
                     val result = Licence.test(pluginName, owner, key)
                     ProxyServer.getInstance().console.sendMessage(TextComponent(tag + result.message))

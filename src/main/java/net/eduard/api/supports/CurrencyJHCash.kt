@@ -4,9 +4,10 @@ import JH_Shop.Main
 import net.eduard.api.server.currency.SimpleCurrencySystem
 import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.game.ItemBuilder
+import net.eduard.api.lib.storage.annotations.StorageAttributes
 import org.bukkit.Material
 
-
+@StorageAttributes(indentificate = true)
 class CurrencyJHCash : SimpleCurrencySystem() {
     override operator fun get(player: FakePlayer): Double {
         return Main.getAPI().getPontos(player.name)

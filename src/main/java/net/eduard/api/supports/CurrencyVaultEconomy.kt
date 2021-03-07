@@ -7,7 +7,7 @@ import net.eduard.api.lib.modules.VaultAPI
 import net.eduard.api.lib.game.ItemBuilder
 import org.bukkit.Material
 
-
+@StorageAttributes(indentificate = true)
 class CurrencyVaultEconomy : SimpleCurrencySystem() {
 
     override operator fun get(player: FakePlayer): Double {
