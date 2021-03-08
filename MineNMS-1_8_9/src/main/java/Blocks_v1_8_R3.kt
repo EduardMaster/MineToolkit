@@ -41,7 +41,7 @@ class Blocks_v1_8_R3(x: Int, y: Int, z: Int, @field:Transient val worldServer: W
         val x = x and 0xF
         val y = y and 0xF
         val z = z and 0xF
-        val combined: Int = 1//type + (data shl 12)
+        val combined: Int = type + (data.toInt() shl 12)
         val blockData = net.minecraft.server.v1_8_R3.Block
             .getByCombinedId(combined)
         if (blockData === section!!.getType(x, y, z)) {

@@ -67,11 +67,11 @@ class EduardAPIListener : EventsManager() {
         val player = e.entity
         if (Mine.OPT_AUTO_RESPAWN) {
             if (player.hasPermission("eduard.autorespawn")) {
-                EduardAPI.instance.asyncDelay(2){
+                EduardAPI.instance.syncDelay(2){
                     if (player.isDead) {
                         player.fireTicks = 0
                         try {
-                            MineReflect.makeRespawn(player)
+                            player.spigot().respawn()
                         } catch (ex: Exception) {
                             ex.printStackTrace()
                         }

@@ -16,7 +16,6 @@ import org.bukkit.util.Vector
  */
 
 
-
 class MinigameMap(
 
     @StorageIndex
@@ -25,12 +24,15 @@ class MinigameMap(
 ) {
     @Transient
     lateinit var minigame: Minigame
-
-
     var feastRadius = 20
-    val feastCenter get() = Location(world, 0.0, 200.0, 0.0)
+    var feastCenter : Location? = null
+     get() {
+       if (field == null)
+           field = Location(world, 0.0, 100.0, 0.0)
+         return field
+     }
+
     @Transient
-    var lastRelative = Vector(0,0,0)
     var minPlayersAmount = 2
     var maxPlayersAmount = 20
     var neededPlayersAmount = 16
@@ -43,8 +45,8 @@ class MinigameMap(
 
     @Transient
     val allChests = mutableListOf<Chest>()
-    @Transient
-    val feastChests = mutableListOf<Chest>()
+    val feastChests get() = allChests.filter { insideFeast(it.location) }
+
     fun mapName() = minigame.name + "-" + name
     val world: World
         get() = worldUsed.loadOrGet()
@@ -53,6 +55,7 @@ class MinigameMap(
         set(value) {
             worldUsed.worldName = value
         }
+
     fun fixWorld() = world(world)
     val hasLobby get() = lobby != null
     val hasSpawn get() = spawn != null
@@ -60,24 +63,34 @@ class MinigameMap(
     fun defaultWorldName(): String {
         return "${minigame.name}/map/$name"
     }
+    fun setupChests(){
+        allChests.clear()
+        allChests.addAll(map.getAllChests(feastCenter!!))
+    }
+
+
     fun copyWorld(map: MinigameMap) {
         worldUsed.copy(map.worldName)
         fixWorld()
     }
+
     fun insideFeast(location: Location) = location.distanceSquared(feastCenter) < (feastRadius * feastRadius)
     fun unloadWorld() = worldUsed.unload()
     fun resetWorld() {
         worldUsed.reset()
         fixWorld()
     }
+
     fun clearWorld() {
         worldUsed.clear()
         fixWorld()
     }
+
     fun copy(): MinigameMap {
         return Copyable.copyObject(this)
 
     }
+
     fun world(world: World): MinigameMap {
         this.worldName = world.name
         for (spawn in this.spawns) {
@@ -92,9 +105,11 @@ class MinigameMap(
         for (loc in locations.values) {
             loc.world = world
         }
+        feastCenter?.world = world
 
         return this
     }
+
     var worldUsed = MinigameWorld()
         get() {
             if (field.nameNotSet()) {
@@ -102,28 +117,22 @@ class MinigameMap(
             }
             return field
         }
-    fun debug(msg : String){
+
+    fun debug(msg: String) {
         Bukkit.getConsoleSender().sendMessage("§b[MinigameMap] §f$msg")
     }
+
     fun paste(relative: Location) {
-
-        val modified = (relative.toVector().distance(lastRelative) > 0)
-        lastRelative = relative.toVector()
         world(relative.world)
-        val dif = relative.clone().subtract(map.relative)
-
+        val dif = feastCenter!!.clone().subtract(relative)
+        feastCenter = relative
         map.paste(relative, true)
         allChests.clear()
-        allChests.addAll(map.chests)
-        feastChests.addAll(map.feastChests(feastCenter,feastRadius))
-        allChests.removeAll(feastChests)
-
-        if (modified) {
-            this.spawn?.add(dif)
-            this.lobby?.add(dif)
-            for (spawn in spawns) {
-                spawn.add(dif)
-            }
+        allChests.addAll(map.getAllChests(relative))
+        this.spawn?.add(dif)
+        this.lobby?.add(dif)
+        for (spawn in spawns) {
+            spawn.add(dif)
         }
     }
 }

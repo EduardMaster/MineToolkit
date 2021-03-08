@@ -7,6 +7,7 @@ inline fun <reified T> File.reloadListFromFolder(): List<T> {
     mkdirs()
     val list = mutableListOf<T>()
     for (fileName in list()!!) {
+        if (!fileName.endsWith(".yml"))continue
         val config = Config(this, fileName)
         val data = config.get(T::class.java)
         list.add(data)

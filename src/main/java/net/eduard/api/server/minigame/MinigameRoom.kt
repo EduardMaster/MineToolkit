@@ -38,9 +38,10 @@ open class MinigameRoom() {
         mapUsed.worldName = "${minigame.name}/room/$id"
         if (minigame.worldBased) {
             mapUsed.copyWorld(map)
+            mapUsed.setupChests()
         } else {
             mapUsed.clearWorld()
-            mapUsed.paste(mapUsed.feastCenter)
+            mapUsed.paste(mapUsed.feastCenter!!)
         }
         restart()
 
@@ -54,9 +55,10 @@ open class MinigameRoom() {
     open fun reset() {
         if (minigame.worldBased) {
             mapUsed.resetWorld()
+            mapUsed.setupChests()
         } else {
             mapUsed.clearWorld()
-            mapUsed.paste(mapUsed.feastCenter)
+            mapUsed.paste(mapUsed.feastCenter!!)
         }
     }
 
@@ -66,6 +68,7 @@ open class MinigameRoom() {
     var round: Int = 0
     var state = MinigameState.STARTING
     var time: Int = 0
+    var teamSize = 1
     var maxRounds = 3
 
     @Transient
@@ -101,9 +104,9 @@ open class MinigameRoom() {
         for (player in players) {
             player.send(
                 minigame.messagePrefix + message
-                    .replace("\$time", Extra.formatSeconds1(time))
-                    .replace("\$max", "" + map.maxPlayersAmount)
-                    .replace("\$players", "" + players.size)
+                    .replace("%time", Extra.formatSeconds1(time))
+                    .replace("%max", "" + map.maxPlayersAmount)
+                    .replace("%players", "" + players.size)
             )
         }
     }

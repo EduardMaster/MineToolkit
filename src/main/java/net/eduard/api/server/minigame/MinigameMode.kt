@@ -20,7 +20,9 @@ open class MinigameMode() {
     lateinit var minigame: Minigame
 
     @StorageIndex
-    var uuid = UUID.randomUUID()
+     var uuid = UUID.randomUUID()
+
+
     var name = "Normal"
     val modeName get() = name.replace(" ","_").toLowerCase();
     var timeIntoStart = 20
@@ -32,8 +34,8 @@ open class MinigameMode() {
     var timeOnForceTimer = 10
     var timeOnStartingToBroadcast = 15
     var timeOnEquipingToBroadcast = 1
-    var scoreboardStarting = DisplayBoard("Minigame iniciando")
-    var scoreboardPlaying = DisplayBoard("Minigame em jogo")
+    var scoreboardStarting : DisplayBoard? = null
+    var scoreboardPlaying :  DisplayBoard? = null
     val plugin get() = minigame.plugin
     val folder get() = File(plugin.dataFolder, "modes/$modeName/")
 

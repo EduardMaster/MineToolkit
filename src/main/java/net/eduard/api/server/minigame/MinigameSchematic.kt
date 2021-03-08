@@ -19,26 +19,27 @@ import java.util.zip.GZIPOutputStream
  *
  * @author Eduard
  */
-class MinigameSchematic(var name : String = "Mapinha") {
-    class BlockInfo(){
-        var id : Short = 1
-        var data : Byte = 0
+class MinigameSchematic(var name: String = "Mapinha") {
+    class BlockInfo() {
+        var id: Short = 1
+        var data: Byte = 0
 
     }
+
     companion object {
-        lateinit var MAPS_FOLDER : File
+        lateinit var MAPS_FOLDER: File
 
-        private val cache = mutableMapOf<Player,MinigameSchematic>()
-        private val schematics = mutableMapOf<String,MinigameSchematic>()
+        private val cache = mutableMapOf<Player, MinigameSchematic>()
+        private val schematics = mutableMapOf<String, MinigameSchematic>()
 
-        fun isEditing(player  : Player) = cache.containsKey(player)
+        fun isEditing(player: Player) = cache.containsKey(player)
 
-        fun exists(name : String) = schematics.containsKey(name)
-        fun loadToCache(player : Player,name : String){
+        fun exists(name: String) = schematics.containsKey(name)
+        fun loadToCache(player: Player, name: String) {
             cache[player] = schematics[name] as MinigameSchematic
         }
 
-        fun loadAll(folder : File){
+        fun loadAll(folder: File) {
             folder.mkdirs()
             if (folder.listFiles() == null)
                 return
@@ -51,14 +52,20 @@ class MinigameSchematic(var name : String = "Mapinha") {
                 }
             }
         }
-        fun saveAll(folder : File){
+
+        fun saveAll(folder: File) {
             folder.mkdirs()
             for ((name, schematic) in schematics) {
-                schematic.save(File(MAPS_FOLDER,
-                    "$name.map"))
+                schematic.save(
+                    File(
+                        MAPS_FOLDER,
+                        "$name.map"
+                    )
+                )
             }
 
         }
+
         fun getSchematic(name: String) = schematics[name]!!
 
         fun getSchematic(player: Player): MinigameSchematic {
@@ -79,20 +86,22 @@ class MinigameSchematic(var name : String = "Mapinha") {
             val name = subfile.name.replace(".map", "")
             return MinigameSchematic(name).reload(subfile)
         }
-        fun log(message : String){
-            Bukkit.getConsoleSender().sendMessage("§b[GameSchematic] §f"
-            + message)
+
+        fun log(message: String) {
+            Bukkit.getConsoleSender().sendMessage(
+                "§b[GameSchematic] §f"
+                        + message
+            )
         }
     }
 
-    fun register(){
+    fun register() {
         schematics[name] = this
     }
-    fun unregister(){
+
+    fun unregister() {
         schematics.remove(name)
     }
-
-
 
 
     @Transient
@@ -103,17 +112,16 @@ class MinigameSchematic(var name : String = "Mapinha") {
     val past get() = end - start
 
 
-
     var relative = Vector(0, 100, 0)
     var low = Vector(-10, 100, -10)
     var high = Vector(10, 100, 10)
 
 
-    fun inside(location: Location) : Boolean {
+    fun inside(location: Location): Boolean {
         val x = location.blockX
         val y = location.blockY
         val z = location.blockZ
-        return (low.blockX < x && high.blockX  > x &&
+        return (low.blockX < x && high.blockX > x &&
                 low.blockY < y && high.blockY > y
                 && low.blockZ < z && high.blockZ > z)
     }
@@ -125,20 +133,35 @@ class MinigameSchematic(var name : String = "Mapinha") {
     var length: Short = 0
 
     @Transient
-    var chests = mutableListOf<Chest>()
-
-    fun feastChests(feastCenter : Location, feastRadius : Int): List<Chest> {
-        val feastSizeSquared = feastRadius*feastRadius
-        return chests.filter { it.location.distanceSquared(feastCenter) < feastSizeSquared }
-    }
-
-    @Transient
-    lateinit var blocks : Array<BlockInfo>
+    lateinit var blocks: Array<BlockInfo>
 
 
     fun copy(world: World) {
 
         copy(relative.toLocation(world), low.toLocation(world), high.toLocation(world))
+    }
+
+    fun getAllChests(relative: Location ): MutableList<Chest> {
+        val worldUsed = relative.world
+        val startX = low.blockX + (relative.blockX - relative.blockX)
+        val startY = low.blockY + (relative.blockY - relative.blockY)
+        val startZ = low.blockZ + (relative.blockZ - relative.blockZ)
+        val list = mutableListOf<Chest>()
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                for (z in 0 until length) {
+                    val block = worldUsed.getBlockAt(
+                        startX + x,
+                        startY + y,
+                        startZ + z
+                    )
+                    if (block.state is Chest) {
+                        list.add(block.state as Chest)
+                    }
+                }
+            }
+        }
+        return list
     }
 
     fun copy(relativeLocation: Location) {
@@ -165,12 +188,11 @@ class MinigameSchematic(var name : String = "Mapinha") {
         low = lowLoc.toVector()
 
         relative = relativeLocation.toVector()
-        chests.clear()
         width = (highLoc.blockX - lowLoc.blockX).toShort()
         height = (highLoc.blockY - lowLoc.blockY).toShort()
         length = (highLoc.blockZ - lowLoc.blockZ).toShort()
         val size = width * height * length
-        blocks = Array(size){BlockInfo()}
+        blocks = Array(size) { BlockInfo() }
         val worldUsed = relativeLocation.world
 
 
@@ -178,16 +200,14 @@ class MinigameSchematic(var name : String = "Mapinha") {
             for (y in 0 until height) {
                 for (z in 0 until length) {
                     count++
-                    val index = getIndex( x, y, z, width.toInt(), length.toInt())
-                    val block = worldUsed.getBlockAt(lowLoc.blockX + x,
+                    val index = getIndex(x, y, z, width.toInt(), length.toInt())
+                    val block = worldUsed.getBlockAt(
+                        lowLoc.blockX + x,
                         lowLoc.blockY + y,
                         lowLoc.blockZ + z
                     )
                     val id = block.typeId
-                    if (block.state is Chest) {
-                        val chest = block.state as Chest
-                        chests.add(chest)
-                    }
+
                     val blockInfo = blocks[index]
                     blockInfo.id = id.toShort()
                     blockInfo.data = block.data
@@ -201,7 +221,7 @@ class MinigameSchematic(var name : String = "Mapinha") {
     fun paste(newRelative: Location, minusLag: Boolean = false) {
         start = System.currentTimeMillis()
         val worldUsed = newRelative.world
-        chests.clear()
+
         val difX = newRelative.blockX - relative.blockX
         val difY = newRelative.blockY - relative.blockY
         val difZ = newRelative.blockZ - relative.blockZ
@@ -211,7 +231,7 @@ class MinigameSchematic(var name : String = "Mapinha") {
                 for (z in 0 until length) {
                     count++
                     val index = getIndex(
-                        x,y,z,
+                        x, y, z,
                         width.toInt(),
                         length.toInt()
                     )
@@ -229,23 +249,19 @@ class MinigameSchematic(var name : String = "Mapinha") {
                     if (typeData < 0) {
                         typeData = 0
                     }
-                    if (minusLag) {
-                        if (typeId.toInt() == 0) {
-                            continue
-                        }
-                    }
+                    if (minusLag && typeId.toInt() == 0)
+                        continue
+
+
                     if (block != null) {
                         if (block.typeId != typeId.toInt() || block.data != typeData) {
                             val bloco = Blocks.get(block.location) ?: continue
-                            bloco.setTypeAndData (
-                                Material.getMaterial(typeId.toInt())
-                                , typeData.toInt()
+                            bloco.setTypeAndData(
+                                Material.getMaterial(typeId.toInt()), typeData.toInt()
                             )
+
                         }
-                        if (block.state is Chest) {
-                            val chest = block.state as Chest
-                            chests.add(chest)
-                        }
+
                     }
                 }
             }
@@ -256,7 +272,7 @@ class MinigameSchematic(var name : String = "Mapinha") {
 
     fun setType(id: Short, data: Byte) {
         for (block in blocks) {
-            block.id= id
+            block.id = id
             block.data = data
         }
     }
@@ -268,10 +284,10 @@ class MinigameSchematic(var name : String = "Mapinha") {
             dataWriter.writeShort(width.toInt())
             dataWriter.writeShort(height.toInt())
             dataWriter.writeShort(length.toInt())
-            val byteArrayWriter = ByteArrayOutputStream(blocks.size*3)
+            val byteArrayWriter = ByteArrayOutputStream(blocks.size * 3)
             val byteArrayDataWriter = DataOutputStream(byteArrayWriter)
-            var blocksWrited= 0
-            for (block in blocks){
+            var blocksWrited = 0
+            for (block in blocks) {
                 byteArrayDataWriter.writeShort(block.id.toInt())
                 byteArrayDataWriter.writeByte(block.data.toInt())
                 blocksWrited++
@@ -306,14 +322,14 @@ class MinigameSchematic(var name : String = "Mapinha") {
             width = dataReader.readShort()
             height = dataReader.readShort()
             length = dataReader.readShort()
-            val size = dataReader.readInt()/3
-           // log("Size of blocks $size")
-            blocks = Array(size){BlockInfo()}
-            val array = ByteArray(size*3)
+            val size = dataReader.readInt() / 3
+            // log("Size of blocks $size")
+            blocks = Array(size) { BlockInfo() }
+            val array = ByteArray(size * 3)
             dataReader.readFully(array)
             val arrayReader = ByteArrayInputStream(array)
             val arrayDataReader = DataInputStream(arrayReader)
-            for (block in blocks){
+            for (block in blocks) {
                 block.id = arrayDataReader.readShort()
                 block.data = arrayDataReader.readByte()
 
@@ -334,7 +350,6 @@ class MinigameSchematic(var name : String = "Mapinha") {
         reload(fileReader)
         return this
     }
-
 
 
 }

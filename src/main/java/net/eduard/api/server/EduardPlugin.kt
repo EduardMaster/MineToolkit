@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit
 open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
     var isFree= false
+    protected var activated = false
+    protected var reloaded = false
     override var started = false
 
     override val pluginName: String
@@ -144,9 +146,8 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         unregisterStorableClasses()
         unregisterMenus()
         unregisterCommands()
-        log(
-            "Foi desativado na v" + description.version + " um plugin "
-                    + if (isFree) "§aGratuito" else "§bPago"
+        log("Foi desativado na v" + description.version + " um plugin "
+         + if (isFree) "§aGratuito" else "§bPago"
         )
 
     }

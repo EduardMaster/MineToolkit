@@ -81,7 +81,8 @@ public class Blocks_v1_12_R1 extends CraftBlock implements Blocks {
 
 
         if (applyPhysics) {
-         //  worldServer.notify(new BlockPosition(getX(), getY(), getZ()));
+
+         // worldServer.notify(new BlockPosition(getX(), getY(), getZ()));
 
         }
 

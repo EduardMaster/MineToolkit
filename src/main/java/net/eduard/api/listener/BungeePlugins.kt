@@ -1,6 +1,7 @@
 package net.eduard.api.listener
 
 import net.eduard.api.core.Licence
+import net.eduard.api.lib.config.Config
 import net.eduard.api.server.EduardBungeePlugin
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
@@ -28,7 +29,7 @@ class BungeePlugins : Runnable{
                 val tag = "§b[" + plugin.description.name + "] §f"
                 ProxyServer.getInstance().console
                     .sendMessage(TextComponent("$tag Verificando licenca do Plugin no site"))
-
+                val config = Config(plugin , "license.yml")
                 config.add("key", "INSIRA_KEY")
                 config.add("owner", "INSIRA_Dono")
                 config.saveConfig()

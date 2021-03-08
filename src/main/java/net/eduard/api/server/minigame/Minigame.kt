@@ -431,12 +431,12 @@ open class Minigame(
     }
 
     fun saveModes() {
-        File(plugin.dataFolder, "modes/")
-            .saveListInFolder(modes){modeName}
         for (mode in modes) {
             mode.saveChests()
             mode.saveKits()
         }
+        File(plugin.dataFolder, "modes/")
+            .saveListInFolder(modes){modeName}
     }
 
 
@@ -460,14 +460,9 @@ open class Minigame(
     }
 
     open fun reload() {
-        for (mode in modes) {
-            mode.minigame = this
-            mode.reloadChests()
-            mode.reloadKits()
-        }
-
         reloadLobbies()
         reloadMaps()
+        reloadModes()
         reloadRooms()
     }
 
