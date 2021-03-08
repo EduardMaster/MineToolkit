@@ -89,7 +89,7 @@ class MinigameSchematic(var name: String = "Mapinha") {
 
         fun log(message: String) {
             Bukkit.getConsoleSender().sendMessage(
-                "§b[GameSchematic] §f"
+                "§b[MinigameSchematic] §f"
                         + message
             )
         }
@@ -141,7 +141,7 @@ class MinigameSchematic(var name: String = "Mapinha") {
         copy(relative.toLocation(world), low.toLocation(world), high.toLocation(world))
     }
 
-    fun getAllChests(relative: Location ): MutableList<Chest> {
+    fun getAllChests(relative: Location): MutableList<Chest> {
         val worldUsed = relative.world
         val startX = low.blockX + (relative.blockX - relative.blockX)
         val startY = low.blockY + (relative.blockY - relative.blockY)
@@ -249,19 +249,16 @@ class MinigameSchematic(var name: String = "Mapinha") {
                     if (typeData < 0) {
                         typeData = 0
                     }
-                    if (minusLag && typeId.toInt() == 0)
-                        continue
 
 
                     if (block != null) {
-                        if (block.typeId != typeId.toInt() || block.data != typeData) {
-                            val bloco = Blocks.get(block.location) ?: continue
-                            bloco.setTypeAndData(
-                                Material.getMaterial(typeId.toInt()), typeData.toInt()
-                            )
-
+                        if (minusLag && (block.typeId == typeId.toInt() || block.data == typeData)) {
+                            continue
                         }
-
+                        val bloco = Blocks.get(block.location) ?: continue
+                        bloco.setTypeAndData(
+                            Material.getMaterial(typeId.toInt()), typeData.toInt()
+                        )
                     }
                 }
             }

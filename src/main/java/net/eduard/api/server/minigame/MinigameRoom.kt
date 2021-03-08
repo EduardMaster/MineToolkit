@@ -57,7 +57,8 @@ open class MinigameRoom() {
             mapUsed.resetWorld()
             mapUsed.setupChests()
         } else {
-            mapUsed.clearWorld()
+            if (minigame.schematicBasedRestartWorld)
+                mapUsed.clearWorld()
             mapUsed.paste(mapUsed.feastCenter!!)
         }
     }
@@ -87,8 +88,10 @@ open class MinigameRoom() {
         get() = players.filter { it.isOnline }.map { it.player!! }
 
     val teamWinner: MinigameTeam?
-        get() = teams.firstOrNull { it.getPlayers(MinigamePlayerState.NORMAL)
-            .isNotEmpty() }
+        get() = teams.firstOrNull {
+            it.getPlayers(MinigamePlayerState.NORMAL)
+                .isNotEmpty()
+        }
 
 
     val winner: MinigamePlayer
@@ -122,13 +125,15 @@ open class MinigameRoom() {
      * @return
      */
     fun isPlaying(player: Player): Boolean {
-        return players.any{ p -> p.player == player }
+        return players.any { p -> p.player == player }
 
     }
 
     fun getTeams(state: MinigamePlayerState): List<MinigameTeam> {
-        return teams.filter { it.getPlayers(state)
-            .isNotEmpty() }
+        return teams.filter {
+            it.getPlayers(state)
+                .isNotEmpty()
+        }
     }
 
     fun getPlayersOnline(state: MinigamePlayerState): List<Player> {

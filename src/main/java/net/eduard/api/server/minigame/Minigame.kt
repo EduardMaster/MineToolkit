@@ -32,7 +32,14 @@ open class Minigame(
 
     var isEnabled = true
     var isBungeecord = false
-    var worldBased = false
+    var schematicBased = true
+
+    var worldBased
+        get() = !schematicBased
+        set(value) {
+            schematicBased = !value
+        }
+    var schematicBasedRestartWorld = false
     var isLobby = false
     var bungeeLobby = "Lobby"
     var scoreboardLobby = DisplayBoard("Minigame lobby")
@@ -51,10 +58,10 @@ open class Minigame(
     var lobbies = mutableListOf<MinigameLobby>()
 
     @Transient
-    var maps= mutableListOf<MinigameMap>()
+    var maps = mutableListOf<MinigameMap>()
 
     @Transient
-    var rooms= mutableListOf<MinigameRoom>()
+    var rooms = mutableListOf<MinigameRoom>()
 
     @Transient
     var modes = mutableListOf<MinigameMode>()
@@ -436,7 +443,7 @@ open class Minigame(
             mode.saveKits()
         }
         File(plugin.dataFolder, "modes/")
-            .saveListInFolder(modes){modeName}
+            .saveListInFolder(modes) { modeName }
     }
 
 
@@ -448,14 +455,17 @@ open class Minigame(
     fun saveLobbies() {
         File(plugin.dataFolder, "lobby/")
             .saveListInFolder(lobbies) {
-            id.toString() }
+                id.toString()
+            }
 
     }
 
 
     fun saveMaps() {
-        File(plugin.dataFolder, "maps/").saveListInFolder(maps) { name.toLowerCase()
-            .replace(" ","_") }
+        File(plugin.dataFolder, "maps/").saveListInFolder(maps) {
+            name.toLowerCase()
+                .replace(" ", "_")
+        }
 
     }
 
