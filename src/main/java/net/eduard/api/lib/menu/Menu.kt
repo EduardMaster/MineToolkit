@@ -356,6 +356,7 @@ open class Menu(
         }
 
         if (isCacheInventories && pagesCache.containsKey(page)) {
+            this.pageOpened[player] = page
             player.openInventory(pagesCache[page])
         } else {
             if ((lineAmount < 1) or (lineAmount > 6)) {
