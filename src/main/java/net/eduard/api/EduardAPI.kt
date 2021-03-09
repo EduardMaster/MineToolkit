@@ -112,7 +112,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         VaultAPI.setupVault()
         BukkitBungeeAPI.register(plugin)
         BukkitBungeeAPI.requestCurrentServer()
-        BungeeAPI.getBukkit().register(plugin)
+        BungeeAPI.bukkit.register(plugin)
         StorageAPI.registerPackage(Minigame::class.java)
         reload()
         commands()
@@ -286,7 +286,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         saveMaps()
         log("Mapas salvados!")
         log("desativado com sucesso!")
-        BungeeAPI.getController().unregister()
+        BungeeAPI.controller.unregister()
 
     }
 

@@ -116,7 +116,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
         super.onLoad()
 
-        BungeeAPI.getBungee().register(plugin)
+        BungeeAPI.bungee.register(plugin)
         reload()
 
         ProxyServer.getInstance().pluginManager
@@ -158,7 +158,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
 
     override fun onDisable() {
-        BungeeAPI.getController().unregister()
+        BungeeAPI.controller.unregister()
 
     }
 
