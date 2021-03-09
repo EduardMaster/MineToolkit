@@ -133,7 +133,7 @@ class MinigameSchematic(var name: String = "Mapinha") {
     var length: Short = 0
 
     @Transient
-    lateinit var blocks: Array<BlockInfo>
+     var blocks: Array<BlockInfo> = arrayOf()
 
 
     fun copy(world: World) {
@@ -143,9 +143,9 @@ class MinigameSchematic(var name: String = "Mapinha") {
 
     fun getAllChests(relative: Location): MutableList<Chest> {
         val worldUsed = relative.world
-        val startX = low.blockX + (relative.blockX - relative.blockX)
-        val startY = low.blockY + (relative.blockY - relative.blockY)
-        val startZ = low.blockZ + (relative.blockZ - relative.blockZ)
+        val startX = low.blockX + (relative.blockX - this.relative.blockX)
+        val startY = low.blockY + (relative.blockY - this.relative.blockY)
+        val startZ = low.blockZ + (relative.blockZ - this.relative.blockZ)
         val list = mutableListOf<Chest>()
         for (x in 0 until width) {
             for (y in 0 until height) {
@@ -252,7 +252,7 @@ class MinigameSchematic(var name: String = "Mapinha") {
 
 
                     if (block != null) {
-                        if (minusLag && (block.typeId == typeId.toInt() || block.data == typeData)) {
+                        if (minusLag && (block.typeId == typeId.toInt() && block.data == typeData)) {
                             continue
                         }
                         val bloco = Blocks.get(block.location) ?: continue

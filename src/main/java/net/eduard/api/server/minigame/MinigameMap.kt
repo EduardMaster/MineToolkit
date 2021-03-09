@@ -74,7 +74,12 @@ class MinigameMap(
         fixWorld()
     }
 
-    fun insideFeast(location: Location) = location.distanceSquared(feastCenter) < (feastRadius * feastRadius)
+    fun insideFeast(location: Location): Boolean {
+        val raioDoFeast = (feastRadius * feastRadius )
+        val distanciaDoBloco = feastCenter!!.distanceSquared(location)
+      //  debug("Bloco: "+ location+" RaioDoFeast: "+ raioDoFeast+" distanciaBloco: " +distanciaDoBloco)
+        return distanciaDoBloco < raioDoFeast
+    }
     fun unloadWorld() = worldUsed.unload()
     fun resetWorld() {
         worldUsed.reset()
