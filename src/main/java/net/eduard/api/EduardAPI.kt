@@ -49,6 +49,7 @@ import java.util.*
  */
 class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
+
     override var started = false
     override var configs = Config(plugin, "config.yml")
     override var storage = Config(plugin, "storage.yml")
@@ -315,6 +316,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     companion object {
 
         lateinit var instance: EduardAPI
+
+
         init {
             Hybrid.instance = BukkitServer
         }

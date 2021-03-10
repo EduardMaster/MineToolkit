@@ -25,12 +25,13 @@ class MinigameMap(
     @Transient
     lateinit var minigame: Minigame
     var feastRadius = 20
-    var feastCenter : Location? = null
-     get() {
-       if (field == null)
-           field = Location(world, 0.0, 100.0, 0.0)
-         return field
-     }
+
+    var feastCenter: Location? = null
+        get() {
+            if (field == null)
+                field = Location(world, 0.0, 100.0, 0.0)
+            return field
+        }
 
     @Transient
     var minPlayersAmount = 2
@@ -43,8 +44,8 @@ class MinigameMap(
     val map: MinigameSchematic
         get() = MinigameSchematic.getSchematic(mapName())
 
-    @Transient
-    val allChests = mutableListOf<Chest>()
+
+    val allChests get() = map.getAllChests(feastCenter!!)
     val feastChests get() = allChests.filter { insideFeast(it.location) }
 
     fun mapName() = minigame.name + "-" + name
@@ -63,7 +64,8 @@ class MinigameMap(
     fun defaultWorldName(): String {
         return "${minigame.name}/map/$name"
     }
-    fun setupChests(){
+
+    fun setupChests() {
         allChests.clear()
         allChests.addAll(map.getAllChests(feastCenter!!))
     }
@@ -75,11 +77,12 @@ class MinigameMap(
     }
 
     fun insideFeast(location: Location): Boolean {
-        val raioDoFeast = (feastRadius * feastRadius )
+        val raioDoFeast = (feastRadius * feastRadius)
         val distanciaDoBloco = feastCenter!!.distanceSquared(location)
-      //  debug("Bloco: "+ location+" RaioDoFeast: "+ raioDoFeast+" distanciaBloco: " +distanciaDoBloco)
+        //  debug("Bloco: "+ location+" RaioDoFeast: "+ raioDoFeast+" distanciaBloco: " +distanciaDoBloco)
         return distanciaDoBloco < raioDoFeast
     }
+
     fun unloadWorld() = worldUsed.unload()
     fun resetWorld() {
         worldUsed.reset()
@@ -132,8 +135,7 @@ class MinigameMap(
         val dif = feastCenter!!.clone().subtract(relative)
         feastCenter = relative
         map.paste(relative, true)
-        allChests.clear()
-        allChests.addAll(map.getAllChests(relative))
+
         this.spawn?.add(dif)
         this.lobby?.add(dif)
         for (spawn in spawns) {

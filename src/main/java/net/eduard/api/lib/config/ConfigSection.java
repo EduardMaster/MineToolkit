@@ -1,13 +1,9 @@
 package net.eduard.api.lib.config;
 
-import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
 
-import net.eduard.api.lib.game.SoundEffect;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.StorageAPI;
 
@@ -18,102 +14,6 @@ import net.eduard.api.lib.storage.StorageAPI;
  */
 public class ConfigSection {
 
-    private static String getComment(String line) {
-        String[] split = line.split("#");
-        if (split.length > 0)
-            return line.replaceFirst(split[0] + "#", "").replaceFirst(" ", "");
-        return line.replaceFirst("#", "").replaceFirst(" ", "");
-
-    }
-
-    private static String getKey(String line, String space) {
-        line = line.replaceFirst(space, "");
-        return line.split(":")[0];
-
-    }
-
-    private static String getList(String line) {
-        String[] split = line.split("-");
-        if (split.length > 0)
-            return line.replaceFirst(split[0] + "-", "").replaceFirst(" ", "");
-        return line.replaceFirst("-", "");
-    }
-
-    private static String getPath(String path) {
-        if (path.startsWith("#")) {
-            path = path.replaceFirst("#", "$");
-        }
-        if (path.startsWith("-")) {
-            path = path.replaceFirst("-", "$");
-        }
-        if (path.contains(":")) {
-            path = path.replace(":", "$");
-        }
-        return path;
-    }
-
-    /**
-     * Usar builder porque da menos lag
-     *
-     * @param amount Quantidade
-     * @return Texto com varios espaços
-     */
-    private static String getSpace(int amount) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < amount; i++) {
-            builder.append("  ");
-        }
-        return builder.toString();
-    }
-
-    private static int getSpace(String line) {
-        int value = 0;
-        String space = "  ";
-        while (line.startsWith(space)) {
-            line = line.replaceFirst(space, "");
-            value++;
-        }
-        return value;
-    }
-
-    private static String getValue(String line, String space) {
-        line = line.replaceFirst(space, "");
-        if (line.endsWith(":")) {
-            return "";
-        }
-        String[] split = line.split(":");
-        return line.replaceFirst(split[0] + ":", "").replaceFirst(" ", "");
-
-    }
-
-    private static String removeQuotes(String message) {
-        if (message.startsWith("'")) {
-            message = message.replaceFirst("'", "");
-        }
-        if (message.startsWith("\"")) {
-            message = message.replaceFirst("\"", "");
-        }
-        if (message.endsWith("'")) {
-            message = message.substring(0, message.length() - 1);
-        }
-        if (message.endsWith("\"")) {
-            message = message.substring(0, message.length() - 1);
-        }
-        return message;
-    }
-
-    private static boolean isComment(String line) {
-        return line.replace(" ", "").startsWith("#");
-    }
-
-    private static boolean isList(String line) {
-        return line.replace(" ", "").startsWith("-");
-    }
-
-    private static boolean isSection(String line) {
-        return !isList(line) & !isComment(line) & line.contains(":");
-    }
-
     int lineSpaces;
 
     Object object;
@@ -121,13 +21,6 @@ public class ConfigSection {
     ConfigSection father;
 
     String key;
-
-    // Object result;
-
-    // Map<String, ConfigSection> sections = new LinkedHashMap<>();
-
-    // List<Object> list = new ArrayList<>();
-
     List<String> comments = new ArrayList<>();
 
     public ConfigSection(ConfigSection father, String key, Object value) {
@@ -187,15 +80,16 @@ public class ConfigSection {
     }
 
     private Object get() {
-        if (object.equals("[]")) {
+        if (object.equals(ConfigUtil.EMPTY_LIST)) {
             return getList();
         }
-        if (object.equals("{}")) {
+        if (object.equals(ConfigUtil.EMPTY_SECTION)) {
             return getMap();
         }
         if (object instanceof String) {
             String string = (String) object;
-            return removeQuotes(string);
+            string = Extra.toChatMessage(string);
+            return ConfigUtil.INSTANCE.removeQuotes(string);
         }
         return object;
     }
@@ -248,13 +142,6 @@ public class ConfigSection {
         return list;
     }
 
-    public ItemStack getItem() {
-        return (ItemStack) getValue();
-    }
-
-    public ItemStack getItem(String path) {
-        return getSection(path).getItem();
-    }
 
     public <T> T get(String path, Class<T> claz) {
 
@@ -275,16 +162,11 @@ public class ConfigSection {
 
     public List<Object> getList() {
         if (!(object instanceof List)) {
-            object = new ArrayList<Object>();
+            object = new ArrayList<>();
         }
         @SuppressWarnings("unchecked")
         List<Object> list = (List<Object>) object;
         return list;
-    }
-
-
-    public Location getLocation(String path) {
-        return get(path, Location.class);
     }
 
     public Long getLong() {
@@ -316,7 +198,7 @@ public class ConfigSection {
         if (path.isEmpty()) {
             return this;
         }
-        path = getPath(path);
+        path = ConfigUtil.INSTANCE.getPath(path);
         if (path.contains(".")) {
             String[] split = path.split("\\.");
             String restPath = path.replaceFirst(split[0] + ".", "");
@@ -333,17 +215,11 @@ public class ConfigSection {
         return getMap().entrySet();
     }
 
-
-    public SoundEffect getSound(String path) {
-        return get(path, SoundEffect.class);
-    }
-
     public String getString() {
-        return removeQuotes(Extra.toString(object))
-                .replace("/*", "\n")
-                .replace("\\n", "\n")
-                .replace("<br>", "\n")
-                .replace("/n", "\n");
+        return ConfigUtil.INSTANCE.removeQuotes(Extra.toString(object))
+                .replace("\\n", ConfigUtil.LINE_SEPARATOR)
+                .replace("<br>", ConfigUtil.LINE_SEPARATOR)
+                .replace("/n", ConfigUtil.LINE_SEPARATOR);
     }
 
     public String getString(String path) {
@@ -353,7 +229,7 @@ public class ConfigSection {
     public List<String> getStringList() {
         ArrayList<String> list = new ArrayList<>();
         for (Object item : getList()) {
-            list.add(removeQuotes(Extra.toString(item)));
+            list.add(ConfigUtil.INSTANCE.removeQuotes(Extra.toString(item)));
         }
         return list;
     }
@@ -462,18 +338,18 @@ public class ConfigSection {
     }
 
     void save(List<String> lines, int spaceId) {
-        String space = getSpace(spaceId);
+        String space = ConfigUtil.INSTANCE.getSpace(spaceId);
         for (String comment : comments) {
             lines.add(space + "# " + comment);
         }
         if (isList()) {
-            lines.add(space + key + ": []");
+            lines.add(space + key + ":");
             for (Object text : getList()) {
-                lines.add(space + "- " + text);
+                lines.add(space + "  - " + text);
             }
         } else if (isMap()) {
             if (spaceId != -1) {
-                lines.add(space + key + ": {}");
+                lines.add(space + key + ":");
             }
             for (ConfigSection section : getMap().values()) {
                 section.save(lines, spaceId + 1);
@@ -484,6 +360,10 @@ public class ConfigSection {
         } else {
             if (spaceId == -1)
                 return;
+            if (object instanceof String){
+                object = ((String) object).replace("§","&");
+                object = "\""+ object+"\"";
+            }
             lines.add(space + key + ": " + object);
 
         }
@@ -499,27 +379,27 @@ public class ConfigSection {
         // int index = 0;
         for (String line : lines) {
             // System.err.println("-> " + line);
-            String space = getSpace(spaceId);
+            String space = ConfigUtil.INSTANCE.getSpace(spaceId);
 
-            if (isList(line)) {
-                path.getList().add(getList(line));
-            } else if (isComment(line)) {
-                currentComments.add(getComment(line));
-            } else if (isSection(line)) {
+            if (ConfigUtil.INSTANCE.isList(line)) {
+                path.getList().add(ConfigUtil.INSTANCE.getList(line));
+            } else if (ConfigUtil.INSTANCE.isComment(line)) {
+                currentComments.add(ConfigUtil.INSTANCE.getComment(line));
+            } else if (ConfigUtil.INSTANCE.isSection(line)) {
                 if (!line.startsWith("  ")) {
                     spaceId = 0;
                     path = this;
                 } else if (!line.startsWith(space)) {
-                    int time = getSpace(line);
+                    int time = ConfigUtil.INSTANCE.getSpaceAmount(line);
                     while (time < spaceId) {
                         path = path.father;
                         spaceId--;
                         // time = getSpace(line);
                     }
                 }
-                space = getSpace(spaceId);
-                path = path.getSection(getKey(line, space));
-                path.set(getValue(line, space));
+                space = ConfigUtil.INSTANCE.getSpace(spaceId);
+                path = path.getSection(ConfigUtil.INSTANCE.getKey(line, space));
+                path.set(ConfigUtil.INSTANCE.getValue(line, space));
                 path.comments.addAll(currentComments);
                 currentComments.clear();
                 spaceId++;
@@ -541,7 +421,7 @@ public class ConfigSection {
     }
 
     public boolean isList() {
-        return object instanceof List || object.toString().startsWith("[]");
+        return object instanceof List || object.toString().equals(ConfigUtil.EMPTY_LIST);
     }
 
     public boolean isMap() {
@@ -553,7 +433,7 @@ public class ConfigSection {
     }
 
     public void setComments(String... comments) {
-        if (comments != null & comments.length > 0) {
+        if (comments != null && comments.length > 0) {
             this.comments.clear();
             for (Object value : comments) {
                 this.comments.add(Extra.toString(value));

@@ -3,17 +3,17 @@ package net.eduard.api.lib.config;
 import java.util.LinkedHashMap;
 import java.util.Map;
 /**
- * Secao do {@link MasterConfig}
+ * Interpretador de YAML e JSON e XML simultaneo
  * @author Eduard
  *
  */
-public class MasterSection {
-	private final MasterConfig config;
+public class XJsonSection {
+	private final XJsonConfig config;
 	private Object value = new LinkedHashMap<>();
-	private MasterSection parent;
+	private XJsonSection parent;
 	private String key;
 
-	public MasterSection getSection(String path) {
+	public XJsonSection getSection(String path) {
 		if (path.isEmpty()) {
 			return parent;
 		}
@@ -22,25 +22,25 @@ public class MasterSection {
 			String[] split = path.split(config.section);
 			String first = split[0];
 			String last = path.replace(first + config.section, "");
-			MasterSection section = new MasterSection(config, this, first);
+			XJsonSection section = new XJsonSection(config, this, first);
 			return section.getSection(last);
 		} else {
-			return new MasterSection(config, this, path.replace(config.section, ""));
+			return new XJsonSection(config, this, path.replace(config.section, ""));
 		}
 	}
 
-	public MasterSection add(String path, Object value, String comments) {
+	public XJsonSection add(String path, Object value, String comments) {
 		if (!contains(path)) {
 			return set(path, value, comments);
 		}
 		return getSection(path);
 	}
 
-	public MasterSection set(String path, Object value, String... comments) {
-		MasterSection sec = getSection(path);
+	public XJsonSection set(String path, Object value, String... comments) {
+		XJsonSection sec = getSection(path);
 		if (!sec.getParent().getMap().containsKey(sec.getKey())) {
 			for (String comment : comments) {
-				sec.getParent().getMap().put(String.valueOf(MasterConfig.COMMENT) + sec.getParent().getMap().size(),
+				sec.getParent().getMap().put(String.valueOf(XJsonConfig.COMMENT) + sec.getParent().getMap().size(),
 						comment);
 			}
 
@@ -50,8 +50,8 @@ public class MasterSection {
 		return sec;
 	}
 
-	public MasterSection remove(String path) {
-		MasterSection sec = getSection(path);
+	public XJsonSection remove(String path) {
+		XJsonSection sec = getSection(path);
 		sec.getParent().remove(sec.getKey());
 		sec.setValue(null);
 		return sec;
@@ -65,7 +65,7 @@ public class MasterSection {
 		return get(path) != null;
 	}
 
-	public MasterSection(MasterConfig config, MasterSection parent, String key) {
+	public XJsonSection(XJsonConfig config, XJsonSection parent, String key) {
 		this.config = config;
 		this.setParent(parent);
 		this.setKey(key);
@@ -92,11 +92,11 @@ public class MasterSection {
 		this.value = value;
 	}
 
-	public MasterSection getParent() {
+	public XJsonSection getParent() {
 		return parent;
 	}
 
-	public void setParent(MasterSection parent) {
+	public void setParent(XJsonSection parent) {
 		this.parent = parent;
 	}
 

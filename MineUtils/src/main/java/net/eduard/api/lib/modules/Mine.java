@@ -75,6 +75,7 @@ public final class Mine {
 
 
     }
+
     /**
      * Metodo muito importante para verificar se o cara esta realmente acertando o alvo
      *
@@ -119,8 +120,6 @@ public final class Mine {
 
 
     }
-
-
 
 
     /**
@@ -2944,20 +2943,6 @@ public final class Mine {
         PLAYERS_ARMOURS.put(player, player.getInventory().getArmorContents());
     }
 
-    public static void saveConfig(File file, YamlConfiguration config) {
-
-        try {
-            Writer fileWriter = new BufferedWriter(
-                    new OutputStreamWriter(
-                            new FileOutputStream(file),
-                            StandardCharsets.UTF_8));
-            fileWriter.write(config.saveToString());
-            fileWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     /**
      * Armazena os Itens do Jogador

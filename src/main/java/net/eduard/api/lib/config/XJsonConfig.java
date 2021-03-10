@@ -13,12 +13,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Sistema Interpretador de YAML e JSON simultaneo
+ * Interpretador de YAML e JSON e XML simultaneo
  * 
  * @author Eduard
  *
  */
-public class MasterConfig {
+public class XJsonConfig {
 
 
 	private static String getSpaces(int size) {
@@ -60,7 +60,7 @@ public class MasterConfig {
 
 	protected Object value = null;
 	protected StringBuilder text = new StringBuilder();
-	private final MasterSection root = new MasterSection(this, null, null);
+	private final XJsonSection root = new XJsonSection(this, null, null);
 
 	protected File folder;
 	protected File file;
@@ -75,11 +75,11 @@ public class MasterConfig {
 	protected int currentTab;
 	protected int spacesSkipped;
 
-	public MasterConfig() {
+	public XJsonConfig() {
 		restartRead();
 	}
 
-	public MasterConfig(File folder, String name) {
+	public XJsonConfig(File folder, String name) {
 		restartRead();
 		this.folder = folder;
 		this.file = new File(folder, name);
@@ -384,7 +384,7 @@ public class MasterConfig {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public MasterSection getConfig() {
+	public XJsonSection getConfig() {
 		if (value instanceof Map) {
 			root.setValue(value);
 		}

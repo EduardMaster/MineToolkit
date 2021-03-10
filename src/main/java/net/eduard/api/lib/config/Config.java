@@ -21,10 +21,11 @@ public class Config {
     private final transient File folder;
     private transient Object plugin;
     private final String name;
-    transient List<String> lines;
+
+
     private File getDataFolder() {
         try {
-            return (File) Extra.getMethodInvoke(plugin,"getDataFolder");
+            return (File) Extra.getMethodInvoke(plugin, "getDataFolder");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,12 +58,10 @@ public class Config {
         file = new File(folder, name);
         file.getParentFile().mkdirs();
         root = new ConfigSection("", "{}");
-        lines = new ArrayList<>();
         root.lineSpaces = 1;
         this.root.father = root;
         reloadConfig();
     }
-
 
 
     public List<Integer> getIntList(String path) {
@@ -71,52 +70,51 @@ public class Config {
 
     public void log(String msg) {
         Hybrid.instance.getConsole()
-                .sendMessage("§b[ConfigAPI] §3("+ name + ") §f" + msg);
+                .sendMessage("§b[ConfigAPI] §3(" + name + ") §f" + msg);
     }
 
     public void saveDefaultConfig() {
         file.getParentFile().mkdirs();
-        if (!file.exists()) {
-            if (Extra.isDirectory(file)) {
-                file.mkdirs();
-            } else {
-                if (plugin != null) {
-                    try {
-                        log("COPYING DEFAULT...");
-                        InputStream defaultResourceFile = Extra.getResource(plugin.getClass().getClassLoader(), name);
-                        if (defaultResourceFile != null) {
-                            Extra.copyAsUTF8(defaultResourceFile, file);
-                            log("DEFAULT COPIED!");
-                        }else{
-                            log("DEFAULT NOT FOUNDED!");
-                        }
-
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-
-            }
+        if (file.exists()) return;
+        if (Extra.isDirectory(file)) {
+            file.mkdirs();
+            return;
         }
+        if (plugin == null) return;
+        try {
+            log("COPYING DEFAULT...");
+            InputStream defaultResourceFile = Extra.getResource(plugin.getClass().getClassLoader(), name);
+            if (defaultResourceFile == null) {
+                log("DEFAULT NOT FOUNDED!");
+                return;
+            }
+            Extra.copyAsUTF8(defaultResourceFile, file);
+            log("DEFAULT COPIED!");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+
     }
 
     public void saveConfig() {
 
         log("SAVING...");
         try {
-            if (!Extra.isDirectory(file)) {
-                lines.clear();
-                root.save(lines, -1);
-                Extra.writeLines(file, lines);
-                log("SAVED!");
-            }else{
+            if (Extra.isDirectory(file)) {
                 log("NOT SAVED!");
-            }
+                return;
 
+            }
+            List<String> lines = new ArrayList<>();
+            root.save(lines, -1);
+            Extra.writeLines(file, lines);
+            log("SAVED!");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        lines.clear();
+
     }
 
     public void reloadConfig() {
@@ -125,11 +123,11 @@ public class Config {
 
             if (file.isFile() && file.exists()) {
                 log("RELOADING...");
-                lines = Extra.readLines(file);
+
                 root.getMap().clear();
-                root.reload(lines);
+                root.reload(Extra.readLines(file));
                 log("RELOADED!");
-            }else{
+            } else {
                 log("NOT RELOADED!");
             }
 
@@ -141,6 +139,7 @@ public class Config {
     public <E> E get(Class<E> clazz) {
         return root.get("", clazz);
     }
+
     public <E> E get(String path, Class<E> clazz) {
         return root.get(path, clazz);
     }
@@ -161,11 +160,6 @@ public class Config {
 
     public boolean contains(String path) {
         return root.contains(path);
-    }
-
-    public void copyContents(Config config) {
-        config.root.save(config.lines, -1);
-        // reload();
     }
 
     public Config createConfig(String name) {
@@ -262,10 +256,6 @@ public class Config {
     }
 
     public String getName() {
-        return file.getName();
-    }
-
-    public String getNameComplete() {
         return name;
     }
 
@@ -306,8 +296,8 @@ public class Config {
         root.remove(path);
     }
 
-    public ConfigSection set(Object value){
-        return set("",value);
+    public ConfigSection set(Object value) {
+        return set("", value);
     }
 
     public ConfigSection set(String path, Object value) {
@@ -315,8 +305,7 @@ public class Config {
         return root.set(path, value);
     }
 
-    public ConfigSection set(String path, Object value, String... comments)
-    {
+    public ConfigSection set(String path, Object value, String... comments) {
         return root.set(path, value, comments);
     }
 
