@@ -92,12 +92,11 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
             sqlManager.createTable(ServerSpigot::class.java)
 
             for (server in sqlManager.getAllData(ServerSpigot::class.java)) {
-                BungeeAPI.getServers()[server.name.toLowerCase()] = server
+                BungeeAPI.servers[server.name.toLowerCase()] = server
             }
 
-
             for (server in ProxyServer.getInstance().servers.values) {
-                val spigot = BungeeAPI.getServers()[server.name.toLowerCase()]
+                val spigot = BungeeAPI.servers[server.name.toLowerCase()]
                 if (spigot == null) {
                     val servidor = BungeeAPI.getServer(server.name)
                     servidor.host = server.address.hostName
@@ -135,6 +134,11 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         1,1,TimeUnit.SECONDS)
 
         */
+
+
+
+
+
     }
 
     override fun configDefault() {

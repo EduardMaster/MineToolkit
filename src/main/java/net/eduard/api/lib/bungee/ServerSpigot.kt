@@ -2,7 +2,6 @@ package net.eduard.api.lib.bungee
 
 import net.eduard.api.lib.database.annotations.ColumnSize
 import net.eduard.api.lib.database.annotations.ColumnPrimary
-import net.eduard.api.lib.bungee.ServerState
 import net.eduard.api.lib.database.annotations.TableName
 import java.io.Serializable
 import java.util.ArrayList
@@ -20,10 +19,23 @@ class ServerSpigot : Serializable {
     var subType = "principal"
     var max = 1
     var count = 0
+        set(value) {
+            if (field != value)
+                changed = true
+            field = value
+
+        }
     var teamSize = 1
     var state = ServerState.OFFLINE
+        set(value) {
+            field = value
+            changed = true
+        }
     var host = "localhost"
     var port = 25565
+
+    @Transient
+    var changed = false
 
     @Transient
     var players: List<String> = ArrayList()

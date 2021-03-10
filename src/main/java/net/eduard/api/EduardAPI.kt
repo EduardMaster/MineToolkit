@@ -171,7 +171,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
             log("Carregando infos dos servidores")
             sqlManager.createTable(ServerSpigot::class.java)
             for (server in sqlManager.getAllData(ServerSpigot::class.java)){
-                BungeeAPI.getServers()[server.name.toLowerCase()] = server
+                BungeeAPI.servers[server.name.toLowerCase()] = server
             }
         }
     }
