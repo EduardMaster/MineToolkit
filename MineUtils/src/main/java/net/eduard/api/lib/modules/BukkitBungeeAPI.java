@@ -25,7 +25,7 @@ public final class BukkitBungeeAPI {
 
 	public static void log(String message) {
 		if (debug)
-			Bukkit.getConsoleSender().sendMessage("§e[BukkitBungeeAPI] §f" + message);
+			Bukkit.getConsoleSender().sendMessage("§b[BukkitBungeeAPI] §e" + message);
 	}
 
 	private static String currentServer = "lobby";

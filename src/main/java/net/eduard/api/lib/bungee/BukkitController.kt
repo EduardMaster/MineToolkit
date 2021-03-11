@@ -53,12 +53,13 @@ class BukkitController : ServerController<Plugin> {
         plugin = pl
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, BungeeAPI.channel)
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, BungeeAPI.channel, listener)
-        Bukkit.getConsoleSender().sendMessage("§eRegistrando sistema de conexao com Bungeecoard via Plugin Messaging")
+       BungeeAPI.debug("Registrando sistema no lado do Spigot(Servidor)")
     }
 
     override fun unregister() {
         Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin, BungeeAPI.channel, listener)
         Bukkit.getMessenger().unregisterOutgoingPluginChannel(plugin, BungeeAPI.channel)
+        BungeeAPI.debug("Desativando sistema no lado do Spigot(Servidor)")
     }
 
     override fun receiveMessage(server: String, tag: String, line: String) {

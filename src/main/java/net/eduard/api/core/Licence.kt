@@ -21,8 +21,6 @@ object Licence {
             "User-Agent",
             "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0"
         )
-        Hybrid.instance.console.sendMessage("Verificando pelo link: "
-                + link)
         val scan = Scanner(connect.getInputStream())
         val readingSite = StringBuilder()
         while (scan.hasNext()) {
@@ -45,8 +43,8 @@ object Licence {
                 "User-Agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0"
             )
-            Hybrid.instance.console.sendMessage(tag + "Verificando pelo link: "
-                    + link)
+            //Hybrid.instance.console.sendMessage(tag + "Verificando pelo link: "
+               //     + link)
             val scan = Scanner(connect.getInputStream())
             val readingSite = StringBuilder()
             while (scan.hasNext()) {

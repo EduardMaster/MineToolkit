@@ -30,7 +30,7 @@ class ConfigSection(var key: String, var data: Any) {
 
     lateinit var father: ConfigSection
     fun log(msg: String) {
-       if (Config.debug)
+       if (Config.isDebug)
         Hybrid.instance.console
             .sendMessage("§b[ConfigSection] §3($completeName)§2[${ if (isMap())map.size else "N"}] §f$msg")
     }

@@ -1,8 +1,15 @@
 package net.eduard.api.lib.bungee
 
+import net.eduard.api.lib.hybrid.Hybrid
 import java.lang.Exception
 
 object BungeeAPI {
+
+    fun debug(msg : String){
+
+        Hybrid.instance.console.sendMessage("§b[BungeeAPI] §f$msg")
+
+    }
 
     const val channel = "bukkit:bungee"
     val servers = mutableMapOf<String, ServerSpigot>()

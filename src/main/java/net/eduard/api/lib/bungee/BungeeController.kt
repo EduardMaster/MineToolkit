@@ -71,17 +71,14 @@ class BungeeController : ServerController<Plugin> {
         ProxyServer.getInstance().registerChannel(BungeeAPI.channel)
         ProxyServer.getInstance().pluginManager.registerListener(plugin, listener)
         task = ProxyServer.getInstance().scheduler.schedule(plugin, updater, 1, 1, TimeUnit.SECONDS)
-        ProxyServer.getInstance().console.sendMessage(
-            TextComponent(
-                "§aRegistrando sistema de Conexao com servidores Spigot via Plugin Messager"
-            )
-        )
+        BungeeAPI.debug("Registrando sistema no lado do BungeeCord(Proxy)")
     }
 
     override fun unregister() {
         ProxyServer.getInstance().pluginManager.unregisterListener(listener)
         ProxyServer.getInstance().unregisterChannel(BungeeAPI.channel)
         ProxyServer.getInstance().scheduler.cancel(task)
+        BungeeAPI.debug("Desativando sistema no lado do BungeeCord(Proxy)")
     }
 
     override fun connect(playerName: String, serverType: String, subType: String, teamSize: Int) {

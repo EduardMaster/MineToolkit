@@ -54,7 +54,6 @@ import java.util.*
  */
 class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
-
     override var started = false
     override var configs = Config(plugin, "config.yml")
     override var storage = Config(plugin, "storage.yml")
@@ -67,40 +66,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         StorageAPI.setDebug(false)
         instance = this
 
-        /*
-        HybridTypes
-        BukkitTypes
-        BukkitStorables.load()
-        val teste = Config(this,"teste.yml")
-        Mine.console("§aAQUI -----------------")
-       //teste["testando.tudo"] = "Ola"
-     //  teste["testando.tudo2"] = "Tudo bem"
-       //teste["ola"]="como vai voce"
-       //teste["som"] = SoundEffect(Sound.ENDERMAN_TELEPORT)
-      // teste["db"] = DBManager()
-      // teste["lista"] = listOf<String>()
-      var item1 = ItemStack(Material.DIAMOND_SWORD)
-        val item2 = ItemBuilder(Material.STONE).name("Aloha").lore("Linha1 lore")
-        teste["item"] = item2
-        teste["item1"] = item1
-
-        teste.saveConfig()
-        teste.reloadConfig()
-       val som = teste["som" , SoundEffect::class.java]
-       val db = teste["db" , DBManager::class.java]
-       val lista = teste.getStringList("teste")
-       item1 = teste["item", ItemStack::class.java]
-
-       println(item1)
-     println(lista)
-       println(db)
-       println(som)
-        println(teste.config.map)
-        Mine.console("§aAQUI -----------------")
-        if (true)return
-
-        */
-
+        Config.testing()
 
         super.onLoad()
         BukkitTypes
@@ -227,6 +193,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         log("Ativando debug de sistemas caso marcado na config como 'true'")
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         DBManager.setDebug(configs.getBoolean("debug-database"))
+        Config.isDebug =  configs.getBoolean("debug-config")
         Menu.isDebug = configs.getBoolean("debug-menu")
         CommandManager.isDebug = configs.getBoolean("debug-commands")
         Copyable.CopyDebug.setDebug(configs.getBoolean("debug-copyable"))
@@ -272,7 +239,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
     override fun configDefault() {
-
+        configs.add("debug-config",false)
         configs.add("debug-bungee-bukkit",false)
         configs.add("debug-storage", false)
         configs.add("debug-copyable",false )
@@ -282,7 +249,6 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         configs.add("debug-menu",false )
         configs.add("skins",false )
         configs.add("auto-respawn",true )
-
         configs.add("custom-skin","EduardKillerPro" )
         configs.add("player target","{player_name} - {player_level}" )
         configs.add("stack-design", "§aQuantidade: §f\$stack")
@@ -322,10 +288,9 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
     override fun onDisable() {
-      // if (true)return;
+
         PlayerSkin.saveSkins()
         saveMaps()
-        log("Mapas salvados!")
         log("desativado com sucesso!")
         BungeeAPI.controller.unregister()
 

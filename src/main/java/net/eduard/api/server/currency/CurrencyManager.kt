@@ -31,7 +31,7 @@ class CurrencyManager : SimpleCurrencySystem() {
             simpleCurrency =
                 EduardAPI.instance.configs.get("currency." +
                         simpleCurrency.name, SimpleCurrencySystem::class.java)
-            Hybrid.instance.console.sendMessage("§aMoeda registrada: §f"
+            EduardAPI.instance.log("§aMoeda registrada: §f"
                     + simpleCurrency.name)
             register(simpleCurrency.name, simpleCurrency)
             currenciesByPosition[simpleCurrency.position] = simpleCurrency

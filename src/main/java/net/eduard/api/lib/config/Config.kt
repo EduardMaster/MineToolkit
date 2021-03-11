@@ -35,6 +35,43 @@ class Config(
     private var plugin: Any? = null
 
     companion object {
+        fun testing() {
+            /*
+      HybridTypes
+      BukkitTypes
+      BukkitStorables.load()
+      val teste = Config(this,"teste.yml")
+      Mine.console("§aAQUI -----------------")
+     //teste["testando.tudo"] = "Ola"
+   //  teste["testando.tudo2"] = "Tudo bem"
+     //teste["ola"]="como vai voce"
+     //teste["som"] = SoundEffect(Sound.ENDERMAN_TELEPORT)
+    // teste["db"] = DBManager()
+    // teste["lista"] = listOf<String>()
+    var item1 = ItemStack(Material.DIAMOND_SWORD)
+      val item2 = ItemBuilder(Material.STONE).name("Aloha").lore("Linha1 lore")
+      teste["item"] = item2
+      teste["item1"] = item1
+
+      teste.saveConfig()
+      teste.reloadConfig()
+     val som = teste["som" , SoundEffect::class.java]
+     val db = teste["db" , DBManager::class.java]
+     val lista = teste.getStringList("teste")
+     item1 = teste["item", ItemStack::class.java]
+
+     println(item1)
+   println(lista)
+     println(db)
+     println(som)
+      println(teste.config.map)
+      Mine.console("§aAQUI -----------------")
+      if (true)return
+
+      */
+
+        }
+
         private val Any.dataFolder: File
             get() {
                 try {
@@ -45,7 +82,7 @@ class Config(
                 return File("plugins/data/")
             }
 
-        var debug = true
+        var isDebug = false
 
     }
 
@@ -63,7 +100,7 @@ class Config(
     }
 
     fun log(msg: String) {
-        if (debug)
+        if (isDebug)
         Hybrid.instance.console
             .sendMessage("§b[ConfigAPI] §3($name) §f$msg")
     }
