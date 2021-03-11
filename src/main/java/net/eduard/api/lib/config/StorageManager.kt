@@ -73,9 +73,12 @@ class StorageManager(private var sqlManager: SQLManager) {
             val list = mutableListOf<T>()
             val configBase = config(clz)
 
+            /*
             for (config in configBase.configsChildren){
                 list.add(config.get(clz))
             }
+
+             */
             return list
         }
         return listOf()

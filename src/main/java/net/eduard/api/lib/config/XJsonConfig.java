@@ -20,29 +20,7 @@ import java.util.Map.Entry;
  */
 public class XJsonConfig {
 
-
-	private static String getSpaces(int size) {
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < size; i++) {
-			builder.append(SPACE);
-		}
-		return builder.toString();
-	}
-
-//	private static List<String> toLines(String line) {
-//		List<String> lines = new ArrayList<>();
-//		if (line.contains("\n")) {
-//			String[] split = line.split("\n");
-//			for (String current : split) {
-//				lines.add(current);
-//			}
-//		} else
-//			lines.add(line);
-//		return lines;
-//	}
-
-	static char COMMENT = '#';
-//	private static char SAVE = '!';
+	 static final char COMMENT = '#';
 	private static final char STRING_START = '\'';
 	private static final char TEXT_START = '\"';
 	private static final char STRING_END = '\'';
@@ -132,8 +110,6 @@ public class XJsonConfig {
 		this.currentLineIndex = 0;
 		this.currentTab = 0;
 		this.spacesSkipped = 0;
-		// this.charsSkippedAmount = 0;
-		// this.lastSpacesSkipped = 0;
 	}
 
 	protected void readContentFromFile() {
@@ -175,7 +151,7 @@ public class XJsonConfig {
 	}
 
 	protected void saveTab() {
-		add(getSpaces(tabSize * currentTab));
+		add(ConfigUtil.INSTANCE.getSpace(tabSize * currentTab));
 	}
 
 	protected void saveNewLine() {
@@ -414,7 +390,7 @@ public class XJsonConfig {
 	protected void expected(String value) {
 		System.out.println("\nErro na linha: " + (currentLine + 1));
 		System.out.println("->  " + String.copyValueOf(textChars, lastLine, currentLineIndex));
-		System.out.println("->  " + getSpaces(currentLineIndex) + "^");
+		System.out.println("->  " + ConfigUtil.INSTANCE.getSpace(currentLineIndex) + "^");
 		System.out.println("Esperava-se: ( " + value + " )");
 	}
 
@@ -493,7 +469,6 @@ public class XJsonConfig {
 		if (getCurrentChar() == MAP_START) {
 			toNextChar();
 			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-
 			while (!findEnd()) {
 				ignoreSpacesAndNewLines();
 				if (getCurrentChar() == ITEM_DELIMITER) {
@@ -504,7 +479,6 @@ public class XJsonConfig {
 					break;
 				}
 				readEntry(map);
-
 			}
 			return map;
 		} else if (getCurrentChar() == LIST_START) {
@@ -520,7 +494,6 @@ public class XJsonConfig {
 					break;
 				}
 				list.add(readObject());
-
 			}
 			return list;
 		} else if (getCurrentChar() == STRING_START) {
@@ -533,11 +506,9 @@ public class XJsonConfig {
 				}
 				str.append(getCurrentChar());
 				toNextChar();
-
 			}
 			return str.toString();
 		} else if (getCurrentChar() == TEXT_START) {
-
 			toNextChar();
 			StringBuilder str = new StringBuilder();
 			while (!findEnd()) {
@@ -547,7 +518,6 @@ public class XJsonConfig {
 				}
 				str.append(getCurrentChar());
 				toNextChar();
-
 			}
 			return str.toString();
 		} else if (getCurrentChar() == NEW_LINE) {
@@ -556,19 +526,16 @@ public class XJsonConfig {
 			if (findEnd()) {
 				return "";
 			}
-
 			// int last = spacesSkipped;
 			ignoreSpacesAndNewLines();
 			int init = spacesSkipped;
 			if (getCurrentChar() == LIST_ITEM) {
-
 				List<Object> list = new ArrayList<>();
 				while (!findEnd() && getCurrentChar() == LIST_ITEM && spacesSkipped == init) {
 					list.add(readObject());
 					ignoreSpacesAndNewLines();
 				}
 				return list;
-
 			} else {
 				LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 				while (!findEnd() && spacesSkipped == init) {
@@ -592,7 +559,6 @@ public class XJsonConfig {
 				toNextChar();
 			}
 			return readObject();
-
 		} else if (getCurrentChar() == COMMENT) {
 			toNextChar();
 			StringBuilder str = new StringBuilder();
@@ -606,7 +572,6 @@ public class XJsonConfig {
 			}
 			return str.toString();
 		} else {
-
 			StringBuilder str = new StringBuilder();
 			while (!findEnd()) {
 				if (getCurrentChar() == ENTRY_DELIMITER | getCurrentChar() == COMMENT | getCurrentChar() == LIST_END
@@ -620,7 +585,6 @@ public class XJsonConfig {
 			}
 			return str.toString();
 		}
-
 	}
 
 	protected int skipChars(char... charsToSkip) {
@@ -631,10 +595,8 @@ public class XJsonConfig {
 		while (can) {
 			can = false;
 			for (char var : charsToSkip) {
-
 				if (var == getCurrentChar()) {
 					can = true;
-
 				}
 			}
 			if (getCurrentChar() == SPACE) {

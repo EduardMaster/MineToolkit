@@ -44,40 +44,48 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
     public ItemStack restore(Map<String, Object> map) {
         int id = Extra.toInt(map.get("id"));
         int amount = Extra.toInt(map.get("amount"));
-        int data = Extra.toInt(map.get("data"));
+        int data =  (map.containsKey("data"))? Extra.toInt(map.get("data")) : 0;
         @SuppressWarnings("deprecation")
         ItemBuilder item = new ItemBuilder(Material.getMaterial(id), amount);
         item.data(data);
-        String name = Extra.toChatMessage((String) map.get("name"));
-        if (!name.isEmpty()) {
-            Mine.setName(item, name);
+        if (map.containsKey("name")) {
+            String name = Extra.toChatMessage((String) map.get("name"));
+            if (!name.isEmpty()) {
+                Mine.setName(item, name);
+            }
         }
-        @SuppressWarnings("unchecked")
-        List<String> lore = Extra.toMessages((List<Object>) map.get("lore"));
-        if (!lore.isEmpty()) {
-            Mine.setLore(item, lore);
+        if (map.containsKey("lore")) {
+            Object dado = map.get("lore");
+            if (dado instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<String> lore = Extra.toMessages((List<Object>)dado);
+                if (!lore.isEmpty()) {
+                    Mine.setLore(item, lore);
+                }
+            }
         }
 
+        if (map.containsKey("enchants")) {
+            String enchants = (String) map.get("enchants");
+            if (!enchants.isEmpty()) {
+                if (enchants.contains(", ")) {
+                    String[] split = enchants.split(", ");
+                    for (String enchs : split) {
+                        String[] sub = enchs.split("-");
+                        @SuppressWarnings("deprecation")
+                        Enchantment ench = Enchantment.getById(Extra.toInt(sub[0]));
+                        Integer level = Extra.toInt(sub[1]);
+                        item.addUnsafeEnchantment(ench, level);
 
-        String enchants = (String) map.get("enchants");
-        if (!enchants.isEmpty()) {
-            if (enchants.contains(", ")) {
-                String[] split = enchants.split(", ");
-                for (String enchs : split) {
-                    String[] sub = enchs.split("-");
+                    }
+                } else {
+                    String[] split = enchants.split("-");
                     @SuppressWarnings("deprecation")
-                    Enchantment ench = Enchantment.getById(Extra.toInt(sub[0]));
-                    Integer level = Extra.toInt(sub[1]);
+                    Enchantment ench = Enchantment.getById(Extra.toInt(split[0]));
+                    Integer level = Extra.toInt(split[1]);
                     item.addUnsafeEnchantment(ench, level);
 
                 }
-            } else {
-                String[] split = enchants.split("-");
-                @SuppressWarnings("deprecation")
-                Enchantment ench = Enchantment.getById(Extra.toInt(split[0]));
-                Integer level = Extra.toInt(split[1]);
-                item.addUnsafeEnchantment(ench, level);
-
             }
         }
 
@@ -130,6 +138,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         map.remove("durability");
         map.remove("meta");
         map.remove("type");
+        map.remove("data");
         map.remove("handle");
         map.remove("skull-owner");
         map.put("id", item.getTypeId());
@@ -225,28 +234,24 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
 
                 }
             }
-            if (split.length > 1) {
-                String nome = split[2];
-                if (!nome.equals(" ")) {
-                    Mine.setName(item, Extra.toChatMessage(nome));
-                }
+            String nome = split[2];
+            if (!nome.equals(" ")) {
+                Mine.setName(item, Extra.toChatMessage(nome));
             }
-            if (split.length > 2) {
-                List<String> lista = new ArrayList<>();
-                String descricao = split[3];
-                if (descricao.contains(",")) {
-                    String[] lore = descricao.split(",");
-                    for (String line : lore) {
-                        lista.add(Extra.toChatMessage(line));
-                    }
-                } else {
-                    if (!descricao.equals(" ")) {
-                        lista.add(descricao);
-                    }
+            List<String> lista = new ArrayList<>();
+            String descricao = split[3];
+            if (descricao.contains(",")) {
+                String[] lore = descricao.split(",");
+                for (String line : lore) {
+                    lista.add(Extra.toChatMessage(line));
+                }
+            } else {
+                if (!descricao.equals(" ")) {
+                    lista.add(descricao);
+                }
 
-                }
-                Mine.setLore(item, lista);
             }
+            Mine.setLore(item, lista);
             return item;
 
         } catch (Exception e) {

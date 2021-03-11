@@ -47,8 +47,6 @@ class BukkitConfig(
 
 
 
-
-
     fun createConfig(name: String): BukkitConfig {
         return BukkitConfig(name, plugin)
     }
@@ -58,7 +56,7 @@ class BukkitConfig(
      *
      * @return Config
      */
-    fun reloadConfig(): BukkitConfig {
+    fun reloadConfig() {
         file = File(plugin.dataFolder, name)
         plugin.dataFolder.mkdirs()
         file.parentFile.mkdirs()
@@ -68,7 +66,7 @@ class BukkitConfig(
             val loadConfig = YamlConfiguration.loadConfiguration(defaults)
             config.defaults = loadConfig
         }
-        return this
+
     }
 
     /**
@@ -76,7 +74,7 @@ class BukkitConfig(
      *
      * @return Config
      */
-    fun saveConfig(): BukkitConfig {
+    fun saveConfig() {
         try {
             val fileWriter: Writer = BufferedWriter(
                 OutputStreamWriter(
@@ -89,7 +87,7 @@ class BukkitConfig(
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        return this
+
     }
 
     /**
@@ -102,7 +100,7 @@ class BukkitConfig(
             config.getString(path))
     }
 
-    fun getMessages(path: String?): List<String> {
+    fun getMessages(path: String): List<String> {
         val messages: MutableList<String> = ArrayList()
         for (line in getStringList(path)) {
             messages.add(toChatMessage(line))
@@ -119,7 +117,7 @@ class BukkitConfig(
     }
 
     /**
-     * Salva a config padr§o
+     * Salva a config padrao
      */
     fun saveResource() {
         plugin.saveResource(name, true)
@@ -186,7 +184,6 @@ class BukkitConfig(
 
         return StorageAPI.restore(null, obj)
     }
-
     fun toMap(path: String): Map<String, Any> {
         val map = LinkedHashMap<String, Any>()
         val sec = getSection(path).getValues(false)
@@ -199,59 +196,49 @@ class BukkitConfig(
         }
         return map
     }
-
     fun getBoolean(path: String): Boolean {
         return config.getBoolean(path)
     }
-
     fun getSection(path: String): ConfigurationSection {
         if (!config.isConfigurationSection(path)) {
             config.createSection(path)
         }
         return config.getConfigurationSection(path)
     }
-
     fun getDouble(path: String): Double {
         return config.getDouble(path, 0.0)
     }
-
     fun getInt(path: String): Int {
         return config.getInt(path)
     }
-
     fun getIntegerList(path: String): List<Int> {
         return config.getIntegerList(path)
     }
-
     fun getItemStack(path: String): ItemStack {
         return config.getItemStack(path)
     }
-
     fun getKeys(deep: Boolean): Set<String> {
         return config.getKeys(deep)
     }
-
-    fun getList(path: String?): List<*> {
+    fun getList(path: String): List<*> {
         return config.getList(path)
     }
-
-    fun getLong(path: String?): Long {
+    fun getLong(path: String): Long {
         return config.getLong(path)
     }
-
-    fun getLongList(path: String?): List<Long> {
+    fun getLongList(path: String): List<Long> {
         return config.getLongList(path)
     }
 
-    fun getMapList(path: String?): List<Map<*, *>> {
+    fun getMapList(path: String): List<Map<*, *>> {
         return config.getMapList(path)
     }
 
-    fun getString(path: String?): String {
+    fun getString(path: String): String {
         return config.getString(path)
     }
 
-    fun getStringList(path: String?): List<String> {
+    fun getStringList(path: String): List<String> {
         return config.getStringList(path)
     }
 
@@ -272,11 +259,9 @@ class BukkitConfig(
     }
 
     companion object {
-
         fun toChatMessage(text : String) : String {
             return ChatColor.translateAlternateColorCodes('&', text)
         }
-
         fun toConfigMessage(text: String): String {
             return text.replace("§", "&")
         }
