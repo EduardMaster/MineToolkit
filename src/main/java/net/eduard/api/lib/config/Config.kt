@@ -45,6 +45,8 @@ class Config(
                 return File("plugins/data/")
             }
 
+        var debug = true
+
     }
 
     constructor(plugin: IPlugin, name: String) : this(plugin.pluginFolder, name) {
@@ -61,6 +63,7 @@ class Config(
     }
 
     fun log(msg: String) {
+        if (debug)
         Hybrid.instance.console
             .sendMessage("§b[ConfigAPI] §3($name) §f$msg")
     }

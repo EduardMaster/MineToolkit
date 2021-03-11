@@ -1,6 +1,5 @@
 package net.eduard.api.lib.config
 
-import jdk.management.jfr.ConfigurationInfo
 import net.eduard.api.lib.config.ConfigUtil.removeQuotes
 import net.eduard.api.lib.config.ConfigUtil.getPath
 import net.eduard.api.lib.config.ConfigUtil.getSpace
@@ -16,7 +15,6 @@ import net.eduard.api.lib.hybrid.Hybrid
 import java.util.LinkedHashMap
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
 import java.util.ArrayList
 
 /**
@@ -32,6 +30,7 @@ class ConfigSection(var key: String, var data: Any) {
 
     lateinit var father: ConfigSection
     fun log(msg: String) {
+       if (Config.debug)
         Hybrid.instance.console
             .sendMessage("§b[ConfigSection] §3($completeName)§2[${ if (isMap())map.size else "N"}] §f$msg")
     }
