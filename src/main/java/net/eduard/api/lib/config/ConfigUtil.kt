@@ -3,7 +3,6 @@ package net.eduard.api.lib.config
 object ConfigUtil {
     const val EMPTY_LIST = "[]"
     const val EMPTY_SECTION = "{}"
-    const val SPACE = " "
     const val EMPTY = ""
     const val NO_BUG = "_"
     const val COMMENT = "#"
@@ -31,18 +30,19 @@ object ConfigUtil {
         return line.trimStart().replace(COMMENT, EMPTY)
     }
 
+    /**
+     * Conta quantos espaços até encontrar uma Letra que não seja espaço
+     */
     fun getSpaceAmount(line: String): Int {
-        return line.count { it == ' ' }
-    }
-     fun getValue(currentLine: String): String {
-        var line = currentLine
-        line = line.trimStart()
-        if (line.endsWith(SECTION)) {
-            return ""
+        // "         texto"
+        var spaceAmount = 0
+        for (char in line){
+            if (char != ' ')break
+            spaceAmount++
         }
-        return line.split(SECTION)[1].trimStart().removeSurrounding(STR1).removeSurrounding(STR2)
+        return spaceAmount
+    }
 
-     }
     /**
      * Usar builder porque da menos lag
      *

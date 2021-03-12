@@ -1,9 +1,19 @@
 package net.eduard.api.lib.config
 
 
+import net.eduard.api.EduardAPI
+import net.eduard.api.lib.database.BukkitTypes
+import net.eduard.api.lib.database.HybridTypes
+import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.hybrid.Hybrid
+import net.eduard.api.lib.menu.Menu
+import net.eduard.api.lib.menu.Shop
+import net.eduard.api.lib.menu.TradeType
+import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.storage.storables.BukkitStorables
+import org.bukkit.Material
 import java.io.File
 import java.lang.Exception
 
@@ -26,7 +36,7 @@ class Config(
 
     init {
         file.parentFile.mkdirs()
-        config = ConfigSection("root", "{}")
+        config = ConfigSection("root", "")
         config.indent = 1
         reloadConfig()
     }
@@ -36,39 +46,43 @@ class Config(
 
     companion object {
         fun testing() {
+
             /*
-      HybridTypes
-      BukkitTypes
-      BukkitStorables.load()
-      val teste = Config(this,"teste.yml")
-      Mine.console("§aAQUI -----------------")
-     //teste["testando.tudo"] = "Ola"
-   //  teste["testando.tudo2"] = "Tudo bem"
-     //teste["ola"]="como vai voce"
-     //teste["som"] = SoundEffect(Sound.ENDERMAN_TELEPORT)
-    // teste["db"] = DBManager()
-    // teste["lista"] = listOf<String>()
-    var item1 = ItemStack(Material.DIAMOND_SWORD)
-      val item2 = ItemBuilder(Material.STONE).name("Aloha").lore("Linha1 lore")
-      teste["item"] = item2
-      teste["item1"] = item1
+            HybridTypes
+            BukkitTypes
+            BukkitStorables.load()
 
-      teste.saveConfig()
-      teste.reloadConfig()
-     val som = teste["som" , SoundEffect::class.java]
-     val db = teste["db" , DBManager::class.java]
-     val lista = teste.getStringList("teste")
-     item1 = teste["item", ItemStack::class.java]
+            val teste = Config(EduardAPI.instance, "teste.yml")
+            Mine.console("§aAQUI -----------------")
+            var menu = Menu("Menuzinho",3)
+            Config.isDebug = true
+            /*
+            menu.button {
+                icon = ItemBuilder(Material.DIAMOND_HELMET).name("")
+            }
 
-     println(item1)
-   println(lista)
-     println(db)
-     println(som)
-      println(teste.config.map)
-      Mine.console("§aAQUI -----------------")
-      if (true)return
+             */
+            var loja = Shop("Lojinha", 3){
+                product {
+                    icon = ItemBuilder(Material.EMERALD,64)
+                        .name("§aDinheiro")
+                    buyPrice = 1000.0
+                    tradeType = TradeType.BUYABLE
+                }
+                useConfirmationMenu()
+            }
 
-      */
+            teste["loja"] = loja
+
+            teste["menu"] = menu
+            teste.saveConfig()
+            teste.reloadConfig()
+             menu = teste["menu" , Menu::class.java]
+            loja = teste["loja" , Shop::class.java]
+            println(menu)
+            println(loja)
+            Mine.console("§aAQUI -----------------")
+            */
 
         }
 
@@ -101,18 +115,22 @@ class Config(
 
     fun log(msg: String) {
         if (isDebug)
-        Hybrid.instance.console
-            .sendMessage("§b[ConfigAPI] §3($name) §f$msg")
+            Hybrid.instance.console
+                .sendMessage("§b[ConfigAPI] §3($name) §f$msg")
     }
 
     fun saveDefaultConfig() {
         file.parentFile.mkdirs()
         if (file.exists()) return
         if (Extra.isDirectory(file)) {
+            log("IS A FOLDER")
             file.mkdirs()
             return
         }
-        if (plugin == null) return
+        if (plugin == null) {
+            log("PLUGIN NULL")
+            return
+        }
         try {
             log("COPYING DEFAULT...")
             val defaultResourceFile = Extra.getResource(plugin!!.javaClass.classLoader, name)

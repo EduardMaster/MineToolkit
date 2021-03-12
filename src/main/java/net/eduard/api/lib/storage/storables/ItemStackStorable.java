@@ -33,8 +33,9 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
 
 
     public JsonElement serialize(ItemStack itemStack, Type type, JsonSerializationContext jsonSerializationContext) {
-        return jsonSerializationContext.serialize(StorageAPI.store(ItemStack.class,itemStack));
+        return jsonSerializationContext.serialize(StorageAPI.store(ItemStack.class, itemStack));
     }
+
     @Override
     public ItemStack newInstance() {
         return new ItemStack(Material.STONE);
@@ -44,7 +45,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
     public ItemStack restore(Map<String, Object> map) {
         int id = Extra.toInt(map.get("id"));
         int amount = Extra.toInt(map.get("amount"));
-        int data =  (map.containsKey("data"))? Extra.toInt(map.get("data")) : 0;
+        int data = (map.containsKey("data")) ? Extra.toInt(map.get("data")) : 0;
         @SuppressWarnings("deprecation")
         ItemBuilder item = new ItemBuilder(Material.getMaterial(id), amount);
         item.data(data);
@@ -58,7 +59,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
             Object dado = map.get("lore");
             if (dado instanceof List) {
                 @SuppressWarnings("unchecked")
-                List<String> lore = Extra.toMessages((List<Object>)dado);
+                List<String> lore = Extra.toMessages((List<Object>) dado);
                 if (!lore.isEmpty()) {
                     Mine.setLore(item, lore);
                 }
@@ -66,27 +67,20 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         }
 
         if (map.containsKey("enchants")) {
-            String enchants = (String) map.get("enchants");
-            if (!enchants.isEmpty()) {
-                if (enchants.contains(", ")) {
-                    String[] split = enchants.split(", ");
-                    for (String enchs : split) {
-                        String[] sub = enchs.split("-");
-                        @SuppressWarnings("deprecation")
-                        Enchantment ench = Enchantment.getById(Extra.toInt(sub[0]));
-                        Integer level = Extra.toInt(sub[1]);
-                        item.addUnsafeEnchantment(ench, level);
+            if (map.get("enchants") instanceof  String){
 
-                    }
-                } else {
-                    String[] split = enchants.split("-");
+            }else {
+                List<String> enchants = (List<String>) map.get("enchants");
+
+                for (String enchantLine : enchants) {
+                    String[] sub = enchantLine.split(";");
                     @SuppressWarnings("deprecation")
-                    Enchantment ench = Enchantment.getById(Extra.toInt(split[0]));
-                    Integer level = Extra.toInt(split[1]);
+                    Enchantment ench = Enchantment.getById(Extra.toInt(sub[0]));
+                    Integer level = Extra.toInt(sub[1]);
                     item.addUnsafeEnchantment(ench, level);
-
                 }
             }
+
         }
 
         if (map.containsKey("head-name")) {
@@ -149,22 +143,18 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         if (item.containsEnchantment(EnchantGlow.getGlow())) {
             map.put("glow", true);
         }
-        String enchants = "";
+        List<String> enchants = new ArrayList<>();
         if (item.getItemMeta().hasEnchants()) {
             StringBuilder str = new StringBuilder();
-            int id = 0;
             try {
                 for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
-                    if (id > 0)
-                        str.append(", ");
                     Enchantment enchantment = entry.getKey();
-                    str.append(enchantment.getId() + "-" + entry.getValue());
-                    id++;
+                    enchants.add(enchantment.getId() + ";" + entry.getValue());
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            enchants = str.toString();
+
         }
         map.put("enchants", enchants);
         if (item.getItemMeta() instanceof SkullMeta) {

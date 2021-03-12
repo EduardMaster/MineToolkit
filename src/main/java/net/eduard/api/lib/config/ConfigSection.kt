@@ -1,21 +1,11 @@
 package net.eduard.api.lib.config
 
-import net.eduard.api.lib.config.ConfigUtil.removeQuotes
-import net.eduard.api.lib.config.ConfigUtil.getPath
-import net.eduard.api.lib.config.ConfigUtil.getSpace
-import net.eduard.api.lib.config.ConfigUtil.isList
-import net.eduard.api.lib.config.ConfigUtil.getList
-import net.eduard.api.lib.config.ConfigUtil.isComment
-import net.eduard.api.lib.config.ConfigUtil.getComment
-import net.eduard.api.lib.config.ConfigUtil.isSection
-import net.eduard.api.lib.config.ConfigUtil.getSpaceAmount
-import net.eduard.api.lib.config.ConfigUtil.getKey
-import net.eduard.api.lib.config.ConfigUtil.getValue
-import net.eduard.api.lib.hybrid.Hybrid
 import java.util.LinkedHashMap
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.modules.Mine
 import java.util.ArrayList
+import java.util.logging.Logger
 
 /**
  * Interpretador de YAML proprio, Secao da [Config]
@@ -26,13 +16,29 @@ class ConfigSection(var key: String, var data: Any) {
     var indent = 0
     var comments = mutableListOf<String>()
 
-    val completeName : String get() = (if (!isRoot()) father.completeName + ConfigUtil.SECTION_SEPARATOR else "") + this.key
+    companion object {
+        val logger = Logger.getLogger("ConfigSection")
+    }
+
+    fun isRoot(): Boolean {
+        return !this::father.isInitialized
+    }
+
+    fun isList(): Boolean {
+        return data is List<*>
+    }
+
+    fun isMap(): Boolean {
+        return data is Map<*, *>
+    }
+
+    val completeName: String get() = (if (!isRoot()) father.completeName + ConfigUtil.SECTION_SEPARATOR else "") + this.key
 
     lateinit var father: ConfigSection
     fun log(msg: String) {
-       if (Config.isDebug)
-        Hybrid.instance.console
-            .sendMessage("§b[ConfigSection] §3($completeName)§2[${ if (isMap())map.size else "N"}] §f$msg")
+        val quantidade = if (isMap()) map.size else (if (isList()) list.size else "N")
+        if (Config.isDebug)
+          logger.info("[ConfigSection] ($completeName)[$quantidade] $msg" )
     }
 
     val map: MutableMap<String, ConfigSection>
@@ -76,20 +82,6 @@ class ConfigSection(var key: String, var data: Any) {
         return getSection(path).intList
     }
 
-    private fun get(): Any {
-        if (data == ConfigUtil.EMPTY_LIST) {
-            return list
-        }
-        if (data == ConfigUtil.EMPTY_SECTION) {
-            return map
-        }
-        if (data is String) {
-            var string = data as String
-            string = Extra.toChatMessage(string)
-            return string
-        }
-        return data
-    }
 
     operator fun get(path: String): Any {
         return getSection(path).data
@@ -123,14 +115,8 @@ class ConfigSection(var key: String, var data: Any) {
         return getSection(path).int
     }
 
-    val intList: List<Int>
-        get() {
-            val list = ArrayList<Int>()
-            for (item in list) {
-                list.add(Extra.toInt(item))
-            }
-            return list
-        }
+    val intList: List<Int> get() = this.list.map(Extra::toInt)
+
 
     operator fun <T> get(path: String, claz: Class<T>?): T {
         return getSection(path).getValue(claz) as T
@@ -160,22 +146,14 @@ class ConfigSection(var key: String, var data: Any) {
 
     val message: String
         get() = Extra.toChatMessage(string)
-    val messages: ArrayList<String>
-        get() {
-            val list = ArrayList<String>()
-            for (text in stringList) {
-                list.add(Extra.toChatMessage(text))
-            }
-            return list
-        }
+
+    val messages: List<String> get() = this.stringList
+
 
     fun getMessages(path: String): List<String> {
         return getSection(path).messages
     }
 
-    fun isRoot(): Boolean {
-        return !this::father.isInitialized
-    }
 
     private fun createSection(key: String): ConfigSection {
         log("Criando Secao: §a$key")
@@ -192,7 +170,7 @@ class ConfigSection(var key: String, var data: Any) {
         if (path.isEmpty()) {
             return this
         }
-        path = getPath(path)
+        path = ConfigUtil.getPath(path)
         val spliter = ConfigUtil.SECTION_SEPARATOR
         if (path.contains(spliter)) {
 
@@ -221,7 +199,7 @@ class ConfigSection(var key: String, var data: Any) {
     val set: Set<Map.Entry<String, ConfigSection>>
         get() = map.entries
     val string: String
-        get() = removeQuotes(Extra.toString(data))
+        get() = ConfigUtil.removeQuotes(Extra.toString(data))
             .replace("\\n", ConfigUtil.LINE_SEPARATOR)
             .replace("<br>", ConfigUtil.LINE_SEPARATOR)
             .replace("/n", ConfigUtil.LINE_SEPARATOR)
@@ -231,23 +209,18 @@ class ConfigSection(var key: String, var data: Any) {
     }
 
     val stringList: List<String>
-        get() {
-            val list = ArrayList<String>()
-            for (item in list) {
-                list.add(removeQuotes(Extra.toString(item)))
-            }
-            return list
+        get() = this.list.map {
+            Extra.toChatMessage(ConfigUtil.removeQuotes(Extra.toString(it)))
         }
+
 
     fun getStringList(path: String): List<String> {
         return getSection(path).stringList
     }
 
-    val value: Any
-        get() = getValue<Any>(null)
 
-    fun <T> getValue(claz: Class<T>?): Any {
-        val data = (if (isMap()) toMap() else get())
+    fun <T> getValue(claz: Class<T>? = null): Any {
+        val data = (if (isMap()) toMap() else data)
         return StorageAPI.restore(claz, data)
     }
 
@@ -262,7 +235,10 @@ class ConfigSection(var key: String, var data: Any) {
                     map[key] = value.toMap()
                 }
                 else -> {
-                    map[key] = value.get()
+                    if (value.data is String) {
+                        value.data = Extra.toChatMessage(value.data as String)
+                    }
+                    map[key] = value.data
                 }
             }
         }
@@ -270,16 +246,16 @@ class ConfigSection(var key: String, var data: Any) {
     }
 
     fun toSections(map: Map<Any, Any>) {
-        for ((key1, value) in map) {
-            val key = key1.toString()
+        for ((key, value) in map) {
+            val keyName = key.toString()
             if (value is Map<*, *>) {
-                val section = getSection(key)
+                val section = getSection(keyName)
                 section.map.clear()
                 section.toSections(value as Map<Any, Any>)
             } else if (value is List<*>) {
-                getSection(key).set(value)
+                getSection(keyName).set(value)
             } else {
-                set(key, value)
+                set(keyName, value)
             }
         }
     }
@@ -298,7 +274,7 @@ class ConfigSection(var key: String, var data: Any) {
 
     fun set(value: Any): ConfigSection {
         if (value is List<*>) {
-            val list = value
+            val list = value as List<*>
             if (list.isNotEmpty()) {
                 val first = list[0]!!
                 if (first is Map<*, *>) {
@@ -333,13 +309,13 @@ class ConfigSection(var key: String, var data: Any) {
     }
 
     fun save(lines: MutableList<String>, spaceId: Int) {
-        val space = getSpace(spaceId)
+        val space = ConfigUtil.getSpace(spaceId)
         for (comment in comments) {
             lines.add("$space${ConfigUtil.COMMENT} $comment")
         }
         when {
             isList() -> {
-                lines.add("$space$key" + ConfigUtil.SECTION + (if (list.isEmpty()) ConfigUtil.EMPTY_LIST else "" ))
+                lines.add("$space$key" + ConfigUtil.SECTION + (if (list.isEmpty()) ConfigUtil.EMPTY_LIST else ""))
                 for (text in list) {
                     lines.add("$space  ${ConfigUtil.LIST_ITEM} $text")
                 }
@@ -347,7 +323,7 @@ class ConfigSection(var key: String, var data: Any) {
             isMap() -> {
                 if (spaceId != -1) {
 
-                    lines.add("$space$key" + ConfigUtil.SECTION)
+                    lines.add("$space$key" + ConfigUtil.SECTION + (if (map.isEmpty()) ConfigUtil.EMPTY_SECTION else ""))
                 }
                 for (section in map.values) {
                     section.save(lines, spaceId + 1)
@@ -358,7 +334,12 @@ class ConfigSection(var key: String, var data: Any) {
             }
             else -> {
                 if (spaceId == -1) return
-                val tempData = get()
+                var tempData = data
+                if (tempData is String) {
+                    if (tempData.isEmpty()) {
+                        tempData = ConfigUtil.STR1 + "" + ConfigUtil.STR1
+                    }
+                }
                 lines.add("$space$key${ConfigUtil.SECTION} $tempData")
             }
         }
@@ -370,15 +351,14 @@ class ConfigSection(var key: String, var data: Any) {
         val currentComments: MutableList<String> = ArrayList()
 
         for (line in lines) {
-            val space = getSpace(spaceId)
-            log("Linha: §e$line")
+            log("Lendo linha: \'${line}\'")
             when {
-                isList(line) -> {
-                    path.list.add(getList(line))
+                ConfigUtil.isList(line) -> {
+                    path.list.add(ConfigUtil.getList(line))
                     path.log("Adicionando item a lista")
                 }
-                isComment(line) -> {
-                    currentComments.add(getComment(line))
+                ConfigUtil.isComment(line) -> {
+                    currentComments.add(ConfigUtil.getComment(line))
                     path.log("Adicionando comentario")
                 }
                 line.trimStart().isEmpty() -> {
@@ -386,34 +366,61 @@ class ConfigSection(var key: String, var data: Any) {
                     path = this
                     path.log("Linha vazia")
                 }
-                isSection(line) -> {
-                    if (!path.isRoot() && !line.startsWith(space)) {
-                        var time = getSpaceAmount(line)
-                        if (time >= 2) {
-                            time /= 2
-                        }
-                        while (time < spaceId && spaceId >= 0) {
-                            path.log("§c<<")
-                            path = path.father
-                            spaceId--
+                ConfigUtil.isSection(line) -> {
 
+                    var spaceTimes = ConfigUtil.getSpaceAmount(line)
+                    if (spaceTimes >= 2) {
+                        spaceTimes /= 2
+                    }
+                    while (spaceTimes < spaceId) {
+                        path.log("<<")
+                        path = path.father
+                        spaceId--
+                    }
+
+
+
+                    path = path.getSection(ConfigUtil.getKey(line))
+
+                    val currenLine = line.trimStart().trimEnd()
+                    if (currenLine.endsWith(ConfigUtil.SECTION)) {
+                        path.map
+                    } else if (currenLine.endsWith(ConfigUtil.EMPTY_SECTION)) {
+                        path.map
+                    } else if (currenLine.endsWith(ConfigUtil.EMPTY_LIST)) {
+                        path.list
+                    } else {
+                        val result =
+                            currenLine.split(ConfigUtil.SECTION)[1]
+                                .trimStart()
+                                .removeSurrounding(ConfigUtil.STR1)
+                                .removeSurrounding(ConfigUtil.STR2)
+
+                        if (result == ConfigUtil.EMPTY_SECTION) {
+                            path.map
+                        } else if (result == ConfigUtil.EMPTY_LIST) {
+
+                            path.list
+                        } else {
+                            path.data = result
                         }
                     }
 
 
-                    path = path.getSection(getKey(line))
-                    path.set(getValue(line))
+
+
                     path.comments.addAll(currentComments)
                     currentComments.clear()
-
-                    if (path.data.toString().isEmpty()) {
+                    if (path.isMap() || path.isList()) {
                         spaceId++
-                        path.father.log("§c>> §3"+path.key)
-                    }else{
-                        path.log("Info: §a"+path.data)
+                        path.father.log("§>> (${path.key})" )
+                        path.log("Tentando ler Items da Lista ou SubSecoes")
+                    } else {
+                        path.log("Info: \'${path.data}\'" )
                         path = path.father
-
                     }
+
+
                     // nao desencadeia apenas muda o percurso
                 }
             }
@@ -429,14 +436,6 @@ class ConfigSection(var key: String, var data: Any) {
     fun remove() {
         if (isRoot()) return
         father.map.remove(key)
-    }
-
-    fun isList(): Boolean {
-        return data is List<*>
-    }
-
-    fun isMap(): Boolean {
-        return data is Map<*, *>
     }
 
     fun setComments(vararg comments: String) {

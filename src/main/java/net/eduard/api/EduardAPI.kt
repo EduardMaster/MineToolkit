@@ -66,7 +66,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         StorageAPI.setDebug(false)
         instance = this
 
-        Config.testing()
+
 
         super.onLoad()
         BukkitTypes
@@ -126,6 +126,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         tasks()
         loadServers()
         log("§aCarregado com sucesso!")
+        Config.testing()
     }
 
     fun tasks(){
