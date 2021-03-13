@@ -391,7 +391,7 @@ class ConfigSection(var key: String, var data: Any) {
                         path.list
                     } else {
                         val result =
-                            currenLine.split(ConfigUtil.SECTION)[1]
+                            currenLine.substringAfter(':')
                                 .trimStart()
                                 .removeSurrounding(ConfigUtil.STR1)
                                 .removeSurrounding(ConfigUtil.STR2)
