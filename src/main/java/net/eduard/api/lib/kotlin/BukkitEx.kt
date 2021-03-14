@@ -36,6 +36,7 @@ import kotlin.reflect.KClass
 fun Player.removeXP(amount: Double) {
     Mine.removeXP(this, amount)
 }
+
 /**
  * Atalho para Mine.addHotBar
  */
@@ -46,12 +47,14 @@ fun Player.addHotBar(item: ItemStack) {
 fun String.colored(): String {
     return ChatColor.translateAlternateColorCodes('&', this)
 }
+
 /**
  * Atalho para Mine.changeTabName
  */
 fun Player.changeTabName(tabName: String) {
     Mine.changeTabName(this, tabName)
 }
+
 /**
  * Atalho para Mine.clearHotBar
  */
@@ -59,12 +62,14 @@ fun Player.clearHotBar() {
     Mine.clearHotBar(this)
 
 }
+
 /**
  * Atalho para Mine.clearArmors
  */
 fun LivingEntity.clearArmors() {
     Mine.clearArmours(this)
 }
+
 /**
  * Atalho para Mine.clearInventory
  */
@@ -78,24 +83,28 @@ fun Player.clearInventory() {
 fun Player.sendTitle(title: String, subTitle: String) {
     MineReflect.sendTitle(this, title, subTitle, 20, 20, 20)
 }
+
 /**
  * Atalho para MineReflect.sendTitle
  */
 fun Player.sendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
     MineReflect.sendTitle(this, title, subTitle, fadeInt, stay, fadeOut)
 }
+
 /**
  * Atalho para MineReflect.sendActionBar
  */
 fun Player.sendActionBar(msg: String) {
     MineReflect.sendActionBar(this, msg)
 }
+
 /**
  * Atalho para MineReflect.sendPacket
  */
 fun Player.sendPacket(packet: Any) {
     MineReflect.sendPacket(this, packet)
 }
+
 /**
  * Atalho para Mine.callEvent
  */
@@ -331,7 +340,8 @@ fun <T : Event> KClass<T>.event(actionToDo: T.() -> Unit) {
         .registerEvent(
             this.java,
             BukkitAlterations, EventPriority.NORMAL, { _, event ->
-                actionToDo(event as T)
+                if (this.java.isAssignableFrom(event.javaClass))
+                    actionToDo(event as T)
             }, BukkitAlterations.javaClass.plugin
         )
 }
