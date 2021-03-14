@@ -81,7 +81,7 @@ class BungeeController : ServerController<Plugin> {
         BungeeAPI.debug("Desativando sistema no lado do BungeeCord(Proxy)")
     }
 
-    override fun connect(playerName: String, serverType: String, subType: String, teamSize: Int) {
+    override fun connect(playerName: String, serverType: String, subType: String, teamSize: Int): String {
         val player = ProxyServer.getInstance().getPlayer(playerName)
         if (player != null) {
             ProxyServer.getInstance().console.sendMessage(
@@ -96,10 +96,11 @@ class BungeeController : ServerController<Plugin> {
                     val server = ProxyServer.getInstance()
                         .getServerInfo(spigot.name)
                     player.connect(server)
-                    break
+                    return server.name
                 }
             }
         }
+        return ""
     }
 
     override fun setState(serverName: String, state: ServerState?) {

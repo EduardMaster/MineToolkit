@@ -53,7 +53,7 @@ class BukkitController : ServerController<Plugin> {
         plugin = pl
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, BungeeAPI.channel)
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, BungeeAPI.channel, listener)
-       BungeeAPI.debug("Registrando sistema no lado do Spigot(Servidor)")
+        BungeeAPI.debug("Registrando sistema no lado do Spigot(Servidor)")
     }
 
     override fun unregister() {
@@ -68,11 +68,12 @@ class BukkitController : ServerController<Plugin> {
         }
     }
 
-    override fun connect(player: String, serverType: String, subType: String, teamSize: Int) {
+    override fun connect(player: String, serverType: String, subType: String, teamSize: Int): String {
         sendMessage("connect", "$player $serverType $subType $teamSize")
+        return ""
     }
 
-    override fun setState(server: String, state: ServerState?) {
+    override fun setState(server: String, state: ServerState) {
         sendMessage("set-state", "$server $state")
     }
 }
