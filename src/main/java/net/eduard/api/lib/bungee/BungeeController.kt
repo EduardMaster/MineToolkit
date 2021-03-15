@@ -103,8 +103,8 @@ class BungeeController : ServerController<Plugin> {
         return ""
     }
 
-    override fun setState(serverName: String, state: ServerState?) {
+    override fun setState(serverName: String, state: ServerState) {
         val server = BungeeAPI.getServer(serverName)
-        server.state = state!!
+        server.state = state
     }
 }
