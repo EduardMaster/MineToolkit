@@ -36,6 +36,13 @@ import java.util.zip.ZipInputStream;
 @SuppressWarnings("unused")
 public final class Extra {
 
+    /**
+     * Transforma um objeto em um Tipo Wrapper (Tipos padrões e String)
+     * @param object Objeto
+     * @param type Tipo Wrapper
+     * @return Objeto transformado
+     * @throws Exception Se o método de transformação não funcionar corretamente
+     */
     public static Object transform(Object object, Class<?> type) throws Exception {
         String fieldTypeName = Extra.toTitle(type.getSimpleName());
         Object value = Extra.getMethodInvoke(Extra.class, "to" + fieldTypeName, Extra.getParameters(Object.class), object);
@@ -1807,14 +1814,29 @@ public final class Extra {
 
     }
 
+    /**
+     * Aplica as cores no texto se precisar
+     * @param text Texto
+     * @return Texto colorizado
+     */
     public static String toChatMessage(String text) {
         return text.replace("&", "§");
     }
 
+    /**
+     * Parecido com o Chat.translateColorCode()
+     * @param text Texto
+     * @return Texto retrocado
+     */
     public static String toConfigMessage(String text) {
         return text.replace("§", "&");
     }
 
+    /**
+     * Transforma a lista de texto colorizada em uma lista que usa &
+     * @param lore Lista de cores
+     * @return Lista descolorizada
+     */
     public static List<String> toConfigMessages(List<String> lore) {
         List<String> lines = new ArrayList<String>();
         for (String line : lore) {
@@ -1823,10 +1845,22 @@ public final class Extra {
         return lines;
     }
 
+    /**
+     * Mini formatador decimal em 2 casas decimais mas existe uma manera melhor
+     * @param number Numero decimal
+
+     * @return Numero formatado (texto)
+     */
     public static String toDecimal(Object number) {
         return toDecimal(number, 2);
     }
 
+    /**
+     * Mini formatador decimal mas existe uma manera melhor
+     * @param number Numero decimal
+     * @param max Maximo de casas decimais
+     * @return Numero formatado (texto)
+     */
     public static String toDecimal(Object number, int max) {
         String text = "" + number;
         if (text.contains(".")) {
@@ -1839,6 +1873,11 @@ public final class Extra {
         return text;
     }
 
+    /**
+     * Trnasforma um objeto em Double
+     * @param object Objeto
+     * @return Double (Decimal)
+     */
     public static Double toDouble(Object object) {
 
         if (object == null) {
@@ -1859,6 +1898,11 @@ public final class Extra {
 
     }
 
+    /**
+     * Transforma para um Objeto para Float
+     * @param object Objeto
+     * @return Float (Decimal)
+     */
     public static Float toFloat(Object object) {
 
         if (object == null) {
@@ -1879,6 +1923,11 @@ public final class Extra {
 
     }
 
+    /**
+     * Alias para toInteger()
+     * @param object Objeto
+     * @return Integer
+     */
     public static Integer toInt(Object object) {
 
         if (object == null) {
@@ -1899,6 +1948,11 @@ public final class Extra {
 
     }
 
+    /**
+     * Transforma um Objeto em um Inteiro
+     * @param object Objeto
+     * @return Inteiro
+     */
     public static Integer toInteger(Object object) {
         return toInt(object);
     }
@@ -1928,6 +1982,11 @@ public final class Extra {
 
     }
 
+    /**
+     * Transforma um objeto em Long
+     * @param object Objeto
+     * @return Long
+     */
     public static Long toLong(Object object) {
 
         if (object == null) {
@@ -1947,6 +2006,11 @@ public final class Extra {
         }
     }
 
+    /**
+     * Transforma uma lista de objetos em uma lista de texto
+     * @param list Lista de objetos
+     * @return Lista de textos com cores funcionando
+     */
     public static List<String> toMessages(List<Object> list) {
         List<String> lines = new ArrayList<>();
         for (Object line : list) {
@@ -1955,6 +2019,11 @@ public final class Extra {
         return lines;
     }
 
+    /**
+     * Transforma um objeto em um short
+     * @param object Objeto
+     * @return Short
+     */
     public static Short toShort(Object object) {
 
         if (object == null) {
@@ -1978,8 +2047,8 @@ public final class Extra {
     /**
      * Transforma um objeto em texto
      *
-     * @param object any
-     * @return String
+     * @param object Objeto
+     * @return Texto
      */
     public static String toString(Object object) {
 
@@ -1987,7 +2056,7 @@ public final class Extra {
     }
 
     /**
-     * Transforma uma Coleção de Texto em uma String (Texto)
+     * Transforma uma Coleção de Texto em uma String (Texto) tirando simbolos desnecessários
      *
      * @param text Mensagem
      * @return o texto gerado apartir da coleção
@@ -2030,9 +2099,9 @@ public final class Extra {
     }
 
     /**
-     * capitaliza uma Frase
+     * Capitaliza uma Frase, deixa todas as primeiras letras de cada palavra em maiuscula
      *
-     * @param name     Frase
+     * @param name Frase
      * @param replacer O que será colocado entre as palavras
      * @return Frase capitalizada
      */
@@ -2053,7 +2122,7 @@ public final class Extra {
     }
 
     /**
-     * Desfazr o ZIP do Arquivo
+     * Desfaz o ZIP do Arquivo
      *
      * @param zipFilePath   Arquivo
      * @param destDirectory Destino
@@ -2087,10 +2156,10 @@ public final class Extra {
     }
 
     /**
-     * Valida o nome do usuario se esta certo
+     * Valida o nome do usuario tem só letras e numeros e no maximo 16 letras
      *
      * @param username Nome do usuario
-     * @return Se esta certo
+     * @return Resultado da validação
      */
     public static boolean validatePlayerName(final String username) {
         final Pattern pattern = Pattern.compile("[a-zA-Z0-9_]{1,16}");
@@ -2098,7 +2167,12 @@ public final class Extra {
         return matcher.matches();
     }
 
-
+    /**
+     * Tenta escrever no arquivo de varias maneiras até conseguir
+     * @param file Arquivo
+     * @param lines Linhas para escrever
+     * @exception Exception Não conseguiu escrever por falta de permissão
+     */
     public static void writeLines(File file, List<String> lines) {
         Path path = file.toPath();
         try {

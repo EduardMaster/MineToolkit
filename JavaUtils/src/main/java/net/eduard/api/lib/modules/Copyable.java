@@ -33,6 +33,7 @@ public interface Copyable {
     }
 
     static void debug(String msg) {
+
         if (CopyDebug.isDebug())
             System.out.println("[Copyable] " + msg);
     }
