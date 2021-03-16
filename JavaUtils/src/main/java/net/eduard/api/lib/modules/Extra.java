@@ -710,6 +710,12 @@ public final class Extra {
         return classes;
     }
 
+    /**
+     * Retorna a lista de Classes referente a package
+     * @param jar Jar das classes
+     * @param pack Package das classes
+     * @return Lista de classes
+     */
     public static List<Class<?>> getClasses(JarFile jar, String pack) {
         List<Class<?>> lista = new ArrayList<>();
         try {
@@ -1040,6 +1046,12 @@ public final class Extra {
         return getConstructor(object, parameters).newInstance(values);
     }
 
+    /**
+     * Pega Array de Classes apartir de uma Array de Objetos
+     * @param parameters Array de Objetos (Parametros types)
+     * @return Array do tipos dos Obetos (Array de classes)
+     * @throws Exception Se caso não encontrar alguma classe
+     */
     public static Class<?>[] getParameters(Object... parameters) throws Exception {
         Class<?>[] objects = new Class<?>[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
@@ -1049,11 +1061,28 @@ public final class Extra {
 
     }
 
+    /**
+     * Roda/Invoca o Método se ele for encontrado com o seguinte nome e parametros valores
+     * @param object Objeto ou Classe
+     * @param name Nome do método
+     * @param values Parametros do Método
+     * @return O valor retornado do método ou NULL se for VOID
+     * @throws Exception se caso Não existir este método
+     */
     public static Object getMethodInvoke(Object object, String name, Object... values) throws Exception {
 
         return getMethod(object, name, values).invoke(object, values);
     }
 
+    /**
+     * Roda/Invoca o Método se ele for encontrado com o seguinte nome, parametros e valores
+     * @param object Objeto ou Classe
+     * @param name Nome do método
+     * @param parameters Parametros do Método
+     * @param values Valores dos Parametros
+     * @return O valor retornado do método ou NULL se for VOID
+     * @throws Exception se caso Não existir este método
+     */
     public static Object getMethodInvoke(Object object, String name, Object[] parameters, Object... values) throws Exception {
         try {
             return getMethod(object, name, parameters).invoke(object, values);
@@ -1063,6 +1092,13 @@ public final class Extra {
 
     }
 
+    /**
+     * Pega uma variavel apartir deste nome neste objeto
+     * @param object Objeto ou Classe
+     * @param name Nome da variavel
+     * @return a Variavel
+     * @throws Exception Se não encontrar a variavel
+     */
     public static Field getField(Object object, String name) throws Exception {
         Class<?> claz = getClassFrom(object);
         try {
@@ -1108,19 +1144,35 @@ public final class Extra {
         return null;
     }
 
+    /**
+     * Pega um numero aleatorio entre numero minimo e maximo
+     * @param minValue Numbero minimo
+     * @param maxValue Numero maximo
+     * @return Numero Aleatorio decimal
+     */
     public static double getRandomDouble(double minValue, double maxValue) {
 
         double min = Math.min(minValue, maxValue), max = Math.max(minValue, maxValue);
         return min + (max - min) * RANDOM.nextDouble();
     }
 
-
+    /**
+     * Pega um numero aleatorio entre numero minimo e maximo
+     * @param minValue Numbero minimo
+     * @param maxValue Numero maximo
+     * @return Numero Aleatorio inteiro
+     */
     public static int getRandomInt(int minValue, int maxValue) {
 
         int min = Math.min(minValue, maxValue), max = Math.max(minValue, maxValue);
         return min + RANDOM.nextInt(max - min + 1);
     }
 
+    /**
+     * Pega uma placholder pelo nome dela
+     * @param key Placeholder Name (Texto)
+     * @return o Texto que essa placeholder vira
+     */
     public static String getReplacer(String key) {
         return REPLACERS.get(key);
     }
@@ -1713,6 +1765,11 @@ public final class Extra {
         } else return "";
     }
 
+    /**
+     * Remove os colchetes de um Lista de string transformada para Texto
+     * @param message Array de String que será convertida para Lista de string
+     * @return Texto sem colchetes
+     */
     public static String removeBrackets(String... message) {
 
         return Arrays.toString(message).replace("[", "").replace("]", "");
@@ -1741,6 +1798,12 @@ public final class Extra {
     }
 
 
+    /**
+     * Interpreta o texto com base na separação de cada Char por ponto-virgula ex: CCCC;CCCC;
+     *
+     * @param str Texto saltado
+     * @return Texto normal
+     */
     public static String simpleDeosfucation(String str) {
         final String[] split = str.split(";");
         final int[] parse = new int[split.length];
@@ -1754,6 +1817,12 @@ public final class Extra {
         return build.toString();
     }
 
+    /**
+     * Modifica o texto e coloca cada caractere separado por CCCC;CCCC;
+     *
+     * @param str Texto
+     * @return Texto saltado
+     */
     public static String simpleOfuscation(String str) {
         String build = "";
         for (int i = 0; i < str.length(); i++) {
