@@ -215,6 +215,7 @@ open class Minigame(
         val room = MinigameRoom()
         room.minigame = this
         room.id = rooms.size + 1
+        room.mode = mode
         rooms.add(room)
         room.map = map
         this.isEnabled = true

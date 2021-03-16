@@ -1,6 +1,5 @@
 package net.eduard.api.lib.menu
 
-import net.eduard.api.lib.manager.EffectManager
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine

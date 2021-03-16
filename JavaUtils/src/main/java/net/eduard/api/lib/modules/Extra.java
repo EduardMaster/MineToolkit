@@ -230,64 +230,6 @@ public final class Extra {
 
     }
 
-    /**
-     * Centraliza a Array
-     *
-     * @param paragraph Paragrafo em forma de Array de Texto
-     * @param title     Titulo do Texto
-     */
-    public static void box(String[] paragraph, String title) {
-        ArrayList<String> buffer = new ArrayList<>();
-        StringBuilder at = new StringBuilder();
-
-        int side1 = (int) Math.round(25.0D - (title.length() + 4) / 2.0D);
-        int side2 = (int) (26.0D - (title.length() + 4) / 2.0D);
-        at.append('+');
-        for (int t = 0; t < side1; t++) {
-            at.append('-');
-        }
-        at.append("{ ");
-        at.append(title);
-        at.append(" }");
-        for (int t = 0; t < side2; t++) {
-            at.append('-');
-        }
-        at.append('+');
-        buffer.add(at.toString());
-        at = new StringBuilder();
-        buffer.add("|                                                   |");
-        int j = paragraph.length;
-        for (String s : paragraph) {
-            at.append("| ");
-            int left = 49;
-            for (int t = 0; t < s.length(); t++) {
-                at.append(s.charAt(t));
-                left--;
-                if (left == 0) {
-                    at.append(" |");
-                    buffer.add(at.toString());
-                    at = new StringBuilder();
-                    at.append("| ");
-                    left = 49;
-                }
-            }
-            while (left-- > 0) {
-                at.append(' ');
-            }
-            at.append(" |");
-            buffer.add(at.toString());
-            at = new StringBuilder();
-        }
-        buffer.add("|                                                   |");
-        buffer.add("+---------------------------------------------------+");
-
-        System.out.println(" ");
-        for (String line : buffer.toArray(new String[0])) {
-            System.out.println(line);
-        }
-        System.out.println(" ");
-    }
-
 
     /**
      * Verifica se contem a Mensagem dentro do Texto (Ignora se é maiuscula ou
@@ -528,6 +470,11 @@ public final class Extra {
         return fixDouble(Extra.toDouble(text));
     }
 
+    /**
+     * Arruma onumero
+     * @param number Numero
+     * @return numero arrumado
+     */
     public static double fixDouble(double number) {
         if (Double.isInfinite(number) || Double.isNaN(number)) {
             return 1;
@@ -685,7 +632,12 @@ public final class Extra {
         return classes;
     }
 
-
+    /**
+     * Retorna todos classname de todas classes
+     * @param jar Jar
+     * @param pack Package
+     * @return lista do nomes de classes
+     */
     public static List<String> getClassesName(JarFile jar, String pack) {
         List<String> lista = new ArrayList<>();
         try {
@@ -712,6 +664,11 @@ public final class Extra {
         return lista;
     }
 
+    /**
+     * Calcula a chance e retorna true se passou
+     * @param chance Chance a calcular de 0.0 a 1.0
+     * @return Se deu sorte ou nao
+     */
     public static boolean getChance(double chance) {
 
         return Math.random() <= chance;
@@ -779,6 +736,12 @@ public final class Extra {
         return lista;
     }
 
+    /**
+     * Puxa a classe apartir de objeto sendo , ele classe, objecto, ou até mesmo texto
+     * @param object Objecto
+     * @return Classe
+     * @throws Exception Causa um erro caso nao encontrar a classe
+     */
     public static Class<?> getClassFrom(Object object) throws Exception {
         if (object instanceof Class) {
             return (Class<?>) object;
@@ -844,7 +807,12 @@ public final class Extra {
 
     }
 
-
+    /**
+     * Pega a posição em Menu GUI do Mine da coluna e linha especificada
+     * @param column Coluna
+     * @param line Linha
+     * @return Posição (numero)
+     */
     public static int getIndex(int column, int line) {
         if (line <= 0) {
             line = 1;
@@ -861,11 +829,20 @@ public final class Extra {
         return index + (column - 1);
     }
 
+    /**
+     * Retorna a linha da posição especificada
+     * @param index Posição
+     * @return NUmero da linha
+     */
     public static int getLine(int index) {
         return (index / 9) + 1;
     }
 
 
+    /**
+     * Alias para currentTimeMillis
+     * @return Tempo atual do sistema
+     */
     public static long getNow() {
         return System.currentTimeMillis();
     }
@@ -895,12 +872,28 @@ public final class Extra {
         return null;
     }
 
+    /**
+     * Gera um ProgressBar colorido de acordo com um quantia de dinheiro e uma quantia necessaria
+     * @param money Quantia de money que possui atualmente
+     * @param price Saldo necessario para Bossbar ficar completa
+     * @param completedColor Cor dos simbolos indicando o que voce já completou
+     * @param needColor Cor dos simbolos indicando o que voce ainda não completou
+     * @param symbol Simbolo (Quadrado)
+     * @return A ProgressNar em forma de texto
+     */
     public static String getProgressBar(double money, double price, String completedColor, String needColor,
                                         String symbol) {
         return getProgressBar(money / price, completedColor, needColor, symbol);
     }
 
-
+    /**
+     * Gera um ProgressBar colorido de acordo com uma Porcetangem
+     * @param percent Porcetangem da bossBar que esta completa
+     * @param completedColor Cor dos simbolos indicando o que voce já completou
+     * @param needColor Cor dos simbolos indicando o que voce ainda não completou
+     * @param symbol Simbolo (Quadrado)
+     * @return A ProgressNar em forma de texto
+     */
     public static String getProgressBar(double percent, String completedColor, String needColor,
                                         String symbol) {
         StringBuilder result = new StringBuilder();
@@ -930,6 +923,14 @@ public final class Extra {
      * INICIO DA AREA DE REFLECTION
      *
      */
+
+    /**
+     * Procura o cosntrutor deste Objeto com os seguitnes parametros
+     * @param object Objeto
+     * @param parameters Parametros
+     * @return Construtor
+     * @throws Exception Não encontrou o construtor
+     */
     public static Constructor<?> getConstructor(Object object, Object... parameters) throws Exception {
 
         Class<?> claz = getClassFrom(object);
@@ -945,6 +946,14 @@ public final class Extra {
 
     }
 
+    /**
+     * Procura um método deste Objeto com o seguinte nome e parametros
+     * @param object Objeto ou Classe
+     * @param name Nome do método
+     * @param parameters Parametros de Objetos ou Classes
+     * @return Metodo
+     * @throws Exception Se não encontrou o método
+     */
     public static Method getMethod(Object object, String name, Object... parameters) throws Exception {
         Class<?> claz = getClassFrom(object);
         try {
@@ -959,11 +968,25 @@ public final class Extra {
 
     }
 
+    /**
+     * Liga um novo objeto com os seguintes parametros
+     * @param object Objeto ou classe
+     * @param values Valores dos parametros
+     * @return Objeto novo
+     * @throws Exception Se não possui cosntrutor com esses parametros
+     */
     public static Object getNew(Object object, Object... values) throws Exception {
         return getConstructor(object, values).newInstance(values);
 
     }
 
+    /**
+     * Pega o valor da variavel
+     * @param object Objeto ou classe
+     * @param name Nome da variavel
+     * @return Valor da variavel
+     * @throws Exception Se não encontrar esta variavel na classe
+     */
     public static Object getFieldValue(Object object, String name) throws Exception {
         return getField(object, name).get(object);
     }
@@ -986,10 +1009,26 @@ public final class Extra {
         return constructor;
     }
 
+    /**
+     * Define o valor da variavel
+     * @param object Objeto ou classe
+     * @param name Nome da variavel
+     * @param value Novo valor da variavel
+     * @throws Exception Se não encontrar a variavel destro desta classe
+     */
     public static void setFieldValue(Object object, String name, Object value) throws Exception {
         getField(object, name).set(object, value);
     }
 
+
+    /**
+     * Liga um novo objeto com os seguintes parametros
+     * @param object Objeto ou classe
+     * @param parameters Classes ou objetos dos parametros
+     * @param values Valores dos parametros
+     * @return Objeto novo
+     * @throws Exception Se não possui cosntrutor com esses parametros
+     */
     public static Object getNew(Object object, Object[] parameters, Object... values) throws Exception {
         return getConstructor(object, parameters).newInstance(values);
     }
@@ -1037,12 +1076,24 @@ public final class Extra {
 
      */
 
+    /**
+     * Faz um sorteio e retorna o resultado
+     * @param objects Lista de objetos
+     * @param <E> Tipo da lista
+     * @return um item da lista aleatorio ou nulo
+     */
     public static <E> E getRandom(List<E> objects) {
         if (objects.size() >= 1)
             return objects.get(getRandomInt(1, objects.size()) - 1);
         return null;
     }
 
+    /**
+     * Faz um sorteio e retorna o resultado
+     * @param objects Array de objetos
+     * @param <E> Tipo da Array
+     * @return um item da lista aleatorio ou nulo
+     */
     @SafeVarargs
     public static <E> E getRandom(E... objects) {
         if (objects.length >= 1)

@@ -1,5 +1,6 @@
 package net.eduard.api.command
 
+import net.eduard.api.lib.kotlin.displayEnchants
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
@@ -24,27 +25,29 @@ class EnchantCommand : CommandManager("enchantment") {
     override fun onCommand(sender: CommandSender, command: Command,
                            label: String, args: Array<String>): Boolean {
         if (sender is Player) {
-            val p = sender
-            if (args.size == 0) {
+            val player = sender
+            if (args.isEmpty()) {
                 return false
             } else {
-                if (p.itemInHand == null
-                        || p.itemInHand.type == Material.AIR) {
-                    p.sendMessage(messageError)
+                if (player.itemInHand == null
+                    || player.itemInHand.type == Material.AIR) {
+                    player.sendMessage(messageError)
                     return true
                 }
                 val enchant = Mine.getEnchant(args[0])
                 if (enchant == null) {
-                    p.sendMessage(messageInvalid)
+                    player.sendMessage(messageInvalid)
                 } else {
                     var nivel = 1
                     if (args.size >= 2) {
                         nivel = Extra.toInt(args[1])
                     }
                     if (nivel == 0) {
-                        p.itemInHand.removeEnchantment(enchant)
-                    } else p.itemInHand.addUnsafeEnchantment(enchant, nivel)
-                    p.sendMessage(message)
+                        player.itemInHand.removeEnchantment(enchant)
+                    } else
+                        player.itemInHand.addUnsafeEnchantment(enchant, nivel)
+                    player.itemInHand.displayEnchants()
+                    player.sendMessage(message)
                 }
             }
         }

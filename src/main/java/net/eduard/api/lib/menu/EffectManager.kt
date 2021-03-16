@@ -1,4 +1,4 @@
-package net.eduard.api.lib.manager
+package net.eduard.api.lib.menu
 
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
