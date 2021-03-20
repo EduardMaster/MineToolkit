@@ -197,7 +197,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         Config.isDebug =  configs.getBoolean("debug-config")
         Menu.isDebug = configs.getBoolean("debug-menu")
         CommandManager.isDebug = configs.getBoolean("debug-commands")
-        Copyable.CopyDebug.setDebug(configs.getBoolean("debug-copyable"))
+        Copyable.setDebug(configs.getBoolean("debug-copyable"))
         BukkitBungeeAPI.setDebug(configs.getBoolean("debug-bungee-bukkit"))
         Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
         PlayerSkin.reloadSkins()

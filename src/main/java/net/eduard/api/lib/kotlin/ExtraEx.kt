@@ -1,8 +1,12 @@
 package net.eduard.api.lib.kotlin
 
+import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
 
 
+fun <T : Any> T.copy() : T{
+    return Copyable.copyObject(this) as T
+}
 
 fun Number.format() = Extra.formatMoney(this.toDouble())
 

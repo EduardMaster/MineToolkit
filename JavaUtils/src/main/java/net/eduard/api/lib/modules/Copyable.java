@@ -18,31 +18,26 @@ import java.util.Map.Entry;
  *  Extra
  */
 @SuppressWarnings("unchecked")
-public interface Copyable {
+public class Copyable {
+    private static boolean debug = true;
 
-    class CopyDebug {
-        private static boolean debug = true;
-
-        public static boolean isDebug() {
-            return debug;
-        }
-
-        public static void setDebug(boolean debug) {
-            CopyDebug.debug = debug;
-        }
+    public static boolean isDebug() {
+        return debug;
     }
+
+    public static void setDebug(boolean debug) {
+        Copyable.debug = debug;
+    }
+
 
     static void debug(String msg) {
 
-        if (CopyDebug.isDebug())
+        if (Copyable.isDebug())
             System.out.println("[Copyable] " + msg);
     }
 
-    default Object copy() {
-        return copy(this);
-    }
 
-    static <E> E clone(E object) {
+    public static <E> E clone(E object) {
         try {
             Method cloneMethod = null;
             try {
@@ -64,11 +59,9 @@ public interface Copyable {
         return object;
     }
 
-    default <E> E copy(E object) {
-        return copyObject(object);
-    }
 
-    static <E> E copyObject(E object) {
+
+    public static <E> E copyObject(E object) {
         if (object == null)
             return null;
 

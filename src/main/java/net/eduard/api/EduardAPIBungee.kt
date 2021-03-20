@@ -71,7 +71,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         DBManager.setDebug(configs.getBoolean("debug-database"))
 
         //configs.getBoolean("debug-commands")
-        Copyable.CopyDebug.setDebug(configs.getBoolean("debug-copyable"))
+        Copyable.setDebug(configs.getBoolean("debug-copyable"))
 
 
         try {
