@@ -61,6 +61,7 @@ class MinigameMap(
     val hasLobby get() = lobby != null
     val hasSpawn get() = spawn != null
     val hasSpawns get() = spawns.isNotEmpty()
+
     fun defaultWorldName(): String {
         return "${minigame.name}/map/$name"
     }
@@ -75,6 +76,7 @@ class MinigameMap(
         worldUsed.copy(map.worldName)
         fixWorld()
     }
+
 
     fun insideFeast(location: Location): Boolean {
         val raioDoFeast = (feastRadius * feastRadius)

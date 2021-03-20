@@ -33,6 +33,8 @@ dependencies {
     compileOnly("net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.bukkitplugin:jhcash:6.1")
+    testCompile("junit", "junit", "4.12")
+    //testCompile("org.bukkit:spigot:1.8.9")
 }
 
 repositories {

@@ -104,6 +104,9 @@ open class Minigame(
 
     }
 
+    /**
+     * Registra o Modo de Jogo
+     */
     fun register(mode: MinigameMode) {
         modes.add(mode)
         mode.minigame = this
@@ -155,7 +158,7 @@ open class Minigame(
      * Verifica se existe este Map com este Nome
      *
      * @param name Nome
-     * @return
+     * @return se encontrou o mapa
      */
     fun hasMap(name: String): Boolean {
         return getMap(name) != null
@@ -281,6 +284,9 @@ open class Minigame(
         return member
     }
 
+    /**
+     * Alias para o getPlayer(FakePlayer())
+     */
     fun getPlayer(player: Player): MinigamePlayer {
         return getPlayer(FakePlayer(player))
     }
@@ -309,7 +315,7 @@ open class Minigame(
      * Verifica se o Jogador esta no modo Normal (sem ser Admin ou Spectador)
      *
      * @param player Jogador
-     * @return
+     * @return se sim ou não
      */
     fun isPlayer(player: Player): Boolean {
         return getPlayer(player).isState(MinigamePlayerState.NORMAL)
