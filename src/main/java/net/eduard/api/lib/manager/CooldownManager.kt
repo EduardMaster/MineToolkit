@@ -10,9 +10,7 @@ class CooldownManager( var duration: Long = 20) {
     var msgOver: String? = null
     var msgStart: String? = null
     init{
-        msgCooldown = "§6Voce esta em Cooldown!"
-        msgOver = "§6Voce saiu do Cooldown!"
-        msgStart = "§6Voce usou a Habilidade!"
+        msgCooldown = "§cAinda faltam §7%time segundos §cpara desabilitar o sistema"
     }
     fun noMessages(){
         msgCooldown = null
