@@ -65,9 +65,6 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     override fun onLoad() {
         StorageAPI.setDebug(false)
         instance = this
-
-
-
         super.onLoad()
         BukkitTypes
 
@@ -109,7 +106,6 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
     override fun onEnable() {
-     // if (true)return;
         if (!started) {
             this.onLoad()
         }
@@ -171,6 +167,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         SetXPCommand().register()
         SetSkinCommand().register()
         MemoryCommand().registerCommand(plugin)
+        RunCommand().registerCommand(plugin)
         log("Comandos ativados com sucesso")
     }
     fun loadServers(){
@@ -248,6 +245,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         configs.add("debug-replacers", false)
         configs.add("debug-database",false )
         configs.add("debug-menu",false )
+        configs.add("async-license-check" , false);
         configs.add("skins",false )
         configs.add("auto-respawn",true )
         configs.add("custom-skin","EduardKillerPro" )

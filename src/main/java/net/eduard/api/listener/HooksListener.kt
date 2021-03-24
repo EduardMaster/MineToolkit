@@ -7,7 +7,6 @@ import org.bukkit.event.server.PluginEnableEvent
 
 class HooksListener : EventsManager() {
 
-
     @EventHandler
     fun onPluginEnableEvent(event: PluginEnableEvent) {
         val rooks = PluginHook.getRooks(event.plugin.name)

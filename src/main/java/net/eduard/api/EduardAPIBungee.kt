@@ -2,6 +2,7 @@ package net.eduard.api
 
 import net.eduard.api.command.bungee.BungeeReloadCommand
 import net.eduard.api.lib.bungee.BungeeAPI
+import net.eduard.api.lib.bungee.BungeeMessageListener
 import net.eduard.api.lib.bungee.ServerSpigot
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
@@ -13,7 +14,6 @@ import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
-import net.eduard.api.listener.BungeeListener
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
@@ -118,8 +118,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         BungeeAPI.bungee.register(plugin)
         reload()
 
-        ProxyServer.getInstance().pluginManager
-            .registerListener(plugin, BungeeListener())
+
         ProxyServer.getInstance().pluginManager
             .registerCommand(plugin, BungeeReloadCommand())
 

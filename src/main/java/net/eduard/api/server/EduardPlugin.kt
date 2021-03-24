@@ -33,7 +33,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     override var started = false
 
     override val pluginName: String
-        get() = Extra.getMethodInvoke(plugin, "getName") as String
+        get() = name
     override val pluginFolder: File
         get() = plugin.dataFolder
 
@@ -65,9 +65,13 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §f$message")
     }
 
+
+
     override fun getPluginConnected(): Plugin {
         return this
     }
+
+
 
     /**
      * Envia mensagem para o console caso as Log de Erros esteja ativada para ele
@@ -78,6 +82,8 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         if (settings.debug)
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §c$message")
     }
+
+
 
 
     /**
@@ -158,7 +164,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     }
 
     override fun reload() {
-
+        reloaded=true
     }
 
     override fun configDefault() {

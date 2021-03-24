@@ -5,7 +5,6 @@ import net.eduard.api.lib.manager.EventsManager
 
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -15,7 +14,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.server.ServerListPingEvent
-import org.bukkit.scheduler.BukkitRunnable
 
 /**
  * Pequenas manipulações de Eventos criados que qualquer servidor precise
