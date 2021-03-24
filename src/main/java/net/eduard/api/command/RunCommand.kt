@@ -6,6 +6,8 @@ import net.eduard.api.lib.modules.Extra
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.player.PlayerJoinEvent
 import java.lang.Exception
 
 class RunCommand : CommandManager("run", "rodar") {
@@ -13,6 +15,7 @@ class RunCommand : CommandManager("run", "rodar") {
     init {
         usage = "/run <method-name> <double>"
     }
+
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
 
@@ -35,6 +38,7 @@ class RunCommand : CommandManager("run", "rodar") {
                         sender.sendMessage("§6Message: " + ex.message)
                         sender.sendMessage("§0---------------------------------")
                     }
+
                 } else {
                     var text = args[1]
                     val value: Any

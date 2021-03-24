@@ -38,8 +38,9 @@ public final class Extra {
 
     /**
      * Transforma um objeto em um Tipo Wrapper (Tipos padrões e String)
+     *
      * @param object Objeto
-     * @param type Tipo Wrapper
+     * @param type   Tipo Wrapper
      * @return Objeto transformado
      * @throws Exception Se o método de transformação não funcionar corretamente
      */
@@ -479,6 +480,7 @@ public final class Extra {
 
     /**
      * Arruma onumero
+     *
      * @param number Numero
      * @return numero arrumado
      */
@@ -506,13 +508,14 @@ public final class Extra {
         String numeroFormatado = formatador.format(numero);
 
 
-        char separador = formatador.getDecimalFormatSymbols().getGroupingSeparator();
-        char scaper = '\\';
+        String separador = "" + formatador.getDecimalFormatSymbols().getGroupingSeparator();
+        if (separador.contains(".")) {
+            separador = "\\.";
+        }
         // necessario dar Scape no separator se não o Split não funciona em casos q o separator seja um 'Ponto final'
-        String[] conjuntoDeTresCasas = numeroFormatado.split(String.valueOf(scaper + separador));
+        String[] conjuntoDeTresCasas = numeroFormatado.split(separador);
         int tamanho = conjuntoDeTresCasas.length;
         if (tamanho <= 1) {
-
             return MONEY.format(numero);
         }
 
@@ -527,31 +530,6 @@ public final class Extra {
             return "-1.0";
         }
 
-    }
-
-    /**
-     * Formata um numero grande, formatação estilo de servidores OP
-     *
-     * @param numero Numero grande
-     * @return Numero formatado
-     * @author THG com pequenas mudanças feitas por min
-     * @deprecated Este método apresenta pequenos bugs
-     */
-    @Deprecated
-    public static String formatMoney2(double numero) {
-        DecimalFormat formatador = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.US));
-        String formatado = formatador.format(numero);
-        String v = formatado.split(",")[0];
-        formatado = numero >= 1000000 && numero <= 999999999 ? v + "M"
-                : numero >= 1000000000 && numero <= 999999999999L ? v + "B"
-                : numero >= 1000000000000L && numero <= 999999999999999L ? v + "T"
-                : numero >= 1000000000000000L && numero <= 999999999999999999L ? v + "Q"
-                : numero >= 1000000000000000000L && String.valueOf(numero).length() <= 21
-                ? v + "QUI"
-                : String.valueOf(numero).length() > 21 ? "999QUI"
-                : String.valueOf(numero).length() < 7 ? formatado : formatado;
-
-        return formatado;
     }
 
 
@@ -641,7 +619,8 @@ public final class Extra {
 
     /**
      * Retorna todos classname de todas classes
-     * @param jar Jar
+     *
+     * @param jar  Jar
      * @param pack Package
      * @return lista do nomes de classes
      */
@@ -673,6 +652,7 @@ public final class Extra {
 
     /**
      * Calcula a chance e retorna true se passou
+     *
      * @param chance Chance a calcular de 0.0 a 1.0
      * @return Se deu sorte ou nao
      */
@@ -712,7 +692,8 @@ public final class Extra {
 
     /**
      * Retorna a lista de Classes referente a package
-     * @param jar Jar das classes
+     *
+     * @param jar  Jar das classes
      * @param pack Package das classes
      * @return Lista de classes
      */
@@ -751,6 +732,7 @@ public final class Extra {
 
     /**
      * Puxa a classe apartir de objeto sendo , ele classe, objecto, ou até mesmo texto
+     *
      * @param object Objecto
      * @return Classe
      * @throws Exception Causa um erro caso nao encontrar a classe
@@ -822,8 +804,9 @@ public final class Extra {
 
     /**
      * Pega a posição em Menu GUI do Mine da coluna e linha especificada
+     *
      * @param column Coluna
-     * @param line Linha
+     * @param line   Linha
      * @return Posição (numero)
      */
     public static int getIndex(int column, int line) {
@@ -844,6 +827,7 @@ public final class Extra {
 
     /**
      * Retorna a linha da posição especificada
+     *
      * @param index Posição
      * @return NUmero da linha
      */
@@ -854,6 +838,7 @@ public final class Extra {
 
     /**
      * Alias para currentTimeMillis
+     *
      * @return Tempo atual do sistema
      */
     public static long getNow() {
@@ -887,11 +872,12 @@ public final class Extra {
 
     /**
      * Gera um ProgressBar colorido de acordo com um quantia de dinheiro e uma quantia necessaria
-     * @param money Quantia de money que possui atualmente
-     * @param price Saldo necessario para Bossbar ficar completa
+     *
+     * @param money          Quantia de money que possui atualmente
+     * @param price          Saldo necessario para Bossbar ficar completa
      * @param completedColor Cor dos simbolos indicando o que voce já completou
-     * @param needColor Cor dos simbolos indicando o que voce ainda não completou
-     * @param symbol Simbolo (Quadrado)
+     * @param needColor      Cor dos simbolos indicando o que voce ainda não completou
+     * @param symbol         Simbolo (Quadrado)
      * @return A ProgressNar em forma de texto
      */
     public static String getProgressBar(double money, double price, String completedColor, String needColor,
@@ -901,10 +887,11 @@ public final class Extra {
 
     /**
      * Gera um ProgressBar colorido de acordo com uma Porcetangem
-     * @param percent Porcetangem da bossBar que esta completa
+     *
+     * @param percent        Porcetangem da bossBar que esta completa
      * @param completedColor Cor dos simbolos indicando o que voce já completou
-     * @param needColor Cor dos simbolos indicando o que voce ainda não completou
-     * @param symbol Simbolo (Quadrado)
+     * @param needColor      Cor dos simbolos indicando o que voce ainda não completou
+     * @param symbol         Simbolo (Quadrado)
      * @return A ProgressNar em forma de texto
      */
     public static String getProgressBar(double percent, String completedColor, String needColor,
@@ -939,7 +926,8 @@ public final class Extra {
 
     /**
      * Procura o cosntrutor deste Objeto com os seguitnes parametros
-     * @param object Objeto
+     *
+     * @param object     Objeto
      * @param parameters Parametros
      * @return Construtor
      * @throws Exception Não encontrou o construtor
@@ -961,8 +949,9 @@ public final class Extra {
 
     /**
      * Procura um método deste Objeto com o seguinte nome e parametros
-     * @param object Objeto ou Classe
-     * @param name Nome do método
+     *
+     * @param object     Objeto ou Classe
+     * @param name       Nome do método
      * @param parameters Parametros de Objetos ou Classes
      * @return Metodo
      * @throws Exception Se não encontrou o método
@@ -983,6 +972,7 @@ public final class Extra {
 
     /**
      * Liga um novo objeto com os seguintes parametros
+     *
      * @param object Objeto ou classe
      * @param values Valores dos parametros
      * @return Objeto novo
@@ -995,8 +985,9 @@ public final class Extra {
 
     /**
      * Pega o valor da variavel
+     *
      * @param object Objeto ou classe
-     * @param name Nome da variavel
+     * @param name   Nome da variavel
      * @return Valor da variavel
      * @throws Exception Se não encontrar esta variavel na classe
      */
@@ -1024,9 +1015,10 @@ public final class Extra {
 
     /**
      * Define o valor da variavel
+     *
      * @param object Objeto ou classe
-     * @param name Nome da variavel
-     * @param value Novo valor da variavel
+     * @param name   Nome da variavel
+     * @param value  Novo valor da variavel
      * @throws Exception Se não encontrar a variavel destro desta classe
      */
     public static void setFieldValue(Object object, String name, Object value) throws Exception {
@@ -1036,9 +1028,10 @@ public final class Extra {
 
     /**
      * Liga um novo objeto com os seguintes parametros
-     * @param object Objeto ou classe
+     *
+     * @param object     Objeto ou classe
      * @param parameters Classes ou objetos dos parametros
-     * @param values Valores dos parametros
+     * @param values     Valores dos parametros
      * @return Objeto novo
      * @throws Exception Se não possui cosntrutor com esses parametros
      */
@@ -1048,6 +1041,7 @@ public final class Extra {
 
     /**
      * Pega Array de Classes apartir de uma Array de Objetos
+     *
      * @param parameters Array de Objetos (Parametros types)
      * @return Array do tipos dos Obetos (Array de classes)
      * @throws Exception Se caso não encontrar alguma classe
@@ -1063,8 +1057,9 @@ public final class Extra {
 
     /**
      * Roda/Invoca o Método se ele for encontrado com o seguinte nome e parametros valores
+     *
      * @param object Objeto ou Classe
-     * @param name Nome do método
+     * @param name   Nome do método
      * @param values Parametros do Método
      * @return O valor retornado do método ou NULL se for VOID
      * @throws Exception se caso Não existir este método
@@ -1076,10 +1071,11 @@ public final class Extra {
 
     /**
      * Roda/Invoca o Método se ele for encontrado com o seguinte nome, parametros e valores
-     * @param object Objeto ou Classe
-     * @param name Nome do método
+     *
+     * @param object     Objeto ou Classe
+     * @param name       Nome do método
      * @param parameters Parametros do Método
-     * @param values Valores dos Parametros
+     * @param values     Valores dos Parametros
      * @return O valor retornado do método ou NULL se for VOID
      * @throws Exception se caso Não existir este método
      */
@@ -1094,8 +1090,9 @@ public final class Extra {
 
     /**
      * Pega uma variavel apartir deste nome neste objeto
+     *
      * @param object Objeto ou Classe
-     * @param name Nome da variavel
+     * @param name   Nome da variavel
      * @return a Variavel
      * @throws Exception Se não encontrar a variavel
      */
@@ -1121,8 +1118,9 @@ public final class Extra {
 
     /**
      * Faz um sorteio e retorna o resultado
+     *
      * @param objects Lista de objetos
-     * @param <E> Tipo da lista
+     * @param <E>     Tipo da lista
      * @return um item da lista aleatorio ou nulo
      */
     public static <E> E getRandom(List<E> objects) {
@@ -1133,8 +1131,9 @@ public final class Extra {
 
     /**
      * Faz um sorteio e retorna o resultado
+     *
      * @param objects Array de objetos
-     * @param <E> Tipo da Array
+     * @param <E>     Tipo da Array
      * @return um item da lista aleatorio ou nulo
      */
     @SafeVarargs
@@ -1146,6 +1145,7 @@ public final class Extra {
 
     /**
      * Pega um numero aleatorio entre numero minimo e maximo
+     *
      * @param minValue Numbero minimo
      * @param maxValue Numero maximo
      * @return Numero Aleatorio decimal
@@ -1158,6 +1158,7 @@ public final class Extra {
 
     /**
      * Pega um numero aleatorio entre numero minimo e maximo
+     *
      * @param minValue Numbero minimo
      * @param maxValue Numero maximo
      * @return Numero Aleatorio inteiro
@@ -1170,6 +1171,7 @@ public final class Extra {
 
     /**
      * Pega uma placholder pelo nome dela
+     *
      * @param key Placeholder Name (Texto)
      * @return o Texto que essa placeholder vira
      */
@@ -1767,6 +1769,7 @@ public final class Extra {
 
     /**
      * Remove os colchetes de um Lista de string transformada para Texto
+     *
      * @param message Array de String que será convertida para Lista de string
      * @return Texto sem colchetes
      */
@@ -1885,6 +1888,7 @@ public final class Extra {
 
     /**
      * Aplica as cores no texto se precisar
+     *
      * @param text Texto
      * @return Texto colorizado
      */
@@ -1894,6 +1898,7 @@ public final class Extra {
 
     /**
      * Parecido com o Chat.translateColorCode()
+     *
      * @param text Texto
      * @return Texto retrocado
      */
@@ -1903,6 +1908,7 @@ public final class Extra {
 
     /**
      * Transforma a lista de texto colorizada em uma lista que usa &
+     *
      * @param lore Lista de cores
      * @return Lista descolorizada
      */
@@ -1916,8 +1922,8 @@ public final class Extra {
 
     /**
      * Mini formatador decimal em 2 casas decimais mas existe uma manera melhor
+     *
      * @param number Numero decimal
-
      * @return Numero formatado (texto)
      */
     public static String toDecimal(Object number) {
@@ -1926,8 +1932,9 @@ public final class Extra {
 
     /**
      * Mini formatador decimal mas existe uma manera melhor
+     *
      * @param number Numero decimal
-     * @param max Maximo de casas decimais
+     * @param max    Maximo de casas decimais
      * @return Numero formatado (texto)
      */
     public static String toDecimal(Object number, int max) {
@@ -1944,6 +1951,7 @@ public final class Extra {
 
     /**
      * Trnasforma um objeto em Double
+     *
      * @param object Objeto
      * @return Double (Decimal)
      */
@@ -1969,6 +1977,7 @@ public final class Extra {
 
     /**
      * Transforma para um Objeto para Float
+     *
      * @param object Objeto
      * @return Float (Decimal)
      */
@@ -1994,6 +2003,7 @@ public final class Extra {
 
     /**
      * Alias para toInteger()
+     *
      * @param object Objeto
      * @return Integer
      */
@@ -2019,6 +2029,7 @@ public final class Extra {
 
     /**
      * Transforma um Objeto em um Inteiro
+     *
      * @param object Objeto
      * @return Inteiro
      */
@@ -2053,6 +2064,7 @@ public final class Extra {
 
     /**
      * Transforma um objeto em Long
+     *
      * @param object Objeto
      * @return Long
      */
@@ -2077,6 +2089,7 @@ public final class Extra {
 
     /**
      * Transforma uma lista de objetos em uma lista de texto
+     *
      * @param list Lista de objetos
      * @return Lista de textos com cores funcionando
      */
@@ -2090,6 +2103,7 @@ public final class Extra {
 
     /**
      * Transforma um objeto em um short
+     *
      * @param object Objeto
      * @return Short
      */
@@ -2170,7 +2184,7 @@ public final class Extra {
     /**
      * Capitaliza uma Frase, deixa todas as primeiras letras de cada palavra em maiuscula
      *
-     * @param name Frase
+     * @param name     Frase
      * @param replacer O que será colocado entre as palavras
      * @return Frase capitalizada
      */
@@ -2238,9 +2252,10 @@ public final class Extra {
 
     /**
      * Tenta escrever no arquivo de varias maneiras até conseguir
-     * @param file Arquivo
+     *
+     * @param file  Arquivo
      * @param lines Linhas para escrever
-     * @exception Exception Não conseguiu escrever por falta de permissão
+     * @throws Exception Não conseguiu escrever por falta de permissão
      */
     public static void writeLines(File file, List<String> lines) {
         Path path = file.toPath();
