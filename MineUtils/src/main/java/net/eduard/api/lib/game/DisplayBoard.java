@@ -10,6 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * API de criação de Scoreboard feita para facilitar sua vida
@@ -22,7 +25,7 @@ import java.util.*;
  * @version 1.1
  */
 @SuppressWarnings("unused")
-public class DisplayBoard implements  Cloneable {
+public class DisplayBoard implements Cloneable {
 
 
     /**
@@ -45,8 +48,9 @@ public class DisplayBoard implements  Cloneable {
         getScoreboard();
     }
 
-    public static class DisplayBoardScrollPart implements  Cloneable{
+    public static class DisplayBoardScrollPart implements Cloneable {
         private List<String> lines = new ArrayList<>();
+
         public List<String> getLines() {
             return lines;
         }
@@ -56,13 +60,13 @@ public class DisplayBoard implements  Cloneable {
         DisplayBoardScroll scroll = new DisplayBoardScroll();
         scroll.setStartPosition(15 - getLines().size());
         for (int index = 0; index < size; index++) {
-            add("Scroll-"+index);
+            add("Scroll-" + index);
         }
         getScrolls().add(scroll);
         return scroll;
     }
 
-    public static class DisplayBoardScroll implements  Cloneable {
+    public static class DisplayBoardScroll implements Cloneable {
 
         private int startPosition = 15;
         private int ticks = 5;
@@ -107,7 +111,7 @@ public class DisplayBoard implements  Cloneable {
                 return null;
             }
             long duration = ticks * 50L;
-            long now =System.currentTimeMillis();
+            long now = System.currentTimeMillis();
             if (lastModification + duration < now) {
                 current++;
                 if (current >= parts.size()) {
@@ -121,18 +125,18 @@ public class DisplayBoard implements  Cloneable {
     }
 
 
-    public DisplayBoard clone()  {
-       try {
-           DisplayBoard clone = (DisplayBoard) super.clone();
-           clone.scoreboard = null;
-           clone.objective = null;
-           clone.health = null;
-           clone.getScoreboard();
-           return clone;
-       }catch (Exception ex){
-           ex.printStackTrace();
-       }
-       return null;
+    public DisplayBoard clone() {
+        try {
+            DisplayBoard clone = (DisplayBoard) super.clone();
+            clone.scoreboard = null;
+            clone.objective = null;
+            clone.health = null;
+            clone.getScoreboard();
+            return clone;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -286,31 +290,53 @@ public class DisplayBoard implements  Cloneable {
     public DisplayBoard copy() {
         return clone();
     }
-    private int toIndex(int position){
+
+    private int toIndex(int position) {
         return 15 - position;
     }
 
-    public void updateScrolls(){
+    public void updateScrolls() {
         for (DisplayBoardScroll scroll : getScrolls()) {
             DisplayBoardScrollPart part = scroll.get();
+            if (part == null) continue;
             int position = scroll.getStartPosition();
             for (String line : part.getLines()) {
                 getLines().set(toIndex(position), line);
                 position--;
             }
         }
+
     }
 
+    /**
+     * Método criado dia 25/03/21 para calcular lag de cada função desta classe
+     * @param name Nome da Funçõo
+     * @param action Runnable da Função
+     */
+    public void calc(String name, Runnable action) {
+        long start = System.currentTimeMillis();
+        action.run();
+        long end = System.currentTimeMillis();
+        long dif = end - start;
+        //System.out.println("[ScoreLag] " + name + ": " + dif + "ms");
+
+    }
+
+
     public void update(Player player) {
-        updateScrolls();
+
+        calc("updateScrools", this::updateScrolls);
+        calc("For for lines" ,  ()-> {
         int id = 15;
         for (String line : this.lines) {
             set(id, Mine.getReplacers(line, player));
             id--;
         }
+        });
+        calc("setDisplay", () ->  setDisplay(Mine.getReplacers(title, player)));
 
-        setDisplay(Mine.getReplacers(title, player));
-        removeTrash();
+       // calc("removeTrash", () ->   removeTrash());
+
     }
 
     public void update() {
@@ -330,8 +356,12 @@ public class DisplayBoard implements  Cloneable {
         objective.getScore(player).setScore(-1);
     }
 
+    /**
+     * No dia 25/03/2021 este método foi inutilizado pois dava bug de desempenho na Host Premium
+     * e versão do PaperSpigot 1.8.8
+     */
     protected void removeTrash() {
-        for (OfflinePlayer player : scoreboard.getPlayers()) {
+        for (String player : scoreboard.getEntries()) {
             if (objective.getScore(player).getScore() == -1) {
                 scoreboard.resetScores(player);
             }
