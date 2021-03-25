@@ -44,6 +44,10 @@ fun Player.addHotBar(item: ItemStack) {
     Mine.setHotBar(this, item)
 }
 
+/**
+ * Traduz os simbolos & para § <br>
+ * Alias para ChatColor.translateAlternateColorCodes
+ */
 fun String.colored(): String {
     return ChatColor.translateAlternateColorCodes('&', this)
 }
@@ -120,7 +124,9 @@ inline val FakePlayer.offline: PlayerUser
 inline val Player.fake: FakePlayer
     get() = FakePlayer(this)
 
-
+/**
+ * Expecifique se quem fez o comando é um player
+ */
 inline fun CommandSender.isPlayer(block: Player.() -> Unit) {
     if (Mine.onlyPlayer(this)) {
         block(this as Player)
@@ -159,6 +165,9 @@ inline val InventoryClickEvent.player get() = this.whoClicked as Player
 inline val InventoryOpenEvent.player get() = this.player as Player
 
 
+/**
+ * Cria um menu com DSL, parametros, nome, linhas, e DSL Block em seguida
+ */
 inline fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -> Unit): Inventory {
 
     val inventory = Bukkit.createInventory(this, 9 * lineAmount, name.cut(32))
@@ -170,6 +179,9 @@ inline fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -
 
 }
 
+/**
+ * Cria um item para o menu com DSQL< parametros posicao, e SQL Block
+ */
 inline fun Inventory.item(position: Int, block: ItemStack.() -> Unit): ItemStack {
 
     val item = ItemStack(Material.STONE)

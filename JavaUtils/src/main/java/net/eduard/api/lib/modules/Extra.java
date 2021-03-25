@@ -501,13 +501,9 @@ public final class Extra {
      * @author Eduard
      */
     public static String formatMoney(double numero) {
-
         List<String> classificacoes = Arrays.asList("", "k", "m", "b", "t", "q", "qq", "s", "ss", "O", "n", "d", "un", "dd", "td", "qd", "qqd", "sd", "ssd", "od", "nd", "vd");
         DecimalFormat formatador = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR")));
-
         String numeroFormatado = formatador.format(numero);
-
-
         String separador = "" + formatador.getDecimalFormatSymbols().getGroupingSeparator();
         if (separador.contains(".")) {
             separador = "\\.";
@@ -518,7 +514,6 @@ public final class Extra {
         if (tamanho <= 1) {
             return MONEY.format(numero);
         }
-
         String sigla = classificacoes.get(classificacoes.size() - 1);
         if (tamanho <= classificacoes.size()) {
             sigla = classificacoes.get(tamanho - 1);
@@ -532,26 +527,6 @@ public final class Extra {
 
     }
 
-
-    /**
-     * No dia 28/07/2019 o ViniOtaku#0666 passou este Metodo de formatacao<br>
-     * se usar formatMoney3(numero, 0)
-     *
-     * @param numero    Numero grandão
-     * @param iteration Interação em N
-     * @return Numero Formatado
-     * @deprecated Por alguma razão deu falhas no funcionamento mas funcionava bem
-     */
-    @Deprecated
-    public static String formatMoney3(double numero, int iteration) {
-        String[] letras = new String[]{"K", "M", "B", "Q", "QQ", "S", "SS", "O", "N", "D"};
-        double d = ((long) numero / 100D) / 10.0;
-        boolean isRound = (d * 10) % 10 == 0;
-
-
-        return d < 1000 ? (d > 99.9 || isRound || d > 9.99 ? (int) d : d + "") + " " + letras[iteration]
-                : formatMoney3(d, iteration + 1);
-    }
 
     /**
      * Cria uma formação de tempo muito melhor do que a DateFormat faz
@@ -717,7 +692,7 @@ public final class Extra {
 
                         lista.add(claz);
                     } catch (Error e) {
-                        System.out.println("Error on load " + classeName);
+                        System.out.println("[ClassNotFound]" + classeName);
                     }
 
                 }
@@ -1638,6 +1613,14 @@ public final class Extra {
         return new HashSet<>(Arrays.asList(array));
     }
 
+
+    /**
+     * Tenta parsear
+     * @param time Texto a ser parseado
+     * @param future Futuro?
+     * @return Tempo
+     * @throws Exception Pode falhar o Parseamento
+     */
     public static long parseDateDiff(String time, boolean future) throws Exception {
         Pattern timePattern = Pattern.compile(
                 "(?:([0-9]+)\\s*y[a-z]*[,\\s]*)?(?:([0-9]+)\\s*mo[a-z]*[,\\s]*)?(?:([0-9]+)\\s*w[a-z]*[,\\s]*)?(?:([0-9]+)\\s*d[a-z]*[,\\s]*)?(?:([0-9]+)\\s*h[a-z]*[,\\s]*)?(?:([0-9]+)\\s*m[a-z]*[,\\s]*)?(?:([0-9]+)\\s*(?:s[a-z]*)?)?",
