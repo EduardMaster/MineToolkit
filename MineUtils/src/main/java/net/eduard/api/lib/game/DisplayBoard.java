@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  * @version 1.1
  */
 @SuppressWarnings("unused")
-public class DisplayBoard implements Cloneable {
+public class DisplayBoard {
 
 
     /**
@@ -126,17 +126,8 @@ public class DisplayBoard implements Cloneable {
 
 
     public DisplayBoard clone() {
-        try {
-            DisplayBoard clone = (DisplayBoard) super.clone();
-            clone.scoreboard = null;
-            clone.objective = null;
-            clone.health = null;
-            clone.getScoreboard();
-            return clone;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
+
+        return copy();
     }
 
     /**
@@ -288,7 +279,23 @@ public class DisplayBoard implements Cloneable {
      * Returna uma Copia da Scoreboard
      */
     public DisplayBoard copy() {
-        return clone();
+        try {
+            DisplayBoard clone = new DisplayBoard();
+            clone.lines.clear();
+            clone.lines.addAll(this.lines);
+            clone.title = this.title;
+            System.out.println("Scoreboard sendo copiada");
+            clone.objective.unregister();
+            clone.scoreboard = null;
+            clone.objective = null;
+            clone.health = null;
+            System.out.println("Criando nova score");
+            clone.getScoreboard();
+            return clone;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     private int toIndex(int position) {
@@ -335,7 +342,7 @@ public class DisplayBoard implements Cloneable {
         });
         calc("setDisplay", () ->  setDisplay(Mine.getReplacers(title, player)));
 
-       // calc("removeTrash", () ->   removeTrash());
+        calc("removeTrash", () ->   removeTrash());
 
     }
 
@@ -376,10 +383,14 @@ public class DisplayBoard implements Cloneable {
                 this.texts = new HashMap<>();
 
                 scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-                objective = scoreboard.registerNewObjective("displayBoard", "dummy");
+                objective = scoreboard.registerNewObjective(Extra.newKey(Extra.KeyType.LETTER,16), "dummy");
                 objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+                System.out.println("Objetivo criado "+objective.getName());
+                System.out.println("Objetivo display criado "+objective.getDisplayName());
                 if (healthBarEnabled) {
-                    health = scoreboard.registerNewObjective("HealthBar", Criterias.HEALTH);
+                    health = scoreboard.registerNewObjective("Bar"+Extra.newKey(Extra.KeyType.LETTER,13), Criterias.HEALTH);
+                    System.out.println("HealthBar "+health.getName());
+                    System.out.println("HealthBarDisplay "+health.getDisplayName());
                     health.setDisplaySlot(DisplaySlot.BELOW_NAME);
                 }
                 for (int id = 15; id > 0; id--) {

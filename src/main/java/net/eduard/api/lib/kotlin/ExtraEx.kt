@@ -30,8 +30,8 @@ fun Long.formatHour() = Extra.FORMAT_TIME.format(this)
 /**
  * Formata o numero no formato OP
  */
-fun Number.format(formatOP: Boolean = true) {
-    if (formatOP) Extra.formatMoney(this.toDouble())
+fun Number.format(formatOP: Boolean = true): String{
+    return if (formatOP) Extra.formatMoney(this.toDouble())
     else Extra.MONEY.format(this)
 }
 

@@ -410,9 +410,10 @@ open class Menu(
 
             var position = button.index
 
-            if (position >= getSlotLimit()) {
-                position = 0
-            }
+            if (!button.fixed)
+                if (position >= getSlotLimit()) {
+                    position = 0
+                }
             var icon = button.getIcon(player)
             if (isTranslateIcon) {
                 icon = Mine.getReplacers(icon, player)

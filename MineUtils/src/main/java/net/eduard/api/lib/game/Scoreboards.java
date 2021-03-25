@@ -79,6 +79,9 @@ public class Scoreboards {
 
     }
 
+    /**
+     * Método parecido com do removeTrash do DisplayBoard
+     */
     public void clearScoreboard() {
         for (OfflinePlayer fake : scoreboard.getPlayers()) {
             Score score = objective.getScore(fake);

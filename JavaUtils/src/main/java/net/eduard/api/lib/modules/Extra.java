@@ -167,11 +167,10 @@ public final class Extra {
     }
 
 
-    /**
-     * Instancia da classe DecimalFormat para o PT-BR
-     */
     public static DecimalFormat MONEY = new DecimalFormat("###,###.##",
             DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));
+    public static List<String> MONEY_OP_CLASSES = Arrays.asList("", "k", "m", "b", "t", "q", "qq", "s", "ss", "o", "n", "d", "un", "dd", "td", "qd", "qqd", "sd", "ssd", "od", "nd", "vd");
+    public static DecimalFormat MONEY_OP_FORMATER = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR")));
 
     public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
     public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
@@ -459,9 +458,8 @@ public final class Extra {
 
 
         text = text.toLowerCase();
-        List<String> classificacoes = Arrays.asList("k", "m", "b", "t", "q", "qq", "s", "ss", "O", "n", "d", "un", "dd", "td", "qd", "qqd", "sd", "ssd", "od", "nd", "vd");
-        for (int i = classificacoes.size() - 1; i >= 0; i--) {
-            String sigla = classificacoes.get(i);
+        for (int i = MONEY_OP_CLASSES.size() - 1; i >= 0; i--) {
+            String sigla = MONEY_OP_CLASSES.get(i);
             if (text.endsWith(sigla)) {
                 text = text.replace(sigla, "");
 
@@ -501,10 +499,10 @@ public final class Extra {
      * @author Eduard
      */
     public static String formatMoney(double numero) {
-        List<String> classificacoes = Arrays.asList("", "k", "m", "b", "t", "q", "qq", "s", "ss", "O", "n", "d", "un", "dd", "td", "qd", "qqd", "sd", "ssd", "od", "nd", "vd");
-        DecimalFormat formatador = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR")));
-        String numeroFormatado = formatador.format(numero);
-        String separador = "" + formatador.getDecimalFormatSymbols().getGroupingSeparator();
+
+
+        String numeroFormatado = MONEY_OP_FORMATER.format(numero);
+        String separador = "" + MONEY_OP_FORMATER.getDecimalFormatSymbols().getGroupingSeparator();
         if (separador.contains(".")) {
             separador = "\\.";
         }
@@ -514,13 +512,13 @@ public final class Extra {
         if (tamanho <= 1) {
             return MONEY.format(numero);
         }
-        String sigla = classificacoes.get(classificacoes.size() - 1);
-        if (tamanho <= classificacoes.size()) {
-            sigla = classificacoes.get(tamanho - 1);
+        String sigla = MONEY_OP_CLASSES.get(MONEY_OP_CLASSES.size() - 1);
+        if (tamanho <= MONEY_OP_CLASSES.size()) {
+            sigla = MONEY_OP_CLASSES.get(tamanho - 1);
         }
         try {
-            Number numeroFinal = formatador.parse(conjuntoDeTresCasas[0] + formatador.getDecimalFormatSymbols().getDecimalSeparator() + conjuntoDeTresCasas[1]);
-            return formatador.format(numeroFinal) + sigla.toUpperCase();
+            Number numeroFinal = MONEY_OP_FORMATER.parse(conjuntoDeTresCasas[0] + MONEY_OP_FORMATER.getDecimalFormatSymbols().getDecimalSeparator() + conjuntoDeTresCasas[1]);
+            return MONEY_OP_FORMATER.format(numeroFinal) + sigla;
         } catch (Exception ex) {
             return "-1.0";
         }
