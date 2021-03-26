@@ -2,8 +2,10 @@ package net.eduard.api.lib.score
 
 import net.eduard.api.lib.abstraction.PlayerScore
 import net.eduard.api.lib.kotlin.cut
+import net.eduard.api.lib.modules.Mine
 import java.util.HashMap
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Scoreboard
 import java.lang.Exception
@@ -36,7 +38,7 @@ open class DisplayBoard(
     constructor(title: String, vararg lines: String) : this(title, lines.toMutableList())
 
     var customLines = mutableListOf<DisplayBoardLine>()
-    lateinit var customTitle: DisplayBoardLine
+    var customTitle: DisplayBoardLine? = null
 
     @Transient
     lateinit var score: PlayerScore
@@ -62,20 +64,20 @@ open class DisplayBoard(
             set(id, line)
             id--
         }
+        if (customTitle!= null){
+            score.setTitle(customTitle!!.text)
+        }
 
     }
 
     fun update() {
-        //updateScrolls()
-
+        if (!hasScore())return
         var id = 15
         for (line in lines) {
-            set(id, line)
+            set(id, Mine.getReplacers(line, score.player))
             id--
         }
 
-        // setT Mine.getReplacers(title, player) }
-        //  calc("removeTrash") { removeTrash() }
     }
 
     fun setHealthBar(health: String) {
@@ -85,19 +87,20 @@ open class DisplayBoard(
         score.setLine(line, prefix, center, suffix)
     }
     fun copy() : DisplayBoard {
-        return this
+        val newScore = DisplayBoard(this.title,  this.lines.toMutableList())
+        return newScore
     }
     fun clone() : DisplayBoard {
-        return this
+        return copy()
     }
     open fun updateHealthBar(player: Player) {
 
     }
     open fun empty(slot: Int) {
-
+        set(slot, "§f"+ChatColor.values()[slot-1])
     }
     fun update(player : Player ) {
-
+        update()
     }
     var healthBarEnabled = false
     open fun getDisplay(): String {
@@ -115,7 +118,7 @@ open class DisplayBoard(
     }
 
     open fun add(line: String) {
-
+        this.lines.add(line)
     }
 
     /**
@@ -134,15 +137,12 @@ open class DisplayBoard(
     }
 
     operator fun set(slot: Int, line: String): Boolean {
-        println("Aew")
         if (!hasScore()) return false
-        println("Teste1")
         var text = line
         val id = id(slot)
 
 
         if (line == cache[id]) {
-            println("Teste3")
             // Não vai atualizar pois é a mesma
             return true
         }

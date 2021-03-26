@@ -1,6 +1,6 @@
 package net.eduard.api.lib.score
 
-interface DisplayBoardLine {
+interface DisplayBoardLine : Cloneable{
     var text : String
     var position : Int
 
