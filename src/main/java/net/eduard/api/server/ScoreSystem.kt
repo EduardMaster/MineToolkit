@@ -1,6 +1,6 @@
 package net.eduard.api.server
 
-import net.eduard.api.lib.game.DisplayBoard
+import net.eduard.api.lib.score.DisplayBoard
 import org.bukkit.entity.Player
 
 

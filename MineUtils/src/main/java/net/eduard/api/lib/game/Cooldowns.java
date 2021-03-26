@@ -1,8 +1,9 @@
 package net.eduard.api.lib.game;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,41 +11,17 @@ import java.util.UUID;
 
 /**
  * API de criação de Cooldown para Habilidades e Kits
- * 
+ * <ul>
+ *     <li>v1.1 Não usa mais CooldownEvent (Deletado) agora usa BukkitTask</li>
+ * </ul>
  * @author Eduard
- * @version 1.0
- * @since Lib v1.0
+ * @version 1.1
+ * @since EduardAPI v0.2
  *
  */
 @SuppressWarnings("unused")
 public abstract class Cooldowns {
-	public static abstract class CooldownEvent extends BukkitRunnable {
 
-		public CooldownEvent(long cooldownTime) {
-			setStartTime(System.currentTimeMillis());
-			setCooldownTime(cooldownTime);
-		}
-
-		private long cooldownTime;
-		private long startTime;
-
-		public long getStartTime() {
-			return startTime;
-		}
-
-		public void setStartTime(long startTime) {
-			this.startTime = startTime;
-		}
-
-		public long getCooldownTime() {
-			return cooldownTime;
-		}
-
-		public void setCooldownTime(long cooldownTime) {
-			this.cooldownTime = cooldownTime;
-		}
-
-	}
 
 	/**
 	 * Tempo de Cooldown<br>
@@ -58,8 +35,8 @@ public abstract class Cooldowns {
 	 * KEY = UUID = Id do Jogador<br>
 	 * VALUE = CooldownEvent = Evento do Cooldown<br>
 	 */
-	private final Map<UUID, CooldownEvent> cooldowns = new HashMap<>();
-
+	private final Map<UUID, BukkitTask> cooldowns = new HashMap<>();
+	private final Map<UUID, Long> cooldownsStart = new HashMap<>();
 	/**
 	 * Metodo abstrato para oque vai acontecer quando sair do Cooldown
 	 * 
@@ -118,23 +95,19 @@ public abstract class Cooldowns {
 	public void setOnCooldown(Player player) {
 		removeFromCooldown(player);
 		onStartCooldown(player);
-		CooldownEvent event = new CooldownEvent(ticks) {
-
-			@Override
-			public void run() {
-				removeFromCooldown(player);
-			}
-
-		};
-		event.runTaskLater(getPlugin(), ticks);
-		cooldowns.put(player.getUniqueId(), event);
+		BukkitTask task = Bukkit.getScheduler().runTaskLaterAsynchronously(getPlugin(), () ->{
+			removeFromCooldown(player);
+		}, ticks);
+		cooldowns.put(player.getUniqueId(), task);
+		cooldownsStart.put(player.getUniqueId() , System.currentTimeMillis());
 	}
 
 	public int getCooldown(Player player) {
 		if (onCooldown(player)) {
-			CooldownEvent cooldown = cooldowns.get(player.getUniqueId());
-			int result = (int) ((-cooldown.getStartTime() + System.currentTimeMillis()) / 1000);
-			return (int) (cooldown.getCooldownTime() - result);
+			BukkitTask cooldown = cooldowns.get(player.getUniqueId());
+			long start = cooldownsStart.get(player.getUniqueId());
+			int result = (int) ((-start + System.currentTimeMillis()) / 1000);
+			return (int) (start - result);
 		}
 		return -1;
 	}

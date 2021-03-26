@@ -16,16 +16,31 @@ import java.util.List;
  * Isso não mudou em nada dentro dela então a versão dela ainda é 1.0
  * Nomes Antigos em ordem crescente:
  * <br>
- * - net.eduard.craft.CraftSetup1
- * - net.eduard_api.game.craft.Crafts
- * - net.eduard.eduard_api.game.craft.simples.Craft
- * - net.eduard.eduard_api.game.craft.CraftSimples
- * - net.eduard.api.gui.SimpleCraft
- * - net.eduard.api.setup.Mine$SimpleCraft
+ *    <ol>
+ *        <li>
+ *            net.eduard.craft.CraftSetup1
+ *        </li>
+ *        <li>
+ *            net.eduard_api.game.craft.Crafts
+ *        </li>
+ * <li>
+ * net.eduard.eduard_api.game.craft.simples.Craft
+ * </li>
+ * <li>
+ * net.eduard.eduard_api.game.craft.CraftSimples
+ * </li>
+ * <li>
+ * net.eduard.api.gui.SimpleCraft
+ * </li>
+ * <li>
+ * net.eduard.api.setup.Mine$SimpleCraft
+ * </li>
+ *    </ol>
+
  *
  * @author Eduard
  * @version 1.0
- * @since 1.0
+ * @since EduardAPI v0.1
  */
 @SuppressWarnings("unused")
 public class SimpleRecipe {

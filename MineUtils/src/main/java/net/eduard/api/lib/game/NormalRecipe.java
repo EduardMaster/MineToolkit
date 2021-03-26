@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 /**
  * API de criação de Craft predefinido com Slots e Items expecificos
  * @version 1.0
- * @since 1.0 
+ * @since EduardAPI v0.1
  * @author Eduard
  * @see SimpleRecipe
  */

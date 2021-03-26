@@ -1,6 +1,6 @@
 package net.eduard.api.lib.event
 
-import net.eduard.api.lib.game.DisplayBoard
+import net.eduard.api.lib.score.DisplayBoard
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList

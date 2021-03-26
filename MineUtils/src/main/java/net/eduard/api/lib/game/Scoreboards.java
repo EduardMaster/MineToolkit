@@ -1,9 +1,7 @@
 package net.eduard.api.lib.game;
 
-import net.eduard.api.lib.modules.FakePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.*;
 
 import java.util.HashMap;
@@ -12,17 +10,27 @@ import java.util.Map;
 /**
  * API de Scoreboard com menas opções que DisplayBoard,
  * mais funciona muito bem.
+ * <p>
+ * Updates</p>
+ * <ul>
+ *     <li>v1.1 Scoreboard tem cache não atualiza se não precisa e desativado suporte a 1.7</li>
+ * </ul>
  *
  * @author Eduard
- * @version 1.0
+ * @version 1.1
  */
-@SuppressWarnings("deprecation")
+
 public class Scoreboards {
-    private Scoreboard scoreboard;
-    private Objective objective;
-    public Scoreboards(){
+    private final Scoreboard scoreboard;
+    private final Objective objective;
+    private final Map<Integer, String> scores = new HashMap<>();
+    private final Map<Integer, Team> teams = new HashMap<>();
+
+    public Scoreboards() {
+        this("Scoreboard simples");
 
     }
+
     public Scoreboards(String title) {
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         objective = scoreboard.registerNewObjective("scoreboard", "dummy");
@@ -51,8 +59,6 @@ public class Scoreboards {
         return scoreboard;
     }
 
-    private final Map<Integer, OfflinePlayer> fakes = new HashMap<>();
-    private final Map<Integer, Team> teams = new HashMap<>();
 
     public static String cutText(String text, int lenght) {
         return text.length() > lenght ? text.substring(0, lenght) : text;
@@ -63,31 +69,26 @@ public class Scoreboards {
         center = cutText(center, 40);
         suffix = cutText(suffix, 16);
         Team team = teams.get(line);
-        if (fakes.containsKey(line)) {
-            OfflinePlayer fake = fakes.get(line);
-            team.removePlayer(fake);
-            objective.getScore(fake).setScore(-1);
-
+        boolean alreadyHave = true;
+        if (scores.containsKey(line)) {
+            if (!center.equals(scores.get(line))) {
+                team.removeEntry(scores.get(line));
+                alreadyHave = false;
+            }
+        } else {
+            alreadyHave = false;
         }
-        FakePlayer fake = new FakePlayer(center);
-        objective.getScore(fake).setScore(line);
-        fakes.put(line, fake);
-        team.addPlayer(fake);
+
+        if (!alreadyHave) {
+            objective.getScore(center).setScore(line);
+            scores.put(line, center);
+            team.addEntry(center);
+        }
         team.setSuffix(suffix);
         team.setPrefix(prefix);
-        clearScoreboard();
+
 
     }
 
-    /**
-     * Método parecido com do removeTrash do DisplayBoard
-     */
-    public void clearScoreboard() {
-        for (OfflinePlayer fake : scoreboard.getPlayers()) {
-            Score score = objective.getScore(fake);
-            if (score.getScore() == -1)
-                scoreboard.resetScores(fake);
-        }
-    }
 
 }

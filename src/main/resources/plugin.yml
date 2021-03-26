@@ -1,7 +1,7 @@
 name: "EduardAPI"
 description: "API de desenvolvimento de plugins que facilita sua vida"
 main: "net.eduard.api.EduardAPIMain"
-version: "1.0"
+version: "1.7.6"
 author: "Eduard"
 authors: ["Eduard"]
 softdepend: [Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]

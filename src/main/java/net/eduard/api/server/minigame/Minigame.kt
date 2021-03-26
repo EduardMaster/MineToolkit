@@ -4,12 +4,12 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 
 import net.eduard.api.lib.manager.TimeManager
-import net.eduard.api.lib.game.DisplayBoard
 import net.eduard.api.lib.kotlin.reloadListFromFolder
 import net.eduard.api.lib.kotlin.saveListInFolder
 import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.score.DisplayBoard
 import net.eduard.api.lib.storage.annotations.StorageIndex
 import java.io.File
 

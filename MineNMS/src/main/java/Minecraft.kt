@@ -86,12 +86,8 @@ abstract class Minecraft {
          *
          * @return Instancia feita com Reflection
          */
-        lateinit var instance: Minecraft
-
-        init{
-            instance = Class.forName("net.eduard.api.lib.abstraction.Minecraft_" + getVersion())
-                .newInstance() as Minecraft
-        }
+        var instance: Minecraft = Class.forName("net.eduard.api.lib.abstraction.Minecraft_" + getVersion())
+            .newInstance() as Minecraft
 
     }
 }
