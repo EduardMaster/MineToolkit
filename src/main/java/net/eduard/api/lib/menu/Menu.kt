@@ -418,9 +418,11 @@ open class Menu(
             if (isTranslateIcon) {
                 icon = Mine.getReplacers(icon, player)
             }
-            val data = MineReflect.getData(icon)
-            data.setString("button-name", button.name)
-            icon = MineReflect.setData(icon, data)
+            if (button.click != null) {
+                val data = MineReflect.getData(icon)
+                data.setString("button-name", button.name)
+                icon = MineReflect.setData(icon, data)
+            }
             menu.setItem(position, icon)
         }
 

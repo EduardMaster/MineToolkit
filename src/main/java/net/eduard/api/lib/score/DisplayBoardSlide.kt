@@ -34,7 +34,7 @@ class DisplayBoardSlide : DisplayBoardLine {
     }
 
     override var position: Int
-        get() = position
+        get() = current
         set(value) {}
 
 }

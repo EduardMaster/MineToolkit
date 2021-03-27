@@ -60,6 +60,10 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     override fun error(message: String) {
        console("§c$message")
     }
+    override fun onLoad(){
+        StorageAPI.setDebug(false)
+        super.onLoad()
+    }
 
     override fun reload() {
         log("Inicio do Recarregamento do EduardAPI")
@@ -112,8 +116,8 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     }
 
     override fun onEnable() {
+        StorageAPI.setDebug(false)
 
-        super.onLoad()
 
         BungeeAPI.bungee.register(plugin)
         reload()

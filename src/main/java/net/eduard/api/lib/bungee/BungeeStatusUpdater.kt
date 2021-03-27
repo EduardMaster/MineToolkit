@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream
 import java.io.IOException
 
 class BungeeStatusUpdater : Runnable {
+
     override fun run() {
         updateServers()
     }
@@ -38,9 +39,9 @@ class BungeeStatusUpdater : Runnable {
                 if (!server.changed) continue
                 server.changed = false
                 try {
-                    ProxyServer.getInstance().console.sendMessage(
-                        TextComponent("§aEnviando updates do Servidor " + server.name + " para todos servidores")
-                    )
+                   // ProxyServer.getInstance().console.sendMessage(
+                    //    TextComponent("§aEnviando updates do Servidor " + server.name + " para todos servidores")
+                    //)
                     val arrayOut = ByteArrayOutputStream()
                     val out = ObjectOutputStream(arrayOut)
                     out.writeUTF(server.name)
