@@ -1,11 +1,15 @@
 package net.eduard.api.lib.score
 
 import net.eduard.api.lib.abstraction.PlayerScore
+import net.eduard.api.lib.kotlin.copy
 import net.eduard.api.lib.kotlin.cut
 import net.eduard.api.lib.modules.Mine
+import net.minecraft.server.v1_8_R3.ScoreboardServer
 import java.util.HashMap
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboard
+import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboardManager
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Scoreboard
 import java.lang.Exception
@@ -58,54 +62,64 @@ open class DisplayBoard(
         score = PlayerScore.getScore(player)
         score.removeAllLines()
         score.removeAllTeams()
-        score.setTitle(title)
-        var id = 15
-        for (line in lines) {
-            set(id, line)
-            id--
-        }
-        if (customTitle!= null){
-            score.setTitle(customTitle!!.text)
-        }
+        update()
 
     }
 
     fun update() {
-        if (!hasScore())return
+        if (!hasScore()) return
         var id = 15
         for (line in lines) {
             set(id, Mine.getReplacers(line, score.player))
             id--
         }
 
+        for (line in customLines) {
+            line.check()
+            set(line.position, Mine.getReplacers(line.text, score.player))
+        }
+        customTitle?.check()
+        setDisplay(customTitle?.text ?: title)
     }
 
     fun setHealthBar(health: String) {
 
     }
+
     open fun setLine(prefix: String, center: String, suffix: String, line: Int) {
         score.setLine(line, prefix, center, suffix)
     }
-    fun copy() : DisplayBoard {
-        val newScore = DisplayBoard(this.title,  this.lines.toMutableList())
+
+    fun copy(): DisplayBoard {
+        val newScore = DisplayBoard(this.title, this.lines.toMutableList())
+        for(customLine in this.customLines){
+            newScore.customLines.add(customLine.copy())
+        }
         return newScore
     }
-    fun clone() : DisplayBoard {
+
+    fun clone(): DisplayBoard {
         return copy()
     }
+
+
     open fun updateHealthBar(player: Player) {
 
     }
+
     open fun empty(slot: Int) {
-        set(slot, "§f"+ChatColor.values()[slot-1])
+        set(slot, "§f" + ChatColor.values()[slot - 1])
     }
-    fun update(player : Player ) {
+
+    fun update(player: Player) {
         update()
     }
+
     var healthBarEnabled = false
     open fun getDisplay(): String {
         return score.getTitle()
     }
+
     open fun setDisplay(name: String) {
         score.setTitle(name)
     }
@@ -140,6 +154,10 @@ open class DisplayBoard(
         if (!hasScore()) return false
         var text = line
         val id = id(slot)
+
+        if (line.trim().isEmpty()){
+            text = "§f"+ChatColor.values()[id-1]
+        }
 
 
         if (line == cache[id]) {

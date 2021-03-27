@@ -1,23 +1,33 @@
 package net.eduard.api.lib.score
 
 
+class DisplayBoardSlide(
+    var durationTicks: Long = 1L,
+    var versions: MutableList<String> = mutableListOf(),
+    override var position: Int = 1
+) : DisplayBoardLine {
 
-class DisplayBoardSlide : DisplayBoardLine {
+    constructor(durationTicks: Long=1, position: Int=15, vararg versions: String) : this(
+        durationTicks,
+        versions.toMutableList(),
+        position
+    )
+
     @Transient
     private var lastModification: Long = 0
 
     @Transient
     var current = 0
-    var durationTicks = 1L;
-    var versions = mutableListOf<String>()
+
+
     override var text: String
         get() = versions[current]
         set(value) {
-
+            versions.add(value)
         }
 
 
-    fun check() {
+    override fun check() {
         if (versions.isEmpty()) {
             return
         }
@@ -33,8 +43,6 @@ class DisplayBoardSlide : DisplayBoardLine {
 
     }
 
-    override var position: Int
-        get() = current
-        set(value) {}
+
 
 }
