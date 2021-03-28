@@ -295,9 +295,9 @@ class MinigameSchematic(var name: String = "Mapinha") {
             dataWriter.writeInt(byteArrayWriter.size())
             dataWriter.write(byteArrayWriter.toByteArray())
             byteArrayDataWriter.close()
-            dataWriter.writeUTF(Mine.saveVector(low))
-            dataWriter.writeUTF(Mine.saveVector(high))
-            dataWriter.writeUTF(Mine.saveVector(relative))
+            dataWriter.writeUTF(Mine.serializeVector(low))
+            dataWriter.writeUTF(Mine.serializeVector(high))
+            dataWriter.writeUTF(Mine.serializeVector(relative))
             dataWriter.flush()
             dataWriter.close()
         } catch (e: Exception) {
@@ -331,9 +331,9 @@ class MinigameSchematic(var name: String = "Mapinha") {
                 block.data = arrayDataReader.readByte()
 
             }
-            low = Mine.toVector(dataReader.readUTF())
-            high = Mine.toVector(dataReader.readUTF())
-            relative = Mine.toVector(dataReader.readUTF())
+            low = Mine.deserializeVector(dataReader.readUTF())
+            high = Mine.deserializeVector(dataReader.readUTF())
+            relative = Mine.deserializeVector(dataReader.readUTF())
             dataReader.close()
         } catch (e: Exception) {
             e.printStackTrace()

@@ -2908,26 +2908,6 @@ public final class Mine {
         return item;
     }
 
-    public static void resetScoreboard(Player player) {
-        player.setScoreboard(Mine.getMainScoreboard());
-    }
-    // Parei aqui
-
-    public static void resetScoreboards() {
-
-        for (Team teams : getMainScoreboard().getTeams()) {
-            teams.unregister();
-        }
-        for (Objective objective : getMainScoreboard().getObjectives()) {
-            objective.unregister();
-        }
-        for (Player player : Mine.getPlayers()) {
-            player.setScoreboard(getMainScoreboard());
-            player.setMaxHealth(20);
-            player.setHealth(20);
-            player.setHealthScaled(false);
-        }
-    }
 
 
     public static void runCommand(String command) {
@@ -2962,7 +2942,7 @@ public final class Mine {
      * @param vector Vector
      * @return Texto gerado
      */
-    public static String saveVector(Vector vector) {
+    public static String serializeVector(Vector vector) {
         return vector.getX() + "," +
                 vector.getY() + "," +
                 vector.getZ();
@@ -2974,7 +2954,7 @@ public final class Mine {
      * @param text Texto
      * @return Vector gerado
      */
-    public static Vector toVector(String text) {
+    public static Vector deserializeVector(String text) {
         String[] split = text.split(",");
         double x = Double.parseDouble(split[0]);
         double y = Double.parseDouble(split[1]);
@@ -2994,8 +2974,8 @@ public final class Mine {
     }
 
 
-    public static void sendAll(Player p, String message) {
-        broadcast(getReplacers(message, p));
+    public static void sendAll(Player player, String message) {
+        broadcast(getReplacers(message, player));
 
     }
 

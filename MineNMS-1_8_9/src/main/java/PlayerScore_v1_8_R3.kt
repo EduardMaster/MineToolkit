@@ -14,17 +14,38 @@ class PlayerScore_v1_8_R3(override var player: Player) : PlayerScore {
     private val objective = score.registerObjective("PerPlayerScore", IScoreboardCriteria.b);
     private val scores = mutableMapOf<Int, ScoreboardScore>()
     private val teams = mutableMapOf<Int, ScoreboardTeam>()
+    private val playersPosition = mutableMapOf<String, Int>()
     private val playersTeam = mutableMapOf<String, ScoreboardTeam>()
 
     init {
+
+
+    }
+    override fun rebuild(){
+        for (line in scores.values){
+            sendPacket(PacketPlayOutScoreboardScore(line.playerName, objective))
+        }
+        for (team in teams.values){
+            sendPacket(PacketPlayOutScoreboardTeam(team , 1))
+        }
+        for (team in playersTeam.values){
+            sendPacket(PacketPlayOutScoreboardTeam(team , 1))
+        }
         remove()
         create()
+        for (line in scores.values){
+            sendPacket(PacketPlayOutScoreboardScore(line))
+        }
+        for (team in teams.values){
+            sendPacket(PacketPlayOutScoreboardTeam(team , 0))
+        }
         show()
+        /*
         for (lineId in 1 until 16) {
             setLine(lineId, Extra.newKey(Extra.KeyType.LETTER, 16))
         }
         setTitle("§aTitulo da Score")
-
+         */
     }
     fun sendPacket(packet : Packet<*>){
         (player as CraftPlayer).handle.playerConnection.sendPacket(packet)
@@ -43,7 +64,7 @@ class PlayerScore_v1_8_R3(override var player: Player) : PlayerScore {
                 team.playerNameSet.remove(score.playerName)
 
             }
-          sendPacket(PacketPlayOutScoreboardScore(score.playerName))
+             sendPacket(PacketPlayOutScoreboardScore(score.playerName,objective))
             scores.remove(lineID)
         }
     }
@@ -120,8 +141,9 @@ class PlayerScore_v1_8_R3(override var player: Player) : PlayerScore {
     }
 
     override fun hide() {
+        sendPacket(PacketPlayOutScoreboardDisplayObjective(0, null))
         sendPacket(PacketPlayOutScoreboardDisplayObjective(1, null))
-
+        sendPacket(PacketPlayOutScoreboardDisplayObjective(2, null))
     }
 
     override fun show() {
@@ -172,10 +194,10 @@ class PlayerScore_v1_8_R3(override var player: Player) : PlayerScore {
         }
         var team = playersTeam[playerName.toLowerCase()]
         if (team == null){
-            team = score.createTeam(playerName)
+            val position = playersPosition[playerName.toLowerCase()]?:10
+            team = score.createTeam("$position$playerName".cut(16))
             team.prefix = prefix.cut(16)
             team.suffix = suffix.cut(16)
-            team!!.displayName = "0$playerName".cut(16)
             team.playerNameSet.add(playerName)
             playersTeam[playerName.toLowerCase()] = team
             sendPacket(PacketPlayOutScoreboardTeam(team, 0))
@@ -189,10 +211,17 @@ class PlayerScore_v1_8_R3(override var player: Player) : PlayerScore {
     }
 
     override fun setPlayerTagPosition(playerName: String, position: Int) {
-        val team = playersTeam[playerName.toLowerCase()]
-        if (team != null){
-            team.displayName = "$position$playerName".cut(16)
-            sendPacket(PacketPlayOutScoreboardTeam(team, 2))
+        playersPosition[playerName.toLowerCase()] = position
+        val teamOriginal = playersTeam[playerName.toLowerCase()]
+        if (teamOriginal != null){
+            sendPacket(PacketPlayOutScoreboardTeam(teamOriginal, 1))
+            score.removeTeam(teamOriginal)
+            val team = score.createTeam("$position$playerName".cut(16))
+            playersTeam[playerName.toLowerCase()] = team
+            team.prefix = teamOriginal.prefix
+            team.suffix = teamOriginal.suffix
+            team.playerNameSet.add(playerName)
+            sendPacket(PacketPlayOutScoreboardTeam(team, 0))
         }
     }
 

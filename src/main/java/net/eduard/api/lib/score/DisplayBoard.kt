@@ -45,9 +45,9 @@ open class DisplayBoard(
     var customTitle: DisplayBoardLine? = null
 
     @Transient
-    lateinit var score: PlayerScore
+    var score: PlayerScore? = null
 
-    fun hasScore() = this::score.isInitialized
+    fun hasScore() = score != null
 
     @Transient
     private var cache: MutableMap<Int, String> = HashMap()
@@ -58,10 +58,12 @@ open class DisplayBoard(
      * @param player Jogador
      */
     fun apply(player: Player) {
-        player.resetScore()
         score = PlayerScore.getScore(player)
-        score.removeAllLines()
-        score.removeAllTeams()
+        score!!.player = player
+        score!!.removeAllLines()
+        score!!.removeAllTeams()
+        cache.clear()
+        score!!.rebuild()
         update()
 
     }
@@ -70,13 +72,13 @@ open class DisplayBoard(
         if (!hasScore()) return
         var id = 15
         for (line in lines) {
-            set(id, Mine.getReplacers(line, score.player))
+            set(id, Mine.getReplacers(line, score!!.player))
             id--
         }
 
         for (line in customLines) {
             line.check()
-            set(line.position, Mine.getReplacers(line.text, score.player))
+            set(line.position, Mine.getReplacers(line.text, score!!.player))
         }
         customTitle?.check()
         setDisplay(customTitle?.text ?: title)
@@ -87,7 +89,7 @@ open class DisplayBoard(
     }
 
     open fun setLine(prefix: String, center: String, suffix: String, line: Int) {
-        score.setLine(line, prefix, center, suffix)
+        score!!.setLine(line, prefix, center, suffix)
     }
 
     fun copy(): DisplayBoard {
@@ -95,6 +97,7 @@ open class DisplayBoard(
         for(customLine in this.customLines){
             newScore.customLines.add(customLine.copy())
         }
+
         return newScore
     }
 
@@ -117,11 +120,11 @@ open class DisplayBoard(
 
     var healthBarEnabled = false
     open fun getDisplay(): String {
-        return score.getTitle()
+        return score!!.getTitle()
     }
 
     open fun setDisplay(name: String) {
-        score.setTitle(name)
+        score!!.setTitle(name)
     }
 
     fun getScoreboard()
@@ -135,15 +138,6 @@ open class DisplayBoard(
         this.lines.add(line)
     }
 
-    /**
-     * Tenta definir a score padrão do servidor
-     */
-    private fun Player.resetScore() {
-        try {
-            scoreboard = Bukkit.getScoreboardManager().mainScoreboard
-        } catch (er: Exception) {
-        }
-    }
 
 
     private fun id(slot: Int): Int {
@@ -167,7 +161,7 @@ open class DisplayBoard(
         val prefixLimit = 16
         val suffixLimit = 16
         // 16 + 40 + 16 = Tamanho maximo de uma linha
-        text = text.cut(prefixLimit + score.getNameLimit() + suffixLimit)
+        text = text.cut(prefixLimit + score!!.getNameLimit() + suffixLimit)
 
 
         var prefix = ""
@@ -176,18 +170,18 @@ open class DisplayBoard(
 
         var suffix = ""
 
-        if (text.length <= score.getNameLimit()) {
+        if (text.length <= score!!.getNameLimit()) {
             center = text
-        } else if (text.length <= score.getNameLimit() + prefixLimit) {
-            center = text.substring(0, score.getNameLimit())
-            suffix = text.substring(score.getNameLimit())
-        } else if (text.length <= (score.getNameLimit() + prefixLimit + suffixLimit)) {
+        } else if (text.length <= score!!.getNameLimit() + prefixLimit) {
+            center = text.substring(0, score!!.getNameLimit())
+            suffix = text.substring(score!!.getNameLimit())
+        } else if (text.length <= (score!!.getNameLimit() + prefixLimit + suffixLimit)) {
             prefix = text.substring(0, prefixLimit)
-            center = text.substring(prefixLimit, prefixLimit + score.getNameLimit() - 1)
-            suffix = text.substring(prefixLimit + score.getNameLimit())
+            center = text.substring(prefixLimit, prefixLimit + score!!.getNameLimit() - 1)
+            suffix = text.substring(prefixLimit + score!!.getNameLimit())
         }
         cache[id] = text
-        score.setLine(id, prefix, center, suffix)
+        score!!.setLine(id, prefix, center, suffix)
         return true
     }
 
@@ -210,27 +204,10 @@ open class DisplayBoard(
 
         // Antigo código
         //scoreboard!!.resetScores(fake)
-        score.clearLine(id)
+        score!!.clearLine(id)
         return false
     }
 
-    /*
-
-     /**
-     * Método criado dia 25/03/21 para calcular lag de cada função desta classe
-     * @param name Nome da Funçõo
-     * @param action Runnable da Função
-     */
-    fun calc(name: String?, action: Runnable) {
-        val start = System.currentTimeMillis()
-        action.run()
-        val end = System.currentTimeMillis()
-        val dif = end - start
-        //System.out.println("[ScoreLag] " + name + ": " + dif + "ms");
-    }
-
-
-     */
 
 }
 

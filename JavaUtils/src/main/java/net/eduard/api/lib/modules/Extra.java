@@ -458,7 +458,7 @@ public final class Extra {
 
 
         text = text.toLowerCase();
-        for (int i = MONEY_OP_CLASSES.size() - 1; i >= 0; i--) {
+        for (int i = MONEY_OP_CLASSES.size() - 1; i > 0; i--) {
             String sigla = MONEY_OP_CLASSES.get(i);
             if (text.endsWith(sigla)) {
                 text = text.replace(sigla, "");

@@ -212,9 +212,9 @@ final public class MiniSchematic {
 			d.write(blocksId);
 			d.writeInt(blocksId.length);
 			d.write(blocksData);
-			d.writeUTF(Mine.saveVector(low));
-			d.writeUTF(Mine.saveVector(high));
-			d.writeUTF(Mine.saveVector(relative));
+			d.writeUTF(Mine.serializeVector(low));
+			d.writeUTF(Mine.serializeVector(high));
+			d.writeUTF(Mine.serializeVector(relative));
 			d.flush();
 			d.close();
 		} catch (Exception e) {
@@ -240,9 +240,9 @@ final public class MiniSchematic {
 			this.blocksData = new byte[size];
 			d.readFully(blocksData);
 
-			low = Mine.toVector(d.readUTF());
-			high = Mine.toVector(d.readUTF());
-			relative = Mine.toVector(d.readUTF());
+			low = Mine.deserializeVector(d.readUTF());
+			high = Mine.deserializeVector(d.readUTF());
+			relative = Mine.deserializeVector(d.readUTF());
 
 			d.close();
 

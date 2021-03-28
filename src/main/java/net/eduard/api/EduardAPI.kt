@@ -37,6 +37,7 @@ import net.eduard.api.task.PlayerTargetPlayerTask
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -124,9 +125,29 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         log("§aCarregado com sucesso!")
         Config.testing()
     }
+    fun resetScoreboard(player: Player) {
+        player.scoreboard = Mine.getMainScoreboard()
+    }
+    // Parei aqui
+
+    // Parei aqui
+    fun resetScoreboards() {
+        for (teams in Mine.getMainScoreboard().teams) {
+            teams.unregister()
+        }
+        for (objective in Mine.getMainScoreboard().objectives) {
+            objective.unregister()
+        }
+        for (player in Mine.getPlayers()) {
+            player.scoreboard = Mine.getMainScoreboard()
+            player.maxHealth = 20.0
+            player.health = 20.0
+            player.isHealthScaled = false
+        }
+    }
 
     fun tasks(){
-        Mine.resetScoreboards()
+        resetScoreboards()
         log("Scoreboards dos jogadores online resetadas!")
 
         BukkitReplacers()

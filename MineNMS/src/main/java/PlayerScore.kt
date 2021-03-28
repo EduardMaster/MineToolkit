@@ -15,15 +15,21 @@ interface PlayerScore {
             }
             construct!!.newInstance(it) as PlayerScore
         }
-        fun create(player: Player): PlayerScore {
-            val score = constructor.invoke(player)
-            players[player] = score
-            return score
-        }
-        fun hasScore(player : Player) = player in players
 
+        fun hasScore(player : Player) = player in players
+        fun removeScore(player : Player){
+            if (hasScore(player)) {
+                players.remove(player)
+            }
+        }
         fun getScore(player: Player): PlayerScore {
-            return players[player] ?: create(player)
+            var conta = players.get(player)
+            if (conta == null){
+                conta = constructor.invoke(player)
+                players[player] = conta
+
+            }
+            return conta
         }
 
 
@@ -47,6 +53,9 @@ interface PlayerScore {
     fun getLine(lineID: Int): String
 
     fun remove()
+
+    fun rebuild()
+
 
     fun hide()
 
