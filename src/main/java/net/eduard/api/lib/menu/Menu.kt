@@ -22,6 +22,7 @@ import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.Sound
 import org.bukkit.event.block.Action
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
 
@@ -378,15 +379,7 @@ open class Menu(
             val menu = Bukkit.createInventory(fakeHolder, 9 * lineAmount, menuTitle)
             fakeHolder.openInventory = menu
             fakeHolder.pageOpenned = page
-            if (isPageSystem) {
-                if (page > 1)
-                    previousPage.give(menu)
-                if (page < pageAmount)
-                    nextPage.give(menu)
-            }
-            if (this.superiorMenu != null) {
-                backPage.give(menu)
-            }
+
             update(menu, player, page)
 
 
@@ -405,6 +398,15 @@ open class Menu(
     }
 
     fun update(menu: Inventory, player: Player, page: Int) {
+        if (isPageSystem) {
+            if (page > 1)
+                previousPage.give(menu)
+            if (page < pageAmount)
+                nextPage.give(menu)
+        }
+        if (this.superiorMenu != null) {
+            backPage.give(menu)
+        }
         for (button in buttons) {
             if (button.page != page) continue
 
@@ -422,6 +424,13 @@ open class Menu(
                 val data = MineReflect.getData(icon)
                 data.setString("button-name", button.name)
                 icon = MineReflect.setData(icon, data)
+            }
+            if (button.iconWithoutFlags){
+                val meta  = icon.itemMeta
+                for (flag in ItemFlag.values()){
+                    meta.removeItemFlags(flag)
+                }
+                icon.itemMeta = meta
             }
             menu.setItem(position, icon)
         }

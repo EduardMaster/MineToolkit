@@ -56,7 +56,7 @@ open class MenuButton(var name: String = "Botao"
         set(itemParameter) {
             item = itemParameter
         }
-
+    var iconWithoutFlags = false
 
 
     val isCategory: Boolean
