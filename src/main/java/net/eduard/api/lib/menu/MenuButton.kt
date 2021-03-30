@@ -5,17 +5,15 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-open class MenuButton(var name: String = "Botao"
-                      , @Transient
-                      var parentMenu: Menu? = null
-                      , positionX: Int = 0,
-                      positionY: Int = 1,
-                      var page: Int = 1,
-                      block: (MenuButton.() -> Unit)? = null
+open class MenuButton(
+    var name: String = "Botao",
+    @Transient
+    var parentMenu: Menu? = null,
+    positionX: Int = 0,
+    positionY: Int = 1,
+    var page: Int = 1
 
 ) : Slot(positionX, positionY) {
-
-
 
 
     var menu: Menu? = null
@@ -23,18 +21,18 @@ open class MenuButton(var name: String = "Botao"
     var fixed = false
 
     init {
-        block?.invoke(this)
         parentMenu?.addButton(this)
-
-
     }
 
-    fun menu(title : String,lineAmount : Int, body: Menu.() -> Unit){
+    fun subMenu(title: String, lineAmount: Int, setup: Menu.() -> Unit) {
         this.menu = Menu(title, lineAmount)
-        body(this.menu!!)
+        setup(this.menu!!)
     }
 
-    constructor(parent: Menu) : this(parentMenu = parent)
+    fun subShop(title: String, lineAmount: Int, setup: Shop.() -> Unit) {
+        this.menu = Shop(title, lineAmount)
+        setup(this.shop)
+    }
 
 
     val shop: Shop
@@ -45,18 +43,19 @@ open class MenuButton(var name: String = "Botao"
 
 
     @Transient
-    var iconPerPlayer : (Player.() -> ItemStack)? = null
+    var iconPerPlayer: (Player.() -> ItemStack)? = null
 
     open fun getIcon(player: Player): ItemStack {
-        return iconPerPlayer?.invoke(player)?:icon
+        return iconPerPlayer?.invoke(player) ?: icon
     }
 
-    var icon : ItemStack
-        get() = item?:ItemBuilder(Material.BARRIER).name("§cItem nulo")
+    var icon: ItemStack
+        get() = item ?: ItemBuilder(Material.BARRIER)
+            .name("§cItem nulo")
         set(itemParameter) {
             item = itemParameter
         }
-    var iconWithoutFlags = false
+
 
 
     val isCategory: Boolean

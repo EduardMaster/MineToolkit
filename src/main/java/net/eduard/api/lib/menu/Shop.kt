@@ -18,14 +18,15 @@ import java.util.*
 
 @Suppress("unused")
 @StorageAttributes(indentificate = true)
-open class Shop(name: String = "Loja", lineAmount: Int = 3
-                , block: (Shop.() -> Unit)? = null) : Menu(name, lineAmount) {
-    init {
-        block?.invoke(this)
-    }
-    fun product(name: String = "Produto", block: (Product.() -> Unit)? = null): Product {
+open class Shop(
+    name: String = "Loja",
+    lineAmount: Int = 3)
+: Menu(name, lineAmount) {
+
+
+    fun product(name: String = "Produto", setup: (Product.() -> Unit)): Product {
         val product = Product(name, this)
-        block?.invoke(product)
+        setup.invoke(product)
         return product
     }
 
@@ -106,7 +107,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
 
 
     fun useUpgradesMenu() {
-        menuUpgrades = Menu("Lista de Upgrades", 6) {
+        menuUpgrades = menu("Lista de Upgrades", 6) {
             cantBeOpened()
 
             button("upgrade") {
@@ -124,7 +125,7 @@ open class Shop(name: String = "Loja", lineAmount: Int = 3
     }
 
     fun useConfirmationMenu() {
-        this.menuConfirmation = Menu("Confirmar Transação", 3) {
+        this.menuConfirmation = menu("Confirmar Transação", 3) {
             cantBeOpened()
             button("confirmar") {
                 setPosition(3, 2)

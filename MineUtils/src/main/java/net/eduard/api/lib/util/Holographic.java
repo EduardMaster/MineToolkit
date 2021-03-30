@@ -81,23 +81,23 @@ public class Holographic
     }
   }
   
-  public boolean displayHolo(Player p)
+  public boolean displayHolo(Player player)
   {
     for (Object o : this.spawnCache) {
-      sendPacket(p, o);
+      sendPacket(player, o);
     }
-    this.players.add(p.getUniqueId());
+    this.players.add(player.getUniqueId());
     return true;
   }
   
-  public boolean destroyHolo(Player p)
+  public boolean destroyHolo(Player player)
   {
-    if (this.players.contains(p.getUniqueId()))
+    if (this.players.contains(player.getUniqueId()))
     {
       for (Object o : this.destroyCache) {
-        sendPacket(p, o);
+        sendPacket(player, o);
       }
-      this.players.remove(p.getUniqueId());
+      this.players.remove(player.getUniqueId());
       return true;
     }
     return false;
@@ -158,12 +158,12 @@ public class Holographic
     return null;
   }
   
-  private void sendPacket(Player p, Object packet)
+  private void sendPacket(Player player, Object packet)
   {
     try
     {
-      Method getHandle = p.getClass().getMethod("getHandle");
-      Object entityPlayer = getHandle.invoke(p);
+      Method getHandle = player.getClass().getMethod("getHandle");
+      Object entityPlayer = getHandle.invoke(player);
       Object pConnection = entityPlayer.getClass().getField("playerConnection").get(entityPlayer);
       Method sendMethod = pConnection.getClass().getMethod("sendPacket", nmsPacket);
       sendMethod.invoke(pConnection, packet);

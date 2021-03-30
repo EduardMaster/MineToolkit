@@ -26,6 +26,16 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
 
+fun menu(title: String, amount: Int, setup : Menu.() -> Unit) : Menu{
+    val menu = Menu(title, amount)
+    setup.invoke(menu)
+    return menu
+}
+fun shop(title: String, amount: Int, setup : Shop.() -> Unit) : Shop{
+    val menu = Shop(title, amount)
+    setup.invoke(menu)
+    return menu
+}
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
  * sua vida
@@ -36,19 +46,16 @@ import java.lang.Exception
 open class Menu(
 
     var title: String = "Menu",
-    var lineAmount: Int = 1,
-    block: (Menu.() -> Unit)? = null
+    var lineAmount: Int = 1
 
 ) : EventsManager() {
 
-    constructor(
-        title: String,
-        lineAmount: Int
-    ) : this(title, lineAmount, null)
 
-    fun button(name: String = "Botao", block: (MenuButton.() -> Unit)? = null): MenuButton {
-        return MenuButton(name, this, block = block)
 
+    fun button(name: String = "Botao", setup: (MenuButton.() -> Unit)): MenuButton {
+        val button = MenuButton(name, this)
+        setup(button)
+        return button
     }
 
 
@@ -134,9 +141,7 @@ open class Menu(
     }
 
 
-    init {
-        block?.invoke(this)
-    }
+
 
     val fullTitle: String
         get() = if (isPageSystem) {
@@ -420,18 +425,22 @@ open class Menu(
             if (isTranslateIcon) {
                 icon = Mine.getReplacers(icon, player)
             }
-            if (button.click != null) {
-                val data = MineReflect.getData(icon)
-                data.setString("button-name", button.name)
-                icon = MineReflect.setData(icon, data)
-            }
+            /*
             if (button.iconWithoutFlags){
-                val meta  = icon.itemMeta
+                val meta  = icon.
+                meta.addItemFlags(ItemFlag.)
                 for (flag in ItemFlag.values()){
                     meta.removeItemFlags(flag)
                 }
                 icon.itemMeta = meta
             }
+            */
+            if (button.click != null) {
+                val data = MineReflect.getData(icon)
+                data.setString("button-name", button.name)
+                icon = MineReflect.setData(icon, data)
+            }
+
             menu.setItem(position, icon)
         }
 

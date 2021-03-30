@@ -15,7 +15,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * API de capturar os blocos de um Terreno de um Ponto ao Outro<br>
+ * API de capturar os blocos de um Terreno de um Ponto ao outro<br>
  * (Schematic do WorldEdit versão Compacta)
  * <br>
  * Antigo nome Schematic

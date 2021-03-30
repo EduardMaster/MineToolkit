@@ -31,7 +31,8 @@ public class MineReflect {
     public static ItemStack toStack(ItemStack original, double amount) {
 
         List<String> lore = getLore(original);
-        lore.add(MineReflect.MSG_ITEM_STACK.replace("%stack", Extra.formatMoney(amount)));
+        lore.add(MineReflect.MSG_ITEM_STACK
+                .replace("%stack", Extra.formatMoney(amount)));
         setLore(original, lore);
         ItemExtraData data = getData(original);
         data.setCustomStack(amount);

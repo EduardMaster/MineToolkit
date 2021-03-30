@@ -9,16 +9,10 @@ import org.bukkit.inventory.ItemStack
 
 @Suppress("unused")
 open class Product(
-    name: String = "Produto",
-    shop: Shop? = null
-) : MenuButton(name, parentMenu = shop) {
+    name: String = "Produto",shop: Shop? = null
+) : MenuButton(name,shop) {
 
-    constructor(shopping: Shop) : this(shop = shopping)
 
-    constructor(shopping: Shop, product: ItemStack, buyPrice: Double) : this(shop = shopping) {
-        this.product = product
-        this.buyPrice = buyPrice
-    }
 
     fun upgrade(level: Int, body: ProductUpgrade.() -> Unit): ProductUpgrade {
         val upgrade = ProductUpgrade(level, this)

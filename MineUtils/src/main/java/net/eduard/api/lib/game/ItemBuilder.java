@@ -12,6 +12,7 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
@@ -129,6 +130,18 @@ public class ItemBuilder extends ItemStack {
 
         return this;
     }
+    public ItemBuilder addFlags(ItemFlag... flags){
+        ItemMeta meta = getItemMeta();
+        meta.addItemFlags(flags);
+        setItemMeta(meta);
+        return this;
+    }
+    public ItemBuilder removeFlags(){
+        ItemMeta meta = getItemMeta();
+        meta.removeItemFlags(ItemFlag.values());
+        setItemMeta(meta);
+        return this;
+    }
 
     public ItemBuilder clearEnchants() {
 
@@ -145,7 +158,6 @@ public class ItemBuilder extends ItemStack {
     }
 
     public ItemBuilder lore(Collection<String> lore) {
-
         ItemMeta meta = getItemMeta();
         meta.setLore(new ArrayList<>(lore));
         setItemMeta(meta);
@@ -168,7 +180,6 @@ public class ItemBuilder extends ItemStack {
     }
 
     public ItemBuilder removeLore() {
-
         return lore();
     }
 
@@ -185,14 +196,11 @@ public class ItemBuilder extends ItemStack {
     }
 
     public ItemBuilder addEnchant(Enchantment enchant, int level) {
-
         addUnsafeEnchantment(enchant, level);
-
         return this;
     }
 
     public ItemBuilder name(String name) {
-
         ItemMeta meta = this.getItemMeta();
         meta.setDisplayName(name);
         setItemMeta(meta);
@@ -205,12 +213,12 @@ public class ItemBuilder extends ItemStack {
         return (ItemBuilder) super.clone();
     }
 
-    public ItemStack builder() {
+    public ItemBuilder builder() {
         return clone();
     }
 
 
-    public ItemStack banner(String alphabet, DyeColor baseColor, DyeColor dyeColor) {
+    public ItemBuilder banner(String alphabet, DyeColor baseColor, DyeColor dyeColor) {
         alphabet = ChatColor.stripColor(alphabet.toUpperCase()).substring(0, 1);
 
         BannerMeta bannerMeta = (BannerMeta) getItemMeta();
