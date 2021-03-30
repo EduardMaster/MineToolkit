@@ -1,6 +1,7 @@
 package net.eduard.api.lib.menu
 
 import net.eduard.api.lib.game.EnchantGlow
+import net.eduard.api.lib.kotlin.format
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import org.bukkit.Material
@@ -76,7 +77,7 @@ open class Product(
         }
         return null
     }
-
+    var moneyFormatedOP = false
 
     override fun getIcon(player: Player): ItemStack {
         product
@@ -104,11 +105,11 @@ open class Product(
                     lore.add(
                         line.replace("\$product_name", name)
                             .replace("\$product_stock", "" + stock)
-                            .replace("\$product_buy_unit_price", Extra.formatMoney(unitBuyPrice))
-                            .replace("\$product_buy_pack_price", Extra.formatMoney(unitBuyPrice * 64))
-                            .replace("\$product_sell_unit_price", Extra.formatMoney(unitSellPrice))
-                            .replace("\$product_sell_pack_price", Extra.formatMoney(unitSellPrice * 64))
-                            .replace("\$product_sell_inventory_price", Extra.formatMoney(unitSellPrice * 64 * 4 * 9))
+                            .replace("\$product_buy_unit_price", unitBuyPrice.format(moneyFormatedOP))
+                            .replace("\$product_buy_pack_price", (unitBuyPrice * 64.0).format(moneyFormatedOP))
+                            .replace("\$product_sell_unit_price", unitSellPrice.format(moneyFormatedOP))
+                            .replace("\$product_sell_pack_price", (unitSellPrice * 64).format(moneyFormatedOP))
+                            .replace("\$product_sell_inventory_price", (unitSellPrice * 64 * 4 * 9).format(moneyFormatedOP))
                     )
                 }
                 if (parentShop.isPermissionShop) {
