@@ -6,8 +6,6 @@ import org.bukkit.World
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.storage.annotations.StorageIndex
 import org.bukkit.Bukkit
-import org.bukkit.block.Chest
-import org.bukkit.util.Vector
 
 /**
  * Representa o Mapa da Sala do Minigame
@@ -25,6 +23,9 @@ class MinigameMap(
     @Transient
     lateinit var minigame: Minigame
     var feastRadius = 20
+    var chestsMiniFeastLocations = mutableListOf<Location>()
+    var chestsFeastsLocations = mutableListOf<Location>()
+    var chestsIslandsLocations = mutableListOf<Location>()
 
     var feastCenter: Location? = null
         get() {
@@ -40,10 +41,12 @@ class MinigameMap(
     var spawn: Location? = null
     var lobby: Location? = null
     var locations = mutableMapOf<String, Location>()
+
+
+
     var spawns = mutableListOf<Location>()
     val map: MinigameSchematic
         get() = MinigameSchematic.getSchematic(mapName())
-
 
     val allChests get() = map.getAllChests(feastCenter!!)
     val feastChests get() = allChests.filter { insideFeast(it.location) }
@@ -66,10 +69,6 @@ class MinigameMap(
         return "${minigame.name}/map/$name"
     }
 
-    fun setupChests() {
-        allChests.clear()
-        allChests.addAll(map.getAllChests(feastCenter!!))
-    }
 
 
     fun copyWorld(map: MinigameMap) {
@@ -86,6 +85,7 @@ class MinigameMap(
     }
 
     fun unloadWorld() = worldUsed.unload()
+
     fun resetWorld() {
         worldUsed.reset()
         fixWorld()
@@ -98,7 +98,6 @@ class MinigameMap(
 
     fun copy(): MinigameMap {
         return Copyable.copyObject(this)
-
     }
 
     fun world(world: World): MinigameMap {
@@ -113,6 +112,15 @@ class MinigameMap(
             lobby!!.world = world
         }
         for (loc in locations.values) {
+            loc.world = world
+        }
+        for (loc in chestsIslandsLocations){
+            loc.world = world
+        }
+        for (loc in chestsMiniFeastLocations){
+            loc.world = world
+        }
+        for (loc in chestsFeastsLocations){
             loc.world = world
         }
         feastCenter?.world = world
@@ -142,6 +150,15 @@ class MinigameMap(
         this.lobby?.add(dif)
         for (spawn in spawns) {
             spawn.add(dif)
+        }
+        for (chest in chestsFeastsLocations){
+            chest.add(dif)
+        }
+        for (chest in chestsIslandsLocations){
+            chest.add(dif)
+        }
+        for (chest in chestsMiniFeastLocations){
+            chest.add(dif)
         }
     }
 }

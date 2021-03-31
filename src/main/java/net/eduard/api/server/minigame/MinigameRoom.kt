@@ -38,7 +38,7 @@ open class MinigameRoom() {
         mapUsed.worldName = "${minigame.name}/room/$id"
         if (minigame.worldBased) {
             mapUsed.copyWorld(map)
-            mapUsed.setupChests()
+           // mapUsed.setupChests()
         } else {
             mapUsed.clearWorld()
             mapUsed.paste(mapUsed.feastCenter!!)
@@ -55,7 +55,7 @@ open class MinigameRoom() {
     open fun reset() {
         if (minigame.worldBased) {
             mapUsed.resetWorld()
-            mapUsed.setupChests()
+           // mapUsed.setupChests()
         } else {
             if (minigame.schematicBasedRestartWorld)
                 mapUsed.clearWorld()
