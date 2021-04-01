@@ -26,16 +26,18 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
 
-fun menu(title: String, amount: Int, setup : Menu.() -> Unit) : Menu{
+fun menu(title: String, amount: Int, setup: Menu.() -> Unit): Menu {
     val menu = Menu(title, amount)
     setup.invoke(menu)
     return menu
 }
-fun shop(title: String, amount: Int, setup : Shop.() -> Unit) : Shop{
+
+fun shop(title: String, amount: Int, setup: Shop.() -> Unit): Shop {
     val menu = Shop(title, amount)
     setup.invoke(menu)
     return menu
 }
+
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
  * sua vida
@@ -49,7 +51,6 @@ open class Menu(
     var lineAmount: Int = 1
 
 ) : EventsManager() {
-
 
 
     fun button(name: String = "Botao", setup: (MenuButton.() -> Unit)): MenuButton {
@@ -103,6 +104,7 @@ open class Menu(
     var autoAlignSkipCenter = false
     var isCacheInventories: Boolean = false
     var isPerPlayerInventory = false
+    var closeMenuWhenButtonsCleared = false
     var openWithItem: ItemStack? = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
     var openWithCommand: String? = null
     var openWithCommandText: String? = null
@@ -141,8 +143,6 @@ open class Menu(
     }
 
 
-
-
     val fullTitle: String
         get() = if (isPageSystem) {
             pagePrefix + title + pageSuffix
@@ -175,7 +175,8 @@ open class Menu(
     fun removeAllButtons() {
         buttons.clear()
         clearCache()
-        pageOpened.forEach { (p, _) -> p.closeInventory() }
+        if (closeMenuWhenButtonsCleared)
+            pageOpened.forEach { (p, _) -> p.closeInventory() }
         pageOpened.clear()
     }
 
@@ -403,6 +404,7 @@ open class Menu(
     }
 
     fun update(menu: Inventory, player: Player, page: Int) {
+        menu.clear()
         if (isPageSystem) {
             if (page > 1)
                 previousPage.give(menu)

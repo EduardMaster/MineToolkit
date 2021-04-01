@@ -20,8 +20,8 @@ import java.util.*
 @StorageAttributes(indentificate = true)
 open class Shop(
     name: String = "Loja",
-    lineAmount: Int = 3)
-: Menu(name, lineAmount) {
+    lineAmount: Int = 3
+) : Menu(name, lineAmount) {
 
 
     fun product(name: String = "Produto", setup: (Product.() -> Unit)): Product {
@@ -35,6 +35,15 @@ open class Shop(
 
     @Transient
     var currency: CurrencySystem? = null
+        set(value) {
+            field = value
+            for (button in buttons) {
+                if (button.isCategory && button.menu is Shop) {
+                    val shop = button.shop
+                    shop.currency = value
+                }
+            }
+        }
         get() {
             if (field == null) {
                 field = CurrencyManager.getCurrency(currencyType)
@@ -85,23 +94,26 @@ open class Shop(
         var TEXT_ALREADY_BOUGHT = "§a§lDESBLOQUEADO"
 
         var TEMPLATE_BUY = listOf(
-                "§fCompre: §e\$product_name",
-                "§7Custo x1: §c$§f\$product_buy_unit_price",
-                "§7Custo x64: §c$§f\$product_buy_pack_price",
-                "§7Quantidade: §cx§f\$product_stock")
+            "§fCompre: §e\$product_name",
+            "§7Custo x1: §c$§f\$product_buy_unit_price",
+            "§7Custo x64: §c$§f\$product_buy_pack_price",
+            "§7Quantidade: §cx§f\$product_stock"
+        )
         var TEMPLATE_SELL = listOf(
-                "§fVenda: §e\$product_name",
-                "§7Custo x64: §c$§f\$product_sell_pack_price",
-                "§7Custo Inventário: §f\$product_sell_inventory_price",
-                "§7Quantidade: §cx§f\$product_stock")
+            "§fVenda: §e\$product_name",
+            "§7Custo x64: §c$§f\$product_sell_pack_price",
+            "§7Custo Inventário: §f\$product_sell_inventory_price",
+            "§7Quantidade: §cx§f\$product_stock"
+        )
         var TEMPLATE_BUY_SELL = listOf(
-                "§fCompre: §e\$product_name",
-                " §7Custo x1: §c$§f\$product_buy_unit_price",
-                " §7Custo x64: §c$§f\$product_buy_pack_price",
-                "§fVenda",
-                " §7Custo x64: §c$§f\$product_sell_pack_price",
-                " §7Custo Inventário: §f\$product_sell_inventory_price",
-                "§7Quantidade: §cx§f\$product_stock")
+            "§fCompre: §e\$product_name",
+            " §7Custo x1: §c$§f\$product_buy_unit_price",
+            " §7Custo x64: §c$§f\$product_buy_pack_price",
+            "§fVenda",
+            " §7Custo x64: §c$§f\$product_sell_pack_price",
+            " §7Custo Inventário: §f\$product_sell_inventory_price",
+            "§7Quantidade: §cx§f\$product_stock"
+        )
         const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
     }
 
@@ -130,16 +142,16 @@ open class Shop(
             button("confirmar") {
                 setPosition(3, 2)
                 icon = ItemBuilder(Material.WOOL)
-                        .data(5)
-                        .name("§a§lCONFIRMAR")
-                        .lore("§aClique para confirmar a transação.")
+                    .data(5)
+                    .name("§a§lCONFIRMAR")
+                    .lore("§aClique para confirmar a transação.")
             }
 
             button("cancelar") {
                 icon = ItemBuilder(Material.WOOL)
-                        .data(14)
-                        .name("§c§lCANCELAR")
-                        .lore("§cClique para cancelar a transação.")
+                    .data(14)
+                    .name("§c§lCANCELAR")
+                    .lore("§cClique para cancelar a transação.")
                 setPosition(7, 2)
             }
 
@@ -230,12 +242,18 @@ open class Shop(
         }
         product.stock = evento.newStock
         for (cmd in product.commands) {
-            val cmdExecuted = cmd.replace("\$player", player.name).replace("\$formated_amount", Extra.formatMoney(amount)).replace("\$amount", "" + amount)
+            val cmdExecuted =
+                cmd.replace("\$player", player.name).replace("\$formated_amount", Extra.formatMoney(amount))
+                    .replace("\$amount", "" + amount)
             debug("CMD: $cmdExecuted")
             Mine.runCommand(cmdExecuted)
         }
-        player.sendMessage(messageBoughtItem.replace("\$amount", Extra.formatMoney(amount)).replace("\$product",
-                "" + product.name))
+        player.sendMessage(
+            messageBoughtItem.replace("\$amount", Extra.formatMoney(amount)).replace(
+                "\$product",
+                "" + product.name
+            )
+        )
         if (isPermissionShop) {
             if (VaultAPI.hasVault() && VaultAPI.hasPermission()) {
                 VaultAPI.getPermission().playerAdd(null, fake, product.permission)
@@ -291,22 +309,15 @@ open class Shop(
             evento.amount = PLAYER_INVENTORY_LIMIT.toDouble()
         }
         Mine.remove(player.inventory, product.product, evento.amount.toInt())
-        player.sendMessage(messageSoldItem.replace("\$amount", "" + amount).replace("\$product",
-                product.name))
+        player.sendMessage(
+            messageSoldItem.replace("\$amount", "" + amount).replace(
+                "\$product",
+                product.name
+            )
+        )
         currency!!.add(fake, finalPrice)
     }
 
-
-    fun setCurrency(currency: CurrencyManager?) {
-        if (currency == null) return
-        this.currency = currency
-        for (button in buttons) {
-            if (button.menu is Shop) {
-                val shop = button.shop
-                shop.setCurrency(currency)
-            }
-        }
-    }
 
     fun getProduct(icon: ItemStack, player: Player): Product? {
         val button = getButton(icon, player)
@@ -364,8 +375,8 @@ open class Shop(
 
                 for (upgrade in product.upgrades) {
                     val icon = ItemBuilder(Material.STAINED_GLASS_PANE)
-                            .data(14)
-                            .name("§6Upgrade §e" + upgrade.displayName)
+                        .data(14)
+                        .name("§6Upgrade §e" + upgrade.displayName)
                     if (upgrade.hasBought(player)) {
                         icon.data(5)
                     }
@@ -404,13 +415,21 @@ open class Shop(
 
                     this.currency!!.remove(fake, nextUpgrade.price)
                     VaultAPI.getPermission().playerAdd(player, nextUpgrade.permission)
-                    player.sendMessage(messageUpgradeBought
-                            .replace("\$product_name",
-                                nextUpgrade.displayName)
-                            .replace("\$product",
-                                nextUpgrade.name)
-                            .replace("\$level",
-                                "" + nextUpgrade.level))
+                    player.sendMessage(
+                        messageUpgradeBought
+                            .replace(
+                                "\$product_name",
+                                nextUpgrade.displayName
+                            )
+                            .replace(
+                                "\$product",
+                                nextUpgrade.name
+                            )
+                            .replace(
+                                "\$level",
+                                "" + nextUpgrade.level
+                            )
+                    )
                 } else {
                     player.sendMessage(messageWithoutBalance)
                 }
@@ -429,7 +448,7 @@ open class Shop(
             if (event.currentItem == null) return@ClickEffect
 
             val product = getProduct(event.currentItem, player)
-            if (product == null){
+            if (product == null) {
 
                 debug("Produto pelo Icone nulo")
                 return@ClickEffect
@@ -442,15 +461,19 @@ open class Shop(
                 return@ClickEffect
             }
             if (((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)
-                            && (product.tradeType === TradeType.BOTH))
-                    || (product.tradeType === TradeType.BUYABLE)
+                        && (product.tradeType === TradeType.BOTH))
+                || (product.tradeType === TradeType.BUYABLE)
             ) {
                 if (isAmountPerChat) {
                     selectingAmount[player] = product
                     trading[player] = TradeType.BUYABLE
                     player.closeInventory()
-                    player.sendMessage(messageChoiceAmount.replace("\$product",
-                            "" + product.name).replace("\$trader", "comprar"))
+                    player.sendMessage(
+                        messageChoiceAmount.replace(
+                            "\$product",
+                            "" + product.name
+                        ).replace("\$trader", "comprar")
+                    )
                     return@ClickEffect
                 }
                 var amount = 1
@@ -463,15 +486,20 @@ open class Shop(
                 buy(player, product, amount.toDouble())
             }
             if (((event.click == ClickType.LEFT || event.click == ClickType.SHIFT_LEFT)
-                            && (product.tradeType === TradeType.BOTH)
-                            || product.tradeType === TradeType.SELABLE)) {
+                        && (product.tradeType === TradeType.BOTH)
+                        || product.tradeType === TradeType.SELABLE)
+            ) {
                 if (product.product != null) {
                     if (isAmountPerChat) {
                         selectingAmount[player] = product
                         trading[player] = TradeType.SELABLE
                         player.closeInventory()
-                        player.sendMessage(messageChoiceAmount.replace("\$product",
-                                "" + product.name).replace("\$trader", "vender"))
+                        player.sendMessage(
+                            messageChoiceAmount.replace(
+                                "\$product",
+                                "" + product.name
+                            ).replace("\$trader", "vender")
+                        )
                         return@ClickEffect
                     }
                     var amount = Mine.getTotalAmount(player.inventory, product.product)
