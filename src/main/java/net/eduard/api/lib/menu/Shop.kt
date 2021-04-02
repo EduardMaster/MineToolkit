@@ -251,11 +251,13 @@ open class Shop(
         }
         player.sendMessage(
             messageBoughtItem
-                .replace("\$amount",
-                    Extra.formatMoney(amount)).replace(
-                "\$product",
-                "" + product.name
-            )
+                .replace(
+                    "\$amount",
+                    Extra.formatMoney(amount)
+                ).replace(
+                    "\$product",
+                    "" + product.name
+                )
         )
         if (isPermissionShop) {
             if (VaultAPI.hasVault() && VaultAPI.hasPermission()) {
@@ -314,8 +316,9 @@ open class Shop(
         Mine.remove(player.inventory, product.product, evento.amount.toInt())
         player.sendMessage(
             messageSoldItem.replace("\$amount", "" + amount)
-                .replace("\$product",product.name
-            )
+                .replace(
+                    "\$product", product.name
+                )
         )
         currency!!.add(fake, finalPrice)
     }
@@ -332,12 +335,12 @@ open class Shop(
     }
 
     fun getProductFrom(item: ItemStack): Product? {
-        val button = getButton(item, null)
-        if (button != null) {
+        for (button in buttons)
             if (button is Product) {
-                return button
+                if (true == button.product?.isSimilar(item))
+                    return button
             }
-        }
+
         return null
     }
 
@@ -361,31 +364,22 @@ open class Shop(
                 }
             }
             menuConfirmation!!.openHandler = { inventory, player ->
-
                 val productButton = menuConfirmation?.getButton("product")!!
-
                 val product = selectedProduct[player]!!
-
                 if (isPermissionShop && product.hasBought(player)) {
                     menuUpgrades?.open(player)
-
                 } else {
                     inventory.setItem(productButton.index, product.icon)
                 }
             }
         }
-
         if (menuUpgrades != null) {
             menuUpgrades!!.superiorMenu = this
             menuUpgrades!!.openHandler = { inventory, player ->
-
                 val product = selectedProduct[player]!!
                 var slot = Extra.getIndex(3, 4)
                 val productButton = menuUpgrades?.getButton("product")!!
-
-
                 inventory.setItem(productButton.index, product.icon)
-
                 for (upgrade in product.upgrades) {
                     val icon = ItemBuilder(Material.STAINED_GLASS_PANE)
                         .data(14)
@@ -397,10 +391,7 @@ open class Shop(
                     slot++
                 }
             }
-
         }
-
-
         val upgradeButton = menuUpgrades?.getButton("upgrade") ?: return
         upgradeButton.click = ClickEffect { event ->
             val player = event.player
@@ -409,7 +400,6 @@ open class Shop(
             val nextUpgrade = product.getNextUpgrade(player)
             if (nextUpgrade != null) {
                 if (this.currency!!.contains(fake, nextUpgrade.price)) {
-
                     this.currency!!.remove(fake, nextUpgrade.price)
                     VaultAPI.getPermission().playerAdd(player, nextUpgrade.permission)
                     player.sendMessage(
@@ -426,6 +416,7 @@ open class Shop(
                                 "\$level",
                                 "" + nextUpgrade.level
                             )
+
                     )
                 } else {
                     player.sendMessage(messageWithoutBalance)

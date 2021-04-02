@@ -22,7 +22,6 @@ import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.Sound
 import org.bukkit.event.block.Action
-import org.bukkit.inventory.ItemFlag
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
 
@@ -99,8 +98,8 @@ open class Menu(
     var pageAmount = 1
     var pagePrefix = ""
     var pageSuffix = "(\$page/\$max_page)"
-    var isTranslateIcon: Boolean = false
-    var isAutoAlignItems: Boolean = false
+    var isTranslateIcon = false
+    var isAutoAlignItems = false
     var autoAlignSkipCenter = false
     var isCacheInventories: Boolean = false
     var isPerPlayerInventory = false
@@ -385,12 +384,8 @@ open class Menu(
             val menu = Bukkit.createInventory(fakeHolder, 9 * lineAmount, menuTitle)
             fakeHolder.openInventory = menu
             fakeHolder.pageOpenned = page
-
             update(menu, player, page)
-
-
             this.pageOpened[player] = page
-
             openHandler?.invoke(this, menu, player)
             player.openInventory(menu)
             if (isCacheInventories && !pagesCache.containsKey(page)) {
@@ -427,21 +422,11 @@ open class Menu(
             if (isTranslateIcon) {
                 icon = Mine.getReplacers(icon, player)
             }
-            /*
-            if (button.iconWithoutFlags){
-                val meta  = icon.
-                meta.addItemFlags(ItemFlag.)
-                for (flag in ItemFlag.values()){
-                    meta.removeItemFlags(flag)
-                }
-                icon.itemMeta = meta
-            }
-            */
-            if (button.click != null) {
-                val data = MineReflect.getData(icon)
-                data.setString("button-name", button.name)
-                icon = MineReflect.setData(icon, data)
-            }
+
+            val data = MineReflect.getData(icon)
+            data.setString("button-name", button.name)
+            icon = MineReflect.setData(icon, data)
+
 
             menu.setItem(position, icon)
         }

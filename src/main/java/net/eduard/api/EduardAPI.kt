@@ -185,6 +185,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         EnchantCommand().register()
         GotoCommand().register()
         SoundCommand().register()
+        MacroCommand().registerCommand(plugin)
         SetXPCommand().register()
         SetSkinCommand().register()
         MemoryCommand().registerCommand(plugin)
