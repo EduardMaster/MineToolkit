@@ -18,6 +18,11 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+    shadowJar{
+        archiveVersion.set("1.0")
+        archiveBaseName.set("EduardAPI")
+        destinationDirectory.set(file("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\plugins\\"))
+    }
 }
 dependencies {
     compileOnly(kotlin("stdlib"))
@@ -33,7 +38,7 @@ dependencies {
     compileOnly("net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.bukkitplugin:jhcash:6.1")
-    testCompile("junit", "junit", "4.12")
+    testCompileOnly("junit", "junit", "4.12")
     //testCompile("org.bukkit:spigot:1.8.9")
 }
 
@@ -44,9 +49,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://jitpack.io/")
 }
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>{
-    destinationDir = file("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\plugins\\")
-}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {

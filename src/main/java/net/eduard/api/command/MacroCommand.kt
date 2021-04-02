@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
 class MacroCommand : CommandManager("macro","autoclick") {
 
     init{
-        EduardAPI.instance.syncTimer(5,5){
+        EduardAPI.instance.syncTimer(3,3){
             update()
         }
 
@@ -26,7 +26,7 @@ class MacroCommand : CommandManager("macro","autoclick") {
         }
         fun doMacro(player : Player){
             // e.player.sendMessage("§aVocê esta clicando")
-            val list = player.getNearbyEntities(3.5/2, 3.5/2, 3.5/2)
+            val list = player.getNearbyEntities(3.5, 3.5, 3.5)
             //val realTarget = Mine.getTarget(e.player , list)
             for (entity in list) {
                 if (entity == null) continue

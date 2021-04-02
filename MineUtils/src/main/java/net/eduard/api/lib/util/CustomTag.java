@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Sistema de customizar tags dos jogadores
+ * Sistema de customizar tags dos jogadores via packet Direto
  * 
  * @author Internet
  *
