@@ -7,7 +7,7 @@ import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.server.CurrencySystem
 import org.bukkit.inventory.ItemStack
 
-class CurrencyManager : SimpleCurrencySystem() {
+open class CurrencyManager : SimpleCurrencySystem() {
 
     companion object{
         private val currencies= mutableMapOf<String, CurrencySystem>()

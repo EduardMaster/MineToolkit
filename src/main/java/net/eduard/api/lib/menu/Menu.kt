@@ -208,7 +208,7 @@ open class Menu(
         return null
     }
 
-    fun getButton(icon: ItemStack, player: Player): MenuButton? {
+    fun getButton(icon: ItemStack, player: Player?): MenuButton? {
         val data = MineReflect.getData(icon)
         val buttonName = data.getString("button-name")
         return buttonsCache[buttonName]

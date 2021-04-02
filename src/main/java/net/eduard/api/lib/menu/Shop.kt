@@ -243,13 +243,16 @@ open class Shop(
         product.stock = evento.newStock
         for (cmd in product.commands) {
             val cmdExecuted =
-                cmd.replace("\$player", player.name).replace("\$formated_amount", Extra.formatMoney(amount))
+                cmd.replace("\$player", player.name)
+                    .replace("\$formated_amount", Extra.formatMoney(amount))
                     .replace("\$amount", "" + amount)
             debug("CMD: $cmdExecuted")
             Mine.runCommand(cmdExecuted)
         }
         player.sendMessage(
-            messageBoughtItem.replace("\$amount", Extra.formatMoney(amount)).replace(
+            messageBoughtItem
+                .replace("\$amount",
+                    Extra.formatMoney(amount)).replace(
                 "\$product",
                 "" + product.name
             )
@@ -310,9 +313,8 @@ open class Shop(
         }
         Mine.remove(player.inventory, product.product, evento.amount.toInt())
         player.sendMessage(
-            messageSoldItem.replace("\$amount", "" + amount).replace(
-                "\$product",
-                product.name
+            messageSoldItem.replace("\$amount", "" + amount)
+                .replace("\$product",product.name
             )
         )
         currency!!.add(fake, finalPrice)
@@ -330,11 +332,10 @@ open class Shop(
     }
 
     fun getProductFrom(item: ItemStack): Product? {
-        for (button in buttons) {
+        val button = getButton(item, null)
+        if (button != null) {
             if (button is Product) {
-                if (button.product?.isSimilar(item)!!) {
-                    return button
-                }
+                return button
             }
         }
         return null
@@ -345,7 +346,6 @@ open class Shop(
         menuUpgrades?.register(plugin)
         menuConfirmation?.register(plugin)
         if (menuConfirmation != null) {
-
             val confirmationButton = menuConfirmation!!.getButton("confirmar")!!
             val cancelButton = menuConfirmation!!.getButton("cancelar")!!
             val productButton = menuConfirmation!!.getButton("product")!!
@@ -358,6 +358,19 @@ open class Shop(
                     buy(player, produto, 1.0)
                 } else if (type == TradeType.SELABLE) {
                     sell(player, produto, 1.0)
+                }
+            }
+            menuConfirmation!!.openHandler = { inventory, player ->
+
+                val productButton = menuConfirmation?.getButton("product")!!
+
+                val product = selectedProduct[player]!!
+
+                if (isPermissionShop && product.hasBought(player)) {
+                    menuUpgrades?.open(player)
+
+                } else {
+                    inventory.setItem(productButton.index, product.icon)
                 }
             }
         }
@@ -387,22 +400,6 @@ open class Shop(
 
         }
 
-        if (menuConfirmation != null) {
-
-            menuConfirmation!!.openHandler = { inventory, player ->
-
-                val productButton = menuConfirmation?.getButton("product")!!
-
-                val product = selectedProduct[player]!!
-
-                if (isPermissionShop && product.hasBought(player)) {
-                    menuUpgrades?.open(player)
-
-                } else {
-                    inventory.setItem(productButton.index, product.icon)
-                }
-            }
-        }
 
         val upgradeButton = menuUpgrades?.getButton("upgrade") ?: return
         upgradeButton.click = ClickEffect { event ->
