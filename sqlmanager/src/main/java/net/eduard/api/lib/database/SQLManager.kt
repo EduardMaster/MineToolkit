@@ -64,6 +64,16 @@ class SQLManager(var dbManager: DBManager) {
 
     /**
      *
+     * @param primaryKeyValue
+     * @param <E> dataType
+     * @return
+     */
+    inline fun <reified E : Any> getData(primaryKeyValue: Any): E? {
+        return getData(E::class.java, primaryKeyValue)
+    }
+
+    /**
+     *
      * @param dataClass
      * @param fieldName
      * @param fieldValue
@@ -76,6 +86,7 @@ class SQLManager(var dbManager: DBManager) {
                 .findByColumn(fieldName, fieldValue)
         } else null
     }
+
 
     /**
      *
@@ -90,6 +101,11 @@ class SQLManager(var dbManager: DBManager) {
                 .findByPrimary(primaryKeyValue)
         } else null
     }
+
+    inline fun <reified T : Any> getAll(): List<T> {
+        return getAllData(T::class.java)
+    }
+
 
     fun <E : Any> getAllData(dataClass: Class<E>): List<E> {
         return if (hasConnection()) {
@@ -179,10 +195,18 @@ class SQLManager(var dbManager: DBManager) {
         }
     }
 
+    inline fun <reified T : Any> createTable() {
+        createTable(T::class.java)
+    }
+
     fun <T : Any> createTable(dataClass: Class<T>) {
         if (hasConnection()) {
             dbManager.engineUsed.createTable(dataClass)
         }
+    }
+
+    inline fun <reified T : Any> deleteTable() {
+        deleteTable(T::class.java)
     }
 
     fun <T : Any> deleteTable(dataClass: Class<T>) {
@@ -191,11 +215,22 @@ class SQLManager(var dbManager: DBManager) {
         }
     }
 
+    inline fun <reified T : Any> clearTable() {
+        clearTable(T::class.java)
+    }
+
+
     fun <T : Any> clearTable(dataClass: Class<T>) {
         if (hasConnection()) {
             dbManager.engineUsed.clearTable(dataClass)
         }
     }
+
+
+    inline fun <reified T : Any> createReferences() {
+        createReferences(T::class.java)
+    }
+
 
     fun <T : Any> createReferences(dataClass: Class<T>) {
         if (hasConnection()) {

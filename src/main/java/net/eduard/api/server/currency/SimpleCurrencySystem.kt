@@ -33,4 +33,8 @@ open class SimpleCurrencySystem
         return true
     }
 
+    override fun set(player: FakePlayer, amount: Double){
+
+    }
+
 }

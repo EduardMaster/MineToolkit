@@ -336,7 +336,7 @@ class ConfigSection(var key: String, var data: Any) {
                 if (spaceId == -1) return
                 var tempData = data
                 if (tempData is String) {
-                    if (tempData.isEmpty()) {
+                    if (tempData.isEmpty()||tempData.endsWith(" ")||tempData.startsWith(" ")) {
                         tempData = ConfigUtil.STR1 + "" + ConfigUtil.STR1
                     }
                 }
