@@ -8,6 +8,9 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
 import java.lang.IllegalStateException
 
+/**
+ *
+ */
 class PlayerScore_v1_8_R3(override var player: Player) : PlayerScore {
 
     private val score = Scoreboard();
@@ -133,7 +136,7 @@ class PlayerScore_v1_8_R3(override var player: Player) : PlayerScore {
         if (lineID in scores) {
             return scores[lineID]!!.playerName
         }
-        return "";
+        return ""
     }
 
     override fun remove() {

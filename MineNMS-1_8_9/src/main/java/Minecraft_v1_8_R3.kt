@@ -1,8 +1,8 @@
 package net.eduard.api.lib.abstraction
 
-import com.google.gson.JsonObject
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
+import net.eduard.api.lib.modules.Extra
 import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -11,11 +11,9 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
-import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.lang.Exception
 import java.lang.reflect.Field
-import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
@@ -26,14 +24,10 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
     override fun sendPacket(packet: Any, player: Player) {
 
-        (player as CraftPlayer).getHandle().playerConnection.sendPacket(packet as Packet<*>)
+        (player as CraftPlayer).handle.playerConnection.sendPacket(packet as Packet<*>)
     }
 
     override fun setHeadSkin(head: ItemStack, texture: String, signature: String) {
-
-    }
-
-    fun setInventoryName(inventory: Inventory, name: String) {
 
     }
 
@@ -72,25 +66,25 @@ class Minecraft_v1_8_R3 : Minecraft() {
     }
 
     override fun getPlayers(): Collection<Player> {
-        return Bukkit.getOnlinePlayers();
+        return Bukkit.getOnlinePlayers()
     }
 
     override fun performRespawn(player: Player) {
-        (player as CraftPlayer).getHandle().playerConnection
+        (player as CraftPlayer).handle.playerConnection
             .a(PacketPlayInClientCommand(PacketPlayInClientCommand.EnumClientCommand.PERFORM_RESPAWN))
     }
 
     override fun setPlayerSkin(player: Player, newSkin: String) {
-        val entityPlayer: EntityPlayer = (player as CraftPlayer).getHandle()
-        val playerProfile: GameProfile = entityPlayer.getProfile()
-        playerProfile.getProperties().clear()
-        val uuid: String = "" //Extra.getPlayerUUIDByName(newSkin)
-        val skinProperty: JsonObject = JsonObject()//Extra.getSkinProperty(uuid)
-        val name: String = skinProperty.get("name").getAsString()
-        val skin: String = skinProperty.get("value").getAsString()
-        val signature: String = skinProperty.get("signature").getAsString()
+        val entityPlayer: EntityPlayer = (player as CraftPlayer).handle
+        val playerProfile: GameProfile = entityPlayer.profile
+        playerProfile.properties.clear()
+        val uuid: String = Extra.getPlayerUUIDByName(newSkin)
+        val skinProperty = Extra.getSkinProperty(uuid)
+        val name: String = skinProperty.get("name").asString
+        val skin: String = skinProperty.get("value").asString
+        val signature: String = skinProperty.get("signature").asString
         try {
-            playerProfile.getProperties().put("textures", Property(name, skin, signature))
+            playerProfile.properties.put("textures", Property(name, skin, signature))
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -99,8 +93,8 @@ class Minecraft_v1_8_R3 : Minecraft() {
     }
 
     override fun setPlayerName(player: Player, newName: String) {
-        val entityPlayer: EntityPlayer = (player as CraftPlayer).getHandle()
-        val playerProfile: GameProfile = entityPlayer.getProfile()
+        val entityPlayer: EntityPlayer = (player as CraftPlayer).handle
+        val playerProfile: GameProfile = entityPlayer.profile
         try {
             val field: Field = playerProfile.javaClass.getDeclaredField("name")
             field.isAccessible = true
@@ -115,44 +109,44 @@ class Minecraft_v1_8_R3 : Minecraft() {
         addToTab(player)
     }
 
-    override fun respawnPlayer(player: Player) {
-        val entityPlayer: EntityPlayer = (player as CraftPlayer).getHandle()
-        val destroy = PacketPlayOutEntityDestroy(entityPlayer.getId())
+    override fun respawnPlayer(playerToRespawn: Player) {
+        val entityPlayer: EntityPlayer = (playerToRespawn as CraftPlayer).handle
+        val destroy = PacketPlayOutEntityDestroy(entityPlayer.id)
         val removePlayerInfo = PacketPlayOutPlayerInfo(
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-            player.getHandle()
+            playerToRespawn.handle
         )
         val spawn = PacketPlayOutNamedEntitySpawn(entityPlayer)
         val addPlayerInfo = PacketPlayOutPlayerInfo(
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-            player.getHandle()
+            playerToRespawn.handle
         )
         val metadata = PacketPlayOutEntityMetadata(
-            entityPlayer.getId(),
-            entityPlayer.getDataWatcher(), true
+            entityPlayer.id,
+            entityPlayer.dataWatcher, true
         )
         val headRotation = PacketPlayOutEntityHeadRotation(
             entityPlayer,
-            MathHelper.d(entityPlayer.getHeadRotation() * 256.0f / 360.0f).toByte()
+            MathHelper.d(entityPlayer.headRotation * 256.0f / 360.0f).toByte()
         )
-        sendPacketsToOthers(player, removePlayerInfo, destroy, spawn, addPlayerInfo, metadata, headRotation)
+        sendPacketsToOthers(playerToRespawn, removePlayerInfo, destroy, spawn, addPlayerInfo, metadata, headRotation)
     }
 
     override fun reloadPlayer(player: Player) {
         sendPacket(player,
             PacketPlayOutPlayerInfo(
-                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, (player as CraftPlayer).getHandle()
+                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, (player as CraftPlayer).handle
             )
         )
         sendPacket(player,
             PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                (player as CraftPlayer).getHandle()
+                player.handle
             )
         )
-        (Bukkit.getServer() as CraftServer).getHandle().moveToWorld(
-            (player as CraftPlayer).getHandle(), (player as CraftPlayer)
-                .getHandle().dimension, true, player.getLocation(),
+        (Bukkit.getServer() as CraftServer).handle.moveToWorld(
+            player.handle, player
+                .handle.dimension, true, player.getLocation(),
             true
         )
     }
@@ -160,7 +154,7 @@ class Minecraft_v1_8_R3 : Minecraft() {
     override fun removeFromTab(playerRemoved: Player) {
         val removePlayerInfo = PacketPlayOutPlayerInfo(
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-            (playerRemoved as CraftPlayer).getHandle()
+            (playerRemoved as CraftPlayer).handle
         )
         sendPacketsToAll(removePlayerInfo)
     }
@@ -168,14 +162,14 @@ class Minecraft_v1_8_R3 : Minecraft() {
     override fun addToTab(playerToAdd: Player) {
         val addPlayerInfo = PacketPlayOutPlayerInfo(
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-            (playerToAdd as CraftPlayer).getHandle()
+            (playerToAdd as CraftPlayer).handle
         )
         sendPacketsToAll(addPlayerInfo)
     }
 
-    override fun updateDisplayName(player: Player) {
+    override fun updateDisplayName(playerToAdd: Player) {
         val updateDisplayName = PacketPlayOutPlayerInfo(
-            PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_DISPLAY_NAME, (player as CraftPlayer).getHandle()
+            PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_DISPLAY_NAME, (playerToAdd as CraftPlayer).handle
         )
         sendPacketsToAll(updateDisplayName)
     }

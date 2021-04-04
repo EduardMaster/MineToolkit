@@ -1,7 +1,6 @@
 package net.eduard.api.lib.abstraction
-import net.eduard.api.lib.abstraction.Minecraft
+
 import net.minecraft.server.v1_7_R4.*
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer
 import org.bukkit.entity.Entity
@@ -13,7 +12,8 @@ import org.bukkit.inventory.ItemStack
  */
 class Minecraft_v1_7_R4 : Minecraft() {
     override fun sendPacket(packet: Any, player: Player) {
-        (player as CraftPlayer).handle.playerConnection.sendPacket(packet as Packet)
+        (player as CraftPlayer).handle.playerConnection
+            .sendPacket(packet as Packet)
     }
 
     override fun removeFromTab(playerRemoved: Player) {

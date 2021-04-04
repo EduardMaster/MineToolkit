@@ -4,7 +4,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
 import org.bukkit.entity.Player
-import java.util.ArrayList
 
 /**
  * Criado em 28/11/2019
@@ -79,7 +78,7 @@ class Hologram_v1_8_R3 : Hologram {
     fun update(player: Player) {
         // tentativas de mandar packets de atualização da entidade
         text = text
-        val updateNBT = PacketPlayOutUpdateEntityNBT(holo!!.id, holo!!.nbtTag)
+        //val updateNBT = PacketPlayOutUpdateEntityNBT(holo!!.id, holo!!.nbtTag)
         val updateMetadata = PacketPlayOutEntityMetadata(holo!!.id, holo!!.dataWatcher, false)
 
 

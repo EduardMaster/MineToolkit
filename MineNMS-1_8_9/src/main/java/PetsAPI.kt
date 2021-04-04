@@ -19,14 +19,14 @@ object PetsAPI {
     private var targetSelector: Field? = null
     fun makePet(e: LivingEntity, toFollow: UUID?) {
         try {
-            val nms_entity: Any = (e as CraftLivingEntity).handle
-            if (nms_entity is EntityInsentient) {
-                val goal = goalSelector!![nms_entity] as PathfinderGoalSelector
-                val target = targetSelector!![nms_entity] as PathfinderGoalSelector
+            val nmsEntity: Any = (e as CraftLivingEntity).handle
+            if (nmsEntity is EntityInsentient) {
+                val goal = goalSelector!![nmsEntity] as PathfinderGoalSelector
+                val target = targetSelector!![nmsEntity] as PathfinderGoalSelector
                 gsa!![goal] = UnsafeList<Any>()
                 gsa!![target] = UnsafeList<Any>()
-                goal.a(0, PathfinderGoalFloat(nms_entity))
-                goal.a(1, PathfinderGoalWalktoTile(nms_entity, toFollow))
+                goal.a(0, PathfinderGoalFloat(nmsEntity))
+                goal.a(1, PathfinderGoalWalktoTile(nmsEntity, toFollow))
             } else {
                 throw IllegalArgumentException(e.getType().getName() + " is not an instance of an EntityInsentient.")
             }
@@ -51,6 +51,18 @@ object PetsAPI {
             return path != null
         }
 
+
+        override fun e() {
+
+        }
+
+        override fun d() {
+
+        }
+        override fun i(): Boolean {
+            return true
+        }
+
         override fun c() {
             entity.navigation.a(path, 1.0)
         }
@@ -59,11 +71,11 @@ object PetsAPI {
     init {
         try {
             gsa = PathfinderGoalSelector::class.java.getDeclaredField("b")
-            gsa!!.setAccessible(true)
+            gsa!!.isAccessible = true
             goalSelector = EntityInsentient::class.java.getDeclaredField("goalSelector")
-            goalSelector!!.setAccessible(true)
+            goalSelector!!.isAccessible = true
             targetSelector = EntityInsentient::class.java.getDeclaredField("targetSelector")
-            targetSelector!!.setAccessible(true)
+            targetSelector!!.isAccessible = true
         } catch (e: Exception) {
             e.printStackTrace()
         }

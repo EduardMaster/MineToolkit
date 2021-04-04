@@ -1,4 +1,5 @@
 package net.eduard.api.lib.abstraction
+
 import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Chunk
 import org.bukkit.Location
@@ -8,11 +9,19 @@ import org.bukkit.block.Block
 import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
 
-class Blocks_v1_8_R3(x: Int, y: Int, z: Int, @field:Transient val worldServer: WorldServer) : CraftBlock(null, x, y, z),
+/**
+ *
+ */
+class Blocks_v1_8_R3(
+    x: Int, y: Int, z: Int,
+    val worldServer: WorldServer
+) : CraftBlock(null, x, y, z),
     Blocks {
 
     constructor(location: Location) : this(location.block) {}
-    constructor(block: Block) : this(block.x, block.y, block.z, (block.world as CraftWorld).handle) {}
+    constructor(block: Block) :
+            this(block.x, block.y, block.z, (block.world as CraftWorld).handle) {
+    }
 
     override fun getWorld(): World {
         return worldServer.world
