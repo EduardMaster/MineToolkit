@@ -71,17 +71,18 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
     override fun performRespawn(player: Player) {
         (player as CraftPlayer).handle.playerConnection
-            .a(PacketPlayInClientCommand(PacketPlayInClientCommand.EnumClientCommand.PERFORM_RESPAWN))
+            .a(PacketPlayInClientCommand(PacketPlayInClientCommand
+                .EnumClientCommand.PERFORM_RESPAWN))
     }
 
     override fun setPlayerSkin(player: Player, newSkin: String) {
         val entityPlayer: EntityPlayer = (player as CraftPlayer).handle
         val playerProfile: GameProfile = entityPlayer.profile
         playerProfile.properties.clear()
-        val uuid: String = Extra.getPlayerUUIDByName(newSkin)
+        val uuid = Extra.getPlayerUUIDByName(newSkin)
         val skinProperty = Extra.getSkinProperty(uuid)
-        val name: String = skinProperty.get("name").asString
-        val skin: String = skinProperty.get("value").asString
+        val name = skinProperty.get("name").asString
+        val skin = skinProperty.get("value").asString
         val signature: String = skinProperty.get("signature").asString
         try {
             playerProfile.properties.put("textures", Property(name, skin, signature))
@@ -135,7 +136,8 @@ class Minecraft_v1_8_R3 : Minecraft() {
     override fun reloadPlayer(player: Player) {
         sendPacket(player,
             PacketPlayOutPlayerInfo(
-                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, (player as CraftPlayer).handle
+                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
+                (player as CraftPlayer).handle
             )
         )
         sendPacket(player,
@@ -169,7 +171,8 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
     override fun updateDisplayName(playerToAdd: Player) {
         val updateDisplayName = PacketPlayOutPlayerInfo(
-            PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_DISPLAY_NAME, (playerToAdd as CraftPlayer).handle
+            PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_DISPLAY_NAME,
+            (playerToAdd as CraftPlayer).handle
         )
         sendPacketsToAll(updateDisplayName)
     }
@@ -177,18 +180,18 @@ class Minecraft_v1_8_R3 : Minecraft() {
     override fun getItemNBT(item: ItemStack): Any {
         val nmsItem: net.minecraft.server.v1_8_R3.ItemStack = CraftItemStack.asNMSCopy(item)
         var nbt: NBTTagCompound
-        if (nmsItem.getTag().also { nbt = it } == null) nmsItem.setTag(nbt)
+        if (nmsItem.tag.also { nbt = it } == null) nmsItem.tag = nbt
         return nbt
     }
 
     override fun setItemNBT(item: ItemStack, nbt: Any): ItemStack {
         val nmsItem: net.minecraft.server.v1_8_R3.ItemStack = CraftItemStack.asNMSCopy(item)
-        nmsItem.setTag(nbt as NBTTagCompound?)
+        nmsItem.tag = nbt as NBTTagCompound?
         return CraftItemStack.asCraftMirror(nmsItem)
     }
 
     override fun disableAI(entity: Entity) {
-        TODO("Not yet implemented")
+
     }
 
     override fun sendActionBar(player: Player, message: String) {
@@ -218,8 +221,8 @@ class Minecraft_v1_8_R3 : Minecraft() {
     }
 
     companion object {
-        private val particles: MutableMap<String, Any> = HashMap()
-        private val blockedMessage: MutableSet<String> = HashSet()
+        var particles: MutableMap<String, Any> = HashMap()
+        var blockedMessage: MutableSet<String> = HashSet()
     }
 
     init {
