@@ -236,4 +236,37 @@ VERSÔES:
 0.9: Embreve vou marcar as mudanças que rolou nesta versão.
 0.10: Embreve vou marcar as mudanças que rolou nesta versão.
 1.0: Parando de renomear package principal, Package setup/ fica as classes mais importantes
-1.7: Utilizando o Kotlin em boa parte do plugin EduardAPI
+1.1: Embreve vou marcar as mudanças que rolou nesta versão.
+1.2: Embreve vou marcar as mudanças que rolou nesta versão.
+1.3: Embreve vou marcar as mudanças que rolou nesta versão.
+1.4: Embreve vou marcar as mudanças que rolou nesta versão.
+1.5: Embreve vou marcar as mudanças que rolou nesta versão.
+1.6: Embreve vou marcar as mudanças que rolou nesta versão.
+1.7:
+  Descriçao: Utilizando o Kotlin em boa parte do projeto
+  Detalhes:
+  - Os debugs de tudo é ativavel pela config.yml
+  - Movendo arquivos da pasta lib/abstraction para api/abstraction
+  - Colocando lista de classes de todos os Kits conhecidos de HG e KitPvP na pasta api/server/kits
+    antes estas classes ficavam nos dois projetos pagos, EduHG e EduKitPvP,
+    resolvi que como os kits são os mesmos é melhor ficam em um lugar só
+  - Movi 3 classes da pasta api/server/kits para api/server/kit
+  - Removido métodos da Extra relacionados a contagem de Valor de Projeto pois agora sigo o padrão do Site que calcula o projeto dependendo de coisas que os propríos compradores podem avaliar
+  - Método removido calculateClassValue(class)->double que calcula o valor da Classe com base em um HashMap de valores levando em consideração até suas variaveis
+  - Método removido setPrice(class,double) que define o valor da Classe dentro do HashMap
+  - Método removido getPrice(class)->double que retorna o valor da Classe vinda do HashMap e 0 caso não tenha esta classe no Mapa
+  - Método removido InfoGenerator.saveObject(path,player) porque não tem porque salva infos dos jogadores se não vou controlar
+  - Colocando a maioria dos códigos que estavam na classe EduardAPI em varias outras classes
+  - Transferindo Constantes da classe Mine e Extra para a EduardAPI pois não será usado por ninguem é apenas informativo
+  - Comecei a criar Storage v2 (Storation) só para ver se conseguia ainda, tem como Objetivo ser mais compacto e mais simples
+  - Comecei a transformar as classes Java para Kotlin
+  - Reformulando onde fica as classe em qual package, muitas refatorações
+  - Removendo classe EduardLIB que extendia JavaPlugin
+  - Retirando lista de classes de todos os Kits conhecidos de HG e KitPvP e colocando no projeto HG
+  - Colocando arquivos da package player/ , world/ e outras foram todas para package /game/
+  - Deletei a Storage v2 (Storation) não precisa ter dois sistema de Automatização de armazenamento
+  - Deletei o repositorio da package lib/ que existia (EduardLIB)
+  - Criando o SQLManager um ORM feito para facilitar a sua vida 50% concluido, falta relacionamento entre tabelas
+  - Atualizando DBManager classe retirando independencia agora depende da classe SQLManager ou seja não da pra usar isso fora deste projeto
+  - Em breve será reconstruido todos os códigos para que use StringBuilder para maior eficiência
+  - StorageAPI sistema de Referencia para Lista e Mapas concertado
