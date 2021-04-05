@@ -71,8 +71,12 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
     override fun performRespawn(player: Player) {
         (player as CraftPlayer).handle.playerConnection
-            .a(PacketPlayInClientCommand(PacketPlayInClientCommand
-                .EnumClientCommand.PERFORM_RESPAWN))
+            .a(
+                PacketPlayInClientCommand(
+                    PacketPlayInClientCommand
+                        .EnumClientCommand.PERFORM_RESPAWN
+                )
+            )
     }
 
     override fun setPlayerSkin(player: Player, newSkin: String) {
@@ -130,17 +134,19 @@ class Minecraft_v1_8_R3 : Minecraft() {
             entityPlayer,
             MathHelper.d(entityPlayer.headRotation * 256.0f / 360.0f).toByte()
         )
-        sendPacketsToOthers(playerToRespawn, removePlayerInfo, destroy, spawn, addPlayerInfo, metadata, headRotation)
+        sendPacketsToOthers(playerToRespawn, removePlayerInfo, destroy, metadata, addPlayerInfo, spawn, headRotation)
     }
 
     override fun reloadPlayer(player: Player) {
-        sendPacket(player,
+        sendPacket(
+            player,
             PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
                 (player as CraftPlayer).handle
             )
         )
-        sendPacket(player,
+        sendPacket(
+            player,
             PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
                 player.handle
@@ -199,7 +205,7 @@ class Minecraft_v1_8_R3 : Minecraft() {
         sendPacket(packetPlayOutChat, player)
     }
 
-   override fun setTabList(player: Player, header: String, footer: String) {
+    override fun setTabList(player: Player, header: String, footer: String) {
         val packet = PacketPlayOutPlayerListHeaderFooter()
         try {
             val headerComponent: IChatBaseComponent = ChatComponentText(header)
