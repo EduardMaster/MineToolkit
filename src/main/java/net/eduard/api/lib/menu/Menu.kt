@@ -411,9 +411,7 @@ open class Menu(
         }
         for (button in buttons) {
             if (button.page != page) continue
-
             var position = button.index
-
             if (!button.fixed)
                 if (position >= getSlotLimit()) {
                     position = 0
@@ -422,12 +420,9 @@ open class Menu(
             if (isTranslateIcon) {
                 icon = Mine.getReplacers(icon, player)
             }
-
             val data = MineReflect.getData(icon)
             data.setString("button-name", button.name)
             icon = MineReflect.setData(icon, data)
-
-
             menu.setItem(position, icon)
         }
 
@@ -441,12 +436,10 @@ open class Menu(
     open fun registerMenu(plugin: IPluginInstance) {
         var id = 1
         val namesUsed = mutableSetOf<String>()
-
         for (button in buttons) {
             val lastEquals = (namesUsed.contains(button.name))
             if (button.name == "Produto" || lastEquals) {
                 button.name = "Produto-$id"
-
             }
             if (button.name == "Botao" || lastEquals) {
                 button.name = "Botao-$id"
@@ -454,7 +447,6 @@ open class Menu(
             if (!lastEquals) {
                 namesUsed.add(button.name)
             }
-
             id++
         }
         registerListener(plugin.plugin as JavaPlugin)
@@ -478,13 +470,10 @@ open class Menu(
                 button.menu?.unregisterMenu()
             }
         }
-
     }
 
     @EventHandler
     fun onClick(e: PlayerInteractEvent) {
-
-
         val player = e.player
         if (player.itemInHand == null)
             return
@@ -493,8 +482,6 @@ open class Menu(
         if (!Mine.equals(player.itemInHand, openWithItem)) return
         e.isCancelled = true
         open(player)
-
-
     }
 
     @EventHandler
@@ -513,9 +500,7 @@ open class Menu(
     fun onCommandText(event: PlayerCommandPreprocessEvent) {
         val player = event.player
         val message = event.message
-
         openWithCommandText ?: return
-
         if (message.toLowerCase().startsWith(openWithCommandText!!.toLowerCase())) {
             event.isCancelled = true
             open(player)
@@ -550,7 +535,6 @@ open class Menu(
                 return
             } else {
                 button = getButton(itemClicked, player)
-
                 debug("Button by Item " + if (button == null) "is Null" else "is not null")
             }
         }
@@ -558,7 +542,6 @@ open class Menu(
             button = getButton(page, slot)
             debug("Button by Slot " + if (button == null) "is Null" else "is not null")
         }
-
         if (button != null) {
             if (button.click != null) {
                 debug("Button make click effect")
@@ -568,7 +551,6 @@ open class Menu(
                 debug("Button make Editable Effects")
                 button.effects?.playEffects(player)
             }
-
             if (button.isCategory) {
                 button.menu?.open(player)
                 debug("Button open another menu")
@@ -579,8 +561,6 @@ open class Menu(
             debug("Played menu effect")
             effect?.accept(event)
         }
-
-
     }
 
 

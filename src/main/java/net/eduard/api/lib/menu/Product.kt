@@ -2,17 +2,14 @@ package net.eduard.api.lib.menu
 
 import net.eduard.api.lib.game.EnchantGlow
 import net.eduard.api.lib.kotlin.format
-import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 @Suppress("unused")
 open class Product(
-    name: String = "Produto",shop: Shop? = null
-) : MenuButton(name,shop) {
-
+    name: String = "Produto", shop: Shop? = null
+) : MenuButton(name, shop) {
 
 
     fun upgrade(level: Int, body: ProductUpgrade.() -> Unit): ProductUpgrade {
@@ -77,6 +74,7 @@ open class Product(
         }
         return null
     }
+
     var moneyFormatedOP = false
 
     override fun getIcon(player: Player): ItemStack {
@@ -94,6 +92,14 @@ open class Product(
                 var template: List<String>? = null
                 if (tradeType === TradeType.BUYABLE) {
                     template = parentShop.buyTemplate
+                    if (parentShop.isPermissionShop) {
+                        if (player.hasPermission(permission)) {
+                            if (parentShop.glowIconWhenAlreadyBought) {
+                                EnchantGlow.addGlow(clone)
+                            }
+                            template = parentShop.boughtTemplate
+                        }
+                    }
                 }
                 if (tradeType === TradeType.SELABLE) {
                     template = parentShop.sellTemplate
@@ -109,15 +115,13 @@ open class Product(
                             .replace("\$product_buy_pack_price", (unitBuyPrice * 64.0).format(moneyFormatedOP))
                             .replace("\$product_sell_unit_price", unitSellPrice.format(moneyFormatedOP))
                             .replace("\$product_sell_pack_price", (unitSellPrice * 64).format(moneyFormatedOP))
-                            .replace("\$product_sell_inventory_price", (unitSellPrice * 64 * 4 * 9).format(moneyFormatedOP))
+                            .replace(
+                                "\$product_sell_inventory_price",
+                                (unitSellPrice * 64 * 4 * 9).format(moneyFormatedOP)
+                            )
                     )
                 }
-                if (parentShop.isPermissionShop) {
-                    if (player.hasPermission(permission)) {
-                        EnchantGlow.addGlow(clone)
-                        lore.add(parentShop.textAlreadyBought)
-                    }
-                }
+
             }
         }
 

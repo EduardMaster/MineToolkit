@@ -39,13 +39,8 @@ open class EffectManager {
         if (clearInventory) {
             Mine.clearInventory(player)
         }
-
         visualEffectToShow?.create(player)
-
-
         player.inventory.addItem(*itemsToGive.toTypedArray())
-
-
         potionsToApply.forEach { it.apply(player) }
 
     }
