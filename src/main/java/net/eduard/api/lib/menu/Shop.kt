@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.inventory.ItemStack
 import java.util.*
+import kotlin.math.abs
 
 @Suppress("unused")
 @StorageAttributes(indentificate = true)
@@ -71,6 +72,7 @@ open class Shop(
     val boughtTemplate = TEMPLATE_BOUGHT.toMutableList()
     var sellTemplate = TEMPLATE_SELL.toMutableList()
     var sellBuyTemplate = TEMPLATE_BUY_SELL.toMutableList()
+
     var messageChoiceAmount = MESSAGE_CHOICE_AMOUNT
     var messageBoughtItem = MESSAGE_BOUGHT_ITEM
     var messageSoldItem = MESSAGE_SOLD_ITEM
@@ -198,7 +200,7 @@ open class Shop(
         if (selectingAmount.containsKey(player)) {
             val product = selectingAmount[player]!!
             var amount = Extra.fromMoneyToDouble(e.message)
-            amount = Math.abs(amount)
+            amount = abs(amount)
             selectingAmount.remove(player)
             val trade = trading[player]
             trading.remove(player)
@@ -370,38 +372,38 @@ open class Shop(
                 val player = event.player
                 val produto = selectedProduct[player]!!
                 val type = trading[player]!!
+
                 if (type == TradeType.BUYABLE) {
                     buy(player, produto, 1.0)
                 } else if (type == TradeType.SELABLE) {
                     sell(player, produto, 1.0)
                 }
+                open(event.player)
             }
-            menuConfirmation!!.openHandler = { inventory, player ->
-
-                val product = selectedProduct[player]!!
-                if (isPermissionShop && product.hasBought(player)) {
-                    menuUpgrades?.open(player)
-                } else {
+            if (menuConfirmation!!.openHandler == null)
+                menuConfirmation!!.openHandler = { inventory, player ->
+                    val product = selectedProduct[player]!!
                     inventory.setItem(productButton.index, product.icon)
                 }
-            }
         }
         if (menuUpgrades != null) {
             menuUpgrades!!.superiorMenu = this
-            menuUpgrades!!.openHandler = { inventory, player ->
-                val product = selectedProduct[player]!!
-                var slot = Extra.getIndex(3, 4)
-                val productButton = menuUpgrades?.getButton("product")!!
-                inventory.setItem(productButton.index, product.icon)
-                for (upgrade in product.upgrades) {
-                    val icon = ItemBuilder(Material.STAINED_GLASS_PANE)
-                        .data(14)
-                        .name("§6Upgrade §e" + upgrade.displayName)
-                    if (upgrade.hasBought(player)) {
-                        icon.data(5)
+            if (menuUpgrades!!.openHandler == null) {
+                menuUpgrades!!.openHandler = { inventory, player ->
+                    val product = selectedProduct[player]!!
+                    var slot = Extra.getIndex(3, 4)
+                    val productButton = menuUpgrades?.getButton("product")!!
+                    inventory.setItem(productButton.index, product.icon)
+                    for (upgrade in product.upgrades) {
+                        val icon = ItemBuilder(Material.STAINED_GLASS_PANE)
+                            .data(14)
+                            .name("§6Upgrade §e" + upgrade.displayName)
+                        if (upgrade.hasBought(player)) {
+                            icon.data(5)
+                        }
+                        inventory.setItem(slot, icon)
+                        slot++
                     }
-                    inventory.setItem(slot, icon)
-                    slot++
                 }
             }
         }
@@ -434,7 +436,8 @@ open class Shop(
                     .replace(
                         "\$level",
                         "" + nextUpgrade.level
-                    ))
+                    )
+            )
 
         }
     }
@@ -449,8 +452,12 @@ open class Shop(
                 debug("Produto pelo Icone nulo")
                 return@ClickEffect
             }
-            if (menuConfirmation != null) {
-                if (isPermissionShop && product.hasBought(player)){
+
+            if (menuUpgrades != null && isPermissionShop && product.hasBought(player)) {
+                menuUpgrades?.open(player)
+                return@ClickEffect
+            } else if (menuConfirmation != null) {
+                if (isPermissionShop && product.hasBought(player)) {
                     return@ClickEffect
                 }
                 trading[player] = product.tradeType

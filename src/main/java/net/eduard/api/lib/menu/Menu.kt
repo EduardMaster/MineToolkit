@@ -397,6 +397,9 @@ open class Menu(
         }
         return null
     }
+    open fun update(){
+
+    }
 
     fun update(menu: Inventory, player: Player, page: Int) {
         menu.clear()

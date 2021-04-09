@@ -87,44 +87,42 @@ open class Product(
             }
         }
         val lore = Mine.getLore(clone)
-        if (parentMenu != null) {
-            if (parentMenu is Shop) {
-                var template: List<String>? = null
-                if (tradeType === TradeType.BUYABLE) {
-                    template = parentShop.buyTemplate
-                    if (parentShop.isPermissionShop) {
-                        if (player.hasPermission(permission)) {
-                            if (parentShop.glowIconWhenAlreadyBought) {
-                                EnchantGlow.addGlow(clone)
-                            }
-                            template = parentShop.boughtTemplate
-                        }
-                    }
-                }
-                if (tradeType === TradeType.SELABLE) {
-                    template = parentShop.sellTemplate
-                }
-                if (tradeType === TradeType.BOTH) {
-                    template = parentShop.sellBuyTemplate
-                }
-                for (line in template!!) {
-                    lore.add(
-                        line.replace("\$product_name", name)
-                            .replace("\$product_stock", "" + stock)
-                            .replace("\$product_buy_unit_price", unitBuyPrice.format(moneyFormatedOP))
-                            .replace("\$product_buy_pack_price", (unitBuyPrice * 64.0).format(moneyFormatedOP))
-                            .replace("\$product_sell_unit_price", unitSellPrice.format(moneyFormatedOP))
-                            .replace("\$product_sell_pack_price", (unitSellPrice * 64).format(moneyFormatedOP))
-                            .replace(
-                                "\$product_sell_inventory_price",
-                                (unitSellPrice * 64 * 4 * 9).format(moneyFormatedOP)
-                            )
-                    )
-                }
-
-            }
+        if (parentMenu == null) {
+            return clone
         }
-
+        if (parentMenu !is Shop) {
+            return clone
+        }
+        var template: List<String>? = null
+        if (tradeType === TradeType.BUYABLE) {
+            template = parentShop.buyTemplate
+            if (parentShop.isPermissionShop) {
+                if (player.hasPermission(permission)) {
+                    if (parentShop.glowIconWhenAlreadyBought) {
+                        EnchantGlow.addGlow(clone)
+                    }
+                    template = parentShop.boughtTemplate
+                }
+            }
+        } else if (tradeType === TradeType.SELABLE) {
+            template = parentShop.sellTemplate
+        } else if (tradeType === TradeType.BOTH) {
+            template = parentShop.sellBuyTemplate
+        }
+        for (line in template!!) {
+            lore.add(
+            line.replace("\$product_name", name)
+                .replace("\$product_stock", "" + stock)
+                .replace("\$product_buy_unit_price", unitBuyPrice.format(moneyFormatedOP))
+                .replace("\$product_buy_pack_price", (unitBuyPrice * 64.0).format(moneyFormatedOP))
+                .replace("\$product_sell_unit_price", unitSellPrice.format(moneyFormatedOP))
+                .replace("\$product_sell_pack_price", (unitSellPrice * 64).format(moneyFormatedOP))
+                .replace(
+                    "\$product_sell_inventory_price",
+                    (unitSellPrice * 64 * 4 * 9).format(moneyFormatedOP)
+                )
+            )
+        }
 
         Mine.setLore(clone, lore)
         return clone
