@@ -546,10 +546,17 @@ public final class Extra {
             sb.append(hours).append(" ").append(hours == 1L ? "hora" : "horas").append(" ");
         }
         if (minutes > 0L) {
+
             sb.append(minutes).append(" ").append(minutes == 1L ? "minuto" : "minutos").append(" ");
         }
         if (seconds >= 0L) {
-            sb.append(seconds).append(".").append(ticks).append(" ").append(seconds == 1L ? "segundo" : "segundos");
+            if (ticks == 20 && seconds > 0) {
+                sb.append(seconds).append(" ").append(seconds == 1L ? "segundo" : "segundos");
+            } else if (ticks != 20 && seconds != 0) {
+                sb.append(seconds).append(".").append(ticks).append(" ").append(seconds == 1L ? "segundo" : "segundos");
+            }else{
+                sb.deleteCharAt(sb.length()-1);
+            }
 
         }
         String tempoFormatado = sb.toString();
@@ -1611,7 +1618,8 @@ public final class Extra {
 
     /**
      * Tenta parsear
-     * @param time Texto a ser parseado
+     *
+     * @param time   Texto a ser parseado
      * @param future Futuro?
      * @return Tempo
      * @throws Exception Pode falhar o Parseamento
