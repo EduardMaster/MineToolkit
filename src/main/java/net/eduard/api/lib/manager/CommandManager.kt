@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin
 
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 
@@ -21,21 +22,35 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
     @Transient
     var parent: CommandManager? = null
-    set(value){
-        field = value
-        if (usage.isEmpty()){
-            usage = autoUsage()
+        set(value) {
+            field = value
+            if (usage.isEmpty()) {
+                usage = autoUsage()
+            }
+            if (permission.isEmpty()) {
+                permission = autoPermission()
+            }
         }
-        if (permission.isEmpty()){
-            permission = autoPermission()
-        }
-    }
 
     @Transient
     var customCommand: CustomCommand? = null
     var subCommands: MutableMap<String, CommandManager> = HashMap()
 
+    open fun playerCommand(player: Player, args: Array<String>) {
 
+    }
+
+    open fun command(sender: CommandSender, args: Array<String>) {
+        if (sender is Player) {
+            playerCommand(sender, args)
+        } else {
+            if (args.isEmpty()) {
+                sender.sendMessage("/$name help")
+            } else {
+                sendUsage(sender)
+            }
+        }
+    }
 
     var usagePrefix: String = "§cUtilize: "
     var description = "Este comando faz algo"
@@ -80,13 +95,12 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
     }
 
 
-
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
 
 
         var cmd = this
-        for (i in args.indices) {
-            val arg = args[i].toLowerCase()
+        for (index in args.indices) {
+            val arg = args[index].toLowerCase()
             var sub: CommandManager? = null
             for (subcmd in cmd.subCommands.values) {
                 if (subcmd.name.equals(arg, ignoreCase = true)) {
@@ -104,17 +118,20 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             }
             cmd = sub
         }
-        //			sender.sendMessage("permiscao " + cmd.getPermission());
+
         if (cmd === this) {
-            if (args.isEmpty()) {
-                sender.sendMessage("/$name help")
-            } else {
-                sendUsage(sender)
-            }
+
+            cmd.command(sender, args)
+
         } else {
 
             if (sender.hasPermission(cmd.permission)) {
-                cmd.onCommand(sender, command, label, args)
+                if (args.isNotEmpty()) {
+                    val args2 = args.copyOfRange(1, args.size)
+                    cmd.onCommand(sender, command, label, args2)
+                } else {
+                    cmd.onCommand(sender, command, label, args)
+                }
             } else
                 sender.sendMessage(cmd.permissionMessage)
         }
@@ -124,33 +141,35 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): List<String>? {
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): List<String>? {
         val vars = ArrayList<String>()
-
-
         var cmd = this
-        for (i in args.indices) {
-            val arg = args[i].toLowerCase()
+        for (index in args.indices) {
+            val arg = args[index].toLowerCase()
             vars.clear()
             var sub: CommandManager? = null
             for (subcmd in cmd.subCommands.values) {
-                if (sender.hasPermission(subcmd.permission)) {
-                    if (Extra.startWith(subcmd.name, arg)) {
-                        vars.add(subcmd.name)
+                if (!sender.hasPermission(subcmd.permission)) continue
+                if (Extra.startWith(subcmd.name, arg)) {
+                    vars.add(subcmd.name)
+                }
+                if (subcmd.name.equals(arg, ignoreCase = true)) {
+                    sub = subcmd
+                }
+                for (alias in subcmd.aliases) {
+                    if (Extra.startWith(alias, arg)) {
+                        vars.add(alias)
                     }
-                    if (subcmd.name.equals(arg, ignoreCase = true)) {
+                    if (alias.equals(arg, ignoreCase = true)) {
                         sub = subcmd
                     }
-                    for (alias in subcmd.aliases) {
-                        if (Extra.startWith(alias, arg)) {
-                            vars.add(alias)
-                        }
-                        if (alias.equals(arg, ignoreCase = true)) {
-                            sub = subcmd
-                        }
-                    }
-
                 }
+
 
             }
             if (sub == null) {
@@ -164,11 +183,12 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             null
         } else vars
     }
-    private fun fixPermissionAndUsage(){
-        if (usage.isEmpty()){
+
+    private fun fixPermissionAndUsage() {
+        if (usage.isEmpty()) {
             usage = autoUsage()
         }
-        if (permission.isEmpty()){
+        if (permission.isEmpty()) {
             permission = autoPermission()
         }
     }
@@ -209,8 +229,10 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         command.permission = permission
         command.executor = this
 
-        log("O comando §a" + name + " §ffoi registrado para o Plugin §b" + command.plugin.name
-                + "§f pela plugin.yml")
+        log(
+            "O comando §a" + name + " §ffoi registrado para o Plugin §b" + command.plugin.name
+                    + "§f pela plugin.yml"
+        )
         commandsRegistred[name.toLowerCase()] = this
         updateSubs()
         registerListener(plugin)
@@ -235,8 +257,10 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         command.usage = usage
         command.permissionMessage = permissionMessage
         command.permission = permission
-        log("O comando §a" + name + " §ffoi registrado para o Plugin §b" + plugin.name
-                + "§f sem plugin.yml")
+        log(
+            "O comando §a" + name + " §ffoi registrado para o Plugin §b" + plugin.name
+                    + "§f sem plugin.yml"
+        )
         commandsRegistred[name.toLowerCase()] = this
 
         updateSubs()
@@ -249,7 +273,6 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             Mine.removeCommand(name)
 
     }
-
 
 
     fun sendPermissionMessage(sender: CommandSender) {
