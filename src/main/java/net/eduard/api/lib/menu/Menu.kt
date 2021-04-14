@@ -416,7 +416,7 @@ open class Menu(
             if (button.page != page) continue
             var position = button.index
             if (!button.fixed)
-                if (position >= getSlotLimit()) {
+                if (position > getSlotLimit()) {
                     position = 0
                 }
             var icon = button.getIcon(player)
