@@ -9,23 +9,18 @@ import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.annotations.StorageAttributes;
 
 @StorageAttributes(inline = true)
-public class TimeStampStorable implements Storable<Timestamp>  , JsonDeserializer<Timestamp>, JsonSerializer<Timestamp> {
+public class TimeStampStorable implements Storable<Timestamp>, JsonDeserializer<Timestamp>, JsonSerializer<Timestamp> {
 
     public String store(Timestamp timestamp) {
-
         return "" + timestamp.getTime();
-
     }
-
 
     public Timestamp restore(Object string) {
         return new Timestamp(Extra.toLong(string));
-
-
     }
+
     @Override
     public Timestamp deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-
         return new Timestamp(jsonElement.getAsLong());
     }
 

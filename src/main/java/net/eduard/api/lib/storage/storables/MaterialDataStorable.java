@@ -12,22 +12,15 @@ public class MaterialDataStorable implements Storable<MaterialData> {
 
     @Override
     public MaterialData newInstance() {
-
         return new MaterialData(1);
     }
 
-
     @Override
     public String store(MaterialData materialData) {
-
         return materialData.getItemTypeId() + ";" + materialData.getData();
-
-
     }
 
-
     public MaterialData restore(String string) {
-
         try {
             if (string.contains(";")) {
                 String[] split = string.split(";");

@@ -13,8 +13,6 @@ import net.eduard.api.lib.storage.Storable;
 @StorageAttributes(inline = true)
 public class OfflinePlayerStorable implements Storable<OfflinePlayer>, JsonSerializer<OfflinePlayer>, JsonDeserializer<OfflinePlayer> {
 
-
-
     @Override
     public OfflinePlayer newInstance() {
         return new FakePlayer();
@@ -22,22 +20,18 @@ public class OfflinePlayerStorable implements Storable<OfflinePlayer>, JsonSeria
 
     @Override
     public OfflinePlayer restore(String id) {
-
         if (id.contains(";")) {
             String[] split = id.split(";");
             if (split[1].equals("null")) {
                 return new FakePlayer(split[0]);
             } else
                 return new FakePlayer(split[0], UUID.fromString(split[1]));
-
         }
-
         return new FakePlayer("Player");
     }
 
-
-    public String store(OfflinePlayer p) {
-        return p.getName() + ";" + p.getUniqueId();
+    public String store(OfflinePlayer player) {
+        return player.getName() + ";" + player.getUniqueId();
     }
 
     @Override

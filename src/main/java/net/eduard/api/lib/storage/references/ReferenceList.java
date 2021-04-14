@@ -18,7 +18,6 @@ public class ReferenceList extends ReferenceBase<List<Object>> {
 		for (Object key : getRestore()) {
 			realList.add(StorageAPI.getObjectByKey(getInfo().getType(), key ));
 		}
-
 	}
 
 

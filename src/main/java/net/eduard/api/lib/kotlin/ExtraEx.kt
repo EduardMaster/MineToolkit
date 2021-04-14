@@ -2,6 +2,7 @@ package net.eduard.api.lib.kotlin
 
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.storage.StorageAPI
 
 /**
  * Alias para Copyable.copyObject, copia este Objeto
@@ -10,7 +11,12 @@ import net.eduard.api.lib.modules.Extra
 fun <T : Any> T.copy(): T {
     return Copyable.copyObject(this) as T
 }
-
+inline fun <reified  T : Any> store(){
+    StorageAPI.autoRegisterClass(T::class.java)
+}
+inline fun <reified  T : Any> store(alias : String){
+    StorageAPI.autoRegisterClass(T::class.java , alias)
+}
 
 /**
  * Formata o Tempo do Jeito de Data ou por Duração

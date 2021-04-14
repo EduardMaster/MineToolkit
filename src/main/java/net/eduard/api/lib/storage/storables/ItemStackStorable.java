@@ -26,11 +26,8 @@ import net.eduard.api.lib.storage.Storable;
 public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {
 
     public ItemStack deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-
-
         return (ItemStack) StorageAPI.restore(ItemStack.class, jsonDeserializationContext.deserialize(jsonElement, Map.class));
     }
-
 
     public JsonElement serialize(ItemStack itemStack, Type type, JsonSerializationContext jsonSerializationContext) {
         return jsonSerializationContext.serialize(StorageAPI.store(ItemStack.class, itemStack));
@@ -65,11 +62,10 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 }
             }
         }
-
         if (map.containsKey("enchants")) {
-            if (map.get("enchants") instanceof  String){
+            if (map.get("enchants") instanceof String) {
 
-            }else {
+            } else {
                 List<String> enchants = (List<String>) map.get("enchants");
 
                 for (String enchantLine : enchants) {
@@ -80,11 +76,8 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                     item.addUnsafeEnchantment(ench, level);
                 }
             }
-
         }
-
         if (map.containsKey("head-name")) {
-
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof SkullMeta) {
                 SkullMeta skullmeta = (SkullMeta) meta;
@@ -96,14 +89,12 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
 
         } else if (map.containsKey("texture-value")) {
             ItemMeta meta = item.getItemMeta();
-//
             if (meta instanceof SkullMeta) {
                 GameProfile profile = new GameProfile(UUID.randomUUID(), null);
                 profile.getProperties().put("textures", new Property("textures", (String) map.get("texture-value")));
                 Field profileField = null;
                 try {
                     profileField = meta.getClass().getDeclaredField("profile");
-
                     profileField.setAccessible(true);
                     profileField.set(meta, profile);
 
@@ -111,7 +102,6 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                     e.printStackTrace();
                 }
                 item.setItemMeta(meta);
-
             }
         } else if (map.containsKey("texture")) {
             Mine.setSkin(item, (String) map.get("texture"));
@@ -128,7 +118,6 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
 
     @Override
     public void store(Map<String, Object> map, ItemStack item) {
-
         map.remove("durability");
         map.remove("meta");
         map.remove("type");
@@ -154,7 +143,6 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-
         }
         map.put("enchants", enchants);
         if (item.getItemMeta() instanceof SkullMeta) {
@@ -192,8 +180,6 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
 
     @Override
     public ItemStack restore(String text) {
-
-
         try {
             String[] split = text.split(";");
             String[] splitData = split[0].split("-");
@@ -239,7 +225,6 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 if (!descricao.equals(" ")) {
                     lista.add(descricao);
                 }
-
             }
             Mine.setLore(item, lista);
             return item;
@@ -255,12 +240,10 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
     @SuppressWarnings("deprecation")
     @Override
     public String store(ItemStack item) {
-
         StringBuilder textao = new StringBuilder();
         textao.append(item.getTypeId() + ":" + item.getDurability() + "-" + item.getAmount() + ";");
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-
             if (meta.hasEnchants()) {
                 boolean first = true;
                 for (Entry<Enchantment, Integer> enchant : item.getItemMeta().getEnchants().entrySet()) {
@@ -291,7 +274,6 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                         first = false;
                     textao.append(line);
                 }
-
             } else {
                 textao.append(" ");
             }

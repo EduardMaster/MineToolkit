@@ -27,7 +27,7 @@ final public class StorageInfo implements Cloneable {
     private Field field;
 
 
-    public StorageClassInfo getClassInfo(){
+    public StorageClassInfo getClassInfo() {
         return StorageAPI.getClassInfo(getType());
     }
 
@@ -95,28 +95,28 @@ final public class StorageInfo implements Cloneable {
     }
 
     public void updateByField() {
-        if (getField() != null) {
-            if (getField().isAnnotationPresent(StorageAttributes.class)) {
-                StorageAttributes attributes = getField().getAnnotation(StorageAttributes.class);
-                update(attributes);
-            }
-            if (getField().isAnnotationPresent(StorageReference.class)) {
-                setReference(true);
-            }
-            if (getField().isAnnotationPresent(StorageIndex.class)) {
-                setIndentifiable(true);
-            }
+        if (getField() == null) return;
+        if (getField().isAnnotationPresent(StorageAttributes.class)) {
+            StorageAttributes attributes = getField().getAnnotation(StorageAttributes.class);
+            update(attributes);
         }
+        if (getField().isAnnotationPresent(StorageReference.class)) {
+            setReference(true);
+        }
+        if (getField().isAnnotationPresent(StorageIndex.class)) {
+            setIndentifiable(true);
+        }
+
     }
 
     public void updateByStorable() {
         Storable<?> store = getStore(getType());
-        if (store != null) {
-            if (store.getClass().isAnnotationPresent(StorageAttributes.class)) {
-                StorageAttributes attributes = store.getClass().getAnnotation(StorageAttributes.class);
-                update(attributes);
-            }
+        if (store == null) return;
+        if (store.getClass().isAnnotationPresent(StorageAttributes.class)) {
+            StorageAttributes attributes = store.getClass().getAnnotation(StorageAttributes.class);
+            update(attributes);
         }
+
 
     }
 
@@ -141,7 +141,6 @@ final public class StorageInfo implements Cloneable {
     public String getAlias(Class<?> claz) {
         return StorageAPI.getAlias(claz);
     }
-
 
     public boolean isReference() {
         return reference;
@@ -178,7 +177,6 @@ final public class StorageInfo implements Cloneable {
     public void setIndentifiable(boolean indentifiable) {
         this.indentifiable = indentifiable;
     }
-
 
 
 }

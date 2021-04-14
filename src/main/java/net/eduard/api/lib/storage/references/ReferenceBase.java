@@ -8,7 +8,6 @@ public abstract class ReferenceBase<T> {
     private Object instance;
     private T restore;
 
-
     public ReferenceBase(StorageInfo info, Object instance) {
         setInstance(instance);
         setInfo(info);

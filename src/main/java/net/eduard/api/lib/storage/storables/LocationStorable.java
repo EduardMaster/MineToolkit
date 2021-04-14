@@ -22,8 +22,6 @@ public class LocationStorable implements Storable<Location>, JsonSerializer<Loca
 		return (Location) StorageAPI.restore(Location.class,jsonDeserializationContext.deserialize(jsonElement, Map.class)); // connection pool
 	}
 
-
-
 	@Override
 	public JsonElement serialize(Location location, Type type, JsonSerializationContext jsonSerializationContext) {
 		return jsonSerializationContext.serialize(StorageAPI.store(Location.class,location));

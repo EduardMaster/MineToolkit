@@ -22,6 +22,9 @@ public class ReferenceMap extends ReferenceBase<Map<Object,Object>>{
 	@Override
 	public void update() {
 		for (Entry<Object,Object> entry : getRestore().entrySet()){
+			Object realKey = StorageAPI.getObjectByKey(keyInfo.getType(), entry.getKey());
+			Object realValue = StorageAPI.getObjectByKey(valueInfo.getType(), entry.getValue());
+			realMap.put(realKey, realValue);
 
 		}
 

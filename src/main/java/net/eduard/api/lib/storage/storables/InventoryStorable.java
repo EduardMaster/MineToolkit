@@ -16,9 +16,7 @@ public class InventoryStorable implements Storable<Inventory> {
         return Bukkit.createInventory(null, 6 * 9);
     }
 
-
     public Inventory restore(String string) {
-
         String[] split = string.split("//");
         try {
             Integer lines = Extra.toInt(split[0]);
@@ -30,18 +28,13 @@ public class InventoryStorable implements Storable<Inventory> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         return newInstance();
     }
 
     public String store(Inventory inventory) {
-
         int lines = inventory.getSize() / 9;
         ItemStack[] content = inventory.getContents();
         return lines + "//" + Mine.fromItemsToBase64(content);
-
-
     }
 
 }
