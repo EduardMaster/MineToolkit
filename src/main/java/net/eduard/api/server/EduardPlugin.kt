@@ -27,7 +27,8 @@ import java.util.concurrent.TimeUnit
  */
 open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
-    var isFree= false
+    var calulatingLag = false
+    var isFree = false
     protected var activated = false
     protected var reloaded = false
     override var started = false
@@ -66,11 +67,9 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     }
 
 
-
     override fun getPluginConnected(): Plugin {
         return this
     }
-
 
 
     /**
@@ -82,8 +81,6 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         if (settings.debug)
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §c$message")
     }
-
-
 
 
     /**
@@ -106,7 +103,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
 
     fun autosave() {
-        settings.lastSave =  Extra.getNow()
+        settings.lastSave = Extra.getNow()
 
         save()
 
@@ -144,16 +141,27 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     }
 
 
+    inline fun calculate(actionName: String, action: () -> Unit) {
+        val inicio = System.currentTimeMillis()
+        action.invoke()
+        val fim = System.currentTimeMillis()
+        val lag = fim - inicio
+        if (calulatingLag) {
+            log("Lag causado em $actionName -> ${lag}ms")
+        }
+    }
+
     override fun onDisable() {
-        disconnectDB()
-        unregisterServices()
-        unregisterListeners()
-        unregisterTasks()
-        unregisterStorableClasses()
-        unregisterMenus()
-        unregisterCommands()
+
+        calculate("Desconectando DB") { disconnectDB() }
+        calculate("Desregistrando Servicos") { unregisterServices() }
+        calculate("Desregistrando Listeners") { unregisterListeners() }
+        calculate("Desregistrando Tasks") { unregisterTasks() }
+        calculate("Desregistrando Storables") { unregisterStorableClasses() }
+        calculate("Desregistrando menus") { unregisterMenus() }
+        calculate("Desregistrando Comandos") { unregisterCommands() }
         log("Foi desativado na v" + description.version + " um plugin "
-         + if (isFree) "§aGratuito" else "§bPago"
+                    + if (isFree) "§aGratuito" else "§bPago"
         )
 
     }
@@ -164,7 +172,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     }
 
     override fun reload() {
-        reloaded=true
+        reloaded = true
     }
 
     override fun configDefault() {
@@ -196,8 +204,10 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         val pasta = File(pluginFolder, "/backup/")
         pasta.mkdirs()
         val lista = listOf(*pasta.listFiles()!!)
-        lista.filter { it.lastModified() + TimeUnit.DAYS
-            .toMillis(1) <= System.currentTimeMillis() }
+        lista.filter {
+            it.lastModified() + TimeUnit.DAYS
+                .toMillis(1) <= System.currentTimeMillis()
+        }
             .forEach {
                 Extra.deleteFolder(it)
                 if (it.exists())
