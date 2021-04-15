@@ -156,6 +156,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }
+        table.createCollumns()
     }
 
 

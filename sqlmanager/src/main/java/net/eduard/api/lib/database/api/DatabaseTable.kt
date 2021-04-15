@@ -24,6 +24,7 @@ interface DatabaseTable<T : Any> {
     fun delete(data : T)
     fun selectAll() : List<T>
     fun createReferences()
+    fun createCollumns()
     fun delete()
     fun deleteReferences()
     fun findByColumn(columnName :String, columnValue : Any , cachedData : T? = null) : T?

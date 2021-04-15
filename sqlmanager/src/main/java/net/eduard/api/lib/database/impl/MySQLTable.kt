@@ -14,8 +14,7 @@ import java.sql.SQLException
 import java.sql.Statement
 
 class MySQLTable<T : Any>(
-    override var connection: Connection
-    , override val tableClass: Class<*>,
+    override var connection: Connection, override val tableClass: Class<*>,
     override val engine: DatabaseEngine
 
 
@@ -36,7 +35,7 @@ class MySQLTable<T : Any>(
 
 
     override fun reload() {
-        if (tableClass == String::class.java)return
+        if (tableClass == String::class.java) return
         columns.clear()
         for (field in tableClass.declaredFields) {
             if (Modifier.isStatic(field.modifiers)) {
@@ -48,8 +47,8 @@ class MySQLTable<T : Any>(
             if (Modifier.isTransient(field.modifiers)) {
                 continue
             }
-            val column =DatabaseColumn(this, field, engine)
-            columns[field] =  column
+            val column = DatabaseColumn(this, field, engine)
+            columns[field] = column
 
             field.isAccessible = true
         }
@@ -96,20 +95,20 @@ class MySQLTable<T : Any>(
         referencesRemoved = true
 
 
-            for (column in columns.values) {
-                if (column.isConstraint) {
-                    try {
+        for (column in columns.values) {
+            if (column.isConstraint) {
+                try {
                     connection.prepareStatement(
                         "ALTER TABLE $name " +
                                 "DROP FOREIGN KEY ${column.foreignKeyName}"
                     )
                         .executeUpdate()
-                    } catch (ex: SQLException) {
-                        log("§cFalha ao deletar a Foreign key pois ela nao existe")
-                    }
+                } catch (ex: SQLException) {
+                    log("§cFalha ao deletar a Foreign key pois ela nao existe")
                 }
-                //ALTER TABLE `party_user` DROP FOREIGN KEY `party`; ALTER TABLE `party_user` ADD CONSTRAINT `party` FOREIGN KEY (`party_id`) REFERENCES `partu`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
             }
+            //ALTER TABLE `party_user` DROP FOREIGN KEY `party`; ALTER TABLE `party_user` ADD CONSTRAINT `party` FOREIGN KEY (`party_id`) REFERENCES `partu`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+        }
 
     }
 
@@ -137,7 +136,7 @@ class MySQLTable<T : Any>(
         }
     }
 
-    override fun findByColumn(columnName: String, columnValue: Any, cachedData : T?): T? {
+    override fun findByColumn(columnName: String, columnValue: Any, cachedData: T?): T? {
         try {
             log("Selecionando 1 registro")
             val text = "SELECT * FROM $name WHERE $columnName = ? LIMIT 1"
@@ -159,8 +158,8 @@ class MySQLTable<T : Any>(
         return null
     }
 
-    override fun findByPrimary(primaryValue: Any, cachedData : T?): T? {
-        return findByColumn(primaryName, primaryValue,cachedData )
+    override fun findByPrimary(primaryValue: Any, cachedData: T?): T? {
+        return findByColumn(primaryName, primaryValue, cachedData)
 
     }
 
@@ -189,17 +188,17 @@ class MySQLTable<T : Any>(
 
         for ((field, column) in columns) {
             val str = query.getString(column.name)
-            if (column.isConstraint){
+            if (column.isConstraint) {
                 val key = query.getObject(column.name)
-                if (key == null){
+                if (key == null) {
                     field.set(data, null)
                     continue;
                 }
                 val value = column.referenceTable.elements[key]
-                if (value !=null) {
+                if (value != null) {
                     field.set(data, value)
-                }else{
-                    references.add(TableReference(column,data, key))
+                } else {
+                    references.add(TableReference(column, data, key))
                 }
                 continue
             }
@@ -210,14 +209,14 @@ class MySQLTable<T : Any>(
                 ex.printStackTrace()
             }
         }
-        if (primaryColumn!=null) {
+        if (primaryColumn != null) {
             elements[primaryColumn!!.field.get(data)] = data
         }
 
     }
 
     override fun updateReferences() {
-        for (reference in references){
+        for (reference in references) {
             reference.update()
         }
         references.clear()
@@ -241,8 +240,8 @@ class MySQLTable<T : Any>(
             for ((field, column) in columns) {
 
                 val fieldValue = field.get(data)
-                if (column.isConstraint && fieldValue!= null){
-                    val primaryKey = column.referenceTable.primaryColumn!!.field.get(fieldValue)?:0
+                if (column.isConstraint && fieldValue != null) {
+                    val primaryKey = column.referenceTable.primaryColumn!!.field.get(fieldValue) ?: 0
                     prepare.setObject(id, primaryKey)
                     id++
                     continue
@@ -259,15 +258,13 @@ class MySQLTable<T : Any>(
             prepare.executeUpdate()
             val keys = prepare.generatedKeys
             if (keys != null) {
-                if (keys.next()) {
-                    if (primaryColumn != null) {
-                        if (primaryColumn!!.isNumber) {
-                            primaryColumn!!.field.set(data, keys.getInt(1))
-                        }
-                    }
+                if (keys.next() && primaryColumn != null && primaryColumn!!.isNumber) {
+                    primaryColumn!!.field.set(data, keys.getInt(1))
+
+
                 }
             }
-            if (primaryColumn!= null){
+            if (primaryColumn != null) {
                 elements[primaryColumn!!.field.get(data)] = data
             }
 
@@ -300,8 +297,8 @@ class MySQLTable<T : Any>(
                 if (column.isPrimary && column.isNumber) continue
                 field.isAccessible = true
                 val fieldValue = field.get(data)
-                if (column.isConstraint && fieldValue!= null){
-                    val primaryKey = column.referenceTable.primaryColumn!!.field.get(fieldValue)?:0
+                if (column.isConstraint && fieldValue != null) {
+                    val primaryKey = column.referenceTable.primaryColumn!!.field.get(fieldValue) ?: 0
                     prepare.setObject(id, primaryKey)
                     id++
                     continue
@@ -353,5 +350,56 @@ class MySQLTable<T : Any>(
         }
     }
 
+    override fun createCollumns() {
+        try {
+            val text = "SELECT * FROM information_schema.COLUMNS " +
+                    "WHERE TABLE_NAME = $name"
+            val prepare = connection.prepareStatement(text)
+            val query = prepare.executeQuery()
+            log("Query: $text")
+
+            val collumnsNames = mutableListOf<String>()
+            var lastCollum = ""
+            while (query.next()) {
+                val columnName = query.getString("COLLUMN_NAME")
+                collumnsNames.add(columnName)
+                lastCollum = columnName
+            }
+            for (column in columns.values) {
+                if (collumnsNames.contains(column.name)) continue
+                val builder = StringBuilder()
+                builder.append("ALTER TABLE $name ADD ${column.name} ")
+                builder.append(" ")
+                builder.append(column.customType)
+                if (!column.isNumber) {
+                    builder.append("(${column.size})")
+                }
+                builder.append(" ")
+
+                if (column.isNullable || column.isConstraint) {
+                    builder.append("NULL")
+                } else builder.append("NOT NULL")
+                builder.append(" ")
+                if (column.isNumber && column.isPrimary) {
+                    builder.append("AUTO_INCREMENT")
+                    builder.append(" ")
+                }
+                if (column.isUnique) {
+                    builder.append("UNIQUE")
+                    builder.append(" ")
+                }
+                builder.append(" AFTER $lastCollum")
+                connection.prepareStatement(
+                    builder.toString()
+                ).executeUpdate()
+                lastCollum = column.name
+                //ALTER TABLE `guriel_fases` ADD `teste` INT NOT NULL AFTER `tempo_online`;
+
+            }
+
+        } catch (ex: SQLException) {
+            ex.printStackTrace()
+        }
+    }
 
 }
