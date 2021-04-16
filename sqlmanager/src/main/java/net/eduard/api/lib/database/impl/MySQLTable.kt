@@ -353,15 +353,16 @@ class MySQLTable<T : Any>(
     override fun createCollumns() {
         try {
             val text = "SELECT * FROM information_schema.COLUMNS " +
-                    "WHERE TABLE_NAME = $name"
+                    "WHERE TABLE_NAME = ?"
             val prepare = connection.prepareStatement(text)
+            prepare.setString(1, name)
             val query = prepare.executeQuery()
             log("Query: $text")
 
             val collumnsNames = mutableListOf<String>()
             var lastCollum = ""
             while (query.next()) {
-                val columnName = query.getString("COLLUMN_NAME")
+                val columnName = query.getString("COLUMN_NAME")
                 collumnsNames.add(columnName)
                 lastCollum = columnName
             }
