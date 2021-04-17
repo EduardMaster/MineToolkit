@@ -389,8 +389,8 @@ open class Shop(
         if (menuUpgrades != null) {
             menuUpgrades!!.superiorMenu = this
             if (menuUpgrades!!.openHandler == null) {
-                menuUpgrades!!.openHandler = { inventory, player ->
-                    val product = selectedProduct[player]!!
+                menuUpgrades!!.openHandler =teste@ { inventory, player ->
+                    val product = selectedProduct[player]?:return@teste
                     var slot = Extra.getIndex(3, 4)
                     val productButton = menuUpgrades?.getButton("product")!!
                     inventory.setItem(productButton.index, product.icon)
@@ -454,6 +454,7 @@ open class Shop(
             }
 
             if (menuUpgrades != null && isPermissionShop && product.hasBought(player)) {
+                selectedProduct[player] = product
                 menuUpgrades?.open(player)
                 return@ClickEffect
             } else if (menuConfirmation != null) {
