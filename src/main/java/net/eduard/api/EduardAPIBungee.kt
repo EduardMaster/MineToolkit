@@ -14,12 +14,14 @@ import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
+import net.eduard.api.task.BungeeDatabaseUpdater
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 @Suppress("deprecated")
@@ -71,12 +73,9 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         messages.reloadConfig()
         configDefault()
         log("Ativando debug de sistemas caso marcado na config como 'true'")
-        StorageAPI.setDebug(configs.getBoolean("debug-storage"))
-        DBManager.setDebug(configs.getBoolean("debug-database"))
-
-        //configs.getBoolean("debug-commands")
-        Copyable.setDebug(configs.getBoolean("debug-copyable"))
-
+        StorageAPI.setDebug(configs.getBoolean("debug.storage"))
+        DBManager.setDebug(configs.getBoolean("debug.database"))
+        Copyable.setDebug(configs.getBoolean("debug.copyable"))
 
         try {
             log("Carregando formato de dinheiro da config")
@@ -92,7 +91,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         log("Recarregamento do EduardAPI concluido.")
 
         if (dbManager.hasConnection()) {
-            log("MySQL Ativado, iniciando conexao")
+            log("SQL Conectado iniciando modifications")
             sqlManager.createTable(ServerSpigot::class.java)
 
             for (server in sqlManager.getAllData(ServerSpigot::class.java)) {
@@ -126,7 +125,8 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         ProxyServer.getInstance().pluginManager
             .registerCommand(plugin, BungeeReloadCommand())
 
-
+        ProxyServer.getInstance().scheduler.schedule(plugin,BungeeDatabaseUpdater(),
+            1,1, TimeUnit.SECONDS );
         /*
         ProxyServer.getInstance().scheduler.schedule(plugin, {
             for (server in ProxyServer.getInstance().servers.values) {
@@ -145,17 +145,14 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     }
 
     override fun configDefault() {
-        configs.add("debug-storage", false)
-        configs.add("debug-copyable", false)
-        configs.add("debug-commands", false)
-        configs.add("debug-replacers", false)
-        configs.add("debug-database", false)
-
+        configs.add("debug.storage", false)
+        configs.add("debug.copyable", false)
+        configs.add("debug.commands", false)
+        configs.add("debug.replacers", false)
+        configs.add("debug.database", false)
         configs.add("money-format", "###,###.##")
         configs.add("money-format-locale", "PT-BR")
-
         configs.saveConfig()
-
 
     }
 
