@@ -11,10 +11,10 @@ class ApiEnableCommand : CommandManager("enable", "habilitar") {
         sender: CommandSender, command: Command,
         label: String, args: Array<String>
     ): Boolean {
-        if (args.size == 1) {
+        if (args.isEmpty()) {
             sendUsage(sender)
         } else {
-            val pluginName = args[1]
+            val pluginName = args[0]
             if (Mine.existsPlugin(sender, pluginName)) {
                 val plugin = Mine.getPlugin(pluginName)
                 sender.sendMessage("§bEduardAPI §aPlugin §2$pluginName§a foi ativado")

@@ -17,23 +17,24 @@ class MapSaveCommand : CommandManager("save", "salvar") {
         label: String,
         args: Array<String>
     ): Boolean {
-        if (args.size == 1) {
+        if (args.isEmpty()) {
             sendUsage(sender)
-        } else {
-            if (Mine.onlyPlayer(sender)) {
-                val player = sender as Player
-                if (!isEditing(player)) {
-                    player.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy")
-                    return true
-                }
-                val schema = MinigameSchematic.getSchematic(player)
-                schema.name = args[1].toLowerCase()
-                schema.register()
-                schema.save(File(MinigameSchematic.MAPS_FOLDER,schema.name+".map"))
-
-                player.sendMessage("§bEduardAPI §aMapa salvado com sucesso!")
-            }
+            return true
         }
+        if (Mine.onlyPlayer(sender)) {
+            val player = sender as Player
+            if (!isEditing(player)) {
+                player.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy")
+                return true
+            }
+            val schema = MinigameSchematic.getSchematic(player)
+            schema.name = args[0].toLowerCase()
+            schema.register()
+            schema.save(File(MinigameSchematic.MAPS_FOLDER, schema.name + ".map"))
+
+            player.sendMessage("§bEduardAPI §aMapa salvado com sucesso!")
+        }
+
         return true
     }
 

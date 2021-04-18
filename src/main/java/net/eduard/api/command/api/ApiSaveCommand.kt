@@ -8,10 +8,10 @@ import org.bukkit.command.CommandSender
 
 class ApiSaveCommand : CommandManager("save", "salvar") {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        if (args.size == 1) {
+        if (args.isEmpty()) {
             sendUsage(sender)
         } else {
-            val sub = args[1]
+            val sub = args[0]
             if (Mine.existsPlugin(sender, sub)) {
                 val plugin = Mine.getPlugin(sub)
                 if (plugin is EduardPlugin) {

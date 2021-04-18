@@ -12,13 +12,13 @@ class MapPos2Command : CommandManager("pos2", "sethigh", "setpos2") {
         sender: CommandSender, command: Command,
         label: String, args: Array<String>
     ): Boolean {
-        if (Mine.onlyPlayer(sender)) {
-            val p = sender as Player
-            val schema =
-                MinigameSchematic.getSchematic(p)
-            schema.high = p.location.toVector()
-            p.sendMessage("§bEduardAPI §aPosicão 2 setada!")
-        }
+        if (!Mine.onlyPlayer(sender)) return true
+        val p = sender as Player
+        val schema =
+            MinigameSchematic.getSchematic(p)
+        schema.high = p.location.toVector()
+        p.sendMessage("§bEduardAPI §aPosicão 2 setada!")
+
         return true
     }
 

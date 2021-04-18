@@ -7,12 +7,12 @@ import org.bukkit.command.CommandSender
 
 class ApiUnloadWorldCommand : CommandManager("unloadworld", "descarregarmundo", "desligarmundo") {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        if (args.size == 1) {
+        if (args.isEmpty()) {
             sendUsage(sender)
         } else {
-            if (Mine.existsWorld(sender, args[1])) {
-                Mine.unloadWorld(args[1])
-                sender.sendMessage("§bEduardAPI §aVoce descarregou o mundo §2" + args[1])
+            if (Mine.existsWorld(sender, args[0])) {
+                Mine.unloadWorld(args[0])
+                sender.sendMessage("§bEduardAPI §aVoce descarregou o mundo §2" + args[0])
             }
         }
         return true

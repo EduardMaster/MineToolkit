@@ -12,12 +12,12 @@ class MapLoadCommand : CommandManager("load", "carregar") {
         sender: CommandSender, command: Command,
         label: String, args: Array<String>
     ): Boolean {
-        if (args.size == 1) {
+        if (args.isEmpty()) {
             sender.sendMessage("§c/map load <name>")
         } else {
             if (Mine.onlyPlayer(sender)) {
                 val player = sender as Player
-                val name = args[1].toLowerCase()
+                val name = args[0].toLowerCase()
                 if (MinigameSchematic.exists(name)) {
                     MinigameSchematic.loadToCache(player, name)
                     player.sendMessage("§bEduardAPI §aMapa carregado com sucesso!")

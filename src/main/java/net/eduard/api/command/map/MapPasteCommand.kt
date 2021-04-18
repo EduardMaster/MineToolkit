@@ -14,20 +14,20 @@ class MapPasteCommand : CommandManager("paste", "colar") {
         label: String,
         args: Array<String>
     ): Boolean {
-        if (Mine.onlyPlayer(sender)) {
-            val player = sender as Player
-            if (!MinigameSchematic.isEditing(player)) {
-                player.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy")
-                return true
-            }
-            val map: MinigameSchematic =
-                MinigameSchematic.getSchematic(player)
-            map.paste(player.location, false)
-            player.sendMessage(
-                "§bEduardAPI §aMapa colado com sucesso! §2(\$blocks)"
-                    .replace("\$blocks", "" + map.count)
-            )
+        if (!Mine.onlyPlayer(sender)) return true
+        val player = sender as Player
+        if (!MinigameSchematic.isEditing(player)) {
+            player.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy")
+            return true
         }
+        val map: MinigameSchematic =
+            MinigameSchematic.getSchematic(player)
+        map.paste(player.location, false)
+        player.sendMessage(
+            "§bEduardAPI §aMapa colado com sucesso! §2(\$blocks)"
+                .replace("\$blocks", "" + map.count)
+        )
+
         return true
     }
 
