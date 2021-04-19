@@ -36,7 +36,7 @@ class BukkitPlugins : EventsManager() {
     }
 
     fun check(plugin : EduardPlugin, pluginName: String, owner: String, key: String) {
-        val tag = "§b[" + pluginName + "]§f"
+        val tag = "§b[$pluginName]§f"
         val result = Licence.test(pluginName, owner, key);
         Bukkit.getConsoleSender().sendMessage(tag + result.message)
         if (!result.isActive) {

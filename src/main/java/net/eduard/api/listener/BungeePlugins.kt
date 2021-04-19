@@ -42,6 +42,7 @@ class BungeePlugins : Runnable, Listener{
                         ProxyServer.getInstance().pluginManager.unregisterCommands(plugin)
                         disabled.add(plugin)
                     } else {
+                        activated.add(plugin)
                         ProxyServer.getInstance().scheduler
                             .schedule(plugin, { plugin.onActivation() }, 50, TimeUnit.MILLISECONDS)
                     }
@@ -65,8 +66,6 @@ class BungeePlugins : Runnable, Listener{
         val serverName = e.target.name
         val playerUUID = e.player.uniqueId
         val playerAmount = e.target.players.size
-
-
     }
     @EventHandler
     fun event(e: ServerConnectedEvent) {

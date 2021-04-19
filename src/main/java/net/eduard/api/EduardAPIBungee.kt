@@ -14,6 +14,7 @@ import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
+import net.eduard.api.listener.BungeePlugins
 import net.eduard.api.task.BungeeDatabaseUpdater
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
@@ -127,6 +128,8 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
         ProxyServer.getInstance().scheduler.schedule(plugin,BungeeDatabaseUpdater(),
             1,1, TimeUnit.SECONDS );
+        ProxyServer.getInstance().scheduler.schedule(plugin,BungeePlugins(),
+            5,5, TimeUnit.SECONDS );
         /*
         ProxyServer.getInstance().scheduler.schedule(plugin, {
             for (server in ProxyServer.getInstance().servers.values) {
