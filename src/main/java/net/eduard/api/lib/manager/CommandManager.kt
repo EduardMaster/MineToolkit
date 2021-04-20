@@ -97,12 +97,10 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
 
-
-        var cmd = this
-        for (index in args.indices) {
-            val arg = args[index].toLowerCase()
+        if (args.isNotEmpty()){
+            val arg = args[0]
             var sub: CommandManager? = null
-            for (subcmd in cmd.subCommands.values) {
+            for (subcmd in subCommands.values) {
                 if (subcmd.name.equals(arg, ignoreCase = true)) {
                     sub = subcmd
                 }
@@ -112,32 +110,20 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
                     }
                 }
             }
-            if (sub == null) {
-                break
-
+            if (sub!=null){
+                val args2 = args.copyOfRange(1, args.size)
+                return sub.onCommand(sender,command,label,args2)
+            }else{
+                command(sender, args)
             }
-            cmd = sub
+        }else{
+            if (sender.hasPermission(permission)) {
+                command(sender, args)
+            }else{
+                sender.sendMessage(permissionMessage)
+            }
         }
-
-        if (cmd === this) {
-
-            cmd.command(sender, args)
-
-        } else {
-
-            if (sender.hasPermission(cmd.permission)) {
-                if (args.isNotEmpty()) {
-                    val args2 = args.copyOfRange(1, args.size)
-                    cmd.onCommand(sender, command, label, args2)
-                } else {
-                    cmd.onCommand(sender, command, label, args)
-                }
-            } else
-                sender.sendMessage(cmd.permissionMessage)
-        }
-
-
-        return true
+        return true;
 
     }
 
