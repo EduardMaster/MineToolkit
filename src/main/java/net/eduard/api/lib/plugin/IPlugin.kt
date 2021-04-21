@@ -76,7 +76,9 @@ interface IPlugin : IPluginInstance {
         StorageAPI.unregisterPlugin(javaClass)
     }
 
-
+    override fun getSystemName(): String {
+        return pluginName
+    }
     val pluginName: String
     val pluginFolder: File
     fun log(message: String)

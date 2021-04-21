@@ -129,7 +129,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         ProxyServer.getInstance().scheduler.schedule(plugin,BungeeDatabaseUpdater(),
             1,1, TimeUnit.SECONDS );
         ProxyServer.getInstance().scheduler.schedule(plugin,BungeePlugins(),
-            5,5, TimeUnit.SECONDS );
+            1,1, TimeUnit.SECONDS );
         /*
         ProxyServer.getInstance().scheduler.schedule(plugin, {
             for (server in ProxyServer.getInstance().servers.values) {

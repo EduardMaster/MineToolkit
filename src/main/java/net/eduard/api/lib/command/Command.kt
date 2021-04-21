@@ -11,7 +11,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
 
 
     companion object {
-        var MESSAGE_PERMISSION = "§cVocê não tem permissão para executar este comando."
+        var MESSAGE_PERMISSION = "§cVocê não possui permissão para executar este comando. §f%permission"
         val COMMANDS = mutableListOf<Command>()
 
     }
@@ -74,8 +74,8 @@ open class Command(override var name: String = "comando", vararg aliases: String
     fun processTabComplete(sender: ISender, args: List<String>): List<String> {
         val vars = ArrayList<String>()
         var cmd = this
-        for (i in args.indices) {
-            val arg = args[i].toLowerCase()
+        for (index in args.indices) {
+            val arg = args[index].toLowerCase()
             vars.clear()
             var sub: Command? = null
             for (subcmd in cmd.subCommands) {
@@ -108,8 +108,8 @@ open class Command(override var name: String = "comando", vararg aliases: String
 
     fun processCommand(sender: ISender, args: List<String>) {
         var cmd = this
-        for (i in args.indices) {
-            val arg = args[i].toLowerCase()
+        for (index in args.indices) {
+            val arg = args[index].toLowerCase()
             var sub: Command? = null
             for (subcmd in cmd.subCommands) {
                 if (subcmd.name.equals(arg, ignoreCase = true)) {
@@ -132,8 +132,11 @@ open class Command(override var name: String = "comando", vararg aliases: String
         if (sender.hasPermission(cmd.permission)) {
             cmd.onCommand(sender, args)
         } else {
-            sender.sendMessage("§cVocê precisa da permissão " + cmd.permission)
-            sender.sendMessage(cmd.permissionMessage)
+
+            sender.sendMessage(
+                cmd.permissionMessage
+                    .replace("%permission", cmd.permission)
+            )
         }
 
     }
@@ -141,7 +144,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
     fun sendUsage(sender: ISender) {
         if (subCommands.isNotEmpty()) {
             sender.sendMessage(usage)
-        }else{
+        } else {
             sender.sendMessage("$usage help")
         }
     }
@@ -173,7 +176,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
         } else {
             BukkitCommand(this).register(main)
         }
-        Hybrid.instance.console.sendMessage("Comando $name registrado para o plugin $main")
+        Hybrid.instance.console.sendMessage("§fComando §a$name §fregistrado para o plugin §e${main.systemName}")
 
         COMMANDS.add(this)
 
