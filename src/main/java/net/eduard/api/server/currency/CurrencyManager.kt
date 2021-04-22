@@ -10,8 +10,8 @@ import org.bukkit.inventory.ItemStack
 open class CurrencyManager : SimpleCurrencySystem() {
 
     companion object {
-        private val currencies = mutableMapOf<String, CurrencySystem>()
-        private val currenciesByPosition = mutableMapOf<Int, CurrencySystem>()
+        val currencies = mutableMapOf<String, CurrencySystem>()
+        val currenciesByPosition = mutableMapOf<Int, CurrencySystem>()
 
         fun getNextCurrency(currency: CurrencySystem): CurrencySystem? {
             return currenciesByPosition[currency.position + 1]

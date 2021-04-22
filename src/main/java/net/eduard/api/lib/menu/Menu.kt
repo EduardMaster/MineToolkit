@@ -385,8 +385,7 @@ open class Menu(
             fakeHolder.openInventory = menu
             fakeHolder.pageOpenned = page
             update(menu, player, page)
-            this.pageOpened[player] = page
-            openHandler?.invoke(this, menu, player)
+
             player.openInventory(menu)
             if (isCacheInventories && !pagesCache.containsKey(page)) {
                 pagesCache[page] = menu
@@ -428,7 +427,8 @@ open class Menu(
             icon = MineReflect.setData(icon, data)
             menu.setItem(position, icon)
         }
-
+        this.pageOpened[player] = page
+        openHandler?.invoke(this, menu, player)
     }
 
 
