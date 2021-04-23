@@ -3,7 +3,6 @@ package net.eduard.api.lib.config
 import java.util.LinkedHashMap
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
 import java.util.ArrayList
 import java.util.logging.Logger
 
@@ -311,11 +310,11 @@ class ConfigSection(var key: String, var data: Any) {
     fun save(lines: MutableList<String>, spaceId: Int) {
         val space = ConfigUtil.getSpace(spaceId)
         for (comment in comments) {
-            lines.add("$space${ConfigUtil.COMMENT} $comment")
+            lines.add("$space${ConfigUtil.COMMENT} ${comment.trimStart()}")
         }
         when {
             isList() -> {
-                lines.add("$space$key" + ConfigUtil.SECTION + (if (list.isEmpty()) ConfigUtil.EMPTY_LIST else ""))
+                lines.add("$space$key" + ConfigUtil.SECTION + (if (list.isEmpty())(" " +ConfigUtil.EMPTY_LIST) else ""))
                 for (text in list) {
                     lines.add("$space  ${ConfigUtil.LIST_ITEM} $text")
                 }
@@ -323,7 +322,7 @@ class ConfigSection(var key: String, var data: Any) {
             isMap() -> {
                 if (spaceId != -1) {
 
-                    lines.add("$space$key" + ConfigUtil.SECTION + (if (map.isEmpty()) ConfigUtil.EMPTY_SECTION else ""))
+                    lines.add("$space$key" + ConfigUtil.SECTION + (if (map.isEmpty()) (" "+ConfigUtil.EMPTY_SECTION) else ""))
                 }
                 for (section in map.values) {
                     section.save(lines, spaceId + 1)

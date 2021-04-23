@@ -2,18 +2,9 @@ package net.eduard.api.lib.config
 
 
 import net.eduard.api.EduardAPI
-import net.eduard.api.lib.database.BukkitTypes
-import net.eduard.api.lib.database.HybridTypes
-import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.hybrid.Hybrid
-import net.eduard.api.lib.menu.Menu
-import net.eduard.api.lib.menu.Shop
-import net.eduard.api.lib.menu.TradeType
-import net.eduard.api.lib.modules.Mine
-import net.eduard.api.lib.storage.storables.BukkitStorables
-import org.bukkit.Material
 import java.io.File
 import java.lang.Exception
 
@@ -26,7 +17,9 @@ import java.lang.Exception
 class Config(
     @Transient
     var folder: File,
-    val name: String
+    val name: String,
+    @Transient
+    private var plugin: Any? = null
 ) {
     @Transient
     var config: ConfigSection
@@ -34,15 +27,7 @@ class Config(
     @Transient
     var file: File = File(folder, name)
 
-    init {
-        file.parentFile.mkdirs()
-        config = ConfigSection("root", "")
-        config.indent = 1
-        reloadConfig()
-    }
 
-    @Transient
-    private var plugin: Any? = null
 
     companion object {
         fun testing() {
@@ -100,12 +85,13 @@ class Config(
 
     }
 
-    constructor(plugin: IPlugin, name: String) : this(plugin.pluginFolder, name) {
-        this.plugin = plugin
-    }
-
-    constructor(plugin: Any, name: String) : this(plugin.dataFolder, name) {
-        this.plugin = plugin
+    constructor(plugin: IPlugin, name: String) : this(plugin.pluginFolder, name, plugin)
+    constructor(plugin: Any, name: String) : this(plugin.dataFolder, name, plugin)
+    init {
+        file.parentFile.mkdirs()
+        config = ConfigSection("root", "")
+        config.indent = 1
+        reloadConfig()
     }
 
 
