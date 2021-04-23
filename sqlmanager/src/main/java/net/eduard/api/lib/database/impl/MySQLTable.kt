@@ -226,7 +226,12 @@ class MySQLTable<T : Any>(
 
         try {
             log("Inserindo dado na tabela $name")
-            val builder = StringBuilder("INSERT INTO $name VALUES (")
+            val builder = StringBuilder("INSERT INTO $name (")
+            for (column in columns.values) {
+                builder.append(column.name+",")
+            }
+            builder.deleteCharAt(builder.length-1)
+            builder.append(") VALUES (")
 
             for (column in columns.values) {
                 builder.append("?,")

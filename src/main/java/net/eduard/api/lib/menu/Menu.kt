@@ -594,14 +594,11 @@ open class Menu(
         var isDebug = true
         val registeredMenus = ArrayList<Menu>()
 
-
         fun debug(msg: String) {
             if (isDebug) {
                 Mine.console("§b[Menu] §7$msg")
             }
-
         }
-
     }
 
 }
