@@ -10,19 +10,22 @@ import java.util.Objects;
 public class LibraryLoader {
 
     private final File libFile;
-    public LibraryLoader(File file){
+
+    public LibraryLoader(File file) {
         this.libFile = file;
     }
-    public void loadLibraries(){
+
+    public void loadLibraries() {
         File pastaLibs = libFile;
         pastaLibs.mkdirs();
-        log("Starting loading libraries");
-        for (File file : Objects.requireNonNull(pastaLibs.listFiles())){
-            if (file.getName().endsWith(".jar")){
+        log("Iniciando carregamento de libraries");
+        for (File file : Objects.requireNonNull(pastaLibs.listFiles())) {
+            if (file.getName().endsWith(".jar")) {
                 try {
-                    log("Loading jar: "+file.getName());
-                    addClassPath(getJarUrl(file));
-                } catch (IOException e) {
+                    log("Carregando jar: " + file.getName());
+                    addClassPath(file);
+                } catch (Exception e) {
+                    log("Falha no carregamento do: " + file.getName());
                     e.printStackTrace();
                 }
             }
@@ -30,29 +33,28 @@ public class LibraryLoader {
 
     }
 
-    public void log(String msg)
-    {
+    public void log(String msg) {
         String name = "EduardAPI JarLoader";
-        System.out.println("["+ name +"] "+msg);
+        System.out.println("[" + name + "] " + msg);
     }
 
 
-    public static URL getJarUrl(final File file) throws IOException {
-        return new URL("jar:" + file.toURI().toURL().toExternalForm() + "!/");
-    }
-    private void addClassPath(final URL url) throws IOException {
-        final URLClassLoader sysloader = (URLClassLoader) ClassLoader
+    private void addClassPath(final File file) throws Exception {
+
+
+        URL url = new URL("jar:" + file.toURI().toURL().toExternalForm() + "!/");
+        final Object sysloader = ClassLoader
                 .getSystemClassLoader();
-        final Class<URLClassLoader> sysclass = URLClassLoader.class;
-        try {
-            final Method method = sysclass.getDeclaredMethod("addURL",
-                    URL.class);
-            method.setAccessible(true);
+
+        final Method method = URLClassLoader.class
+                .getDeclaredMethod("addURL",
+                        URL.class);
+        method.setAccessible(true);
+        if (URLClassLoader.class.isAssignableFrom(sysloader.getClass())) {
             method.invoke(sysloader, url);
-        } catch (final Throwable err) {
-            err.printStackTrace();
-            throw new IOException("Error adding " + url
-                    + " to system classloader");
+        }else{
+            log("Java incompativel para carregamento de jar automatico");
         }
+
     }
 }
