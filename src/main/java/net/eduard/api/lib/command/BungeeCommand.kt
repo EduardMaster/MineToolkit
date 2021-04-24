@@ -8,7 +8,7 @@ import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Plugin
 
 class BungeeCommand(val command: net.eduard.api.lib.command.Command)
-    : Command(command.name, command.permission, *command.aliases.toTypedArray())  {
+    : Command(command.name, null, *command.aliases.toTypedArray())  {
 
     fun register(plugin : IPluginInstance){
         register(plugin.plugin as Plugin)
@@ -18,7 +18,11 @@ class BungeeCommand(val command: net.eduard.api.lib.command.Command)
     }
 
     override fun execute(sender: CommandSender, args: Array<String>) {
-
+        if (!sender.hasPermission(command.permission)){
+            sender.sendMessage(command.permissionMessage
+                .replace("%permission", command.permission))
+            return
+        }
         if (sender is ProxiedPlayer) {
             command.processCommand(Hybrid.instance.getPlayer(sender.name, sender.uniqueId),
                 args.toList())

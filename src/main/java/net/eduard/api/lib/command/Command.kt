@@ -4,6 +4,7 @@ import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.hybrid.IPlayer
 import net.eduard.api.lib.hybrid.ISender
 import net.eduard.api.lib.modules.Extra
+import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPluginInstance
 import java.util.ArrayList
 
@@ -28,6 +29,7 @@ open class Command(override var name: String = "comando", vararg aliases: String
     override var description = "Descrição do comando"
 
     override var usage = ""
+    var prefixUsage = "§cUtilize: "
     override var permission = ""
 
     @Transient
@@ -132,7 +134,6 @@ open class Command(override var name: String = "comando", vararg aliases: String
         if (sender.hasPermission(cmd.permission)) {
             cmd.onCommand(sender, args)
         } else {
-
             sender.sendMessage(
                 cmd.permissionMessage
                     .replace("%permission", cmd.permission)
@@ -141,12 +142,9 @@ open class Command(override var name: String = "comando", vararg aliases: String
 
     }
 
-    fun sendUsage(sender: ISender) {
-        if (subCommands.isNotEmpty()) {
-            sender.sendMessage(usage)
-        } else {
-            sender.sendMessage("$usage help")
-        }
+    open fun sendUsage(sender: ISender) {
+       sender.sendMessage(prefixUsage + usage)
+
     }
 
 
