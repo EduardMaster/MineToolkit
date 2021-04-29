@@ -7,7 +7,7 @@ interface DatabaseEngine {
     val types: MutableMap<Class<*>, String>
     val tables : MutableMap<Class<*> , out DatabaseTable<*>>
 
-
+    fun cacheInfo()
 
     fun <T : Any> getTable(
         clz: Class<T >

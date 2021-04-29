@@ -1,10 +1,9 @@
 package net.eduard.api.lib.database.impl
 
 import net.eduard.api.lib.database.DBManager
-import net.eduard.api.lib.database.SQLManager
+import net.eduard.api.lib.database.annotations.TableName
 import net.eduard.api.lib.database.api.DatabaseColumn
 import net.eduard.api.lib.database.api.DatabaseEngine
-import net.eduard.api.lib.database.api.DatabaseTable
 import net.eduard.api.lib.database.deserialization
 import net.eduard.api.lib.database.serialization
 import net.eduard.api.lib.modules.Extra
@@ -14,11 +13,50 @@ import java.sql.SQLException
 
 class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     override val tables: MutableMap<Class<*>, MySQLTable<*>> = mutableMapOf()
-    private val tablesByName = mutableMapOf<String, DatabaseTable<*>>()
+    private val tablesByName = mutableMapOf<String, MySQLTable<*>>()
     override fun <T : Any> updateCache(data: T) {
         val clz = data.javaClass
         val table = getTable(clz)
         table.findByPrimary(table.primaryColumn!!.field.get(data), data)
+    }
+    override fun cacheInfo(){
+        try{
+            val showTableSql = "show tables;"
+            val tablesCreatedQuery = connection.prepareStatement(showTableSql).executeQuery()
+            log(showTableSql)
+            while(tablesCreatedQuery.next()){
+                val tableName = tablesCreatedQuery.getString(1)
+                getTable(tableName).created = true
+            }
+            tablesCreatedQuery.close()
+
+            val columnsSql = "SELECT * FROM information_schema.COLUMNS"
+            val columnsQuery = connection.prepareStatement(columnsSql).executeQuery()
+            log(columnsSql)
+            while(columnsQuery.next()){
+                val tableName = columnsQuery.getString("TABLE_NAME")
+                val collumn = columnsQuery.getString("COLUMN_NAME")
+                val table = getTable(tableName)
+                table.columnsCreated.add(collumn)
+            }
+            columnsQuery.close()
+
+            val contraintsCreatedSql = "SELECT * FROM information_schema.table_constraints"
+            log(contraintsCreatedSql)
+            val contraintsCreateQuery =  connection.prepareStatement(
+                contraintsCreatedSql).executeQuery()
+
+
+            while(contraintsCreateQuery.next()){
+                val tableName = contraintsCreateQuery.getString("TABLE_NAME")
+                val table = getTable(tableName)
+                val constraint = contraintsCreateQuery.getString("CONSTRAINT_NAME")
+                table.columnsContraintsCreated.add(constraint)
+            }
+
+        }catch (ex : Exception){
+            ex.printStackTrace()
+        }
     }
 
     companion object {
@@ -51,8 +89,20 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         if (tables.containsKey(clz)) {
             return tables[clz] as MySQLTable<T>
         }
+        val tableName: String = if (clz.isAnnotationPresent(
+                TableName::class.java
+            )
+        ) (clz.getAnnotation(TableName::class.java).value) else (clz.simpleName)
+        if (tablesByName.containsKey(tableName)){
+            val table = tablesByName[tableName]!! as MySQLTable<T>
+            table.tableClass = clz
+            tables[clz] = table
+            table.reload()
+            return table
+        }
         val table = MySQLTable<T>(connection, clz, this)
         tables[clz] = table
+        tablesByName[table.name] = table
         table.reload()
         return table
     }
@@ -62,12 +112,13 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         deleteTable(table.name)
     }
 
-    fun getTable(tableName: String): DatabaseTable<*> {
+    fun getTable(tableName: String): MySQLTable<*> {
         if (tablesByName.containsKey(tableName)) {
             return tablesByName[tableName]!!
         }
-        val table = tables.values.first { it.name.equals(tableName, true) }
-        tablesByName[tableName.toLowerCase()] = table
+        val table = MySQLTable<Any>(connection, String::class.java, this)
+        //val table = tables.values.first { it.name.equals(tableName, true) }
+        tablesByName[tableName] = table
         return table
     }
 
@@ -106,6 +157,9 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
 
     override fun <T : Any> createTable(clz: Class<T>) {
         val table = getTable(clz)
+        if (table.created){
+            return
+        }
         val tableName = table.name
         try {
             val builder = StringBuilder("CREATE TABLE IF NOT EXISTS $tableName (")

@@ -5,6 +5,7 @@ import net.eduard.api.lib.database.api.DatabaseColumn
 import net.eduard.api.lib.database.api.DatabaseEngine
 import net.eduard.api.lib.database.api.DatabaseTable
 import net.eduard.api.lib.database.api.TableReference
+import org.bukkit.entity.Player
 import java.lang.Exception
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -14,26 +15,31 @@ import java.sql.SQLException
 import java.sql.Statement
 
 class MySQLTable<T : Any>(
-    override var connection: Connection, override val tableClass: Class<*>,
+    override var connection: Connection,
+    override var tableClass: Class<*>,
     override val engine: DatabaseEngine
 
 
 ) : DatabaseTable<T> {
-    var referencesRemoved = false
+    override var created = false
     override val elements = mutableMapOf<Any, T>()
+    var referencesRemoved = false
     val references = mutableListOf<TableReference<T>>()
     fun log(str: String) {
         if (MySQLEngine.logEnabled)
             println("MySQLTable: $str")
     }
 
-    override val name: String = if (tableClass.isAnnotationPresent(
+    override val name: String get() = if (tableClass.isAnnotationPresent(
             TableName::class.java
         )
     ) (tableClass.getAnnotation(TableName::class.java).value) else (tableClass.simpleName)
 
     override val columns: MutableMap<Field, DatabaseColumn<*>> = linkedMapOf()
+    override val columnsCreated = mutableSetOf<String>()
+    override val columnsContraintsCreated = mutableSetOf<String>()
 
+    override var newInstance: () -> T = { tableClass.newInstance() as T }
 
     override fun reload() {
         if (tableClass == String::class.java) return
@@ -56,7 +62,7 @@ class MySQLTable<T : Any>(
     }
 
 
-    override var newInstance: () -> T = { tableClass.newInstance() as T }
+
 
     override fun selectAll(): List<T> {
         val list = mutableListOf<T>()
@@ -116,24 +122,10 @@ class MySQLTable<T : Any>(
     override fun createReferences() {
 
         try {
-            val contrainsCreated = mutableSetOf<String>()
-            val sql = "SELECT * FROM information_schema.table_constraints" +
-                    " where TABLE_NAME = ?"
-            log(sql)
 
-            val state = connection.prepareStatement(sql)
-
-            state.setString(1 , name)
-            val query = state.executeQuery()
-
-
-            while(query.next()){
-                val contraint = query.getString("CONSTRAINT_NAME")
-                contrainsCreated.add(contraint)
-            }
 
             for (column in columns.values) {
-                if (column.isConstraint&& !contrainsCreated.contains(column.foreignKeyName)) {
+                if (column.isConstraint&& !columnsContraintsCreated.contains(column.foreignKeyName)) {
 
                     val text = "ALTER TABLE $name ADD CONSTRAINT ${column.foreignKeyName} FOREIGN KEY" +
                             " (${column.name}) REFERENCES ${column.referenceTable.name}(${column.referenceTable.primaryName}) " +
@@ -373,22 +365,9 @@ class MySQLTable<T : Any>(
 
     override fun createCollumns() {
         try {
-            val text = "SELECT * FROM information_schema.COLUMNS " +
-                    "WHERE TABLE_NAME = ?"
-            val prepare = connection.prepareStatement(text)
-            prepare.setString(1, name)
-            val query = prepare.executeQuery()
-            log("Query: $text")
-
-            val collumnsNames = mutableListOf<String>()
-            var lastCollum = ""
-            while (query.next()) {
-                val columnName = query.getString("COLUMN_NAME")
-                collumnsNames.add(columnName)
-                lastCollum = columnName
-            }
+            var lastCollum = columnsCreated.last()
             for (column in columns.values) {
-                if (collumnsNames.contains(column.name)) continue
+                if (columnsCreated.contains(column.name)) continue
                 val builder = StringBuilder()
                 builder.append("ALTER TABLE $name ADD ${column.name} ")
                 builder.append(" ")
@@ -414,6 +393,7 @@ class MySQLTable<T : Any>(
                 connection.prepareStatement(
                     builder.toString()
                 ).executeUpdate()
+                columnsCreated.add(column.name)
                 lastCollum = column.name
                 //ALTER TABLE `guriel_fases` ADD `teste` INT NOT NULL AFTER `tempo_online`;
 

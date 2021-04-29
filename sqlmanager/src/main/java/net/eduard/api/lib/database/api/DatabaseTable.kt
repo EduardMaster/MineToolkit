@@ -9,9 +9,10 @@ interface DatabaseTable<T : Any> {
     val engine : DatabaseEngine
     val name : String
     var connection : Connection
-    val tableClass : Class<*>
+    var tableClass : Class<*>
     var newInstance : () -> T
     val columns : MutableMap<Field,DatabaseColumn<*>>
+    val columnsCreated: MutableSet<String>
     val elements : MutableMap<Any,T>
     val primaryColumn: DatabaseColumn<*>?
         get() = columns.values.firstOrNull { it.isPrimary }
@@ -32,5 +33,6 @@ interface DatabaseTable<T : Any> {
     fun updateCache(data : T, query : ResultSet)
     fun select(where: String , columnOrder : String, ascending : Boolean, limit : Int): List<T>
 
-
+    val columnsContraintsCreated: MutableSet<String>
+    var created: Boolean
 }
