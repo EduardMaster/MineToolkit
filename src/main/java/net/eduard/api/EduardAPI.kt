@@ -194,6 +194,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     }
     fun loadServers(){
         if (sqlManager.hasConnection()){
+            sqlManager.cacheInfo()
             log("Carregando infos dos servidores")
             sqlManager.createTable(ServerSpigot::class.java)
             for (server in sqlManager.getAllData(ServerSpigot::class.java)){

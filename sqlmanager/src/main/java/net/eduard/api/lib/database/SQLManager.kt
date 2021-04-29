@@ -1,5 +1,6 @@
 package net.eduard.api.lib.database
 
+import java.lang.Exception
 import java.sql.Connection
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -249,5 +250,12 @@ class SQLManager(var dbManager: DBManager) {
         if (hasConnection()) {
             dbManager.engineUsed.updateCache(data)
         }
+    }
+
+     fun cacheInfo(){
+         if (hasConnection()) {
+             dbManager.engineUsed.cacheInfo()
+         }
+
     }
 }

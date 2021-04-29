@@ -255,7 +255,7 @@ class DBManager(
     }
 
     /**
-     * Adiciona no Come§o da tabela uma coluna
+     * Adiciona no Inicio §o da tabela uma coluna
      *
      * @param table          Tabela
      * @param columnComplete Coluna

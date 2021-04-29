@@ -19,45 +19,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         val table = getTable(clz)
         table.findByPrimary(table.primaryColumn!!.field.get(data), data)
     }
-    override fun cacheInfo(){
-        try{
-            val showTableSql = "show tables;"
-            val tablesCreatedQuery = connection.prepareStatement(showTableSql).executeQuery()
-            log(showTableSql)
-            while(tablesCreatedQuery.next()){
-                val tableName = tablesCreatedQuery.getString(1)
-                getTable(tableName).created = true
-            }
-            tablesCreatedQuery.close()
 
-            val columnsSql = "SELECT * FROM information_schema.COLUMNS"
-            val columnsQuery = connection.prepareStatement(columnsSql).executeQuery()
-            log(columnsSql)
-            while(columnsQuery.next()){
-                val tableName = columnsQuery.getString("TABLE_NAME")
-                val collumn = columnsQuery.getString("COLUMN_NAME")
-                val table = getTable(tableName)
-                table.columnsCreated.add(collumn)
-            }
-            columnsQuery.close()
-
-            val contraintsCreatedSql = "SELECT * FROM information_schema.table_constraints"
-            log(contraintsCreatedSql)
-            val contraintsCreateQuery =  connection.prepareStatement(
-                contraintsCreatedSql).executeQuery()
-
-
-            while(contraintsCreateQuery.next()){
-                val tableName = contraintsCreateQuery.getString("TABLE_NAME")
-                val table = getTable(tableName)
-                val constraint = contraintsCreateQuery.getString("CONSTRAINT_NAME")
-                table.columnsContraintsCreated.add(constraint)
-            }
-
-        }catch (ex : Exception){
-            ex.printStackTrace()
-        }
-    }
 
     companion object {
         val logEnabled get() = DBManager.isDebugging
@@ -85,6 +47,35 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
 
     )
 
+
+
+    override fun cacheInfo() {
+        try{
+
+            val showTableSql = "show tables"
+            val tablesCreatedQuery = connection.prepareStatement(showTableSql).executeQuery()
+            log(showTableSql)
+            while (tablesCreatedQuery.next()) {
+                val tableName = tablesCreatedQuery.getString(1)
+                getTable(tableName).created = true
+            }
+            tablesCreatedQuery.close()
+
+
+        }catch (ex : Exception){
+            ex.printStackTrace()
+        }
+    }
+
+    override fun getTable(tableName: String): MySQLTable<*> {
+        if (tablesByName.containsKey(tableName)) {
+            return tablesByName[tableName]!!
+        }
+        val table = MySQLTable<Any>(connection, String::class.java, this)
+        //val table = tables.values.first { it.name.equals(tableName, true) }
+        tablesByName[tableName] = table
+        return table
+    }
     override fun <T : Any> getTable(clz: Class<T>): MySQLTable<T> {
         if (tables.containsKey(clz)) {
             return tables[clz] as MySQLTable<T>
@@ -112,15 +103,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         deleteTable(table.name)
     }
 
-    fun getTable(tableName: String): MySQLTable<*> {
-        if (tablesByName.containsKey(tableName)) {
-            return tablesByName[tableName]!!
-        }
-        val table = MySQLTable<Any>(connection, String::class.java, this)
-        //val table = tables.values.first { it.name.equals(tableName, true) }
-        tablesByName[tableName] = table
-        return table
-    }
+
 
     override fun deleteTable(tableName: String) {
         try {
@@ -198,6 +181,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                 builder.toString()
             )
             prepare.executeUpdate()
+            table.created=true
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }

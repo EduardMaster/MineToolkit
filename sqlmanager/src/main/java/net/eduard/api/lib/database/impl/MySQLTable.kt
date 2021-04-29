@@ -30,10 +30,11 @@ class MySQLTable<T : Any>(
             println("MySQLTable: $str")
     }
 
-    override val name: String get() = if (tableClass.isAnnotationPresent(
-            TableName::class.java
-        )
-    ) (tableClass.getAnnotation(TableName::class.java).value) else (tableClass.simpleName)
+    override val name: String
+        get() = if (tableClass.isAnnotationPresent(
+                TableName::class.java
+            )
+        ) (tableClass.getAnnotation(TableName::class.java).value) else (tableClass.simpleName)
 
     override val columns: MutableMap<Field, DatabaseColumn<*>> = linkedMapOf()
     override val columnsCreated = mutableSetOf<String>()
@@ -60,8 +61,6 @@ class MySQLTable<T : Any>(
             field.isAccessible = true
         }
     }
-
-
 
 
     override fun selectAll(): List<T> {
@@ -119,13 +118,35 @@ class MySQLTable<T : Any>(
 
     }
 
+    fun calcLag(text: String, body: () -> Unit) {
+        val start = System.currentTimeMillis()
+        body()
+        val end = System.currentTimeMillis()
+        val dif = end - start
+        println("MySQLEngine: $text -> ${dif}ms")
+
+    }
+
     override fun createReferences() {
 
         try {
+            val contraintsCreatedSql = "SELECT * FROM information_schema.table_constraints" +
+                    " WHERE TABLE_NAME = ?"
+            log(contraintsCreatedSql)
+            val contraintsCreateState = connection.prepareStatement(
+                contraintsCreatedSql
+            )
+            contraintsCreateState.setString(1, name)
+            val contraintsCreateQuery = contraintsCreateState.executeQuery()
+            while (contraintsCreateQuery.next()) {
+                val constraint = contraintsCreateQuery.getString("CONSTRAINT_NAME")
+                columnsContraintsCreated.add(constraint)
+            }
+            contraintsCreateQuery.close()
 
 
             for (column in columns.values) {
-                if (column.isConstraint&& !columnsContraintsCreated.contains(column.foreignKeyName)) {
+                if (column.isConstraint && !columnsContraintsCreated.contains(column.foreignKeyName)) {
 
                     val text = "ALTER TABLE $name ADD CONSTRAINT ${column.foreignKeyName} FOREIGN KEY" +
                             " (${column.name}) REFERENCES ${column.referenceTable.name}(${column.referenceTable.primaryName}) " +
@@ -134,7 +155,7 @@ class MySQLTable<T : Any>(
 
                     connection.prepareStatement(text)
                         .executeUpdate()
-
+                columnsContraintsCreated.add(column.foreignKeyName)
 
                 }
                 //ALTER TABLE `party_user` DROP FOREIGN KEY `party`; ALTER TABLE `party_user` ADD CONSTRAINT `party` FOREIGN KEY (`party_id`) REFERENCES `partu`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
@@ -236,9 +257,9 @@ class MySQLTable<T : Any>(
             log("Inserindo dado na tabela $name")
             val builder = StringBuilder("INSERT INTO $name (")
             for (column in columns.values) {
-                builder.append(column.name+",")
+                builder.append(column.name + ",")
             }
-            builder.deleteCharAt(builder.length-1)
+            builder.deleteCharAt(builder.length - 1)
             builder.append(") VALUES (")
 
             for (column in columns.values) {
@@ -365,7 +386,19 @@ class MySQLTable<T : Any>(
 
     override fun createCollumns() {
         try {
-            var lastCollum = columnsCreated.last()
+
+            val columnsSql = "SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = ?"
+            val columnsState = connection.prepareStatement(columnsSql)
+            columnsState.setString(1, name)
+            val columnsQuery = columnsState.executeQuery()
+            log(columnsSql)
+            while (columnsQuery.next()) {
+                val collumn = columnsQuery.getString("COLUMN_NAME")
+                columnsCreated.add(collumn)
+            }
+            columnsQuery.close()
+
+            var lastCollum = columnsCreated.lastOrNull()
             for (column in columns.values) {
                 if (columnsCreated.contains(column.name)) continue
                 val builder = StringBuilder()
@@ -389,7 +422,9 @@ class MySQLTable<T : Any>(
                     builder.append("UNIQUE")
                     builder.append(" ")
                 }
-                builder.append(" AFTER $lastCollum")
+                if (lastCollum != null) {
+                    builder.append(" AFTER $lastCollum")
+                }
                 connection.prepareStatement(
                     builder.toString()
                 ).executeUpdate()
