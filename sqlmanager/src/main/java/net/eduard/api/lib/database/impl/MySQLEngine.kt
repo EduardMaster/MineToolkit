@@ -107,11 +107,9 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     override fun <T : Any> createTable(clz: Class<T>) {
         val table = getTable(clz)
         val tableName = table.name
-
         try {
             val builder = StringBuilder("CREATE TABLE IF NOT EXISTS $tableName (")
             log("Criando tabela $tableName")
-
             for ((field, column) in table.columns) {
                 log("Coluna: ${field.name}")
                 builder.append(column.name)
@@ -121,7 +119,6 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                     builder.append("(${column.size})")
                 }
                 builder.append(" ")
-
                 if (column.isNullable || column.isConstraint) {
                     builder.append("NULL")
                 } else builder.append("NOT NULL")
@@ -134,7 +131,6 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                     builder.append("UNIQUE")
                     builder.append(" ")
                 }
-
                 if (!column.isConstraint && column.isPrimary) {
                     builder.append("PRIMARY KEY")
                     builder.append(" ")
@@ -144,15 +140,10 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             builder.deleteCharAt(builder.length - 1)
             builder.append(")")
             log("Query:$builder")
-
             val prepare = connection.prepareStatement(
                 builder.toString()
-
-
             )
             prepare.executeUpdate()
-
-
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }

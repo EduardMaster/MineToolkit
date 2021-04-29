@@ -30,7 +30,8 @@ class MySQLTable<T : Any>(
     override val name: String = if (tableClass.isAnnotationPresent(
             TableName::class.java
         )
-    ) tableClass.getAnnotation(TableName::class.java).value else tableClass.simpleName
+    ) (tableClass.getAnnotation(TableName::class.java).value) else (tableClass.simpleName)
+
     override val columns: MutableMap<Field, DatabaseColumn<*>> = linkedMapOf()
 
 
@@ -115,15 +116,30 @@ class MySQLTable<T : Any>(
     override fun createReferences() {
 
         try {
-            deleteReferences()
-            for (column in columns.values) {
-                if (column.isConstraint) {
+            val contrainsCreated = mutableSetOf<String>()
+            val sql = "SELECT * FROM information_schema.table_constraints" +
+                    " where TABLE_NAME = ?"
+            log(sql)
 
+            val state = connection.prepareStatement(sql)
+
+            state.setString(1 , name)
+            val query = state.executeQuery()
+
+
+            while(query.next()){
+                val contraint = query.getString("CONSTRAINT_NAME")
+                contrainsCreated.add(contraint)
+            }
+
+            for (column in columns.values) {
+                if (column.isConstraint&& !contrainsCreated.contains(column.foreignKeyName)) {
 
                     val text = "ALTER TABLE $name ADD CONSTRAINT ${column.foreignKeyName} FOREIGN KEY" +
                             " (${column.name}) REFERENCES ${column.referenceTable.name}(${column.referenceTable.primaryName}) " +
                             "ON DELETE SET NULL ON UPDATE SET NULL"
                     log(text)
+
                     connection.prepareStatement(text)
                         .executeUpdate()
 
