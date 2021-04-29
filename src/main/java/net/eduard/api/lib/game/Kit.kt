@@ -9,24 +9,25 @@ import java.util.concurrent.TimeUnit
 class Kit() {
 
 
-    constructor(block  : Kit.() -> Unit) : this(){
+    constructor(block: Kit.() -> Unit) : this() {
         block.invoke(this)
     }
 
     class KitUpgrade(
-            var level: Int = 1,
-            var price: Double = 0.0,
-            var cooldown: Long = TimeUnit.HOURS.toMillis(1)
+        var level: Int = 1,
+        var price: Double = 0.0,
+        var cooldown: Long = TimeUnit.HOURS.toMillis(1)
 
     ) {
 
         var items = mutableListOf<ItemStack>()
+
         @Transient
         lateinit var kit: Kit
 
     }
 
-    fun newUpgrade(level: Int, block : (KitUpgrade.() -> Unit)? = null) : KitUpgrade {
+    fun newUpgrade(level: Int, block: (KitUpgrade.() -> Unit)? = null): KitUpgrade {
         val upgrade = KitUpgrade(level)
         upgrade.kit = this
         upgrades.add(upgrade)
@@ -35,6 +36,7 @@ class Kit() {
     }
 
     var name = "kit"
+    var permission = "kits.kit"
     var menuPosition = 10
     var cooldown: Long = TimeUnit.HOURS.toMillis(1)
     var price = 1000.0
@@ -43,18 +45,17 @@ class Kit() {
     var isAutoEquip = true
 
 
-    var icon : ItemStack = ItemBuilder(Material.DIAMOND_SWORD).name("§aKit")
+    var icon: ItemStack = ItemBuilder(Material.DIAMOND_SWORD).name("§aKit")
     var items = mutableListOf<ItemStack>()
     var upgrades = mutableListOf<KitUpgrade>()
 
 
-
-    fun give(p: Player, level: Int = 1) {
-        val inv = p.inventory
+    fun give(player: Player, level: Int = 1) {
+        val inv = player.inventory
         if (isClearInventory) {
-            Mine.clearInventory(p)
+            Mine.clearInventory(player)
         }
-        if (level == 1)
+        if (level == 1) {
             for (item in items) {
                 val type = item.type.name
                 if (isAutoEquip) {
@@ -72,7 +73,8 @@ class Kit() {
                 } else {
                     inv.addItem(item)
                 }
-            }else {
+            }
+        } else {
 
             val upgrade = getUpgrade(level)
             for (item in upgrade.items) {
@@ -94,7 +96,7 @@ class Kit() {
                 }
             }
         }
-        if (isFillSoup)Mine.fill(inv, ItemStack(Material.MUSHROOM_SOUP))
+        if (isFillSoup) Mine.fill(inv, ItemStack(Material.MUSHROOM_SOUP))
     }
 
     fun getUpgrade(level: Int) = upgrades.first { it.level == level }

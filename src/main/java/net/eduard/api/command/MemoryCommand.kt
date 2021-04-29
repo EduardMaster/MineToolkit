@@ -12,11 +12,11 @@ class MemoryCommand : CommandManager("memory", "memoria") {
         val totalMemoria = (Runtime.getRuntime().totalMemory() / div)
         val maximoMemoria = Runtime.getRuntime().maxMemory() / div
         val memoriaUsada = totalMemoria - memoriaDisponivel
-        sender.sendMessage("§aVerificador de uso de Memoria")
-        sender.sendMessage("§bMemoria Disponivel: ${memoriaDisponivel}MB")
-        sender.sendMessage("§bMemoria Total: ${totalMemoria}MB")
-        sender.sendMessage("§aMemoria Maxima: ${maximoMemoria}MB")
-        sender.sendMessage("§aMemoria Usada: ${memoriaUsada}MB")
+        sender.sendMessage("§bVerificador de uso de Memoria")
+        sender.sendMessage("§eMemoria Disponivel: §a${memoriaDisponivel}MB")
+        sender.sendMessage("§eMemoria Total: §a${totalMemoria}MB")
+        sender.sendMessage("§eMemoria Maxima: §c${maximoMemoria}MB")
+        sender.sendMessage("§eMemoria Usada: §c${memoriaUsada}MB")
 
 
 
