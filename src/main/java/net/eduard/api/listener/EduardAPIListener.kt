@@ -88,7 +88,7 @@ class EduardAPIListener : EventsManager() {
     fun onPingServer(e: ServerListPingEvent) {
         val amount = EduardAPI.instance.configs.getInt("custom-motd-amount")
         if (amount > -1) {
-            e.maxPlayers = amount!!
+            e.maxPlayers = amount
         }
 
         if (EduardAPI.instance.configs.getBoolean("custom-motd")) {

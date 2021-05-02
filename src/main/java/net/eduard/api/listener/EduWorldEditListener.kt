@@ -19,20 +19,20 @@ class EduWorldEditListener : EventsManager() {
     @EventHandler
     fun onSelectPositions(e: PlayerInteractEvent) {
         val player = e.player
-        if (player.gameMode == GameMode.CREATIVE) {
-            if (e.item == null)
-                return
-            if (e.item.type == Material.WOOD_AXE) {
-                val mapa = MinigameSchematic.getSchematic(player)
-                if (e.action == Action.LEFT_CLICK_BLOCK) {
-                    mapa.high = e.clickedBlock.location.toVector()
-                    player.sendMessage("§aPosição 1 setada!")
-                } else if (e.action == Action.RIGHT_CLICK_BLOCK) {
-                    mapa.low = e.clickedBlock.location.toVector()
-                    player.sendMessage("§aPosição 2 setada!")
-                }
-            }
+        if (player.gameMode != GameMode.CREATIVE) return
+        if (e.item == null)
+            return
+        if (e.item.type != Material.WOOD_AXE) return
+        val mapa = MinigameSchematic.getSchematic(player)
+        if (e.action == Action.LEFT_CLICK_BLOCK) {
+            mapa.high = e.clickedBlock.location.toVector()
+            player.sendMessage("§aPosição 1 setada!")
+        } else if (e.action == Action.RIGHT_CLICK_BLOCK) {
+            mapa.low = e.clickedBlock.location.toVector()
+            player.sendMessage("§aPosição 2 setada!")
         }
+
+
     }
 
 }

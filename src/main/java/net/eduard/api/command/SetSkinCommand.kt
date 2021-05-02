@@ -13,10 +13,11 @@ class SetSkinCommand : CommandManager("setskin") {
             sendUsage(sender)
         } else {
             if (Mine.onlyPlayer(sender)) {
-                val p = sender as Player
+                val player = sender as Player
                 val playerName = args[0]
                 sender.sendMessage("§aSua skin foi alterada para $playerName")
-                PlayerSkin.change(p, playerName)
+                PlayerSkin.change(player, playerName)
+                
             }
         }
         return true
