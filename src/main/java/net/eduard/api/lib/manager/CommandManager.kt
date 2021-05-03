@@ -17,7 +17,6 @@ import net.eduard.api.lib.modules.Mine
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-
 open class CommandManager(var name: String, vararg aliases: String) : EventsManager(), TabCompleter, CommandExecutor {
 
     @Transient
