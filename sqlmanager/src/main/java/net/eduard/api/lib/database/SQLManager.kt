@@ -240,9 +240,15 @@ class SQLManager(var dbManager: DBManager) {
         }
     }
 
-    fun updateReferences() {
+    fun updateAllReferences() {
         if (hasConnection()) {
             dbManager.engineUsed.updateReferences()
+        }
+    }
+    inline fun <reified T : Any> updateReferences(){
+        if (hasConnection()){
+            dbManager.engineUsed.getTable(T::class.java)
+                .updateReferences()
         }
     }
 

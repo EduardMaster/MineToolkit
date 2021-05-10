@@ -19,6 +19,7 @@ interface DatabaseTable<T : Any> {
 
     val primaryName get() = primaryColumn?.name?:"ID"
     fun updateReferences()
+
     fun reload()
     fun insert(data : T)
     fun update(data : T)

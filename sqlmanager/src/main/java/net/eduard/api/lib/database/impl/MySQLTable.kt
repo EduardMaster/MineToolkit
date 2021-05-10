@@ -213,6 +213,8 @@ class MySQLTable<T : Any>(
         return list
     }
 
+
+
     override fun updateCache(data: T, query: ResultSet) {
 
         for ((field, column) in columns) {
@@ -227,6 +229,7 @@ class MySQLTable<T : Any>(
                 if (value != null) {
                     field.set(data, value)
                 } else {
+
                     references.add(TableReference(column, data, key))
                 }
                 continue
@@ -243,6 +246,7 @@ class MySQLTable<T : Any>(
         }
 
     }
+
 
     override fun updateReferences() {
         for (reference in references) {
