@@ -10,18 +10,19 @@ class ApiReloadCommand : CommandManager("reload", "recarregar") {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             sendUsage(sender)
-        } else {
-            val pluginName = args[0]
-            if (Mine.existsPlugin(sender, pluginName)) {
-                val plugin = Mine.getPlugin(pluginName)
-                if (plugin is EduardPlugin) {
-                    plugin.reload()
-                    sender.sendMessage("§bEduardAPI §aPlugin do Eduard §2" + plugin.getName() + "§a foi recarregado")
-                } else {
-                    sender.sendMessage("§cEste plugin nao é um plugin do Eduard")
-                }
+            return true
+        }
+        val pluginName = args[0]
+        if (Mine.existsPlugin(sender, pluginName)) {
+            val plugin = Mine.getPlugin(pluginName)
+            if (plugin is EduardPlugin) {
+                plugin.reload()
+                sender.sendMessage("§bEduardAPI §aPlugin do Eduard §2" + plugin.getName() + "§a foi recarregado")
+            } else {
+                sender.sendMessage("§cEste plugin nao é um plugin do Eduard")
             }
         }
+
         return true
     }
 

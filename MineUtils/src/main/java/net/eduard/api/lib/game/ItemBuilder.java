@@ -61,7 +61,7 @@ public class ItemBuilder extends ItemStack {
         return this;
     }
 
-    public ItemStack banner(DyeColor baseColor, DyeColor patternColor, PatternType patternType) {
+    public ItemBuilder banner(DyeColor baseColor, DyeColor patternColor, PatternType patternType) {
         type(Material.BANNER);
         BannerMeta bannerMeta = (BannerMeta) getItemMeta();
         bannerMeta.setBaseColor(baseColor);

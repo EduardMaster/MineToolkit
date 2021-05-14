@@ -9,12 +9,13 @@ class ApiUnloadWorldCommand : CommandManager("unloadworld", "descarregarmundo", 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             sendUsage(sender)
-        } else {
-            if (Mine.existsWorld(sender, args[0])) {
-                Mine.unloadWorld(args[0])
-                sender.sendMessage("§bEduardAPI §aVoce descarregou o mundo §2" + args[0])
-            }
+            return true
         }
+        if (Mine.existsWorld(sender, args[0])) {
+            Mine.unloadWorld(args[0])
+            sender.sendMessage("§bEduardAPI §aVoce descarregou o mundo §2" + args[0])
+        }
+
         return true
     }
 

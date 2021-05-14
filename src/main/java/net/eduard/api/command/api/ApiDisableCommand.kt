@@ -10,14 +10,15 @@ class ApiDisableCommand : CommandManager("disable", "desabilitar") {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             sendUsage(sender)
-        } else {
-            val pluginName = args[0]
-            if (Mine.existsPlugin(sender, pluginName)) {
-                val plugin = Mine.getPlugin(pluginName)
-                sender.sendMessage("§bEduardAPI §aPlugin §2$pluginName§a foi desativado")
-                Bukkit.getPluginManager().disablePlugin(plugin)
-            }
+            return true
         }
+        val pluginName = args[0]
+        if (Mine.existsPlugin(sender, pluginName)) {
+            val plugin = Mine.getPlugin(pluginName)
+            sender.sendMessage("§bEduardAPI §aPlugin §2$pluginName§a foi desativado")
+            Bukkit.getPluginManager().disablePlugin(plugin)
+        }
+
         return true
     }
 

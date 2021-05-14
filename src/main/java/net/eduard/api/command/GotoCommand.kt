@@ -13,15 +13,15 @@ class GotoCommand : CommandManager("goto") {
     var message = "§6Voce foi teleportado para o Mundo §e\$world"
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) return false
-        if (Mine.onlyPlayer(sender)) {
-            val p = sender as Player
-            if (Mine.existsWorld(sender, args[0])) {
-                val world = Bukkit.getWorld(args[0])
-                Mine.teleport(p, world.spawnLocation)
-                OPT_SOUND_TELEPORT.create(p)
-                Mine.send(p, message.replace("\$world", world.name))
-            }
+        if (!Mine.onlyPlayer(sender)) return true
+        val player = sender as Player
+        if (Mine.existsWorld(sender, args[0])) {
+            val world = Bukkit.getWorld(args[0])
+            Mine.teleport(player, world.spawnLocation)
+            OPT_SOUND_TELEPORT.create(player)
+            Mine.send(player, message.replace("\$world", world.name))
         }
+
         return true
     }
 }

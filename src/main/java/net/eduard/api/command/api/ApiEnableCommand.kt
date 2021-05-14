@@ -13,14 +13,15 @@ class ApiEnableCommand : CommandManager("enable", "habilitar") {
     ): Boolean {
         if (args.isEmpty()) {
             sendUsage(sender)
-        } else {
-            val pluginName = args[0]
-            if (Mine.existsPlugin(sender, pluginName)) {
-                val plugin = Mine.getPlugin(pluginName)
-                sender.sendMessage("§bEduardAPI §aPlugin §2$pluginName§a foi ativado")
-                Bukkit.getPluginManager().enablePlugin(plugin)
-            }
+            return true
         }
+        val pluginName = args[0]
+        if (Mine.existsPlugin(sender, pluginName)) {
+            val plugin = Mine.getPlugin(pluginName)
+            sender.sendMessage("§bEduardAPI §aPlugin §2$pluginName§a foi ativado")
+            Bukkit.getPluginManager().enablePlugin(plugin)
+        }
+
         return true
     }
 

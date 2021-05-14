@@ -226,7 +226,7 @@ val enchantmentsNames = mutableMapOf(
 val Enchantment.nameBR get() = enchantmentsNames[this] ?: name
 
 
-fun ItemStack.displayEnchants(): ItemStack {
+fun <T : ItemStack> T.displayEnchants(): T {
     val meta = itemMeta
     val lore = meta.lore ?: mutableListOf<String>()
 
@@ -276,7 +276,7 @@ var ItemStack.lore: MutableList<String>
     }
 
 
-operator fun ItemStack.invoke(name: String): ItemStack {
+operator  fun <T : ItemStack> T.invoke(name: String): T {
     this.name = name
     return this
 }
@@ -305,24 +305,24 @@ infix fun Enchantment.level(level: Int): Map<Enchantment, Int> {
     return mapOf(this to level)
 }
 
-fun ItemStack.id(id: Int): ItemStack {
+fun <T : ItemStack> T.id(id: Int): T {
     typeId = id
     return this
 }
 
-fun ItemStack.data(data: Int): ItemStack {
+fun <T : ItemStack> T.data(data: Int): T {
     durability = data.toShort()
     return this
 }
 
-fun ItemStack.addLore(vararg lore: String): ItemStack {
+fun <T : ItemStack> T.addLore(vararg lore: String): T {
     val list = this.lore
     list.addAll(lore)
     this.lore = list
     return this
 }
 
-fun ItemStack.lore(vararg lore: String): ItemStack {
+fun <T : ItemStack> T.lore(vararg lore: String): T {
     val list = this.lore
     list.clear()
     list.addAll(lore)
@@ -330,12 +330,12 @@ fun ItemStack.lore(vararg lore: String): ItemStack {
     return this
 }
 
-fun ItemStack.addEnchant(ench: Enchantment, level: Int): ItemStack {
+fun <T : ItemStack> T.addEnchant(ench: Enchantment, level: Int): T {
     addUnsafeEnchantment(ench, level)
     return this
 }
 
-fun ItemStack.color(color: Color): ItemStack {
+fun <T : ItemStack> T.color(color: Color): T {
     if (!type.name.contains("LEATHER"))
         type = Material.LEATHER_CHESTPLATE
     val meta = itemMeta as LeatherArmorMeta

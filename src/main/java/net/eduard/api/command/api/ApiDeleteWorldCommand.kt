@@ -9,13 +9,14 @@ class ApiDeleteWorldCommand : CommandManager("deleteworld", "deletarmundo") {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             sendUsage(sender)
-        } else {
-            val worldName = args[0]
-            if (Mine.existsWorld(sender, worldName)) {
-                Mine.deleteWorld(worldName)
-                sender.sendMessage("§bEduardAPI §aO Mundo §2$worldName§a foi deletado com sucesso!")
-            }
+            return true
         }
+        val worldName = args[0]
+        if (Mine.existsWorld(sender, worldName)) {
+            Mine.deleteWorld(worldName)
+            sender.sendMessage("§bEduardAPI §aO Mundo §2$worldName§a foi deletado com sucesso!")
+        }
+
         return true
     }
 

@@ -10,14 +10,15 @@ class ApiLoadWorldCommand : CommandManager("loadworld", "carregarmundo", "ligarm
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             sendUsage(sender)
-        } else {
-            if (Bukkit.getWorld(args[0]) == null) {
-                Mine.loadWorld(args[0])
-                sender.sendMessage("§bEduardAPI §aVoce carregou o mundo §2" + args[0])
-            } else {
-                sender.sendMessage("§bEduardAPI §aEste mundo já esta carregado")
-            }
+            return true
         }
+        if (Bukkit.getWorld(args[0]) == null) {
+            Mine.loadWorld(args[0])
+            sender.sendMessage("§bEduardAPI §aVoce carregou o mundo §2" + args[0])
+        } else {
+            sender.sendMessage("§bEduardAPI §aEste mundo já esta carregado")
+        }
+
         return true
     }
 

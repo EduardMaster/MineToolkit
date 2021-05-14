@@ -10,18 +10,19 @@ class ApiSaveCommand : CommandManager("save", "salvar") {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             sendUsage(sender)
-        } else {
-            val sub = args[0]
-            if (Mine.existsPlugin(sender, sub)) {
-                val plugin = Mine.getPlugin(sub)
-                if (plugin is EduardPlugin) {
-                    plugin.save()
-                    sender.sendMessage("§bEduardAPI §aPlugin do Eduard " + plugin.getName() + "§a foi salvado")
-                } else {
-                    sender.sendMessage("§bEduardAPI §cEste plugin nao é um plugin do Eduard")
-                }
+            return true
+        }
+        val pluginName = args[0]
+        if (Mine.existsPlugin(sender, pluginName)) {
+            val plugin = Mine.getPlugin(pluginName)
+            if (plugin is EduardPlugin) {
+                plugin.save()
+                sender.sendMessage("§bEduardAPI §aPlugin do Eduard " + plugin.getName() + "§a foi salvado")
+            } else {
+                sender.sendMessage("§bEduardAPI §cEste plugin nao é um plugin do Eduard")
             }
         }
+
         return true
     }
 

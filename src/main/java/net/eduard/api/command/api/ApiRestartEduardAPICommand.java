@@ -28,10 +28,10 @@ public class ApiRestartEduardAPICommand extends CommandManager {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         sender.sendMessage("§eDescarregando plugins do Eduard");
         List<String> lista = new ArrayList<>();
-        for (Plugin pl : Bukkit.getPluginManager().getPlugins()) {
-            if (pl instanceof EduardPlugin) {
-                Mine.makeCommand("plugman unload " + pl.getName());
-                lista.add(pl.getName());
+        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            if (plugin instanceof EduardPlugin) {
+                Mine.makeCommand("plugman unload " + plugin.getName());
+                lista.add(plugin.getName());
             }
         }
 
@@ -52,7 +52,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
 
     }
 
-    private String loadPlugin(String pl) {
+    private String loadPlugin(String pluginName) {
         Plugin targetPlugin = null;
         String msg = "";
         File pluginDir = new File("plugins");
@@ -60,16 +60,15 @@ public class ApiRestartEduardAPICommand extends CommandManager {
             return pre + red + "Plugin directory not found!";
         }
         PluginLoader loader = ((JavaPlugin) EduardAPIMain.getPlugin(EduardAPIMain.class)).getPluginLoader();
-        File pluginFile = new File(pluginDir, pl + ".jar");
+        File pluginFile = new File(pluginDir, pluginName + ".jar");
         if (!pluginFile.isFile()) {
-            for (File f : pluginDir.listFiles()) {
+            for (File file : pluginDir.listFiles()) {
                 try {
-                    if (f.getName().endsWith(".jar")) {
-
+                    if (file.getName().endsWith(".jar")) {
                         PluginDescriptionFile pdf =loader
-                               . getPluginDescription(f);
-                        if (pdf.getName().equalsIgnoreCase(pl)) {
-                            pluginFile = f;
+                               . getPluginDescription(file);
+                        if (pdf.getName().equalsIgnoreCase(pluginName)) {
+                            pluginFile = file;
                             msg = "(via search) ";
                             break;
                         }
@@ -81,9 +80,9 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         }
         try {
             Bukkit.getServer().getPluginManager().loadPlugin(pluginFile);
-            targetPlugin = getPlugin(pl);
+            targetPlugin = getPlugin(pluginName);
             Bukkit.getServer().getPluginManager().enablePlugin(targetPlugin);
-            return pre + green + getPlugin(pl) + " loaded " + msg + "and enabled!";
+            return pre + green + getPlugin(pluginName) + " loaded " + msg + "and enabled!";
         } catch (UnknownDependencyException e) {
             return pre + red + "File exists, but is missing a dependency!";
         } catch (InvalidPluginException e) {
@@ -94,11 +93,11 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         return pre + red + "Plugin exists, but has an invalid description!";
     }
 
-    private Plugin getPlugin(String p) {
+    private Plugin getPlugin(String pluginName) {
 
-        for (Plugin pl : Bukkit.getServer().getPluginManager().getPlugins()) {
-            if (pl.getDescription().getName().equalsIgnoreCase(p)) {
-                return pl;
+        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
+            if (plugin.getDescription().getName().equalsIgnoreCase(pluginName)) {
+                return plugin;
             }
         }
         return null;
@@ -146,12 +145,12 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         String tp = "";
 
 
-        for (Plugin p : Bukkit.getServer().getPluginManager().getPlugins()) {
-            if (p.getDescription().getName().equalsIgnoreCase(pl)) {
-                pm.disablePlugin(p);
-                tp = tp + p.getName() + " ";
-                if ((plugins != null) && (plugins.contains(p))) {
-                    plugins.remove(p);
+        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
+            if (plugin.getDescription().getName().equalsIgnoreCase(pl)) {
+                pm.disablePlugin(plugin);
+                tp = tp + plugin.getName() + " ";
+                if ((plugins != null) && (plugins.contains(plugin))) {
+                    plugins.remove(plugin);
                 }
                 if ((names != null) && (names.containsKey(pl))) {
                     names.remove(pl);
@@ -161,7 +160,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
                         Iterator<RegisteredListener> it2 = set.iterator();
                         while (it2.hasNext()) {
                             RegisteredListener value = (RegisteredListener) it2.next();
-                            if (value.getPlugin() == p) {
+                            if (value.getPlugin() == plugin) {
                                 it2.remove();
                             }
                         }
@@ -174,7 +173,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
                         Map.Entry<String, Command> entry = (Map.Entry) it3.next();
                         if ((entry.getValue() instanceof PluginCommand)) {
                             PluginCommand c = (PluginCommand) entry.getValue();
-                            if (c.getPlugin() == p) {
+                            if (c.getPlugin() == plugin) {
                                 c.unregister(cmdMap);
                                 it3.remove();
                             }
