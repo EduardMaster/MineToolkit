@@ -65,7 +65,7 @@ class MinigameSchematic(var name: String = "Mapinha") {
             }
 
         }
-
+        fun hasSchematic(name : String) = name in schematics
         fun getSchematic(name: String) = schematics[name]!!
 
         fun getSchematic(player: Player): MinigameSchematic {
@@ -225,6 +225,8 @@ class MinigameSchematic(var name: String = "Mapinha") {
         val difX = newRelative.blockX - relative.blockX
         val difY = newRelative.blockY - relative.blockY
         val difZ = newRelative.blockZ - relative.blockZ
+        log("Colando com Diferencial de: X: $difX, Y: $difY, Z: $difZ")
+
         count = 0
         for (x in 0 until width) {
             for (y in 0 until height) {
@@ -239,6 +241,7 @@ class MinigameSchematic(var name: String = "Mapinha") {
                         difX + low.blockX + x, difY + low.blockY + y,
                         difZ + low.blockZ + z
                     )
+
                     val blockInfo = blocks[index]
                     var typeId = blockInfo.id
                     var typeData = blockInfo.data
@@ -263,6 +266,7 @@ class MinigameSchematic(var name: String = "Mapinha") {
                 }
             }
         }
+
         end = System.currentTimeMillis()
         log("Colando blocos do schematic $name tempo levado ${past}ms")
     }
