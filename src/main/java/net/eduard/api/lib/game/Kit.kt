@@ -1,6 +1,7 @@
 package net.eduard.api.lib.game
 
 import net.eduard.api.lib.modules.Mine
+import net.eduard.api.server.minigame.MinigameMode
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -37,6 +38,8 @@ class Kit() {
 
     var name = "kit"
     var permission = "kits.kit"
+    @Transient
+    var mode : MinigameMode? = null
     var menuPosition = 10
     var cooldown: Long = TimeUnit.HOURS.toMillis(1)
     var price = 1000.0

@@ -22,6 +22,7 @@ import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.Sound
 import org.bukkit.event.block.Action
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
 
@@ -59,13 +60,7 @@ open class Menu(
     }
 
 
-    @Transient
-    val playersWhoCanOpen = mutableSetOf<Player>()
 
-    fun canOpen(player: Player): Boolean {
-        if (playersWhoCanOpen.isEmpty()) return true
-        return playersWhoCanOpen.contains(player)
-    }
 
 
     @Transient
@@ -98,6 +93,7 @@ open class Menu(
     var pageAmount = 1
     var pagePrefix = ""
     var pageSuffix = "(\$page/\$max_page)"
+    var showPage = false
     var isTranslateIcon = false
     var isAutoAlignItems = false
     var autoAlignSkipCenter = false
@@ -142,10 +138,8 @@ open class Menu(
     }
 
 
-    val fullTitle: String
-        get() = if (isPageSystem) {
-            pagePrefix + title + pageSuffix
-        } else title
+    val fullTitle: String = pagePrefix + title + pageSuffix
+
 
 
     val firstEmptySlotOnInventories: Int
@@ -162,7 +156,7 @@ open class Menu(
     val isFull: Boolean
         get() = isFull(1)
 
-    val isPageSystem: Boolean
+    val hasPages: Boolean
         get() = pageAmount > 1
 
     fun removeButton(name: String) {
@@ -375,7 +369,7 @@ open class Menu(
             val suffix = pageSuffix.replace("\$max_page", "" + pageAmount)
                 .replace("\$page", "" + page)
             val menuTitle = Extra.cutText(
-                if (isPageSystem) {
+                if (showPage) {
                     prefix + currentTitle + suffix
                 } else currentTitle, 32
             )
@@ -396,28 +390,46 @@ open class Menu(
         }
         return null
     }
+
+    fun canOpen(player: Player): Boolean {
+        return true
+    }
+
     open fun update(){
 
     }
 
-    fun update(menu: Inventory, player: Player, page: Int) {
+    fun update(menu: Inventory, player: Player, page: Int=1) {
         menu.clear()
-        if (isPageSystem) {
-            if (page > 1)
-                previousPage.give(menu)
-            if (page < pageAmount)
-                nextPage.give(menu)
+        if (hasPages) {
+            if (page > 1) {
+               val itemPageBack = Mine.applyPlaceholders(previousPage.item!!.clone() ,
+                   mapOf(
+                    "%page" to ""+(page-1),
+                    ))
+                menu.setItem(previousPage.slot, itemPageBack)
+
+            }
+            if (page < pageAmount) {
+                val itemPageNext = Mine.applyPlaceholders(nextPage.item!!.clone() ,
+                    mapOf(
+                        "%page" to ""+(page+1),
+                    ))
+                menu.setItem(nextPage.slot, itemPageNext)
+            }
         }
         if (this.superiorMenu != null) {
             backPage.give(menu)
         }
         for (button in buttons) {
-            if (button.page != page) continue
+
             var position = button.index
-            if (!button.fixed)
+            if (!button.fixed) {
                 if (position > getSlotLimit()) {
                     position = 0
                 }
+                if (button.page != page) continue
+            }
             var icon = button.getIcon(player)
             if (isTranslateIcon) {
                 icon = Mine.getReplacers(icon, player)
@@ -509,6 +521,20 @@ open class Menu(
             open(player)
         }
     }
+    fun Player.goBack(){
+        lastOpennedMenu[this]?.open(this)
+    }
+    fun Player.getLastMenu(): Menu {
+        return lastOpennedMenu[this]!!
+    }
+    @EventHandler
+    fun onClose(event : InventoryCloseEvent){
+        if (event.player !is Player)return
+        val player = event.player as Player
+        if (isOpen(player, event.inventory)){
+            lastOpennedMenu[player] = this
+        }
+    }
 
     @EventHandler
     fun onClick(event: InventoryClickEvent) {
@@ -522,15 +548,17 @@ open class Menu(
         val itemClicked = event.currentItem
         var button: MenuButton? = null
         if (itemClicked != null) {
-            if (previousPage.item == itemClicked) {
+            if (previousPage.slot == slot) {
+                if (page == 1)return
                 previousPageSound?.create(player)
                 open(player, (--page))
                 return
-            } else if (nextPage.item == itemClicked) {
+            } else if (nextPage.slot == slot) {
+                if (page == pageAmount)return
                 nextPageSound?.create(player)
                 open(player, (++page))
                 return
-            } else if (backPage.item == itemClicked) {
+            } else if (backPage.slot == slot) {
                 if (superiorMenu != null) {
                     backPageSound?.create(player)
                     superiorMenu?.open(player)
@@ -593,6 +621,7 @@ open class Menu(
     companion object {
         var isDebug = true
         val registeredMenus = ArrayList<Menu>()
+        val lastOpennedMenu = mutableMapOf<Player,Menu>()
 
         fun debug(msg: String) {
             if (isDebug) {
