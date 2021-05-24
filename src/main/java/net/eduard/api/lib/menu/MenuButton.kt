@@ -1,8 +1,11 @@
 package net.eduard.api.lib.menu
 
 import net.eduard.api.lib.game.ItemBuilder
+import net.eduard.api.lib.modules.Mine
+import net.eduard.api.lib.modules.MineReflect
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 open class MenuButton(
@@ -14,6 +17,7 @@ open class MenuButton(
     var page: Int = 1
 
 ) : Slot(positionX, positionY) {
+
 
 
     var menu: Menu? = null
@@ -35,12 +39,24 @@ open class MenuButton(
     }
 
 
+
     val shop: Shop
         get() = menu as Shop
 
     @Transient
     var click: ClickEffect? = null
 
+    open fun update(player : Player, inventory : Inventory) {
+        var icon = getIcon(player)
+        if (parentMenu!!.isTranslateIcon) {
+            icon = Mine.getReplacers(icon, player)
+        }
+        val data = MineReflect.getData(icon)
+        data.setString("button-name", name)
+        icon = MineReflect.setData(icon, data)
+        inventory.setItem(index,icon)
+
+    }
 
     @Transient
     var iconPerPlayer: (Player.() -> ItemStack)? = null
