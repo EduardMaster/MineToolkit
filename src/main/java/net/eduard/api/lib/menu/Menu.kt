@@ -57,8 +57,10 @@ open class Menu(
         setup(button)
         return button
     }
+
     fun <T : Any> items(
-        setup: (MenuButton.() -> Unit)): MenuItems<T> {
+        setup: (MenuItems<T>.() -> Unit)
+    ): MenuItems<T> {
         val button = MenuItems<T>()
         setup(button)
         addButton(button)
@@ -106,17 +108,17 @@ open class Menu(
     @Transient
     private val pageOpened = mutableMapOf<Player, Int>()
 
-    var ignoreAutoAlign = false
+
     var pageAmount = 1
     var pagePrefix = ""
     var pageSuffix = "(\$page/\$max_page)"
     var showPage = false
     var isTranslateIcon = false
     var isAutoAlignItems = false
-    var autoAlignSkipColumns = listOf(1, 9)
-    var autoAlignSkipLines = listOf<Int>()
+    var autoAlignSkipColumns = listOf(9, 1)
+    var autoAlignSkipLines = listOf(1, lineAmount)
     var autoAlignPerLine = 7
-    var autoAlignPerPage = autoAlignPerLine * lineAmount
+    var autoAlignPerPage = autoAlignPerLine * 1
     var isCacheInventories: Boolean = false
     var isPerPlayerInventory = false
     var closeMenuWhenButtonsCleared = false
@@ -248,10 +250,6 @@ open class Menu(
     }
 
 
-
-
-
-
     fun addButton(button: MenuButton) {
         buttons.add(button)
         button.parentMenu = this
@@ -268,9 +266,11 @@ open class Menu(
 
     @Transient
     var lastSlot = 0
-    val slotLimit get(): Int {
-        return (lineAmount * 9) - 1
-    }
+    val slotLimit
+        get(): Int {
+            return (lineAmount * 9) - 1
+        }
+
     fun removeButton(button: MenuButton) {
         buttons.remove(button)
 
@@ -329,12 +329,12 @@ open class Menu(
         if (lastSlot < 0) {
             lastSlot = 0
         }
-        for (line in autoAlignSkipLines){
+        for (line in autoAlignSkipLines) {
             val currentLine = Extra.getLine(lastSlot)
             val currentCollumn = Extra.getColumn(lastSlot)
-            val restColumn = 9-currentCollumn
-            if (line == currentLine){
-                lastSlot+= restColumn
+            val restColumn = 9 - currentCollumn
+            if (line == currentLine) {
+                lastSlot += (restColumn )
             }
         }
         for (column in autoAlignSkipColumns) {
@@ -403,7 +403,7 @@ open class Menu(
         return null
     }
 
-    fun canOpen(player: Player): Boolean {
+    open fun canOpen(player: Player): Boolean {
         return true
     }
 

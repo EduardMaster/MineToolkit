@@ -46,8 +46,6 @@ class Kit() {
     var isClearInventory = false
     var isFillSoup = false
     var isAutoEquip = true
-
-
     var icon: ItemStack = ItemBuilder(Material.DIAMOND_SWORD).name("§aKit")
     var items = mutableListOf<ItemStack>()
     var upgrades = mutableListOf<KitUpgrade>()
@@ -103,5 +101,22 @@ class Kit() {
     }
 
     fun getUpgrade(level: Int) = upgrades.first { it.level == level }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Kit
+
+        if (name != other.name) return false
+        if (mode != other.mode) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + (mode?.hashCode() ?: 0)
+        return result
+    }
 
 }

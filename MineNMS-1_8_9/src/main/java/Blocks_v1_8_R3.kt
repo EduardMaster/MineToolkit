@@ -50,16 +50,26 @@ class Blocks_v1_8_R3(
         val x = x and 0xF
         val y = y and 0xF
         val z = z and 0xF
+        val position = BlockPosition(getX(), getY(), getZ())
         val combined: Int = type + (data.toInt() shl 12)
         val blockData = net.minecraft.server.v1_8_R3.Block
             .getByCombinedId(combined)
         if (blockData === section!!.getType(x, y, z)) {
             return false
         }
+        //section!!.b(x,y,z,15)
+        //section.a(x,y,z,15)
         section!!.setType(x, y, z, blockData)
+        //método responsavel por concertar as luzes porem da mais lag
+        worldServer.x(position)
+      //  worldServer.getLightLevel(position)
+
+
+
         if (applyPhysics) {
-            worldServer.notify(BlockPosition(getX(), getY(), getZ()))
+            worldServer.notify(position)
         }
+        //super.setTypeIdAndData(type, data, applyPhysics)
         return true
     }
 
