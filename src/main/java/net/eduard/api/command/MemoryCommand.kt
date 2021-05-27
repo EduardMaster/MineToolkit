@@ -7,6 +7,12 @@ import org.bukkit.command.CommandSender
 class MemoryCommand : CommandManager("memory", "memoria") {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
+        if (args.isNotEmpty()){
+            if (args[0] == "gc"){
+                Runtime.getRuntime().gc()
+                sender.sendMessage("§aGC Run")
+            }
+        }
         val div = 1000*1000
         val memoriaDisponivel = (Runtime.getRuntime().freeMemory() / div)
         val totalMemoria = (Runtime.getRuntime().totalMemory() / div)
