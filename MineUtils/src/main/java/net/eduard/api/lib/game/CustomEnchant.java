@@ -25,7 +25,11 @@ public abstract class CustomEnchant extends EnchantmentWrapper {
     private int startLevel = 1;
 
     public CustomEnchant() {
-        super(500);
+        this(500);
+    }
+    public CustomEnchant(int enchantID) {
+        super(enchantID);
+
     }
 
     public boolean unregister() {
