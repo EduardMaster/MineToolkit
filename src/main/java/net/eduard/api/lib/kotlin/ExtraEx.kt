@@ -18,6 +18,7 @@ inline fun <reified  T : Any> store(alias : String){
     StorageAPI.autoRegisterClass(T::class.java , alias)
 }
 
+
 /**
  * Formata o Tempo do Jeito de Data ou por Duração
  */
@@ -40,6 +41,7 @@ fun Number.format(formatOP: Boolean = true): String{
     return if (formatOP) Extra.formatMoney(this.toDouble())
     else Extra.MONEY.format(this)
 }
+
 
 fun <T : Any> Array<T>.shuffle(): Array<T> {
     for (index in 0 until size) {
@@ -119,6 +121,10 @@ fun String.formatColors(): String {
  */
 fun Int.chance(): Boolean {
     return (this.toDouble() / 100).chance()
+}
+
+fun Double.percent() : String{
+    return Extra.MONEY.format(this * 100.0)
 }
 
 /**

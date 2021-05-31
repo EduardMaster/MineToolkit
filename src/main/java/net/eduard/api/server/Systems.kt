@@ -15,4 +15,11 @@ object Systems {
     @JvmStatic
     var tagSystem: TagSystem? = null
 
+    @JvmStatic
+    var dropsSystem: DropSystem? = null
+
+    @JvmStatic
+    var mineSystem: MineSystem? = null
+
+
 }
