@@ -228,6 +228,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         configs.add("sound-teleport", OPT_SOUND_TELEPORT)
         configs.add("sound-error", OPT_SOUND_ERROR)
         configs.add("sound-success", OPT_SOUND_SUCCESS)
+        configs.add("show-plugins-on-join",true)
         configs.saveConfig()
         Mine.OPT_AUTO_RESPAWN = configs.getBoolean("auto-respawn")
         Mine.OPT_NO_JOIN_MESSAGE = configs.getBoolean("no-join-message")

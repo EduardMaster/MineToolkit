@@ -4,11 +4,15 @@ import net.eduard.api.EduardAPI
 import net.eduard.api.lib.manager.EventsManager
 
 import net.eduard.api.core.PlayerSkin
+import net.eduard.api.lib.event.BlockMineEvent
+import net.eduard.api.lib.kotlin.call
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
+import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerJoinEvent
@@ -27,61 +31,65 @@ class EduardAPIListener : EventsManager() {
     @EventHandler
     fun onChat(e: AsyncPlayerChatEvent) {
         val player = e.player
-        if (player.hasPermission("chat.color")) {
-            e.message = ChatColor.translateAlternateColorCodes('&', e.message)
-        }
+        if (!player.hasPermission("chat.color")) return
+        e.message = ChatColor.translateAlternateColorCodes('&', e.message)
+
+    }
+    @EventHandler(ignoreCancelled = true,priority = EventPriority.HIGHEST)
+    fun onBreak(e : BlockBreakEvent){
+        val event = BlockMineEvent(mutableMapOf(),e.block,e.player)
+        event.call()
     }
 
     @EventHandler
-    fun marketing(e: PlayerJoinEvent) {
+    fun event(e: PlayerJoinEvent) {
         val player = e.player
         if (EduardAPI.instance.getBoolean("skins")) {
             PlayerSkin.change(player, player.name)
         }
-        if (player.hasPermission("eduard.plugins")) {
-            for (plugin in Bukkit.getPluginManager().plugins) {
-                if (plugin !is EduardPlugin) continue
-                if (plugin.isEnabled()) {
-                    player.sendMessage(
-                        "§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
-                                + plugin.getDescription().version + "§a esta ativado."
-                    )
-                } else {
-                    player.sendMessage(
-                        "§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
-                                + plugin.getDescription().version + "§c esta desativado."
-                    )
-                }
-
-
+        if (!EduardAPI.instance.getBoolean("show-plugins-on-join")) return
+        if (!player.hasPermission("eduard.plugins")) return
+        for (plugin in Bukkit.getPluginManager().plugins) {
+            if (plugin !is EduardPlugin) continue
+            if (plugin.isEnabled()) {
+                player.sendMessage(
+                    "§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
+                            + plugin.getDescription().version + "§a esta ativado."
+                )
+            } else {
+                player.sendMessage(
+                    "§b[Eduard-Dev] §f" + plugin.getName() + " §fv"
+                            + plugin.getDescription().version + "§c esta desativado."
+                )
             }
-            player.sendMessage("§aCaso deseje comprar mais plugins entre em contato ou no site §bwww.eduard.com.br")
         }
+        player.sendMessage("§aCaso deseje comprar mais plugins entre em contato ou no site §bwww.eduard.com.br")
+
 
     }
 
     @EventHandler
     fun onDeath(e: PlayerDeathEvent) {
         val player = e.entity
-        if (Mine.OPT_AUTO_RESPAWN) {
-            if (player.hasPermission("eduard.autorespawn")) {
-                EduardAPI.instance.syncDelay(2){
-                    if (player.isDead) {
-                        player.fireTicks = 0
-                        try {
-                            player.spigot().respawn()
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
-
-                    }
-                }
-            }
-
-        }
         if (Mine.OPT_NO_DEATH_MESSAGE) {
             e.deathMessage = null
         }
+        if (Mine.OPT_AUTO_RESPAWN && player.hasPermission("eduard.autorespawn")) {
+            EduardAPI.instance.syncDelay(1) {
+                if (player.isDead) {
+                    player.fireTicks = 0
+                    try {
+                        player.spigot().respawn()
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+
+                }
+            }
+
+
+        }
+
     }
 
     @EventHandler
@@ -91,13 +99,13 @@ class EduardAPIListener : EventsManager() {
             e.maxPlayers = amount
         }
 
-        if (EduardAPI.instance.configs.getBoolean("custom-motd")) {
-            val builder = StringBuilder()
-            for (line in EduardAPI.instance.configs.getMessages("motd")) {
-                builder.append(line + "\n")
-            }
-            e.motd = builder.toString()
+        if (!EduardAPI.instance.configs.getBoolean("custom-motd")) return
+        val builder = StringBuilder()
+        for (line in EduardAPI.instance.configs.getMessages("motd")) {
+            builder.append(line + "\n")
         }
+        e.motd = builder.toString()
+
 
     }
 

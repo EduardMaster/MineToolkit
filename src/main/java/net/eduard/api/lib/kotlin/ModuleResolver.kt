@@ -7,15 +7,16 @@ private val instances = mutableMapOf<Class<*>, Any>()
 /**
  * registra um Module ligado
  */
-inline fun <reified T : Any> single(instance: T): T {
-    return single(T::class, instance)
+fun <T : Any> single(instance: T): T {
+    instances[instance.javaClass] = instance
+    return instance
 }
 
 /**
  * registra um Module ligado
  */
-fun <T : Any, E : Any> single(clz : KClass<E>, instance: T): T {
-    instances[clz::class.java] = instance
+fun <E : Any, T : Any> singleClass(classUsed : KClass<E>, instance: T): T {
+    instances[classUsed::class.java] = instance
     return instance
 }
 
