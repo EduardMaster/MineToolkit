@@ -10,6 +10,7 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
@@ -28,6 +29,7 @@ import org.bukkit.event.server.ServerListPingEvent
  * @author Eduard
  */
 class EduardAPIListener : EventsManager() {
+
     @EventHandler
     fun onChat(e: AsyncPlayerChatEvent) {
         val player = e.player
@@ -35,10 +37,19 @@ class EduardAPIListener : EventsManager() {
         e.message = ChatColor.translateAlternateColorCodes('&', e.message)
 
     }
-    @EventHandler(ignoreCancelled = true,priority = EventPriority.HIGHEST)
-    fun onBreak(e : BlockBreakEvent){
-        val event = BlockMineEvent(mutableMapOf(),e.block,e.player)
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    fun onBreak(e: BlockBreakEvent) {
+        val event = BlockMineEvent(mutableMapOf(), e.block, e.player)
+        e.isCancelled = true
         event.call()
+        event.expToDrop = e.expToDrop
+        if (event.isCancelled) return
+        e.block.type = Material.AIR
+        event.applyFortune()
+        event.giveDrops()
+        if (e.expToDrop > 0)
+            e.player.giveExp(e.expToDrop)
     }
 
     @EventHandler
@@ -86,8 +97,6 @@ class EduardAPIListener : EventsManager() {
 
                 }
             }
-
-
         }
 
     }
