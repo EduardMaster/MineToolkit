@@ -130,7 +130,9 @@ interface IPlugin : IPluginInstance {
     }
 
     fun disconnectDB() {
-        db.closeConnection()
+        if (db.hasConnection()) {
+            db.closeConnection()
+        }
     }
 
     fun registerPackage(packname: String) {

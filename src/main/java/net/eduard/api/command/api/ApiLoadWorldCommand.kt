@@ -7,10 +7,11 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class ApiLoadWorldCommand : CommandManager("loadworld", "carregarmundo", "ligarmundo") {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
+
+    override fun command(sender: CommandSender, args: Array<String>) {
         if (args.isEmpty()) {
             sendUsage(sender)
-            return true
+            return
         }
         if (Bukkit.getWorld(args[0]) == null) {
             Mine.loadWorld(args[0])
@@ -18,9 +19,8 @@ class ApiLoadWorldCommand : CommandManager("loadworld", "carregarmundo", "ligarm
         } else {
             sender.sendMessage("§bEduardAPI §aEste mundo já esta carregado")
         }
-
-        return true
     }
+
 
     init {
         usage = "/api loadworld <world>"

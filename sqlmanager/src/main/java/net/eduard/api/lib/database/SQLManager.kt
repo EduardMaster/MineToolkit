@@ -1,6 +1,5 @@
 package net.eduard.api.lib.database
 
-import java.lang.Exception
 import java.sql.Connection
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -72,6 +71,9 @@ class SQLManager(var dbManager: DBManager) {
     inline fun <reified E : Any> getData(primaryKeyValue: Any): E? {
         return getData(E::class.java, primaryKeyValue)
     }
+    inline fun <reified E : Any> getDataOf(reference: Any): E? {
+        return getDataOf(E::class.java, reference)
+    }
 
     /**
      *
@@ -85,6 +87,12 @@ class SQLManager(var dbManager: DBManager) {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
                 .findByColumn(fieldName, fieldValue)
+        } else null
+    }
+    fun <E : Any> getDataOf(dataClass: Class<E>, reference: Any): E? {
+        return if (hasConnection()) {
+            dbManager.engineUsed.getTable(dataClass)
+                .findByReference(reference)
         } else null
     }
 

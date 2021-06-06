@@ -18,7 +18,9 @@ class Blocks_v1_8_R3(
 ) : CraftBlock(null, x, y, z),
     Blocks {
 
-    constructor(location: Location) : this(location.block) {}
+    constructor(location: Location) : this(location.block) {
+
+    }
     constructor(block: Block) :
             this(block.x, block.y, block.z, (block.world as CraftWorld).handle) {
     }

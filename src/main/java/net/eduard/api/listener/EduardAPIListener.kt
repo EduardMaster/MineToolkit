@@ -10,7 +10,6 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
@@ -40,16 +39,17 @@ class EduardAPIListener : EventsManager() {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     fun onBreak(e: BlockBreakEvent) {
-        val event = BlockMineEvent(mutableMapOf(), e.block, e.player)
+        val event = BlockMineEvent(mutableMapOf(), e.block, e.player, true, e.expToDrop)
         e.isCancelled = true
         event.call()
-        event.expToDrop = e.expToDrop
         if (event.isCancelled) return
-        e.block.type = Material.AIR
-        event.applyFortune()
-        event.giveDrops()
-        if (e.expToDrop > 0)
-            e.player.giveExp(e.expToDrop)
+        event.breakBlock()
+        if (event.needApplyFortune)
+            event.applyFortune()
+        if (event.needGiveDrops)
+            event.giveDrops()
+        if (event.needGiveExp && event.expToDrop > 0)
+            event.player.giveExp(e.expToDrop)
     }
 
     @EventHandler

@@ -46,8 +46,7 @@ class MinigameMap(
     var spawn: Location? = null
     var lobby: Location? = null
     var locations = mutableMapOf<String, Location>()
-
-
+    var islands = mutableMapOf<Int, MinigameIsland>()
     var spawns = mutableListOf<Location>()
     val gameMap: MinigameSchematic?
         get() {
@@ -130,6 +129,14 @@ class MinigameMap(
         for (loc in chestsFeastsLocations) {
             loc.world = world
         }
+        for ((id,island) in islands){
+            island.chest1Location?.world = world
+            island.chest2Location?.world = world
+            island.spawnLocation?.world = world
+            island.centerLocation?.world = world
+            island.lowLocation?.world = world
+            island.highLocation?.world = world
+        }
         feastCenter?.world = world
 
         return this
@@ -182,6 +189,14 @@ class MinigameMap(
 
             for (chest in chestsMiniFeastLocations) {
                 chest.add(diference)
+            }
+            for ((id,island) in islands){
+                island.chest1Location?.add(diference)
+                island.chest2Location?.add(diference)
+                island.spawnLocation?.add(diference)
+                island.centerLocation?.add(diference)
+                island.lowLocation?.add(diference)
+                island.highLocation?.add(diference)
             }
             diferenceApplied = diference
         }else{

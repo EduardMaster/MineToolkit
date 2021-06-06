@@ -29,6 +29,7 @@ interface DatabaseTable<T : Any> {
     fun createCollumns()
     fun delete()
     fun deleteReferences()
+    fun findByReference(reference : Any , cachedData : T? = null) : T?
     fun findByColumn(columnName :String, columnValue : Any , cachedData : T? = null) : T?
     fun findByPrimary(primaryValue : Any, cachedData : T? = null) : T?
     fun updateCache(data : T, query : ResultSet)

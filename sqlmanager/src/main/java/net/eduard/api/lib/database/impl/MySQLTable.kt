@@ -165,6 +165,19 @@ class MySQLTable<T : Any>(
         }
     }
 
+    override fun findByReference(reference: Any, cachedData: T?): T? {
+        var columnName = primaryName
+        var columnValue : Any = 1
+        for (column in columns.values){
+            if (column.javaType == reference.javaClass){
+                columnName = column.name
+                val primary = column.referenceTable.primaryColumn?:continue
+                columnValue = primary.field.get(reference)
+            }
+        }
+        return findByColumn(columnName,columnValue, cachedData);
+    }
+
     override fun findByColumn(columnName: String, columnValue: Any, cachedData: T?): T? {
         try {
             log("Selecionando 1 registro")
@@ -234,7 +247,9 @@ class MySQLTable<T : Any>(
                 }
                 continue
             }
-            val converted = engine.convertToJava(str, column)
+            var converted : Any? = str
+            if (converted!=null)
+                converted = engine.convertToJava(str, column)
             try {
                 field.set(data, converted)
             } catch (ex: Exception) {

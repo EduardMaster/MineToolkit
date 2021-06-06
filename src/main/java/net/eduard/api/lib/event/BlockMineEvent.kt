@@ -1,5 +1,7 @@
 package net.eduard.api.lib.event
 
+import net.eduard.api.lib.abstraction.Blocks
+import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -12,9 +14,12 @@ class BlockMineEvent(
     val drops: MutableMap<ItemStack, Double>,
     var block: Block,
     var player: Player,
+    var useEnchants : Boolean,
     var expToDrop: Int = 1
 ) : Event(), Cancellable {
-
+    var needGiveDrops = true
+    var needGiveExp = true
+    var needApplyFortune = true
     private var cancel = false
 
     override fun isCancelled(): Boolean {
@@ -23,6 +28,13 @@ class BlockMineEvent(
 
     override fun setCancelled(toggle: Boolean) {
         cancel = toggle
+    }
+
+    fun breakBlock(){
+        val blockInfo = Blocks.get(block.location)
+        if (blockInfo != null)
+            blockInfo.setType(Material.AIR)
+        else block.type = Material.AIR
     }
 
     fun useDefaultDrops() {
