@@ -28,7 +28,7 @@ open class MenuButton(
     @Transient
     var autoUpdateLasttime = 0L
     @Transient
-    var updater : (MenuButton.() -> Unit)? = null
+    var updateHandler : (MenuButton.(Inventory,Player) -> Unit)? = null
 
     fun canAutoUpdate() = System.currentTimeMillis() >= autoUpdateLasttime + autoUpdateDelayTicks * 50
 
@@ -54,6 +54,7 @@ open class MenuButton(
     var click: ClickEffect? = null
 
     open fun updateButton(inventory: Inventory, player: Player) {
+        updateHandler?.invoke(this,inventory,player)
         var icon = getIcon(player)
         if (parentMenu!!.isTranslateIcon) {
             icon = Mine.getReplacers(icon, player)
