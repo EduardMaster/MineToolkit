@@ -19,10 +19,18 @@ open class MenuButton(
 ) : Slot(positionX, positionY) {
 
 
-
     var menu: Menu? = null
 
     var fixed = false
+
+    var autoUpdate = true
+    var autoUpdateDelayTicks = 1
+    @Transient
+    var autoUpdateLasttime = 0L
+    @Transient
+    var updater : (MenuButton.() -> Unit)? = null
+
+    fun canAutoUpdate() = System.currentTimeMillis() >= autoUpdateLasttime + autoUpdateDelayTicks * 50
 
     init {
         parentMenu?.addButton(this)
@@ -39,14 +47,13 @@ open class MenuButton(
     }
 
 
-
     val shop: Shop
         get() = menu as Shop
 
     @Transient
     var click: ClickEffect? = null
 
-    open fun update(player : Player, inventory : Inventory) {
+    open fun updateButton(inventory: Inventory, player: Player) {
         var icon = getIcon(player)
         if (parentMenu!!.isTranslateIcon) {
             icon = Mine.getReplacers(icon, player)
@@ -54,7 +61,8 @@ open class MenuButton(
         val data = MineReflect.getData(icon)
         data.setString("button-name", name)
         icon = MineReflect.setData(icon, data)
-        inventory.setItem(index,icon)
+        inventory.setItem(index, icon)
+
 
     }
 
@@ -71,7 +79,6 @@ open class MenuButton(
         set(itemParameter) {
             item = itemParameter
         }
-
 
 
     val isCategory: Boolean

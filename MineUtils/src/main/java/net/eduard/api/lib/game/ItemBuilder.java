@@ -70,6 +70,15 @@ public class ItemBuilder extends ItemStack {
         return this;
     }
 
+    public ItemBuilder addBanner(DyeColor patternColor, PatternType patternType) {
+        type(Material.BANNER);
+        BannerMeta bannerMeta = (BannerMeta) getItemMeta();
+        bannerMeta.addPattern(new Pattern(patternColor, patternType));
+        setItemMeta(bannerMeta);
+        return this;
+    }
+
+
 
     public ItemBuilder(String name) {
         this(Material.DIAMOND_SWORD, 1);

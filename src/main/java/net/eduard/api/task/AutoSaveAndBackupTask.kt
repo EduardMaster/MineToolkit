@@ -1,12 +1,13 @@
 package net.eduard.api.task
 
 import net.eduard.api.EduardAPI
+import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitRunnable
 
-class AutoSaveAndBackupTask : BukkitRunnable() {
+class AutoSaveAndBackupTask : TimeManager(20) {
     fun log(msg: String) {
         EduardAPI.instance.log(msg)
     }

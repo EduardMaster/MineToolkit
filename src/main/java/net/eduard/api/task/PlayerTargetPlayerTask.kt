@@ -3,10 +3,11 @@ package net.eduard.api.task
 import net.eduard.api.EduardAPI
 import net.eduard.api.lib.event.PlayerTargetPlayerEvent
 import net.eduard.api.lib.kotlin.call
+import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.modules.Mine
 import org.bukkit.scheduler.BukkitRunnable
 
-class PlayerTargetPlayerTask : BukkitRunnable() {
+class PlayerTargetPlayerTask : TimeManager(20L) {
     override fun run() {
         for (player in Mine.getPlayers()) {
             try {

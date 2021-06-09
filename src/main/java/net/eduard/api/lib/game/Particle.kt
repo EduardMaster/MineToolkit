@@ -1,6 +1,7 @@
 package net.eduard.api.lib.game
 
 import net.eduard.api.lib.abstraction.Minecraft
+import net.eduard.api.lib.modules.Mine
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
@@ -18,6 +19,22 @@ class Particle(
     fun create(player: Player, local: Location): Particle {
 
         Minecraft.instance.sendParticle(player, particle.particleName, local, amount,xRandom,yRandom,zRandom,speed)
+        return this
+    }
+
+    fun create(local: Location): Particle {
+        for (player in Mine.getPlayers()) {
+            Minecraft.instance.sendParticle(
+                player,
+                particle.particleName,
+                local,
+                amount,
+                xRandom,
+                yRandom,
+                zRandom,
+                speed
+            )
+        }
         return this
     }
 

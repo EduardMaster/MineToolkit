@@ -33,6 +33,7 @@ import net.eduard.api.supports.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.DatabaseUpdater
+import net.eduard.api.task.MenuAutoUpdaterTask
 import net.eduard.api.task.PlayerTargetPlayerTask
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -154,6 +155,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         BukkitReplacers()
         log("Replacers ativados")
 
+        log("Ativando Sistema atualizador de menus abertos")
+        MenuAutoUpdaterTask().asyncTimer()
 
         BukkitInfoGenerator(this)
         log("Base de dados de Enums do Bukkit gerado com sucesso")
@@ -165,8 +168,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
-        PlayerTargetPlayerTask().runTaskTimerAsynchronously(plugin, 20, 20)
-        AutoSaveAndBackupTask().runTaskTimerAsynchronously(plugin, 20, 20)
+        PlayerTargetPlayerTask().asyncTimer()
+        AutoSaveAndBackupTask().asyncTimer()
         DatabaseUpdater().asyncTimer()
         log("Tasks ativados com sucesso")
     }

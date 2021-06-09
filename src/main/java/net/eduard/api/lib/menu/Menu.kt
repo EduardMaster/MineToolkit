@@ -36,6 +36,20 @@ fun shop(title: String, amount: Int, setup: Shop.() -> Unit): Shop {
     setup.invoke(menu)
     return menu
 }
+fun Player.getMenu(): Menu? {
+    try {
+        if (openInventory == null)return null
+        if (openInventory.topInventory == null)return null
+        val holder = openInventory.topInventory.holder ?: return null
+        if (holder is FakeInventoryHolder) {
+            return holder.menu
+        }
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+    }
+
+    return null
+}
 
 /**
  * Sistema proprio de criacao de Menus Interativos automaticos para facilitar
@@ -50,27 +64,36 @@ open class Menu(
     var lineAmount: Int = 1
 
 ) : EventsManager() {
-
+    @Transient
+    var autoAlignPerLine = 7
+    @Transient
+    var autoAlignPerPage = autoAlignPerLine * 1
 
     fun button(name: String = "Botao", setup: (MenuButton.() -> Unit)): MenuButton {
-        val button = MenuButton(name, this)
-        setup(button)
-        return button
-    }
-
-    fun <T : Any> items(
-        setup: (MenuItems<T>.() -> Unit)
-    ): MenuItems<T> {
-        val button = MenuItems<T>()
+        val button = MenuButton(name, null)
+        button.parentMenu = this
         setup(button)
         addButton(button)
         return button
     }
 
     @Transient
+    var itemsEffect: MenuItems<*>? = null
+
+    fun <T : Any> items(
+        setup: (MenuItems<T>.() -> Unit)
+    ): MenuItems<T> {
+        val listContent = MenuItems<T>()
+        listContent.menu = this
+        itemsEffect = listContent
+        setup(listContent)
+        return listContent
+    }
+
+    @Transient
     var lastInteraction = mutableMapOf<Player, Long>()
 
-    fun canInteract(player: Player): Boolean {
+    open fun canInteract(player: Player): Boolean {
 
         if (player in lastInteraction) {
             val interactionMoment = lastInteraction[player]!!
@@ -79,7 +102,7 @@ open class Menu(
         return true
     }
 
-    fun interact(player: Player) = lastInteraction.put(player, System.currentTimeMillis())
+    open fun interact(player: Player) = lastInteraction.put(player, System.currentTimeMillis())
 
 
     @Transient
@@ -117,9 +140,7 @@ open class Menu(
     var isAutoAlignItems = false
     var autoAlignSkipColumns = listOf(9, 1)
     var autoAlignSkipLines = listOf(1, lineAmount)
-    var autoAlignPerLine = 7
-    var autoAlignPerPage = autoAlignPerLine * 1
-    var isCacheInventories: Boolean = false
+    var isCacheInventories = false
     var isPerPlayerInventory = false
     var closeMenuWhenButtonsCleared = false
     var cooldownBetweenInteractions = 1000L
@@ -204,6 +225,7 @@ open class Menu(
 
 
     fun getButtonUsingStream(icon: ItemStack, player: Player): MenuButton? {
+
         val page = pageOpened[player] ?: 1
         val skipValue = autoAlignPerPage * page - 1
         val stream = buttons.stream().skip(skipValue.toLong())
@@ -319,34 +341,35 @@ open class Menu(
     }
 
     /**
-     * Método usado para gerar a nova posição do botão apartir
-     * de um sistema de paginação com 7 items por linha
-     * com 4 linhas com items e duas linhas vazias, e também com a
-     * possibildade de deixar o meio sem items
+     * Método usado para gerar paginação
      */
     fun nextPosition() {
         lastSlot++
-        if (lastSlot < 0) {
-            lastSlot = 0
+        var antiForInfinito = 100
+        while (needChangePosition()) {
+            antiForInfinito--
+            lastSlot++
+            if (antiForInfinito==0)break
         }
+        if (lastSlot > slotLimit) {
+            pageAmount++
+            lastPage++
+            lastSlot=-1
+            nextPosition()
+        }
+
+    }
+
+    fun needChangePosition(): Boolean {
         for (line in autoAlignSkipLines) {
-            val currentLine = Extra.getLine(lastSlot)
-            val currentCollumn = Extra.getColumn(lastSlot)
-            val restColumn = 9 - currentCollumn
-            if (line == currentLine) {
-                lastSlot += (restColumn )
-            }
+            if (Extra.getLine(lastSlot) == line)
+                return true
         }
         for (column in autoAlignSkipColumns) {
             if (Mine.isColumn(lastSlot, column))
-                lastSlot++
+                return true
         }
-
-        if (lastSlot >= slotLimit) {
-            lastPage++
-            pageAmount++
-            lastSlot = 0
-        }
+        return false;
     }
 
     open fun open(player: Player, pageOpened: Int): Inventory? {
@@ -437,6 +460,7 @@ open class Menu(
         if (this.superiorMenu != null) {
             backPage.give(menu)
         }
+        itemsEffect?.update(menu, player)
         for (button in buttons) {
             if (!button.fixed) {
                 if (button.index > slotLimit) {
@@ -444,7 +468,7 @@ open class Menu(
                 }
                 if (button.page != page) continue
             }
-            button.update(player, menu)
+            button.updateButton(menu, player)
 
         }
         this.pageOpened[player] = page
@@ -579,6 +603,9 @@ open class Menu(
         if (button == null) {
             button = getButton(page, slot)
             debug("Button by Slot " + if (button == null) "is Null" else "is not null")
+        }
+        if (itemsEffect != null) {
+            itemsEffect!!.click.accept(event)
         }
         if (button != null) {
             if (!canInteract(player)) {
