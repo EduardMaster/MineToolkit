@@ -6,8 +6,10 @@ plugins {
 }
 group = "net.eduard"
 version = "1.0-SNAPSHOT"
+
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
+
 tasks {
     compileJava{
         options.encoding = "UTF-8"
@@ -21,7 +23,8 @@ tasks {
     shadowJar{
         archiveVersion.set("1.0")
         archiveBaseName.set("EduardAPI")
-        destinationDirectory.set(file("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\plugins\\"))
+        destinationDirectory.set(
+            file("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\plugins\\"))
     }
 }
 dependencies {
