@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack
 interface CurrencySystem {
 
     var name: String
+
     var displayName: String
     var icon: ItemStack
     var symbol: String
