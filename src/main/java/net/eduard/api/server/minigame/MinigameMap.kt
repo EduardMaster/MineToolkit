@@ -136,6 +136,9 @@ class MinigameMap(
             island.centerLocation?.world = world
             island.lowLocation?.world = world
             island.highLocation?.world = world
+            for (locChest in island.chestsLocation){
+                locChest.world = world
+            }
         }
         feastCenter?.world = world
 
@@ -197,6 +200,9 @@ class MinigameMap(
                 island.centerLocation?.add(diference)
                 island.lowLocation?.add(diference)
                 island.highLocation?.add(diference)
+                for (locChest in island.chestsLocation){
+                    locChest.add(diference)
+                }
             }
             diferenceApplied = diference
         }else{
