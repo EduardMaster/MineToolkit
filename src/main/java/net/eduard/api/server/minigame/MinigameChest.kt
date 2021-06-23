@@ -94,30 +94,27 @@ class MinigameChest {
     fun fill(vararg inventories: Inventory): List<ItemStack> {
         val chestAmount = inventories.size
         val sortedItemsList = randomize()
-        val perInventoryItems = (sortedItemsList.size.toDouble() / chestAmount.toDouble()).toInt()
-        Mine.console("§cSortedItems: §e"+ sortedItemsList.size.format())
-        Mine.console("§cChestAmount: §e"+ chestAmount.format())
-        Mine.console("§cPerInventoryItems: §e"+ perInventoryItems.format())
+        val perInventoryItems = (sortedItemsList.size.toDouble() / chestAmount.toDouble()).toInt()+1
+        //Mine.console("§cSortedItems: §e"+ sortedItemsList.size.format())
+        //Mine.console("§cChestAmount: §e"+ chestAmount.format())
+        //Mine.console("§cPerInventoryItems: §e"+ perInventoryItems.format())
         val listUsed = sortedItemsList.toMutableList()
 
         for (chestInv in inventories) {
-            Mine.console("§cNew Inventory/Chest")
+            //Mine.console("§cNew Inventory/Chest")
             if (!canAcumulate) {
                 chestInv.clear()
             }
-            var quantidade = 0
+
             for (chestItem in itemsPerChest) {
                 chestInv.addItem(chestItem.create())
                 chestItem.repeats = 0
-                Mine.console("§fDando Item $quantidade para o bau")
-                quantidade++
             }
             var sorted = 0
             while (sorted < perInventoryItems && listUsed.isNotEmpty()) {
                 val randomItemSelected = listUsed.random()
                 listUsed.remove(randomItemSelected)
                 chestInv.addItem(randomItemSelected)
-                Mine.console("§fTamanho da lista Superfula "+ listUsed.size)
                 sorted++
             }
 

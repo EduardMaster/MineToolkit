@@ -189,10 +189,10 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         EnchantCommand().register()
         GotoCommand().register()
         SoundCommand().register()
-        MacroCommand().registerCommand(plugin)
         SetXPCommand().register()
         SetSkinCommand().register()
-        MemoryCommand().registerCommand(plugin)
+        MemoryCommand().register()
+        MacroCommand().registerCommand(plugin)
         RunCommand().registerCommand(plugin)
         log("Comandos ativados com sucesso")
     }
@@ -320,13 +320,15 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         saveMaps()
         log("desativado com sucesso!")
         BungeeAPI.controller.unregister()
-
+        unregisterCommands()
+        unregisterTasks()
+        unregisterListeners()
+        unregisterServices()
     }
 
     override fun unregisterTasks() {
 
     }
-
 
     override fun unregisterListeners() {
 
@@ -337,7 +339,12 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     }
 
     override fun unregisterCommands() {
-
+        for ((name, cmd ) in CommandManager.commandsRegistred){
+            log("Comando $name desregisrado")
+            cmd.unregisterCommand()
+            cmd.unregisterListener()
+        }
+        CommandManager.commandsRegistred.clear()
     }
 
 

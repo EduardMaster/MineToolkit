@@ -35,3 +35,7 @@ commands:
     description: "Define a experiencia (EXP) do jogador"
     aliases: [setexp,setxp]
     usage: /<command> <xp>
+  memory:
+    description: "Verifica uso de memoria geral do servidor"
+    aliases: [ram]
+    usage: </command> [gc]
