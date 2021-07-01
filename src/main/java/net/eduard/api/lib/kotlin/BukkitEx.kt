@@ -25,9 +25,11 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
+import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.material.Crops
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.potion.PotionEffect
 import kotlin.reflect.KClass
 
 /**
@@ -179,6 +181,17 @@ inline fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -
 
 }
 
+
+
+fun <T : ItemStack> T.potion(effect : PotionEffect): T {
+    if (type!= Material.POTION)
+        type = Material.POTION
+    val meta = itemMeta as PotionMeta
+    meta.setMainEffect(effect.type)
+    meta.addCustomEffect(effect,true)
+    itemMeta = meta
+    return this
+}
 /**
  * Cria um item para o menu com DSQL< parametros posicao, e SQL Block
  */

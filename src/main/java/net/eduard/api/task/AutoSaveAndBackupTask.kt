@@ -19,7 +19,6 @@ class AutoSaveAndBackupTask : TimeManager(20) {
             val pluginSettings = plugin.settings
             try {
                 val agora = Extra.getNow()
-
                 if (pluginSettings.autoSave && pluginSettings.lastSave + pluginSettings.autoBackupSeconds * 1000 < agora) {
                     log("Salvando dados do plugin §b" + plugin.name)
                     val tempo1 = Extra.getNow()

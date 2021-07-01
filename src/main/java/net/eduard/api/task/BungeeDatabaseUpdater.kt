@@ -15,7 +15,6 @@ class BungeeDatabaseUpdater : Runnable {
             if (plugin !is EduardBungeePlugin) continue
             if (plugin.db.hasConnection()) {
                 val name = plugin.pluginName
-
                 run {
                     val agora = Extra.getNow()
                     val amountUpdated = plugin.sqlManager.runUpdatesQueue()

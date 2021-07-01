@@ -24,12 +24,15 @@ open class MenuButton(
     var fixed = false
 
     var autoUpdate = true
-    var autoUpdateDelayTicks = 1
+    var autoUpdateDelayTicks = 20
     @Transient
     var autoUpdateLasttime = 0L
     @Transient
     var updateHandler : (MenuButton.(Inventory,Player) -> Unit)? = null
-
+    @Transient
+    var iconPerPlayer: (Player.() -> ItemStack)? = null
+    @Transient
+    var hideWhen : (Player.() -> Boolean)? = null
     fun canAutoUpdate() = System.currentTimeMillis() >= autoUpdateLasttime + autoUpdateDelayTicks * 50
 
     init {
@@ -55,6 +58,9 @@ open class MenuButton(
 
     open fun updateButton(inventory: Inventory, player: Player) {
         updateHandler?.invoke(this,inventory,player)
+        if (hideWhen!= null){
+            if (hideWhen!!(player))return
+        }
         var icon = getIcon(player)
         if (parentMenu!!.isTranslateIcon) {
             icon = Mine.getReplacers(icon, player)
@@ -67,8 +73,7 @@ open class MenuButton(
 
     }
 
-    @Transient
-    var iconPerPlayer: (Player.() -> ItemStack)? = null
+
 
     open fun getIcon(player: Player): ItemStack {
         return iconPerPlayer?.invoke(player) ?: icon

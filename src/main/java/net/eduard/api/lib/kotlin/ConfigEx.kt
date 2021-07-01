@@ -14,7 +14,7 @@ inline fun <reified T> File.reloadListFromFolder(): List<T> {
     }
     return list
 }
-inline fun <T> Config.save(data : T){
+fun <T> Config.save(data : T){
     set(data)
     saveConfig()
 }

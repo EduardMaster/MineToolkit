@@ -22,17 +22,18 @@ import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.Sound
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
 
-fun menu(title: String, amount: Int, setup: Menu.() -> Unit): Menu {
-    val menu = Menu(title, amount)
+fun menu(title: String, lineAmount: Int, setup: Menu.() -> Unit): Menu {
+    val menu = Menu(title, lineAmount)
     setup.invoke(menu)
     return menu
 }
 
-fun shop(title: String, amount: Int, setup: Shop.() -> Unit): Shop {
-    val menu = Shop(title, amount)
+fun shop(title: String, lineAmount: Int, setup: Shop.() -> Unit): Shop {
+    val menu = Shop(title, lineAmount)
     setup.invoke(menu)
     return menu
 }
@@ -59,79 +60,33 @@ fun Player.getMenu(): Menu? {
  */
 @Suppress("unused")
 open class Menu(
-
     var title: String = "Menu",
     var lineAmount: Int = 1
-
 ) : EventsManager() {
     @Transient
     var autoAlignPerLine = 7
     @Transient
     var autoAlignPerPage = autoAlignPerLine * 1
-
-    fun button(name: String = "Botao", setup: (MenuButton.() -> Unit)): MenuButton {
-        val button = MenuButton(name, null)
-        button.parentMenu = this
-        setup(button)
-        addButton(button)
-        return button
-    }
-
-    @Transient
-    var itemsEffect: MenuItems<*>? = null
-
-    fun <T : Any> items(
-        setup: (MenuItems<T>.() -> Unit)
-    ): MenuItems<T> {
-        val listContent = MenuItems<T>()
-        listContent.menu = this
-        itemsEffect = listContent
-        setup(listContent)
-        return listContent
-    }
-
     @Transient
     var lastInteraction = mutableMapOf<Player, Long>()
-
-    open fun canInteract(player: Player): Boolean {
-
-        if (player in lastInteraction) {
-            val interactionMoment = lastInteraction[player]!!
-            return System.currentTimeMillis() - interactionMoment > cooldownBetweenInteractions
-        }
-        return true
-    }
-
-    open fun interact(player: Player) = lastInteraction.put(player, System.currentTimeMillis())
-
-
     @Transient
     var superiorMenu: Menu? = null
-
     @Transient
     var titlePerPlayer: (Player.() -> String)? = null
-
-
+    @Transient
+    var lineAmountPerPlayer: (Player.() -> Int)? = null
     @Transient
     var openHandler: (Menu.(Inventory, Player) -> Unit)? = null
-
     @Transient
     var effect: ClickEffect? = null
-
     @Transient
     private var pagesCache = mutableMapOf<Int, Inventory>()
-
     @Transient
     private var inventoryCache = mutableMapOf<Player, Inventory>()
-
-
     @Transient
     private var buttonsCache = mutableMapOf<String, MenuButton>()
-
     @Transient
     private val pageOpened = mutableMapOf<Player, Int>()
-
-
     var pageAmount = 1
     var pagePrefix = ""
     var pageSuffix = "(\$page/\$max_page)"
@@ -180,6 +135,28 @@ open class Menu(
         openWithCommand = null
         openWithCommandText = null
     }
+
+    fun button(name: String = "Botao", setup: (MenuButton.() -> Unit)): MenuButton {
+        val button = MenuButton(name, null)
+        button.parentMenu = this
+        setup(button)
+        addButton(button)
+        return button
+    }
+
+
+
+    open fun menuPlayerCanInteract(player: Player): Boolean {
+
+        if (player in lastInteraction) {
+            val interactionMoment = lastInteraction[player]!!
+            return System.currentTimeMillis() - interactionMoment > cooldownBetweenInteractions
+        }
+        return true
+    }
+
+    open fun menuPlayerInteract(player: Player) = lastInteraction.put(player, System.currentTimeMillis())
+
 
 
     val fullTitle: String = pagePrefix + title + pageSuffix
@@ -298,6 +275,9 @@ open class Menu(
 
     }
 
+    /**
+     * Remove o Invetario de um página especifica do cache
+     */
     fun updateCache(page: Int) {
         if (isCacheInventories) {
             pagesCache.remove(page)
@@ -305,6 +285,9 @@ open class Menu(
     }
 
 
+    /**
+     * Remove os Invetários do Cache
+     */
     fun clearCache() {
         pagesCache.clear()
     }
@@ -324,6 +307,10 @@ open class Menu(
         return true
     }
 
+    /**
+     * Abre a página 1 para o Jogador
+     * @param player Jogador
+     */
     fun open(player: Player): Inventory? {
         return open(player, 1)
     }
@@ -360,6 +347,9 @@ open class Menu(
 
     }
 
+    /**
+     * Verifica se precisa avançar para um Próximo Slot que não esteja ocupado ou bloqueado
+     */
     fun needChangePosition(): Boolean {
         for (line in autoAlignSkipLines) {
             if (Extra.getLine(lastSlot) == line)
@@ -372,6 +362,11 @@ open class Menu(
         return false;
     }
 
+    /**
+     * Abre o Menu em uma Página especifica para o Jogador
+     * @param pageOpened Página Numero
+     * @param player Jogador
+     */
     open fun open(player: Player, pageOpened: Int): Inventory? {
         if (!canOpen(player)) {
             return null
@@ -394,14 +389,20 @@ open class Menu(
             this.pageOpened[player] = page
             player.openInventory(pagesCache[page])
         } else {
-            if ((lineAmount < 1) or (lineAmount > 6)) {
-                lineAmount = 1
-            }
 
+            var customLineAmount = lineAmount
+            if (lineAmountPerPlayer!=null){
+                customLineAmount = lineAmountPerPlayer!!(player)
+            }
+            if ((customLineAmount < 1) or (customLineAmount > 6)) {
+                customLineAmount = 1
+            }
             val currentTitle = titlePerPlayer?.invoke(player) ?: title
-            val prefix = pagePrefix.replace("\$max_page", "" + pageAmount)
+            val prefix = pagePrefix.replace("\$max_page", "" +
+                    pageAmount)
                 .replace("\$page", "" + page)
-            val suffix = pageSuffix.replace("\$max_page", "" + pageAmount)
+            val suffix = pageSuffix.replace("\$max_page", "" +
+                    pageAmount)
                 .replace("\$page", "" + page)
             val menuTitle = Extra.cutText(
                 if (showPage) {
@@ -410,7 +411,9 @@ open class Menu(
             )
 
             val fakeHolder = FakeInventoryHolder(this)
-            val menu = Bukkit.createInventory(fakeHolder, 9 * lineAmount, menuTitle)
+            val menu = Bukkit.createInventory(fakeHolder, 9 * customLineAmount,
+
+                menuTitle)
             fakeHolder.openInventory = menu
             fakeHolder.pageOpenned = page
             update(menu, player, page)
@@ -426,14 +429,27 @@ open class Menu(
         return null
     }
 
+    /**
+     * Se o menu pode ser aberto por um Jogador
+     * @param player Jogador
+     */
     open fun canOpen(player: Player): Boolean {
         return true
     }
 
+    /**
+     * Remoção e Atualização dos botões do menu
+     */
     open fun update() {
 
     }
 
+    /**
+     * Atualiza o Inventário com os ItemStack dos MenuButton da página espeficiada
+     * @param menu Inventário
+     * @param player Jogador
+     * @param page Página
+     */
     open fun update(menu: Inventory, player: Player, page: Int = 1) {
         menu.clear()
         if (hasPages) {
@@ -460,7 +476,7 @@ open class Menu(
         if (this.superiorMenu != null) {
             backPage.give(menu)
         }
-        itemsEffect?.update(menu, player)
+
         for (button in buttons) {
             if (!button.fixed) {
                 if (button.index > slotLimit) {
@@ -475,11 +491,17 @@ open class Menu(
         openHandler?.invoke(this, menu, player)
     }
 
-
+    /**
+     * Alias para Menu#registerMenu(plugin)
+     * @param plugin Plugin
+     */
     override fun register(plugin: IPluginInstance) {
         registerMenu(plugin)
     }
 
+    /**
+     * Registra o Listener deste menu e de seus submenus e configura nomes de botões sem nomes
+     */
     open fun registerMenu(plugin: IPluginInstance) {
         var id = 1
         val namesUsed = mutableSetOf<String>()
@@ -570,6 +592,14 @@ open class Menu(
             lastOpennedMenu[player] = this
         }
     }
+    @EventHandler
+    fun eventOnQuit(event : PlayerQuitEvent){
+        val player = event.player
+        lastOpennedMenu.remove(player)
+        this.lastInteraction.remove(player)
+        this.inventoryCache.remove(player)
+    }
+
 
     @EventHandler
     fun eventOnClick(event: InventoryClickEvent) {
@@ -604,16 +634,14 @@ open class Menu(
             button = getButton(page, slot)
             debug("Button by Slot " + if (button == null) "is Null" else "is not null")
         }
-        if (itemsEffect != null) {
-            itemsEffect!!.click.accept(event)
-        }
+
         if (button != null) {
-            if (!canInteract(player)) {
+            if (!menuPlayerCanInteract(player)) {
                 debug("Button Interaction in cooldown")
                 return
             }
             if (button.click != null) {
-                interact(player)
+                menuPlayerInteract(player)
                 debug("Button make click effect")
                 button.click?.accept(event)
             }
@@ -634,11 +662,19 @@ open class Menu(
     }
 
 
+    /**
+     * Verifica se o jogador esta com menu aberto
+     */
     fun isOpen(player: Player): Boolean {
         return pageOpened.containsKey(player)
     }
 
 
+    /**
+     * Verifica se o jogador abriu este Inventario e se ele é este Menu
+     * @param player Jogador
+     * @param inventory Inventario
+     */
     fun isOpen(player: Player, inventory: Inventory): Boolean {
         try {
             val holder = inventory.holder ?: return false
@@ -653,6 +689,10 @@ open class Menu(
         return false
     }
 
+    /**
+     * Pega a Página aberta
+     * @return Numero
+     */
     fun getPageOpen(player: Player): Int {
         return pageOpened.getOrDefault(player, 0)
     }
