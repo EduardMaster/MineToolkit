@@ -332,7 +332,8 @@ open class Menu(
      */
     fun nextPosition() {
         lastSlot++
-        var antiForInfinito = 100
+        val maxSkips = 3*9
+        var antiForInfinito = maxSkips
         while (needChangePosition()) {
             antiForInfinito--
             lastSlot++
@@ -341,8 +342,16 @@ open class Menu(
         if (lastSlot > slotLimit) {
             pageAmount++
             lastPage++
-            lastSlot=-1
-            nextPosition()
+            lastSlot=0
+            antiForInfinito = maxSkips
+            while (needChangePosition()) {
+                antiForInfinito--
+                lastSlot++
+                if (antiForInfinito==0){
+                    lastPage=0
+                    break
+                }
+            }
         }
 
     }
