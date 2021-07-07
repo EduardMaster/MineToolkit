@@ -24,5 +24,6 @@ interface DatabaseEngine {
     fun <T : Any> createTable(clz: Class<T>)
     fun updateReferences()
     fun convertToSQL(value : Any?) : String
+    fun convertToSQL(value : Any?, column : DatabaseColumn<*>) : String
     fun convertToJava(string: String, column: DatabaseColumn<*>): Any?
 }

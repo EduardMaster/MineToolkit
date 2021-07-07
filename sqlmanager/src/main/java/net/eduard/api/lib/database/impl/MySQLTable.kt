@@ -185,7 +185,8 @@ class MySQLTable<T : Any>(
             val prepare = connection.prepareStatement(
                 text
             )
-            prepare.setString(1, engine.convertToSQL(columnValue))
+            val column = columns.values.first{it.name == columnName}
+            prepare.setString(1, engine.convertToSQL(columnValue, column))
             val query = prepare.executeQuery()
             log("Query: $text")
             if (query.next()) {
@@ -302,7 +303,7 @@ class MySQLTable<T : Any>(
                 if (fieldValue == null || (column.isNumber && column.isPrimary)) {
                     prepare.setObject(id, null)
                 } else {
-                    val converted = engine.convertToSQL(fieldValue)
+                    val converted = engine.convertToSQL(fieldValue, column)
                     prepare.setString(id, converted)
                 }
                 id++
@@ -359,7 +360,7 @@ class MySQLTable<T : Any>(
                 if (fieldValue == null || (column.isNumber && column.isPrimary)) {
                     prepare.setObject(id, null)
                 } else {
-                    val converted = engine.convertToSQL(fieldValue)
+                    val converted = engine.convertToSQL(fieldValue, column)
                     prepare.setString(id, converted)
                 }
                 id++
@@ -368,7 +369,7 @@ class MySQLTable<T : Any>(
                 val primaryValue = primaryColumn!!.field.get(data)
 
                 if (primaryValue != null) {
-                    val converted = engine.convertToSQL(primaryValue)
+                    val converted = engine.convertToSQL(primaryValue,primaryColumn!!)
                     prepare.setObject(id, converted)
                 } else prepare.setInt(id, 1)
             } else
@@ -389,7 +390,7 @@ class MySQLTable<T : Any>(
                 "DELETE FROM $name WHERE ${primaryColumn?.name ?: "ID"} = ?"
             )
             if (primaryColumn != null) {
-                prepare.setString(1, engine.convertToSQL(primaryColumn!!.field.get(data)))
+                prepare.setString(1, engine.convertToSQL(primaryColumn!!.field.get(data), primaryColumn!!))
                 elements.remove(primaryColumn!!.field.get(data))
             } else {
                 prepare.setString(1, "1")

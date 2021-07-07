@@ -36,6 +36,8 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         }
     }
 
+
+
     override val types: MutableMap<Class<*>, String> = mutableMapOf(
         String::class.java to "VARCHAR",
         Int::class.java to "INT",
@@ -188,8 +190,14 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         table.createCollumns()
     }
 
-
     override fun convertToSQL(valor: Any?): String {
+        var value: Any = valor ?: return "NULL"
+        if (value is Boolean){
+            value = if (value) 1 else 0
+        }
+        return serialization[value::class.java]?.invoke(value) ?: "$value"
+    }
+    override fun convertToSQL(valor: Any?, column: DatabaseColumn<*>): String {
         var value: Any = valor ?: return "NULL"
         if (value is Boolean){
             value = if (value) 1 else 0

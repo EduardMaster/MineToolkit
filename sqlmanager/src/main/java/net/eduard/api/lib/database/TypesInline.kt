@@ -1,5 +1,6 @@
 package net.eduard.api.lib.database
 
+import java.sql.Timestamp
 import java.util.*
 
 val serialization: MutableMap<Class<*>, Any.() -> String> = mutableMapOf()
@@ -27,10 +28,35 @@ inline fun <reified T> load(noinline loadAs: (String) -> T) {
     deserialization[clz] = loadAs as (String) -> Any
 }
 
+fun Date.toSQLDate() = java.sql.Date(time)
+fun String.toSQLDate() = java.sql.Date.valueOf(this)
+fun java.sql.Date.toDate() = Date(time)
 
 fun javaTypes() {
+
     save<UUID>(100) {
         toString()
     }
-    load { UUID.fromString(it) }
+    load {
+        UUID.fromString(it)
+    }
+    save<Date>  {
+        toSQLDate().toString()
+    }
+    load {
+        it.toSQLDate().toDate()
+    }
+    save<java.sql.Date>  {
+        toString()
+    }
+    load {
+        it.toSQLDate()
+    }
+    save<Timestamp> { toString()
+    }
+
+    load {
+         Timestamp.valueOf(it)
+    }
+
 }
