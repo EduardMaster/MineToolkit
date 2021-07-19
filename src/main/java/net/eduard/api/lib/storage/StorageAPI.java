@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
+import jdk.internal.loader.ClassLoaders;
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.api.StorageClassInfo;
 import net.eduard.api.lib.storage.api.StorageInfo;
@@ -20,6 +21,9 @@ import net.eduard.api.lib.storage.storables.TimeStampStorable;
 import net.eduard.api.lib.storage.storables.UUIDStorable;
 import net.eduard.api.lib.storage.references.ReferenceBase;
 import net.eduard.api.lib.storage.impl.*;
+import sun.jvm.hotspot.utilities.SystemDictionaryHelper;
+
+import javax.management.loading.ClassLoaderRepository;
 
 /**
  * Sistema automatico de Armazenamento em Mapas que podem ser usados em JSON,
@@ -176,19 +180,6 @@ public final class StorageAPI {
         debug("++ CLASS " + info.getAlias());
     }
 
-
-    public static void registerPackage(Class<?> clazzForPackage) {
-        registerPackage(clazzForPackage, clazzForPackage.getPackage().getName());
-    }
-
-    public static void registerPackage(Class<?> clazzPlugin, String pack) {
-        debug("<> PACKAGE " + pack);
-        List<Class<?>> classes = Extra.getClasses(clazzPlugin, pack);
-        for (Class<?> claz : classes) {
-            autoRegisterClass(claz);
-        }
-    }
-
     public static Storable<?> autoRegisterClass(Class<?> claz) {
         return autoRegisterClass(claz, getClassName(claz));
     }
@@ -230,28 +221,32 @@ public final class StorageAPI {
         if (info != null) {
             classInfoByClass.remove(clz);
             classInfoByAlias.remove(info.getAlias());
-            debug("- CLASS " + info.getAlias());
+            log("- CLASS " + info.getAlias());
         }
     }
 
 
     public static void unregisterPlugin(Class<?> pluginClass) {
-        StorageAPI.debug("- CLASSES FROM PLUGIN " + pluginClass);
+        StorageAPI.log("- CLASSES FROM PLUGIN " + pluginClass);
         ClassLoader loader = pluginClass.getClassLoader();
         Iterator<Entry<String, StorageClassInfo>> it = classInfoByAlias.entrySet().iterator();
         String alias = getClassName(pluginClass);
         int amount = 0;
         while (it.hasNext()) {
             Entry<String, StorageClassInfo> entry = it.next();
-            if (entry.getKey().getClass().getClassLoader() == loader) {
+            Class<?> classe = entry.getValue().getCurrentClass();
+
+            if (classe.getClassLoader() == loader) {
                 StorageClassInfo info = entry.getValue();
                 info.getCache().clear();
                 classInfoByClass.remove(info.getCurrentClass());
                 it.remove();
+                log(" .. Classe: "+classe);
                 amount++;
             }
         }
-        StorageAPI.debug("- CLASSES WITH SAME LOADER OF: " + alias + " AMOUNT: " + amount);
+
+        StorageAPI.log("- CLASSES WITH SAME LOADER OF: " + alias + " AMOUNT: " + amount);
     }
 
 
@@ -312,13 +307,19 @@ public final class StorageAPI {
             msg = msg.substring(0, limit) + "...";
         }
         if (debug)
-            console("[StorageAPI] " + msg);
+            console("[Storage] " + msg);
+    }
+
+    public static void log(String msg) {
+        int limit = 120;
+        if (msg.length() > limit) {
+            msg = msg.substring(0, limit) + "...";
+        }
+        console("[StorageAPI] " + msg);
     }
 
     public static void console(String msg) {
-
         System.out.println(msg);
-
     }
 
     public static void registerAlias(Class<?> claz, String alias) {

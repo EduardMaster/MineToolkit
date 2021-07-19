@@ -18,6 +18,8 @@ final public class StorageInfo implements Cloneable {
     public StorageInfo(Field field) {
         setField(field);
         setType(field.getType());
+
+
     }
 
     private Class<?> type;

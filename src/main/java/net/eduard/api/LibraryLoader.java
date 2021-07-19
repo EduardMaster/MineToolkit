@@ -1,7 +1,8 @@
 package net.eduard.api;
 
+import kotlin.KotlinVersion;
+
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -10,6 +11,16 @@ import java.util.Objects;
 public class LibraryLoader {
 
     private final File libFile;
+
+    public boolean needLoadKotlin() {
+        try {
+            KotlinVersion versaoAtual = KotlinVersion.CURRENT;
+
+            return false;
+        } catch (Error err) {
+            return true;
+        }
+    }
 
     public LibraryLoader(File file) {
         this.libFile = file;
@@ -22,6 +33,8 @@ public class LibraryLoader {
         for (File file : Objects.requireNonNull(pastaLibs.listFiles())) {
             if (file.getName().endsWith(".jar")) {
                 try {
+                    if (!needLoadKotlin() && file.getName().toLowerCase().contains("kotlin"))
+                        continue;
                     log("Carregando jar: " + file.getName());
                     addClassPath(file);
                 } catch (Exception e) {
@@ -46,13 +59,14 @@ public class LibraryLoader {
         final Object sysloader = ClassLoader
                 .getSystemClassLoader();
 
+
         final Method method = URLClassLoader.class
                 .getDeclaredMethod("addURL",
                         URL.class);
         method.setAccessible(true);
         if (URLClassLoader.class.isAssignableFrom(sysloader.getClass())) {
             method.invoke(sysloader, url);
-        }else{
+        } else {
             log("Java incompativel para carregamento de jar automatico");
         }
 

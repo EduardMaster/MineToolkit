@@ -135,10 +135,6 @@ interface IPlugin : IPluginInstance {
         }
     }
 
-    fun registerPackage(packname: String) {
-        StorageAPI.registerPackage(javaClass, packname)
-    }
-
     /**
      * Deleta os backups dos dias anteriores
      */

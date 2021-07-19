@@ -34,7 +34,8 @@ class MySQLTable<T : Any>(
         get() = if (tableClass.isAnnotationPresent(
                 TableName::class.java
             )
-        ) (tableClass.getAnnotation(TableName::class.java).value) else (tableClass.simpleName)
+        ) (tableClass.getAnnotation(TableName::class.java).value)
+        else (tableClass.simpleName)
 
     override val columns: MutableMap<Field, DatabaseColumn<*>> = linkedMapOf()
     override val columnsCreated = mutableSetOf<String>()
@@ -118,14 +119,7 @@ class MySQLTable<T : Any>(
 
     }
 
-    fun calcLag(text: String, body: () -> Unit) {
-        val start = System.currentTimeMillis()
-        body()
-        val end = System.currentTimeMillis()
-        val dif = end - start
-        println("MySQLEngine: $text -> ${dif}ms")
 
-    }
 
     override fun createReferences() {
 
@@ -180,15 +174,15 @@ class MySQLTable<T : Any>(
 
     override fun findByColumn(columnName: String, columnValue: Any, cachedData: T?): T? {
         try {
-            log("Selecionando 1 registro")
             val text = "SELECT * FROM $name WHERE $columnName = ? LIMIT 1"
             val prepare = connection.prepareStatement(
                 text
             )
             val column = columns.values.first{it.name == columnName}
             prepare.setString(1, engine.convertToSQL(columnValue, column))
+            log("findByColumn: $text")
             val query = prepare.executeQuery()
-            log("Query: $text")
+
             if (query.next()) {
                 val newData = cachedData ?: newInstance.invoke()
                 updateCache(newData, query)
@@ -206,14 +200,17 @@ class MySQLTable<T : Any>(
 
     }
 
-    override fun select(where: String, columnOrder: String, ascending: Boolean, limit: Int): List<T> {
+    override fun select(collums : String, where: String, columnOrder: String, ascending: Boolean, limit: Int): List<T> {
         val list = mutableListOf<T>()
         try {
-
+            val collumsUsed = if (collums.isEmpty())"*" else collums
+            var text =  "SELECT $collumsUsed FROM $name "
+            if (where.isNotEmpty()) text+="WHERE $where"
+            text+=" ORDER BY $columnOrder "+ (if (ascending) "ASC" else "DESC") + " LIMIT $limit"
             val prepare = connection.prepareStatement(
-                "SELECT * FROM $name WHERE $where ORDER BY $columnOrder "
-                        + (if (ascending) "ASC" else "DESC") + " LIMIT $limit"
+               text
             )
+            log("Selecting: $text")
             val query = prepare.executeQuery()
             while (query.next()) {
                 val newData = newInstance.invoke()
@@ -274,7 +271,7 @@ class MySQLTable<T : Any>(
     override fun insert(data: T) {
 
         try {
-            log("Inserindo dado na tabela $name")
+
             val builder = StringBuilder("INSERT INTO $name (")
             for (column in columns.values) {
                 builder.append(column.name + ",")
@@ -308,7 +305,7 @@ class MySQLTable<T : Any>(
                 }
                 id++
             }
-            log("Query: $builder")
+            log("Inserindo: $builder")
             prepare.executeUpdate()
             val keys = prepare.generatedKeys
             if (keys != null) {
@@ -374,7 +371,7 @@ class MySQLTable<T : Any>(
                 } else prepare.setInt(id, 1)
             } else
                 prepare.setInt(id, 1)
-
+            log("Atualizando: $builder")
             prepare.executeUpdate()
 
 

@@ -5,7 +5,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
- * SQLManager é parecido com Hibernate porem com bem menas Features
+ * SQLManager é parecido com Hibernate porem com bem menos Features
  */
 @Suppress("unused")
 class SQLManager(var dbManager: DBManager) {
@@ -71,6 +71,7 @@ class SQLManager(var dbManager: DBManager) {
     inline fun <reified E : Any> getData(primaryKeyValue: Any): E? {
         return getData(E::class.java, primaryKeyValue)
     }
+
     inline fun <reified E : Any> getDataOf(reference: Any): E? {
         return getDataOf(E::class.java, reference)
     }
@@ -89,6 +90,7 @@ class SQLManager(var dbManager: DBManager) {
                 .findByColumn(fieldName, fieldValue)
         } else null
     }
+
     fun <E : Any> getDataOf(dataClass: Class<E>, reference: Any): E? {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
@@ -111,16 +113,38 @@ class SQLManager(var dbManager: DBManager) {
         } else null
     }
 
-    inline fun <reified T : Any> getAll(): List<T> {
-        return getAllData(T::class.java)
+    inline fun <reified E : Any> getAll(): List<E> {
+        return getAllData(E::class.java)
     }
-
 
     fun <E : Any> getAllData(dataClass: Class<E>): List<E> {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
                 .selectAll()
         } else ArrayList()
+    }
+
+    inline fun <reified E : Any> getSome(
+        collums: String = "*",
+        where: String = "",
+        orderBy: String = "id",
+        desc: Boolean = true,
+        limit: Int = 10
+    ): List<E> {
+        return getSome(E::class.java, collums, where, orderBy, desc, limit)
+    }
+
+    /**
+     * Alias para getSome()
+    </E> */
+    fun <E : Any> getAllData(
+        dataClass: Class<E>,
+        where: String,
+        orderBy: String,
+        desc: Boolean,
+        limit: Int
+    ): List<E> {
+        return getSome(dataClass, "*", where, orderBy, !desc, limit)
     }
 
     /**
@@ -133,8 +157,9 @@ class SQLManager(var dbManager: DBManager) {
      * @param <E>
      * @return
     </E> */
-    fun <E : Any> getAllData(
+    fun <E : Any> getSome(
         dataClass: Class<E>,
+        collums: String,
         where: String,
         orderBy: String,
         desc: Boolean,
@@ -142,8 +167,8 @@ class SQLManager(var dbManager: DBManager) {
     ): List<E> {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
-                .select(where, orderBy, !desc, limit)
-        } else ArrayList()
+                .select(collums, where, orderBy, !desc, limit)
+        } else listOf()
     }
 
     fun <E : Any> insertData(data: E) {
@@ -214,30 +239,30 @@ class SQLManager(var dbManager: DBManager) {
         }
     }
 
-    inline fun <reified T : Any> deleteTable() {
-        deleteTable(T::class.java)
+    inline fun <reified E : Any> deleteTable() {
+        deleteTable(E::class.java)
     }
 
-    fun <T : Any> deleteTable(dataClass: Class<T>) {
+    fun <E : Any> deleteTable(dataClass: Class<E>) {
         if (hasConnection()) {
             dbManager.engineUsed.deleteTable(dataClass)
         }
     }
 
-    inline fun <reified T : Any> clearTable() {
-        clearTable(T::class.java)
+    inline fun <reified E : Any> clearTable() {
+        clearTable(E::class.java)
     }
 
 
-    fun <T : Any> clearTable(dataClass: Class<T>) {
+    fun <E : Any> clearTable(dataClass: Class<E>) {
         if (hasConnection()) {
             dbManager.engineUsed.clearTable(dataClass)
         }
     }
 
 
-    inline fun <reified T : Any> createReferences() {
-        createReferences(T::class.java)
+    inline fun <reified E : Any> createReferences() {
+        createReferences(E::class.java)
     }
 
 
@@ -253,9 +278,10 @@ class SQLManager(var dbManager: DBManager) {
             dbManager.engineUsed.updateReferences()
         }
     }
-    inline fun <reified T : Any> updateReferences(){
-        if (hasConnection()){
-            dbManager.engineUsed.getTable(T::class.java)
+
+    inline fun <reified E : Any> updateReferences() {
+        if (hasConnection()) {
+            dbManager.engineUsed.getTable(E::class.java)
                 .updateReferences()
         }
     }
@@ -266,10 +292,10 @@ class SQLManager(var dbManager: DBManager) {
         }
     }
 
-     fun cacheInfo(){
-         if (hasConnection()) {
-             dbManager.engineUsed.cacheInfo()
-         }
+    fun cacheInfo() {
+        if (hasConnection()) {
+            dbManager.engineUsed.cacheInfo()
+        }
 
     }
 }

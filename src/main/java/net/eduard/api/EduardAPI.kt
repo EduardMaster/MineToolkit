@@ -13,9 +13,7 @@ import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.BukkitTypes
 import net.eduard.api.lib.database.DBManager
-import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
-import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.server.minigame.MinigameSchematic
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.hybrid.BukkitServer
@@ -36,7 +34,6 @@ import net.eduard.api.task.DatabaseUpdater
 import net.eduard.api.task.MenuAutoUpdaterTask
 import net.eduard.api.task.PlayerTargetPlayerTask
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -99,8 +96,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     fun storage(){
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
-        StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
-
+        //StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
+        //StorageAPI.registerPackage(Minigame::class.java)
         BukkitStorables.load()
         StorageAPI.startGson()
         log("Storables do Bukkit carregado!")
@@ -118,7 +115,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         BukkitBungeeAPI.register(plugin)
         BukkitBungeeAPI.requestCurrentServer()
         BungeeAPI.bukkit.register(plugin)
-        StorageAPI.registerPackage(Minigame::class.java)
+
         reload()
         commands()
         events()
@@ -126,13 +123,12 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         loadServers()
         log("§aCarregado com sucesso!")
 
+
     }
     fun resetScoreboard(player: Player) {
         player.scoreboard = Mine.getMainScoreboard()
     }
-    // Parei aqui
 
-    // Parei aqui
     fun resetScoreboards() {
         for (teams in Mine.getMainScoreboard().teams) {
             teams.unregister()
@@ -201,7 +197,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
             sqlManager.cacheInfo()
             log("Carregando infos dos servidores")
             sqlManager.createTable(ServerSpigot::class.java)
-            for (server in sqlManager.getAllData(ServerSpigot::class.java)){
+            for (server in sqlManager.getAll<ServerSpigot>()){
                 BungeeAPI.servers[server.name.toLowerCase()] = server
             }
         }
@@ -256,9 +252,9 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         }
         MSG_ON_JOIN = configs.message("on-join-message")
         MSG_ON_QUIT = configs.message("on-quit-message")
-        OPT_SOUND_TELEPORT = configs.get("sound-teleport", SoundEffect::class.java)
-        OPT_SOUND_ERROR = configs.get("sound-error", SoundEffect::class.java)
-        OPT_SOUND_SUCCESS = configs.get("sound-success", SoundEffect::class.java)
+        OPT_SOUND_TELEPORT = configs["sound-teleport", SoundEffect::class.java]
+        OPT_SOUND_ERROR = configs["sound-error", SoundEffect::class.java]
+        OPT_SOUND_SUCCESS = configs["sound-success", SoundEffect::class.java]
 
         log("Recarregamento do EduardAPI concluido.")
     }

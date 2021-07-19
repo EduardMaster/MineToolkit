@@ -33,7 +33,7 @@ interface DatabaseTable<T : Any> {
     fun findByColumn(columnName :String, columnValue : Any , cachedData : T? = null) : T?
     fun findByPrimary(primaryValue : Any, cachedData : T? = null) : T?
     fun updateCache(data : T, query : ResultSet)
-    fun select(where: String , columnOrder : String, ascending : Boolean, limit : Int): List<T>
+    fun select(collums : String, where: String , columnOrder : String, ascending : Boolean, limit : Int): List<T>
 
     val columnsContraintsCreated: MutableSet<String>
     var created: Boolean

@@ -11,6 +11,7 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
+import org.apache.commons.lang.mutable.Mutable
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
@@ -98,7 +99,8 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     }
 
 
-    fun getClasses(pack: String): List<Class<*>> {
+    fun getClasses(pack: String): MutableList<Class<*>> {
+
         return Mine.getClasses(this, pack)
     }
 

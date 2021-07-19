@@ -554,8 +554,8 @@ public final class Extra {
                 sb.append(seconds).append(" ").append(seconds == 1L ? "segundo" : "segundos");
             } else if (ticks != 20 && seconds != 0) {
                 sb.append(seconds).append(".").append(ticks).append(" ").append(seconds == 1L ? "segundo" : "segundos");
-            }else{
-                sb.deleteCharAt(sb.length()-1);
+            } else {
+                sb.deleteCharAt(sb.length() - 1);
             }
 
         }
@@ -568,27 +568,38 @@ public final class Extra {
      * Pega uma lista de classes de uma package <br>
      * metodo incompleto
      *
-     * @param classe  Plugin
-     * @param pkgname Package
+     * @param classUsed Plugin
+     * @param pack   Package
      * @return Lista de Classes
      */
-    public static List<String> getClassesName(Class<?> classe, String pkgname) {
+    public static List<String> getClassesName(Class<?> classUsed, String pack) {
         List<String> classes = new ArrayList<>();
-        CodeSource src = classe.getProtectionDomain().getCodeSource();
+        CodeSource src = classUsed.getProtectionDomain().getCodeSource();
         if (src != null) {
-            URL resource = src.getLocation();
             try {
-                //
+                URL resource = src.getLocation();
                 String resPath = resource.getPath().replace("%20", " ");
                 String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
-//				try {
-//					return getClassesName(new JarFile(jarPath), pkgname);
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
+
+                try {
+                    return getClassesName(new JarFile(jarPath), pack);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
 
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+        return classes;
+    }
+    public List<Class<?>> toClasses(List<String> names){
+        List<Class<?>> classes = new ArrayList<>();
+        for (String className : names){
+            try{
+                classes.add(Class.forName(className));
+            }catch (Exception | Error ignored){
             }
         }
         return classes;
@@ -601,28 +612,27 @@ public final class Extra {
      * @param pack Package
      * @return lista do nomes de classes
      */
-    public static List<String> getClassesName(JarFile jar, String pack) {
+    public static List<String> getClassesName(JarFile jar, String pack) throws IOException {
         List<String> lista = new ArrayList<>();
         try {
             String relPath = pack.replace('.', '/');
-            // (entryName.length() > relPath.length() + "/".length())
-            // String resPath = resource.getPath().replace("%20", " ");
-            // String jarPath = resPath.replaceFirst("[.]jar[!].*",
-            // ".jar").replaceFirst("file:", "");
             Enumeration<JarEntry> entries = jar.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
-                if ((entryName.endsWith(".class")) && (entryName.startsWith(relPath)) && !entryName.contains("$")) {
+                if ((entryName.endsWith(".class"))
+                        && (entryName.startsWith(relPath))
+                        && !entryName.contains("$")) {
                     String classeName = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
                     lista.add(classeName);
-
                 }
-
             }
-            jar.close();
+
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            jar.close();
+
         }
         return lista;
     }
@@ -638,74 +648,7 @@ public final class Extra {
         return Math.random() <= chance;
     }
 
-    /**
-     * Pega uma lista de classes de uma package
-     *
-     * @param classe  Plugin
-     * @param pkgname Package
-     * @return Lista de Classes
-     */
-    public static List<Class<?>> getClasses(Class<?> classe, String pkgname) {
-        List<Class<?>> classes = new ArrayList<>();
-        CodeSource src = classe.getProtectionDomain().getCodeSource();
-        if (src != null) {
-            URL resource = src.getLocation();
-            try {
 
-                String resPath = resource.getPath().replace("%20", " ");
-                String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
-                try {
-                    return getClasses(new JarFile(jarPath), pkgname);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return classes;
-    }
-
-    /**
-     * Retorna a lista de Classes referente a package
-     *
-     * @param jar  Jar das classes
-     * @param pack Package das classes
-     * @return Lista de classes
-     */
-    public static List<Class<?>> getClasses(JarFile jar, String pack) {
-        List<Class<?>> lista = new ArrayList<>();
-        try {
-            String relPath = pack.replace('.', '/');
-            // (entryName.length() > relPath.length() + "/".length())
-            // String resPath = resource.getPath().replace("%20", " ");
-            // String jarPath = resPath.replaceFirst("[.]jar[!].*",
-            // ".jar").replaceFirst("file:", "");
-            Enumeration<JarEntry> entries = jar.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String entryName = entry.getName();
-                if ((entryName.endsWith(".class")) && (entryName.startsWith(relPath)) && !entryName.contains("$")) {
-
-                    String classeName = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
-                    try {
-                        Class<?> claz = Class.forName(classeName);
-
-                        lista.add(claz);
-                    } catch (Error e) {
-                        System.out.println("[ClassNotFound]" + classeName);
-                    }
-
-                }
-
-            }
-            jar.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return lista;
-    }
 
     /**
      * Puxa a classe apartir de objeto sendo , ele classe, objecto, ou até mesmo texto

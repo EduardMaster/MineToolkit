@@ -1056,28 +1056,35 @@ public final class Mine {
      * Pega classes de um plugin pela package da Classe
      *
      * @param plugin    Plugin
-     * @param clazzName Classe
+     * @param clazzUsed Classe
      * @return Lista de Classes
      */
-    public static List<Class<?>> getClasses(JavaPlugin plugin, Class<?> clazzName) {
-        return getClasses(plugin, clazzName.getPackage().getName());
+    public static List<Class<?>> getClasses(JavaPlugin plugin, Class<?> clazzUsed) {
+        return getClasses(plugin, clazzUsed.getPackage().getName());
     }
 
     /**
      * Pega classes de um plugin pela Classe
      *
      * @param plugin  Plugin
-     * @param pkgname Pacote
+     * @param pack Pacote
      * @return Lista de Classes
      */
-    public static List<Class<?>> getClasses(JavaPlugin plugin, String pkgname) {
+    public static List<Class<?>> getClasses(JavaPlugin plugin, String pack) {
         List<Class<?>> lista = new ArrayList<>();
         try {
             Method fileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
             fileMethod.setAccessible(true);
             File file = (File) fileMethod.invoke(plugin);
-            //System.out.println("Arquivo "+file.getName());
-            return Extra.getClasses(new JarFile(file), pkgname);
+            List<String> names = Extra.getClassesName(new JarFile(file), pack);
+            for (String className : names){
+                try{
+                    lista.add(plugin.getClass().getClassLoader().loadClass(className));
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }catch (Error ignored){
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1085,16 +1092,6 @@ public final class Mine {
         return lista;
     }
 
-    /**
-     * Sistema de pegar classe apartir de textos, ou objetos normais, ou classes
-     *
-     * @param object Objeto ou Classe, ou texto
-     * @return Classe encontrada
-     * @throws Exception Falha ao pegar a classes apartir do objeto passado
-     */
-    public static Class<?> getClassFrom(Object object) throws Exception {
-        return Extra.getClassFrom(object);
-    }
 
     /**
      * @return O Hashmap onde estão registrados todos comandos e aliases

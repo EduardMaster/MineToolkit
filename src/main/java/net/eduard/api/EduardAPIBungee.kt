@@ -2,7 +2,6 @@ package net.eduard.api
 
 import net.eduard.api.command.bungee.BungeeReloadCommand
 import net.eduard.api.lib.bungee.BungeeAPI
-import net.eduard.api.lib.bungee.BungeeMessageListener
 import net.eduard.api.lib.bungee.ServerSpigot
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
@@ -17,6 +16,7 @@ import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.listener.BungeePlugins
 import net.eduard.api.task.BungeeDatabaseUpdater
 import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 import java.text.DecimalFormat
@@ -29,7 +29,8 @@ import java.util.concurrent.TimeUnit
 class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     companion object {
         lateinit var instance: EduardAPIBungee
-        init{
+
+        init {
             Hybrid.instance = BungeeServer
         }
     }
@@ -57,13 +58,15 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     }
 
     override fun console(message: String) {
-        ProxyServer.getInstance().console.sendMessage("§b[EduardAPI]§r $message")
+        ProxyServer.getInstance().console
+            .sendMessage(TextComponent("§b[EduardAPI]§r $message"))
     }
 
     override fun error(message: String) {
-       console("§c$message")
+        console("§c$message")
     }
-    override fun onLoad(){
+
+    override fun onLoad() {
         StorageAPI.setDebug(false)
         super.onLoad()
     }
@@ -89,65 +92,56 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
             error("Formato do dinheiro invalido " + configs.getString("money-format"))
         }
 
+        mysqlDownload()
         log("Recarregamento do EduardAPI concluido.")
+    }
 
-        if (dbManager.hasConnection()) {
-            log("SQL Conectado iniciando modifications")
-            sqlManager.createTable(ServerSpigot::class.java)
+    fun mysqlDownload() {
 
-            for (server in sqlManager.getAllData(ServerSpigot::class.java)) {
-                BungeeAPI.servers[server.name.toLowerCase()] = server
+        if (!dbManager.hasConnection()) return
+        log("SQL Conectado iniciando modifications")
+        sqlManager.createTable(ServerSpigot::class.java)
+
+        if (!getBoolean("bungee-api")) return
+        for (server in sqlManager.getAll<ServerSpigot>()) {
+            BungeeAPI.servers[server.name.toLowerCase()] = server
+        }
+        for (server in ProxyServer.getInstance().servers.values) {
+            val spigot = BungeeAPI.servers[server.name.toLowerCase()]
+            if (spigot == null) {
+                val servidor = BungeeAPI.getServer(server.name)
+                servidor.host = server.address.hostName
+                servidor.port = server.address.port
+                servidor.players = server.players
+                    .map { it.name }
+                servidor.count = server.players.size
+                sqlManager.insertData(servidor)
             }
-
-            for (server in ProxyServer.getInstance().servers.values) {
-                val spigot = BungeeAPI.servers[server.name.toLowerCase()]
-                if (spigot == null) {
-                    val servidor = BungeeAPI.getServer(server.name)
-                    servidor.host = server.address.hostName
-                    servidor.port = server.address.port
-                    servidor.players = server.players
-                        .map { it.name }
-                    servidor.count = server.players.size
-                    sqlManager.insertData(servidor)
-                }
-            }
-
         }
     }
 
     override fun onEnable() {
         StorageAPI.setDebug(false)
-
-
-        BungeeAPI.bungee.register(plugin)
+        if (getBoolean("bungee-api")) {
+            BungeeAPI.bungee.register(plugin)
+        }
         reload()
-
-
         ProxyServer.getInstance().pluginManager
             .registerCommand(plugin, BungeeReloadCommand())
-
-        ProxyServer.getInstance().scheduler.schedule(plugin,BungeeDatabaseUpdater(),
-            1,1, TimeUnit.SECONDS );
-        ProxyServer.getInstance().scheduler.schedule(plugin,BungeePlugins(),
-            1,1, TimeUnit.SECONDS );
-        /*
-        ProxyServer.getInstance().scheduler.schedule(plugin, {
-            for (server in ProxyServer.getInstance().servers.values) {
-                val spigot = BungeeAPI.getServers()[server.name.toLowerCase()]?:continue
-                sqlManager.updateData(spigot)
-            }
-        },
-        1,1,TimeUnit.SECONDS)
-
-        */
-
-
-
-
+        ProxyServer.getInstance().scheduler.schedule(
+            plugin,
+            BungeeDatabaseUpdater(),
+            1, 1, TimeUnit.SECONDS
+        );
+        ProxyServer.getInstance().scheduler.schedule(
+            plugin, BungeePlugins(),
+            1, 1, TimeUnit.SECONDS
+        );
 
     }
 
     override fun configDefault() {
+        configs.add("bungee-api", true)
         configs.add("debug.storage", false)
         configs.add("debug.copyable", false)
         configs.add("debug.commands", false)
@@ -165,7 +159,9 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
 
     override fun onDisable() {
-        BungeeAPI.controller.unregister()
+        if (getBoolean("bungee-api")) {
+            BungeeAPI.controller.unregister()
+        }
 
     }
 

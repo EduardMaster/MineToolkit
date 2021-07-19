@@ -178,7 +178,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             }
             builder.deleteCharAt(builder.length - 1)
             builder.append(")")
-            log("Query:$builder")
+            log("Inserindo: $builder")
             val prepare = connection.prepareStatement(
                 builder.toString()
             )
