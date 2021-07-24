@@ -3,6 +3,7 @@ package net.eduard.api.lib.menu
 import net.eduard.api.lib.game.ItemBuilder
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.MineReflect
+import net.eduard.api.lib.storage.annotations.StorageReference
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -15,14 +16,11 @@ open class MenuButton(
     positionX: Int = 0,
     positionY: Int = 1,
     var page: Int = 1
-
 ) : Slot(positionX, positionY) {
-
-
     var menu: Menu? = null
-
+    @StorageReference
+    var menuLink : Menu? = null
     var fixed = false
-
     var autoUpdate = true
     var autoUpdateDelayTicks = 20
     @Transient
@@ -88,6 +86,6 @@ open class MenuButton(
 
 
     val isCategory: Boolean
-        get() = menu != null
+        get() = menu != null || menuLink != null
 
 }

@@ -16,9 +16,6 @@ public class StorageClassInfo {
 
     public Object getPrimary(Object instance) {
         try {
-
-            System.out.println("Index: " + getIndex());
-
             return getIndex()
                     .getField()
                     .get(instance);

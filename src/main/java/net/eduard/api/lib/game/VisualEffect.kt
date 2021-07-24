@@ -5,7 +5,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 
-class VisualEffect(var type: Effect? = Effect.FLAME, var data: Int = 0) {
+class VisualEffect(var type: Effect? = null, var data: Int = 0) {
 
     constructor(type: Effect?) : this(type,0)
 
@@ -18,8 +18,8 @@ class VisualEffect(var type: Effect? = Effect.FLAME, var data: Int = 0) {
         return this
     }
 
-    fun create(p: Player): VisualEffect {
-        p.playEffect(p.location, type, data)
+    fun create(player: Player): VisualEffect {
+        player.playEffect(player.location, type, data)
         return this
     }
 

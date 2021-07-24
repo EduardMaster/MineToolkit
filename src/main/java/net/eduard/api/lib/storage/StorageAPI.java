@@ -177,7 +177,7 @@ public final class StorageAPI {
     public static void registerStorable(Class<?> claz, Storable<?> storable) {
         StorageClassInfo info = getClassInfo(claz);
         info.setStorable(storable);
-        debug("++ CLASS " + info.getAlias());
+        log("ADDING CLASS " + info.getAlias());
     }
 
     public static Storable<?> autoRegisterClass(Class<?> claz) {
@@ -221,7 +221,7 @@ public final class StorageAPI {
         if (info != null) {
             classInfoByClass.remove(clz);
             classInfoByAlias.remove(info.getAlias());
-            log("- CLASS " + info.getAlias());
+            log("REMOVING CLASS " + info.getAlias());
         }
     }
 
@@ -241,12 +241,11 @@ public final class StorageAPI {
                 info.getCache().clear();
                 classInfoByClass.remove(info.getCurrentClass());
                 it.remove();
-                log(" .. Classe: "+classe);
                 amount++;
             }
         }
 
-        StorageAPI.log("- CLASSES WITH SAME LOADER OF: " + alias + " AMOUNT: " + amount);
+        StorageAPI.log("REMOVING CLASSES WITH SAME LOADER OF: " + alias + " AMOUNT: " + amount);
     }
 
 

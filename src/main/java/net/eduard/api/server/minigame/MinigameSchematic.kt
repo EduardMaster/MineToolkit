@@ -36,7 +36,11 @@ class MinigameSchematic(var name: String = "Mapinha") {
 
         fun exists(name: String) = schematics.containsKey(name)
         fun loadToCache(player: Player, name: String) {
-            cache[player] = schematics[name] as MinigameSchematic
+            cache[player] = schematics[name]!!
+        }
+        fun unloadAll(){
+            cache.clear()
+            schematics.clear()
         }
 
         fun loadAll(folder: File) {
@@ -65,7 +69,8 @@ class MinigameSchematic(var name: String = "Mapinha") {
             }
 
         }
-        fun hasSchematic(name : String) = name in schematics
+
+        fun hasSchematic(name: String) = name in schematics
         fun getSchematic(name: String) = schematics[name]!!
 
         fun getSchematic(player: Player): MinigameSchematic {
@@ -133,7 +138,7 @@ class MinigameSchematic(var name: String = "Mapinha") {
     var length: Short = 0
 
     @Transient
-     var blocks: Array<BlockInfo> = arrayOf()
+    var blocks: Array<BlockInfo?> = arrayOf()
 
 
     fun copy(world: World) {
@@ -206,11 +211,17 @@ class MinigameSchematic(var name: String = "Mapinha") {
                         lowLoc.blockY + y,
                         lowLoc.blockZ + z
                     )
-                    val id = block.typeId
 
-                    val blockInfo = blocks[index]
+                    val id = block.typeId
+                    if (id == 0) {
+                        blocks[index] = null
+                        continue
+                    }
+                    val blockInfo = blocks[index] ?: BlockInfo()
                     blockInfo.id = id.toShort()
                     blockInfo.data = block.data
+                    blocks[index] = blockInfo
+
                 }
             }
         }
@@ -243,8 +254,16 @@ class MinigameSchematic(var name: String = "Mapinha") {
                     )
 
                     val blockInfo = blocks[index]
-                    var typeId = blockInfo.id
-                    var typeData = blockInfo.data
+                    var typeId: Short
+                    var typeData: Byte
+                    if (blockInfo == null) {
+                        typeId = 0
+                        typeData = 0
+                    } else {
+                        typeId = blockInfo.id
+                        typeData = blockInfo.data
+                    }
+
 
                     if (typeId < 0) {
                         typeId = 0
@@ -252,17 +271,16 @@ class MinigameSchematic(var name: String = "Mapinha") {
                     if (typeData < 0) {
                         typeData = 0
                     }
+                    if (block == null) continue
 
-
-                    if (block != null) {
-                        if (minusLag && (block.typeId == typeId.toInt() && block.data == typeData)) {
-                            continue
-                        }
-                        val bloco = Blocks.get(block.location) ?: continue
-                        bloco.setTypeAndData(
-                            Material.getMaterial(typeId.toInt()), typeData.toInt()
-                        )
+                    if (minusLag && (block.typeId == typeId.toInt() && block.data == typeData)) {
+                        continue
                     }
+                    val blockOf = Blocks.get(block.location) ?: continue
+                    blockOf.setTypeAndData(
+                        Material.getMaterial(typeId.toInt()), typeData.toInt()
+                    )
+
                 }
             }
         }
@@ -272,10 +290,19 @@ class MinigameSchematic(var name: String = "Mapinha") {
     }
 
     fun setType(id: Short, data: Byte) {
-        for (block in blocks) {
-            block.id = id
-            block.data = data
+        if (id == 0.toShort()) {
+            for (i in blocks.indices) {
+                blocks[i] = null
+            }
+        } else {
+            for (i in blocks.indices) {
+                val block = blocks[i] ?: BlockInfo()
+                block.id = id
+                block.data = data
+                blocks[i] = block
+            }
         }
+
     }
 
     fun save(stream: OutputStream) {
@@ -289,11 +316,17 @@ class MinigameSchematic(var name: String = "Mapinha") {
             val byteArrayDataWriter = DataOutputStream(byteArrayWriter)
             var blocksWrited = 0
             for (block in blocks) {
-                byteArrayDataWriter.writeShort(block.id.toInt())
-                byteArrayDataWriter.writeByte(block.data.toInt())
+                if (block == null) {
+                    byteArrayDataWriter.writeShort(0)
+                    byteArrayDataWriter.writeByte(0)
+                } else {
+                    byteArrayDataWriter.writeShort(block.id.toInt())
+                    byteArrayDataWriter.writeByte(block.data.toInt())
+                }
                 blocksWrited++
 
             }
+
             //log("Escreveu $blocksWrited no arquivo")
             //log("Escreveu ${byteArrayWriter.size()} bytes no arquivo")
             dataWriter.writeInt(byteArrayWriter.size())
@@ -330,10 +363,18 @@ class MinigameSchematic(var name: String = "Mapinha") {
             dataReader.readFully(array)
             val arrayReader = ByteArrayInputStream(array)
             val arrayDataReader = DataInputStream(arrayReader)
-            for (block in blocks) {
-                block.id = arrayDataReader.readShort()
-                block.data = arrayDataReader.readByte()
-
+            for (i in 0 until size) {
+                var block = blocks[i]
+                val id = arrayDataReader.readShort()
+                val data = arrayDataReader.readByte()
+                if (id == 0.toShort()) {
+                    blocks[i] = null
+                } else {
+                    block = block ?: BlockInfo()
+                    block.id = id
+                    block.data = data
+                    blocks[i] = block
+                }
             }
             low = Mine.deserializeVector(dataReader.readUTF())
             high = Mine.deserializeVector(dataReader.readUTF())

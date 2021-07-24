@@ -4,7 +4,7 @@ main: "net.eduard.api.EduardAPIMain"
 version: "1.7.6"
 author: "Eduard"
 authors: ["Eduard"]
-softdepend: [Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]
+softdepend: [Kotlin,KotlinLIBS,Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]
 website: "https://www.youtube.com/user/EduTutoriaisHD"
 commands:
   map:

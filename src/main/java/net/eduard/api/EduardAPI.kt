@@ -18,8 +18,9 @@ import net.eduard.api.server.minigame.MinigameSchematic
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.hybrid.BukkitServer
 import net.eduard.api.lib.hybrid.Hybrid
+import net.eduard.api.lib.kotlin.store
 import net.eduard.api.lib.manager.CommandManager
-import net.eduard.api.lib.menu.Menu
+import net.eduard.api.lib.menu.*
 import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
@@ -97,6 +98,11 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         StorageAPI.setDebug(configs.getBoolean("debug-storage"))
         log("Registrando classes da EduardLIB")
         //StorageAPI.registerPackage(javaClass, "net.eduard.api.lib")
+        store<Product>()
+        store<MenuButton>()
+        store<Shop>()
+        store<Menu>()
+        store<Slot>()
         //StorageAPI.registerPackage(Minigame::class.java)
         BukkitStorables.load()
         StorageAPI.startGson()
@@ -320,6 +326,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         unregisterTasks()
         unregisterListeners()
         unregisterServices()
+        MinigameSchematic.unloadAll()
     }
 
     override fun unregisterTasks() {

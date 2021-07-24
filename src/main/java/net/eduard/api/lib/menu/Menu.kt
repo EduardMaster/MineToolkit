@@ -1,7 +1,6 @@
 package net.eduard.api.lib.menu
 
 import net.eduard.api.lib.game.SoundEffect
-import java.util.ArrayList
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -19,12 +18,14 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.MineReflect
 import net.eduard.api.lib.plugin.IPluginInstance
+import net.eduard.api.lib.storage.annotations.StorageIndex
 import org.bukkit.Sound
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
+import java.util.*
 
 fun menu(title: String, lineAmount: Int, setup: Menu.() -> Unit): Menu {
     val menu = Menu(title, lineAmount)
@@ -63,6 +64,8 @@ open class Menu(
     var title: String = "Menu",
     var lineAmount: Int = 1
 ) : EventsManager() {
+    @StorageIndex
+    var index = title.toLowerCase().replace(" ","_")
     @Transient
     var autoAlignPerLine = 7
     @Transient
@@ -534,6 +537,7 @@ open class Menu(
             button.parentMenu = this
             if (button.isCategory) {
                 button.menu?.superiorMenu = this
+                button.menuLink?.superiorMenu = this
                 button.menu?.register(plugin)
             }
         }
@@ -615,7 +619,7 @@ open class Menu(
         if (event.whoClicked !is Player) return
         val player = event.whoClicked as Player
         if (!isOpen(player, event.inventory)) return
-        debug("Nome do Menu: " + event.inventory.name)
+        debug("Nome do Menu: " + event.view.title)
         event.isCancelled = true
         val slot = event.rawSlot
         var page: Int = getPageOpen(player)
@@ -660,6 +664,7 @@ open class Menu(
             }
             if (button.isCategory) {
                 button.menu?.open(player)
+                button.menuLink?.open(player)
                 debug("Button open another menu")
                 return
             }

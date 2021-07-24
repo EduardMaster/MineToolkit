@@ -67,8 +67,14 @@ public class EnchantGlow extends EnchantmentWrapper {
 			e.printStackTrace();
 		}
 
-		glow = new EnchantGlow(255);
-		Enchantment.registerEnchantment(glow);
+		try {
+			glow = new EnchantGlow(255);
+			Enchantment.registerEnchantment(glow);
+		}catch (Error err){
+			// pode falhar nas novas versões então adiciona Protection mesmo
+			glow = Enchantment.PROTECTION_ENVIRONMENTAL;
+		}
+
 		return glow;
 	}
 
