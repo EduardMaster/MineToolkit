@@ -162,6 +162,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         if (getBoolean("bungee-api")) {
             BungeeAPI.controller.unregister()
         }
+        dbManager.closeConnection()
 
     }
 
@@ -180,6 +181,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     override fun unregisterCommands() {
 
     }
+
 
     override fun getPlugin(): Any {
         return plugin

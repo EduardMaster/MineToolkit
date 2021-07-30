@@ -5,7 +5,6 @@ import net.eduard.api.lib.database.api.DatabaseColumn
 import net.eduard.api.lib.database.api.DatabaseEngine
 import net.eduard.api.lib.database.api.DatabaseTable
 import net.eduard.api.lib.database.api.TableReference
-import org.bukkit.entity.Player
 import java.lang.Exception
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -160,16 +159,50 @@ class MySQLTable<T : Any>(
     }
 
     override fun findByReference(reference: Any, cachedData: T?): T? {
-        var columnName = primaryName
-        var columnValue : Any = 1
+        var referenceColumnName = primaryName
+        var referenceId : Any = 1
         for (column in columns.values){
             if (column.javaType == reference.javaClass){
-                columnName = column.name
+                referenceColumnName = column.name
                 val primary = column.referenceTable.primaryColumn?:continue
-                columnValue = primary.field.get(reference)
+                referenceId = primary.field.get(reference)
             }
         }
-        return findByColumn(columnName,columnValue, cachedData);
+        return findByColumn(referenceColumnName,referenceId, cachedData);
+    }
+
+    override fun selectByReference(reference: Any): List<T> {
+        val list = mutableListOf<T>()
+        var referenceColumnName = primaryName
+        var referenceId : Any = 1
+        for (column in columns.values){
+            if (column.javaType == reference.javaClass){
+                referenceColumnName = column.name
+                val primary = column.referenceTable.primaryColumn?:continue
+                referenceId = primary.field.get(reference)
+            }
+        }
+        try {
+            val text = "SELECT * FROM $name WHERE $referenceColumnName = ?"
+            val prepare = connection.prepareStatement(
+                text
+            )
+            val column = columns.values.first{it.name == referenceColumnName}
+            prepare.setString(1, engine.convertToSQL(referenceId, column))
+            log("Pegando: $text")
+            val query = prepare.executeQuery()
+
+            while (query.next()) {
+                val cachedData : T? = elements[query.getObject(primaryName)]
+                val newData = cachedData ?: newInstance.invoke()
+                updateCache(newData, query)
+                list.add(newData)
+            }
+            query.close()
+        } catch (ex: SQLException) {
+            ex.printStackTrace()
+        }
+        return list
     }
 
     override fun findByColumn(columnName: String, columnValue: Any, cachedData: T?): T? {
@@ -180,12 +213,13 @@ class MySQLTable<T : Any>(
             )
             val column = columns.values.first{it.name == columnName}
             prepare.setString(1, engine.convertToSQL(columnValue, column))
-            log("findByColumn: $text")
+            log("Encontrando: $text")
             val query = prepare.executeQuery()
 
             if (query.next()) {
                 val newData = cachedData ?: newInstance.invoke()
                 updateCache(newData, query)
+                query.close()
                 return newData
             }
 
@@ -200,6 +234,7 @@ class MySQLTable<T : Any>(
 
     }
 
+
     override fun select(collums : String, where: String, columnOrder: String, ascending: Boolean, limit: Int): List<T> {
         val list = mutableListOf<T>()
         try {
@@ -210,13 +245,15 @@ class MySQLTable<T : Any>(
             val prepare = connection.prepareStatement(
                text
             )
-            log("Selecting: $text")
+            log("Selecionando: $text")
             val query = prepare.executeQuery()
             while (query.next()) {
-                val newData = newInstance.invoke()
+                val cachedData : T? = elements[query.getObject(primaryName)]
+                val newData = cachedData?: newInstance.invoke()
                 updateCache(newData, query)
                 list.add(newData)
             }
+            query.close()
 
         } catch (ex: SQLException) {
             ex.printStackTrace()
@@ -236,9 +273,9 @@ class MySQLTable<T : Any>(
                     field.set(data, null)
                     continue;
                 }
-                val value = column.referenceTable.elements[key]
-                if (value != null) {
-                    field.set(data, value)
+                val referenceInstance = column.referenceTable.elements[key]
+                if (referenceInstance != null) {
+                    field.set(data, referenceInstance)
                 } else {
 
                     references.add(TableReference(column, data, key))
@@ -349,12 +386,14 @@ class MySQLTable<T : Any>(
                 field.isAccessible = true
                 val fieldValue = field.get(data)
                 if (column.isConstraint && fieldValue != null) {
-                    val primaryKey = column.referenceTable.primaryColumn!!.field.get(fieldValue) ?: 0
+                    val primaryKey = column.referenceTable.primaryColumn!!
+                        .field.get(fieldValue) ?: 0
                     prepare.setObject(id, primaryKey)
                     id++
                     continue
                 }
-                if (fieldValue == null || (column.isNumber && column.isPrimary)) {
+                if (fieldValue == null || (column.isNumber &&
+                            column.isPrimary)) {
                     prepare.setObject(id, null)
                 } else {
                     val converted = engine.convertToSQL(fieldValue, column)
@@ -455,5 +494,6 @@ class MySQLTable<T : Any>(
             ex.printStackTrace()
         }
     }
+
 
 }

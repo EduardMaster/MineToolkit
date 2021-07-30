@@ -14,7 +14,7 @@ class DatabaseUpdater : TimeManager(20) {
     override fun run() {
         for (plugin in Bukkit.getPluginManager().plugins) {
             if (plugin !is EduardPlugin) continue
-            if (plugin.db.hasConnection()) {
+            if (plugin.dbManager.hasConnection()) {
                 val name = plugin.name
 
                 run {

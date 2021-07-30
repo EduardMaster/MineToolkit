@@ -156,13 +156,14 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
     override fun onDisable() {
 
-        calculate("Desconectando DB") { disconnectDB() }
+
         calculate("Desregistrando Servicos") { unregisterServices() }
         calculate("Desregistrando Listeners") { unregisterListeners() }
         calculate("Desregistrando Tasks") { unregisterTasks() }
         calculate("Desregistrando Storables") { unregisterStorableClasses() }
         calculate("Desregistrando menus") { unregisterMenus() }
         calculate("Desregistrando Comandos") { unregisterCommands() }
+        calculate("Desconectando Database Connections e Limpando Cache") { dbManager.closeConnection() }
         log("Foi desativado na v" + description.version + " um plugin "
                     + if (isFree) "§aGratuito" else "§bPago"
         )

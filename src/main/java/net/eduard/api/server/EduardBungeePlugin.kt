@@ -22,9 +22,7 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
 
     override var started = false
     var isFree= false
-    override fun onLoad() {
-        super<IPlugin>.onLoad()
-    }
+
 
 
     fun registerEvents(events: Listener) {
@@ -66,9 +64,14 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     override fun error(message: String) {
         console("§e$prefix§c$message")
     }
-
+    override fun onLoad() {
+        super<IPlugin>.onLoad()
+    }
     override fun onEnable() {
         if (!started) onLoad()
+    }
+    override fun onDisable() {
+
     }
     override fun save() {
 

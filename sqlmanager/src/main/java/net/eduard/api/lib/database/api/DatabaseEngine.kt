@@ -16,6 +16,7 @@ interface DatabaseEngine {
         className : String
     ): DatabaseTable<*>
     fun cacheInfo()
+    fun clearCache()
     fun <T : Any> updateCache(data : T)
     fun <T : Any> deleteTable(clz: Class<T>)
     fun <T : Any> clearTable(clz: Class<T>)

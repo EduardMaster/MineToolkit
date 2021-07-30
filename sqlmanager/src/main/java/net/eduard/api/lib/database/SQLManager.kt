@@ -75,7 +75,9 @@ class SQLManager(var dbManager: DBManager) {
     inline fun <reified E : Any> getDataOf(reference: Any): E? {
         return getDataOf(E::class.java, reference)
     }
-
+    inline fun <reified E : Any> getDatasOf(reference: Any): List<E> {
+        return getDatasOf(E::class.java, reference)
+    }
     /**
      *
      * @param dataClass
@@ -91,6 +93,8 @@ class SQLManager(var dbManager: DBManager) {
         } else null
     }
 
+
+
     fun <E : Any> getDataOf(dataClass: Class<E>, reference: Any): E? {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
@@ -98,6 +102,14 @@ class SQLManager(var dbManager: DBManager) {
         } else null
     }
 
+
+
+    fun <E : Any> getDatasOf(dataClass: Class<E>, reference: Any): List<E> {
+        return if (hasConnection()) {
+            dbManager.engineUsed.getTable(dataClass)
+                .selectByReference(reference)
+        } else listOf()
+    }
 
     /**
      *
@@ -136,7 +148,7 @@ class SQLManager(var dbManager: DBManager) {
 
     /**
      * Alias para getSome()
-    </E> */
+     */
     fun <E : Any> getAllData(
         dataClass: Class<E>,
         where: String,
@@ -148,12 +160,12 @@ class SQLManager(var dbManager: DBManager) {
     }
 
     /**
-     *
-     * @param dataClass
-     * @param where
-     * @param orderBy
-     * @param desc
-     * @param limit
+     * Retorna alguns dados da tabela pesquisa mais complexa do que getAll()
+     * @param dataClass Classe
+     * @param where Where
+     * @param orderBy Coluna de Ordenar
+     * @param desc Se é Decrescente
+     * @param limit Numero Limite
      * @param <E>
      * @return
     </E> */

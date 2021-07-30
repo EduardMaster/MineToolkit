@@ -8,6 +8,7 @@ import java.lang.reflect.Field
 class DatabaseColumn<T : Any>(val table: DatabaseTable<T>, val field: Field, val engine: DatabaseEngine) {
 
 
+    val isReference get() = isConstraint && !isPrimary
     val isConstraint = field.isAnnotationPresent(ColumnRelation::class.java)
     val javaType = field.type
     val wrapperType = Extra.getWrapperOrReturn(field.type)

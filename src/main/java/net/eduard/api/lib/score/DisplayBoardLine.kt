@@ -5,4 +5,9 @@ interface DisplayBoardLine {
 
     fun check()
 
+    fun get(): String {
+        check()
+        return text
+    }
+
 }

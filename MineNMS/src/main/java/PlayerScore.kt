@@ -23,13 +23,13 @@ interface PlayerScore {
             }
         }
         fun getScore(player: Player): PlayerScore {
-            var conta = players.get(player)
-            if (conta == null){
-                conta = constructor.invoke(player)
-                players[player] = conta
+            var playerScore = players[player]
+            if (playerScore == null){
+                playerScore = constructor.invoke(player)
+                players[player] = playerScore
 
             }
-            return conta
+            return playerScore
         }
 
 

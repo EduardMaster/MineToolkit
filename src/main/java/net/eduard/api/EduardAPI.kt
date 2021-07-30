@@ -131,9 +131,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
     }
-    fun resetScoreboard(player: Player) {
-        player.scoreboard = Mine.getMainScoreboard()
-    }
+
 
     fun resetScoreboards() {
         for (teams in Mine.getMainScoreboard().teams) {
@@ -327,6 +325,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         unregisterListeners()
         unregisterServices()
         MinigameSchematic.unloadAll()
+        sqlManager.dbManager.closeConnection()
     }
 
     override fun unregisterTasks() {

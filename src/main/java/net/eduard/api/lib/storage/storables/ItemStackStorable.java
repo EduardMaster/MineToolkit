@@ -33,6 +33,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         return jsonSerializationContext.serialize(StorageAPI.store(ItemStack.class, itemStack));
     }
 
+
     @Override
     public ItemStack newInstance() {
         return new ItemStack(Material.STONE);
@@ -51,6 +52,14 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
             if (!name.isEmpty()) {
                 Mine.setName(item, name);
             }
+        }
+        if (map.containsKey("type")){
+            try {
+                Material type = Material.getMaterial(map.get("type").toString());
+                item.type(type);
+            }catch (Exception ignored){
+            }
+
         }
         if (map.containsKey("lore")) {
             Object dado = map.get("lore");
@@ -125,6 +134,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         map.remove("handle");
         map.remove("skull-owner");
         map.put("id", item.getTypeId());
+        map.put("type",item.getType());
         map.put("data", item.getDurability());
         map.put("amount", item.getAmount());
         map.put("name", Mine.getName(item));

@@ -36,6 +36,24 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         }
     }
 
+    override fun clearCache() {
+        for (table in tables.values){
+            for (element in table.elements.values){
+                for (column in table.columns.values){
+                    if (column.isReference){
+                        column.field.set(element, null)
+                    }
+                }
+            }
+            table.references.clear()
+            table.elements.clear()
+            table.columns.clear()
+            table.columnsContraintsCreated.clear()
+            table.columnsCreated.clear()
+        }
+        tables.clear()
+        tablesByName.clear()
+    }
 
 
     override val types: MutableMap<Class<*>, String> = mutableMapOf(

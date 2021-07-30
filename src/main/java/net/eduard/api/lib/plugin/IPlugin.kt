@@ -35,14 +35,14 @@ interface IPlugin : IPluginInstance {
         configs.add("settings", settings)
         configs.add("database", dbManager)
         configs.saveConfig()
-        settings =  configs.get("settings", PluginSettings::class.java)
+        settings = configs.get("settings", PluginSettings::class.java)
         dbManager = configs.get("database", DBManager::class.java)
         sqlManager = SQLManager(dbManager)
         storageManager = StorageManager(sqlManager)
         started = true
         storageManager.type = settings.storeType
-        if (db.isEnabled) {
-            db.openConnection()
+        if (dbManager.isEnabled) {
+            dbManager.openConnection()
         }
     }
 
@@ -79,6 +79,7 @@ interface IPlugin : IPluginInstance {
     override fun getSystemName(): String {
         return pluginName
     }
+
     val pluginName: String
     val pluginFolder: File
     fun log(message: String)
@@ -88,20 +89,16 @@ interface IPlugin : IPluginInstance {
     }
 
     fun onEnable()
+    fun onDisable()
     fun reload()
     fun configDefault()
     fun save()
     fun onActivation() {}
-    fun onDisable()
     fun unregisterTasks()
     fun unregisterListeners()
     fun unregisterServices()
     fun unregisterCommands()
-    var db
-        get() = dbManager
-        set(data) {
-            dbManager = data
-        }
+
 
 
     fun getBoolean(path: String): Boolean {
@@ -129,11 +126,6 @@ interface IPlugin : IPluginInstance {
         return configs.message(path)
     }
 
-    fun disconnectDB() {
-        if (db.hasConnection()) {
-            db.closeConnection()
-        }
-    }
 
     /**
      * Deleta os backups dos dias anteriores
@@ -142,7 +134,8 @@ interface IPlugin : IPluginInstance {
         val pasta = File(pluginFolder, "/backup/")
         pasta.mkdirs()
         val lista = listOf(*pasta.listFiles()!!)
-        lista.filter { it.lastModified() + TimeUnit.DAYS.toMillis(1) <= System.currentTimeMillis() }
+        lista.filter { it.lastModified() + TimeUnit.DAYS.
+        toMillis(1) <= System.currentTimeMillis() }
             .forEach {
                 Extra.deleteFolder(it)
                 if (it.exists())

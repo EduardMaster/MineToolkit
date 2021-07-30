@@ -5,6 +5,7 @@ import net.eduard.api.lib.database.api.SQLEngineType
 import net.eduard.api.lib.database.impl.MySQLEngine
 import net.eduard.api.lib.modules.Extra
 import java.sql.*
+import kotlin.jvm.internal.Intrinsics
 
 /**
  * API de Controle de MySQL ou SQLite com apenas 1 conexão
@@ -51,9 +52,11 @@ class DBManager(
      * Fecha a conexao do Banco
      */
     fun closeConnection() {
-        if (hasConnection()) {
+        if (hasConnectionInMemory()) {
             try {
+                engineUsed.clearCache()
                 connection.close()
+
             } catch (e: SQLException) {
                 e.printStackTrace()
             }
@@ -85,22 +88,20 @@ class DBManager(
      * @return Mesma instacia da classe DBManager
      */
     fun openConnection(): DBManager {
-        if (!hasConnectionInFact()) {
-            try {
-                connection = connect()
-                if (engine === SQLEngineType.MYSQL) {
-                    engineUsed = MySQLEngine(connection)
-                    createDatabase(database)
-                    useDatabase(database)
-                } else if (engine === SQLEngineType.SQLITE) {
-                    engineUsed = MySQLEngine(connection)
-                }
-            } catch (e: Exception) {
-                if (isDebugging) {
-                    e.printStackTrace()
-                }
+        try {
+            connection = connect()
+            if (engine === SQLEngineType.MYSQL) {
+                engineUsed = MySQLEngine(connection)
+                createDatabase(database)
+                useDatabase(database)
+            } else if (engine === SQLEngineType.SQLITE) {
+                engineUsed = MySQLEngine(connection)
             }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+
         }
+
         return this
     }
 
@@ -113,11 +114,16 @@ class DBManager(
     fun hasConnectionInFact(): Boolean {
         try {
 
-            return this::connection.isInitialized&&  connection.isValid(1000) && !(connection.isClosed)
+            return hasConnectionInMemory()
+                    && connection.isValid(500)
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }
         return false
+    }
+
+    fun hasConnectionInMemory(): Boolean {
+        return this::connection.isInitialized && !(connection.isClosed)
     }
 
     /**
@@ -128,9 +134,9 @@ class DBManager(
     fun hasConnection(): Boolean {
         try {
             var have = hasConnectionInFact()
-            if (!have && autoReconnect) {
+            if (!have && autoReconnect && isEnabled) {
                 openConnection()
-                have = hasConnectionInFact()
+                have = hasConnectionInMemory()
             }
             return have
         } catch (ex: SQLException) {

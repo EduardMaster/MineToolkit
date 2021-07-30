@@ -13,7 +13,7 @@ class BungeeDatabaseUpdater : Runnable {
     override fun run() {
         for (plugin in ProxyServer.getInstance().pluginManager.plugins) {
             if (plugin !is EduardBungeePlugin) continue
-            if (plugin.db.hasConnection()) {
+            if (plugin.dbManager.hasConnection()) {
                 val name = plugin.pluginName
                 run {
                     val agora = Extra.getNow()
