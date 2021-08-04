@@ -9,17 +9,16 @@ class MinigameTeam(
     var game: MinigameRoom
 ){
 
-
     var name: String = "Time1"
     var points = 0
     var players = mutableListOf<MinigamePlayer>()
     var maxSize = 0
 
     val kills: Int
-        get() = players.sumBy { it.kills }
+        get() = players.sumBy { it.stats.kills }
 
     val deaths: Int
-        get() = players.sumBy { it.deaths }
+        get() = players.sumBy { it.stats.deaths }
 
 
     val size: Int

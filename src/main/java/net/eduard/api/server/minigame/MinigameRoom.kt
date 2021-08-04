@@ -73,6 +73,9 @@ open class MinigameRoom() {
     var maxRounds = 3
 
     @Transient
+    var stats = mutableMapOf<MinigamePlayer, MinigamePlayerStats>()
+
+    @Transient
     var mapUsed: MinigameMap = map
 
     @Transient
@@ -227,6 +230,7 @@ open class MinigameRoom() {
     fun restart() {
         state = MinigameState.STARTING
         time = mode.timeIntoStart
+        stats.clear()
     }
 
     /**
@@ -236,6 +240,7 @@ open class MinigameRoom() {
      */
     open fun leave(player: MinigamePlayer) {
         players.remove(player)
+        player.resetStats()
         player.game = null
         for (jogador in players) {
             jogador.hide(player)

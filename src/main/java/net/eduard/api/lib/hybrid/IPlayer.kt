@@ -8,8 +8,10 @@ interface IPlayer<T : Any> : ISender {
     val instance : T?
     val isOnline : Boolean
     val uniqueId get() = uuid
+    val server : String
     fun search() : T?
     fun connect(serverName: String)
+    fun playSound(soundName : String)
     val offline get() = PlayerUser(name, uuid)
     fun sendMessage(message : TextComponent)
     fun chat(message : String)

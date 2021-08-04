@@ -13,10 +13,7 @@ import org.bukkit.entity.Player
 @Suppress("unused")
 open class MinigamePlayer() {
 
-    var kills = 0
-    var deaths = 0
-    var streak = 0
-    var assists = 0
+
     var state = MinigamePlayerState.NORMAL
     var team: MinigameTeam? = null
     var game: MinigameRoom? = null
@@ -24,6 +21,9 @@ open class MinigamePlayer() {
     var fakePlayer = FakePlayer("Eduard")
     val player get() = fakePlayer.player
     val offline get() = fakePlayer.offline
+    var lastStats : MinigamePlayerStats? = null
+    var stats = MinigamePlayerStats()
+
 
     val isPlaying
         get() = game != null
@@ -59,25 +59,25 @@ open class MinigamePlayer() {
      * Adiciona um Kill
      */
     fun addKill() {
-        kills++
+        stats.kills++
     }
 
     /**
      * Adiciona um Streak
      */
     fun addStreak() {
-        streak++
+        stats.streak++
     }
 
     /**
      * Adiciona uma Morte
      */
     fun addDeath() {
-        deaths++
+        stats.deaths++
     }
 
     fun addAssist(){
-        assists++
+        stats.assists++
     }
 
     /**
@@ -163,6 +163,7 @@ open class MinigamePlayer() {
      */
     fun join(game: MinigameRoom) {
         this.game = game
+        game.stats[this] = stats
         for (gamePlayerLoop in game.players) {
             gamePlayerLoop.show(this)
             show(gamePlayerLoop)
@@ -192,6 +193,10 @@ open class MinigamePlayer() {
     fun leaveGame() {
         game?.leave(this)
 
+    }
+    fun resetStats(){
+        lastStats = stats
+        stats = MinigamePlayerStats()
     }
 
     fun leaveLobby() {

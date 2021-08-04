@@ -4,6 +4,7 @@ package net.eduard.api.lib.hybrid
 import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -48,6 +49,12 @@ override var uuid: UUID) : IPlayer<Player>{
     constructor(player : Player) : this(player.name,
         player.uniqueId)
 
+    override val server: String
+        get() = BukkitBungeeAPI.getCurrentServer()
+    override fun playSound(soundName: String) {
+        val som = Sound.valueOf(soundName.toUpperCase())
+        instance?.playSound(instance?.location,som,2f,1f)
+    }
     override val isOnline: Boolean
         get() = instance?.isOnline?:false
 

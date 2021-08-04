@@ -51,6 +51,13 @@ override var uuid: UUID) : IPlayer<ProxiedPlayer>{
     override fun hashCode(): Int {
         return offline.hashCode()
     }
+
+    override val server: String
+        get() = instance?.server?.info?.name ?:"lobby"
+
+    override fun playSound(soundName: String) {
+
+    }
     override fun equals(other: Any?): Boolean {
         if (other == null)return false
         if (this === other) return true
