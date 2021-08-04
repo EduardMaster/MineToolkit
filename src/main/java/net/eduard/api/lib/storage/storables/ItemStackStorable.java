@@ -41,25 +41,48 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
 
     @Override
     public ItemStack restore(Map<String, Object> map) {
-        int id = Extra.toInt(map.get("id"));
         int amount = Extra.toInt(map.get("amount"));
         int data = (map.containsKey("data")) ? Extra.toInt(map.get("data")) : 0;
-        @SuppressWarnings("deprecation")
-        ItemBuilder item = new ItemBuilder(Material.getMaterial(id), amount);
-        item.data(data);
+        Material type = Material.values()[0];
+        String typeName = null;
+        if (map.containsKey("id")) {
+            int id = Extra.toInt(map.get("id"));
+            type = Material.getMaterial(id);
+        } else if (map.containsKey("type")) {
+            try {
+                 typeName = map.get("type").toString()
+                        .toUpperCase();
+                type = Material.matchMaterial(typeName);
+                if (type == null)
+                    try {
+                        type = (Material) Extra.getFieldValue(Material.class, typeName);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                if (type == null) {
+                    type = Material.getMaterial(typeName);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        if (type == null) {
+            type = Material.getMaterial("STONE");
+        }
+
+        ItemBuilder item = new ItemBuilder(type, amount);
+        if (typeName!=null){
+            item.setTypeName(typeName);
+        }
+        if (data != 0) {
+            item.data(data);
+        }
+
         if (map.containsKey("name")) {
             String name = Extra.toChatMessage((String) map.get("name"));
             if (!name.isEmpty()) {
                 Mine.setName(item, name);
             }
-        }
-        if (map.containsKey("type")){
-            try {
-                Material type = Material.getMaterial(map.get("type").toString());
-                item.type(type);
-            }catch (Exception ignored){
-            }
-
         }
         if (map.containsKey("lore")) {
             Object dado = map.get("lore");
@@ -127,23 +150,27 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
 
     @Override
     public void store(Map<String, Object> map, ItemStack item) {
-        map.remove("durability");
-        map.remove("meta");
-        map.remove("type");
-        map.remove("data");
-        map.remove("handle");
-        map.remove("skull-owner");
-        map.put("id", item.getTypeId());
-        map.put("type",item.getType());
-        map.put("data", item.getDurability());
+        if (item.getTypeId()!=0) {
+            map.put("id", item.getTypeId());
+            map.remove("type");
+        }else{
+            if (item instanceof ItemBuilder){
+                map.put("type", ((ItemBuilder) item).getTypeName());
+            }
+        }
         map.put("amount", item.getAmount());
-        map.put("name", Mine.getName(item));
-        map.put("lore", Extra.toConfigMessages(Mine.getLore(item)));
         if (item.containsEnchantment(EnchantGlow.getGlow())) {
             map.put("glow", true);
         }
         List<String> enchants = new ArrayList<>();
-        if (item.getItemMeta().hasEnchants()) {
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta == null) return;
+        if (item.getDurability() != 0) {
+            map.put("data", item.getDurability());
+        }
+        map.put("name", Mine.getName(item));
+        map.put("lore", Extra.toConfigMessages(Mine.getLore(item)));
+        if (itemMeta.hasEnchants()) {
             StringBuilder str = new StringBuilder();
             try {
                 for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
@@ -155,8 +182,8 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
             }
         }
         map.put("enchants", enchants);
-        if (item.getItemMeta() instanceof SkullMeta) {
-            SkullMeta meta = (SkullMeta) item.getItemMeta();
+        if (itemMeta instanceof SkullMeta) {
+            SkullMeta meta = (SkullMeta) itemMeta;
             if (meta.getOwner() != null) {
                 map.put("head-name", meta.getOwner());
             }
@@ -171,21 +198,18 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 Collection<Property> textures = profile.getProperties().get("textures");
                 if (textures == null)
                     return;
-                if (textures.size() >= 1) {
-                    for (Property texture : textures) {
+                if (textures.size() == 0) return;
+                for (Property texture : textures) {
 
-                        map.put("texture-value", texture.getValue());
-                        map.put("texture-signature", texture.getSignature());
-                    }
+                    map.put("texture-value", texture.getValue());
+                    map.put("texture-signature", texture.getSignature());
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-
     }
-//
 
 
     @Override

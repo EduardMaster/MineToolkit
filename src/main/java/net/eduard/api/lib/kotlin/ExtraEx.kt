@@ -17,7 +17,8 @@ inline fun <reified  T : Any> store(){
 inline fun <reified  T : Any> store(alias : String){
     StorageAPI.autoRegisterClass(T::class.java , alias)
 }
-
+fun Int.toRadians() = Math.toRadians(this.toDouble())
+fun Double.toRadians() = Math.toRadians(this)
 
 /**
  * Formata o Tempo do Jeito de Data ou por Duração

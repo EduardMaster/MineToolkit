@@ -552,6 +552,7 @@ open class Menu(
                 button.menu?.unregisterMenu()
             }
         }
+        buttons.clear()
     }
 
     @EventHandler

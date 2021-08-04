@@ -39,6 +39,7 @@ class EduardAPIListener : EventsManager() {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     fun onBreak(e: BlockBreakEvent) {
+        if (!EduardAPI.instance.getBoolean("block-mine"))return
         val event = BlockMineEvent(mutableMapOf(), e.block, e.player, true, e.expToDrop)
         e.isCancelled = true
         event.call()

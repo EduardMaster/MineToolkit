@@ -30,6 +30,7 @@ import net.eduard.api.listener.*
 import net.eduard.api.server.currency.CurrencyManager
 import net.eduard.api.supports.CurrencyVaultEconomy
 import net.eduard.api.server.minigame.Minigame
+import net.eduard.api.supports.CurrencyJHCash
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.DatabaseUpdater
 import net.eduard.api.task.MenuAutoUpdaterTask
@@ -162,6 +163,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         log("Base de dados de Enums do Bukkit gerado com sucesso")
 
         log("Carregando Moedas")
+        store<CurrencyJHCash>()
+        store<CurrencyVaultEconomy>()
         CurrencyManager.register(CurrencyVaultEconomy())
         JHCashHook()
         log("Moedas carregadas")

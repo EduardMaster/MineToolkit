@@ -33,6 +33,7 @@ dependencies {
     api(project(":MineNMS-1_8_9"))
     api(project(":MineNMS-1_7"))
     api(project(":MineNMS-1_12"))
+    api(project(":MineNMS-1_16_5"))
     api(project(":JavaUtils"))
     api(project(":MineUtils"))
     api(project(":SQLManager"))
