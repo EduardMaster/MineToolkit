@@ -3,6 +3,7 @@ description: "API de desenvolvimento de plugins que facilita sua vida"
 main: "net.eduard.api.EduardAPIMain"
 version: "1.7.6"
 author: "Eduard"
+api-version: 1.16
 authors: ["Eduard"]
 softdepend: [Kotlin,KotlinLIBS,Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]
 website: "https://www.youtube.com/user/EduTutoriaisHD"

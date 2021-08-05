@@ -22,7 +22,7 @@ class EduWorldEditListener : EventsManager() {
         if (player.gameMode != GameMode.CREATIVE) return
         if (e.item == null)
             return
-        if (e.item.type != Material.WOOD_AXE) return
+        if (e.item.type != Material.IRON_AXE) return
         val mapa = MinigameSchematic.getSchematic(player)
         if (e.action == Action.LEFT_CLICK_BLOCK) {
             mapa.high = e.clickedBlock.location.toVector()

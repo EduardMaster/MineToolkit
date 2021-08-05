@@ -1,6 +1,8 @@
 package net.eduard.api.lib.storage.storables;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
@@ -33,24 +35,74 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         return jsonSerializationContext.serialize(StorageAPI.store(ItemStack.class, itemStack));
     }
 
+    private static Method isLegacy = null;
+    private static Method getTypeId = null;
+    private static final Map<Integer, Material> typesByID = new HashMap<>();
+
+    static {
+        try {
+            isLegacy = Extra.getMethod(Material.class, "isLegacy");
+            Map<String, Material> mats = (Map<String, Material>) Extra.getFieldValue(Material.class, "BY_NAME");
+            for (Entry<String, Material> entry : mats.entrySet()) {
+                Material mat = entry.getValue();
+                if (mat==null)continue;
+                boolean isOld = (boolean) isLegacy.invoke(mat);
+                //Mine.console("§aMaterialName: "+mat.name());
+                //Mine.console("§aMaterialString: "+mat.toString());
+                if (isOld) {
+                    typesByID.put(mat.getId(), mat);
+                    //Mine.console("§eMaterialId: "+mat.getId());
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        try {
+            getTypeId = Extra.getMethod(ItemStack.class, "getTypeId");
+        } catch (Exception ex) {
+        }
+    }
+
+    public static int getTypeId(Material material) {
+        if (getTypeId != null) {
+            try {
+                return (int) getTypeId.invoke(material);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
 
     @Override
     public ItemStack newInstance() {
         return new ItemStack(Material.STONE);
     }
 
+    public static Material getMaterial(int id) {
+        if (isLegacy != null) {
+            Material mat = typesByID.get(id);
+            return mat;
+        } else {
+            return Material.getMaterial(id);
+        }
+    }
+
+
     @Override
     public ItemStack restore(Map<String, Object> map) {
-        int amount = Extra.toInt(map.get("amount"));
+        int amount = (map.containsKey("amount")) ? Extra.toInt(map.get("amount")) : 1;
         int data = (map.containsKey("data")) ? Extra.toInt(map.get("data")) : 0;
         Material type = Material.values()[0];
         String typeName = null;
         if (map.containsKey("id")) {
             int id = Extra.toInt(map.get("id"));
-            type = Material.getMaterial(id);
-        } else if (map.containsKey("type")) {
+            type = getMaterial(id);
+        }
+        if (map.containsKey("type")) {
             try {
-                 typeName = map.get("type").toString()
+                typeName = map.get("type").toString()
                         .toUpperCase();
                 type = Material.matchMaterial(typeName);
                 if (type == null)
@@ -71,9 +123,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         }
 
         ItemBuilder item = new ItemBuilder(type, amount);
-        if (typeName!=null){
-            item.setTypeName(typeName);
-        }
+
         if (data != 0) {
             item.data(data);
         }
@@ -150,15 +200,17 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
 
     @Override
     public void store(Map<String, Object> map, ItemStack item) {
-        if (item.getTypeId()!=0) {
-            map.put("id", item.getTypeId());
-            map.remove("type");
-        }else{
-            if (item instanceof ItemBuilder){
-                map.put("type", ((ItemBuilder) item).getTypeName());
-            }
+
+        if (isLegacy != null) {
+            map.put("type", item.getType().toString());
+        } else {
+            int id = getTypeId(item.getType());
+            map.put("id", id);
+            map.put("type", item.getType().toString());
         }
-        map.put("amount", item.getAmount());
+        if (item.getAmount() > 1) {
+            map.put("amount", item.getAmount());
+        }
         if (item.containsEnchantment(EnchantGlow.getGlow())) {
             map.put("glow", true);
         }
