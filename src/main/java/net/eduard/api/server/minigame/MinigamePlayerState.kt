@@ -5,5 +5,5 @@ package net.eduard.api.server.minigame
  * @author Eduard
  */
 enum class MinigamePlayerState {
-    NORMAL, SPECTATOR, ADMIN
+    NORMAL, SPECTATOR, ADMIN, WINNER, GHOST
 }

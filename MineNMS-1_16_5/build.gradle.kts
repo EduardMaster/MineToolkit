@@ -35,6 +35,7 @@ repositories {
 
 dependencies {
     compileOnly(project(":MineNMS"))
+    compileOnly(project(":JavaUtils"))
     compileOnly("org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT")
     compileOnly(kotlin("stdlib"))
 }

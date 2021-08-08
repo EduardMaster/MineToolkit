@@ -55,7 +55,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+           // ex.printStackTrace();
         }
         try {
             getTypeId = Extra.getMethod(ItemStack.class, "getTypeId");
@@ -63,15 +63,15 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         }
     }
 
-    public static int getTypeId(Material material) {
+    public static int getTypeId(ItemStack itemStack) {
         if (getTypeId != null) {
             try {
-                return (int) getTypeId.invoke(material);
+                return (int) getTypeId.invoke(itemStack);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return 0;
+        return itemStack.getType().getId();
     }
 
 
@@ -204,7 +204,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         if (isLegacy != null) {
             map.put("type", item.getType().toString());
         } else {
-            int id = getTypeId(item.getType());
+            int id = getTypeId(item);
             map.put("id", id);
             map.put("type", item.getType().toString());
         }
@@ -223,7 +223,6 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         map.put("name", Mine.getName(item));
         map.put("lore", Extra.toConfigMessages(Mine.getLore(item)));
         if (itemMeta.hasEnchants()) {
-            StringBuilder str = new StringBuilder();
             try {
                 for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
                     Enchantment enchantment = entry.getKey();

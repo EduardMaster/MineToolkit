@@ -36,10 +36,13 @@ open class DisplayBoard(
 ) {
 
     companion object {
-        private val nameLimit = 16
-        private val teamPrefix = "display-"
-        private val prefixLimit = 16
-        private val suffixLimit = 16
+        var prefixLimit = 16
+        var suffixLimit = 16
+        var nameLimit = 16
+        var colorFix = true
+        val teamPrefix = "display-"
+
+
     }
 
     /**
@@ -137,10 +140,8 @@ open class DisplayBoard(
             id--
         }
         for (line in customLines) {
-
             set(line.position, Mine.getReplacers(line.get(), player))
         }
-
         setDisplay(Mine.getReplacers(customTitle?.get() ?: title, player))
     }
 
@@ -198,23 +199,44 @@ open class DisplayBoard(
         var prefix = ""
         var center = ""
         var suffix = ""
-        val colorSize = 2
-        if (text.length <= nameLimit) {
-            center = text
-        } else if (text.length <= nameLimit + prefixLimit - colorSize) {
-            center = text.substring(0, nameLimit)
-            val color = ChatColor.getLastColors(center)
-            suffix = color + text.substring(nameLimit)
+        if (!colorFix) {
+            if (text.length <= nameLimit) {
+                center = text
+            } else if (text.length < nameLimit + prefixLimit) {
+                center = text.substring(0, nameLimit)
+                suffix = text.substring(nameLimit)
+
+            } else {
+                prefix = text.substring(0, prefixLimit)
+                center = text.substring(prefixLimit, prefixLimit + nameLimit)
+                suffix = text.substring(
+                    prefixLimit + nameLimit
+                )
+                suffix = suffix.cut(16)
+
+            }
         } else {
-            prefix = text.substring(0, prefixLimit)
-            var color = ChatColor.getLastColors(prefix)
-            center = color + text.substring(prefixLimit, prefixLimit + nameLimit - colorSize)
-            color = ChatColor.getLastColors(center)
-            suffix = color + text.substring(
-                prefixLimit + nameLimit - colorSize,
-                prefixLimit + nameLimit + suffixLimit - colorSize- colorSize
-            )
+            val colorSize = 2
+            if (text.length <= nameLimit) {
+                center = text
+            } else if (text.length < nameLimit + prefixLimit - colorSize) {
+                center = text.substring(0, nameLimit)
+                val color = ChatColor.getLastColors(center)
+                suffix = color + text.substring(nameLimit)
+                suffix = suffix.cut(suffixLimit)
+            } else {
+                prefix = text.substring(0, prefixLimit)
+                var color = ChatColor.getLastColors(prefix)
+                center = color + text.substring(prefixLimit, nameLimit + prefixLimit - colorSize)
+                color = ChatColor.getLastColors(center)
+                suffix = color + text.substring(
+                    prefixLimit + nameLimit - colorSize
+                )
+                suffix = suffix.cut(suffixLimit)
+
+            }
         }
+
         val used = linesCenters[id]
         val team = linesTeams[id]!!
         linesUsed[id] = text

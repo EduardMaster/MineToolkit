@@ -11,10 +11,13 @@ class PlayerTargetPlayerTask : TimeManager(20L) {
     override fun run() {
         for (player in Mine.getPlayers()) {
             try {
-                val target = Mine.getTarget(player, Mine.getPlayerAtRange(player.location, 100.0)) ?: continue
+                val target = Mine.getTarget(player,
+                    Mine.getPlayerAtRange(player.location, 100.0)) ?: continue
                 if (target.hasMetadata("NPC"))continue
-                PlayerTargetPlayerEvent(
-                    target, player).call()
+                EduardAPI.instance.syncTask {
+                    PlayerTargetPlayerEvent(
+                        target, player).call()
+                }
             } catch (ex: Exception) {
                 EduardAPI.instance.log("Erro ao causar o Evento PlayerTargetEvent ")
                 ex.printStackTrace()

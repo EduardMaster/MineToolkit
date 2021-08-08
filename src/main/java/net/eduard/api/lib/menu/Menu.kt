@@ -22,9 +22,11 @@ import net.eduard.api.lib.storage.annotations.StorageIndex
 import org.bukkit.Sound
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
+import java.lang.IllegalStateException
 import java.util.*
 
 fun menu(title: String, lineAmount: Int, setup: Menu.() -> Unit): Menu {
@@ -40,12 +42,22 @@ fun shop(title: String, lineAmount: Int, setup: Shop.() -> Unit): Shop {
 }
 fun Player.getMenu(): Menu? {
     try {
+
         if (openInventory == null)return null
         if (openInventory.topInventory == null)return null
-        val holder = openInventory.topInventory.holder ?: return null
-        if (holder is FakeInventoryHolder) {
-            return holder.menu
+        // se não for bau custom não verifica o holder
+        if (openInventory.type != InventoryType.CHEST)return null
+        try {
+            val holder = openInventory.topInventory.holder ?: return null
+            if (holder is FakeInventoryHolder) {
+                return holder.menu
+            }
+        }catch (ex :IllegalStateException){
+            // causa esse erro na versão 1.16.5 por tentar acessar o Holder usando Async
+        }catch (ex :RuntimeException){
+            // causa esse erro na versão 1.16.5 por tentar acessar o Holder usando Async
         }
+
     } catch (ex: Exception) {
         ex.printStackTrace()
     }

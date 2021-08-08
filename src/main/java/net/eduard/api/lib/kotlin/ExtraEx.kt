@@ -42,7 +42,7 @@ fun Number.format(formatOP: Boolean = true): String{
     return if (formatOP) Extra.formatMoney(this.toDouble())
     else Extra.MONEY.format(this)
 }
-
+val Number.text get() = format(false)
 
 fun <T : Any> Array<T>.shuffle(): Array<T> {
     for (index in 0 until size) {
