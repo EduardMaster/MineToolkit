@@ -6,9 +6,11 @@ import com.mojang.authlib.properties.Property;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Chest;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -32,6 +34,28 @@ final public class Minecraft_v1_12_R1 extends Minecraft {
 
     }
 
+    @Override
+    public void forceOpen(@NotNull Chest chest, @NotNull Player player) {
+
+    }
+
+    @Override
+    public void canAttackMelee(@NotNull Creature creature, @NotNull String classEntityName, int priority) {
+    }
+
+    @Override
+    public void canTarget(@NotNull Creature creature, @NotNull String classEntityName, int priority) {
+    }
+
+    @Override
+    public void removeGoals(@NotNull Creature creature) {
+
+    }
+
+    @Override
+    public void removeTargetGoals(@NotNull Creature creature) {
+
+    }
 
     @Override
     public void sendPacket(Object packet, Player player) {

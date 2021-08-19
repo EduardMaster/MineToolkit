@@ -6,9 +6,14 @@ import net.eduard.api.lib.modules.Extra
 import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.block.Chest
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer
+import org.bukkit.craftbukkit.v1_8_R3.block.CraftChest
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack
+import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -22,6 +27,51 @@ import kotlin.collections.HashSet
  */
 class Minecraft_v1_8_R3 : Minecraft() {
 
+    override fun canTarget(creature: Creature, classEntityName : String, priority : Int){
+        try {
+            val nmsCreature = (creature as CraftCreature).handle
+            val clz = Extra.getClassFrom("#mEntity$classEntityName")
+                    as Class<out net.minecraft.server.v1_8_R3.EntityLiving>
+
+            val target = PathfinderGoalNearestAttackableTarget(nmsCreature, clz, true)
+            nmsCreature.targetSelector.a(target)
+            nmsCreature.targetSelector.a(priority, target)
+        }catch (ex : Exception){
+            ex.printStackTrace()
+        }
+    }
+    override fun canAttackMelee(creature: Creature, classEntityName : String, priority : Int){
+        try {
+
+            val nmsCreature = (creature as CraftCreature).handle
+            val clz = Extra.getClassFrom("#mEntity$classEntityName")
+                    as Class<out net.minecraft.server.v1_8_R3.Entity>
+            val melee = PathfinderGoalMeleeAttack(
+                nmsCreature,
+                clz, 1.0, true
+            )
+            nmsCreature.goalSelector.a(melee)
+            nmsCreature.goalSelector.a(priority,melee)
+
+        }catch (ex : Exception){
+            ex.printStackTrace()
+        }
+
+    }
+
+    override fun removeGoals(creature: Creature) {
+
+    }
+
+    override fun forceOpen(chest: Chest, player: Player) {
+        val nmsPlayer = ((player as CraftPlayer).handle)
+        val nmsChestTile = ((chest as CraftChest).tileEntity)
+        nmsPlayer.openTileEntity(nmsChestTile)
+    }
+
+    override fun removeTargetGoals(creature: Creature) {
+
+    }
     override fun sendPacket(packet: Any, player: Player) {
 
         (player as CraftPlayer).handle.playerConnection.sendPacket(packet as Packet<*>)
@@ -71,12 +121,9 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
     override fun performRespawn(player: Player) {
         (player as CraftPlayer).handle.playerConnection
-            .a(
-                PacketPlayInClientCommand(
+            .a(PacketPlayInClientCommand(
                     PacketPlayInClientCommand
-                        .EnumClientCommand.PERFORM_RESPAWN
-                )
-            )
+                        .EnumClientCommand.PERFORM_RESPAWN))
     }
 
     override fun setPlayerSkin(player: Player, newSkin: String) {
@@ -119,39 +166,27 @@ class Minecraft_v1_8_R3 : Minecraft() {
         val destroy = PacketPlayOutEntityDestroy(entityPlayer.id)
         val removePlayerInfo = PacketPlayOutPlayerInfo(
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-            playerToRespawn.handle
-        )
+            playerToRespawn.handle)
         val spawn = PacketPlayOutNamedEntitySpawn(entityPlayer)
         val addPlayerInfo = PacketPlayOutPlayerInfo(
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-            playerToRespawn.handle
-        )
+            playerToRespawn.handle)
         val metadata = PacketPlayOutEntityMetadata(
             entityPlayer.id,
-            entityPlayer.dataWatcher, true
-        )
+            entityPlayer.dataWatcher, true)
         val headRotation = PacketPlayOutEntityHeadRotation(
             entityPlayer,
-            MathHelper.d(entityPlayer.headRotation * 256.0f / 360.0f).toByte()
-        )
+            MathHelper.d(entityPlayer.headRotation * 256.0f / 360.0f).toByte())
         sendPacketsToOthers(playerToRespawn, removePlayerInfo, destroy, metadata, addPlayerInfo, spawn, headRotation)
     }
 
     override fun reloadPlayer(player: Player) {
-        sendPacket(
-            player,
-            PacketPlayOutPlayerInfo(
+        sendPacket(player,PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                (player as CraftPlayer).handle
-            )
-        )
-        sendPacket(
-            player,
-            PacketPlayOutPlayerInfo(
+                (player as CraftPlayer).handle))
+        sendPacket( player,PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                player.handle
-            )
-        )
+                player.handle))
         (Bukkit.getServer() as CraftServer).handle.moveToWorld(
             player.handle, player
                 .handle.dimension, true, player.getLocation(),
@@ -197,7 +232,11 @@ class Minecraft_v1_8_R3 : Minecraft() {
     }
 
     override fun disableAI(entity: Entity) {
-
+        val nmsEntity = ((entity as CraftEntity).handle)
+        val compound = NBTTagCompound()
+        nmsEntity.c(compound)
+        compound.setByte("NoAI",1.toByte())
+        nmsEntity.f(compound)
     }
 
     override fun sendActionBar(player: Player, message: String) {

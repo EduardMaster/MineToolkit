@@ -2,7 +2,9 @@ package net.eduard.api.lib.abstraction
 
 import net.minecraft.server.v1_7_R4.*
 import org.bukkit.Location
+import org.bukkit.block.Chest
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer
+import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -16,6 +18,16 @@ class Minecraft_v1_7_R4 : Minecraft() {
             .sendPacket(packet as Packet)
     }
 
+    override fun forceOpen(chest: Chest, player: Player) {
+
+    }
+    override fun canAttackMelee(creature: Creature, classEntityName: String, priority: Int) {}
+
+    override fun canTarget(creature: Creature, classEntityName: String, priority: Int) {}
+
+    override fun removeGoals(creature: Creature) {}
+
+    override fun removeTargetGoals(creature: Creature) {}
     override fun removeFromTab(playerRemoved: Player) {
         val removePlayerInfo = PacketPlayOutPlayerInfo
             .removePlayer((playerRemoved as CraftPlayer).handle)

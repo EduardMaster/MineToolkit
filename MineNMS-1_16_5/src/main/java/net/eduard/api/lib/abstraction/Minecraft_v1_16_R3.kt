@@ -7,9 +7,11 @@ import net.minecraft.server.v1_16_R3.Packet
 import net.minecraft.server.v1_16_R3.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.block.Chest
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack
+import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -32,6 +34,16 @@ class Minecraft_v1_16_R3 : Minecraft() {
 
     }
 
+    override fun forceOpen(chest: Chest, player: Player) {
+
+    }
+    override fun canAttackMelee(creature: Creature, classEntityName: String, priority: Int) {}
+
+    override fun canTarget(creature: Creature, classEntityName: String, priority: Int) {}
+
+    override fun removeGoals(creature: Creature) {}
+
+    override fun removeTargetGoals(creature: Creature) {}
     override fun sendParticle(
         player: Player,
         name: String,

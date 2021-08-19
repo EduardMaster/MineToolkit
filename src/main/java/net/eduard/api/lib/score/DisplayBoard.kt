@@ -55,6 +55,18 @@ open class DisplayBoard(
     )
 
     var healthBarEnabled = true
+        set(flag) {
+            if (!flag && hasScore()) {
+                objectiveHealth?.unregister()
+                objectiveHealth = null
+            }else if (flag && hasScore()){
+                val health = scoreboard!!.registerNewObjective("displayHealth", "health")
+                health.displaySlot = DisplaySlot.BELOW_NAME
+                health.displayName = "§c❤"
+                objectiveHealth = health
+            }
+            field = flag
+        }
     var customLines = mutableListOf<DisplayBoardLine>()
     var customTitle: DisplayBoardLine? = null
 
@@ -113,12 +125,7 @@ open class DisplayBoard(
             linesTeams[position] = score.registerNewTeam("$teamPrefix$position")
         }
         objective!!.displaySlot = DisplaySlot.SIDEBAR
-        if (healthBarEnabled) {
-            val health = score.registerNewObjective("displayHealth", "health")
-            health.displaySlot = DisplaySlot.BELOW_NAME
-            health.displayName = "§c❤"
-            objectiveHealth = health
-        }
+        healthBarEnabled=healthBarEnabled
         return score
     }
 
@@ -151,7 +158,7 @@ open class DisplayBoard(
         for (customLine in this.customLines) {
             newScore.customLines.add(customLine.copy())
         }
-
+        newScore.healthBarEnabled = healthBarEnabled
         return newScore
     }
 

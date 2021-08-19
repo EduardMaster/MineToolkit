@@ -35,6 +35,7 @@ repositories {
 
 dependencies {
     compileOnly(project(":MineNMS"))
+    compileOnly(project(":MineUtils"))
     compileOnly(project(":JavaUtils"))
     compileOnly("org.bukkit:spigot:1.8.9")
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")

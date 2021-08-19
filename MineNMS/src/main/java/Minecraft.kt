@@ -2,6 +2,8 @@ package net.eduard.api.lib.abstraction
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.MineReflect
 import org.bukkit.Location
+import org.bukkit.block.Chest
+import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -78,7 +80,11 @@ abstract class Minecraft {
     abstract fun getItemNBT(item: ItemStack): Any
     abstract fun setItemNBT(item: ItemStack, nbt: Any): ItemStack
     abstract fun disableAI(entity: Entity)
-
+    abstract fun forceOpen(chest : Chest, player: Player);
+    abstract fun canTarget(creature: Creature, classEntityName : String, priority : Int)
+    abstract fun canAttackMelee(creature: Creature, classEntityName : String, priority : Int)
+    abstract fun removeGoals(creature: Creature)
+    abstract fun removeTargetGoals(creature: Creature)
     companion object {
         fun getVersion() = MineReflect.getVersion()
         /**

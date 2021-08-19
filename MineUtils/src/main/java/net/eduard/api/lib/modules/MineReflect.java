@@ -412,15 +412,15 @@ public class MineReflect {
             // entityplayer);
             // // Extra.setFieldValue(Extra.getFieldValue(packet, "b"), "name", displayName);
             // sendPackets(packet, player);
-            for (Player p : getPlayers()) {
-                if (p.equals(player))
+            for (Player playerLoop : getPlayers()) {
+                if (playerLoop.equals(player))
                     continue;
-                p.hidePlayer(player);
+                playerLoop.hidePlayer(player);
             }
-            for (Player p : getPlayers()) {
-                if (p.equals(player))
+            for (Player playerLoop : getPlayers()) {
+                if (playerLoop.equals(player))
                     continue;
-                p.showPlayer(player);
+                playerLoop.showPlayer(player);
             }
             // Extra.setFieldValue(gameprofile, "name", before);
             // System.out.println(Bukkit.getPlayer(displayName));
