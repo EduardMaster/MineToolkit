@@ -365,13 +365,14 @@ class MySQLTable<T : Any>(
     }
 
 
-    override fun update(data: T) {
+    override fun update(data: T,vararg columnsNames : String) {
 
         try {
             val builder = StringBuilder("UPDATE $name SET ")
 
             for (column in columns.values) {
                 if (column.isPrimary && column.isNumber) continue
+                if (columnsNames.isNotEmpty()&& !columnsNames.contains(column.name))continue
                 builder.append("${column.name} = ?,")
             }
             builder.deleteCharAt(builder.length - 1)
@@ -383,6 +384,7 @@ class MySQLTable<T : Any>(
             var id = 1
             for ((field, column) in columns) {
                 if (column.isPrimary && column.isNumber) continue
+                if (columnsNames.isNotEmpty()&& !columnsNames.contains(column.name))continue
                 field.isAccessible = true
                 val fieldValue = field.get(data)
                 if (column.isConstraint && fieldValue != null) {

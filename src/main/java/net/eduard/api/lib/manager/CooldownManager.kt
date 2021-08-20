@@ -90,6 +90,6 @@ class CooldownManager( var duration: Long = 20) {
     }
 
     fun getCooldown(player: Player): Int {
-        return (getResult(player) / 20).toInt()
+        return (getResult(player) / 20).toInt() +1
     }
 }

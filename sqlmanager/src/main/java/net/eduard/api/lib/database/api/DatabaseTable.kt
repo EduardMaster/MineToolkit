@@ -22,7 +22,7 @@ interface DatabaseTable<T : Any> {
 
     fun reload()
     fun insert(data : T)
-    fun update(data : T)
+    fun update(data : T,vararg columnsNames : String)
     fun delete(data : T)
     fun selectAll() : List<T>
     fun createReferences()

@@ -15,7 +15,9 @@ class SQLManager(var dbManager: DBManager) {
         UPDATE, DELETE, INSERT, UPDATE_CACHE
     }
 
-    class DataChanged(val data: Any, val action: SQLAction)
+    class DataChanged(val data: Any,
+                      val action: SQLAction,
+                      vararg val collumnsNames : String)
 
     val actions: Queue<DataChanged> = ConcurrentLinkedQueue()
 
@@ -33,7 +35,7 @@ class SQLManager(var dbManager: DBManager) {
                     continue
                 }
                 updatesDone.add(dataChange.data)
-                updateData(dataChange.data)
+                updateData(dataChange.data,*dataChange.collumnsNames)
             } else if (dataChange.action == SQLAction.DELETE) {
                 if (deletesDone.contains(dataChange.data)) {
                     continue
@@ -198,8 +200,8 @@ class SQLManager(var dbManager: DBManager) {
      *
      * @param data
      */
-    fun <E : Any> updateDataQueue(data: E) {
-        actions.offer(DataChanged(data, SQLAction.UPDATE))
+    fun <E : Any> updateDataQueue(data: E,vararg columnsNames: String) {
+        actions.offer(DataChanged(data, SQLAction.UPDATE,*columnsNames))
     }
 
     /**
@@ -217,18 +219,20 @@ class SQLManager(var dbManager: DBManager) {
     fun <E : Any> insertDataQueue(data: E) {
         actions.offer(DataChanged(data, SQLAction.INSERT))
     }
-
+    fun <T : Any> updateData(data: T) {
+        return updateData(data, *arrayOf())
+    }
     /**
      *
      * @param data
      * @param <T>
     </T> */
-    fun <T : Any> updateData(data: T) {
+    fun <T : Any> updateData(data: T, vararg columnsNames : String) {
         if (hasConnection()) {
 
             val dataClass = data.javaClass
             dbManager.engineUsed.getTable(dataClass)
-                .update(data)
+                .update(data,*columnsNames)
 
         }
     }

@@ -12,12 +12,23 @@ interface DatabaseElement {
     fun delete(){
         sqlManager.deleteData(this )
     }
+
     fun update(){
-        sqlManager.updateData(this )
+        sqlManager.updateData(this,*arrayOf() )
     }
+
+    fun updateOnly(vararg collumnsNames : String){
+        sqlManager.updateData(this,*collumnsNames )
+    }
+
     fun updateQueue(){
-        sqlManager.updateDataQueue(this)
+        sqlManager.updateDataQueue(this, *arrayOf())
     }
+
+    fun updateOnlyQueue(vararg columnsNames: String){
+        sqlManager.updateDataQueue(this, *columnsNames)
+    }
+
     fun updateCache(){
         sqlManager.updateCache(this)
     }
