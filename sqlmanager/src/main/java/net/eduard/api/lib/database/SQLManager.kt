@@ -31,10 +31,13 @@ class SQLManager(var dbManager: DBManager) {
         for (i in 0 until queueRunsLimit) {
             val dataChange = actions.poll() ?: break
             if (dataChange.action == SQLAction.UPDATE) {
-                if (updatesDone.contains(dataChange.data)) {
-                    continue
+                if (dataChange.collumnsNames.isEmpty()){
+                    if (!updatesDone.contains(dataChange.data)) {
+                        updatesDone.add(dataChange.data)
+                    }else{
+                        continue
+                    }
                 }
-                updatesDone.add(dataChange.data)
                 updateData(dataChange.data,*dataChange.collumnsNames)
             } else if (dataChange.action == SQLAction.DELETE) {
                 if (deletesDone.contains(dataChange.data)) {

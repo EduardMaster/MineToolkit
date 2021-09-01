@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Criado em 28/11/2019
@@ -23,6 +24,11 @@ public class Hologram_v1_12_R1 implements Hologram {
     private EntityArmorStand holo;
     private String text;
     private final List<String> seeingHolo = new ArrayList<>();
+
+    @Override
+    public int getId() {
+        return 0;
+    }
 
     private static void log(String msg) {
         boolean debug = false;
@@ -185,12 +191,34 @@ public class Hologram_v1_12_R1 implements Hologram {
 
     @NotNull
     @Override
-    public List<Player> getPlayersSeeing() {
+    public Set<Player> getPlayersSeeing() {
         return null;
     }
 
+
+
     @Override
-    public void setPlayersSeeing(@NotNull List<Player> playersSeeing) {
+    public void setPlayersSeeing(@NotNull Set<Player> playersSeeing) {
+
+    }
+
+    @Override
+    public void toggle(@NotNull Player player) {
+
+    }
+
+    @Override
+    public void showAllIn(int distance) {
+
+    }
+
+    @Override
+    public void hideAllIn(int distance) {
+
+    }
+
+    @Override
+    public void updateAllIn(int distance) {
 
     }
 }

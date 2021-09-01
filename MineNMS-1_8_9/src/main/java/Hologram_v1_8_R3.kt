@@ -1,8 +1,10 @@
 package net.eduard.api.lib.abstraction
+
 import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArmorStand
 import org.bukkit.entity.Player
 
 /**
@@ -15,111 +17,122 @@ import org.bukkit.entity.Player
 class Hologram_v1_8_R3 : Hologram {
 
 
-    var players= mutableListOf<Player>()
-    var location: Location? = null
-    private var holo: EntityArmorStand? = null
+    var players = mutableListOf<Player>()
+    override var location: Location = Bukkit.getWorlds().first().spawnLocation
+        set(value) {
+            field = value
+            holo?.setPosition(value.x, value.y, value.z)
+        }
+    var holo: EntityArmorStand? = null
+        get() {
+            if (field == null) {
+                val nmsWorld: World = (location.world as CraftWorld).handle
+                field = EntityArmorStand(nmsWorld, location.x, location.y, location.z)
+                field?.apply {
+                    isInvisible = true
+                    isSmall = true
+                    //funcao setMarker
+                    n(true)
+                    customName = "§b§lHolograma EduardAPI"
+                    setGravity(false)
+                    customNameVisible = true
+                    setArms(false)
+                }
+
+            }
+            return field
+        }
+
+
     override var text: String = ""
         set(text) {
             field = text
-            if (getHolo() != null) {
-                holo!!.customName = text
-                holo!!.customNameVisible = true
-            }
+            holo?.customName = text
         }
-        get() = holo?.customName?: ""
+        get() = holo?.customName ?: ""
 
 
-    override var playersSeeing = mutableListOf<Player>()
+    override var playersSeeing = mutableSetOf<Player>()
 
-    constructor() {}
+    override fun toggle(player: Player) {
+        if (canSee(player)) {
+            hide(player)
+        } else show(player)
+    }
 
-    fun updateAll(distance: Int) {
+    override fun showAllIn(distance: Int) {
         for (player in Bukkit.getOnlinePlayers()) {
-            if (player.world == location!!.world) {
-                if (player.location.distance(location) <= distance) {
-                    update(player)
-                } else {
-                    if (playersSeeing.contains(player)) {
-                        hide(player)
-                    }
-                }
+            if (player.world != location.world) continue
+            if (player.location.distance(location) <= distance) {
+                show(player)
             }
+
         }
     }
 
-    constructor(loc: Location) {
-        location = loc
-        text = "§fHolograma"
-        spawn()
-    }
+    override fun updateAllIn(distance: Int) {
+        for (player in Bukkit.getOnlinePlayers()) {
+            if (player.world != location.world) continue
+            if (player.location.distance(location) <= distance) {
+                update(player)
+            }
 
+        }
+    }
 
 
     override fun show(player: Player) {
-        log("§aMostrando holograma1")
+        Hologram.log("Mostrando para ${player.name}")
         playersSeeing.add(player)
         val pacote = PacketPlayOutSpawnEntityLiving(holo)
         Minecraft.instance.sendPacket(player, pacote)
     }
 
-    fun exists(): Boolean {
-        return holo != null
-    }
 
     override fun hide(player: Player) {
-        log("§cEscondendo holograma1")
+        Hologram.log("Escondendo de ${player.name}")
         playersSeeing.remove(player)
-        if (exists()) {
-            val pacote = PacketPlayOutEntityDestroy(getHolo()!!.id)
+        if (isSpawned) {
+            val pacote = PacketPlayOutEntityDestroy(id)
             Minecraft.instance.sendPacket(player, pacote)
         }
     }
 
-    fun update(player: Player) {
+    override val id: Int
+        get() = holo?.id ?: -1
+
+    override fun update(player: Player) {
         // tentativas de mandar packets de atualização da entidade
-        text = text
-        //val updateNBT = PacketPlayOutUpdateEntityNBT(holo!!.id, holo!!.nbtTag)
+        val updateNBT = PacketPlayOutUpdateEntityNBT(holo!!.id, holo!!.nbtTag)
         val updateMetadata = PacketPlayOutEntityMetadata(holo!!.id, holo!!.dataWatcher, false)
-
-
-        // PacketPlayOutTitle a = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, IChatBaseComponent.ChatSerializer.a("title linha 1"));
-        // PacketPlayOutTitle a = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, IChatBaseComponent.ChatSerializer.a("action bar"));
-        if (playersSeeing.contains(player)) {
-            log("§bAtualizando holograma2")
-            //sendPacket(p, pacote);
+        if (canSee(player)) {
+            Hologram.log("Atualizando para $player")
             Minecraft.instance.sendPacket(player, updateMetadata)
+            Minecraft.instance.sendPacket(player, updateNBT)
         } else {
             show(player)
         }
     }
 
-    private fun getHolo(): EntityArmorStand? {
-        if (holo == null) {
-            if (location != null) {
-                val nmsWorld: World = (location!!.world as CraftWorld).handle
-                holo = EntityArmorStand(nmsWorld, location!!.x, location!!.y, location!!.z)
-                holo!!.isInvisible = true
-                holo!!.isSmall = true
+
+    override fun hideAllIn(distance: Int) {
+        for (player in Bukkit.getOnlinePlayers()) {
+            if (player.world != location.world) continue
+            if (player.location.distance(location) <= distance) {
+                hide(player)
             }
+
         }
-        return holo
     }
 
-    override fun spawn(location: Location) {
-        this.location = location
-        spawn()
+    override fun spawn(local: Location) {
+        this.location = local
+        showAllIn(100)
     }
 
-    fun spawn() {
-        getHolo()
-        text = text
-        // metodo que faz a entidade spawnar no servidor e ser contralada por ele
-        // nmsWorld.addEntity(armorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
-        updateAll(10)
-    }
 
     override fun canSee(player: Player): Boolean {
-        return false
+        return player in playersSeeing
     }
 
 
@@ -129,10 +142,4 @@ class Hologram_v1_8_R3 : Hologram {
 
     }
 
-    companion object {
-        private const val debug = false
-        private fun log(msg: String) {
-            if (debug) println("[Hologram_v1_8_R3] $msg")
-        }
-    }
 }

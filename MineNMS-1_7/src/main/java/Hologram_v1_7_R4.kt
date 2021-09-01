@@ -7,12 +7,16 @@ class Hologram_v1_7_R4 : Hologram {
     override var text: String
         get() = TODO("Not yet implemented")
         set(value) {}
-    override var playersSeeing: MutableList<Player>
+    override var playersSeeing: MutableSet<Player>
         get() = TODO("Not yet implemented")
         set(value) {}
     override val isSpawned: Boolean
         get() = TODO("Not yet implemented")
-
+    override var location: Location
+        get() = TODO("Not yet implemented")
+        set(value) {}
+    override val id: Int
+        get() = 0
     override fun canSee(player: Player): Boolean {
         TODO("Not yet implemented")
     }
@@ -30,6 +34,26 @@ class Hologram_v1_7_R4 : Hologram {
     }
 
     override fun hide(player: Player) {
+        TODO("Not yet implemented")
+    }
+
+    override fun toggle(player: Player) {
+        TODO("Not yet implemented")
+    }
+
+    override fun showAllIn(distance: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun hideAllIn(distance: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateAllIn(distance: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun update(player: Player) {
         TODO("Not yet implemented")
     }
     /*
