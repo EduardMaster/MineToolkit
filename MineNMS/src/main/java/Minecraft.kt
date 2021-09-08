@@ -1,5 +1,4 @@
 package net.eduard.api.lib.abstraction
-import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.modules.MineReflect
 import org.bukkit.Location
 import org.bukkit.block.Chest

@@ -130,6 +130,9 @@ public class ItemBuilder extends ItemStack {
 
         return texture(new String(encodedData));
     }
+    public ItemBuilder skinId(String skinID){
+        return skin("http://textures.minecraft.net/texture/"+skinID);
+    }
 
     public ItemBuilder amount(int amount) {
         setAmount(amount);

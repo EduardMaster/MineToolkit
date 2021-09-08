@@ -6,13 +6,14 @@ import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArmorStand
 import org.bukkit.entity.Player
+import org.spigotmc.AsyncCatcher
 
 /**
- * Criado em 28/11/2019
- * Atualizado em 07/05/2020
- *
+ * Criado em 28/11/2019<br>
+ * Atualizado 1.1 em 07/05/2020<br>
+ * Atualizado 1.2 em 01/09/2021<br>
  * @author Eduard
- * @version 1.1
+ * @version 1.2
  */
 class Hologram_v1_8_R3 : Hologram {
 
@@ -25,6 +26,7 @@ class Hologram_v1_8_R3 : Hologram {
         }
     var holo: EntityArmorStand? = null
         get() {
+            AsyncCatcher.enabled
             if (field == null) {
                 val nmsWorld: World = (location.world as CraftWorld).handle
                 field = EntityArmorStand(nmsWorld, location.x, location.y, location.z)
@@ -121,7 +123,6 @@ class Hologram_v1_8_R3 : Hologram {
             if (player.location.distance(location) <= distance) {
                 hide(player)
             }
-
         }
     }
 
