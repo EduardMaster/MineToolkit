@@ -8,10 +8,7 @@ import net.eduard.api.lib.database.api.TableReference
 import java.lang.Exception
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
-import java.sql.Connection
-import java.sql.ResultSet
-import java.sql.SQLException
-import java.sql.Statement
+import java.sql.*
 
 class MySQLTable<T : Any>(
     override var connection: Connection,
@@ -65,21 +62,27 @@ class MySQLTable<T : Any>(
 
     override fun selectAll(): List<T> {
         val list = mutableListOf<T>()
+        var prepare : PreparedStatement? = null
+        var query : ResultSet? = null
         log("Selecionando tudo de $name")
         try {
-
-            val prepare = connection.prepareStatement(
+            prepare = connection.prepareStatement(
                 "SELECT * FROM $name"
             )
-            val query = prepare.executeQuery()
+            query = prepare.executeQuery()
             while (query.next()) {
                 val newData = newInstance.invoke()
                 updateCache(newData, query)
                 list.add(newData)
             }
 
+
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        }
+        finally {
+            query?.close()
+            prepare?.close()
         }
         return list
     }
@@ -100,17 +103,19 @@ class MySQLTable<T : Any>(
         if (referencesRemoved) return
         referencesRemoved = true
 
-
         for (column in columns.values) {
             if (column.isConstraint) {
+                var state : PreparedStatement? = null
                 try {
-                    connection.prepareStatement(
+                    state = connection.prepareStatement(
                         "ALTER TABLE $name " +
                                 "DROP FOREIGN KEY ${column.foreignKeyName}"
                     )
-                        .executeUpdate()
+                        state.executeUpdate()
                 } catch (ex: SQLException) {
                     log("§cFalha ao deletar a Foreign key pois ela nao existe")
+                }finally {
+                    state?.close()
                 }
             }
             //ALTER TABLE `party_user` DROP FOREIGN KEY `party`; ALTER TABLE `party_user` ADD CONSTRAINT `party` FOREIGN KEY (`party_id`) REFERENCES `partu`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
@@ -121,7 +126,7 @@ class MySQLTable<T : Any>(
 
 
     override fun createReferences() {
-
+        var state : PreparedStatement?= null
         try {
             val contraintsCreatedSql = "SELECT * FROM information_schema.table_constraints" +
                     " WHERE TABLE_NAME = ?"
@@ -145,16 +150,17 @@ class MySQLTable<T : Any>(
                             " (${column.name}) REFERENCES ${column.referenceTable.name}(${column.referenceTable.primaryName}) " +
                             "ON DELETE SET NULL ON UPDATE SET NULL"
                     log(text)
-
-                    connection.prepareStatement(text)
-                        .executeUpdate()
-                columnsContraintsCreated.add(column.foreignKeyName)
+                    state = connection.prepareStatement(text)
+                    state.executeUpdate()
+                    columnsContraintsCreated.add(column.foreignKeyName)
 
                 }
                 //ALTER TABLE `party_user` DROP FOREIGN KEY `party`; ALTER TABLE `party_user` ADD CONSTRAINT `party` FOREIGN KEY (`party_id`) REFERENCES `partu`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
             }
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        }finally {
+            state?.close()
         }
     }
 
@@ -173,6 +179,8 @@ class MySQLTable<T : Any>(
 
     override fun selectByReference(reference: Any): List<T> {
         val list = mutableListOf<T>()
+        var prepare : PreparedStatement? = null
+        var query : ResultSet? = null
         var referenceColumnName = primaryName
         var referenceId : Any = 1
         for (column in columns.values){
@@ -184,13 +192,13 @@ class MySQLTable<T : Any>(
         }
         try {
             val text = "SELECT * FROM $name WHERE $referenceColumnName = ?"
-            val prepare = connection.prepareStatement(
+            prepare = connection.prepareStatement(
                 text
             )
             val column = columns.values.first{it.name == referenceColumnName}
             prepare.setString(1, engine.convertToSQL(referenceId, column))
             log("Pegando: $text")
-            val query = prepare.executeQuery()
+            query = prepare.executeQuery()
 
             while (query.next()) {
                 val cachedData : T? = elements[query.getObject(primaryName)]
@@ -198,35 +206,44 @@ class MySQLTable<T : Any>(
                 updateCache(newData, query)
                 list.add(newData)
             }
-            query.close()
+
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        }finally {
+            query?.close()
+            prepare?.close()
         }
         return list
     }
 
     override fun findByColumn(columnName: String, columnValue: Any, cachedData: T?): T? {
+        var prepare : PreparedStatement? = null
+        var query : ResultSet? = null
+        var result : T? = null
         try {
             val text = "SELECT * FROM $name WHERE $columnName = ? LIMIT 1"
-            val prepare = connection.prepareStatement(
+            prepare = connection.prepareStatement(
                 text
             )
             val column = columns.values.first{it.name == columnName}
             prepare.setString(1, engine.convertToSQL(columnValue, column))
             log("Encontrando: $text")
-            val query = prepare.executeQuery()
+            query = prepare.executeQuery()
 
             if (query.next()) {
                 val newData = cachedData ?: newInstance.invoke()
                 updateCache(newData, query)
-                query.close()
-                return newData
+                result= newData
             }
 
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }
-        return null
+        finally {
+            prepare?.close()
+            query?.close()
+        }
+        return result
     }
 
     override fun findByPrimary(primaryValue: Any, cachedData: T?): T? {
@@ -236,27 +253,31 @@ class MySQLTable<T : Any>(
 
 
     override fun select(collums : String, where: String, columnOrder: String, ascending: Boolean, limit: Int): List<T> {
+        var prepare : PreparedStatement? = null
+        var query : ResultSet? = null
         val list = mutableListOf<T>()
         try {
             val collumsUsed = if (collums.isEmpty())"*" else collums
             var text =  "SELECT $collumsUsed FROM $name "
             if (where.isNotEmpty()) text+="WHERE $where"
             text+=" ORDER BY $columnOrder "+ (if (ascending) "ASC" else "DESC") + " LIMIT $limit"
-            val prepare = connection.prepareStatement(
+            prepare = connection.prepareStatement(
                text
             )
             log("Selecionando: $text")
-            val query = prepare.executeQuery()
+            query = prepare.executeQuery()
             while (query.next()) {
                 val cachedData : T? = elements[query.getObject(primaryName)]
                 val newData = cachedData?: newInstance.invoke()
                 updateCache(newData, query)
                 list.add(newData)
             }
-            query.close()
 
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        }finally {
+            prepare?.close()
+            query?.close()
         }
         return list
     }
@@ -306,7 +327,7 @@ class MySQLTable<T : Any>(
     }
 
     override fun insert(data: T) {
-
+        var prepare : PreparedStatement? = null
         try {
 
             val builder = StringBuilder("INSERT INTO $name (")
@@ -322,7 +343,7 @@ class MySQLTable<T : Any>(
 
             builder.deleteCharAt(builder.length - 1)
             builder.append(")")
-            val prepare = connection
+            prepare = connection
                 .prepareStatement(builder.toString(), Statement.RETURN_GENERATED_KEYS)
             var id = 1
             for ((field, column) in columns) {
@@ -356,9 +377,11 @@ class MySQLTable<T : Any>(
                 elements[primaryColumn!!.field.get(data)] = data
             }
 
-
         } catch (ex: SQLException) {
             ex.printStackTrace()
+
+        }finally {
+            prepare?.close()
         }
 
 
@@ -366,7 +389,7 @@ class MySQLTable<T : Any>(
 
 
     override fun update(data: T,vararg columnsNames : String) {
-
+        var prepare : PreparedStatement? = null
         try {
             val builder = StringBuilder("UPDATE $name SET ")
 
@@ -379,7 +402,7 @@ class MySQLTable<T : Any>(
             builder.append(" WHERE ")
             builder.append(primaryName)
             builder.append(" = ?")
-            val prepare = connection
+            prepare = connection
                 .prepareStatement(builder.toString())
             var id = 1
             for ((field, column) in columns) {
@@ -414,17 +437,18 @@ class MySQLTable<T : Any>(
                 prepare.setInt(id, 1)
             log("Atualizando: $builder")
             prepare.executeUpdate()
-
-
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        }finally {
+            prepare?.close()
         }
     }
 
     override fun delete(data: T) {
+        var prepare : PreparedStatement? = null
         try {
 
-            val prepare = connection.prepareStatement(
+            prepare = connection.prepareStatement(
                 "DELETE FROM $name WHERE ${primaryColumn?.name ?: "ID"} = ?"
             )
             if (primaryColumn != null) {
@@ -435,20 +459,22 @@ class MySQLTable<T : Any>(
                 elements.remove(1)
             }
             prepare.executeUpdate()
-
-
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        } finally {
+            prepare?.close()
         }
     }
 
     override fun createCollumns() {
+        var columnsState : PreparedStatement? = null
+        var columnsQuery : ResultSet? = null
         try {
 
             val columnsSql = "SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = ?"
-            val columnsState = connection.prepareStatement(columnsSql)
+            columnsState = connection.prepareStatement(columnsSql)
             columnsState.setString(1, name)
-            val columnsQuery = columnsState.executeQuery()
+            columnsQuery = columnsState.executeQuery()
             log(columnsSql)
             while (columnsQuery.next()) {
                 val collumn = columnsQuery.getString("COLUMN_NAME")
@@ -494,6 +520,9 @@ class MySQLTable<T : Any>(
 
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        }finally {
+            columnsQuery?.close()
+            columnsState?.close()
         }
     }
 

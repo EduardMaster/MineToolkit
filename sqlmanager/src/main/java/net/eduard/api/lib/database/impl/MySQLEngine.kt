@@ -9,6 +9,7 @@ import net.eduard.api.lib.database.serialization
 import net.eduard.api.lib.modules.Extra
 import java.lang.Exception
 import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.SQLException
 
 class MySQLEngine(override val connection: Connection) : DatabaseEngine {
@@ -126,17 +127,18 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
 
 
     override fun deleteTable(tableName: String) {
+        var prepare : PreparedStatement? = null
         try {
             val table = getTable(tableName)
             table.delete()
-            val prepare = connection.prepareStatement(
+            prepare = connection.prepareStatement(
                 "DROP TABLE $tableName"
             )
             prepare.executeUpdate()
-
-
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        }finally {
+            prepare?.close()
         }
     }
 
@@ -146,14 +148,17 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     }
 
     override fun clearTable(tableName: String) {
+        var prepare : PreparedStatement? = null
         try {
 
-            val prepare = connection.prepareStatement(
+            prepare = connection.prepareStatement(
                 "TRUNCATE TABLE $tableName"
             )
             prepare.executeUpdate()
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        }finally {
+            prepare?.close()
         }
     }
 
@@ -164,6 +169,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             return
         }
         val tableName = table.name
+        var prepare : PreparedStatement? = null
         try {
             val builder = StringBuilder("CREATE TABLE IF NOT EXISTS $tableName (")
             log("Criando tabela $tableName")
@@ -194,16 +200,19 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                 }
                 builder.append(",")
             }
+
             builder.deleteCharAt(builder.length - 1)
             builder.append(")")
             log("Inserindo: $builder")
-            val prepare = connection.prepareStatement(
+            prepare = connection.prepareStatement(
                 builder.toString()
             )
             prepare.executeUpdate()
             table.created=true
         } catch (ex: SQLException) {
             ex.printStackTrace()
+        }finally {
+            prepare?.close()
         }
         table.createCollumns()
     }
