@@ -28,7 +28,7 @@ tasks {
     }
 }
 dependencies {
-    compileOnly(kotlin("stdlib"))
+    api(kotlin("stdlib"))
     api(project(":MineNMS"))
     api(project(":MineNMS-1_8_9"))
     api(project(":MineNMS-1_7"))
@@ -39,7 +39,7 @@ dependencies {
     api(project(":SQLManager"))
     compileOnly("org.bukkit:spigot:1.8.9")
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.bukkitplugin:jhcash:6.1")
     testCompileOnly("junit", "junit", "4.12")

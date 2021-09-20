@@ -6,13 +6,16 @@ import java.util.*
 object HybridTypes {
 
     init{
-        save<PlayerUser>(75) {
-            "$name;$uniqueId"
+        customType<PlayerUser> {
+            saveMethod={
+                "$name;$uniqueId"
+            }
+            reloadMethod={
+                val split = split(";")
+                PlayerUser(split[0], UUID.fromString(split[1]))
+            }
         }
-        load {
-            val split = it.split(";")
-            PlayerUser(split[0], UUID.fromString(split[1]))
-        }
+
     }
 
 }

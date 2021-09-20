@@ -1,16 +1,17 @@
 package net.eduard.api.lib.database.impl
 
-import net.eduard.api.lib.database.DBManager
+import net.eduard.api.lib.database.*
 import net.eduard.api.lib.database.annotations.TableName
 import net.eduard.api.lib.database.api.DatabaseColumn
 import net.eduard.api.lib.database.api.DatabaseEngine
-import net.eduard.api.lib.database.deserialization
-import net.eduard.api.lib.database.serialization
 import net.eduard.api.lib.modules.Extra
 import java.lang.Exception
 import java.sql.Connection
+import java.sql.Date
 import java.sql.PreparedStatement
 import java.sql.SQLException
+import java.sql.Timestamp
+import java.util.*
 
 class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     override val tables: MutableMap<Class<*>, MySQLTable<*>> = mutableMapOf()
@@ -65,7 +66,6 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         Float::class.java to "FLOAT",
         Boolean::class.java to "TINYINT",
         Long::class.java to "BIGINT"
-
     )
 
 
@@ -178,7 +178,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                 builder.append(column.name)
                 builder.append(" ")
                 builder.append(column.customType)
-                if (!column.isNumber) {
+                if (!column.isNumber && column.size>0) {
                     builder.append("(${column.size})")
                 }
                 builder.append(" ")
@@ -222,14 +222,17 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         if (value is Boolean){
             value = if (value) 1 else 0
         }
-        return serialization[value::class.java]?.invoke(value) ?: "$value"
+
+        val method = customTypes[value::class.java] as CustomType<Any>?
+        return method?.saveMethod?.invoke(value) ?: "$value"
     }
     override fun convertToSQL(valor: Any?, column: DatabaseColumn<*>): String {
         var value: Any = valor ?: return "NULL"
         if (value is Boolean){
             value = if (value) 1 else 0
         }
-        return serialization[value::class.java]?.invoke(value) ?: "$value"
+        val method = customTypes[value::class.java] as CustomType<Any>?
+        return method?.saveMethod?.invoke(value) ?: "$value"
 
     }
 
@@ -251,7 +254,8 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
                 e.printStackTrace()
             }
         }
-        return deserialization[column.javaType]?.invoke(data) ?: data
+        val method = customTypes[column.javaType] as CustomType<Any>?
+        return method?.reloadMethod?.invoke(data) ?: data
 
     }
 

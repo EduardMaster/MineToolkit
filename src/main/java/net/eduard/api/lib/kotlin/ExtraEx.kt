@@ -20,14 +20,29 @@ inline fun <reified  T : Any> store(alias : String){
 fun Int.toRadians() = Math.toRadians(this.toDouble())
 fun Double.toRadians() = Math.toRadians(this)
 
+
+inline fun <reified T : Any> new(setup: T.() -> Unit): T {
+    val element = T::class.java.newInstance() as T
+    element.setup()
+    return element
+}
+
+
+inline fun <reified T : Any> MutableList<T>.add(setup: T.() -> Unit): T {
+    val element = T::class.java.newInstance() as T
+    element.setup()
+    add(element)
+    return element
+}
+
 /**
  * Formata o Tempo do Jeito de Data ou por Duração
  */
 fun Long.formatTime(durationFormat: Boolean = false): String {
-    if (durationFormat)
-        return Extra.formatTime(this) ?: "0"
+    return if (durationFormat)
+        Extra.formatTime(this) ?: "0"
     else
-        return Extra.FORMAT_DATETIME.format(this)
+        Extra.FORMAT_DATETIME.format(this)
 }
 
 

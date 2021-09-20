@@ -9,10 +9,15 @@ interface DatabaseElement {
     fun insert(){
         sqlManager.insertData(this )
     }
+    fun insertQueue(){
+        sqlManager.insertDataQueue(this )
+    }
     fun delete(){
         sqlManager.deleteData(this )
     }
-
+    fun deleteQueue(){
+        sqlManager.deleteDataQueue(this )
+    }
     fun update(){
         sqlManager.updateData(this,*arrayOf() )
     }

@@ -273,7 +273,8 @@ class MinigameSchematic(var name: String = "Mapinha") {
                     }
                     if (block == null) continue
 
-                    if (minusLag && (block.typeId == typeId.toInt() && block.data == typeData)) {
+                    if (minusLag && (block.typeId == typeId.toInt()
+                                && block.data == typeData)) {
                         continue
                     }
                     val blockOf = Blocks.get(block.location) ?: continue

@@ -5,6 +5,7 @@ import net.eduard.api.lib.database.api.SQLEngineType
 import net.eduard.api.lib.database.impl.MySQLEngine
 import net.eduard.api.lib.modules.Extra
 import java.sql.*
+import javax.persistence.ColumnResult
 import kotlin.jvm.internal.Intrinsics
 
 /**
@@ -434,12 +435,14 @@ class DBManager(
     ): Int {
         var resultado = -1
         if (hasConnection()) {
+            var state : PreparedStatement? = null
+            var keys : ResultSet? = null
             try {
-                val state = query(
+                 state = query(
                     query, *objects
                 )
                 resultado = state!!.executeUpdate()
-                val keys = state.generatedKeys
+                keys = state.generatedKeys
                 if (keys != null) {
                     if (keys.next()) {
                         resultado = keys.getInt(1)
@@ -447,6 +450,9 @@ class DBManager(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+            }finally {
+                keys?.close()
+                state?.close()
             }
         }
         return resultado
@@ -478,14 +484,18 @@ class DBManager(
         vararg objects: Any?
     ): T? {
         var result: T? = null
+        var queryResult : ResultSet? = null
         if (hasConnection()) try {
-            val queryResult = selectAll(table, where, *objects) ?: return null
+             queryResult = selectAll(table, where, *objects) ?: return null
             if (queryResult.next()) {
                 result = queryResult.getObject(column, type) as T
             }
             queryResult.close()
         } catch (e: Exception) {
             e.printStackTrace()
+        }finally {
+            queryResult?.close()
+            queryResult?.statement?.close()
         }
         return result
     }
@@ -498,14 +508,16 @@ class DBManager(
      * @return PreparedStatement (Estado da Query)
      */
     fun query(
-        query: String, vararg objects: Any?
+        queryStr: String, vararg objects: Any?
     ): PreparedStatement? {
-        var query = query
+
+        var query = queryStr
+        var state : PreparedStatement? = null
         try {
             if (!query.endsWith(";")) {
                 query += ";"
             }
-            val state =
+             state =
                 connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
             var id = 1
             for (replacer in objects) {
@@ -519,11 +531,11 @@ class DBManager(
                 id++
             }
             debug("[MySQL] $query")
-            return state
         } catch (e: Exception) {
             e.printStackTrace()
+            state?.close()
         }
-        return null
+        return state
     }
 
     fun selectAll(

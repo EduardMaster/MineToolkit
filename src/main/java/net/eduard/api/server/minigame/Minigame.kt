@@ -48,7 +48,7 @@ open class Minigame(
     @Transient
     var setting: MinigameMap? = null
     var lobby: Location? = null
-    var mapsWorld = MinigameWorld("$name-Maps")
+    var mapsWorld = MinigameWorld("worlds/$name/map_creation")
 
     @Transient
     var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()

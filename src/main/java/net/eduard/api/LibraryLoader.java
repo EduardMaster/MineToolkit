@@ -14,8 +14,7 @@ public class LibraryLoader {
 
     public boolean needLoadKotlin() {
         try {
-            KotlinVersion versaoAtual = KotlinVersion.CURRENT;
-
+            KotlinVersion version = KotlinVersion.CURRENT;
             return false;
         } catch (Error err) {
             return true;
@@ -32,9 +31,9 @@ public class LibraryLoader {
         log("Iniciando carregamento de libraries");
         for (File file : Objects.requireNonNull(pastaLibs.listFiles())) {
             if (file.getName().endsWith(".jar")) {
+                if (!needLoadKotlin() && file.getName().toLowerCase().contains("kotlin"))
+                    continue;
                 try {
-                    if (!needLoadKotlin() && file.getName().toLowerCase().contains("kotlin"))
-                        continue;
                     log("Carregando jar: " + file.getName());
                     addClassPath(file);
                 } catch (Exception e) {
@@ -43,7 +42,6 @@ public class LibraryLoader {
                 }
             }
         }
-
     }
 
     public void log(String msg) {
@@ -53,13 +51,9 @@ public class LibraryLoader {
 
 
     private void addClassPath(final File file) throws Exception {
-
-
         URL url = new URL("jar:" + file.toURI().toURL().toExternalForm() + "!/");
         final Object sysloader = ClassLoader
                 .getSystemClassLoader();
-
-
         final Method method = URLClassLoader.class
                 .getDeclaredMethod("addURL",
                         URL.class);
@@ -69,6 +63,5 @@ public class LibraryLoader {
         } else {
             log("Java incompativel para carregamento de jar automatico");
         }
-
     }
 }

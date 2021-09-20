@@ -32,6 +32,34 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.potion.PotionEffect
 import kotlin.reflect.KClass
 
+val ItemStack.extra get() = MineReflect.getData(this)
+
+
+fun ItemStack.extra( setup : MineReflect.ItemExtraData.(ItemStack) -> Unit): ItemStack {
+    val extra = MineReflect.getData(this)
+    setup(extra,  this)
+    return MineReflect.setData(this , extra).apply {
+        if (extra.customStack>0.0) {
+            val currentLore = lore
+            currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
+            currentLore.add(
+                MineReflect.MSG_ITEM_STACK
+                    .replace("%stack", Extra.formatMoney(extra.customStack))
+            )
+            lore = currentLore
+        }else{
+            val currentLore = lore
+            currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
+            lore = currentLore
+        }
+    };
+}
+
+
+
+
+
+
 /**
  * Atalho para Mine.removeXP
  */
@@ -196,13 +224,9 @@ fun <T : ItemStack> T.potion(effect : PotionEffect): T {
  * Cria um item para o menu com DSQL< parametros posicao, e SQL Block
  */
 inline fun Inventory.item(position: Int, block: ItemStack.() -> Unit): ItemStack {
-
     val item = ItemStack(Material.STONE)
-
     block(item)
-
     setItem(position, item)
-
     return item
 
 }
@@ -285,7 +309,6 @@ var ItemStack.lore: MutableList<String>
         val meta = itemMeta
         meta.lore = value
         this.itemMeta = meta
-
     }
 
 

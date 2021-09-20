@@ -35,7 +35,7 @@ open class MinigameRoom() {
     open fun start() {
         mapUsed = map.copy()
         mapUsed.minigame = minigame
-        mapUsed.worldName = "${minigame.name}/room/$id"
+        mapUsed.worldName = "worlds/${minigame.name}/room/$id"
         if (minigame.worldBased) {
             mapUsed.copyWorld(map)
            // mapUsed.setupChests()

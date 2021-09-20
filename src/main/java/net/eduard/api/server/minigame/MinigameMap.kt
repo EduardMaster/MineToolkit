@@ -73,7 +73,7 @@ class MinigameMap(
     val hasSpawns get() = spawns.isNotEmpty()
 
     fun defaultWorldName(): String {
-        return "${minigame.name}/map/$name"
+        return "worlds/${minigame.name}/map/$name"
     }
 
 

@@ -3,29 +3,27 @@ package net.eduard.api.lib.database
 import java.sql.Timestamp
 import java.util.*
 
-val serialization: MutableMap<Class<*>, Any.() -> String> = mutableMapOf()
-val deserialization: MutableMap<Class<*>, (String) -> Any> = mutableMapOf()
-val dataSize :  MutableMap<Class<*>, Int> = mutableMapOf()
+val customTypes = mutableMapOf<Class<*>, CustomType<*>>()
+class CustomType<T : Any>{
+    var saveMethod : (T.() -> String)?= null
+    var reloadMethod : (String.() -> T)? = null
+    var sqlType: String = "VARCHAR"
+    var sqlSize = 150
+    fun withoutSize()  { sqlSize=0 }
+    inline fun < reified T> register(){
+        customTypes[T::class.java] = this
+    }
 
-inline fun <reified T> save(noinline saveAs: T.() -> String) {
-    val clz = T::class.java
-    serialization[clz] = saveAs as ((Any) -> String)
 }
-inline fun <reified T> save(size : Int, noinline saveAs: T.() -> String) {
-    sizeOf<T>(size)
-    save(saveAs)
+inline fun <reified T : Any> customType(noinline settings : (CustomType<T>.() -> Unit)){
+    customTypeRegister(T::class.java,settings)
 }
-inline fun <reified T> sizeOf(size : Int){
-    val clz = T::class.java
-    dataSize[clz] = size
-}
-inline fun <reified T> load(size : Int, noinline loadAs: (String) -> T) {
-    sizeOf<T>(size)
-    load(loadAs)
-}
-inline fun <reified T> load(noinline loadAs: (String) -> T) {
-    val clz = T::class.java
-    deserialization[clz] = loadAs as (String) -> Any
+fun <T : Any> customTypeRegister(clz : Class<T>,
+  settings : (CustomType<T>.() -> Unit)) : CustomType<T>{
+    val customType = CustomType<T>()
+    customType.settings()
+    customTypes[clz] = customType
+    return customType
 }
 
 fun Date.toSQLDate() = java.sql.Date(time)
@@ -33,30 +31,46 @@ fun String.toSQLDate() = java.sql.Date.valueOf(this)
 fun java.sql.Date.toDate() = Date(time)
 
 fun javaTypes() {
+    customType<UUID> {
+        reloadMethod ={
+            UUID.fromString(this)
+        }
+        saveMethod={
+           toString()
+        }
+    }
+    customType<Date> {
+        reloadMethod ={
+            toSQLDate().toDate()
+        }
+        saveMethod={
+            toSQLDate().toString()
+        }
+        withoutSize()
+        sqlType="DATE"
+    }
+    customType<java.sql.Date> {
+        reloadMethod = {
+            toSQLDate()
+        }
+        saveMethod={
+            toString()
+        }
 
-    save<UUID>(100) {
-        toString()
+        withoutSize()
+        sqlType="DATE"
     }
-    load {
-        UUID.fromString(it)
-    }
-    save<Date>  {
-        toSQLDate().toString()
-    }
-    load {
-        it.toSQLDate().toDate()
-    }
-    save<java.sql.Date>  {
-        toString()
-    }
-    load {
-        it.toSQLDate()
-    }
-    save<Timestamp> { toString()
+    customType<Timestamp> {
+        reloadMethod = {
+            Timestamp.valueOf(this)
+        }
+        saveMethod={
+            toString()
+        }
+
+        withoutSize()
+        sqlType="TIMESTAMP"
     }
 
-    load {
-         Timestamp.valueOf(it)
-    }
 
 }

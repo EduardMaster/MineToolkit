@@ -11,43 +11,58 @@ import java.util.*
 
 object BukkitTypes {
     init {
-        save<World>(50) { name }
-        load {
-            Bukkit.getWorld(it)
+        customType<World> {
+            saveMethod = {
+                name
+            }
+            reloadMethod = {
+                Bukkit.getWorld(this)
+            }
         }
-        save<Location>(150) {
-            "${world.name};$x;$y;$z;$yaw;$pitch"
+        customType<Location> {
+            saveMethod = {
+                "${world.name};$x;$y;$z;$yaw;$pitch"
+            }
+            reloadMethod = {
+                val split = split(";")
+                Location(
+                    Bukkit.getWorld(split[0]), split[1].toDouble(),
+                    split[2].toDouble(), split[3].toDouble(), split[4].toFloat()
+                    , split[5].toFloat()
+                )
+            }
         }
-        load {
-            val split = it.split(";")
-            Location(
-                Bukkit.getWorld(split[0]), split[1].toDouble(),
-                split[2].toDouble(), split[3].toDouble(), split[4].toFloat()
-                , split[5].toFloat()
-            )
+        customType<Vector> {
+            saveMethod = {
+                "$x;$y;$z"
+            }
+            reloadMethod = {
+                val (x, y, z) = split(";")
+                    .map { n -> n.toDouble() }
+                Vector(
+                    x, y, z
+                )
+            }
         }
-        save<Vector>(75) { "$x;$y;$z" }
-        load {
-            val (x, y, z) = it.split(";")
-                .map { n -> n.toDouble() }
-            Vector(
-                x, y, z
-            )
+        customType<FakePlayer> {
+            saveMethod = {
+                "$name;$uniqueId"
+            }
+            reloadMethod = {
+                val split = split(";")
+                FakePlayer(split[0], UUID.fromString(split[1]))
+            }
+            sqlSize=100
         }
-        save<FakePlayer>(100) {
-            "$name;$uniqueId"
+        customType<Enchantment> {
+            saveMethod = {
+                "$id"
+            }
+            reloadMethod = {
+                Enchantment.getById(Extra.toInt(this))
+            }
+            sqlSize=100
         }
-        load {
-            val split = it.split(";")
-            FakePlayer(split[0], UUID.fromString(split[1]))
-        }
-        save<Enchantment>(100) {
-            "$id"
-        }
-        load {
-            Enchantment.getById(Extra.toInt(it))
-        }
-
     }
 }
 
