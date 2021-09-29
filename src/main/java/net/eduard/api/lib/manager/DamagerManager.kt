@@ -14,6 +14,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
  */
 object DamagerManager : Listener {
 
+    private val lastPvP: MutableMap<Entity, Entity> = HashMap()
+
     init{
         register(EduardAPI.instance.plugin)
     }
@@ -27,8 +29,6 @@ object DamagerManager : Listener {
         }
         return damager
     }
-
-    private val lastPvP: MutableMap<Entity, Entity> = HashMap()
 
 
 

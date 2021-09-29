@@ -112,11 +112,11 @@ class DBManager(
      *
      * @return Se a conexao existe
      */
-    fun hasConnectionInFact(): Boolean {
+    fun hasConnectionInFact(time : Int = 500): Boolean {
         try {
 
             return hasConnectionInMemory()
-                    && connection.isValid(500)
+                    && connection.isValid(time)
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }

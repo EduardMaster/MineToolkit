@@ -278,7 +278,16 @@ class SQLManager(var dbManager: DBManager) {
             dbManager.engineUsed.clearTable(dataClass)
         }
     }
+    inline fun <reified E : Any> deleteReferences() {
+        deleteReferences(E::class.java)
+    }
 
+
+    fun <E : Any> deleteReferences(dataClass: Class<E>) {
+        if (hasConnection()) {
+            dbManager.engineUsed.getTable(dataClass).deleteReferences()
+        }
+    }
 
     inline fun <reified E : Any> createReferences() {
         createReferences(E::class.java)

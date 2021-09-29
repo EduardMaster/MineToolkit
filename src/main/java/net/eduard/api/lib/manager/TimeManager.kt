@@ -26,7 +26,7 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable,
 
 
     @Transient
-    var task: BukkitTask? = null
+    lateinit var task: BukkitTask
 
     val isRunning: Boolean
         get() = existsTask() &&
@@ -51,8 +51,8 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable,
      */
     fun syncDelay(): BukkitTask {
         task = newTask(time,false,false,this)
-        startedTime = Mine.getNow()
-        return task!!
+        startedTime = System.currentTimeMillis()
+        return task
     }
 
     /**
@@ -63,8 +63,8 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable,
      */
     fun syncTimer(): BukkitTask {
         task = newTask(time,true,false,this)
-        startedTime = Mine.getNow()
-        return task!!
+        startedTime = System.currentTimeMillis()
+        return task
     }
 
     /**
@@ -75,8 +75,8 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable,
      */
     fun asyncTimer(): BukkitTask {
         task = newTask(time,true,true,this)
-        startedTime = Mine.getNow()
-        return task!!
+        startedTime = System.currentTimeMillis()
+        return task
     }
 
     /**
@@ -87,8 +87,8 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable,
      */
     fun asyncDelay(): BukkitTask {
         task = newTask(time,false,true,this)
-        startedTime =Mine.getNow()
-        return task!!
+        startedTime = System.currentTimeMillis()
+        return task
     }
 
     /**
@@ -96,16 +96,15 @@ open class TimeManager(var time: Long = 20) : EventsManager(), Runnable,
      * @return Se ligou um Timer ou Delay
      */
     fun existsTask(): Boolean {
-        return task != null
+        return this::task.isInitialized
     }
 
     /**
      * Desliga o Timer/Delay criado
      */
     fun stopTask() {
-        if (existsTask()) {
-            task!!.cancel()
-            task = null
+        if (isRunning) {
+            task.cancel()
         }
     }
 

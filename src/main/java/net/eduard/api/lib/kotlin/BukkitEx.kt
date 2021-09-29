@@ -32,25 +32,26 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.potion.PotionEffect
 import kotlin.reflect.KClass
 
-val ItemStack.extra get() = MineReflect.getData(this)
+
+inline val ItemStack.extra get() = MineReflect.getData(this)
 
 
 fun ItemStack.extra( setup : MineReflect.ItemExtraData.(ItemStack) -> Unit): ItemStack {
     val extra = MineReflect.getData(this)
     setup(extra,  this)
     return MineReflect.setData(this , extra).apply {
-        if (extra.customStack>0.0) {
+        lore = if (extra.customStack>0.0) {
             val currentLore = lore
             currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
             currentLore.add(
                 MineReflect.MSG_ITEM_STACK
                     .replace("%stack", Extra.formatMoney(extra.customStack))
             )
-            lore = currentLore
+            currentLore
         }else{
             val currentLore = lore
             currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
-            lore = currentLore
+            currentLore
         }
     };
 }
@@ -63,14 +64,14 @@ fun ItemStack.extra( setup : MineReflect.ItemExtraData.(ItemStack) -> Unit): Ite
 /**
  * Atalho para Mine.removeXP
  */
-fun Player.removeXP(amount: Double) {
+inline fun Player.removeXP(amount: Double) {
     Mine.removeXP(this, amount)
 }
 
 /**
  * Atalho para Mine.addHotBar
  */
-fun Player.addHotBar(item: ItemStack) {
+inline fun Player.addHotBar(item: ItemStack) {
     Mine.setHotBar(this, item)
 }
 
@@ -78,21 +79,21 @@ fun Player.addHotBar(item: ItemStack) {
  * Traduz os simbolos & para § <br>
  * Alias para ChatColor.translateAlternateColorCodes
  */
-fun String.colored(): String {
+inline fun String.colored(): String {
     return ChatColor.translateAlternateColorCodes('&', this)
 }
 
 /**
  * Atalho para Mine.changeTabName
  */
-fun Player.changeTabName(tabName: String) {
+inline fun Player.changeTabName(tabName: String) {
     Mine.changeTabName(this, tabName)
 }
 
 /**
  * Atalho para Mine.clearHotBar
  */
-fun Player.clearHotBar() {
+inline fun Player.clearHotBar() {
     Mine.clearHotBar(this)
 
 }
@@ -100,49 +101,49 @@ fun Player.clearHotBar() {
 /**
  * Atalho para Mine.clearArmors
  */
-fun LivingEntity.clearArmors() {
+inline fun LivingEntity.clearArmors() {
     Mine.clearArmours(this)
 }
 
 /**
  * Atalho para Mine.clearInventory
  */
-fun Player.clearInventory() {
+inline fun Player.clearInventory() {
     Mine.clearInventory(this)
 }
 
 /**
  * Atalho para MineReflect.sendTitle
  */
-fun Player.sendTitle(title: String, subTitle: String) {
+inline fun Player.sendTitle(title: String, subTitle: String) {
     MineReflect.sendTitle(this, title, subTitle, 20, 20, 20)
 }
 
 /**
  * Atalho para MineReflect.sendTitle
  */
-fun Player.sendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
+inline fun Player.sendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
     MineReflect.sendTitle(this, title, subTitle, fadeInt, stay, fadeOut)
 }
 
 /**
  * Atalho para MineReflect.sendActionBar
  */
-fun Player.sendActionBar(msg: String) {
+inline fun Player.sendActionBar(msg: String) {
     MineReflect.sendActionBar(this, msg)
 }
 
 /**
  * Atalho para MineReflect.sendPacket
  */
-fun Player.sendPacket(packet: Any) {
+inline fun Player.sendPacket(packet: Any) {
     MineReflect.sendPacket(this, packet)
 }
 
 /**
  * Atalho para Mine.callEvent
  */
-fun Event.call() {
+inline fun Event.call() {
     return Mine.callEvent(this)
 }
 
@@ -163,13 +164,13 @@ inline fun CommandSender.isPlayer(block: Player.() -> Unit) {
     }
 }
 
-fun Listener.register(plugin: Plugin) = Bukkit.getPluginManager().registerEvents(this, plugin)
+inline fun Listener.register(plugin: Plugin) = Bukkit.getPluginManager().registerEvents(this, plugin)
 
-fun CommandExecutor.register(cmd: String, plugin: JavaPlugin) {
+inline fun CommandExecutor.register(cmd: String, plugin: JavaPlugin) {
     plugin.getCommand(cmd).executor = this
 }
 
-val Player.offline get() = PlayerUser(this.name, this.uniqueId)
+inline val Player.offline get() = PlayerUser(this.name, this.uniqueId)
 
 
 val <T> Class<T>.plugin: JavaPlugin
@@ -180,9 +181,9 @@ val <T> Class<T>.plugin: JavaPlugin
         return JavaPlugin.getPlugin(this as Class<out JavaPlugin>) as JavaPlugin
     }
 
-fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
+inline fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
 
-val BlockState.isCrop get() = type == Material.CROPS
+inline val BlockState.isCrop get() = type == Material.CROPS
 
 
 val BlockState.plantState: CropState?
@@ -192,7 +193,7 @@ val BlockState.plantState: CropState?
 
 inline val InventoryClickEvent.player get() = this.whoClicked as Player
 
-inline val InventoryOpenEvent.player get() = this.player as Player
+inline val InventoryOpenEvent.opener get() = this.player as Player
 
 
 /**
@@ -201,10 +202,8 @@ inline val InventoryOpenEvent.player get() = this.player as Player
 inline fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -> Unit): Inventory {
 
     val inventory = Bukkit.createInventory(this, 9 * lineAmount, name.cut(32))
-
     block(inventory)
     player.openInventory(inventory)
-
     return inventory
 
 }
@@ -260,7 +259,7 @@ val enchantmentsNames = mutableMapOf(
     Enchantment.PROTECTION_PROJECTILE to "Proteção contra Projéteis"
 )
 
-val Enchantment.nameBR get() = enchantmentsNames[this] ?: name
+inline val Enchantment.nameBR get() = enchantmentsNames.getOrDefault(this, name)
 
 
 fun <T : ItemStack> T.displayEnchants(): T {
@@ -290,49 +289,36 @@ fun <T : ItemStack> T.displayEnchants(): T {
 }
 
 
-var ItemStack.name: String
+inline var ItemStack.name: String
     get() {
-        return itemMeta.displayName ?: ""
+        return Mine.getName(this)
     }
     set(value) {
-        val meta = itemMeta
-        meta.displayName = value
-        this.itemMeta = meta
+        Mine.setName(this , value)
 
     }
 
-var ItemStack.lore: MutableList<String>
+inline var ItemStack.lore: MutableList<String>
     get() {
-        return itemMeta.lore ?: mutableListOf()
+        return Mine.getLore(this)
     }
     set(value) {
-        val meta = itemMeta
-        meta.lore = value
-        this.itemMeta = meta
+        Mine.setLore(this , value)
     }
 
 
-operator  fun <T : ItemStack> T.invoke(name: String): T {
-    this.name = name
-    return this
-}
 
-operator fun ItemStack.invoke(enchament: Enchantment, level: Int): ItemStack {
-    addUnsafeEnchantment(enchament, level)
-    return this
-}
-
-operator fun ItemStack.minus(enchament: Enchantment): ItemStack {
+inline operator fun ItemStack.minus(enchament: Enchantment): ItemStack {
     removeEnchantment(enchament)
     return this
 }
 
-operator fun ItemStack.plus(amount: Int): ItemStack {
+inline operator fun ItemStack.plus(amount: Int): ItemStack {
     this.amount += amount
     return this
 }
 
-operator fun ItemStack.plus(map: Map<Enchantment, Int>): ItemStack {
+inline operator fun ItemStack.plus(map: Map<Enchantment, Int>): ItemStack {
     addUnsafeEnchantments(map)
     return this
 }
@@ -341,12 +327,12 @@ infix fun Enchantment.level(level: Int): Map<Enchantment, Int> {
     return mapOf(this to level)
 }
 
-fun <T : ItemStack> T.id(id: Int): T {
+inline fun <T : ItemStack> T.id(id: Int): T {
     typeId = id
     return this
 }
 
-fun <T : ItemStack> T.data(data: Int): T {
+inline fun <T : ItemStack> T.data(data: Int): T {
     durability = data.toShort()
     return this
 }
@@ -358,25 +344,18 @@ fun <T : ItemStack> T.addLore(vararg lore: String): T {
     return this
 }
 
-fun <T : ItemStack> T.lore(vararg lore: String): T {
-    val list = this.lore
-    list.clear()
-    list.addAll(lore)
-    this.lore = list
+inline fun <T : ItemStack> T.lore(vararg lore: String): T {
+    Mine.setLore(this, *lore)
     return this
 }
 
-fun <T : ItemStack> T.addEnchant(ench: Enchantment, level: Int): T {
+inline fun <T : ItemStack> T.addEnchant(ench: Enchantment, level: Int): T {
     addUnsafeEnchantment(ench, level)
     return this
 }
 
-fun <T : ItemStack> T.color(color: Color): T {
-    if (!type.name.contains("LEATHER"))
-        type = Material.LEATHER_CHESTPLATE
-    val meta = itemMeta as LeatherArmorMeta
-    meta.color = color
-    itemMeta = meta
+inline fun <T : ItemStack> T.color(color: Color): T {
+    Mine.setColor(this , color)
     return this
 }
 

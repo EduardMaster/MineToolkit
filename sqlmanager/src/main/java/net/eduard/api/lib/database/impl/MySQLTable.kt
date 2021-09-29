@@ -5,7 +5,6 @@ import net.eduard.api.lib.database.api.DatabaseColumn
 import net.eduard.api.lib.database.api.DatabaseEngine
 import net.eduard.api.lib.database.api.DatabaseTable
 import net.eduard.api.lib.database.api.TableReference
-import java.lang.Exception
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.sql.*
@@ -298,8 +297,14 @@ class MySQLTable<T : Any>(
                 if (referenceInstance != null) {
                     field.set(data, referenceInstance)
                 } else {
-
                     references.add(TableReference(column, data, key))
+                }
+                try {
+                    val relatedField = tableClass.getDeclaredField(field.name + "Id")
+                    relatedField.isAccessible=true
+                    relatedField.set(data , key);
+                }catch (ex : Exception){
+
                 }
                 continue
             }
@@ -330,9 +335,9 @@ class MySQLTable<T : Any>(
         var prepare : PreparedStatement? = null
         try {
 
-            val builder = StringBuilder("INSERT INTO $name (")
+            val builder = StringBuilder("INSERT INTO `$name` (")
             for (column in columns.values) {
-                builder.append(column.name + ",")
+                builder.append("`"+column.name + "`,")
             }
             builder.deleteCharAt(builder.length - 1)
             builder.append(") VALUES (")
@@ -369,9 +374,8 @@ class MySQLTable<T : Any>(
             if (keys != null) {
                 if (keys.next() && primaryColumn != null && primaryColumn!!.isNumber) {
                     primaryColumn!!.field.set(data, keys.getInt(1))
-
-
                 }
+                keys.close()
             }
             if (primaryColumn != null) {
                 elements[primaryColumn!!.field.get(data)] = data
@@ -391,16 +395,16 @@ class MySQLTable<T : Any>(
     override fun update(data: T,vararg columnsNames : String) {
         var prepare : PreparedStatement? = null
         try {
-            val builder = StringBuilder("UPDATE $name SET ")
+            val builder = StringBuilder("UPDATE `$name` SET ")
 
             for (column in columns.values) {
                 if (column.isPrimary && column.isNumber) continue
-                if (columnsNames.isNotEmpty()&& !columnsNames.contains(column.name))continue
-                builder.append("${column.name} = ?,")
+                if (columnsNames.isNotEmpty() && !columnsNames.contains(column.name))continue
+                builder.append("`${column.name}` = ?,")
             }
             builder.deleteCharAt(builder.length - 1)
             builder.append(" WHERE ")
-            builder.append(primaryName)
+            builder.append("`$primaryName`")
             builder.append(" = ?")
             prepare = connection
                 .prepareStatement(builder.toString())
@@ -449,7 +453,7 @@ class MySQLTable<T : Any>(
         try {
 
             prepare = connection.prepareStatement(
-                "DELETE FROM $name WHERE ${primaryColumn?.name ?: "ID"} = ?"
+                "DELETE FROM `$name` WHERE `${primaryColumn?.name ?: "ID"}` = ?"
             )
             if (primaryColumn != null) {
                 prepare.setString(1, engine.convertToSQL(primaryColumn!!.field.get(data), primaryColumn!!))

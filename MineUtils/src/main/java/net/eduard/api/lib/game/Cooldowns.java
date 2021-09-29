@@ -77,7 +77,7 @@ public abstract class Cooldowns {
 	 *            Segundos
 	 */
 	public void setTime(int seconds) {
-		ticks = seconds * 20;
+		ticks = seconds * 20L;
 	}
 
 	/**
@@ -95,9 +95,7 @@ public abstract class Cooldowns {
 	public void setOnCooldown(Player player) {
 		removeFromCooldown(player);
 		onStartCooldown(player);
-		BukkitTask task = Bukkit.getScheduler().runTaskLaterAsynchronously(getPlugin(), () ->{
-			removeFromCooldown(player);
-		}, ticks);
+		BukkitTask task = Bukkit.getScheduler().runTaskLaterAsynchronously(getPlugin(), () -> removeFromCooldown(player), ticks);
 		cooldowns.put(player.getUniqueId(), task);
 		cooldownsStart.put(player.getUniqueId() , System.currentTimeMillis());
 	}

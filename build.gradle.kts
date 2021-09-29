@@ -28,7 +28,7 @@ tasks {
     }
 }
 dependencies {
-    api(kotlin("stdlib"))
+    compileOnly(kotlin("stdlib"))
     api(project(":MineNMS"))
     api(project(":MineNMS-1_8_9"))
     api(project(":MineNMS-1_7"))

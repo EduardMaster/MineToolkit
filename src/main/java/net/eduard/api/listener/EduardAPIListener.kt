@@ -6,6 +6,7 @@ import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.lib.event.BlockMineEvent
 import net.eduard.api.lib.kotlin.call
+import net.eduard.api.lib.kotlin.chat
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit

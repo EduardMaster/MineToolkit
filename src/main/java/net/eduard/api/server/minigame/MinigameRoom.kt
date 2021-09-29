@@ -118,7 +118,7 @@ open class MinigameRoom() {
     }
 
     fun hasMinPlayersAmount(): Boolean {
-        return players.size >= map.minPlayersAmount
+        return getPlayers(MinigamePlayerState.NORMAL).size >= map.minPlayersAmount
     }
 
     /**
@@ -128,7 +128,7 @@ open class MinigameRoom() {
      * @return
      */
     fun isPlaying(player: Player): Boolean {
-        return players.any { p -> p.player == player }
+        return players.any { minigamePlayer -> minigamePlayer.player == player }
 
     }
 
@@ -283,7 +283,7 @@ open class MinigameRoom() {
      * @return
      */
     fun hasSpace(): Boolean {
-        return players.size < map.maxPlayersAmount
+        return getPlayers(MinigamePlayerState.NORMAL).size < map.maxPlayersAmount
     }
 
 

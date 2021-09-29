@@ -49,8 +49,8 @@ class BukkitController : ServerController<Plugin> {
         }
     }
 
-    override fun register(pl: Plugin) {
-        plugin = pl
+    override fun register(pluginUsed: Plugin) {
+        plugin = pluginUsed
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, BungeeAPI.channel)
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, BungeeAPI.channel, listener)
         BungeeAPI.debug("Registrando sistema no lado do Spigot(Servidor)")

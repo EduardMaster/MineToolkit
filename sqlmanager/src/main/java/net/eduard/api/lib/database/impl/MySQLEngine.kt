@@ -82,7 +82,6 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
             }
             tablesCreatedQuery.close()
 
-
         }catch (ex : Exception){
             ex.printStackTrace()
         }
@@ -150,11 +149,13 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     override fun clearTable(tableName: String) {
         var prepare : PreparedStatement? = null
         try {
-
+            val table = getTable(tableName)
+            table.deleteReferences()
             prepare = connection.prepareStatement(
                 "TRUNCATE TABLE $tableName"
             )
             prepare.executeUpdate()
+            table.createReferences()
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }finally {
@@ -171,11 +172,11 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         val tableName = table.name
         var prepare : PreparedStatement? = null
         try {
-            val builder = StringBuilder("CREATE TABLE IF NOT EXISTS $tableName (")
+            val builder = StringBuilder("CREATE TABLE IF NOT EXISTS `$tableName` (")
             log("Criando tabela $tableName")
             for ((field, column) in table.columns) {
                 log("Coluna: ${field.name}")
-                builder.append(column.name)
+                builder.append("`" + column.name + "`")
                 builder.append(" ")
                 builder.append(column.customType)
                 if (!column.isNumber && column.size>0) {

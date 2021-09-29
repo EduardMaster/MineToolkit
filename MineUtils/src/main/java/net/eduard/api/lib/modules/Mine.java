@@ -3103,7 +3103,6 @@ public final class Mine {
      * @return Item
      */
     public static ItemStack setLore(ItemStack item, String... lore) {
-
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setLore(Arrays.asList(lore));
