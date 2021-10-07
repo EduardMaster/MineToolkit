@@ -332,6 +332,7 @@ class MySQLTable<T : Any>(
     }
 
     override fun insert(data: T) {
+        log("Dado a ser inserido "+data)
         var prepare : PreparedStatement? = null
         try {
 
@@ -352,7 +353,6 @@ class MySQLTable<T : Any>(
                 .prepareStatement(builder.toString(), Statement.RETURN_GENERATED_KEYS)
             var id = 1
             for ((field, column) in columns) {
-
                 val fieldValue = field.get(data)
                 if (column.isConstraint && fieldValue != null) {
                     val primaryKey = column.referenceTable.primaryColumn!!.field.get(fieldValue) ?: 0

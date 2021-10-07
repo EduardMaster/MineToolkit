@@ -17,9 +17,9 @@ object BungeeAPI {
 
 
     fun getServer(serverName: String): ServerSpigot {
-        return servers.getOrPut(serverName.toLowerCase() , {
+        return servers.getOrPut(serverName.toLowerCase()) {
             ServerSpigot(serverName)
-        })
+        }
     }
 
     val playersAmount: Int

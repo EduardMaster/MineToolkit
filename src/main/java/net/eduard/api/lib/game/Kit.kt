@@ -46,7 +46,8 @@ class Kit() {
     var isClearInventory = false
     var isFillSoup = false
     var isAutoEquip = true
-    var icon: ItemStack = ItemBuilder(Material.DIAMOND_SWORD).name("§aKit")
+    var icon: ItemStack = ItemBuilder(Material.DIAMOND_SWORD)
+        .name("§aKit")
     var items = mutableListOf<ItemStack>()
     var upgrades = mutableListOf<KitUpgrade>()
 

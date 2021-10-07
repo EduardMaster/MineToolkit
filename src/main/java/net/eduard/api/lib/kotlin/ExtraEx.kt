@@ -11,12 +11,15 @@ import net.eduard.api.lib.storage.StorageAPI
 inline fun <T : Any> T.copy(): T {
     return Copyable.copyObject(this) as T
 }
-inline fun <reified  T : Any> store(){
+
+inline fun <reified T : Any> store() {
     StorageAPI.autoRegisterClass(T::class.java)
 }
-inline fun <reified  T : Any> store(alias : String){
-    StorageAPI.autoRegisterClass(T::class.java , alias)
+
+inline fun <reified T : Any> store(alias: String) {
+    StorageAPI.autoRegisterClass(T::class.java, alias)
 }
+
 inline fun Int.toRadians() = Math.toRadians(this.toDouble())
 inline fun Double.toRadians() = Math.toRadians(this)
 
@@ -38,12 +41,16 @@ inline fun <reified T : Any> MutableList<T>.add(setup: T.() -> Unit): T {
 /**
  * Formata o Tempo do Jeito de Data ou por Duração
  */
-fun Long.formatTime(durationFormat: Boolean = false): String {
+inline fun Long.formatTime(durationFormat: Boolean): String {
     return if (durationFormat)
-        Extra.formatTime(this) ?: "0"
+        formatDuration()
     else
-        Extra.FORMAT_DATETIME.format(this)
+        formatTime()
 }
+
+inline fun Long.formatTime() = Extra.FORMAT_DATETIME.format(this)
+
+inline fun Long.formatDuration() = Extra.formatTime(this)
 
 
 inline fun Long.formatDate() = Extra.FORMAT_DATE.format(this)
@@ -53,10 +60,13 @@ inline fun Long.formatHour() = Extra.FORMAT_TIME.format(this)
 /**
  * Formata o numero no formato OP
  */
-fun Number.format(formatOP: Boolean = true): String{
-    return if (formatOP) Extra.formatMoney(this.toDouble())
-    else Extra.MONEY.format(this)
+inline fun Number.format(formatOP: Boolean): String {
+    return if (formatOP) format()
+    else text
 }
+
+inline fun Number.format() = Extra.formatMoney(this.toDouble())
+
 inline val Number.text get() = Extra.MONEY.format(this)
 
 fun <T : Any> Array<T>.shuffle(): Array<T> {
@@ -120,7 +130,8 @@ fun <T : Any> List<T>.randomByPercent(getDouble: (T.() -> Double)): T {
 fun Int.centralized(): Int {
     var valor = this
     while (Extra.isColumn(valor, 1) ||
-        Extra.isColumn(valor, 9)) {
+        Extra.isColumn(valor, 9)
+    ) {
         valor++
     }
     return valor
@@ -140,7 +151,7 @@ inline fun Int.chance(): Boolean {
     return (this.toDouble() / 100).chance()
 }
 
-inline fun Double.percent() : String{
+inline fun Double.percent(): String {
     return Extra.MONEY.format(this * 100.0)
 }
 
@@ -157,7 +168,6 @@ inline fun Double.chance(): Boolean {
 inline fun String.cut(maxSize: Int): String {
     return Extra.cutText(this, maxSize)
 }
-
 
 
 inline fun String.lowerContains(msg: String) = Extra.contains(this, msg)

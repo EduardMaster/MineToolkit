@@ -44,13 +44,13 @@ open class MinigamePlayer() {
 
     fun show(gamePlayer: MinigamePlayer) {
 
-        send("§aAgora você pode ver §2${gamePlayer.fakePlayer.name}")
+        //send("§aAgora você pode ver §2${gamePlayer.fakePlayer.name}")
         this.player.showPlayer(gamePlayer.player)
     }
 
     fun hide(gamePlayer: MinigamePlayer) {
 
-        send("§cAgora você não pode ver §7${gamePlayer.fakePlayer.name}")
+        //send("§cAgora você não pode ver §7${gamePlayer.fakePlayer.name}")
         this.player.hidePlayer(gamePlayer.player)
 
     }

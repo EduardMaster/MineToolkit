@@ -13,6 +13,10 @@ class Particle(
     var yRandom: Float = 0f,
     var zRandom: Float = 0f
 ) {
+    constructor(particle: ParticleType) : this(particle , 1,0f,0f,0f,0f)
+    constructor(particle: ParticleType, amount: Int) : this(particle , amount,0f,0f,0f,0f)
+    constructor(particle: ParticleType, amount: Int,speed: Float) : this(particle , amount,speed,0f,0f,0f)
+
 
 
     fun create(player: Player, local: Location): Particle {

@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack
 @Suppress("unused")
 open class Product(
     name: String = "Produto", shop: Shop? = null
-) : MenuButton(name, shop) {
+) : MenuButton(name, shop,1,1,1) {
 
 
     fun upgrade(level: Int, body: ProductUpgrade.() -> Unit): ProductUpgrade {
@@ -111,14 +111,14 @@ open class Product(
         }
         for (line in template!!) {
             lore.add(
-            line.replace("\$product_name", name)
-                .replace("\$product_stock", "" + stock)
-                .replace("\$product_buy_unit_price", unitBuyPrice.format(moneyFormatedOP))
-                .replace("\$product_buy_pack_price", (unitBuyPrice * 64.0).format(moneyFormatedOP))
-                .replace("\$product_sell_unit_price", unitSellPrice.format(moneyFormatedOP))
-                .replace("\$product_sell_pack_price", (unitSellPrice * 64).format(moneyFormatedOP))
+            line.replace("%product_name", name)
+                .replace("%product_stock", "" + stock)
+                .replace("%product_buy_unit_price", unitBuyPrice.format(moneyFormatedOP))
+                .replace("%product_buy_pack_price", (unitBuyPrice * 64.0).format(moneyFormatedOP))
+                .replace("%product_sell_unit_price", unitSellPrice.format(moneyFormatedOP))
+                .replace("%product_sell_pack_price", (unitSellPrice * 64).format(moneyFormatedOP))
                 .replace(
-                    "\$product_sell_inventory_price",
+                    "%product_sell_inventory_price",
                     (unitSellPrice * 64 * 4 * 9).format(moneyFormatedOP)
                 )
             )

@@ -12,6 +12,12 @@ open class ItemRandom(
     var maxAmount: Int = 1,
     var maxRepeats: Int = 1
 ) {
+    constructor(item: ItemStack,chance: Double,minAmount: Int,maxAmount: Int)
+    : this(item, chance,minAmount,maxAmount,1)
+    constructor(item: ItemStack,chance: Double,amount: Int)
+            : this(item, chance,amount,amount,1)
+    constructor(item: ItemStack,chance: Double)
+            : this(item, chance,1,1,1)
 
     @Transient
     var repeats = 0

@@ -15,10 +15,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.*;
+import org.bukkit.potion.PotionEffect;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -69,6 +67,16 @@ public class ItemBuilder extends ItemStack {
         return this;
     }
 
+    public ItemBuilder potion(PotionEffect effect) {
+        if (getType() != Material.POTION)
+            setType(Material.POTION);
+        PotionMeta meta = (PotionMeta) getItemMeta();
+        meta.setMainEffect(effect.getType());
+        meta.addCustomEffect(effect, true);
+        setItemMeta(meta);
+        return this;
+    }
+
     public ItemBuilder banner(DyeColor baseColor, DyeColor patternColor, PatternType patternType) {
         type(Material.BANNER);
         BannerMeta bannerMeta = (BannerMeta) getItemMeta();
@@ -85,7 +93,6 @@ public class ItemBuilder extends ItemStack {
         setItemMeta(bannerMeta);
         return this;
     }
-
 
 
     public ItemBuilder(String name) {
@@ -107,9 +114,7 @@ public class ItemBuilder extends ItemStack {
         type(Material.SKULL_ITEM);
         data(SkullType.PLAYER.ordinal());
         SkullMeta itemMeta = (SkullMeta) getItemMeta();
-
         GameProfile profile = new GameProfile(UUID.randomUUID(), "Notch");
-
         profile.getProperties().put("textures",
                 new Property("textures", textureBase64));
 
@@ -130,8 +135,9 @@ public class ItemBuilder extends ItemStack {
 
         return texture(new String(encodedData));
     }
-    public ItemBuilder skinId(String skinID){
-        return skin("http://textures.minecraft.net/texture/"+skinID);
+
+    public ItemBuilder skinId(String skinID) {
+        return skin("http://textures.minecraft.net/texture/" + skinID);
     }
 
     public ItemBuilder amount(int amount) {
@@ -145,18 +151,18 @@ public class ItemBuilder extends ItemStack {
     }
 
     public ItemBuilder type(Material type) {
-
         setType(type);
-
         return this;
     }
-    public ItemBuilder addFlags(ItemFlag... flags){
+
+    public ItemBuilder addFlags(ItemFlag... flags) {
         ItemMeta meta = getItemMeta();
         meta.addItemFlags(flags);
         setItemMeta(meta);
         return this;
     }
-    public ItemBuilder removeFlags(){
+
+    public ItemBuilder removeFlags() {
         ItemMeta meta = getItemMeta();
         meta.removeItemFlags(ItemFlag.values());
         setItemMeta(meta);

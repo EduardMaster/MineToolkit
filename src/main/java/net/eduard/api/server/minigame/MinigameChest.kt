@@ -95,9 +95,6 @@ class MinigameChest {
         val chestAmount = inventories.size
         val sortedItemsList = randomize()
         val perInventoryItems = (sortedItemsList.size.toDouble() / chestAmount.toDouble()).toInt()+1
-        //Mine.console("§cSortedItems: §e"+ sortedItemsList.size.format())
-        //Mine.console("§cChestAmount: §e"+ chestAmount.format())
-        //Mine.console("§cPerInventoryItems: §e"+ perInventoryItems.format())
         val listUsed = sortedItemsList.toMutableList()
 
         for (chestInv in inventories) {

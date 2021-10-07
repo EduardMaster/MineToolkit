@@ -52,7 +52,7 @@ public final class BukkitBungeeAPI {
 
 		@EventHandler
 		public void event(PlayerJoinEvent e){
-			sendMissingMessages(e.getPlayer());
+			//sendMissingMessages(e.getPlayer());
 		}
 
 
@@ -127,43 +127,33 @@ public final class BukkitBungeeAPI {
 		private int playerCount = 0;
 		private String host;
 		private int port;
-
 		public String getName() {
 			return name;
 		}
-
 		public void setName(String name) {
 			this.name = name;
 		}
-
 		public List<String> getPlayers() {
 			return players;
 		}
-
 		public void setPlayers(List<String> players) {
 			this.players = players;
 		}
-
 		public int getPlayerCount() {
 			return playerCount;
 		}
-
 		public void setPlayerCount(int playerCount) {
 			this.playerCount = playerCount;
 		}
-
 		public String getHost() {
 			return host;
 		}
-
 		public void setHost(String host) {
 			this.host = host;
 		}
-
 		public int getPort() {
 			return port;
 		}
-
 		public void setPort(int port) {
 			this.port = port;
 		}
@@ -171,53 +161,41 @@ public final class BukkitBungeeAPI {
 	}
 
 	public static class SimplePlayer {
-
 		private String server;
 		private String name;
 		private String uuid;
 		private String host;
 		private int port;
-
 		public String getServer() {
 			return server;
 		}
-
 		public void setServer(String server) {
 			this.server = server;
 		}
-
 		public String getName() {
 			return name;
 		}
-
 		public void setName(String name) {
 			this.name = name;
 		}
-
 		public String getUuid() {
 			return uuid;
 		}
-
 		public void setUuid(String uuid) {
 			this.uuid = uuid;
 		}
-
 		public String getHost() {
 			return host;
 		}
-
 		public void setHost(String host) {
 			this.host = host;
 		}
-
 		public int getPort() {
 			return port;
 		}
-
 		public void setPort(int port) {
 			this.port = port;
 		}
-
 	}
 
 
@@ -243,19 +221,7 @@ public final class BukkitBungeeAPI {
 	} 
 
 	private static  BukkitBungeeListener listener;
-	private static Queue<ByteArrayOutputStream> needSend = new ArrayDeque<>();
-	public static void sendMissingMessages(Player player){
-		log("TRYING SEND MISSING MESSAGES");
-		if (needSend.isEmpty())return;
-		Bukkit.getScheduler().runTaskLater(plugin, () -> {
-			log("SENDING "+needSend.size()+ " MISSING MESSAGES" );
-			while(!needSend.isEmpty()){
-				ByteArrayOutputStream message = needSend.remove();
-				sendMessage(player, message);
-			}
-		},1);
 
-	}
 	public static Plugin getInstance() {
 		return plugin;
 	}
@@ -263,8 +229,9 @@ public final class BukkitBungeeAPI {
 	public static void sendMessage(ByteArrayOutputStream message) {
 
 		if (Bukkit.getOnlinePlayers().size() == 0){
-			log("PUTTING THIS MESSAGE IN THE QUEUE");
-			needSend.add(message);
+		 //nao requisita nada pois n tem ninguem on
+		// antes a mensagem era colocado em uma fila e depois era enviada tudo ao player entrar, porem
+		// acumula muita mensagem para ser enviada de uma vez só crashando o jogador por 5s
 		}else{
 			sendMessage(Bukkit.getOnlinePlayers().iterator().next() , message);
 		}
@@ -361,7 +328,7 @@ public final class BukkitBungeeAPI {
 		HandlerList.unregisterAll(listener);
 		Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin, "BungeeCord", listener);
 		Bukkit.getMessenger().unregisterOutgoingPluginChannel(plugin, "BungeeCord");
-		needSend.clear();
+
 		log("Desregistrando Sistema");
 	}
 

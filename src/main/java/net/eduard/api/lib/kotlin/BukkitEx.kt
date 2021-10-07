@@ -24,23 +24,20 @@ import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.LeatherArmorMeta
-import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.material.Crops
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.potion.PotionEffect
 import kotlin.reflect.KClass
 
 
 inline val ItemStack.extra get() = MineReflect.getData(this)
 
 
-fun ItemStack.extra( setup : MineReflect.ItemExtraData.(ItemStack) -> Unit): ItemStack {
+fun ItemStack.extra(setup: MineReflect.ItemExtraData.(ItemStack) -> Unit): ItemStack {
     val extra = MineReflect.getData(this)
-    setup(extra,  this)
-    return MineReflect.setData(this , extra).apply {
-        lore = if (extra.customStack>0.0) {
+    setup(extra, this)
+    return MineReflect.setData(this, extra).apply {
+        lore = if (extra.customStack > 0.0) {
             val currentLore = lore
             currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
             currentLore.add(
@@ -48,17 +45,13 @@ fun ItemStack.extra( setup : MineReflect.ItemExtraData.(ItemStack) -> Unit): Ite
                     .replace("%stack", Extra.formatMoney(extra.customStack))
             )
             currentLore
-        }else{
+        } else {
             val currentLore = lore
             currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
             currentLore
         }
     };
 }
-
-
-
-
 
 
 /**
@@ -147,10 +140,8 @@ inline fun Event.call() {
     return Mine.callEvent(this)
 }
 
-inline val FakePlayer.offline: PlayerUser
-    get() {
-        return PlayerUser(name, id)
-    }
+inline val FakePlayer.offline get() = PlayerUser(name, id)
+
 
 inline val Player.fake: FakePlayer
     get() = FakePlayer(this)
@@ -181,12 +172,13 @@ val <T> Class<T>.plugin: JavaPlugin
         return JavaPlugin.getPlugin(this as Class<out JavaPlugin>) as JavaPlugin
     }
 
-inline fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) = this.setItem(Extra.getIndex(column, line), item)
+inline fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) =
+    this.setItem(Extra.getIndex(column, line), item)
 
 inline val BlockState.isCrop get() = type == Material.CROPS
 
 
-val BlockState.plantState: CropState?
+inline val BlockState.plantState: CropState?
     get() = if (type == Material.CROPS) (this as Crops).state
     else null
 
@@ -209,16 +201,6 @@ inline fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -
 }
 
 
-
-fun <T : ItemStack> T.potion(effect : PotionEffect): T {
-    if (type!= Material.POTION)
-        type = Material.POTION
-    val meta = itemMeta as PotionMeta
-    meta.setMainEffect(effect.type)
-    meta.addCustomEffect(effect,true)
-    itemMeta = meta
-    return this
-}
 /**
  * Cria um item para o menu com DSQL< parametros posicao, e SQL Block
  */
@@ -294,7 +276,7 @@ inline var ItemStack.name: String
         return Mine.getName(this)
     }
     set(value) {
-        Mine.setName(this , value)
+        Mine.setName(this, value)
 
     }
 
@@ -303,12 +285,11 @@ inline var ItemStack.lore: MutableList<String>
         return Mine.getLore(this)
     }
     set(value) {
-        Mine.setLore(this , value)
+        Mine.setLore(this, value)
     }
 
 
-
-inline operator fun ItemStack.minus(enchament: Enchantment): ItemStack {
+inline operator fun ItemStack.minus(enchament: Enchantment?): ItemStack {
     removeEnchantment(enchament)
     return this
 }
@@ -323,7 +304,7 @@ inline operator fun ItemStack.plus(map: Map<Enchantment, Int>): ItemStack {
     return this
 }
 
-infix fun Enchantment.level(level: Int): Map<Enchantment, Int> {
+inline infix fun Enchantment.level(level: Int): Map<Enchantment, Int> {
     return mapOf(this to level)
 }
 
@@ -332,30 +313,24 @@ inline fun <T : ItemStack> T.id(id: Int): T {
     return this
 }
 
-inline fun <T : ItemStack> T.data(data: Int): T {
-    durability = data.toShort()
+
+inline fun <T : ItemStack> T.addLore(vararg lore: String): T {
+    Mine.addLore(this, *lore)
     return this
 }
 
-fun <T : ItemStack> T.addLore(vararg lore: String): T {
-    val list = this.lore
-    list.addAll(lore)
-    this.lore = list
-    return this
-}
-
-inline fun <T : ItemStack> T.lore(vararg lore: String): T {
+inline fun <T : ItemStack> T.lore(vararg lore: String?): T {
     Mine.setLore(this, *lore)
     return this
 }
 
-inline fun <T : ItemStack> T.addEnchant(ench: Enchantment, level: Int): T {
+inline fun <T : ItemStack> T.addEnchant(ench: Enchantment?, level: Int): T {
     addUnsafeEnchantment(ench, level)
     return this
 }
 
 inline fun <T : ItemStack> T.color(color: Color): T {
-    Mine.setColor(this , color)
+    Mine.setColor(this, color)
     return this
 }
 

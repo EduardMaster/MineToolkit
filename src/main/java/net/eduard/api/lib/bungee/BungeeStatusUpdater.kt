@@ -45,10 +45,11 @@ class BungeeStatusUpdater : Runnable {
                     out.writeUTF("server-update")
                     out.writeObject(server)
                     for (serverInfo in ProxyServer.getInstance().servers.values) {
-                        serverInfo.sendData(
-                            BungeeAPI.channel,
-                            arrayOut.toByteArray()
-                        )
+                        if (serverInfo.players.isNotEmpty())
+                            serverInfo.sendData(
+                                BungeeAPI.channel,
+                                arrayOut.toByteArray()
+                            )
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()

@@ -18,6 +18,7 @@ class SoundEffect(
     var sound: Sound = getSoundByName("LEVEL_UP"),
     var volume: Float = 2f, var pitch: Float = 1f
 ) {
+    constructor( sound: Sound) : this(sound, 2f,1f)
     fun create(location: Location): SoundEffect {
         location.world.playSound(location, sound, volume, pitch)
         return this

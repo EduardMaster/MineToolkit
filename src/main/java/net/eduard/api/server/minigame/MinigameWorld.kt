@@ -7,8 +7,9 @@ import org.bukkit.World
 /**
  * Mundo da Sala ou do Mapa
  */
-class MinigameWorld( var worldName: String = "minigame-map") {
+class MinigameWorld( var worldName: String ) {
 
+    constructor() : this("minigame-map")
 
     fun nameNotSet() = worldName == "minigame-map"
 

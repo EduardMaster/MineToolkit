@@ -26,9 +26,12 @@ import java.io.File
 
 open class Minigame(
     @StorageIndex
-    var name: String = "Minigame",
-    var messagePrefix: String = "§8[§b$name§8]§f"
+    var name: String,
+    var messagePrefix: String
 ) : TimeManager() {
+
+    constructor() : this( "Minigame")
+    constructor(name: String) : this(name,"§8[§b$name§8]§f")
 
     var isEnabled = true
     var isBungeecord = false

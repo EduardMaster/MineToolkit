@@ -1,22 +1,13 @@
 package net.eduard.api.lib.kotlin
 
-import kotlin.reflect.KClass
 
 private val instances = mutableMapOf<Class<*>, Any>()
 
 /**
  * registra um Module ligado
  */
-fun <T : Any> single(instance: T): T {
+fun <T : Any> resolvePut(instance: T): T {
     instances[instance.javaClass] = instance
-    return instance
-}
-
-/**
- * registra um Module ligado
- */
-fun <E : Any, T : Any> singleClass(classUsed : KClass<E>, instance: T): T {
-    instances[classUsed::class.java] = instance
     return instance
 }
 
@@ -24,18 +15,18 @@ fun <E : Any, T : Any> singleClass(classUsed : KClass<E>, instance: T): T {
  * Recupera o Module instanciado
  */
 inline fun <reified T : Any> resolve(): T {
-    return resolve(T::class)
+    return resolve(T::class.java)
 }
 
 /**
  * Recupera o Module instanciado pela Classe
  */
-fun <T : Any> resolve(claz : KClass<T>): T {
-    return instances[claz.java] as T
+fun <T : Any> resolve(claz : Class<T>): T {
+    return instances[claz] as T
 }
 /**
  * Desregistra um Module
  */
-fun <T : Any> deresolve(data: T): Boolean {
+fun <T : Any> resolveTake(data: T): Boolean {
     return instances.remove(data.javaClass) != null
 }

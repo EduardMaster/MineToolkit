@@ -16,7 +16,8 @@ class Explosion(
 
 ) {
 
-
+    constructor(power: Float) : this(power,false,false)
+    constructor(power: Float,isBreakBlocks: Boolean) : this(power,isBreakBlocks,false)
 
 
     fun create(entity: Entity): Explosion {

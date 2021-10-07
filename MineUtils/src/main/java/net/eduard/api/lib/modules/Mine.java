@@ -1495,6 +1495,9 @@ public final class Mine {
     public static List<String> getLore(ItemStack item) {
         if (item != null) {
             if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
+                if (item.getItemMeta().getLore()==null){
+                    return new ArrayList<>();
+                }
                 return item.getItemMeta().getLore();
             }
         }
@@ -3094,7 +3097,21 @@ public final class Mine {
         }
         return item;
     }
-
+    /**
+     * Adiciona uma ou varias linhas a Descrição do Item
+     *
+     * @param item Item
+     * @param lines Linhas
+     * @return Item
+     */
+    public static ItemStack addLore(ItemStack item, String... lines) {
+        if (lines !=null) {
+            List<String> lore = getLore(item);
+            lore.addAll(Arrays.asList(lines));
+            setLore(item, lore);
+        }
+        return item;
+    }
     /**
      * Modifica a Descrição do Item
      *

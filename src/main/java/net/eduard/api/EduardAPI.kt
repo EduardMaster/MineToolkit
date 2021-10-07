@@ -30,16 +30,12 @@ import net.eduard.api.lib.storage.storables.BukkitStorables
 import net.eduard.api.listener.*
 import net.eduard.api.server.currency.CurrencyManager
 import net.eduard.api.supports.CurrencyVaultEconomy
-import net.eduard.api.server.minigame.Minigame
 import net.eduard.api.supports.CurrencyJHCash
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.DatabaseUpdater
 import net.eduard.api.task.MenuAutoUpdaterTask
 import net.eduard.api.task.PlayerTargetPlayerTask
 import org.bukkit.Bukkit
-import org.bukkit.Sound
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -118,7 +114,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         if (!started) {
             this.onLoad()
         }
-        MinigameSchematic.MAPS_FOLDER = File(EduardAPI.instance.pluginFolder, "maps/")
+        MinigameSchematic.MAPS_FOLDER = File(instance.pluginFolder, "maps/")
         storage()
         VaultAPI.setupVault()
         BukkitBungeeAPI.register(plugin)
@@ -224,14 +220,14 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         messages.reloadConfig()
         configDefault()
         log("Ativando debug de sistemas caso marcado na config como 'true'")
-        StorageAPI.setDebug(configs.getBoolean("debug-storage"))
-        DBManager.setDebug(configs.getBoolean("debug-database"))
-        Config.isDebug = configs.getBoolean("debug-config")
-        Menu.isDebug = configs.getBoolean("debug-menu")
-        CommandManager.isDebug = configs.getBoolean("debug-commands")
-        Copyable.setDebug(configs.getBoolean("debug-copyable"))
-        BukkitBungeeAPI.setDebug(configs.getBoolean("debug-bungee-bukkit"))
-        Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug-replacers")
+        StorageAPI.setDebug(configs.getBoolean("debug.storage"))
+        DBManager.setDebug(configs.getBoolean("debug.database"))
+        Config.isDebug = configs.getBoolean("debug.config")
+        Menu.isDebug = configs.getBoolean("debug.menu")
+        CommandManager.isDebug = configs.getBoolean("debug.commands")
+        Copyable.setDebug(configs.getBoolean("debug.copyable"))
+        BukkitBungeeAPI.setDebug(configs.getBoolean("debug.bungee-bukkit"))
+        Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug.replacers")
         PlayerSkin.reloadSkins()
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
         loadMaps()
@@ -279,15 +275,14 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
 
     override fun configDefault() {
-
-        configs.add("debug-config", false)
-        configs.add("debug-bungee-bukkit", false)
-        configs.add("debug-storage", false)
-        configs.add("debug-copyable", false)
-        configs.add("debug-commands", false)
-        configs.add("debug-replacers", false)
-        configs.add("debug-database", false)
-        configs.add("debug-menu", false)
+        configs.add("debug.config", false)
+        configs.add("debug.bungee-bukkit", false)
+        configs.add("debug.storage", false)
+        configs.add("debug.copyable", false)
+        configs.add("debug.commands", false)
+        configs.add("debug.replacers", false)
+        configs.add("debug.database", false)
+        configs.add("debug.menu", false)
         configs.add("menu-auto-updater", false)
         configs.add("scoreboard.name-limit", 40)
         configs.add("scoreboard.prefix-limit", 16)
@@ -297,7 +292,8 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         configs.add("skins", false)
         configs.add("auto-respawn", true)
         configs.add("custom-skin", "EduardKillerPro")
-        configs.add("player target", "{player_name} - {player_level}")
+        configs.add("on-target.show-text" , false)
+        configs.add("on-target.text", "{player_name} - {player_level}")
         configs.add("stack-design", "§aQuantidade: §f\$stack")
         configs.add("money-format", "###,###.##")
         configs.add("money-format-locale", "PT-BR")

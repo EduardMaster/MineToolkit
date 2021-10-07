@@ -28,18 +28,23 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
 import java.lang.IllegalStateException
 import java.util.*
+import java.util.function.Consumer
+import java.util.function.Function
 
-fun menu(title: String, lineAmount: Int, setup: Menu.() -> Unit): Menu {
+
+inline fun menu(title: String, lineAmount: Int, setup: Menu.() -> Unit): Menu {
     val menu = Menu(title, lineAmount)
     setup.invoke(menu)
     return menu
 }
 
-fun shop(title: String, lineAmount: Int, setup: Shop.() -> Unit): Shop {
+
+inline fun shop(title: String, lineAmount: Int, setup: Shop.() -> Unit): Shop {
     val menu = Shop(title, lineAmount)
     setup.invoke(menu)
     return menu
 }
+
 fun Player.getMenu(): Menu? {
     try {
 
@@ -73,9 +78,12 @@ fun Player.getMenu(): Menu? {
  */
 @Suppress("unused")
 open class Menu(
-    var title: String = "Menu",
-    var lineAmount: Int = 1
+    var title: String,
+    var lineAmount: Int
 ) : EventsManager() {
+
+    constructor(title: String ) : this(title,3)
+    constructor() : this("Menu Vazio",6)
     @StorageIndex
     var index = title.toLowerCase().replace(" ","_")
     @Transient
@@ -86,12 +94,33 @@ open class Menu(
     var lastInteraction = mutableMapOf<Player, Long>()
     @Transient
     var superiorMenu: Menu? = null
+
     @Transient
-    var titlePerPlayer: (Player.() -> String)? = null
+    var titleGenerated: Function<Player, String>? = null
+
+    var titlePerPlayer: (Player.() -> String)?
+        set(value) {
+            titleGenerated = Function(value!!)
+        }
+        get() = null
+
+
     @Transient
     var lineAmountPerPlayer: (Player.() -> Int)? = null
+
     @Transient
-    var openHandler: (Menu.(Inventory, Player) -> Unit)? = null
+    var openEffect : OpenEffect? = null
+
+    var openHandler: (Menu.(Inventory, Player) -> Unit)?
+    set(value) {
+        openEffect = OpenEffect { player, inventory ->
+            value!!.invoke(this, inventory,player)
+        }
+    }
+    get() {
+        return null
+    }
+
     @Transient
     var effect: ClickEffect? = null
     @Transient
@@ -151,14 +180,19 @@ open class Menu(
         openWithCommandText = null
     }
 
-    fun button(name: String = "Botao", setup: (MenuButton.() -> Unit)): MenuButton {
-        val button = MenuButton(name, null)
-        button.parentMenu = this
-        setup(button)
+    inline fun button(name: String = "Botao", kotlinLambda: (MenuButton.() -> Unit)): MenuButton {
+        val button = MenuButton(name)
+        kotlinLambda(button)
         addButton(button)
         return button
     }
 
+    fun button(name: String, consumer: Consumer<MenuButton>): MenuButton {
+        val button = MenuButton(name)
+        consumer.accept(button)
+        addButton(button)
+        return button
+    }
 
 
     open fun menuPlayerCanInteract(player: Player): Boolean {
@@ -421,7 +455,7 @@ open class Menu(
             if ((customLineAmount < 1) or (customLineAmount > 6)) {
                 customLineAmount = 1
             }
-            val currentTitle = titlePerPlayer?.invoke(player) ?: title
+            val currentTitle = titleGenerated?.apply(player) ?: title
             val prefix = pagePrefix.replace("\$max_page", "" +
                     pageAmount)
                 .replace("\$page", "" + page)
@@ -512,7 +546,7 @@ open class Menu(
 
         }
         this.pageOpened[player] = page
-        openHandler?.invoke(this, menu, player)
+        openEffect?.accept(player,menu)
     }
 
     /**

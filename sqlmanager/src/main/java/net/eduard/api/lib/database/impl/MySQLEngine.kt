@@ -7,11 +7,8 @@ import net.eduard.api.lib.database.api.DatabaseEngine
 import net.eduard.api.lib.modules.Extra
 import java.lang.Exception
 import java.sql.Connection
-import java.sql.Date
 import java.sql.PreparedStatement
 import java.sql.SQLException
-import java.sql.Timestamp
-import java.util.*
 
 class MySQLEngine(override val connection: Connection) : DatabaseEngine {
     override val tables: MutableMap<Class<*>, MySQLTable<*>> = mutableMapOf()
@@ -97,16 +94,24 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         return table
     }
     override fun <T : Any> getTable(clz: Class<T>): MySQLTable<T> {
+
         if (tables.containsKey(clz)) {
-            return tables[clz] as MySQLTable<T>
+            val table = tables[clz] as MySQLTable<T>
+            return table
         }
         val tableName: String = if (clz.isAnnotationPresent(
                 TableName::class.java
             )
         ) (clz.getAnnotation(TableName::class.java).value) else (clz.simpleName)
+
         if (tablesByName.containsKey(tableName)){
             val table = tablesByName[tableName]!! as MySQLTable<T>
-            table.tableClass = clz
+            if (table.tableClass == String::class.java) {
+                // erro encontrado dia 05/10 sobre modificar o tableClass de classes normais
+                // ai a tabela ficava com table class incompativel e bugava tudo
+                // agora com o if para só modificar se é String.class ou seja se nunca foi modificado
+                table.tableClass = clz
+            }
             tables[clz] = table
             table.reload()
             return table

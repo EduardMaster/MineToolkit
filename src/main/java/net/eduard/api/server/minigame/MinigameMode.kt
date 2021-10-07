@@ -22,7 +22,6 @@ open class MinigameMode() {
     @StorageIndex
      var uuid = UUID.randomUUID()
 
-
     var name = "Normal"
     val modeName get() = name.replace(" ","_").toLowerCase();
     var timeIntoStart = 20

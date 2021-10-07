@@ -7,7 +7,6 @@ package net.eduard.api.server.minigame
  * @author Eduard
  */
 enum class MinigameState( var displayName: String){
-
     STARTING("Iniciando"),
     EQUIPPING("Pre-Jogo"),
     PLAYING("Em-Jogo"),

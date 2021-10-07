@@ -7,7 +7,10 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
- * API de criação de tarefas de tempos em tempos, ou com atraso
+ * Timer = Repetidor de Ação a cada X Tempo
+ * Delay = Atrasa a execução de Ação
+ * Classe cheia de Aliases para as Funções do BukkitScheduler, para
+ * facilitar a criação de BukkitTask
  *
  * @author Eduard
  */
@@ -89,7 +92,7 @@ public interface BukkitTimeHandler {
     }
 
     /**
-     * Cancela todos Repetidores e Atrasos criado nesta classe
+     * Cancela todas BukkitTask feitas por este Plugin
      */
     default void cancelAllTasks() {
         getScheduler().cancelTasks(getPluginConnected());

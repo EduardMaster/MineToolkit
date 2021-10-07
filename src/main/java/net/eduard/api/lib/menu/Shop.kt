@@ -25,7 +25,7 @@ open class Shop(
 ) : Menu(name, lineAmount) {
 
 
-    fun product(name: String = "Produto", setup: (Product.() -> Unit)): Product {
+   inline fun product(name: String = "Produto", setup: (Product.() -> Unit)): Product {
         val product = Product(name, this)
         setup.invoke(product)
         return product
@@ -85,47 +85,47 @@ open class Shop(
 
 
     companion object {
-        var MESSAGE_CHOICE_AMOUNT = "§aEscolha uma quantidade para \$trader este produto \$product"
-        var MESSAGE_BOUGHT_ITEM = "§aVoce adquiriu \$amount (\$product) produto(s) da Loja!"
-        var MESSAGE_SOLD_ITEM = "§aVocê vendeu \$amount (\$product) produtos(s) para a loja!"
+        var MESSAGE_CHOICE_AMOUNT = "§aEscolha uma quantidade para %trader este produto %product"
+        var MESSAGE_BOUGHT_ITEM = "§aVoce adquiriu %amount (%product) produto(s) da Loja!"
+        var MESSAGE_SOLD_ITEM = "§aVocê vendeu %amount (%product) produtos(s) para a loja!"
         var MESSAGE_WITHOUT_ITEMS = "§cVoce não tem items suficiente!"
         var MESSAGE_WITHOUT_BALANCE = "§cVoce não tem dinheiro suficiente!"
         var MESSAGE_WITHOUT_PERMISSION = "§cVoce não tem permissão para comprar este produto!"
         var MESSAGE_ALREADY_BOUGHT = "§cVocê já comprou este produto."
-        var MESSAGE_UPGRADE_BOUGHT = "§cVocê comprou evolução do \$product para o nível \$level"
+        var MESSAGE_UPGRADE_BOUGHT = "§cVocê comprou evolução do %product para o nível %level"
         var MESSAGE_UPGRADES_ALREADY_BOUGHT = "§cTodos os upgrades já foram adquiridos."
 
 
         var TEMPLATE_BUY = listOf(
-            "§e\$product_name",
+            "§e%product_name",
             "",
-            "§7Valor unitário: §a\$product_buy_unit_price",
-            "§7Valor do Pack: §a\$product_buy_pack_price",
-            "§7Quantidade em Estoque: §b\$product_stock"
+            "§7Valor unitário: §a%product_buy_unit_price",
+            "§7Valor do Pack: §a%product_buy_pack_price",
+            "§7Quantidade em Estoque: §b%product_stock"
         )
         var TEMPLATE_BOUGHT = listOf(
             "",
             "§a§lDESBLOQUEADO"
         )
         var TEMPLATE_SELL = listOf(
-            "§e\$product_name",
+            "§e%product_name",
             "",
-            "§7Valor do Pack: §a\$product_sell_pack_price",
-            "§7Valor do Inventário: §a\$product_sell_inventory_price",
-            "§7Quantidade em Estoque: §b\$product_stock"
+            "§7Valor do Pack: §a%product_sell_pack_price",
+            "§7Valor do Inventário: §a%product_sell_inventory_price",
+            "§7Quantidade em Estoque: §b%product_stock"
         )
         var TEMPLATE_BUY_SELL = listOf(
-            "§e\$product_name",
+            "§e%product_name",
             "",
             "§cComprar",
-            " §7Custo x1: §a\$product_buy_unit_price",
-            " §7Custo x64: §a\$product_buy_pack_price",
+            " §7Custo x1: §a%product_buy_unit_price",
+            " §7Custo x64: §a%product_buy_pack_price",
             "",
             "§cVender",
-            " §7Custo do Pack: §a\$product_sell_pack_price",
-            " §7Custo do Inventário: §a\$product_sell_inventory_price",
+            " §7Custo do Pack: §a%product_sell_pack_price",
+            " §7Custo do Inventário: §a%product_sell_inventory_price",
             "",
-            "§7Quantidade em Estoque: §b\$product_stock",
+            "§7Quantidade em Estoque: §b%product_stock",
 
 
             )
@@ -258,19 +258,19 @@ open class Shop(
         product.stock = evento.newStock
         for (cmd in product.commands) {
             val cmdExecuted =
-                cmd.replace("\$player", player.name)
-                    .replace("\$formated_amount", Extra.formatMoney(amount))
-                    .replace("\$amount", "" + amount)
+                cmd.replace("%player", player.name)
+                    .replace("%formated_amount", Extra.formatMoney(amount))
+                    .replace("%amount", "" + amount)
             debug("CMD: $cmdExecuted")
             Mine.runCommand(cmdExecuted)
         }
         player.sendMessage(
             messageBoughtItem
                 .replace(
-                    "\$amount",
+                    "%amount",
                     Extra.formatMoney(amount)
                 ).replace(
-                    "\$product",
+                    "%product",
                     "" + product.name
                 )
         )
@@ -330,9 +330,9 @@ open class Shop(
         }
         Mine.remove(player.inventory, product.product, evento.amount.toInt())
         player.sendMessage(
-            messageSoldItem.replace("\$amount", "" + amount)
+            messageSoldItem.replace("%amount", "" + amount)
                 .replace(
-                    "\$product", product.name
+                    "%product", product.name
                 )
         )
         currency!!.add(fake, finalPrice)
@@ -364,9 +364,10 @@ open class Shop(
         menuUpgrades?.register(plugin)
         menuConfirmation?.register(plugin)
         if (menuConfirmation != null) {
-            val confirmationButton = menuConfirmation!!.getButton("confirmar")!!
-            val cancelButton = menuConfirmation!!.getButton("cancelar")!!
-            val productButton = menuConfirmation!!.getButton("product")!!
+            val menuConfirmed = menuConfirmation!!
+            val confirmationButton = menuConfirmed.getButton("confirmar")!!
+            val cancelButton = menuConfirmed.getButton("cancelar")!!
+            val productButton = menuConfirmed.getButton("product")!!
             cancelButton.click = ClickEffect { event -> open(event.player) }
             confirmationButton.click = ClickEffect { event ->
                 val player = event.player
@@ -387,10 +388,11 @@ open class Shop(
                 }
         }
         if (menuUpgrades != null) {
-            menuUpgrades!!.superiorMenu = this
-            if (menuUpgrades!!.openHandler == null) {
-                menuUpgrades!!.openHandler =teste@ { inventory, player ->
-                    val product = selectedProduct[player]?:return@teste
+            val upgrading = menuUpgrades!!
+            upgrading.superiorMenu = this
+            if (upgrading.openHandler == null) {
+                upgrading.openHandler = { inventory, player ->
+                    val product = selectedProduct[player]!!
                     var slot = Extra.getIndex(3, 4)
                     val productButton = menuUpgrades?.getButton("product")!!
                     inventory.setItem(productButton.index, product.icon)
@@ -413,28 +415,29 @@ open class Shop(
             val fake = FakePlayer(player)
             val product = selectedProduct[player]!!
             val nextUpgrade = product.getNextUpgrade(player)
+            val currency = currency!!
             if (nextUpgrade == null) {
                 player.sendMessage(messageUpgradesAlreadyBought)
                 return@ClickEffect
             }
-            if (!this.currency!!.contains(fake, nextUpgrade.price)) {
+            if (!currency.contains(fake, nextUpgrade.price)) {
                 player.sendMessage(messageWithoutBalance)
                 return@ClickEffect
             }
-            this.currency!!.remove(fake, nextUpgrade.price)
+            currency.remove(fake, nextUpgrade.price)
             VaultAPI.getPermission().playerAdd(player, nextUpgrade.permission)
             player.sendMessage(
                 messageUpgradeBought
                     .replace(
-                        "\$product_name",
+                        "%product_name",
                         nextUpgrade.displayName
                     )
                     .replace(
-                        "\$product",
+                        "%product",
                         nextUpgrade.name
                     )
                     .replace(
-                        "\$level",
+                        "%level",
                         "" + nextUpgrade.level
                     )
             )
@@ -478,9 +481,9 @@ open class Shop(
                     player.closeInventory()
                     player.sendMessage(
                         messageChoiceAmount.replace(
-                            "\$product",
+                            "%product",
                             "" + product.name
-                        ).replace("\$trader", "comprar")
+                        ).replace("%trader", "comprar")
                     )
                     return@ClickEffect
                 }
@@ -504,8 +507,8 @@ open class Shop(
                     player.closeInventory()
                     player.sendMessage(
                         messageChoiceAmount
-                            .replace("\$product", product.name)
-                            .replace("\$trader", "vender")
+                            .replace("%product", product.name)
+                            .replace("%trader", "vender")
                     )
                     return@ClickEffect
                 }

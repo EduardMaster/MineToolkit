@@ -20,6 +20,15 @@ class Calculator(
         variation: Number = 0
     ) : this(base.toDouble(), perLevel.toDouble(), limit.toDouble(), variationPerLevel.toDouble(), variation.toDouble())
 
+    constructor(
+        base: Number = 10,
+        perLevel: Number = 5,
+        limit: Number = 0,
+    ) : this(base.toDouble(), perLevel.toDouble(), limit.toDouble(), 0,0)
+    constructor(
+        base: Number = 10,
+        perLevel: Number = 5
+    ) : this(base.toDouble(), perLevel.toDouble(), 0, 0,0)
 
     fun getValue(level: Double): Double {
         val result = perLevel * level + base

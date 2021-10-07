@@ -1,6 +1,7 @@
 package net.eduard.api.server.minigame
 
 import net.eduard.api.lib.abstraction.Blocks
+import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Mine
 import org.bukkit.Bukkit
@@ -11,6 +12,9 @@ import org.bukkit.block.Chest
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import java.io.*
+import java.util.*
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.DelayQueue
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
@@ -19,18 +23,84 @@ import java.util.zip.GZIPOutputStream
  *
  * @author Eduard
  */
-class MinigameSchematic(var name: String = "Mapinha") {
+class MinigameSchematic(var name: String) {
     class BlockInfo() {
         var id: Short = 1
         var data: Byte = 0
-
     }
+
+    class SchematicPastingStage(
+        val block: Blocks,
+        val newBlockType: Material,
+        val newBlockData: Int
+    ) {
+        fun paste() {
+            block.setTypeAndData(
+                newBlockType, newBlockData
+            )
+        }
+    }
+
+    class SchematicPasting(
+        val maxPerTick: Int,
+        val stages: Array<SchematicPastingStage?>
+    ) : TimeManager(1) {
+        var currentStage = 0
+
+        init {
+            syncTimer()
+            log("Iniciando colagem de " + stages.size + " estagios")
+            run()
+
+        }
+
+        fun nextStage() {
+            currentStage++
+        }
+
+        fun finished(): Boolean {
+            return stages.size <= currentStage
+        }
+
+        var blocksChanged = 0
+        var finished = false
+        override fun run() {
+            if (finished) {
+                return
+            }
+            var current = 0
+            while (true) {
+                if (current > maxPerTick) {
+                    break;
+                }
+                if (finished()) {
+                    break;
+                }
+                if (stages[currentStage] == null) {
+                    nextStage()
+                    continue;
+                }
+                val stage = stages[currentStage]!!
+                stage.paste()
+                stages[currentStage] = null
+                blocksChanged++
+                current++
+                nextStage()
+            }
+            if (finished()) {
+                log("Colagem finalizada, quantidade de blocos modificados $blocksChanged")
+                stopTask()
+                finished = true
+            }
+        }
+    }
+
 
     companion object {
         lateinit var MAPS_FOLDER: File
 
         private val cache = mutableMapOf<Player, MinigameSchematic>()
-        private val schematics = mutableMapOf<String, MinigameSchematic>()
+        val schematics = mutableMapOf<String, MinigameSchematic>()
 
         fun isEditing(player: Player) = cache.containsKey(player)
 
@@ -38,7 +108,8 @@ class MinigameSchematic(var name: String = "Mapinha") {
         fun loadToCache(player: Player, name: String) {
             cache[player] = schematics[name]!!
         }
-        fun unloadAll(){
+
+        fun unloadAll() {
             cache.clear()
             schematics.clear()
         }
@@ -51,8 +122,11 @@ class MinigameSchematic(var name: String = "Mapinha") {
             for (subfile in folder.listFiles()!!) {
                 if (!subfile.isDirectory) {
                     val schema = load(subfile)
-
-                    schematics[schema.name] = schema
+                    if (schema.isBugged()) {
+                        log("O Schematic ${schema.name} esta bugado e nao foi descarregado")
+                    } else {
+                        schematics[schema.name] = schema
+                    }
                 }
             }
         }
@@ -229,7 +303,15 @@ class MinigameSchematic(var name: String = "Mapinha") {
         log("Copiando blocos do schematic $name tempo levado ${past}ms")
     }
 
-    fun paste(newRelative: Location, minusLag: Boolean = false) {
+    fun paste(newRelative: Location) {
+        paste(newRelative, true)
+    }
+
+    fun paste(newRelative: Location, minusLag: Boolean) {
+
+        val blockModified: Array<SchematicPastingStage?> = Array(width * height * length) {
+            null
+        }
         start = System.currentTimeMillis()
         val worldUsed = newRelative.world
 
@@ -237,7 +319,6 @@ class MinigameSchematic(var name: String = "Mapinha") {
         val difY = newRelative.blockY - relative.blockY
         val difZ = newRelative.blockZ - relative.blockZ
         log("Colando com Diferencial de: X: $difX, Y: $difY, Z: $difZ")
-
         count = 0
         for (x in 0 until width) {
             for (y in 0 until height) {
@@ -273,19 +354,25 @@ class MinigameSchematic(var name: String = "Mapinha") {
                     }
                     if (block == null) continue
 
-                    if (minusLag && (block.typeId == typeId.toInt()
-                                && block.data == typeData)) {
+                    if ((block.typeId == typeId.toInt()
+                                && block.data == typeData)
+                    ) {
+                        continue
+                    }
+                    if (minusLag && typeId.toInt() == 0) {
                         continue
                     }
                     val blockOf = Blocks.get(block.location) ?: continue
-                    blockOf.setTypeAndData(
+                    blockModified[count - 1] = SchematicPastingStage(
+                        blockOf,
                         Material.getMaterial(typeId.toInt()), typeData.toInt()
                     )
+
 
                 }
             }
         }
-
+        SchematicPasting(10000, blockModified)
         end = System.currentTimeMillis()
         log("Colando blocos do schematic $name tempo levado ${past}ms")
     }
@@ -381,12 +468,16 @@ class MinigameSchematic(var name: String = "Mapinha") {
             high = Mine.deserializeVector(dataReader.readUTF())
             relative = Mine.deserializeVector(dataReader.readUTF())
             dataReader.close()
+            stream.close()
         } catch (e: Exception) {
             e.printStackTrace()
         }
         log("Recuperando Schematic $name do HD tempo levado ${past}ms")
+
         return this
     }
+
+    fun isBugged() = width == 0.toShort() || length == 0.toShort() || height == 0.toShort()
 
     fun reload(file: File): MinigameSchematic {
         val fileReader = FileInputStream(file)
@@ -394,5 +485,6 @@ class MinigameSchematic(var name: String = "Mapinha") {
         return this
     }
 
+    constructor() : this("Mapinha")
 
 }

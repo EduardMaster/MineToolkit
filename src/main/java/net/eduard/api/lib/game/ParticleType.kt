@@ -6,7 +6,10 @@ import org.bukkit.potion.Potion
 import org.bukkit.potion.PotionType
 
 
-enum class ParticleType(var particleName: String= "nome",var id: Int= 0,var ptName : String = particleName
+enum class ParticleType(var particleName: String= "nome",
+                        var id: Int= 0,
+                        var ptName :
+                        String = particleName
 , var icon : ItemStack = ItemStack(Material.PAPER)
 ) {
 

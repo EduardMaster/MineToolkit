@@ -8,32 +8,49 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import java.util.function.Function
 
 open class MenuButton(
-    var name: String = "Botao",
+    var name: String,
     @Transient
-    var parentMenu: Menu? = null,
-    positionX: Int = 0,
-    positionY: Int = 1,
-    var page: Int = 1
+    var parentMenu: Menu?,
+    positionX: Int,
+    positionY: Int,
+    var page: Int
 ) : Slot(positionX, positionY) {
     var menu: Menu? = null
+
     @StorageReference
-    var menuLink : Menu? = null
+    var menuLink: Menu? = null
     var fixed = false
     var autoUpdate = true
     var autoUpdateDelayTicks = 20
+
     @Transient
     var autoUpdateLasttime = 0L
+
     @Transient
-    var updateHandler : (MenuButton.(Inventory,Player) -> Unit)? = null
+    var updateHandler: (MenuButton.(Inventory, Player) -> Unit)? = null
+
+
+    var iconPerPlayer: (Player.() -> ItemStack)?
+        set(value) {
+            iconGenerated = IconGenerated(value!!)
+        }
+        get() = null
+
+
     @Transient
-    var iconPerPlayer: (Player.() -> ItemStack)? = null
+    var iconGenerated: Function<Player, ItemStack>? = null
+
+
+
     @Transient
-    var hideWhen : (Player.() -> Boolean)? = null
+    var hideWhen: (Player.() -> Boolean)? = null
     fun canAutoUpdate() = System.currentTimeMillis() >= autoUpdateLasttime + autoUpdateDelayTicks * 50
 
     init {
+
         parentMenu?.addButton(this)
     }
 
@@ -55,9 +72,9 @@ open class MenuButton(
     var click: ClickEffect? = null
 
     open fun updateButton(inventory: Inventory, player: Player) {
-        updateHandler?.invoke(this,inventory,player)
-        if (hideWhen!= null){
-            if (hideWhen!!(player))return
+        updateHandler?.invoke(this, inventory, player)
+        if (hideWhen != null) {
+            if (hideWhen!!(player)) return
         }
         var icon = getIcon(player)
         if (parentMenu!!.isTranslateIcon) {
@@ -72,9 +89,8 @@ open class MenuButton(
     }
 
 
-
     open fun getIcon(player: Player): ItemStack {
-        return iconPerPlayer?.invoke(player) ?: icon
+        return iconGenerated?.apply(player) ?: icon
     }
 
     var icon: ItemStack
@@ -87,5 +103,14 @@ open class MenuButton(
 
     val isCategory: Boolean
         get() = menu != null || menuLink != null
+
+    constructor(name: String) : this(name , null, 1,1,1)
+    constructor(name: String, menu : Menu) : this(name , menu, 1,1,1)
+    constructor(name: String, menu : Menu? ,positionX: Int,
+                positionY: Int) : this(name , menu, positionX,positionY,1)
+    constructor(name: String, positionX: Int,
+                positionY: Int) : this(name , null, positionX,positionY,1)
+
+    constructor() : this("BotaoVazio")
 
 }

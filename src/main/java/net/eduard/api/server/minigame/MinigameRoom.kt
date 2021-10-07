@@ -32,6 +32,7 @@ open class MinigameRoom() {
     var map: MinigameMap = MinigameMap()
 
 
+
     open fun start() {
         mapUsed = map.copy()
         mapUsed.minigame = minigame
@@ -284,6 +285,21 @@ open class MinigameRoom() {
      */
     fun hasSpace(): Boolean {
         return getPlayers(MinigamePlayerState.NORMAL).size < map.maxPlayersAmount
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MinigameRoom
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id
     }
 
 

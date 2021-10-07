@@ -14,4 +14,5 @@ class MinigamePlayerStats {
     var assists = 0
     var firstKiller = false
     var points = 0.0
+    var wins = 0
 }
