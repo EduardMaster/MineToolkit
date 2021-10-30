@@ -56,7 +56,6 @@ open class MinigameRoom() {
     open fun reset() {
         if (minigame.worldBased) {
             mapUsed.resetWorld()
-           // mapUsed.setupChests()
         } else {
             if (minigame.schematicBasedRestartWorld)
                 mapUsed.clearWorld()
@@ -119,7 +118,7 @@ open class MinigameRoom() {
     }
 
     fun hasMinPlayersAmount(): Boolean {
-        return getPlayers(MinigamePlayerState.NORMAL).size >= map.minPlayersAmount
+        return minigame.hasMinPlayerAmount(this)
     }
 
     /**

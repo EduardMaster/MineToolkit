@@ -9,20 +9,14 @@ import java.util.concurrent.ConcurrentLinkedQueue
  */
 @Suppress("unused")
 class SQLManager(var dbManager: DBManager) {
-
-
     enum class SQLAction {
         UPDATE, DELETE, INSERT, UPDATE_CACHE
     }
-
     class DataChanged(val data: Any,
                       val action: SQLAction,
                       vararg val collumnsNames : String)
-
     val actions: Queue<DataChanged> = ConcurrentLinkedQueue()
-
     val queueRunsLimit = 100
-
 
     fun runChanges(): Int {
         var amount = 0
@@ -80,7 +74,7 @@ class SQLManager(var dbManager: DBManager) {
     inline fun <reified E : Any> getDataOf(reference: Any): E? {
         return getDataOf(E::class.java, reference)
     }
-    inline fun <reified E : Any> getDatasOf(reference: Any): List<E> {
+    inline fun <reified E : Any> getDatasOf(reference: Any): MutableList<E> {
         return getDatasOf(E::class.java, reference)
     }
     /**
@@ -109,11 +103,11 @@ class SQLManager(var dbManager: DBManager) {
 
 
 
-    fun <E : Any> getDatasOf(dataClass: Class<E>, reference: Any): List<E> {
+    fun <E : Any> getDatasOf(dataClass: Class<E>, reference: Any): MutableList<E> {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
                 .selectByReference(reference)
-        } else listOf()
+        } else mutableListOf()
     }
 
     /**
@@ -130,15 +124,15 @@ class SQLManager(var dbManager: DBManager) {
         } else null
     }
 
-    inline fun <reified E : Any> getAll(): List<E> {
+    inline fun <reified E : Any> getAll(): MutableList<E> {
         return getAllData(E::class.java)
     }
 
-    fun <E : Any> getAllData(dataClass: Class<E>): List<E> {
+    fun <E : Any> getAllData(dataClass: Class<E>): MutableList<E> {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
                 .selectAll()
-        } else ArrayList()
+        } else mutableListOf()
     }
 
     inline fun <reified E : Any> getSome(
@@ -147,7 +141,7 @@ class SQLManager(var dbManager: DBManager) {
         orderBy: String = "id",
         desc: Boolean = true,
         limit: Int = 10
-    ): List<E> {
+    ): MutableList<E> {
         return getSome(E::class.java, collums, where, orderBy, desc, limit)
     }
 
@@ -160,7 +154,7 @@ class SQLManager(var dbManager: DBManager) {
         orderBy: String,
         desc: Boolean,
         limit: Int
-    ): List<E> {
+    ): MutableList<E> {
         return getSome(dataClass, "*", where, orderBy, !desc, limit)
     }
 
@@ -181,11 +175,11 @@ class SQLManager(var dbManager: DBManager) {
         orderBy: String,
         desc: Boolean,
         limit: Int
-    ): List<E> {
+    ): MutableList<E> {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
                 .select(collums, where, orderBy, !desc, limit)
-        } else listOf()
+        } else mutableListOf()
     }
 
     fun <E : Any> insertData(data: E) {
@@ -307,6 +301,7 @@ class SQLManager(var dbManager: DBManager) {
         }
     }
 
+
     inline fun <reified E : Any> updateReferences() {
         if (hasConnection()) {
             dbManager.engineUsed.getTable(E::class.java)
@@ -324,6 +319,5 @@ class SQLManager(var dbManager: DBManager) {
         if (hasConnection()) {
             dbManager.engineUsed.cacheInfo()
         }
-
     }
 }

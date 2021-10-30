@@ -6,13 +6,15 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class Particle(
-    var particle: ParticleType = ParticleType.HEART,
-    var amount: Int = 1,
-    var speed: Float = 0.25f,
-    var xRandom: Float = 0f,
-    var yRandom: Float = 0f,
-    var zRandom: Float = 0f
+    var particle: ParticleType=ParticleType.HEART,
+    var amount: Int=1,
+    var speed: Float=0f,
+    var xRandom: Float=0f,
+    var yRandom: Float=0f,
+    var zRandom: Float=0f
 ) {
+
+    constructor() : this(ParticleType.HEART);
     constructor(particle: ParticleType) : this(particle , 1,0f,0f,0f,0f)
     constructor(particle: ParticleType, amount: Int) : this(particle , amount,0f,0f,0f,0f)
     constructor(particle: ParticleType, amount: Int,speed: Float) : this(particle , amount,speed,0f,0f,0f)
@@ -20,7 +22,6 @@ class Particle(
 
 
     fun create(player: Player, local: Location): Particle {
-
         Minecraft.instance.sendParticle(player, particle.particleName, local, amount, xRandom, yRandom, zRandom, speed)
         return this
     }

@@ -42,7 +42,7 @@ class MinigameMap(
             return field
         }
 
-    @Transient
+
     var minPlayersAmount = 2
     var maxPlayersAmount = 20
     var neededPlayersAmount = 16
@@ -176,7 +176,7 @@ class MinigameMap(
         val diference = Vector(difX,difY,difZ)
         debug("Diferenca entre Ambos: $diference")
 
-        map.paste(relative, true)
+        map.paste(relative, false)
 
         if (diferenceApplied == Vector()) {
             debug("Aplicando diferencial em todas as locations")

@@ -8,9 +8,11 @@ import org.bukkit.inventory.ItemStack
 
 @Suppress("unused")
 open class Product(
-    name: String = "Produto", shop: Shop? = null
-) : MenuButton(name, shop,1,1,1) {
+    name: String, menu: Menu?
+) : MenuButton(name, menu,1,1,1) {
 
+
+    constructor() : this("Produto", null)
 
     fun upgrade(level: Int, body: ProductUpgrade.() -> Unit): ProductUpgrade {
         val upgrade = ProductUpgrade(level, this)
@@ -18,7 +20,7 @@ open class Product(
         return upgrade
     }
 
-
+    var display = name
     var sellPrice = 0.0
     var buyPrice = 0.0
     var isLimited = false
@@ -78,9 +80,9 @@ open class Product(
     var moneyFormatedOP = false
 
     override fun getIcon(player: Player): ItemStack {
-        product
-        var clone = super.getIcon(player).clone()
-        clone = clone.clone()
+
+        val clone = super.getIcon(player).clone()
+
         if (isLimited) {
             if (clone.amount > 64) {
                 clone.amount = 64
@@ -111,12 +113,15 @@ open class Product(
         }
         for (line in template!!) {
             lore.add(
-            line.replace("%product_name", name)
-                .replace("%product_stock", "" + stock)
-                .replace("%product_buy_unit_price", unitBuyPrice.format(moneyFormatedOP))
-                .replace("%product_buy_pack_price", (unitBuyPrice * 64.0).format(moneyFormatedOP))
-                .replace("%product_sell_unit_price", unitSellPrice.format(moneyFormatedOP))
-                .replace("%product_sell_pack_price", (unitSellPrice * 64).format(moneyFormatedOP))
+            line.replace("%product_name", display,false)
+                .replace("%product_stock",  stock.format(moneyFormatedOP),false)
+                .replace("%product_buy_unit_price", unitBuyPrice.format(moneyFormatedOP),false)
+                .replace("%product_buy_pack_price", (unitBuyPrice * 64.0).format(moneyFormatedOP),false)
+                .replace("%product_sell_unit_price", unitSellPrice.format(moneyFormatedOP),false)
+                .replace("%product_sell_pack_price", (unitSellPrice * 64).format(moneyFormatedOP),false)
+                .replace("%product_buy_total_price", (unitBuyPrice * stock).format(moneyFormatedOP),false)
+                .replace("%product_sell_total_price", (unitSellPrice * stock).format(moneyFormatedOP),false)
+
                 .replace(
                     "%product_sell_inventory_price",
                     (unitSellPrice * 64 * 4 * 9).format(moneyFormatedOP)

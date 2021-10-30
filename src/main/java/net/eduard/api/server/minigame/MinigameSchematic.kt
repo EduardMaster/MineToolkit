@@ -24,6 +24,7 @@ import java.util.zip.GZIPOutputStream
  * @author Eduard
  */
 class MinigameSchematic(var name: String) {
+
     class BlockInfo() {
         var id: Short = 1
         var data: Byte = 0
@@ -65,42 +66,51 @@ class MinigameSchematic(var name: String) {
         var blocksChanged = 0
         var finished = false
         override fun run() {
-            if (finished) {
-                return
-            }
-            var current = 0
-            while (true) {
-                if (current > maxPerTick) {
-                    break;
+            try {
+                if (finished) {
+                    return
+                }
+                var current = 0
+                while (true) {
+                    if (current > maxPerTick) {
+                        break;
+                    }
+                    if (finished()) {
+                        break;
+                    }
+                    if (stages[currentStage] == null) {
+                        nextStage()
+                        continue;
+                    }
+                    val stage = stages.get(currentStage)
+                    if (finished()) {
+                        break;
+                    }
+                    if (stage != null) {
+                        stage.paste()
+                        stages[currentStage] = null
+                        blocksChanged++
+                        current++
+                        nextStage()
+                    }
                 }
                 if (finished()) {
-                    break;
+                    log("Colagem finalizada, quantidade de blocos modificados $blocksChanged")
+                    stopTask()
+                    finished = true
                 }
-                if (stages[currentStage] == null) {
-                    nextStage()
-                    continue;
-                }
-                val stage = stages[currentStage]!!
-                stage.paste()
-                stages[currentStage] = null
-                blocksChanged++
-                current++
-                nextStage()
-            }
-            if (finished()) {
-                log("Colagem finalizada, quantidade de blocos modificados $blocksChanged")
-                stopTask()
-                finished = true
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
 
 
     companion object {
-        lateinit var MAPS_FOLDER: File
+        var MAPS_FOLDER: File = File("schematics/")
 
         private val cache = mutableMapOf<Player, MinigameSchematic>()
-        val schematics = mutableMapOf<String, MinigameSchematic>()
+        private val schematics = mutableMapOf<String, MinigameSchematic>()
 
         fun isEditing(player: Player) = cache.containsKey(player)
 
@@ -146,13 +156,18 @@ class MinigameSchematic(var name: String) {
 
         fun hasSchematic(name: String) = name in schematics
         fun getSchematic(name: String) = schematics[name]!!
-
+        fun getSchematics() = schematics.values
         fun getSchematic(player: Player): MinigameSchematic {
             var gameSchematic = cache[player]
             if (gameSchematic == null) {
-                gameSchematic = MinigameSchematic()
-                cache[player] = gameSchematic
+                gameSchematic = newSchematic(player)
             }
+            return gameSchematic
+        }
+
+        fun newSchematic(player: Player): MinigameSchematic {
+            val gameSchematic = MinigameSchematic()
+            cache[player] = gameSchematic
             return gameSchematic
         }
 
@@ -271,7 +286,7 @@ class MinigameSchematic(var name: String) {
         height = (highLoc.blockY - lowLoc.blockY).toShort()
         length = (highLoc.blockZ - lowLoc.blockZ).toShort()
         val size = width * height * length
-        blocks = Array(size) { BlockInfo() }
+        blocks = Array(size) { null }
         val worldUsed = relativeLocation.world
 
 
@@ -332,7 +347,7 @@ class MinigameSchematic(var name: String) {
                     val block = worldUsed.getBlockAt(
                         difX + low.blockX + x, difY + low.blockY + y,
                         difZ + low.blockZ + z
-                    )
+                    ) ?: continue;
 
                     val blockInfo = blocks[index]
                     var typeId: Short
@@ -352,7 +367,7 @@ class MinigameSchematic(var name: String) {
                     if (typeData < 0) {
                         typeData = 0
                     }
-                    if (block == null) continue
+
 
                     if ((block.typeId == typeId.toInt()
                                 && block.data == typeData)
@@ -367,7 +382,6 @@ class MinigameSchematic(var name: String) {
                         blockOf,
                         Material.getMaterial(typeId.toInt()), typeData.toInt()
                     )
-
 
                 }
             }
@@ -477,7 +491,9 @@ class MinigameSchematic(var name: String) {
         return this
     }
 
-    fun isBugged() = width == 0.toShort() || length == 0.toShort() || height == 0.toShort()
+    fun isBugged() = width == 0.toShort()
+            || length == 0.toShort()
+            || height == 0.toShort()
 
     fun reload(file: File): MinigameSchematic {
         val fileReader = FileInputStream(file)

@@ -1,7 +1,6 @@
 package net.eduard.api.lib.manager
 
 import java.util.UUID
-import net.eduard.api.lib.modules.Mine
 import org.bukkit.entity.Player
 
 class CooldownManager( var duration: Long = 20) {
@@ -81,8 +80,8 @@ class CooldownManager( var duration: Long = 20) {
         if (cooldowns.containsKey(player.uniqueId)) {
             val now = System.currentTimeMillis()
             val timeManager = cooldowns[player.uniqueId]!!
-            val before = timeManager.startedTime
-            val cooldownDuration = timeManager.time * 50
+            val before = timeManager.taskStart
+            val cooldownDuration = timeManager.taskDuration * 50
             val endOfCooldown = before + cooldownDuration
             val durationLeft = endOfCooldown - now
             return if (durationLeft <= 0) {

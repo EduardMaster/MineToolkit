@@ -6,13 +6,10 @@ import net.md_5.bungee.api.ProxyServer
 import java.io.IOException
 import net.eduard.api.lib.modules.Extra
 import java.util.concurrent.TimeUnit
-import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.ByteArrayOutputStream
 
 class BungeeController : ServerController<Plugin> {
-
-
     private val listener = BungeeMessageListener(this)
     private val updater = BungeeStatusUpdater()
     private var task: ScheduledTask? = null
@@ -66,26 +63,29 @@ class BungeeController : ServerController<Plugin> {
     }
 
     var plugin: Plugin? = null
-    override fun register(pl: Plugin) {
-        plugin = pl
+    override fun register(pluginUsed: Plugin) {
+        plugin = pluginUsed
         ProxyServer.getInstance().registerChannel(BungeeAPI.channel)
-        ProxyServer.getInstance().pluginManager.registerListener(plugin, listener)
-        task = ProxyServer.getInstance().scheduler.schedule(plugin, updater, 1, 1, TimeUnit.SECONDS)
+        ProxyServer.getInstance().pluginManager.registerListener(pluginUsed, listener)
+        task = ProxyServer.getInstance().scheduler.schedule(pluginUsed, updater, 1, 1, TimeUnit.SECONDS)
         BungeeAPI.debug("Registrando sistema no lado do BungeeCord(Proxy)")
     }
 
     override fun unregister() {
+
         ProxyServer.getInstance().pluginManager.unregisterListener(listener)
         ProxyServer.getInstance().unregisterChannel(BungeeAPI.channel)
-        ProxyServer.getInstance().scheduler.cancel(task)
+        if (task!=null) {
+            ProxyServer.getInstance().scheduler.cancel(task)
+        }
         BungeeAPI.debug("Desativando sistema no lado do BungeeCord(Proxy)")
     }
 
-    override fun connect(playerName: String, serverType: String, subType: String, teamSize: Int): String {
-        val player = ProxyServer.getInstance().getPlayer(playerName)
-        if (player != null) {
+    override fun connect(player: String, serverType: String, subType: String, teamSize: Int): String {
+        val proxiedPlayer = ProxyServer.getInstance().getPlayer(player)
+        if (proxiedPlayer != null) {
             ProxyServer.getInstance().console.sendMessage(
-                "§cConnecting player " + player.name
+                "§cConnecting player " + proxiedPlayer.name
                         + " para o servidor do tipo " + serverType + " e subtipo " + subType
             )
             for (spigot in BungeeAPI.servers.values) {
@@ -95,7 +95,7 @@ class BungeeController : ServerController<Plugin> {
                 ) {
                     val server = ProxyServer.getInstance()
                         .getServerInfo(spigot.name)
-                    player.connect(server)
+                    proxiedPlayer.connect(server)
                     return server.name
                 }
             }
@@ -103,8 +103,8 @@ class BungeeController : ServerController<Plugin> {
         return ""
     }
 
-    override fun setState(serverName: String, state: ServerState) {
-        val server = BungeeAPI.getServer(serverName)
-        server.state = state
+    override fun setState(server: String, state: ServerState) {
+        val serverSpigot = BungeeAPI.getServer(server)
+        serverSpigot.state = state
     }
 }

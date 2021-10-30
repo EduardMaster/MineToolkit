@@ -10,14 +10,14 @@ import org.bukkit.entity.Entity
  * @author Eduard
  */
 class Explosion(
-        var power: Float = 3f,
-        var isBreakBlocks: Boolean = false,
-        var isMakeFire: Boolean = false
+    var power: Float,
+    var isBreakBlocks: Boolean,
+    var isMakeFire: Boolean
 
 ) {
-
-    constructor(power: Float) : this(power,false,false)
-    constructor(power: Float,isBreakBlocks: Boolean) : this(power,isBreakBlocks,false)
+    constructor() : this(3f)
+    constructor(power: Float) : this(power, false, false)
+    constructor(power: Float, isBreakBlocks: Boolean) : this(power, isBreakBlocks, false)
 
 
     fun create(entity: Entity): Explosion {

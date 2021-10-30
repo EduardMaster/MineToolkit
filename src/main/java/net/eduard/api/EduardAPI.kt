@@ -7,6 +7,7 @@ import net.eduard.api.core.BukkitInfoGenerator
 import net.eduard.api.core.BukkitReplacers
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.hooks.JHCashHook
+import net.eduard.api.lib.abstraction.Hologram
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerSpigot
 import net.eduard.api.lib.config.Config
@@ -120,14 +121,12 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         BukkitBungeeAPI.register(plugin)
         BukkitBungeeAPI.requestCurrentServer()
         BungeeAPI.bukkit.register(plugin)
-
         reload()
         commands()
         events()
         tasks()
         loadServers()
         log("§aCarregado com sucesso!")
-
 
     }
 
@@ -224,6 +223,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         DBManager.setDebug(configs.getBoolean("debug.database"))
         Config.isDebug = configs.getBoolean("debug.config")
         Menu.isDebug = configs.getBoolean("debug.menu")
+        Hologram.debug = configs.getBoolean("debug.holograms")
         CommandManager.isDebug = configs.getBoolean("debug.commands")
         Copyable.setDebug(configs.getBoolean("debug.copyable"))
         BukkitBungeeAPI.setDebug(configs.getBoolean("debug.bungee-bukkit"))
@@ -282,8 +282,11 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         configs.add("debug.commands", false)
         configs.add("debug.replacers", false)
         configs.add("debug.database", false)
+        configs.add("debug.holograms",false)
         configs.add("debug.menu", false)
-        configs.add("menu-auto-updater", false)
+        configs.add("menu-updater.enabled", false)
+        configs.add("menu-updater.ticks", 20L)
+
         configs.add("scoreboard.name-limit", 40)
         configs.add("scoreboard.prefix-limit", 16)
         configs.add("scoreboard.suffix-limit", 16)

@@ -19,12 +19,11 @@ interface DatabaseTable<T : Any> {
 
     val primaryName get() = primaryColumn?.name?:"ID"
     fun updateReferences()
-
     fun reload()
     fun insert(data : T)
-    fun update(data : T,vararg columnsNames : String)
+    fun update(data : T , vararg columnsNames : String)
     fun delete(data : T)
-    fun selectAll() : List<T>
+    fun selectAll() : MutableList<T>
     fun createReferences()
     fun createCollumns()
     fun delete()
@@ -33,8 +32,8 @@ interface DatabaseTable<T : Any> {
     fun findByColumn(columnName :String, columnValue : Any , cachedData : T? = null) : T?
     fun findByPrimary(primaryValue : Any, cachedData : T? = null) : T?
     fun updateCache(data : T, query : ResultSet)
-    fun select(collums : String, where: String , columnOrder : String, ascending : Boolean, limit : Int): List<T>
-    fun selectByReference(reference: Any) : List<T>
+    fun select(collums : String, where: String , columnOrder : String, ascending : Boolean, limit : Int): MutableList<T>
+    fun selectByReference(reference: Any) : MutableList<T>
 
     val columnsContraintsCreated: MutableSet<String>
     var created: Boolean

@@ -3,10 +3,7 @@ package net.eduard.api.lib.game;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.eduard.api.lib.modules.Mine;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.SkullType;
+import org.bukkit.*;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.banner.Pattern;
@@ -17,6 +14,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionType;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -30,13 +28,6 @@ import java.util.*;
  */
 @SuppressWarnings("unused")
 public class ItemBuilder extends ItemStack {
-    /**
-     * Dia /04/08/2021
-     * <br>
-     * Variavle necessaria para salvar o Texto do tipo q veio da config
-     * <br>
-     * Na versão 1.16.5 os Items deram problemas tive q fazer para resolver
-     */
 
     public ItemBuilder() {
         this(Material.STONE, 1);
@@ -62,8 +53,43 @@ public class ItemBuilder extends ItemStack {
             CreatureSpawner spawner = (CreatureSpawner) state;
             spawner.setSpawnedType(type);
         }
+        return this;
+    }
 
+    public ItemBuilder potion(PotionType type, int level) {
+        return potion(type,level,false,false);
+    }
+    public ItemBuilder potion(PotionType type) {
+        return potion(type,1,false,false);
+    }
 
+    public ItemBuilder potion(PotionType type, int level, boolean splash) {
+        return potion(type, level, splash,false);
+    }
+    public ItemBuilder potion(PotionType type, int level, boolean splash, boolean extended) {
+        if (this.getType() != Material.POTION){
+            setType(Material.POTION);
+        }
+        int name = type.getDamageValue();
+        short damage;
+        if (type == PotionType.WATER) {
+            damage = 0;
+        } else {
+            if (type == null) {
+                damage = (short) (name == 0 ? 8192 : name);
+            } else {
+                damage = (short) (level - 1);
+                damage = (short) (damage << 5);
+                damage |= (short) type.getDamageValue();
+            }
+            if (splash) {
+                damage = (short) (damage | 16384);
+            }
+            if (extended) {
+                damage = (short) (damage | 64);
+            }
+            setDurability(damage);
+        }
         return this;
     }
 
@@ -76,6 +102,17 @@ public class ItemBuilder extends ItemStack {
         setItemMeta(meta);
         return this;
     }
+
+    public ItemBuilder color(Color color){
+        if (!getType().name().contains("LEATHER")){
+            setType(Material.LEATHER_CHESTPLATE);
+        }
+        LeatherArmorMeta meta = (LeatherArmorMeta) getItemMeta();
+        meta.setColor(color);
+        setItemMeta(meta);
+        return this;
+    }
+
 
     public ItemBuilder banner(DyeColor baseColor, DyeColor patternColor, PatternType patternType) {
         type(Material.BANNER);

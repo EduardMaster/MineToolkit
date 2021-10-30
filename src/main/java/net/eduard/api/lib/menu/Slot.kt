@@ -7,19 +7,22 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.io.Serializable
 
-
 open class Slot(
-        var positionX : Int = 0,
-        var positionY : Int = 0,
-        var item: ItemStack? = null
-
+    var item: ItemStack?,
+    var positionX: Int,
+    var positionY: Int
 ) : Serializable {
 
     var effects: EffectManager? = null
 
-    constructor(item: ItemStack?, index: Int) : this(item = item) {
+    constructor() : this(null, 1, 1)
+    constructor(item: ItemStack?, index: Int) : this(item, 1, 1) {
         this.index = index
+
     }
+
+    constructor(positionX: Int, positionY: Int, item: ItemStack?) : this(item, positionX, positionY)
+
     val slot: Int
         get() = index
 
@@ -31,17 +34,13 @@ open class Slot(
         }
 
 
-    constructor(item: ItemStack?, positionX: Int, positionY: Int) :
-            this(positionX,positionY,item)
-
-
     override fun equals(other: Any?): Boolean {
-        if (other == null)return false
-        if (other is Slot){
+        if (other == null) return false
+        if (other is Slot) {
             return positionX == other.positionX &&
                     positionY == other.positionY
         }
-        if (other is ItemStack){
+        if (other is ItemStack) {
             return this.item == other
         }
         return false

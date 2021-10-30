@@ -59,7 +59,7 @@ class MySQLTable<T : Any>(
     }
 
 
-    override fun selectAll(): List<T> {
+    override fun selectAll(): MutableList<T> {
         val list = mutableListOf<T>()
         var prepare : PreparedStatement? = null
         var query : ResultSet? = null
@@ -176,7 +176,7 @@ class MySQLTable<T : Any>(
         return findByColumn(referenceColumnName,referenceId, cachedData);
     }
 
-    override fun selectByReference(reference: Any): List<T> {
+    override fun selectByReference(reference: Any): MutableList<T> {
         val list = mutableListOf<T>()
         var prepare : PreparedStatement? = null
         var query : ResultSet? = null
@@ -251,7 +251,7 @@ class MySQLTable<T : Any>(
     }
 
 
-    override fun select(collums : String, where: String, columnOrder: String, ascending: Boolean, limit: Int): List<T> {
+    override fun select(collums : String, where: String, columnOrder: String, ascending: Boolean, limit: Int): MutableList<T> {
         var prepare : PreparedStatement? = null
         var query : ResultSet? = null
         val list = mutableListOf<T>()

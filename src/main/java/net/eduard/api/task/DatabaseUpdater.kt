@@ -6,7 +6,8 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 
-class DatabaseUpdater : TimeManager(20) {
+class DatabaseUpdater : TimeManager(20L) {
+
     fun log(msg: String) {
         EduardAPI.instance.log(msg)
     }
@@ -16,7 +17,6 @@ class DatabaseUpdater : TimeManager(20) {
             if (plugin !is EduardPlugin) continue
             if (plugin.dbManager.hasConnection()) {
                 val name = plugin.name
-
                 run {
                     val agora = Extra.getNow()
                     val amountUpdated = plugin.sqlManager.runUpdatesQueue()
@@ -33,8 +33,6 @@ class DatabaseUpdater : TimeManager(20) {
                     if (amountDeleted > 0)
                         log("Deletando $amountDeleted objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
                 }
-
-
             }
         }
     }

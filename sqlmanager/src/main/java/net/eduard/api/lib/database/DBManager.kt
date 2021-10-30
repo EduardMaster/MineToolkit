@@ -22,13 +22,13 @@ import kotlin.jvm.internal.Intrinsics
  */
 @Suppress("unchecked", "unused")
 class DBManager(
-
-    var user: String = "root",
-    var pass: String = "",
-    var database: String = "mine",
-    var host: String = "localhost"
+    var user: String,
+    var pass: String,
+    var database: String,
+    var host: String
 
 ) {
+    constructor() : this("root", "", "mine", "localhost")
 
     var autoReconnect = true
     var isEnabled = false
@@ -112,7 +112,7 @@ class DBManager(
      *
      * @return Se a conexao existe
      */
-    fun hasConnectionInFact(time : Int = 500): Boolean {
+    fun hasConnectionInFact(time: Int = 500): Boolean {
         try {
 
             return hasConnectionInMemory()
@@ -216,13 +216,10 @@ class DBManager(
     fun insert(table: String, vararg objects: Any?): Int {
         val builder = StringBuilder()
         builder.append("INSERT INTO $table VALUES (")
-
-        for (i in objects.indices) {
-
+        for (index in objects.indices) {
             builder.append("? ,")
         }
         builder.deleteCharAt(builder.length - 1)
-
         builder.append(")")
         return update(
             builder.toString(),
@@ -435,10 +432,10 @@ class DBManager(
     ): Int {
         var resultado = -1
         if (hasConnection()) {
-            var state : PreparedStatement? = null
-            var keys : ResultSet? = null
+            var state: PreparedStatement? = null
+            var keys: ResultSet? = null
             try {
-                 state = query(
+                state = query(
                     query, *objects
                 )
                 resultado = state!!.executeUpdate()
@@ -450,7 +447,7 @@ class DBManager(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-            }finally {
+            } finally {
                 keys?.close()
                 state?.close()
             }
@@ -484,16 +481,16 @@ class DBManager(
         vararg objects: Any?
     ): T? {
         var result: T? = null
-        var queryResult : ResultSet? = null
+        var queryResult: ResultSet? = null
         if (hasConnection()) try {
-             queryResult = selectAll(table, where, *objects) ?: return null
+            queryResult = selectAll(table, where, *objects) ?: return null
             if (queryResult.next()) {
                 result = queryResult.getObject(column, type) as T
             }
             queryResult.close()
         } catch (e: Exception) {
             e.printStackTrace()
-        }finally {
+        } finally {
             queryResult?.close()
             queryResult?.statement?.close()
         }
@@ -512,12 +509,12 @@ class DBManager(
     ): PreparedStatement? {
 
         var query = queryStr
-        var state : PreparedStatement? = null
+        var state: PreparedStatement? = null
         try {
             if (!query.endsWith(";")) {
                 query += ";"
             }
-             state =
+            state =
                 connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
             var id = 1
             for (replacer in objects) {

@@ -10,6 +10,7 @@ class MapCommand : CommandManager("map") {
         register(MapPos2Command())
         register(MapLoadCommand())
         register(MapSaveCommand())
+        register(MapSetCommand())
         register(MapListCommand())
         register(MapHelpCommand())
     }

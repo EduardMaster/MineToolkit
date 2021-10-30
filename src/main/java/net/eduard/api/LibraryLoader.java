@@ -13,12 +13,14 @@ public class LibraryLoader {
     private final File libFile;
 
     public boolean needLoadKotlin() {
+
         try {
             KotlinVersion version = KotlinVersion.CURRENT;
             return false;
         } catch (Error err) {
             return true;
         }
+
     }
 
     public LibraryLoader(File file) {

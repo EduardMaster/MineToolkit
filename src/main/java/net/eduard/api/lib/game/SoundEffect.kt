@@ -15,10 +15,14 @@ import java.lang.Exception
  * @since 1.0
  */
 class SoundEffect(
-    var sound: Sound = getSoundByName("LEVEL_UP"),
-    var volume: Float = 2f, var pitch: Float = 1f
+    var sound: Sound,
+    var volume: Float,
+    var pitch: Float
 ) {
-    constructor( sound: Sound) : this(sound, 2f,1f)
+    constructor() : this(getSoundByName("LEVEL_UP"))
+    constructor(sound: Sound) : this(sound, 2f, 1f)
+    constructor(sound: Sound, volume: Float) : this(sound, volume, 1f)
+
     fun create(location: Location): SoundEffect {
         location.world.playSound(location, sound, volume, pitch)
         return this

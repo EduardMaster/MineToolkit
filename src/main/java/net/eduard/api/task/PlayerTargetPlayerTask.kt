@@ -2,7 +2,7 @@ package net.eduard.api.task
 
 import net.eduard.api.EduardAPI
 import net.eduard.api.lib.event.PlayerTargetPlayerEvent
-import net.eduard.api.lib.kotlin.call
+import net.eduard.api.lib.kotlin.mineCallEvent
 import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.modules.Mine
 import org.bukkit.scheduler.BukkitRunnable
@@ -16,7 +16,7 @@ class PlayerTargetPlayerTask : TimeManager(20L) {
                 if (target.hasMetadata("NPC"))continue
                 EduardAPI.instance.syncTask {
                     PlayerTargetPlayerEvent(
-                        target, player).call()
+                        target, player).mineCallEvent()
                 }
             } catch (ex: Exception) {
                 EduardAPI.instance.log("Erro ao causar o Evento PlayerTargetEvent ")

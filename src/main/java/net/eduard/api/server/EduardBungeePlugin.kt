@@ -4,6 +4,8 @@ import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
+import net.eduard.api.lib.kotlin.resolvePut
+import net.eduard.api.lib.kotlin.resolveTake
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
 import net.md_5.bungee.api.ProxyServer
@@ -69,9 +71,10 @@ open class EduardBungeePlugin : Plugin(), IPlugin {
     }
     override fun onEnable() {
         if (!started) onLoad()
+        resolvePut(this)
     }
     override fun onDisable() {
-
+        resolveTake(this)
     }
     override fun save() {
 

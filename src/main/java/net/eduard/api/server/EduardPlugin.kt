@@ -4,7 +4,11 @@ import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
+import net.eduard.api.lib.kotlin.resolve
+import net.eduard.api.lib.kotlin.resolvePut
+import net.eduard.api.lib.kotlin.resolveTake
 import net.eduard.api.lib.manager.CommandManager
+import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Extra
@@ -96,11 +100,10 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
             "Foi ativado na v" + description.version + " um plugin "
                     + (if (isFree) "§aGratuito" else "§bPago") + "§f feito pelo Eduard"
         )
+        resolvePut(this)
     }
 
-
     fun getClasses(pack: String): MutableList<Class<*>> {
-
         return Mine.getClasses(this, pack)
     }
 
@@ -155,8 +158,6 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     }
 
     override fun onDisable() {
-
-
         calculate("Desregistrando Servicos") { unregisterServices() }
         calculate("Desregistrando Listeners") { unregisterListeners() }
         calculate("Desregistrando Tasks") { unregisterTasks() }
@@ -167,7 +168,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         log("Foi desativado na v" + description.version + " um plugin "
                     + if (isFree) "§aGratuito" else "§bPago"
         )
-
+        resolveTake(this)
     }
 
 

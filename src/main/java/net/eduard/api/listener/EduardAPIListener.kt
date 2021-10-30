@@ -5,8 +5,7 @@ import net.eduard.api.lib.manager.EventsManager
 
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.lib.event.BlockMineEvent
-import net.eduard.api.lib.kotlin.call
-import net.eduard.api.lib.kotlin.chat
+import net.eduard.api.lib.kotlin.mineCallEvent
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
@@ -43,7 +42,7 @@ class EduardAPIListener : EventsManager() {
         if (!EduardAPI.instance.getBoolean("block-mine"))return
         val event = BlockMineEvent(mutableMapOf(), e.block, e.player, true, e.expToDrop)
         e.isCancelled = true
-        event.call()
+        event.mineCallEvent()
         if (event.isCancelled) return
         event.breakBlock()
         if (event.needApplyFortune)

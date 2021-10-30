@@ -237,7 +237,7 @@ class MySQLEngine(override val connection: Connection) : DatabaseEngine {
         if (value is Boolean){
             value = if (value) 1 else 0
         }
-        val method = customTypes[value::class.java] as CustomType<Any>?
+        val method = customTypes[column.javaType] as CustomType<Any>?
         return method?.saveMethod?.invoke(value) ?: "$value"
 
     }

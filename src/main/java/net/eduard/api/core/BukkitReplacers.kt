@@ -15,8 +15,10 @@ import org.bukkit.Statistic
 class BukkitReplacers {
     init {
         if (Mine.hasPlugin("Vault")) {
-            Mine.addReplacer("player_group") { VaultAPI.getPermission().getPrimaryGroup(it) }
-            Mine.addReplacer("player_prefix") { Mine.toChatMessage(
+            Mine.addReplacer("player_group") {
+                VaultAPI.getPermission().getPrimaryGroup(it) }
+            Mine.addReplacer("player_prefix") {
+                Mine.toChatMessage(
                 VaultAPI.getChat().getPlayerPrefix(it)) }
             Mine.addReplacer("player_suffix") { Mine.toChatMessage(
                 Mine.toChatMessage(VaultAPI.getChat().getPlayerPrefix(it))) }

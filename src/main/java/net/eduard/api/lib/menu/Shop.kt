@@ -14,18 +14,18 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.inventory.ItemStack
-import java.util.*
 import kotlin.math.abs
 
 @Suppress("unused")
 @StorageAttributes(indentificate = true)
 open class Shop(
-    name: String = "Loja",
-    lineAmount: Int = 3
+    name: String,
+    lineAmount: Int
 ) : Menu(name, lineAmount) {
 
+    constructor() : this("Loja", 3)
 
-   inline fun product(name: String = "Produto", setup: (Product.() -> Unit)): Product {
+    inline fun product(name: String = "Produto", setup: (Product.() -> Unit)): Product {
         val product = Product(name, this)
         setup.invoke(product)
         return product
@@ -185,12 +185,16 @@ open class Shop(
 
     fun organize() {
         if (sortType === ShopSortType.BUY_PRICE_ASC) {
-
-            val result = buttons.filterIsInstance<Product>().sortedBy { it.buyPrice }
-            for ((index, data) in result.withIndex()) {
-                data.index = index
-            }
-
+            updateButtonPositions(buttons.filterIsInstance<Product>().sortedBy { it.buyPrice })
+        }
+        else if (sortType === ShopSortType.BUY_PRICE_DESC) {
+            updateButtonPositions(buttons.filterIsInstance<Product>().sortedByDescending { it.buyPrice })
+        }
+        else if (sortType === ShopSortType.SELL_PRICE_ASC) {
+            updateButtonPositions(buttons.filterIsInstance<Product>().sortedBy { it.sellPrice })
+        }
+        else if (sortType === ShopSortType.SELL_PRICE_DESC) {
+            updateButtonPositions(buttons.filterIsInstance<Product>().sortedByDescending { it.sellPrice })
         }
     }
 
@@ -255,6 +259,7 @@ open class Shop(
             player.sendMessage(messageWithoutBalance)
             return
         }
+        // após uma compra ser feita define o stock do evento para o produto
         product.stock = evento.newStock
         for (cmd in product.commands) {
             val cmdExecuted =
@@ -271,7 +276,7 @@ open class Shop(
                     Extra.formatMoney(amount)
                 ).replace(
                     "%product",
-                    "" + product.name
+                     product.display
                 )
         )
         if (isPermissionShop) {
@@ -328,14 +333,16 @@ open class Shop(
         if (evento.amount > PLAYER_INVENTORY_LIMIT) {
             evento.amount = PLAYER_INVENTORY_LIMIT.toDouble()
         }
+        // quando uma compra é feita seu stock é alterado
+        product.stock = evento.newStock
         Mine.remove(player.inventory, product.product, evento.amount.toInt())
         player.sendMessage(
             messageSoldItem.replace("%amount", "" + amount)
                 .replace(
-                    "%product", product.name
+                    "%product", product.display
                 )
         )
-        currency!!.add(fake, finalPrice)
+        currency?.add(fake, finalPrice)
     }
 
 
@@ -475,23 +482,22 @@ open class Shop(
                         && (product.tradeType === TradeType.BOTH))
                 || (product.tradeType === TradeType.BUYABLE)
             ) {
-                if (isAmountPerChat) {
+                if (isAmountPerChat&&event.click.name.contains("SHIFT")) {
                     selectingAmount[player] = product
                     trading[player] = TradeType.BUYABLE
                     player.closeInventory()
                     player.sendMessage(
                         messageChoiceAmount.replace(
                             "%product",
-                            "" + product.name
+                             product.display
                         ).replace("%trader", "comprar")
                     )
                     return@ClickEffect
                 }
-                var amount = 1
+                var amount = 64
                 if (event.click.name.contains("SHIFT")) {
-                    amount = product.amount
-                    if (amount < 64) {
-                        amount = 64
+                    if (amount > product.stock) {
+                        amount = product.stock.toInt()
                     }
                 }
                 buy(player, product, amount.toDouble())
@@ -501,13 +507,13 @@ open class Shop(
                         || product.tradeType === TradeType.SELABLE)
             ) {
                 if (product.product == null) return@ClickEffect
-                if (isAmountPerChat) {
+                if (isAmountPerChat&&event.click.name.contains("SHIFT")) {
                     selectingAmount[player] = product
                     trading[player] = TradeType.SELABLE
                     player.closeInventory()
                     player.sendMessage(
                         messageChoiceAmount
-                            .replace("%product", product.name)
+                            .replace("%product", product.display)
                             .replace("%trader", "vender")
                     )
                     return@ClickEffect

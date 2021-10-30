@@ -12,7 +12,7 @@ class Jump {
     var isUseVector = false
     var vector: Vector? = null
 
-    constructor() {}
+    constructor()
     constructor(sound: SoundEffect, vector: Vector) {
         this.sound = sound
         isUseVector = true

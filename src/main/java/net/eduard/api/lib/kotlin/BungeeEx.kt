@@ -12,14 +12,14 @@ inline val String.bungeePlayer get() = ProxyServer.getInstance().getPlayer(this)
 
 inline val UUID.bungeePlayer get() = ProxyServer.getInstance().getPlayer(this)
 
-inline fun Listener.register(plugin : Plugin){
+fun Listener.register(plugin : Plugin){
     ProxyServer.getInstance().pluginManager.registerListener(plugin,this)
 }
 inline val ProxiedPlayer.offline get() = PlayerUser(this.name,this.uniqueId)
 
 
 
-inline fun ProxiedPlayer.sendConfirmationQuery(acceptCommand: String, declineCommand: String) {
+fun ProxiedPlayer.sendConfirmationQuery(acceptCommand: String, declineCommand: String) {
 
     sendMessage(confirmationChat(acceptCommand, declineCommand))
 }

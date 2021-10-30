@@ -174,17 +174,11 @@ public final class Extra {
 
     public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
     public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
-    public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+    public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private static final Map<String, String> REPLACERS = new LinkedHashMap<>();
-
-
     private static final Random RANDOM = new Random();
-
-
     private static final Map<Class<?>, Class<?>> wrappers = new HashMap<>();
-
     static {
-
         wrappers.put(String.class, String.class);
         wrappers.put(int.class, Integer.class);
         wrappers.put(double.class, Double.class);
@@ -194,7 +188,6 @@ public final class Extra {
         wrappers.put(float.class, Float.class);
         wrappers.put(boolean.class, Boolean.class);
         wrappers.put(char.class, Character.class);
-
     }
 
     static {

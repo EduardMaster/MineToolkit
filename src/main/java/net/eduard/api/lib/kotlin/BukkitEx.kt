@@ -11,7 +11,6 @@ import net.eduard.api.lib.modules.MineReflect
 import org.bukkit.*
 
 import org.bukkit.block.BlockState
-import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.LivingEntity
@@ -25,7 +24,6 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.Crops
-import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
 
@@ -37,8 +35,8 @@ fun ItemStack.extra(setup: MineReflect.ItemExtraData.(ItemStack) -> Unit): ItemS
     val extra = MineReflect.getData(this)
     setup(extra, this)
     return MineReflect.setData(this, extra).apply {
-        lore = if (extra.customStack > 0.0) {
-            val currentLore = lore
+        mineLore = if (extra.customStack > 0.0) {
+            val currentLore = mineLore
             currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
             currentLore.add(
                 MineReflect.MSG_ITEM_STACK
@@ -46,125 +44,163 @@ fun ItemStack.extra(setup: MineReflect.ItemExtraData.(ItemStack) -> Unit): ItemS
             )
             currentLore
         } else {
-            val currentLore = lore
+            val currentLore = mineLore
             currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
             currentLore
         }
-    };
+    }
 }
 
 
 /**
  * Atalho para Mine.removeXP
  */
-inline fun Player.removeXP(amount: Double) {
+fun Player.mineRemoveXP(amount: Double) {
     Mine.removeXP(this, amount)
 }
 
 /**
  * Atalho para Mine.addHotBar
  */
-inline fun Player.addHotBar(item: ItemStack) {
+fun Player.mineSetHotBar(item: ItemStack) {
     Mine.setHotBar(this, item)
+}
+
+/**
+ * Atalho para Mine.addHotBar
+ */
+fun Player.addHotBar(item: ItemStack) {
+    for (i in 0..9) {
+        inventory.setItem(i, item)
+    }
 }
 
 /**
  * Traduz os simbolos & para § <br>
  * Alias para ChatColor.translateAlternateColorCodes
  */
-inline fun String.colored(): String {
+fun String.colored(): String {
     return ChatColor.translateAlternateColorCodes('&', this)
 }
 
 /**
  * Atalho para Mine.changeTabName
  */
-inline fun Player.changeTabName(tabName: String) {
+fun Player.mineChangeTabName(tabName: String) {
     Mine.changeTabName(this, tabName)
+}
+
+/**
+ * Atalho para Mine.changeTabName
+ */
+fun Player.changeTabName(tabName: String) {
+    player.playerListName = Extra.cutText(tabName, 32)
 }
 
 /**
  * Atalho para Mine.clearHotBar
  */
-inline fun Player.clearHotBar() {
+fun Player.mineClearHotBar() {
     Mine.clearHotBar(this)
+}
 
+/**
+ * Atalho para Mine.clearHotBar
+ */
+fun Player.clearHotBar() {
+    for (slot in 0..9) {
+        player.inventory.setItem(slot, null)
+    }
 }
 
 /**
  * Atalho para Mine.clearArmors
  */
-inline fun LivingEntity.clearArmors() {
+fun LivingEntity.mineClearArmors() {
     Mine.clearArmours(this)
+}
+
+/**
+ * Atalho para Mine.clearArmors
+ */
+fun LivingEntity.clearArmors() {
+    equipment.armorContents = arrayOf()
 }
 
 /**
  * Atalho para Mine.clearInventory
  */
-inline fun Player.clearInventory() {
+fun Player.mineClearInventory() {
     Mine.clearInventory(this)
 }
 
 /**
- * Atalho para MineReflect.sendTitle
+ *  Limpa o inventario
  */
-inline fun Player.sendTitle(title: String, subTitle: String) {
-    MineReflect.sendTitle(this, title, subTitle, 20, 20, 20)
+fun Player.clearInventory() {
+    inventory.clear()
+    inventory.armorContents = arrayOf()
 }
+
 
 /**
  * Atalho para MineReflect.sendTitle
  */
-inline fun Player.sendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
+@Deprecated("Aliases alterada", ReplaceWith("mineSendTitle(title, subTitle, 20, 20, 20)"))
+fun Player.sendTitle(title: String, subTitle: String) = mineSendTitle(title, subTitle, 20, 20, 20)
+
+
+fun Player.sendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
+    return mineSendTitle(title,subTitle,fadeInt,stay,fadeOut);
+}
+
+
+/**
+ * Atalho para MineReflect.sendTitle
+ */
+fun Player.mineSendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
     MineReflect.sendTitle(this, title, subTitle, fadeInt, stay, fadeOut)
 }
 
 /**
  * Atalho para MineReflect.sendActionBar
  */
-inline fun Player.sendActionBar(msg: String) {
-    MineReflect.sendActionBar(this, msg)
-}
+@Deprecated("Aliases alterada", ReplaceWith("mineSendActionBar(msg)"))
+fun Player.sendActionBar(msg: String) = mineSendActionBar(msg)
 
+/**
+ * Atalho para MineReflect.sendActionBar
+ */
+fun Player.mineSendActionBar(msg: String) = MineReflect.sendActionBar(this, msg)
+
+
+
+
+@Deprecated("Aliases alterada", ReplaceWith("mineSendPacket(packet)"))
+fun Player.sendPacket(packet: Any) = mineSendPacket(packet)
 /**
  * Atalho para MineReflect.sendPacket
  */
-inline fun Player.sendPacket(packet: Any) {
-    MineReflect.sendPacket(this, packet)
-}
+fun Player.mineSendPacket(packet: Any) = MineReflect.sendPacket(this, packet)
 
 /**
  * Atalho para Mine.callEvent
  */
-inline fun Event.call() {
+fun Event.mineCallEvent() {
     return Mine.callEvent(this)
 }
 
+@Deprecated("Aliases alterada", ReplaceWith("mineCallEvent()"))
+fun Event.call() = mineCallEvent()
+
+
 inline val FakePlayer.offline get() = PlayerUser(name, id)
-
-
-inline val Player.fake: FakePlayer
-    get() = FakePlayer(this)
-
-/**
- * Expecifique se quem fez o comando é um player
- */
-inline fun CommandSender.isPlayer(block: Player.() -> Unit) {
-    if (Mine.onlyPlayer(this)) {
-        block(this as Player)
-    }
-}
-
-inline fun Listener.register(plugin: Plugin) = Bukkit.getPluginManager().registerEvents(this, plugin)
-
-inline fun CommandExecutor.register(cmd: String, plugin: JavaPlugin) {
-    plugin.getCommand(cmd).executor = this
-}
-
+inline val PlayerUser.fake get() = FakePlayer(name, uniqueId)
+inline val Player.fake get() = FakePlayer(this)
 inline val Player.offline get() = PlayerUser(this.name, this.uniqueId)
 
 
-val <T> Class<T>.plugin: JavaPlugin
+val <T> Class<T>.autoPlugin: JavaPlugin
     get() {
         if (!JavaPlugin::class.java.isAssignableFrom(this)) {
             return JavaPlugin.getProvidingPlugin(this)
@@ -172,27 +208,26 @@ val <T> Class<T>.plugin: JavaPlugin
         return JavaPlugin.getPlugin(this as Class<out JavaPlugin>) as JavaPlugin
     }
 
-inline fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) =
+fun Inventory.setItem(line: Int, column: Int, item: ItemStack?) =
     this.setItem(Extra.getIndex(column, line), item)
 
-inline val BlockState.isCrop get() = type == Material.CROPS
+val BlockState.isCrop get() = type == Material.CROPS
 
 
-inline val BlockState.plantState: CropState?
+val BlockState.plantState: CropState?
     get() = if (type == Material.CROPS) (this as Crops).state
     else null
 
 
-inline val InventoryClickEvent.player get() = this.whoClicked as Player
+val InventoryClickEvent.player get() = this.whoClicked as Player
 
-inline val InventoryOpenEvent.opener get() = this.player as Player
+val InventoryOpenEvent.opener get() = this.player as Player
 
 
 /**
  * Cria um menu com DSL, parametros, nome, linhas, e DSL Block em seguida
  */
-inline fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -> Unit): Inventory {
-
+inline fun Player.openInventory(name: String, lineAmount: Int, block: Inventory.() -> Unit): Inventory {
     val inventory = Bukkit.createInventory(this, 9 * lineAmount, name.cut(32))
     block(inventory)
     player.openInventory(inventory)
@@ -204,7 +239,7 @@ inline fun Player.inventory(name: String, lineAmount: Int, block: Inventory.() -
 /**
  * Cria um item para o menu com DSQL< parametros posicao, e SQL Block
  */
-inline fun Inventory.item(position: Int, block: ItemStack.() -> Unit): ItemStack {
+inline fun Inventory.addItem(position: Int, block: ItemStack.() -> Unit): ItemStack {
     val item = ItemStack(Material.STONE)
     block(item)
     setItem(position, item)
@@ -241,7 +276,7 @@ val enchantmentsNames = mutableMapOf(
     Enchantment.PROTECTION_PROJECTILE to "Proteção contra Projéteis"
 )
 
-inline val Enchantment.nameBR get() = enchantmentsNames.getOrDefault(this, name)
+val Enchantment.nameBR get() = enchantmentsNames.getOrDefault(this, name)
 
 
 fun <T : ItemStack> T.displayEnchants(): T {
@@ -271,16 +306,30 @@ fun <T : ItemStack> T.displayEnchants(): T {
 }
 
 
+@Deprecated("Aliases Alterada", ReplaceWith("mineName"))
 inline var ItemStack.name: String
+    get() = mineName
+    set(value) {
+        mineName = value
+    }
+
+var ItemStack.mineName: String
     get() {
         return Mine.getName(this)
     }
     set(value) {
         Mine.setName(this, value)
-
     }
 
+
+@Deprecated("Aliases Alterada", ReplaceWith("mineLore"))
 inline var ItemStack.lore: MutableList<String>
+    get() = mineLore
+    set(value) {
+        mineLore = value
+    }
+
+var ItemStack.mineLore: MutableList<String>
     get() {
         return Mine.getLore(this)
     }
@@ -288,48 +337,32 @@ inline var ItemStack.lore: MutableList<String>
         Mine.setLore(this, value)
     }
 
+@Deprecated("Aliases Alterada", ReplaceWith("mineAddLore(*lore)"))
+fun <T : ItemStack> T.addLore(vararg lore: String) = mineAddLore(*lore)
 
-inline operator fun ItemStack.minus(enchament: Enchantment?): ItemStack {
-    removeEnchantment(enchament)
-    return this
-}
-
-inline operator fun ItemStack.plus(amount: Int): ItemStack {
-    this.amount += amount
-    return this
-}
-
-inline operator fun ItemStack.plus(map: Map<Enchantment, Int>): ItemStack {
-    addUnsafeEnchantments(map)
-    return this
-}
-
-inline infix fun Enchantment.level(level: Int): Map<Enchantment, Int> {
-    return mapOf(this to level)
-}
-
-inline fun <T : ItemStack> T.id(id: Int): T {
-    typeId = id
-    return this
-}
-
-
-inline fun <T : ItemStack> T.addLore(vararg lore: String): T {
+fun <T : ItemStack> T.mineAddLore(vararg lore: String): T {
     Mine.addLore(this, *lore)
     return this
 }
-
-inline fun <T : ItemStack> T.lore(vararg lore: String?): T {
+@Deprecated("Aliases Alterada", ReplaceWith("mineSetLore(*lore)"))
+fun <T : ItemStack> T.lore(vararg lore: String?) = mineSetLore(*lore)
+fun <T : ItemStack> T.mineSetLore(vararg lore: String?): T {
     Mine.setLore(this, *lore)
     return this
 }
 
-inline fun <T : ItemStack> T.addEnchant(ench: Enchantment?, level: Int): T {
+fun CommandSender.isPlayer(action : Player.() -> Unit){
+    if (this is Player){
+        action.invoke(this)
+    }
+}
+
+fun <T : ItemStack> T.addEnchant(ench: Enchantment?, level: Int): T {
     addUnsafeEnchantment(ench, level)
     return this
 }
 
-inline fun <T : ItemStack> T.color(color: Color): T {
+fun <T : ItemStack> T.mineSetColor(color: Color): T {
     Mine.setColor(this, color)
     return this
 }
@@ -344,7 +377,7 @@ fun <T : Event> KClass<T>.event(actionToDo: T.() -> Unit) {
             BukkitAlterations, EventPriority.NORMAL, { _, event ->
                 if (this.java.isAssignableFrom(event.javaClass))
                     actionToDo(event as T)
-            }, BukkitAlterations.javaClass.plugin
+            }, BukkitAlterations.javaClass.autoPlugin
         )
 }
 

@@ -15,7 +15,7 @@ import java.util.Map.Entry;
  *
  * @author Eduard
  * @version 1.4
- *  Extra
+ *
  */
 @SuppressWarnings("unchecked")
 public class Copyable {

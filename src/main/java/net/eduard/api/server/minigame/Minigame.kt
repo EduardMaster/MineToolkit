@@ -225,7 +225,6 @@ open class Minigame(
         rooms.add(room)
         room.map = map
         this.isEnabled = true
-        this.time = mode.timeIntoStart.toLong()
         return room
     }
 
@@ -453,19 +452,22 @@ open class Minigame(
             mode.saveKits()
         }
         File(plugin.dataFolder, "modes/")
-            .saveListInFolder(modes) { modeName }
+            .saveListInFolder(modes) { it.modeName }
     }
 
 
     fun saveRooms() {
         File(plugin.dataFolder, "rooms/")
-            .saveListInFolder(rooms) { id.toString() }
+            .saveListInFolder(rooms) { it.id.toString() }
+    }
+    open fun hasMinPlayerAmount(room : MinigameRoom) : Boolean{
+        return room.getPlayers(MinigamePlayerState.NORMAL).size >= room.map.minPlayersAmount
     }
 
     fun saveLobbies() {
         File(plugin.dataFolder, "lobby/")
             .saveListInFolder(lobbies) {
-                id.toString()
+                it.id.toString()
             }
 
     }

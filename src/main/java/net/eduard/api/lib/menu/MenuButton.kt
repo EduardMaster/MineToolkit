@@ -8,7 +8,10 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import java.util.function.BiConsumer
+import java.util.function.BiPredicate
 import java.util.function.Function
+import java.util.function.Predicate
 
 open class MenuButton(
     var name: String,
@@ -17,7 +20,7 @@ open class MenuButton(
     positionX: Int,
     positionY: Int,
     var page: Int
-) : Slot(positionX, positionY) {
+) : Slot(null,positionX, positionY) {
     var menu: Menu? = null
 
     @StorageReference
@@ -25,13 +28,11 @@ open class MenuButton(
     var fixed = false
     var autoUpdate = true
     var autoUpdateDelayTicks = 20
-
     @Transient
     var autoUpdateLasttime = 0L
 
     @Transient
-    var updateHandler: (MenuButton.(Inventory, Player) -> Unit)? = null
-
+    var updateHandler: BiConsumer<Inventory, Player>? = null
 
     var iconPerPlayer: (Player.() -> ItemStack)?
         set(value) {
@@ -39,18 +40,28 @@ open class MenuButton(
         }
         get() = null
 
-
     @Transient
     var iconGenerated: Function<Player, ItemStack>? = null
 
-
-
     @Transient
-    var hideWhen: (Player.() -> Boolean)? = null
+    var hideWhen: Predicate<Player>? = null
+
     fun canAutoUpdate() = System.currentTimeMillis() >= autoUpdateLasttime + autoUpdateDelayTicks * 50
 
-    init {
+    constructor(name: String) : this(name, null, 1, 1, 1)
+    constructor(name: String, menu: Menu) : this(name, menu, 1, 1, 1)
+    constructor(
+        name: String, menu: Menu?, positionX: Int,
+        positionY: Int
+    ) : this(name, menu, positionX, positionY, 1)
 
+    constructor(
+        name: String, positionX: Int,
+        positionY: Int
+    ) : this(name, null, positionX, positionY, 1)
+
+    constructor() : this("BotaoVazio")
+    init {
         parentMenu?.addButton(this)
     }
 
@@ -64,7 +75,6 @@ open class MenuButton(
         setup(this.shop)
     }
 
-
     val shop: Shop
         get() = menu as Shop
 
@@ -72,20 +82,18 @@ open class MenuButton(
     var click: ClickEffect? = null
 
     open fun updateButton(inventory: Inventory, player: Player) {
-        updateHandler?.invoke(this, inventory, player)
-        if (hideWhen != null) {
-            if (hideWhen!!(player)) return
-        }
+        updateHandler?.accept(inventory, player)
+        if (hideWhen?.test(player) == true) return
         var icon = getIcon(player)
-        if (parentMenu!!.isTranslateIcon) {
+        if (parentMenu?.isTranslateIcon == true) {
             icon = Mine.getReplacers(icon, player)
         }
-        val data = MineReflect.getData(icon)
-        data.setString("button-name", name)
-        icon = MineReflect.setData(icon, data)
+        if (icon.type != Material.AIR) {
+            val data = MineReflect.getData(icon)
+            data.setString("button-name", name)
+            icon = MineReflect.setData(icon, data)
+        }
         inventory.setItem(index, icon)
-
-
     }
 
 
@@ -104,13 +112,5 @@ open class MenuButton(
     val isCategory: Boolean
         get() = menu != null || menuLink != null
 
-    constructor(name: String) : this(name , null, 1,1,1)
-    constructor(name: String, menu : Menu) : this(name , menu, 1,1,1)
-    constructor(name: String, menu : Menu? ,positionX: Int,
-                positionY: Int) : this(name , menu, positionX,positionY,1)
-    constructor(name: String, positionX: Int,
-                positionY: Int) : this(name , null, positionX,positionY,1)
-
-    constructor() : this("BotaoVazio")
 
 }

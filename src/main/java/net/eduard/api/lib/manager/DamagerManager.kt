@@ -12,12 +12,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
  * Sistema de verificar quem deu o ultimo Hit no jogador
  * @author Eduard
  */
-object DamagerManager : Listener {
+object DamagerManager : EventsManager() {
 
     private val lastPvP: MutableMap<Entity, Entity> = HashMap()
 
     init{
-        register(EduardAPI.instance.plugin)
+        register(EduardAPI.instance)
     }
 
     fun getLastDamager(entity: Entity): Entity? {

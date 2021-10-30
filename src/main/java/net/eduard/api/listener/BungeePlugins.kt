@@ -18,12 +18,14 @@ class BungeePlugins : Runnable, Listener {
 
     private val activated = mutableSetOf<EduardBungeePlugin>()
     private val disabled = mutableSetOf<EduardBungeePlugin>()
+    private val verifying = mutableSetOf<EduardBungeePlugin>()
     override fun run() {
         for (plugin in ProxyServer.getInstance().pluginManager.plugins) {
             if (plugin !is EduardBungeePlugin) continue
             if (plugin.isFree) continue
             if (disabled.contains(plugin)) continue
             if (activated.contains(plugin)) continue
+            if (verifying.contains(plugin)) continue
             val pluginName = plugin.description.name
             val tag = "§b[" + plugin.description.name + "] §f"
             ProxyServer.getInstance().console
@@ -34,7 +36,7 @@ class BungeePlugins : Runnable, Listener {
             config.saveConfig()
             val key = config.getString("key")
             val owner = config.getString("owner")
-
+            verifying.add(plugin)
             ProxyServer.getInstance().scheduler.runAsync(plugin) {
                 val result = Licence.test(pluginName, owner, key)
                 ProxyServer.getInstance().console.sendMessage(TextComponent(tag + result.message))
@@ -47,6 +49,7 @@ class BungeePlugins : Runnable, Listener {
                     ProxyServer.getInstance().scheduler
                         .schedule(plugin, { plugin.onActivation() }, 50, TimeUnit.MILLISECONDS)
                 }
+                verifying.remove(plugin)
             }
 
         }

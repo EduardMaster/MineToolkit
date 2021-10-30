@@ -10,6 +10,7 @@ import org.bukkit.entity.ArmorStand
  * @since 2.5
  */
 class Animation(val stand: ArmorStand) {
+
     private val one_degree = Math.PI / 180
 
 

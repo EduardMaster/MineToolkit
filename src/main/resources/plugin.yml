@@ -5,38 +5,38 @@ version: "1.7.6"
 author: "Eduard"
 api-version: 1.16
 authors: ["Eduard"]
-softdepend: [Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]
+softdepend: [Kotlin,Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]
 website: "https://www.youtube.com/user/EduTutoriaisHD"
 commands:
   map:
     description: "Controla a criacao de mapas (baseado no Schematic do WorldEdit)"
     aliases: [mapa]
-    usage: /<command> help
+    usage: "/<command> help"
   api:
     description: "Controla plugins feitos pelo Edu"
     aliases: [eduardapi,eduard,e]
-    usage: /<command> help
+    usage: "/<command> help"
   goto: 
     description: "Teleporta para outro mundo"
     aliases: [ir,irpara,mundo,world]
-    usage: /<command> <world>
+    usage: "/<command> <world>"
   enchantment: 
     description: "Encanta o item para um nivel"
     aliases: [ench]
-    usage: /<command> <enchant> <level>
+    usage: "/<command> <enchant> <level>"
   sound: 
     description: "Toca um som do minecraft"
     aliases: [som]
-    usage: /<command> <sound> [volume] [pitch]
+    usage: "/<command> <sound> [volume] [pitch]"
   setskin:
     description: "Define uma Skin para o jogador"
     aliases: [setplayerskin]
-    usage: /<command> <playerName>
+    usage: "/<command> <playerName>"
   setexperience: 
     description: "Define a experiencia (EXP) do jogador"
     aliases: [setexp,setxp]
-    usage: /<command> <xp>
+    usage: "/<command> <xp>"
   memory:
     description: "Verifica uso de memoria geral do servidor"
     aliases: [ram]
-    usage: </command> [gc]
+    usage: "</command> [gc]"

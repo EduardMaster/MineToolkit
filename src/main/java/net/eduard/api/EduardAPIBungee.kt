@@ -75,6 +75,9 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
+        if (getBoolean("bungee-api")) {
+            BungeeAPI.bungee.register(plugin)
+        }
         configDefault()
         log("Ativando debug de sistemas caso marcado na config como 'true'")
         StorageAPI.setDebug(configs.getBoolean("debug.storage"))
@@ -122,21 +125,23 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
     override fun onEnable() {
         StorageAPI.setDebug(false)
-        if (getBoolean("bungee-api")) {
-            BungeeAPI.bungee.register(plugin)
-        }
+
         reload()
+
         ProxyServer.getInstance().pluginManager
             .registerCommand(plugin, BungeeReloadCommand())
+
         ProxyServer.getInstance().scheduler.schedule(
             plugin,
             BungeeDatabaseUpdater(),
             1, 1, TimeUnit.SECONDS
         );
+
         ProxyServer.getInstance().scheduler.schedule(
             plugin, BungeePlugins(),
             1, 1, TimeUnit.SECONDS
         );
+
 
     }
 
@@ -160,9 +165,10 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
     override fun onDisable() {
         if (getBoolean("bungee-api")) {
-            BungeeAPI.controller.unregister()
+            BungeeAPI.bungee.unregister()
         }
         dbManager.closeConnection()
+
 
     }
 

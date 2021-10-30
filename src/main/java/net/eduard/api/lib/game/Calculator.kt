@@ -6,12 +6,14 @@ import net.eduard.api.lib.storage.annotations.StorageAttributes
 
 @StorageAttributes(inline = true)
 class Calculator(
-    var base: Double = 10.0,
-    var perLevel: Double = 5.0,
-    var limit: Double = 0.0,
-    var variationPerLevel: Double = 0.0,
-    var variation: Double = 0.0
+    var base: Double,
+    var perLevel: Double,
+    var limit: Double,
+    var variationPerLevel: Double,
+    var variation: Double
 ) {
+    constructor() : this(10.0,5.0,0.0)
+
     constructor(
         base: Number = 10,
         perLevel: Number = 5,
@@ -25,6 +27,7 @@ class Calculator(
         perLevel: Number = 5,
         limit: Number = 0,
     ) : this(base.toDouble(), perLevel.toDouble(), limit.toDouble(), 0,0)
+
     constructor(
         base: Number = 10,
         perLevel: Number = 5

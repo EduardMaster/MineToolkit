@@ -1682,7 +1682,6 @@ public final class Mine {
 
     public static Location getRandomPosition(Location location, int xVar, int zVar) {
         return getHighPosition(getRandomLocation(location, xVar, 0, zVar));
-
     }
 
     /**

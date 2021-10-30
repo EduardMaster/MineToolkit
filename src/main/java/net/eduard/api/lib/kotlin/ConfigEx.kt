@@ -2,29 +2,37 @@ package net.eduard.api.lib.kotlin
 
 import net.eduard.api.lib.config.Config
 import java.io.File
+import java.util.function.Function
 
-inline fun <reified T> File.reloadListFromFolder(): List<T> {
+
+
+fun <T> File.reloadListFromFolder(listType : Class<T>): List<T> {
     mkdirs()
     val list = mutableListOf<T>()
-    for (fileName in list()!!) {
-        if (!fileName.endsWith(".yml"))continue
+    for (fileName in list()) {
+        if (!fileName.endsWith(".yml",false))continue
         val config = Config(this, fileName)
-        val data = config.get(T::class.java)
+        val data = config[listType]
         list.add(data)
     }
     return list
 }
-inline fun <T> Config.save(data : T){
+
+inline fun <reified T> File.reloadListFromFolder(): List<T> {
+    return reloadListFromFolder(T::class.java)
+}
+
+fun <T> Config.save(data : T){
     set(data)
     saveConfig()
 }
 inline fun <reified T> Config.reload(): T {
     return get(T::class.java)
 }
-inline fun <T> File.saveListInFolder(list: List<T>, fileNamer: T.() -> String) {
+
+fun <T> File.saveListInFolder(list: List<T>, fileNamer: Function<T, String>) {
     for (data in list) {
-        val config = Config(this, fileNamer(data) + ".yml")
-        config.set(data)
-        config.saveConfig()
+        val config = Config(this, fileNamer.apply(data) + ".yml")
+        config.save(data)
     }
 }

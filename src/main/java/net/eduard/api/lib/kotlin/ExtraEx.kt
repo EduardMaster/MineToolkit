@@ -8,7 +8,7 @@ import net.eduard.api.lib.storage.StorageAPI
  * Alias para Copyable.copyObject, copia este Objeto
  *
  */
-inline fun <T : Any> T.copy(): T {
+fun <T : Any> T.copy(): T {
     return Copyable.copyObject(this) as T
 }
 
@@ -20,8 +20,8 @@ inline fun <reified T : Any> store(alias: String) {
     StorageAPI.autoRegisterClass(T::class.java, alias)
 }
 
-inline fun Int.toRadians() = Math.toRadians(this.toDouble())
-inline fun Double.toRadians() = Math.toRadians(this)
+fun Int.toRadians() = Math.toRadians(this.toDouble())
+fun Double.toRadians() = Math.toRadians(this)
 
 
 inline fun <reified T : Any> new(setup: T.() -> Unit): T {
@@ -41,31 +41,31 @@ inline fun <reified T : Any> MutableList<T>.add(setup: T.() -> Unit): T {
 /**
  * Formata o Tempo do Jeito de Data ou por Duração
  */
-inline fun Long.formatTime(durationFormat: Boolean): String {
+fun Long.formatTime(durationFormat: Boolean): String {
     return if (durationFormat)
         formatDuration()
     else
         formatTime()
 }
 
-inline fun Long.formatTime() = Extra.FORMAT_DATETIME.format(this)
+fun Long.formatTime() = Extra.FORMAT_DATETIME.format(this)
 
-inline fun Long.formatDuration() = Extra.formatTime(this)
+fun Long.formatDuration() = Extra.formatTime(this)
 
 
-inline fun Long.formatDate() = Extra.FORMAT_DATE.format(this)
+fun Long.formatDate() = Extra.FORMAT_DATE.format(this)
 
-inline fun Long.formatHour() = Extra.FORMAT_TIME.format(this)
+fun Long.formatHour() = Extra.FORMAT_TIME.format(this)
 
 /**
  * Formata o numero no formato OP
  */
-inline fun Number.format(formatOP: Boolean): String {
+fun Number.format(formatOP: Boolean): String {
     return if (formatOP) format()
     else text
 }
 
-inline fun Number.format() = Extra.formatMoney(this.toDouble())
+fun Number.format() = Extra.formatMoney(this.toDouble())
 
 inline val Number.text get() = Extra.MONEY.format(this)
 
@@ -140,37 +140,37 @@ fun Int.centralized(): Int {
 /**
  * Alias para formatColors
  */
-inline fun String.formatColors(): String {
+fun String.formatColors(): String {
     return Extra.formatColors(this)
 }
 
 /**
  * Alias para Extra.getChance() só que multiplica o Int por 100 antes
  */
-inline fun Int.chance(): Boolean {
+fun Int.chance(): Boolean {
     return (this.toDouble() / 100).chance()
 }
 
-inline fun Double.percent(): String {
+fun Double.percent(): String {
     return Extra.MONEY.format(this * 100.0)
 }
 
 /**
  * Alias para Extra.getChance()
  */
-inline fun Double.chance(): Boolean {
+fun Double.chance(): Boolean {
     return Extra.getChance(this)
 }
 
 /**
  * Alias para Extra.cutText()
  */
-inline fun String.cut(maxSize: Int): String {
+fun String.cut(maxSize: Int): String {
     return Extra.cutText(this, maxSize)
 }
 
 
-inline fun String.lowerContains(msg: String) = Extra.contains(this, msg)
+fun String.lowerContains(msg: String) = Extra.contains(this, msg)
 
 
 
