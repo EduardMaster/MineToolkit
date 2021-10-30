@@ -15,7 +15,6 @@ import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.BukkitTypes
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
-import net.eduard.api.server.minigame.MinigameSchematic
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.hybrid.BukkitServer
 import net.eduard.api.lib.hybrid.Hybrid
@@ -24,14 +23,16 @@ import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.*
 import net.eduard.api.lib.modules.*
 import net.eduard.api.lib.plugin.IPlugin
+import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.score.DisplayBoard
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.storables.BukkitStorables
 import net.eduard.api.listener.*
 import net.eduard.api.server.currency.CurrencyManager
-import net.eduard.api.supports.CurrencyVaultEconomy
+import net.eduard.api.server.minigame.MinigameSchematic
 import net.eduard.api.supports.CurrencyJHCash
+import net.eduard.api.supports.CurrencyVaultEconomy
 import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.DatabaseUpdater
 import net.eduard.api.task.MenuAutoUpdaterTask
@@ -51,47 +52,84 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
+class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInstance {
+    fun getString(key : String) = configs.getString(key)
+    fun message(key : String) = messages.message(key)
+    var started = false
 
-    override var started = false
-    override var configs = Config(plugin, "config.yml")
-    override var storage = Config(plugin, "storage.yml")
-    override var messages = Config(plugin, "messages.yml")
-    override lateinit var settings: PluginSettings
-    override var dbManager = DBManager()
-    override lateinit var sqlManager: SQLManager
-    override lateinit var storageManager: StorageManager
-    override fun onLoad() {
+     var configs = Config(plugin, "config.yml")
+
+
+     var storage = Config(plugin, "storage.yml")
+
+
+     var messages = Config(plugin, "messages.yml")
+
+
+     lateinit var settings: PluginSettings
+
+
+     lateinit var dbManager : DBManager
+
+
+     lateinit var sqlManager: SQLManager
+
+    lateinit var storageManager: StorageManager
+     fun onLoad() {
         StorageAPI.setDebug(false)
         instance = this
-        super.onLoad()
+         val currentInstance: EduardAPI = this
+         if (!currentInstance.started) {
+             currentInstance.dbManager = DBManager()
+             currentInstance.configs = Config(currentInstance, "config.yml")
+             currentInstance.messages = Config(currentInstance, "messages.yml")
+             currentInstance.storage = Config(currentInstance, "storage.yml")
+             currentInstance.settings = PluginSettings()
+             currentInstance.configs.add("settings", currentInstance.settings)
+             currentInstance.configs.add("database", currentInstance.dbManager)
+             currentInstance.configs.saveConfig()
+             currentInstance.settings = currentInstance.configs.get("settings", PluginSettings::class.java)
+             currentInstance.dbManager = currentInstance.configs.get("database", DBManager::class.java)
+             currentInstance.sqlManager = SQLManager(currentInstance.dbManager)
+             //  currentInstance.setStorageManager(new StorageManager(currentInstance.getSqlManager()));
+             currentInstance.started = true
+             // currentInstance.getStorageManager().setType(currentInstance.getSettings().getStoreType());
+             if (currentInstance.dbManager.isEnabled) {
+                 currentInstance.dbManager.openConnection()
+             }
+         }
         BukkitTypes
 
 
     }
 
 
-    override fun deleteOldBackups() {
+     fun deleteOldBackups() {
 
     }
 
-    override fun backup() {
+     fun backup() {
 
     }
 
+     fun getPluginName(): String {
+        TODO("Not yet implemented")
+    }
 
-    override val pluginFolder: File
-        get() = plugin.dataFolder
+     fun getPluginFolder(): File {
+        TODO("Not yet implemented")
+    }
 
-    override fun log(message: String) {
+
+     fun log(message: String) {
         console("§f$message")
     }
 
-    override fun console(message: String) {
+     fun console(message: String) {
         Bukkit.getConsoleSender().sendMessage("§b[EduardAPI]§r $message")
     }
 
-    override fun error(message: String) {
+     fun error(message: String) {
         console("§c$message")
     }
 
@@ -111,11 +149,11 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     }
 
 
-    override fun onEnable() {
+     fun onEnable() {
         if (!started) {
             this.onLoad()
         }
-        MinigameSchematic.MAPS_FOLDER = File(instance.pluginFolder, "maps/")
+        MinigameSchematic.MAPS_FOLDER = File(instance.getPluginFolder(), "maps/")
         storage()
         VaultAPI.setupVault()
         BukkitBungeeAPI.register(plugin)
@@ -145,7 +183,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
             player.isHealthScaled = false
         }
     }
-
+    fun getBoolean(key : String) = configs.getBoolean(key);
     fun tasks() {
         resetScoreboards()
         log("Scoreboards dos jogadores online resetadas!")
@@ -213,7 +251,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     }
 
 
-    override fun reload() {
+     fun reload() {
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
@@ -274,7 +312,7 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
     }
 
 
-    override fun configDefault() {
+     fun configDefault() {
         configs.add("debug.config", false)
         configs.add("debug.bungee-bukkit", false)
         configs.add("debug.storage", false)
@@ -322,16 +360,12 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
     }
 
-    override fun save() {
+     fun save() {
 
     }
 
 
-    override val pluginName: String
-        get() = plugin.name
-
-
-    override fun onDisable() {
+     fun onDisable() {
 
         PlayerSkin.saveSkins()
         saveMaps()
@@ -345,19 +379,19 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
         sqlManager.dbManager.closeConnection()
     }
 
-    override fun unregisterTasks() {
+     fun unregisterTasks() {
 
     }
 
-    override fun unregisterListeners() {
+     fun unregisterListeners() {
 
     }
 
-    override fun unregisterServices() {
+     fun unregisterServices() {
 
     }
 
-    override fun unregisterCommands() {
+     fun unregisterCommands() {
         for ((name, cmd) in CommandManager.commandsRegistred) {
             log("Comando $name desregisrado")
             cmd.unregisterCommand()
@@ -369,6 +403,10 @@ class EduardAPI(private val plugin: JavaPlugin) : IPlugin, BukkitTimeHandler {
 
     override fun getPlugin(): Plugin {
         return this.plugin
+    }
+
+    override fun getSystemName(): String {
+        return getPluginName();
     }
 
     companion object {

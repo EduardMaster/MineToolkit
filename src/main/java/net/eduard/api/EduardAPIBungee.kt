@@ -9,8 +9,10 @@ import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.hybrid.BungeeServer
 import net.eduard.api.lib.hybrid.Hybrid
-import net.eduard.api.lib.modules.*
+import net.eduard.api.lib.modules.Copyable
+import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.plugin.IPlugin
+import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.listener.BungeePlugins
@@ -26,7 +28,8 @@ import java.util.concurrent.TimeUnit
 
 
 @Suppress("deprecated")
-class EduardAPIBungee(val plugin: Plugin) : IPlugin {
+class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
+    val dataFolder get() = plugin.dataFolder
     companion object {
         lateinit var instance: EduardAPIBungee
 
@@ -40,38 +43,60 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
     }
 
 
-    override var started = false
-    override lateinit var configs: Config
-    override lateinit var storage: Config
-    override lateinit var messages: Config
-    override lateinit var dbManager: DBManager
-    override lateinit var sqlManager: SQLManager
-    override lateinit var storageManager: StorageManager
-    override lateinit var settings: PluginSettings
-    override val pluginName: String
+    var started = false
+    lateinit var configs: Config
+    lateinit var storage: Config
+    lateinit var messages: Config
+    lateinit var dbManager: DBManager
+    lateinit var sqlManager: SQLManager
+    lateinit var storageManager: StorageManager
+    lateinit var settings: PluginSettings
+    val pluginName: String
         get() = plugin.description.name
-    override val pluginFolder: File
+    val pluginFolder: File
         get() = plugin.dataFolder
 
-    override fun log(message: String) {
+    fun log(message: String) {
         console("§f$message")
     }
 
-    override fun console(message: String) {
+    fun console(message: String) {
         ProxyServer.getInstance().console
             .sendMessage(TextComponent("§b[EduardAPI]§r $message"))
     }
 
-    override fun error(message: String) {
+    fun error(message: String) {
         console("§c$message")
     }
 
-    override fun onLoad() {
+    fun onLoad() {
         StorageAPI.setDebug(false)
-        super.onLoad()
+        val currentInstance: EduardAPIBungee = this
+        if (!currentInstance.started) {
+            currentInstance.dbManager = DBManager()
+            currentInstance.configs = Config(currentInstance, "config.yml")
+            currentInstance.messages = Config(currentInstance, "messages.yml")
+            currentInstance.storage = Config(currentInstance, "storage.yml")
+            currentInstance.settings = PluginSettings()
+            currentInstance.configs.add("settings", currentInstance.settings)
+            currentInstance.configs.add("database", currentInstance.dbManager)
+            currentInstance.configs.saveConfig()
+            currentInstance.settings = currentInstance.configs.get("settings", PluginSettings::class.java)
+            currentInstance.dbManager = currentInstance.configs.get("database", DBManager::class.java)
+            currentInstance.sqlManager = SQLManager(currentInstance.dbManager)
+            //  currentInstance.setStorageManager(new StorageManager(currentInstance.getSqlManager()));
+            currentInstance.started = true
+            // currentInstance.getStorageManager().setType(currentInstance.getSettings().getStoreType());
+            if (currentInstance.dbManager.isEnabled) {
+                currentInstance.dbManager.openConnection()
+            }
+        }
+
+
     }
 
-    override fun reload() {
+    fun getBoolean(key: String) = configs.getBoolean(key)
+    fun reload() {
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
@@ -123,7 +148,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
         }
     }
 
-    override fun onEnable() {
+    fun onEnable() {
         StorageAPI.setDebug(false)
 
         reload()
@@ -145,7 +170,7 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
     }
 
-    override fun configDefault() {
+    fun configDefault() {
         configs.add("bungee-api", true)
         configs.add("debug.storage", false)
         configs.add("debug.copyable", false)
@@ -158,12 +183,12 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
     }
 
-    override fun save() {
+    fun save() {
 
     }
 
 
-    override fun onDisable() {
+    fun onDisable() {
         if (getBoolean("bungee-api")) {
             BungeeAPI.bungee.unregister()
         }
@@ -172,25 +197,28 @@ class EduardAPIBungee(val plugin: Plugin) : IPlugin {
 
     }
 
-    override fun unregisterTasks() {
+    fun unregisterTasks() {
 
     }
 
-    override fun unregisterListeners() {
+    fun unregisterListeners() {
 
     }
 
-    override fun unregisterServices() {
+    fun unregisterServices() {
 
     }
 
-    override fun unregisterCommands() {
+    fun unregisterCommands() {
 
     }
-
 
     override fun getPlugin(): Any {
         return plugin
+    }
+
+    override fun getSystemName(): String {
+        return pluginName;
     }
 
 

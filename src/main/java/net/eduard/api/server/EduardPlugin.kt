@@ -1,21 +1,18 @@
 package net.eduard.api.server
 
 import net.eduard.api.lib.config.Config
-import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
-import net.eduard.api.lib.kotlin.resolve
 import net.eduard.api.lib.kotlin.resolvePut
 import net.eduard.api.lib.kotlin.resolveTake
 import net.eduard.api.lib.manager.CommandManager
-import net.eduard.api.lib.manager.EventsManager
 import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPlugin
+import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.plugin.PluginSettings
-import org.apache.commons.lang.mutable.Mutable
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
@@ -31,44 +28,72 @@ import java.util.concurrent.TimeUnit
  * @version 1.0
  * @since 2.0
  */
-open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
-
+open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPluginInstance {
+    fun getString(key : String) = configs.getString(key)
+    fun message(key : String) = messages.message(key)
+    fun getInt(key : String) = configs.getInt(key)
+    fun getLong(key : String) = configs.getLong(key)
+    fun getBoolean(key : String) = configs.getBoolean(key)
+    fun getMessages(key : String) = messages.getMessages(key)
     var calulatingLag = false
     var isFree = false
-    protected var activated = false
-    protected var reloaded = false
-    override var started = false
+    var activated = false
+    var reloaded = false
+    var started = false
 
-    override val pluginName: String
-        get() = name
-    override val pluginFolder: File
-        get() = plugin.dataFolder
+    fun backup(){
 
-
+    }
     override fun getPlugin(): EduardPlugin {
         return this
     }
+    open fun onActivation(){
 
-    override fun onLoad() {
-        super<IPlugin>.onLoad()
     }
 
-    final override lateinit var configs: Config
-    final override lateinit var messages: Config
-    final override lateinit var storage: Config
-    final override lateinit var settings: PluginSettings
-    final override var dbManager: DBManager = DBManager()
-    final override lateinit var sqlManager: SQLManager
-    final override lateinit var storageManager: StorageManager
+    override fun getSystemName(): String {
+        return description.name
+    }
 
+
+
+    lateinit var configs: Config
+    lateinit var messages: Config
+    lateinit var storage: Config
+    lateinit var settings: PluginSettings
+    lateinit var dbManager: DBManager
+    lateinit var sqlManager: SQLManager
+    override fun onLoad() {
+        //
+        val currentInstance: EduardPlugin = this
+        if (!currentInstance.started) {
+            currentInstance.dbManager = DBManager()
+            currentInstance.configs = Config(currentInstance, "config.yml")
+            currentInstance.messages = Config(currentInstance, "messages.yml")
+            currentInstance.storage = Config(currentInstance, "storage.yml")
+            currentInstance.settings = PluginSettings()
+            currentInstance.configs.add("settings", currentInstance.settings)
+            currentInstance.configs.add("database", currentInstance.dbManager)
+            currentInstance.configs.saveConfig()
+            currentInstance.settings = currentInstance.configs.get("settings", PluginSettings::class.java)
+            currentInstance.dbManager = currentInstance.configs.get("database", DBManager::class.java)
+            currentInstance.sqlManager = SQLManager(currentInstance.dbManager)
+            //  currentInstance.setStorageManager(new StorageManager(currentInstance.getSqlManager()));
+            currentInstance.started = true
+            // currentInstance.getStorageManager().setType(currentInstance.getSettings().getStoreType());
+            if (currentInstance.dbManager.isEnabled) {
+                currentInstance.dbManager.openConnection()
+            }
+        }
+    }
 
     /**
      * Envia mensagem para o console caso as Log Normais esteja ativada para ele
      *
      * @param message Mensagem
      */
-    override fun log(message: String) {
-        if (settings.debug)
+    fun log(message: String) {
+        if (settings.isDebug)
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §f$message")
     }
 
@@ -83,8 +108,8 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      *
      * @param message Mensagem
      */
-    override fun error(message: String) {
-        if (settings.debug)
+    fun error(message: String) {
+        if (settings.isDebug)
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §c$message")
     }
 
@@ -116,15 +141,15 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     }
 
 
-    override fun unregisterServices() {
+    fun unregisterServices() {
         Bukkit.getServicesManager().unregisterAll(this)
     }
 
-    override fun unregisterListeners() {
+    fun unregisterListeners() {
         HandlerList.unregisterAll(this)
     }
 
-    override fun unregisterTasks() {
+    fun unregisterTasks() {
         Bukkit.getScheduler().cancelTasks(this)
     }
 
@@ -137,7 +162,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         }
     }
 
-    override fun unregisterCommands() {
+    fun unregisterCommands() {
         CommandManager.commandsRegistred.values.forEach { cmd ->
             if (this == cmd.plugin) {
                 cmd.unregisterCommand()
@@ -161,26 +186,29 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         calculate("Desregistrando Servicos") { unregisterServices() }
         calculate("Desregistrando Listeners") { unregisterListeners() }
         calculate("Desregistrando Tasks") { unregisterTasks() }
-        calculate("Desregistrando Storables") { unregisterStorableClasses() }
+        //calculate("Desregistrando Storables") { unregisterStorableClasses() }
         calculate("Desregistrando menus") { unregisterMenus() }
         calculate("Desregistrando Comandos") { unregisterCommands() }
         calculate("Desconectando Database Connections e Limpando Cache") { dbManager.closeConnection() }
-        log("Foi desativado na v" + description.version + " um plugin "
+        log(
+            "Foi desativado na v" + description.version + " um plugin "
                     + if (isFree) "§aGratuito" else "§bPago"
         )
         resolveTake(this)
     }
 
 
-    override fun save() {
+    open fun save() {
 
     }
 
-    override fun reload() {
+    fun getPluginFolder() = dataFolder
+
+    open fun reload() {
         reloaded = true
     }
 
-    override fun configDefault() {
+   open fun configDefault() {
 
     }
 
@@ -189,7 +217,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      * Deleta os ultimos backups
      */
     private fun deleteLastBackups() {
-        val pasta = File(pluginFolder, "/backup/")
+        val pasta = File(getPluginFolder(), "/backup/")
         pasta.mkdirs()
         val lista = mutableListOf(*pasta.listFiles()!!)
         lista.sortBy { it.lastModified() }
@@ -205,8 +233,8 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     /**
      * Deleta os backups dos dias anteriores
      */
-    override fun deleteOldBackups() {
-        val pasta = File(pluginFolder, "/backup/")
+    fun deleteOldBackups() {
+        val pasta = File(getPluginFolder(), "/backup/")
         pasta.mkdirs()
         val lista = listOf(*pasta.listFiles()!!)
         lista.filter {

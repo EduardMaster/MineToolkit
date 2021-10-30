@@ -22,6 +22,8 @@ class BungeePlugins : Runnable, Listener {
     override fun run() {
         for (plugin in ProxyServer.getInstance().pluginManager.plugins) {
             if (plugin !is EduardBungeePlugin) continue
+            
+
             if (plugin.isFree) continue
             if (disabled.contains(plugin)) continue
             if (activated.contains(plugin)) continue
