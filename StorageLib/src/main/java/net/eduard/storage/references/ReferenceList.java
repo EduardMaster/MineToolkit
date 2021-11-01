@@ -1,9 +1,9 @@
-package net.eduard.api.lib.storage.references;
-
-import java.util.List;
+package net.eduard.storage.references;
 
 import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.api.StorageInfo;
+import net.eduard.storage.api.StorageInfo;
+
+import java.util.List;
 
 public class ReferenceList extends ReferenceBase<List<Object>> {
 	private final List<Object> realList;

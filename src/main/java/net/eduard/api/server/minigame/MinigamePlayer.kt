@@ -3,7 +3,6 @@ package net.eduard.api.server.minigame
 import net.eduard.api.lib.kotlin.offline
 import net.eduard.api.lib.modules.FakePlayer
 import net.eduard.api.lib.modules.Mine
-import org.bukkit.entity.Player
 
 /**
  * Jogador do Minigame

@@ -1,5 +1,6 @@
 package net.eduard.api.server.minigame
 
+
 /**
  * Representa o lobby do minigame , precisa ser extendido
  */

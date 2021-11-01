@@ -169,9 +169,9 @@ public final class Extra {
 
     public static DecimalFormat MONEY = new DecimalFormat("###,###.##",
             DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));
-    public static List<String> MONEY_OP_CLASSES = Arrays.asList("", "k", "m", "b", "t", "q", "qq", "s", "ss", "o", "n", "d", "un", "dd", "td", "qd", "qqd", "sd", "ssd", "od", "nd", "vd");
-    public static DecimalFormat MONEY_OP_FORMATER = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR")));
 
+    public static List<String> MONEY_OP_CLASSES = Arrays.asList("","m","M","B","T","Q","QQ","S","SS","OC","N","D","UN","DD","TR","QT","QN","SD","SPD","OD","ND","VG","UVG","DVG","TVG","QTV","QNV","SEV","SPV","OVG","NVG","TD");
+    public static DecimalFormat MONEY_OP_FORMATER = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR")));
     public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
     public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
     public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -414,11 +414,11 @@ public final class Extra {
         char[] chars = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f', 'n', 'r', 'l',
                 'k', 'o', 'm'};
         char[] array = text.toCharArray();
-        for (int t = 0; t < array.length - 1; t++) {
-            if (array[t] == '&') {
+        for (int letra = 0; letra < array.length - 1; letra++) {
+            if (array[letra] == '&') {
                 for (char c : chars) {
-                    if (c == array[(t + 1)]) {
-                        array[t] = '\u00a7';
+                    if (c == array[(letra + 1)]) {
+                        array[letra] = '\u00a7';
                         break;
                     }
                 }
@@ -450,16 +450,13 @@ public final class Extra {
         }
         text = text.toLowerCase();
         for (int i = MONEY_OP_CLASSES.size() - 1; i > 0; i--) {
-            String sigla = MONEY_OP_CLASSES.get(i);
+            String sigla = MONEY_OP_CLASSES.get(i).toLowerCase();
             if (text.endsWith(sigla)) {
                 text = text.replace(sigla, "");
                 double valor = Extra.toDouble(text);
                 valor = fixDouble(valor);
                 double potencia = Math.pow(10, (i) * 3);
-
                 return valor * potencia;
-
-
             }
         }
 
@@ -2177,7 +2174,6 @@ public final class Extra {
      *
      * @param file  Arquivo
      * @param lines Linhas para escrever
-     * @throws Exception Não conseguiu escrever por falta de permissão
      */
     public static void writeLines(File file, List<String> lines) {
         Path path = file.toPath();

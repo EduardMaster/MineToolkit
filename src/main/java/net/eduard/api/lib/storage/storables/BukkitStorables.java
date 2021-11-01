@@ -16,6 +16,7 @@ import net.eduard.api.lib.storage.StorageAPI;
 public class BukkitStorables {
 
 	public static void load() {
+
 		StorageAPI.debug("Registering Bukkit Storables");
 		StorageAPI.registerStorable(Chunk.class, new ChunkStorable());
 		StorageAPI.registerStorable(World.class, new WorldStorable());

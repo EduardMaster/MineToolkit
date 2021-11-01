@@ -1,13 +1,12 @@
-package net.eduard.api.lib.storage.references;
+package net.eduard.storage.references;
 
-import java.util.List;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.storage.api.StorageInfo;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.api.StorageInfo;
-
-public class ReferenceMap extends ReferenceBase<Map<Object,Object>>{
+public class ReferenceMap extends ReferenceBase<Map<Object,Object>> {
 
 	private Map<Object,Object> realMap;
 	private StorageInfo keyInfo;

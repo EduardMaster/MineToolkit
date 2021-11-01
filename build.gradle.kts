@@ -47,6 +47,8 @@ dependencies {
     api(project(":MineNMS-1_12"))
     api(project(":MineNMS-1_16_5"))
     api(project(":JavaUtils"))
+    api(project(":MinigameLib"))
+    api(project(":StorageLib"))
     api(project(":MineUtils"))
     api(project(":SQLManager"))
     compileOnly("org.bukkit:spigot:1.8.9")

@@ -11,8 +11,8 @@ import net.eduard.api.lib.modules.BukkitTimeHandler
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPlugin
-import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.plugin.PluginSettings
+import net.eduard.api.lib.storage.StorageAPI
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
@@ -28,33 +28,34 @@ import java.util.concurrent.TimeUnit
  * @version 1.0
  * @since 2.0
  */
-open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPluginInstance {
-    fun getString(key : String) = configs.getString(key)
-    fun message(key : String) = messages.message(key)
-    fun getInt(key : String) = configs.getInt(key)
-    fun getLong(key : String) = configs.getLong(key)
-    fun getBoolean(key : String) = configs.getBoolean(key)
-    fun getMessages(key : String) = messages.getMessages(key)
+open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
+    fun getString(key: String) = configs.getString(key)
+    fun message(key: String) = messages.message(key)
+    fun getInt(key: String) = configs.getInt(key)
+    fun getLong(key: String) = configs.getLong(key)
+    fun getBoolean(key: String) = configs.getBoolean(key)
+    fun getMessages(key: String) = messages.getMessages(key)
     var calulatingLag = false
     var isFree = false
     var activated = false
     var reloaded = false
     var started = false
 
-    fun backup(){
+    fun backup() {
 
     }
+
     override fun getPlugin(): EduardPlugin {
         return this
     }
-    open fun onActivation(){
+
+    open fun onActivation() {
 
     }
 
     override fun getSystemName(): String {
         return description.name
     }
-
 
 
     lateinit var configs: Config
@@ -202,13 +203,13 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPluginInstance {
 
     }
 
-    fun getPluginFolder() = dataFolder
+    override fun getPluginFolder() = dataFolder
 
     open fun reload() {
         reloaded = true
     }
 
-   open fun configDefault() {
+    open fun configDefault() {
 
     }
 
@@ -228,6 +229,10 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPluginInstance {
                 arquivo.delete()
 
         }
+    }
+
+    fun unregisterStorableClasses() {
+        StorageAPI.unregisterPlugin(javaClass)
     }
 
     /**

@@ -4,9 +4,8 @@ plugins {
     `maven-publish`
 }
 
-group = "net.eduard.lib"
+group = "net.eduard.bukkitlibs"
 version = "1.0-SNAPSHOT"
-
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
@@ -25,8 +24,8 @@ tasks {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "net.eduard"
-            artifactId = "mineutils"
+            groupId = "net.eduard.bukkitlibs"
+            artifactId = "minigame"
             version = project.version as String
             from(components["java"])
         }
@@ -45,10 +44,7 @@ repositories {
 
 dependencies {
     compileOnly(project(":JavaUtils"))
-    compileOnly("org.bukkit:spigot:1.8.9")
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly(kotlin("stdlib"))
-    testImplementation("junit", "junit", "4.12")
 }

@@ -1,9 +1,9 @@
-package net.eduard.api.lib.storage.storables;
-
-import java.util.UUID;
+package net.eduard.storage.storables;
 
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.annotations.StorageAttributes;
+
+import java.util.UUID;
 
 
 @StorageAttributes(inline = true)

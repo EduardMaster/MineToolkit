@@ -3,9 +3,9 @@ package net.eduard.api.server;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import net.eduard.api.LibraryLoader;
 import net.eduard.api.lib.config.Config;
 import net.eduard.api.lib.database.DBManager;
+import net.eduard.api.lib.database.HybridTypes;
 import net.eduard.api.lib.database.SQLManager;
 import net.eduard.api.lib.kotlin.ModuleResolverKt;
 import net.eduard.api.lib.plugin.IPluginInstance;
@@ -23,9 +23,6 @@ import java.util.List;
 @Setter
 @Getter
 public class EduardBungeePlugin extends Plugin implements IPluginInstance {
-    static {
-        new LibraryLoader(new File("libs")).loadLibraries();
-    }
 
     public boolean getBoolean(@NotNull String key){
         return getConfigs().getBoolean(key);
@@ -146,16 +143,17 @@ public class EduardBungeePlugin extends Plugin implements IPluginInstance {
 
 
     public void log(@NotNull String message) {
-        console("§b"+prefix +"§a"+ message);
+        console("§b"+getPrefix() +"§a"+ message);
     }
 
     public void error(@NotNull String message) {
-        console("§e"+prefix +"§c"+ message);
+        console("§e"+getPrefix() +"§c"+ message);
     }
 
 
-
     public void onLoad() {
+        val loadingHybrids = HybridTypes.INSTANCE;
+
         val currentInstance = this;
         if (!currentInstance.getStarted()) {
             currentInstance.setDbManager(new DBManager());

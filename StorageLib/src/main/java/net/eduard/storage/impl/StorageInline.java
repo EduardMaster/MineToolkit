@@ -1,15 +1,15 @@
-package net.eduard.api.lib.storage.impl;
+package net.eduard.storage.impl;
+
+import net.eduard.api.lib.modules.Extra;
+import net.eduard.api.lib.storage.Storable;
+import net.eduard.api.lib.storage.StorageAPI;
+import net.eduard.storage.api.StorageBase;
+import net.eduard.storage.api.StorageInfo;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
-
-import net.eduard.api.lib.modules.Extra;
-import net.eduard.api.lib.storage.Storable;
-import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.api.StorageBase;
-import net.eduard.api.lib.storage.api.StorageInfo;
 
 @SuppressWarnings({"deprecated"})
 public final class StorageInline extends StorageBase<Object, String> {

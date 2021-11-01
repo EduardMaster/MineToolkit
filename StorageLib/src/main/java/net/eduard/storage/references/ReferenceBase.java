@@ -1,6 +1,6 @@
-package net.eduard.api.lib.storage.references;
+package net.eduard.storage.references;
 
-import net.eduard.api.lib.storage.api.StorageInfo;
+import net.eduard.storage.api.StorageInfo;
 
 
 public abstract class ReferenceBase<T> {

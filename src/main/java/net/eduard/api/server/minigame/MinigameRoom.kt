@@ -2,10 +2,7 @@ package net.eduard.api.server.minigame
 
 import net.eduard.api.lib.database.annotations.ColumnPrimary
 import net.eduard.api.lib.modules.Extra
-
 import org.bukkit.entity.Player
-
-import net.eduard.api.lib.storage.annotations.StorageAttributes
 import net.eduard.api.lib.storage.annotations.StorageIndex
 import net.eduard.api.lib.storage.annotations.StorageReference
 import org.bukkit.Bukkit

@@ -1,4 +1,4 @@
-package net.eduard.api.lib.storage.api;
+package net.eduard.storage.api;
 
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI;

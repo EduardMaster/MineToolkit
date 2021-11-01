@@ -1,8 +1,8 @@
-package net.eduard.api.lib.storage.impl;
+package net.eduard.storage.impl;
 
 import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.api.StorageBase;
-import net.eduard.api.lib.storage.api.StorageInfo;
+import net.eduard.storage.api.StorageBase;
+import net.eduard.storage.api.StorageInfo;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

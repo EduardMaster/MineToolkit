@@ -1,12 +1,12 @@
 package net.eduard.api.server.minigame
 
 import net.eduard.api.lib.config.Config
-import net.eduard.api.lib.game.DisplayBoard
 import net.eduard.api.lib.game.Kit
 import net.eduard.api.lib.kotlin.reload
 import net.eduard.api.lib.kotlin.reloadListFromFolder
 import net.eduard.api.lib.kotlin.save
 import net.eduard.api.lib.kotlin.saveListInFolder
+import net.eduard.api.lib.score.DisplayBoard
 import net.eduard.api.lib.storage.annotations.StorageIndex
 import java.io.File
 import java.util.*

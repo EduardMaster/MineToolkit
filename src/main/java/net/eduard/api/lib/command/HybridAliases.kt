@@ -7,4 +7,3 @@ typealias PlayerBungee = BungeePlayer
 typealias PlayerBukkit = BukkitPlayer
 typealias PlayerOffline = PlayerUser
 typealias PlayerOnline<T> = IPlayer<T>
-val IPlayer<*>.offline get() = PlayerUser(name, uuid)

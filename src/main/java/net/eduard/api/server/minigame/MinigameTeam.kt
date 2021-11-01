@@ -1,5 +1,6 @@
 package net.eduard.api.server.minigame
 
+
 /**
  * Representa o Time do Jogador em um Minigame
  *

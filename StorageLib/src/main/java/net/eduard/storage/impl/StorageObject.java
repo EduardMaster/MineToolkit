@@ -1,16 +1,16 @@
-package net.eduard.api.lib.storage.impl;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
+package net.eduard.storage.impl;
 
 import net.eduard.api.lib.modules.Extra;
 import net.eduard.api.lib.storage.Storable;
 import net.eduard.api.lib.storage.StorageAPI;
-import net.eduard.api.lib.storage.api.StorageBase;
-import net.eduard.api.lib.storage.api.StorageClassInfo;
-import net.eduard.api.lib.storage.api.StorageInfo;
-import net.eduard.api.lib.storage.references.ReferenceValue;
+import net.eduard.storage.api.StorageBase;
+import net.eduard.storage.api.StorageClassInfo;
+import net.eduard.storage.api.StorageInfo;
+import net.eduard.storage.references.ReferenceValue;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 public class StorageObject extends StorageBase<Object, Object> {
 

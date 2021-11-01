@@ -6,6 +6,7 @@ import net.eduard.api.lib.bungee.ServerSpigot
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.DBManager
+import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.hybrid.BungeeServer
 import net.eduard.api.lib.hybrid.Hybrid
@@ -15,6 +16,7 @@ import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
+import net.eduard.api.lib.storage.storables.BukkitStorables
 import net.eduard.api.listener.BungeePlugins
 import net.eduard.api.task.BungeeDatabaseUpdater
 import net.md_5.bungee.api.ProxyServer
@@ -29,7 +31,7 @@ import java.util.concurrent.TimeUnit
 
 @Suppress("deprecated")
 class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
-    val dataFolder get() = plugin.dataFolder
+
     companion object {
         lateinit var instance: EduardAPIBungee
 
@@ -51,11 +53,15 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
     lateinit var sqlManager: SQLManager
     lateinit var storageManager: StorageManager
     lateinit var settings: PluginSettings
+
     val pluginName: String
         get() = plugin.description.name
-    val pluginFolder: File
-        get() = plugin.dataFolder
 
+    val dataFolder get() = plugin.dataFolder
+
+    override fun getPluginFolder(): File {
+        return  plugin.dataFolder
+    }
     fun log(message: String) {
         console("§f$message")
     }
@@ -70,6 +76,7 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
     }
 
     fun onLoad() {
+        HybridTypes
         StorageAPI.setDebug(false)
         val currentInstance: EduardAPIBungee = this
         if (!currentInstance.started) {
@@ -220,6 +227,7 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
     override fun getSystemName(): String {
         return pluginName;
     }
+
 
 
 }

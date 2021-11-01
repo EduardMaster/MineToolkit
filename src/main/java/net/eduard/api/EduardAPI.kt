@@ -14,6 +14,7 @@ import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.BukkitTypes
 import net.eduard.api.lib.database.DBManager
+import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
 import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.hybrid.BukkitServer
@@ -52,84 +53,87 @@ import java.util.*
  * @version 1.3
  * @since 0.5
  */
-class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInstance {
-    fun getString(key : String) = configs.getString(key)
-    fun message(key : String) = messages.message(key)
+class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInstance {
+    fun getString(key: String) = configs.getString(key)
+    fun message(key: String) = messages.message(key)
     var started = false
 
-     var configs = Config(plugin, "config.yml")
+    var configs = Config(plugin, "config.yml")
 
 
-     var storage = Config(plugin, "storage.yml")
+    var storage = Config(plugin, "storage.yml")
 
 
-     var messages = Config(plugin, "messages.yml")
+    var messages = Config(plugin, "messages.yml")
 
 
-     lateinit var settings: PluginSettings
+    lateinit var settings: PluginSettings
 
 
-     lateinit var dbManager : DBManager
+    lateinit var dbManager: DBManager
 
 
-     lateinit var sqlManager: SQLManager
+    lateinit var sqlManager: SQLManager
 
     lateinit var storageManager: StorageManager
-     fun onLoad() {
+    fun onLoad() {
+        HybridTypes
         StorageAPI.setDebug(false)
         instance = this
-         val currentInstance: EduardAPI = this
-         if (!currentInstance.started) {
-             currentInstance.dbManager = DBManager()
-             currentInstance.configs = Config(currentInstance, "config.yml")
-             currentInstance.messages = Config(currentInstance, "messages.yml")
-             currentInstance.storage = Config(currentInstance, "storage.yml")
-             currentInstance.settings = PluginSettings()
-             currentInstance.configs.add("settings", currentInstance.settings)
-             currentInstance.configs.add("database", currentInstance.dbManager)
-             currentInstance.configs.saveConfig()
-             currentInstance.settings = currentInstance.configs.get("settings", PluginSettings::class.java)
-             currentInstance.dbManager = currentInstance.configs.get("database", DBManager::class.java)
-             currentInstance.sqlManager = SQLManager(currentInstance.dbManager)
-             //  currentInstance.setStorageManager(new StorageManager(currentInstance.getSqlManager()));
-             currentInstance.started = true
-             // currentInstance.getStorageManager().setType(currentInstance.getSettings().getStoreType());
-             if (currentInstance.dbManager.isEnabled) {
-                 currentInstance.dbManager.openConnection()
-             }
-         }
+        val currentInstance: EduardAPI = this
+        if (!currentInstance.started) {
+            currentInstance.dbManager = DBManager()
+            currentInstance.configs = Config(currentInstance, "config.yml")
+            currentInstance.messages = Config(currentInstance, "messages.yml")
+            currentInstance.storage = Config(currentInstance, "storage.yml")
+            currentInstance.settings = PluginSettings()
+            currentInstance.configs.add("settings", currentInstance.settings)
+            currentInstance.configs.add("database", currentInstance.dbManager)
+            currentInstance.configs.saveConfig()
+            currentInstance.settings = currentInstance.configs.get("settings", PluginSettings::class.java)
+            currentInstance.dbManager = currentInstance.configs.get("database", DBManager::class.java)
+            currentInstance.sqlManager = SQLManager(currentInstance.dbManager)
+            //  currentInstance.setStorageManager(new StorageManager(currentInstance.getSqlManager()));
+            currentInstance.started = true
+            // currentInstance.getStorageManager().setType(currentInstance.getSettings().getStoreType());
+            if (currentInstance.dbManager.isEnabled) {
+                currentInstance.dbManager.openConnection()
+            }
+        }
         BukkitTypes
 
 
     }
 
 
-     fun deleteOldBackups() {
+    fun deleteOldBackups() {
 
     }
 
-     fun backup() {
+    fun backup() {
 
     }
 
-     fun getPluginName(): String {
-        TODO("Not yet implemented")
+    fun getPluginName(): String {
+       return  plugin.description.name
     }
 
-     fun getPluginFolder(): File {
-        TODO("Not yet implemented")
+    fun getDataFolder() : File = plugin.dataFolder
+
+    override fun getPluginFolder(): File {
+        return plugin.dataFolder
     }
 
 
-     fun log(message: String) {
+    fun log(message: String) {
         console("§f$message")
     }
 
-     fun console(message: String) {
+    fun console(message: String) {
         Bukkit.getConsoleSender().sendMessage("§b[EduardAPI]§r $message")
     }
 
-     fun error(message: String) {
+    fun error(message: String) {
         console("§c$message")
     }
 
@@ -149,7 +153,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInst
     }
 
 
-     fun onEnable() {
+    fun onEnable() {
         if (!started) {
             this.onLoad()
         }
@@ -183,7 +187,8 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInst
             player.isHealthScaled = false
         }
     }
-    fun getBoolean(key : String) = configs.getBoolean(key);
+
+    fun getBoolean(key: String) = configs.getBoolean(key);
     fun tasks() {
         resetScoreboards()
         log("Scoreboards dos jogadores online resetadas!")
@@ -251,7 +256,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInst
     }
 
 
-     fun reload() {
+    fun reload() {
         log("Inicio do Recarregamento do EduardAPI")
         configs.reloadConfig()
         messages.reloadConfig()
@@ -312,7 +317,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInst
     }
 
 
-     fun configDefault() {
+    fun configDefault() {
         configs.add("debug.config", false)
         configs.add("debug.bungee-bukkit", false)
         configs.add("debug.storage", false)
@@ -320,7 +325,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInst
         configs.add("debug.commands", false)
         configs.add("debug.replacers", false)
         configs.add("debug.database", false)
-        configs.add("debug.holograms",false)
+        configs.add("debug.holograms", false)
         configs.add("debug.menu", false)
         configs.add("menu-updater.enabled", false)
         configs.add("menu-updater.ticks", 20L)
@@ -333,7 +338,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInst
         configs.add("skins", false)
         configs.add("auto-respawn", true)
         configs.add("custom-skin", "EduardKillerPro")
-        configs.add("on-target.show-text" , false)
+        configs.add("on-target.show-text", false)
         configs.add("on-target.text", "{player_name} - {player_level}")
         configs.add("stack-design", "§aQuantidade: §f\$stack")
         configs.add("money-format", "###,###.##")
@@ -360,12 +365,12 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInst
 
     }
 
-     fun save() {
+    fun save() {
 
     }
 
 
-     fun onDisable() {
+    fun onDisable() {
 
         PlayerSkin.saveSkins()
         saveMaps()
@@ -379,19 +384,19 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler ,IPluginInst
         sqlManager.dbManager.closeConnection()
     }
 
-     fun unregisterTasks() {
+    fun unregisterTasks() {
 
     }
 
-     fun unregisterListeners() {
+    fun unregisterListeners() {
 
     }
 
-     fun unregisterServices() {
+    fun unregisterServices() {
 
     }
 
-     fun unregisterCommands() {
+    fun unregisterCommands() {
         for ((name, cmd) in CommandManager.commandsRegistred) {
             log("Comando $name desregisrado")
             cmd.unregisterCommand()
