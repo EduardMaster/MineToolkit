@@ -2,12 +2,10 @@ package net.eduard.api.lib.plugin;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.eduard.api.lib.config.StorageType;
 
 @Getter
 @Setter
 public class PluginSettings {
-    private StorageType storeType = StorageType.YAML;
     private boolean debug = true;
     private boolean autoSave = false;
 
@@ -34,10 +32,6 @@ public class PluginSettings {
 
     public long getLastBackup() {
         return lastBackup;
-    }
-
-    public StorageType getStoreType() {
-        return storeType;
     }
 
     private transient long lastBackup = 0L;

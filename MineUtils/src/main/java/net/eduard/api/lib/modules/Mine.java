@@ -417,7 +417,9 @@ public final class Mine {
      *                <code>Bukkit.broadcastMessage(message)</code>
      */
     public static void broadcast(String message) {
-        Bukkit.broadcastMessage(message);
+        for (Player player : Mine.getPlayers()) {
+            player.sendMessage(message);
+        }
     }
 
     /**
@@ -624,33 +626,6 @@ public final class Mine {
 
     }
 
-
-    /**
-     * Registra um Lista de comandos na HashMap que armazena os comandos registrados
-     *
-     * @param plugin   Plugin
-     * @param commands Vetor de Comando
-     * @return Se registrou com sucesso os comandos
-     */
-    public static boolean createCommand(Plugin plugin, Command... commands) {
-        try {
-            Class<?> serverClass = Extra.getClassFrom(Bukkit.getServer());
-            Field field = serverClass.getDeclaredField("commandMap");
-            field.setAccessible(true);
-            CommandMap map = (CommandMap) field.get(Bukkit.getServer());
-            for (Command cmd : commands) {
-                map.register(cmd.getName(), cmd);
-//				for (String aliase : cmd.getAliases() ){
-//					map.register(aliase, cmd);
-//				}
-            }
-            // }
-            return true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return false;
-    }
 
     /**
      * Deleta o mundo
@@ -1066,8 +1041,8 @@ public final class Mine {
     /**
      * Pega classes de um plugin pela Classe
      *
-     * @param plugin  Plugin
-     * @param pack Pacote
+     * @param plugin Plugin
+     * @param pack   Pacote
      * @return Lista de Classes
      */
     public static List<Class<?>> getClasses(JavaPlugin plugin, String pack) {
@@ -1077,12 +1052,12 @@ public final class Mine {
             fileMethod.setAccessible(true);
             File file = (File) fileMethod.invoke(plugin);
             List<String> names = Extra.getClassesName(new JarFile(file), pack);
-            for (String className : names){
-                try{
+            for (String className : names) {
+                try {
                     lista.add(plugin.getClass().getClassLoader().loadClass(className));
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
-                }catch (Error ignored){
+                } catch (Error ignored) {
                 }
             }
         } catch (Exception e) {
@@ -1092,21 +1067,6 @@ public final class Mine {
         return lista;
     }
 
-
-    /**
-     * @return O Hashmap onde estão registrados todos comandos e aliases
-     */
-    @SuppressWarnings("unchecked")
-    public static Map<String, Command> getCommands() {
-        try {
-            Object map = Extra.getFieldValue(Bukkit.getServer().getPluginManager(), "commandMap");
-
-            return (Map<String, Command>) Extra.getFieldValue(map, "knownCommands");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * Pega a direção apartir de um Gráu
@@ -1495,7 +1455,7 @@ public final class Mine {
     public static List<String> getLore(ItemStack item) {
         if (item != null) {
             if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
-                if (item.getItemMeta().getLore()==null){
+                if (item.getItemMeta().getLore() == null) {
                     return new ArrayList<>();
                 }
                 return item.getItemMeta().getLore();
@@ -2092,6 +2052,11 @@ public final class Mine {
      */
     public static void makeCommand(String command) {
         runCommand(command);
+    }
+
+
+    public static void runCommand(String command) {
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
     }
 
     /**
@@ -2752,15 +2717,11 @@ public final class Mine {
      * @return Estado da planta
      */
     public static CropState getPlantState(BlockState state) {
-
-
         Material type = state.getType();
         if (type == Material.CROPS) {
             Crops crop = (Crops) state.getData();
             return crop.getState();
-
         }
-
         return null;
     }
 
@@ -2831,28 +2792,68 @@ public final class Mine {
         remove(inventory, new ItemStack(material), amount);
     }
 
-    public static void removeAliaseFromCommand(PluginCommand cmd, String aliase) {
+    /**
+     * Registra um comando na HashMap dos Comandos do Servidor
+     *
+     * @param plugin  Plugin
+     * @param command Comando
+     * @return Se registrou com sucesso
+     */
+    public static boolean customCommandRegister(Plugin plugin, Command command) {
+        try {
+            Class<?> serverClass = Extra.getClassFrom(Bukkit.getServer());
+            Field field = serverClass.getDeclaredField("commandMap");
+            field.setAccessible(true);
+            CommandMap map = (CommandMap) field.get(Bukkit.getServer());
+            map.register(command.getName(), command);
+            for (String aliase : command.getAliases()) {
+                map.register(aliase, command);
+            }
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+
+    /**
+     * @return O Hashmap onde estão registrados todos comandos e aliases
+     */
+    public static Map<String, Command> getCustomCommandsMap() {
+        try {
+            CommandMap commandMap = (CommandMap) Extra.getFieldValue(Bukkit.getServer().getPluginManager(), "commandMap");
+            //commandMap.getCommand("cmd").unregister(commandMap)
+            return (Map<String, Command>) Extra.getFieldValue(commandMap, "knownCommands");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void customCommandUnregister(PluginCommand cmd, String aliase) {
         String cmdName = cmd.getName().toLowerCase();
-        if (getCommands().containsKey(aliase)) {
-            getCommands().remove(aliase);
+        if (getCustomCommandsMap().containsKey(aliase)) {
+            getCustomCommandsMap().remove(aliase);
             console("§bCommandAPI §fremovendo aliase §a" + aliase + "§f do comando §b" + cmdName);
         } else {
             console("§bCommandAPI §fnao foi encontrado a aliase §a" + aliase + "§f do comando §b" + cmdName);
         }
     }
 
-    public static void removeCommand(String name) {
-        if (Objects.requireNonNull(getCommands()).containsKey(name)) {
+    public static void customCommandUnregister(String name) {
+        if (Objects.requireNonNull(getCustomCommandsMap()).containsKey(name)) {
             PluginCommand cmd = Bukkit.getPluginCommand(name);
             String pluginName = cmd.getPlugin().getName();
             String cmdName = cmd.getName();
             for (String aliase : cmd.getAliases()) {
-                removeAliaseFromCommand(cmd, aliase);
-                removeAliaseFromCommand(cmd, pluginName.toLowerCase() + ":" + aliase);
+                customCommandUnregister(cmd, aliase);
+                customCommandUnregister(cmd, pluginName.toLowerCase() + ":" + aliase);
             }
             try {
-                getCommands().remove(cmd.getName());
-            } catch (Exception ignored) {
+                getCustomCommandsMap().remove(cmd.getName());
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
             console("§bCommandAPI §fremovendo o comando §a" + cmdName + "§f do Plugin §b" + pluginName);
         } else {
@@ -2882,8 +2883,8 @@ public final class Mine {
         return item;
     }
 
-    public static void removePermission(Player p, String permission) {
-        p.addAttachment(getMainPlugin(), permission, false);
+    public static void removePermission(Player player, String permission) {
+        player.addAttachment(getMainPlugin(), permission, false);
     }
 
     public static void removeReplacer(String replacer) {
@@ -2907,11 +2908,6 @@ public final class Mine {
         return item;
     }
 
-
-
-    public static void runCommand(String command) {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-    }
 
     /**
      * Armazena as armaduras do Jogador
@@ -3047,7 +3043,6 @@ public final class Mine {
         if (entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
             location = livingEntity.getEyeLocation().clone();
-
         }
         entity.teleport(entity.getLocation().setDirection(getDiretion(location, target)));
 
@@ -3096,21 +3091,23 @@ public final class Mine {
         }
         return item;
     }
+
     /**
      * Adiciona uma ou varias linhas a Descrição do Item
      *
-     * @param item Item
+     * @param item  Item
      * @param lines Linhas
      * @return Item
      */
     public static ItemStack addLore(ItemStack item, String... lines) {
-        if (lines !=null) {
+        if (lines != null) {
             List<String> lore = getLore(item);
             lore.addAll(Arrays.asList(lines));
             setLore(item, lore);
         }
         return item;
     }
+
     /**
      * Modifica a Descrição do Item
      *
@@ -3309,13 +3306,11 @@ public final class Mine {
         switch (cause) {
             case BLOCK_EXPLOSION:
                 return "Explosão de Blocos";
-
             case CONTACT:
                 return "Contato";
             case CUSTOM:
             case WITHER:
                 return "Customizado";
-
             case DROWNING:
                 return "Nadando";
             case ENTITY_ATTACK:
@@ -3354,7 +3349,6 @@ public final class Mine {
                 return "Vazio";
             default:
                 return "Outro";
-
         }
     }
 

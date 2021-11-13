@@ -4,7 +4,6 @@ import net.eduard.api.command.bungee.BungeeReloadCommand
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerSpigot
 import net.eduard.api.lib.config.Config
-import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
@@ -51,7 +50,6 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
     lateinit var messages: Config
     lateinit var dbManager: DBManager
     lateinit var sqlManager: SQLManager
-    lateinit var storageManager: StorageManager
     lateinit var settings: PluginSettings
 
     val pluginName: String

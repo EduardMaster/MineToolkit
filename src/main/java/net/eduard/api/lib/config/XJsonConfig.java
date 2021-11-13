@@ -6,612 +6,608 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
  * Interpretador de YAML e JSON e XML simultaneo
- * 
- * @author Eduard
  *
+ * @author Eduard
  */
 public class XJsonConfig {
 
-	 static final char COMMENT = '#';
-	private static final char STRING_START = '\'';
-	private static final char TEXT_START = '\"';
-	private static final char STRING_END = '\'';
-	private static final char TEXT_END = '\"';
-	private static final char MAP_START = '{';
-	private static final char MAP_END = '}';
-	private static final char LIST_START = '[';
-	private static final char LIST_END = ']';
-	private static final char LIST_ITEM = '-';
-	private static final char ENTRY_DELIMITER = ':';
-	private static final char ITEM_DELIMITER = ',';
-	private static final char SPACE = ' ';
-	private static final char NEW_LINE = '\n';
-	private static final int TAB_SIZE = 2;
+    static final char COMMENT = '#';
+    private static final char STRING_START = '\'';
+    private static final char TEXT_START = '\"';
+    private static final char STRING_END = '\'';
+    private static final char TEXT_END = '\"';
+    private static final char MAP_START = '{';
+    private static final char MAP_END = '}';
+    private static final char LIST_START = '[';
+    private static final char LIST_END = ']';
+    private static final char LIST_ITEM = '-';
+    private static final char ENTRY_DELIMITER = ':';
+    private static final char ITEM_DELIMITER = ',';
+    private static final char SPACE = ' ';
+    private static final char NEW_LINE = '\n';
+    private static final int TAB_SIZE = 2;
 
-	protected Object value = null;
-	protected StringBuilder text = new StringBuilder();
-	private final XJsonSection root = new XJsonSection(this, null, null);
+    protected Object value = null;
+    protected StringBuilder text = new StringBuilder();
+    private final XJsonSection root = new XJsonSection(this, null, null);
 
-	protected File folder;
-	protected File file;
-	protected String name = "config.yml";
-	protected String section = ".";
-	protected char[] textChars;
-	protected int currentIndex;
-	protected int currentLine;
-	protected int lastLine;
-	protected int currentLineIndex;
-	protected int tabSize = TAB_SIZE;
-	protected int currentTab;
-	protected int spacesSkipped;
+    protected File folder;
+    protected File file;
+    protected String name = "config.yml";
+    protected String section = ".";
+    protected char[] textChars;
+    protected int currentIndex;
+    protected int currentLine;
+    protected int lastLine;
+    protected int currentLineIndex;
+    protected int tabSize = TAB_SIZE;
+    protected int currentTab;
+    protected int spacesSkipped;
 
-	public XJsonConfig() {
-		restartRead();
-	}
+    public XJsonConfig() {
+        restartRead();
+    }
 
-	public XJsonConfig(File folder, String name) {
-		restartRead();
-		this.folder = folder;
-		this.file = new File(folder, name);
-		this.name = name;
-		reloadConfig();
-	}
+    public XJsonConfig(File folder, String name) {
+        restartRead();
+        this.folder = folder;
+        this.file = new File(folder, name);
+        this.name = name;
+        reloadConfig();
+    }
 
-	public void saveResourceOf(Class<?> clz) {
-		try {
-			Files.deleteIfExists(file.toPath());
-			Files.copy(clz.getResourceAsStream(name), file.toPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    public void saveResourceOf(Class<?> clz) {
+        try {
+            Files.deleteIfExists(file.toPath());
+            Files.copy(Objects.requireNonNull(clz.getResourceAsStream(name)), file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public void saveResource(boolean force) {
+    public void saveResource(boolean force) {
 
-		if (!force && file.exists())
-			return;
-		saveResourceOf(getClass());
+        if (!force && file.exists())
+            return;
+        saveResourceOf(getClass());
 
-	}
+    }
 
-	public void saveDefaultConfig() {
-		saveResource(false);
-		reloadConfig();
-	}
+    public void saveDefaultConfig() {
+        saveResource(false);
+        reloadConfig();
+    }
 
-	public boolean isFolder() {
+    public boolean isFolder() {
 
-		return name.endsWith("/");
-	}
+        return name.endsWith("/");
+    }
 
-	public void debug() {
-		System.out.println(" -------- ");
-		System.out.println(text);
+    public void debug() {
+        System.out.println(" -------- ");
+        System.out.println(text);
 
-	}
+    }
 
-	public void setValue(Object value) {
-		this.value = value;
-	}
+    public void setValue(Object value) {
+        this.value = value;
+    }
 
-	public void restartRead() {
-		this.textChars = text.toString().toCharArray();
-		this.currentIndex = 0;
-		this.currentLine = 0;
-		this.lastLine = 0;
-		this.currentLineIndex = 0;
-		this.currentTab = 0;
-		this.spacesSkipped = 0;
-	}
+    public void restartRead() {
+        this.textChars = text.toString().toCharArray();
+        this.currentIndex = 0;
+        this.currentLine = 0;
+        this.lastLine = 0;
+        this.currentLineIndex = 0;
+        this.currentTab = 0;
+        this.spacesSkipped = 0;
+    }
 
-	protected void readContentFromFile() {
-		file.getParentFile().mkdirs();
+    protected void readContentFromFile() {
+        file.getParentFile().mkdirs();
 
-		BufferedReader reader;
-		try {
-			reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
-			text = new StringBuilder();
-			int first = 0;
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				if (first != 0) {
-					add(NEW_LINE);
-				}
-				add(line);
-				first++;
-			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        BufferedReader reader;
+        try {
+            reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
+            text = new StringBuilder();
+            int first = 0;
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                if (first != 0) {
+                    add(NEW_LINE);
+                }
+                add(line);
+                first++;
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
-	protected void writeContentToFile() {
-		file.getParentFile().mkdirs();
-		try {
-			BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8);
-			writer.write(text.toString());
-			writer.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+    protected void writeContentToFile() {
+        file.getParentFile().mkdirs();
+        try {
+            BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8);
+            writer.write(text.toString());
+            writer.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-	protected void add(Object value) {
-		text.append(value);
-	}
+    protected void add(Object value) {
+        text.append(value);
+    }
 
-	protected void saveTab() {
-		add(ConfigUtil.INSTANCE.getSpace(tabSize * currentTab));
-	}
+    protected void saveTab() {
+        add(ConfigUtil.INSTANCE.getSpace(tabSize * currentTab));
+    }
 
-	protected void saveNewLine() {
-		add(NEW_LINE);
-		saveTab();
-	}
+    protected void saveNewLine() {
+        add(NEW_LINE);
+        saveTab();
+    }
 
-	private void resetText() {
-		this.text = new StringBuilder();
-	}
+    private void resetText() {
+        this.text = new StringBuilder();
+    }
 
-	public void saveJson() {
-		resetText();
+    public void saveJson() {
+        resetText();
 
-		if (value == null) {
-			add("{}");
-		} else {
-			saveAsJson(value);
-		}
-	}
+        if (value == null) {
+            add("{}");
+        } else {
+            saveAsJson(value);
+        }
+    }
 
-	protected void saveAsJson(Object value) {
-		if (value instanceof Map) {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> map = (Map<String, Object>) value;
-			add(MAP_START);
-			currentTab++;
-			saveNewLine();
-			int first = 0;
-			for (Entry<String, Object> entry : map.entrySet()) {
-				if (first != 0) {
-					add(ITEM_DELIMITER);
-					add(NEW_LINE);
-					saveTab();
-				}
-				if (entry.getKey().toCharArray()[0] == COMMENT) {
-					add(COMMENT);
-					add(SPACE);
-					add(entry.getValue());
-					add(SPACE);
-					add(COMMENT);
+    protected void saveAsJson(Object value) {
+        if (value instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) value;
+            add(MAP_START);
+            currentTab++;
+            saveNewLine();
+            int first = 0;
+            for (Entry<String, Object> entry : map.entrySet()) {
+                if (first != 0) {
+                    add(ITEM_DELIMITER);
+                    add(NEW_LINE);
+                    saveTab();
+                }
+                if (entry.getKey().toCharArray()[0] == COMMENT) {
+                    add(COMMENT);
+                    add(SPACE);
+                    add(entry.getValue());
+                    add(SPACE);
+                    add(COMMENT);
 
-				} else {
-					saveAsJson(entry.getKey());
-					add(ENTRY_DELIMITER);
-					saveAsJson(entry.getValue());
-					first++;
-				}
+                } else {
+                    saveAsJson(entry.getKey());
+                    add(ENTRY_DELIMITER);
+                    saveAsJson(entry.getValue());
+                    first++;
+                }
 
-			}
-			add(NEW_LINE);
-			currentTab--;
-			saveTab();
-			add(MAP_END);
-		} else if (value instanceof List) {
-			@SuppressWarnings("unchecked")
-			List<Object> list = (List<Object>) value;
-			add(LIST_START);
-			currentTab++;
-			saveNewLine();
-			int first = 0;
-			for (Object object : list) {
-				if (first != 0) {
-					add(ITEM_DELIMITER);
-					add(NEW_LINE);
-					saveTab();
-				}
-				saveAsJson(object);
-				first++;
-			}
-			currentTab--;
-			saveNewLine();
-			add(LIST_END);
-		} else if (value instanceof String) {
-			add(STRING_START);
-			add(value.toString());
-			add(STRING_END);
-		} else {
-			add(TEXT_START);
-			add(value.toString());
-			add(TEXT_END);
-		}
+            }
+            add(NEW_LINE);
+            currentTab--;
+            saveTab();
+            add(MAP_END);
+        } else if (value instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<Object> list = (List<Object>) value;
+            add(LIST_START);
+            currentTab++;
+            saveNewLine();
+            int first = 0;
+            for (Object object : list) {
+                if (first != 0) {
+                    add(ITEM_DELIMITER);
+                    add(NEW_LINE);
+                    saveTab();
+                }
+                saveAsJson(object);
+                first++;
+            }
+            currentTab--;
+            saveNewLine();
+            add(LIST_END);
+        } else if (value instanceof String) {
+            add(STRING_START);
+            add(value.toString());
+            add(STRING_END);
+        } else {
+            add(TEXT_START);
+            add(value.toString());
+            add(TEXT_END);
+        }
 
-	}
+    }
 
-	public void saveFast() {
-		resetText();
-		if (value == null) {
-			add("{}");
-		} else {
-			saveOneLine(value);
-		}
-		// writeContentToFile();
-	}
+    public void saveFast() {
+        resetText();
+        if (value == null) {
+            add("{}");
+        } else {
+            saveOneLine(value);
+        }
+        // writeContentToFile();
+    }
 
-	protected void saveOneLine(Object value) {
-		if (value instanceof Map) {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> map = (Map<String, Object>) value;
-			add(MAP_START);
-			int first = 0;
-			for (Entry<String, Object> entry : map.entrySet()) {
-				if (first != 0) {
-					add(ITEM_DELIMITER);
-				}
-				if (entry.getKey().toCharArray()[0] == COMMENT) {
-					add(COMMENT);
-					add(entry.getValue());
-					add(COMMENT);
-				} else {
-					saveOneLine(entry.getKey());
-					add(ENTRY_DELIMITER);
-					saveOneLine(entry.getValue());
-				}
-				first++;
-			}
-			add(MAP_END);
+    protected void saveOneLine(Object value) {
+        if (value instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) value;
+            add(MAP_START);
+            int first = 0;
+            for (Entry<String, Object> entry : map.entrySet()) {
+                if (first != 0) {
+                    add(ITEM_DELIMITER);
+                }
+                if (entry.getKey().toCharArray()[0] == COMMENT) {
+                    add(COMMENT);
+                    add(entry.getValue());
+                    add(COMMENT);
+                } else {
+                    saveOneLine(entry.getKey());
+                    add(ENTRY_DELIMITER);
+                    saveOneLine(entry.getValue());
+                }
+                first++;
+            }
+            add(MAP_END);
 
-		} else if (value instanceof List) {
+        } else if (value instanceof List) {
 
-			@SuppressWarnings("unchecked")
-			List<Object> list = (List<Object>) value;
-			add(LIST_START);
-			int first = 0;
-			for (Object object : list) {
-				if (first != 0) {
-					add(ITEM_DELIMITER);
-				}
-				saveOneLine(object);
-				first++;
-			}
-			add(LIST_END);
-		} else if (value instanceof String) {
-			add(STRING_START);
-			add(value.toString());
-			add(STRING_END);
-		} else {
-			add(TEXT_START);
-			add(value.toString());
-			add(TEXT_END);
-		}
-	}
+            @SuppressWarnings("unchecked")
+            List<Object> list = (List<Object>) value;
+            add(LIST_START);
+            int first = 0;
+            for (Object object : list) {
+                if (first != 0) {
+                    add(ITEM_DELIMITER);
+                }
+                saveOneLine(object);
+                first++;
+            }
+            add(LIST_END);
+        } else if (value instanceof String) {
+            add(STRING_START);
+            add(value.toString());
+            add(STRING_END);
+        } else {
+            add(TEXT_START);
+            add(value.toString());
+            add(TEXT_END);
+        }
+    }
 
-	public void saveConfig() {
-		saveYaml();
-		writeContentToFile();
-		
-	}
+    public void saveConfig() {
+        saveYaml();
+        writeContentToFile();
 
-	protected void saveAsYaml(Object value) {
-		if (value instanceof Map) {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> map = (Map<String, Object>) value;
-			currentTab++;
-			saveNewLine();
-			int first = 0;
-			for (Entry<String, Object> entry : map.entrySet()) {
-				if (first != 0) {
-					add(NEW_LINE);
-					saveTab();
-				}
-				if (entry.getKey().toCharArray()[0] == COMMENT) {
-					add(COMMENT);
-					add(SPACE);
-					add(entry.getValue());
-				} else {
-					saveAsYaml(entry.getKey());
-					add(ENTRY_DELIMITER);
-					add(SPACE);
-					saveAsYaml(entry.getValue());
-				}
-				first++;
-			}
-			currentTab--;
-		} else if (value instanceof List) {
-			@SuppressWarnings("unchecked")
-			List<Object> list = (List<Object>) value;
-			currentTab++;
-			saveNewLine();
-			int first = 0;
-			for (Object object : list) {
-				if (first != 0) {
-					saveNewLine();
-				}
+    }
 
-				add(LIST_ITEM);
-				add(SPACE);
-				saveAsYaml(object);
-				first++;
+    protected void saveAsYaml(Object value) {
+        if (value instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) value;
+            currentTab++;
+            saveNewLine();
+            int first = 0;
+            for (Entry<String, Object> entry : map.entrySet()) {
+                if (first != 0) {
+                    add(NEW_LINE);
+                    saveTab();
+                }
+                if (entry.getKey().toCharArray()[0] == COMMENT) {
+                    add(COMMENT);
+                    add(SPACE);
+                    add(entry.getValue());
+                } else {
+                    saveAsYaml(entry.getKey());
+                    add(ENTRY_DELIMITER);
+                    add(SPACE);
+                    saveAsYaml(entry.getValue());
+                }
+                first++;
+            }
+            currentTab--;
+        } else if (value instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<Object> list = (List<Object>) value;
+            currentTab++;
+            saveNewLine();
+            int first = 0;
+            for (Object object : list) {
+                if (first != 0) {
+                    saveNewLine();
+                }
 
-			}
-			currentTab--;
-		} else {
-			add(value.toString());
-		}
-	}
+                add(LIST_ITEM);
+                add(SPACE);
+                saveAsYaml(object);
+                first++;
 
-	public void saveYaml() {
-		resetText();
-		if (value == null) {
-			text.append("{}");
-		} else {
-			currentTab = -1;
-			saveAsYaml(value);
-		}
-	}
+            }
+            currentTab--;
+        } else {
+            add(value.toString());
+        }
+    }
 
-	@SuppressWarnings("rawtypes")
-	public XJsonSection getConfig() {
-		if (value instanceof Map) {
-			root.setValue(value);
-		}
-		return root;
-	}
+    public void saveYaml() {
+        resetText();
+        if (value == null) {
+            text.append("{}");
+        } else {
+            currentTab = -1;
+            saveAsYaml(value);
+        }
+    }
 
-	public Object getValue() {
-		return value;
-	}
+    @SuppressWarnings("rawtypes")
+    public XJsonSection getConfig() {
+        if (value instanceof Map) {
+            root.setValue(value);
+        }
+        return root;
+    }
 
-	public boolean contains(String path) {
-		return root.contains(path);
-	}
+    public Object getValue() {
+        return value;
+    }
 
-	public void set(String path, Object value) {
-		root.set(path, value);
-	}
+    public boolean contains(String path) {
+        return root.contains(path);
+    }
 
-	public Object get(String path, Object value) {
-		return root.get(path);
-	}
+    public void set(String path, Object value) {
+        root.set(path, value);
+    }
 
-	protected void expected(char value) {
-		expected(String.valueOf(value));
-	}
+    public Object get(String path, Object value) {
+        return root.get(path);
+    }
 
-	protected void expected(String value) {
-		System.out.println("\nErro na linha: " + (currentLine + 1));
-		System.out.println("->  " + String.copyValueOf(textChars, lastLine, currentLineIndex));
-		System.out.println("->  " + ConfigUtil.INSTANCE.getSpace(currentLineIndex) + "^");
-		System.out.println("Esperava-se: ( " + value + " )");
-	}
+    protected void expected(char value) {
+        expected(String.valueOf(value));
+    }
 
-	protected char getCurrentChar() {
-		if (textChars.length == 0) {
-			return '\n';
-		}
-		if (findEnd()) {
-			return '?';
-		}
-		return textChars[currentIndex];
-	}
+    protected void expected(String value) {
+        System.out.println("\nErro na linha: " + (currentLine + 1));
+        System.out.println("->  " + String.copyValueOf(textChars, lastLine, currentLineIndex));
+        System.out.println("->  " + ConfigUtil.INSTANCE.getSpace(currentLineIndex) + "^");
+        System.out.println("Esperava-se: ( " + value + " )");
+    }
 
-	protected void toNextChar() {
+    protected char getCurrentChar() {
+        if (textChars.length == 0) {
+            return '\n';
+        }
+        if (findEnd()) {
+            return '?';
+        }
+        return textChars[currentIndex];
+    }
 
-		if (getCurrentChar() == NEW_LINE) {
-			currentLine++;
-			lastLine += currentLineIndex + 1;
-			currentLineIndex = -1;
-		}
-		currentLineIndex++;
-		currentIndex++;
-	}
+    protected void toNextChar() {
 
-	protected char getNextChar() {
-		currentIndex++;
-		char value = getCurrentChar();
-		currentIndex--;
-		return value;
-	}
+        if (getCurrentChar() == NEW_LINE) {
+            currentLine++;
+            lastLine += currentLineIndex + 1;
+            currentLineIndex = -1;
+        }
+        currentLineIndex++;
+        currentIndex++;
+    }
 
-	protected int ignoreSpaces() {
-		return skipChars(SPACE);
-	}
+    protected char getNextChar() {
+        currentIndex++;
+        char value = getCurrentChar();
+        currentIndex--;
+        return value;
+    }
 
-	protected int ignoreSpacesAndNewLines() {
-		return skipChars(SPACE, NEW_LINE);
-	}
+    protected int ignoreSpaces() {
+        return skipChars(SPACE);
+    }
 
-	protected boolean findEnd() {
-		return currentIndex >= textChars.length;
-	}
+    protected int ignoreSpacesAndNewLines() {
+        return skipChars(SPACE, NEW_LINE);
+    }
 
-	public boolean hasRoot() {
-		return value instanceof Map;
-	}
+    protected boolean findEnd() {
+        return currentIndex >= textChars.length;
+    }
 
-	public void reloadConfig() {
-		if (!isFolder()) {
-			if (file.exists()) {
-				readContentFromFile();
-				restartRead();
-				this.value = readObject();
-			}
-		}
-	}
+    public boolean hasRoot() {
+        return value instanceof Map;
+    }
 
-	public Object readEntry(Map<String, Object> map) {
-		try {
-			if (getCurrentChar() == COMMENT) {
-				map.put("#" + map.size() + 1, readObject());
-			} else {
-				String key = (String) readObject();
-				Object value = readObject();
-				map.put(key, value);
-			}
+    public void reloadConfig() {
+        if (!isFolder()) {
+            if (file.exists()) {
+                readContentFromFile();
+                restartRead();
+                this.value = readObject();
+            }
+        }
+    }
 
-		} catch (Exception e) {
-			expected("STR -> MAP KEY");
-		}
-		return map;
-	}
+    public Object readEntry(Map<String, Object> map) {
+        try {
+            if (getCurrentChar() == COMMENT) {
+                map.put("#" + map.size() + 1, readObject());
+            } else {
+                String key = (String) readObject();
+                Object value = readObject();
+                map.put(key, value);
+            }
 
-	public Object readObject() {
+        } catch (Exception e) {
+            expected("STR -> MAP KEY");
+        }
+        return map;
+    }
 
-		if (getCurrentChar() == MAP_START) {
-			toNextChar();
-			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-			while (!findEnd()) {
-				ignoreSpacesAndNewLines();
-				if (getCurrentChar() == ITEM_DELIMITER) {
-					toNextChar();
-					continue;
-				} else if (getCurrentChar() == MAP_END) {
-					toNextChar();
-					break;
-				}
-				readEntry(map);
-			}
-			return map;
-		} else if (getCurrentChar() == LIST_START) {
-			toNextChar();
-			ArrayList<Object> list = new ArrayList<Object>();
-			while (!findEnd()) {
-				ignoreSpacesAndNewLines();
-				if (getCurrentChar() == ITEM_DELIMITER) {
-					toNextChar();
-					continue;
-				} else if (getCurrentChar() == LIST_END) {
-					toNextChar();
-					break;
-				}
-				list.add(readObject());
-			}
-			return list;
-		} else if (getCurrentChar() == STRING_START) {
-			toNextChar();
-			StringBuilder str = new StringBuilder();
-			while (!findEnd()) {
-				if (getCurrentChar() == STRING_END) {
-					toNextChar();
-					break;
-				}
-				str.append(getCurrentChar());
-				toNextChar();
-			}
-			return str.toString();
-		} else if (getCurrentChar() == TEXT_START) {
-			toNextChar();
-			StringBuilder str = new StringBuilder();
-			while (!findEnd()) {
-				if (getCurrentChar() == TEXT_END) {
-					toNextChar();
-					break;
-				}
-				str.append(getCurrentChar());
-				toNextChar();
-			}
-			return str.toString();
-		} else if (getCurrentChar() == NEW_LINE) {
-			// se§§o
-			toNextChar();
-			if (findEnd()) {
-				return "";
-			}
-			// int last = spacesSkipped;
-			ignoreSpacesAndNewLines();
-			int init = spacesSkipped;
-			if (getCurrentChar() == LIST_ITEM) {
-				List<Object> list = new ArrayList<>();
-				while (!findEnd() && getCurrentChar() == LIST_ITEM && spacesSkipped == init) {
-					list.add(readObject());
-					ignoreSpacesAndNewLines();
-				}
-				return list;
-			} else {
-				LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-				while (!findEnd() && spacesSkipped == init) {
-					ignoreSpacesAndNewLines();
-					readEntry(map);
+    public Object readObject() {
 
-				}
-				return map;
-			}
+        if (getCurrentChar() == MAP_START) {
+            toNextChar();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            while (!findEnd()) {
+                ignoreSpacesAndNewLines();
+                if (getCurrentChar() == ITEM_DELIMITER) {
+                    toNextChar();
+                    continue;
+                } else if (getCurrentChar() == MAP_END) {
+                    toNextChar();
+                    break;
+                }
+                readEntry(map);
+            }
+            return map;
+        } else if (getCurrentChar() == LIST_START) {
+            toNextChar();
+            ArrayList<Object> list = new ArrayList<Object>();
+            while (!findEnd()) {
+                ignoreSpacesAndNewLines();
+                if (getCurrentChar() == ITEM_DELIMITER) {
+                    toNextChar();
+                    continue;
+                } else if (getCurrentChar() == LIST_END) {
+                    toNextChar();
+                    break;
+                }
+                list.add(readObject());
+            }
+            return list;
+        } else if (getCurrentChar() == STRING_START) {
+            toNextChar();
+            StringBuilder str = new StringBuilder();
+            while (!findEnd()) {
+                if (getCurrentChar() == STRING_END) {
+                    toNextChar();
+                    break;
+                }
+                str.append(getCurrentChar());
+                toNextChar();
+            }
+            return str.toString();
+        } else if (getCurrentChar() == TEXT_START) {
+            toNextChar();
+            StringBuilder str = new StringBuilder();
+            while (!findEnd()) {
+                if (getCurrentChar() == TEXT_END) {
+                    toNextChar();
+                    break;
+                }
+                str.append(getCurrentChar());
+                toNextChar();
+            }
+            return str.toString();
+        } else if (getCurrentChar() == NEW_LINE) {
+            // se§§o
+            toNextChar();
+            if (findEnd()) {
+                return "";
+            }
+            // int last = spacesSkipped;
+            ignoreSpacesAndNewLines();
+            int init = spacesSkipped;
+            if (getCurrentChar() == LIST_ITEM) {
+                List<Object> list = new ArrayList<>();
+                while (!findEnd() && getCurrentChar() == LIST_ITEM && spacesSkipped == init) {
+                    list.add(readObject());
+                    ignoreSpacesAndNewLines();
+                }
+                return list;
+            } else {
+                LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+                while (!findEnd() && spacesSkipped == init) {
+                    ignoreSpacesAndNewLines();
+                    readEntry(map);
 
-		} else if (getCurrentChar() == LIST_ITEM) {
-			toNextChar();
-			if (getCurrentChar() == SPACE) {
-				toNextChar();
-			}
-			return readObject();
-			// -
-		} else if (getCurrentChar() == ENTRY_DELIMITER) {
-			toNextChar();
-			if (getCurrentChar() == SPACE) {
-				toNextChar();
-			}
-			return readObject();
-		} else if (getCurrentChar() == COMMENT) {
-			toNextChar();
-			StringBuilder str = new StringBuilder();
-			while (!(findEnd())) {
-				if (getCurrentChar() == NEW_LINE | getCurrentChar() == COMMENT) {
-					toNextChar();
-					break;
-				}
-				str.append(getCurrentChar());
-				toNextChar();
-			}
-			return str.toString();
-		} else {
-			StringBuilder str = new StringBuilder();
-			while (!findEnd()) {
-				if (getCurrentChar() == ENTRY_DELIMITER | getCurrentChar() == COMMENT | getCurrentChar() == LIST_END
-						| getCurrentChar() == MAP_END | getCurrentChar() == NEW_LINE) {
-					// talves precise por
-					// toNextChar();
-					break;
-				}
-				str.append(getCurrentChar());
-				toNextChar();
-			}
-			return str.toString();
-		}
-	}
+                }
+                return map;
+            }
 
-	protected int skipChars(char... charsToSkip) {
-		// lastSpacesSkipped = spacesSkipped;
-		spacesSkipped = 0;
-		boolean can = true;
-		int amount = 0;
-		while (can) {
-			can = false;
-			for (char var : charsToSkip) {
-				if (var == getCurrentChar()) {
-					can = true;
-				}
-			}
-			if (getCurrentChar() == SPACE) {
-				spacesSkipped++;
-			}
-			if (getCurrentChar() == NEW_LINE) {
-				spacesSkipped = 0;
-			}
-			if (can) {
-				toNextChar();
-				// charsSkippedAmount++;
-				amount++;
-			}
-		}
-		return amount;
-	}
+        } else if (getCurrentChar() == LIST_ITEM) {
+            toNextChar();
+            if (getCurrentChar() == SPACE) {
+                toNextChar();
+            }
+            return readObject();
+            // -
+        } else if (getCurrentChar() == ENTRY_DELIMITER) {
+            toNextChar();
+            if (getCurrentChar() == SPACE) {
+                toNextChar();
+            }
+            return readObject();
+        } else if (getCurrentChar() == COMMENT) {
+            toNextChar();
+            StringBuilder str = new StringBuilder();
+            while (!(findEnd())) {
+                if (getCurrentChar() == NEW_LINE | getCurrentChar() == COMMENT) {
+                    toNextChar();
+                    break;
+                }
+                str.append(getCurrentChar());
+                toNextChar();
+            }
+            return str.toString();
+        } else {
+            StringBuilder str = new StringBuilder();
+            while (!findEnd()) {
+                if (getCurrentChar() == ENTRY_DELIMITER | getCurrentChar() == COMMENT | getCurrentChar() == LIST_END
+                        | getCurrentChar() == MAP_END | getCurrentChar() == NEW_LINE) {
+                    // talves precise por
+                    // toNextChar();
+                    break;
+                }
+                str.append(getCurrentChar());
+                toNextChar();
+            }
+            return str.toString();
+        }
+    }
+
+    protected int skipChars(char... charsToSkip) {
+        // lastSpacesSkipped = spacesSkipped;
+        spacesSkipped = 0;
+        boolean can = true;
+        int amount = 0;
+        while (can) {
+            can = false;
+            for (char var : charsToSkip) {
+                if (var == getCurrentChar()) {
+                    can = true;
+                }
+            }
+            if (getCurrentChar() == SPACE) {
+                spacesSkipped++;
+            }
+            if (getCurrentChar() == NEW_LINE) {
+                spacesSkipped = 0;
+            }
+            if (can) {
+                toNextChar();
+                // charsSkippedAmount++;
+                amount++;
+            }
+        }
+        return amount;
+    }
 
 }

@@ -197,11 +197,9 @@ class BungeeConfig (
     fun getMessages(path: String): List<String> {
         return getStringList(path).map { toChatMessage(it) }
     }
-
-    companion object {
-        fun toChatMessage(text: String): String {
-            return ChatColor.translateAlternateColorCodes('&', text)
-        }
+    fun toChatMessage(text: String): String {
+        return ChatColor.translateAlternateColorCodes('&', text)
     }
+
 
 }

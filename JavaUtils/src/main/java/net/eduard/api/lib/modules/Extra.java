@@ -170,7 +170,7 @@ public final class Extra {
     public static DecimalFormat MONEY = new DecimalFormat("###,###.##",
             DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));
 
-    public static List<String> MONEY_OP_CLASSES = Arrays.asList("","m","M","B","T","Q","QQ","S","SS","OC","N","D","UN","DD","TR","QT","QN","SD","SPD","OD","ND","VG","UVG","DVG","TVG","QTV","QNV","SEV","SPV","OVG","NVG","TD");
+    public static List<String> MONEY_OP_CLASSES = Arrays.asList("","K","M","B","T","Q","QQ","S","SS","OC","N","D","UN","DD","TR","QT","QN","SD","SPD","OD","ND","VG","UVG","DVG","TVG","QTV","QNV","SEV","SPV","OVG","NVG","TD");
     public static DecimalFormat MONEY_OP_FORMATER = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR")));
     public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
     public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");

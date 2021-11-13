@@ -11,7 +11,6 @@ import net.eduard.api.lib.abstraction.Hologram
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerSpigot
 import net.eduard.api.lib.config.Config
-import net.eduard.api.lib.config.StorageManager
 import net.eduard.api.lib.database.BukkitTypes
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.HybridTypes
@@ -23,7 +22,6 @@ import net.eduard.api.lib.kotlin.store
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.menu.*
 import net.eduard.api.lib.modules.*
-import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.score.DisplayBoard
@@ -57,25 +55,13 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
     fun getString(key: String) = configs.getString(key)
     fun message(key: String) = messages.message(key)
     var started = false
-
     var configs = Config(plugin, "config.yml")
-
-
     var storage = Config(plugin, "storage.yml")
-
-
     var messages = Config(plugin, "messages.yml")
-
-
     lateinit var settings: PluginSettings
-
-
     lateinit var dbManager: DBManager
-
-
     lateinit var sqlManager: SQLManager
 
-    lateinit var storageManager: StorageManager
     fun onLoad() {
         HybridTypes
         StorageAPI.setDebug(false)
@@ -267,14 +253,14 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         Config.isDebug = configs.getBoolean("debug.config")
         Menu.isDebug = configs.getBoolean("debug.menu")
         Hologram.debug = configs.getBoolean("debug.holograms")
-        CommandManager.isDebug = configs.getBoolean("debug.commands")
+        CommandManager.debugEnabled = configs.getBoolean("debug.commands")
         Copyable.setDebug(configs.getBoolean("debug.copyable"))
         BukkitBungeeAPI.setDebug(configs.getBoolean("debug.bungee-bukkit"))
         Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug.replacers")
         PlayerSkin.reloadSkins()
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
         loadMaps()
-
+        configs.add("block-mine-custom-event", true)
         configs.add("sound-teleport", OPT_SOUND_TELEPORT)
         configs.add("sound-error", OPT_SOUND_ERROR)
         configs.add("sound-success", OPT_SOUND_SUCCESS)
@@ -398,7 +384,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
 
     fun unregisterCommands() {
         for ((name, cmd) in CommandManager.commandsRegistred) {
-            log("Comando $name desregisrado")
+            CommandManager.log("Comando $name desregistrado")
             cmd.unregisterCommand()
             cmd.unregisterListener()
         }

@@ -4,7 +4,7 @@ package net.eduard.api.lib.kotlin
 private val instances = mutableMapOf<Class<*>, Any>()
 
 /**
- * registra um Module ligado
+ * Registra um Module ligado
  */
 fun <T : Any> resolvePut(instance: T): T {
     instances[instance.javaClass] = instance

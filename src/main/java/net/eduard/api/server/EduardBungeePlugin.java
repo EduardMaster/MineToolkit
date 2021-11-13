@@ -143,6 +143,7 @@ public class EduardBungeePlugin extends Plugin implements IPluginInstance {
 
 
     public void log(@NotNull String message) {
+
         console("§b"+getPrefix() +"§a"+ message);
     }
 

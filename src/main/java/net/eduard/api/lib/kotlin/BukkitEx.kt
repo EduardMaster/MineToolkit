@@ -24,8 +24,8 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.Crops
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
-import kotlin.reflect.KClass
 
 
 inline val ItemStack.extra get() = MineReflect.getData(this)
@@ -151,7 +151,7 @@ fun Player.sendTitle(title: String, subTitle: String) = mineSendTitle(title, sub
 
 
 fun Player.sendTitle(title: String, subTitle: String, fadeInt: Int, stay: Int, fadeOut: Int) {
-    return mineSendTitle(title,subTitle,fadeInt,stay,fadeOut);
+    return mineSendTitle(title, subTitle, fadeInt, stay, fadeOut);
 }
 
 
@@ -174,10 +174,9 @@ fun Player.sendActionBar(msg: String) = mineSendActionBar(msg)
 fun Player.mineSendActionBar(msg: String) = MineReflect.sendActionBar(this, msg)
 
 
-
-
 @Deprecated("Aliases alterada", ReplaceWith("mineSendPacket(packet)"))
 fun Player.sendPacket(packet: Any) = mineSendPacket(packet)
+
 /**
  * Atalho para MineReflect.sendPacket
  */
@@ -344,6 +343,7 @@ fun <T : ItemStack> T.mineAddLore(vararg lore: String): T {
     Mine.addLore(this, *lore)
     return this
 }
+
 @Deprecated("Aliases Alterada", ReplaceWith("mineSetLore(*lore)"))
 fun <T : ItemStack> T.lore(vararg lore: String?) = mineSetLore(*lore)
 fun <T : ItemStack> T.mineSetLore(vararg lore: String?): T {
@@ -351,8 +351,8 @@ fun <T : ItemStack> T.mineSetLore(vararg lore: String?): T {
     return this
 }
 
-fun CommandSender.isPlayer(action : Player.() -> Unit){
-    if (this is Player){
+fun CommandSender.isPlayer(action: Player.() -> Unit) {
+    if (this is Player) {
         action.invoke(this)
     }
 }
@@ -370,21 +370,22 @@ fun <T : ItemStack> T.mineSetColor(color: Color): T {
 
 object BukkitAlterations : Listener
 
-fun <T : Event> KClass<T>.event(actionToDo: T.() -> Unit) {
+fun <T : Event> Class<T>.event(plugin : Plugin , actionToDo: T.() -> Unit) {
+    val eventClass = this
     Bukkit.getPluginManager()
         .registerEvent(
-            this.java,
+            eventClass,
             BukkitAlterations, EventPriority.NORMAL, { _, event ->
-                if (this.java.isAssignableFrom(event.javaClass))
+                if (eventClass.isAssignableFrom(event.javaClass))
                     actionToDo(event as T)
-            }, BukkitAlterations.javaClass.autoPlugin
+            }, plugin
         )
 }
 
-
-inline fun <reified T : Event> event(noinline actionToDo: T.() -> Unit) {
-    T::class.event(actionToDo)
+inline fun <reified T : Event> Any.event(noinline actionToDo: T.() -> Unit) {
+    T::class.java.event(this.javaClass.autoPlugin, actionToDo)
 }
+
 
 
 

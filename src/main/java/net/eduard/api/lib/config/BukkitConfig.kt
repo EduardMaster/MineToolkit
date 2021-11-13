@@ -25,7 +25,7 @@ import java.util.LinkedHashMap
  */
 class BukkitConfig(
     var name: String = "config.yml",
-    var plugin: Plugin = JavaPlugin.getProvidingPlugin(javaClass)
+    var plugin: Plugin = JavaPlugin.getProvidingPlugin(BukkitConfig::class.java)
 
 )  {
 
@@ -257,15 +257,13 @@ class BukkitConfig(
     fun createSubConfig(name: String): BukkitConfig {
         return createConfig(name + name)
     }
-
-    companion object {
-        fun toChatMessage(text : String) : String {
-            return ChatColor.translateAlternateColorCodes('&', text)
-        }
-        fun toConfigMessage(text: String): String {
-            return text.replace("§", "&")
-        }
+    fun toChatMessage(text : String) : String {
+        return ChatColor.translateAlternateColorCodes('&', text)
     }
+    fun toConfigMessage(text: String): String {
+        return text.replace("§", "&")
+    }
+
 
 
 }

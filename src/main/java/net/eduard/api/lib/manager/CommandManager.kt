@@ -1,21 +1,14 @@
 package net.eduard.api.lib.manager
 
 import net.eduard.api.lib.kotlin.formatColors
-import java.util.ArrayList
-import java.util.HashMap
-
-import org.bukkit.Bukkit
-import org.bukkit.command.Command
-import org.bukkit.command.CommandExecutor
-import org.bukkit.command.CommandSender
-import org.bukkit.command.PluginCommand
-import org.bukkit.command.TabCompleter
-import org.bukkit.plugin.Plugin
-
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.modules.Mine
+import org.bukkit.Bukkit
+import org.bukkit.command.*
 import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
 
 open class CommandManager(var name: String, vararg aliases: String) : EventsManager(), TabCompleter, CommandExecutor {
 
@@ -78,25 +71,22 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
 
     private fun autoPermission(): String {
-
         return if (parent != null) {
             parent?.autoPermission() + "." + name
         } else {
             "command.$name"
         }
-
     }
 
 
     fun broadcast(message: String) {
         Mine.broadcast(message, permission)
-
     }
 
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
 
-        if (args.isNotEmpty()){
+        if (args.isNotEmpty()) {
             val arg = args[0]
             var sub: CommandManager? = null
             for (subcmd in subCommands.values) {
@@ -109,16 +99,16 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
                     }
                 }
             }
-            if (sub!=null){
+            if (sub != null) {
                 val args2 = args.copyOfRange(1, args.size)
-                return sub.onCommand(sender,command,label,args2)
-            }else{
+                return sub.onCommand(sender, command, label, args2)
+            } else {
                 command(sender, args)
             }
-        }else{
+        } else {
             if (sender.hasPermission(permission)) {
                 command(sender, args)
-            }else{
+            } else {
                 sender.sendMessage(permissionMessage)
             }
         }
@@ -188,10 +178,11 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         plugin = command.plugin as JavaPlugin
         if (command.usage != null) {
             if (command.usage.isNotEmpty()) {
-                usage = command.usage.replace("<command>", name).replace('&', '§')
+                usage = command.usage
+                    .replace("<command>", name, false)
+                    .replace('&', '§', false)
             }
         }
-
         if (command.permission != null) {
             permission = command.permission
         }
@@ -205,15 +196,12 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         if (command.aliases != null) {
             aliases = command.aliases
         }
-
         command.usage = usage
         command.label = name
         command.aliases = aliases
-
         command.description = description
         command.permission = permission
         command.executor = this
-
         log(
             "O comando §a" + name + " §ffoi registrado para o Plugin §b" + command.plugin.name
                     + "§f pela plugin.yml"
@@ -246,16 +234,50 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             "O comando §a" + name + " §ffoi registrado para o Plugin §b" + plugin.name
                     + "§f sem plugin.yml"
         )
-        commandsRegistred[name.toLowerCase()] = this
 
+        commandsRegistred[name.toLowerCase()] = this
+        customCommand = command
         updateSubs()
         registerListener(plugin)
-        Mine.createCommand(plugin, command)
+        Bukkit.getScheduler().runTask(plugin) {
+            try {
+                val registrado = getServerCommandsMap()?.register(plugin.name, command) ?: false
+                log("O Comando $name foi registrado com sucesso: $registrado")
+                /*
+                    for (aliase in command.aliases) {
+                        map.register(aliase.toLowerCase(), command);
+                    }
+                 */
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+
     }
 
+
     fun unregisterCommand() {
-        if (customCommand != null)
-            Mine.removeCommand(name)
+        customCommand ?: return
+        val command = customCommand!!
+        val cmdName = command.name.toLowerCase()
+        val pluginName = plugin.name.toLowerCase()
+        commandsRegistred.remove(name.toLowerCase())
+        commandsRegistred.remove(name)
+        command.unregister(getServerCommandsMap())
+        val currentCommands = getServerCommandsHashMap()!!
+
+        for (aliase in aliases) {
+            log("Removendo aliase §a$aliase§f do comando §b$cmdName")
+            currentCommands.remove(aliase.toLowerCase())
+            currentCommands.remove(pluginName.toLowerCase() + ":" + aliase.toLowerCase())
+        }
+        try {
+            currentCommands.remove(cmdName)
+            currentCommands.remove(pluginName.toLowerCase() + ":" + cmdName)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        log("Removendo o comando §a$cmdName§f do Plugin §b$pluginName")
 
     }
 
@@ -265,7 +287,6 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
     }
 
     fun sendUsage(sender: CommandSender) {
-
         sender.sendMessage(usagePrefix + usage)
     }
 
@@ -280,17 +301,48 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
     }
 
     companion object {
-        var isDebug = true
+        var debugEnabled = true
         val commandsRegistred: MutableMap<String, CommandManager> = HashMap()
+
+        /**
+         * @return O Hashmap onde estão registrados todos comandos e aliases
+         */
+        private fun getServerCommandsMap(): CommandMap? {
+            try {
+                return Extra.getFieldValue(Bukkit.getServer().pluginManager, "commandMap") as CommandMap
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+            return null
+        }
+
+        /**
+         * @return O Hashmap onde estão registrados todos comandos e aliases
+         */
+        private fun getServerCommandsHashMap(): MutableMap<String, Command>? {
+            try {
+                val map = getServerCommandsMap()
+                return Extra.getFieldValue(map, "knownCommands") as MutableMap<String, Command>
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+            return null
+        }
+
+        fun unregisterCommands(plugin: Plugin) {
+            val commands = commandsRegistred.values.filter { it.plugin == plugin }
+            commands.forEach {
+                it.unregisterCommand()
+            }
+        }
 
         fun getCommand(name: String): CommandManager {
             return commandsRegistred[name.toLowerCase()]!!
         }
 
-        fun log(msg: String) {
-
-            if (isDebug)
-                Mine.console("§bCommandAPI §f$msg")
+        fun log(message: String) {
+            if (debugEnabled)
+                Mine.console("§bCommandAPI §f$message")
         }
 
 
@@ -304,10 +356,10 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         override fun execute(sender: CommandSender, label: String, args: Array<String>): Boolean {
             try {
                 if (!command.plugin.isEnabled) {
+                    sender.sendMessage("§cPlugin foi desabilitado.")
                     return false
                 }
                 if (sender.hasPermission(permission)) {
-
                     return command.onCommand(sender, this, label, args)
 
                 } else {

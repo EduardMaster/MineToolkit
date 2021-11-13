@@ -20,7 +20,7 @@ import org.bukkit.scoreboard.Team
  *
  * v1.1 Suporte a Animação de Frames a cada ticks
  * v1.2 Usando PlayerScore Classe para Scoreobard direto com NMS
- * v1.3 Usando Bukkit apenas novamente
+ * v1.3 Usando apenas Bukkit novamente
  *
  * @author Eduard
  * @version 1.3

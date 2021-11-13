@@ -1,5 +1,6 @@
 package net.eduard.api.server
 
+import net.eduard.api.lib.command.Command
 import net.eduard.api.lib.config.Config
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.SQLManager
@@ -13,6 +14,7 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
+import net.minecraft.server.v1_8_R3.CommandDebug
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
@@ -93,7 +95,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      *
      * @param message Mensagem
      */
-    fun log(message: String) {
+    open fun log(message: String) {
         if (settings.isDebug)
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §f$message")
     }
@@ -109,7 +111,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      *
      * @param message Mensagem
      */
-    fun error(message: String) {
+    open fun error(message: String) {
         if (settings.isDebug)
             Bukkit.getConsoleSender().sendMessage("§b[${name}] §c$message")
     }
@@ -163,13 +165,14 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         }
     }
 
+    /**
+     * Corrigido descarregamento de comando ao /plugman reload NomePlugin
+     * Dia 13/11/2021
+     *
+     */
     fun unregisterCommands() {
-        CommandManager.commandsRegistred.values.forEach { cmd ->
-            if (this == cmd.plugin) {
-                cmd.unregisterCommand()
-            }
-        }
-
+        CommandManager.unregisterCommands(this)
+        Command.unregisterCommands(this)
     }
 
 
@@ -186,10 +189,11 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     override fun onDisable() {
         calculate("Desregistrando Servicos") { unregisterServices() }
         calculate("Desregistrando Listeners") { unregisterListeners() }
-        calculate("Desregistrando Tasks") { unregisterTasks() }
-        //calculate("Desregistrando Storables") { unregisterStorableClasses() }
-        calculate("Desregistrando menus") { unregisterMenus() }
         calculate("Desregistrando Comandos") { unregisterCommands() }
+        calculate("Desregistrando Tasks") { unregisterTasks() }
+        calculate("Desregistrando Storables") { unregisterStorableClasses() }
+        calculate("Desregistrando menus") { unregisterMenus() }
+
         calculate("Desconectando Database Connections e Limpando Cache") { dbManager.closeConnection() }
         log(
             "Foi desativado na v" + description.version + " um plugin "

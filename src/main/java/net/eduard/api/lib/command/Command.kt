@@ -8,12 +8,22 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPluginInstance
 import java.util.ArrayList
 
-open class Command(override var name: String = "comando", vararg aliases: String) : ICommand {
+open class Command(
+    override var name: String = "comando",
+    vararg aliases: String
+) : ICommand {
 
 
     companion object {
         var MESSAGE_PERMISSION = "§cVocê não possui permissão para executar este comando. §f%permission"
         val COMMANDS = mutableListOf<Command>()
+
+        fun unregisterCommands(plugin: IPluginInstance) {
+            val commandsToUnregister = COMMANDS.filter { plugin == it.plugin }
+            commandsToUnregister.forEach {
+                it.unregister()
+            }
+        }
 
     }
 
@@ -24,6 +34,12 @@ open class Command(override var name: String = "comando", vararg aliases: String
 
     @Transient
     var parent: Command? = null
+
+    @Transient
+    var plugin: IPluginInstance? = null
+
+    @Transient
+    var command: HybridCommand? = null
 
     final override var aliases = mutableListOf<String>()
     override var description = "Descrição do comando"
@@ -136,14 +152,14 @@ open class Command(override var name: String = "comando", vararg aliases: String
         } else {
             sender.sendMessage(
                 cmd.permissionMessage
-                    .replace("%permission", cmd.permission)
+                    .replace("%permission", cmd.permission, false)
             )
         }
 
     }
 
     open fun sendUsage(sender: ISender) {
-       sender.sendMessage(prefixUsage + usage)
+        sender.sendMessage(prefixUsage + usage)
 
     }
 
@@ -151,6 +167,13 @@ open class Command(override var name: String = "comando", vararg aliases: String
     fun register(subCommand: Command) {
         subCommands.add(subCommand)
         subCommand.parent = this
+    }
+
+    fun unregister() {
+        val plugin = plugin!!
+        command?.unregister(plugin)
+        Hybrid.instance.console.sendMessage("§fComando §a$name §fdesregistrado para o plugin §e${plugin.systemName}")
+        COMMANDS.remove(this)
     }
 
     fun register(main: IPluginInstance) {
@@ -169,13 +192,16 @@ open class Command(override var name: String = "comando", vararg aliases: String
                 sub.permission = sub.autoPermission()
             }
         }
+
         if (Hybrid.instance.isBungeecord) {
-            BungeeCommand(this).register(main)
+            command = BungeeCommand(this)
+            command?.register(main)
         } else {
-            BukkitCommand(this).register(main)
+            command = BukkitCommand(this)
+            command?.register(main)
         }
         Hybrid.instance.console.sendMessage("§fComando §a$name §fregistrado para o plugin §e${main.systemName}")
-
+        plugin = main
         COMMANDS.add(this)
 
     }
