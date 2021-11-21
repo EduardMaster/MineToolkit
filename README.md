@@ -8,7 +8,7 @@
 - Uso de Armazenamento Automatico com **StorageAPI** + **Config** 
 - Criação de MENU GUI (Inventários) com **Menu** , **MenuButton** e **Shop**
 - Criação de Scoreboard (Telas informativas) com **DisplayBoard**
-- Conjuento de Classes Java que podem ser arrastado de Projeto em Projeto
+- Conjunto de Classes Java que podem ser arrastado de Projeto em Projeto
 - Conjunto de Classes Objetos Extras
 
 ### Motivos do Uso
