@@ -3,7 +3,7 @@
 
 ### Features
 - Uso de Bancos de Dados SQL Manualmente com **DBManager** (**Custom Database ORM**)
-- Uso de Bancos de Dados SQL Automaticamente com **DBManager** (**Custom Database ORM**)
+- Uso de Bancos de Dados SQL Automaticamente com **SQLManager** (**Custom Database ORM**)
 - Uso de Arquivos YAML mais permissivo com **Config** e **ConfigSection**
 - Uso de Armazenamento Automatico com **StorageAPI** + **Config** 
 - Criação de MENU GUI (Inventários) com **Menu** , **MenuButton** e **Shop**
