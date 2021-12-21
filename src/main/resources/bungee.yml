@@ -4,6 +4,4 @@ main: "net.eduard.api.EduardAPIBungeeMain"
 version: "1.7.6"
 author: "Eduard"
 authors: ["Eduard"]
-softdepend: [Kotlin]
-soft-depend: [Kotlin]
 website: "https://www.youtube.com/user/EduTutoriaisHD"

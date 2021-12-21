@@ -30,7 +30,7 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         List<String> lista = new ArrayList<>();
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             if (plugin instanceof EduardPlugin) {
-                Mine.makeCommand("plugman unload " + plugin.getName());
+                Mine.runCommand("plugman unload " + plugin.getName());
                 lista.add(plugin.getName());
             }
         }
@@ -39,12 +39,12 @@ public class ApiRestartEduardAPICommand extends CommandManager {
         sender.sendMessage("§ePlugins do Eduard descarregaados pelo PlugMan");
         sender.sendMessage("§fReiniciando EduardAPI");
 
-        Mine.makeCommand("plugman unload EduardAPI");
-        Mine.makeCommand("plugman load EduardAPI");
+        Mine.runCommand("plugman unload EduardAPI");
+        Mine.runCommand("plugman load EduardAPI");
 
         sender.sendMessage("§fReiniciando plugins do Eduard");
         for (String plNome : lista){
-            Mine.makeCommand("plugman load "+plNome);
+            Mine.runCommand("plugman load "+plNome);
         }
         sender.sendMessage("§aTodos os plugins foram recarregados com os novos jars");
 

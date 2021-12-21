@@ -9,7 +9,28 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 
-class SoundCommand : CommandManager("sound") {
+class SoundCommand : CommandManager("sound","som") {
+
+    init{
+        description= "Toca um som do minecraft"
+        usage= "/<command> <sound> [volume] [pitch]"
+    }
+
+    fun parseSound(textInput: String): List<String> {
+        var argument = textInput
+        argument = argument.trim { it <= ' ' }
+            .replace("_", "")
+        val list: MutableList<String> = ArrayList()
+        for (enchant in Sound.values()) {
+            val text = Extra.toTitle(enchant.name, "")
+            val line = enchant.name.trim { it <= ' ' }.replace("_", "")
+            if (Extra.startWith(line, argument)) {
+                list.add(text)
+            }
+        }
+        return list
+    }
+
     override fun onCommand(
         sender: CommandSender, command: Command,
         label: String, args: Array<String>
@@ -59,24 +80,8 @@ class SoundCommand : CommandManager("sound") {
         label: String, args: Array<String>
     ): List<String>? {
         return if (args.size == 1) {
-            getSounds(args[0])
+            parseSound(args[0])
         } else null
     }
 
-    companion object {
-        fun getSounds(arg: String?): List<String> {
-            var argument = arg ?: ""
-
-            argument = argument.trim { it <= ' ' }.replace("_", "")
-            val list: MutableList<String> = ArrayList()
-            for (enchant in Sound.values()) {
-                val text = Extra.toTitle(enchant.name, "")
-                val line = enchant.name.trim { it <= ' ' }.replace("_", "")
-                if (Extra.startWith(line, argument)) {
-                    list.add(text)
-                }
-            }
-            return list
-        }
-    }
 }

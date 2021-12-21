@@ -6,8 +6,6 @@ import net.eduard.api.lib.modules.Extra
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.player.PlayerJoinEvent
 import java.lang.Exception
 
 class RunCommand : CommandManager("run", "rodar") {

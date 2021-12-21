@@ -91,9 +91,9 @@ class PlayerSkin {
 
         fun change(player: Player, skinName: String) {
             var skin = getSkin(skinName)
-            var defName = EduardAPI.instance.getString("custom-skin")
+            var defName = EduardAPI.instance.getString("features.custom-skin")
             if (defName.isEmpty()) {
-                defName = "EduardKIllerPro"
+                defName = "Eduard"
             }
             if (!skin.exists()) {
                 skin = getSkin(defName)
@@ -101,9 +101,6 @@ class PlayerSkin {
             skin.update(player)
             skinUsed[player] = skin
         }
-
-
-
         /*
         private const val LINK_MOJANG_UUID = "https://api.mojang.com/users/rofiles/minecraft/"
         private const val LINK_MOJANG_SKIN = "https://sessionserver.mojang.com/session/minecraft/profile/"

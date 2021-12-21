@@ -56,26 +56,25 @@ public class StorageObject extends StorageBase<Object, Object> {
             debug(">> BY MAP ");
             return StorageAPI.STORE_MAP.restore(info, data);
         }
-        if (info.isReference()) {
-            debug(">> BY REFERENCE ");
 
-            return StorageAPI.STORE_OBJECT.restore(info.getClassInfo().getIndex(), data);
-
-        }
         alias = StorageAPI.getAlias(claz);
         Storable<?> store = StorageAPI.getStore(claz);
         Class<?> wrapper = Extra.getWrapper(claz);
         if (wrapper != null) {
             try {
-
                 Object result = StorageAPI.transform(data, wrapper);
-
                 debug(">> BY " + wrapper.getSimpleName());
 
                 return result;
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        if (info.isReference()) {
+            debug(">> BY REFERENCE ");
+
+            return StorageAPI.STORE_OBJECT.restore(info.getClassInfo().getIndex(), data);
+
         }
         Object instance = null;
 		/* mesmo se a Storable esteja nula vai continuar recarregando da config
@@ -216,7 +215,11 @@ public class StorageObject extends StorageBase<Object, Object> {
         }
         Class<?> claz = data.getClass();
         String alias = info.getAlias();
-        debug("<< DATA: " + data);
+        try {
+            debug("<< DATA: " + data);
+        }catch (Exception ex){
+            // Pode acontecer de tentar printar o Objeto no console e causar um erro
+        }
         debug("<< TYPE: " + alias);
 
         if (claz.isEnum()) {
@@ -243,6 +246,13 @@ public class StorageObject extends StorageBase<Object, Object> {
          */
 
 
+
+        Class<?> wrapper = Extra.getWrapper(claz);
+        if (wrapper != null) {
+            debug("<< AS "+ StorageAPI.getClassName(wrapper));
+            return data;
+        }
+
         if (info.isReference()) {
             Object key = StorageAPI.getKeyOfObject(data);
             debug("<< AS REFERENCE");
@@ -250,23 +260,15 @@ public class StorageObject extends StorageBase<Object, Object> {
             classInfo.getCache().put(key, data);
             return StorageAPI.STORE_OBJECT.store(classInfo.getIndex(), key);
         }
-        Class<?> wrapper = Extra.getWrapper(claz);
-        if (wrapper != null) {
-            debug("<< AS "+ StorageAPI.getClassName(wrapper));
-            return data;
-        }
         if (info.isInline()) {
             Object result = null;
-
             if (store != null) {
                 result = store.store(data);
                 debug("<< AS INLINE CUSTOM");
                 if (result == null) {
                     debug("<< AS INLINE CUSTOM FAIL");
                 } else {
-
                     debug("<< AS INLINE CUSTOM OK");
-
                 }
             }
             if (result == null) {

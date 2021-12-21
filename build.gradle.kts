@@ -59,7 +59,7 @@ dependencies {
 
     testCompileOnly("junit", "junit", "4.12")
     //testCompile("org.bukkit:spigot:1.8.9")
-    implementation(kotlin("script-runtime"))
+
 }
 
 

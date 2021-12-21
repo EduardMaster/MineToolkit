@@ -87,7 +87,7 @@ fun String.colored(): String {
  * Atalho para Mine.changeTabName
  */
 fun Player.mineChangeTabName(tabName: String) {
-    Mine.changeTabName(this, tabName)
+    Mine.setTabName(this, tabName)
 }
 
 /**

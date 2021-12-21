@@ -199,9 +199,9 @@ class ConfigSection(var key: String, var data: Any) {
         get() = map.entries
     val string: String
         get() = ConfigUtil.removeQuotes(Extra.toString(data))
-            .replace("\\n", ConfigUtil.LINE_SEPARATOR)
-            .replace("<br>", ConfigUtil.LINE_SEPARATOR)
-            .replace("/n", ConfigUtil.LINE_SEPARATOR)
+            .replace("\\n", ConfigUtil.LINE_SEPARATOR, false)
+            .replace("<br>", ConfigUtil.LINE_SEPARATOR, false)
+            .replace("/n", ConfigUtil.LINE_SEPARATOR, false)
 
     fun getString(path: String): String {
         return getSection(path).string
@@ -310,19 +310,19 @@ class ConfigSection(var key: String, var data: Any) {
     fun save(lines: MutableList<String>, spaceId: Int) {
         val space = ConfigUtil.getSpace(spaceId)
         for (comment in comments) {
-            lines.add("$space${ConfigUtil.COMMENT} ${comment.trimStart()}")
+            lines.add("$space${ConfigUtil.CHAR_COMMENT} ${comment.trimStart()}")
         }
         when {
             isList() -> {
-                lines.add("$space$key" + ConfigUtil.SECTION + (if (list.isEmpty())(" " +ConfigUtil.EMPTY_LIST) else ""))
+                lines.add("$space$key" + ConfigUtil.CHAR_SECTION + (if (list.isEmpty())(" " +ConfigUtil.EMPTY_LIST) else ""))
                 for (text in list) {
-                    lines.add("$space  ${ConfigUtil.LIST_ITEM} $text")
+                    lines.add("$space  ${ConfigUtil.CHAR_LIST_ITEM} $text")
                 }
             }
             isMap() -> {
                 if (spaceId != -1) {
 
-                    lines.add("$space$key" + ConfigUtil.SECTION + (if (map.isEmpty()) (" "+ConfigUtil.EMPTY_SECTION) else ""))
+                    lines.add("$space$key" + ConfigUtil.CHAR_SECTION + (if (map.isEmpty()) (" "+ConfigUtil.EMPTY_SECTION) else ""))
                 }
                 for (section in map.values) {
                     section.save(lines, spaceId + 1)
@@ -335,11 +335,14 @@ class ConfigSection(var key: String, var data: Any) {
                 if (spaceId == -1) return
                 var tempData = data
                 if (tempData is String) {
-                    if (tempData.isEmpty()||tempData.endsWith(" ")||tempData.startsWith(" ")) {
+                    if (ConfigUtil.hasOnlySpaces(tempData)) {
                         tempData = ConfigUtil.STR1 + "" + ConfigUtil.STR1
                     }
+                    if (tempData.startsWith(" ") or tempData.endsWith(" ")){
+                        tempData = ConfigUtil.STR1 + tempData + ConfigUtil.STR1
+                    }
                 }
-                lines.add("$space$key${ConfigUtil.SECTION} $tempData")
+                lines.add("$space$key${ConfigUtil.CHAR_SECTION} $tempData")
             }
         }
     }
@@ -382,7 +385,7 @@ class ConfigSection(var key: String, var data: Any) {
                     path = path.getSection(ConfigUtil.getKey(line))
 
                     val currenLine = line.trimStart().trimEnd()
-                    if (currenLine.endsWith(ConfigUtil.SECTION)) {
+                    if (currenLine.endsWith(ConfigUtil.CHAR_SECTION)) {
                         path.map
                     } else if (currenLine.endsWith(ConfigUtil.EMPTY_SECTION)) {
                         path.map

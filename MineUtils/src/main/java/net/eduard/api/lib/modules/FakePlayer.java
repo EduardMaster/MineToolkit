@@ -96,14 +96,14 @@ public class FakePlayer implements OfflinePlayer {
     @Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        if (other == null || getClass() != other.getClass()) return false;
+        if (other == null || !getClass().equals(other.getClass())) return false;
         FakePlayer otherPlayer = (FakePlayer) other;
-        return name.equalsIgnoreCase(otherPlayer.name);
+        return getName().equalsIgnoreCase(otherPlayer.getName());
     }
 
     @Override
     public int hashCode() {
-        return name.toLowerCase().hashCode();
+        return getName().toLowerCase().hashCode();
     }
 
     @Override

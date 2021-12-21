@@ -19,6 +19,9 @@ final public class StorageMap extends StorageBase<Map<?,?> , Object> {
         mapInfoKey.setType(info.getMapKey());
         mapInfoKey.updateByType();
         mapInfoKey.updateByStorable();
+        mapInfoKey.updateByField();
+        mapInfoKey.setInline(true);
+        mapInfoKey.setReference(false);
 
         StorageInfo mapInfoValue = info.clone();
         mapInfoValue.setType(info.getMapValue());
@@ -27,14 +30,17 @@ final public class StorageMap extends StorageBase<Map<?,?> , Object> {
         mapInfoValue.updateByField();
 
         if (info.isReference()) {
+            /**
+             * Dia 13/11/2021 Ta com erro na recuperacao do HashMap Referenciado
+             */
             if (data instanceof Map) {
                 @SuppressWarnings("unchecked")
                 Map<Object, Object> oldMap = (Map<Object, Object>) data;
                 Map<Object, Object> newMap = new HashMap<>();
                 for (Entry<Object, Object> entry : oldMap.entrySet()) {
-                    newMap.put(StorageAPI.STORE_OBJECT
-                                    .restore(mapInfoKey,entry.getKey()),
-                            StorageAPI.STORE_OBJECT.restore(mapInfoValue,entry.getValue()));
+                    Object entryKey = StorageAPI.STORE_OBJECT.restore(mapInfoKey,entry.getKey());
+                    Object entryValue = StorageAPI.STORE_OBJECT.restore(mapInfoValue,entry.getValue());
+                    newMap.put(entryKey, entryValue);
                 }
                 Map<Object, Object> realMap = new HashMap<>();
                 StorageAPI.newReference(new ReferenceMap(info, mapInfoKey, mapInfoValue, newMap, realMap));
@@ -64,6 +70,9 @@ final public class StorageMap extends StorageBase<Map<?,?> , Object> {
         mapInfoKey.setType(info.getMapKey());
         mapInfoKey.updateByType();
         mapInfoKey.updateByStorable();
+        mapInfoKey.updateByField();
+        mapInfoKey.setInline(true);
+        mapInfoKey.setReference(false);
 
         StorageInfo mapInfoValue = info.clone();
         mapInfoValue.setType(info.getMapValue());

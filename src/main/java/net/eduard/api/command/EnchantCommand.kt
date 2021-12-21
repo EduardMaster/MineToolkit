@@ -11,7 +11,11 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import java.util.*
 
-class EnchantCommand : CommandManager("enchantment") {
+class EnchantCommand : CommandManager("enchantment","ench") {
+    init{
+        description= "Encanta o item para um nivel"
+        usage= "/<command> <enchant> <level>"
+    }
     var messageInvalid = "§cDigite o encantamento valido! §bAperte TAB"
     var message = "§aEncantamento aplicado!"
     var messageError = "§cVoce precisar ter um item em maos!"
@@ -39,7 +43,7 @@ class EnchantCommand : CommandManager("enchantment") {
                 player.sendMessage(messageError)
                 return true
             }
-            val enchant = Mine.getEnchant(args[0])
+            val enchant = Mine.parseEnchant(args[0])
             if (enchant == null) {
                 player.sendMessage(messageInvalid)
             } else {

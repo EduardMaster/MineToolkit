@@ -11,11 +11,9 @@ import net.eduard.api.lib.hybrid.BungeeServer
 import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
-import net.eduard.api.lib.storage.storables.BukkitStorables
 import net.eduard.api.listener.BungeePlugins
 import net.eduard.api.task.BungeeDatabaseUpdater
 import net.md_5.bungee.api.ProxyServer
@@ -26,6 +24,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 
 @Suppress("deprecated")
@@ -172,7 +171,17 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
             1, 1, TimeUnit.SECONDS
         );
 
-
+        asyncSQLUpdater()
+    }
+    lateinit var databaseUpdater: Thread
+    fun asyncSQLUpdater(){
+        databaseUpdater = thread {
+            val updater = BungeeDatabaseUpdater()
+            while (true){
+                updater.run()
+                Thread.sleep(50)
+            }
+        }
     }
 
     fun configDefault() {
@@ -198,8 +207,7 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
             BungeeAPI.bungee.unregister()
         }
         dbManager.closeConnection()
-
-
+        databaseUpdater.interrupt()
     }
 
     fun unregisterTasks() {

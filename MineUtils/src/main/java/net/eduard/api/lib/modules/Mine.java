@@ -56,6 +56,15 @@ import java.util.stream.Collectors;
 public final class Mine {
 
     /**
+     * Usa o runCommand()
+     * @param cmd
+     */
+    @Deprecated
+    public static void makeCommand(String cmd){
+        runCommand(cmd);
+    }
+
+    /**
      * Interface de criar Replacer (Placeholders)
      *
      * @author Eduard
@@ -190,36 +199,7 @@ public final class Mine {
 
 
     public static boolean OPT_DEBUG_REPLACERS = true;
-    /**
-     * Lista de Comandos para efeito Positivo
-     */
-    public static List<String> OPT_COMMANDS_ON = new ArrayList<>(Arrays.asList("on", "ativar"));
 
-    /**
-     * Lista de Comandos para efeito Negativo
-     */
-    public static List<String> OPT_COMMANDS_OFF = new ArrayList<>(Arrays.asList("off", "desativar"));
-
-    /**
-     * Desativar mensagem de morte
-     */
-    public static boolean OPT_NO_DEATH_MESSAGE = true;
-    /**
-     * Desativar mensagem de entrada
-     */
-    public static boolean OPT_NO_JOIN_MESSAGE = true;
-    /**
-     * Desativar mensagem de saida
-     */
-    public static boolean OPT_NO_QUIT_MESSAGE = true;
-    /**
-     * Velocidade minima de corrida
-     */
-    public static final double VALUE_MIN_WALK_SPEED = 0.2;
-    /**
-     * Velocidade minima de voo
-     */
-    public static final double VALUE_MIN_FLY_SPEED = 0.1;
     /**
      * Ligar sistema de Respawn Automatico
      */
@@ -291,16 +271,16 @@ public final class Mine {
      * @param item   Item
      */
     public static void addHotBar(Player player, ItemStack item) {
-        PlayerInventory inv = player.getInventory();
+        PlayerInventory inventory = player.getInventory();
         if (item == null)
             return;
         if (item.getType() == Material.AIR)
             return;
-        if (isFull(inv))
+        if (isFull(inventory))
             return;
-        int i;
-        while ((i = inv.firstEmpty()) < 9) {
-            inv.setItem(i, item);
+        int slot;
+        while ((slot = inventory.firstEmpty()) < 9) {
+            inventory.setItem(slot, item);
         }
     }
 
@@ -312,7 +292,6 @@ public final class Mine {
      */
 
     public static void addPermission(CommandSender sender, String permission) {
-
         sender.addAttachment(getMainPlugin(), permission, true);
     }
 
@@ -350,9 +329,7 @@ public final class Mine {
      * @param chunk Chunk
      */
     public static void setBorder(Material type, Chunk chunk) {
-
         setBorder(type, chunk, chunk);
-
     }
 
     /**
@@ -366,15 +343,11 @@ public final class Mine {
         Chunk chunkMin = chunk.getWorld().getChunkAt(chunk.getX() - radius, chunk.getZ() - radius);
         Chunk chunkMax = chunk.getWorld().getChunkAt(chunk.getX() + radius, chunk.getZ() + radius);
         setBorder(type, chunkMax, chunkMin);
-
     }
 
     public static void setBorder(Material type, Chunk chunkHigh, Chunk chunkLow) {
-
         Block low = chunkLow.getBlock(0, 10, 0);
-
         Block high = chunkHigh.getBlock(15, 0, 15);
-
         for (int x = low.getX(); x <= high.getX(); x++) {
             for (int z = low.getZ(); z <= high.getZ(); z++) {
                 Block highestBlockAt = chunkHigh.getWorld().getHighestBlockAt(x, z);
@@ -442,7 +415,6 @@ public final class Mine {
      * @param event Evento
      */
     public static void callEvent(Event event) {
-
         Bukkit.getPluginManager().callEvent(event);
     }
 
@@ -453,7 +425,7 @@ public final class Mine {
      * @param player      Jogador
      * @param displayName Nome do TAB
      */
-    public static void changeTabName(Player player, String displayName) {
+    public static void setTabName(Player player, String displayName) {
         player.setPlayerListName(Extra.cutText(displayName, 32));
     }
 
@@ -504,11 +476,11 @@ public final class Mine {
      * @param command     Executor
      * @return o Comando
      */
-    public static PluginCommand command(String commandName, CommandExecutor command) {
-        PluginCommand cmd = Bukkit.getPluginCommand(commandName);
-        cmd.setExecutor(command);
-        cmd.setPermissionMessage(Mine.MSG_NO_PERMISSION.replace("$permission", cmd.getPermission()));
-        return cmd;
+    public static PluginCommand registerCommand(String commandName, CommandExecutor command) {
+        PluginCommand pluginCommand = Bukkit.getPluginCommand(commandName);
+        pluginCommand.setExecutor(command);
+        pluginCommand.setPermissionMessage(Mine.MSG_NO_PERMISSION.replace("$permission", pluginCommand.getPermission()));
+        return pluginCommand;
     }
 
     /**
@@ -520,13 +492,13 @@ public final class Mine {
      * @param permission  Permissão
      * @return o Comando
      */
-    public static PluginCommand command(String commandName, CommandExecutor command, String permission) {
+    public static PluginCommand registerCommand(String commandName, CommandExecutor command, String permission) {
 
-        PluginCommand cmd = Bukkit.getPluginCommand(commandName);
-        cmd.setExecutor(command);
-        cmd.setPermission(permission);
-        cmd.setPermissionMessage(Mine.MSG_NO_PERMISSION.replace("$permission", cmd.getPermission()));
-        return cmd;
+        PluginCommand pluginCommand = Bukkit.getPluginCommand(commandName);
+        pluginCommand.setExecutor(command);
+        pluginCommand.setPermission(permission);
+        pluginCommand.setPermissionMessage(Mine.MSG_NO_PERMISSION.replace("$permission", pluginCommand.getPermission()));
+        return pluginCommand;
     }
 
     /**
@@ -539,14 +511,14 @@ public final class Mine {
      * @param permissionMessage Mensagem de erro
      * @return o Comando
      */
-    public static PluginCommand command(String commandName, CommandExecutor command, String permission,
+    public static PluginCommand registerCommand(String commandName, CommandExecutor command, String permission,
                                         String permissionMessage) {
 
-        PluginCommand cmd = Bukkit.getPluginCommand(commandName);
-        cmd.setExecutor(command);
-        cmd.setPermission(permission);
-        cmd.setPermissionMessage(permissionMessage);
-        return cmd;
+        PluginCommand pluginCommand = Bukkit.getPluginCommand(commandName);
+        pluginCommand.setExecutor(command);
+        pluginCommand.setPermission(permission);
+        pluginCommand.setPermissionMessage(permissionMessage);
+        return pluginCommand;
     }
 
     /**
@@ -667,7 +639,7 @@ public final class Mine {
      * @param item   Item
      */
     public static void drop(Entity entity, ItemStack item) {
-        drop(entity.getLocation(), item);
+        entity.getLocation().getWorld().dropItemNaturally(entity.getLocation(), item);
     }
 
     /**
@@ -717,7 +689,6 @@ public final class Mine {
      * @return o resultado da verificação
      */
     public static boolean equals(Location location1, Location location2) {
-
         return getBlockLocation1(location1).equals(getBlockLocation1(location2));
     }
 
@@ -738,14 +709,13 @@ public final class Mine {
      * caso o jogador esteja offline
      *
      * @param sender Sender (Quem faz o comando)
-     * @param player Nome do jogador
+     * @param playerName Nome do jogador
      * @return se o jogador está online ou não
      */
-    public static boolean existsPlayer(CommandSender sender, String player) {
-
-        Player p = Bukkit.getPlayer(player);
-        if (p == null) {
-            sender.sendMessage(Mine.MSG_PLAYER_NOT_EXISTS.replace("$player", player));
+    public static boolean existsPlayer(CommandSender sender, String playerName) {
+        Player player = Bukkit.getPlayer(playerName);
+        if (player == null) {
+            sender.sendMessage(Mine.MSG_PLAYER_NOT_EXISTS.replace("$player", playerName));
             return false;
         }
         return true;
@@ -1002,10 +972,6 @@ public final class Mine {
         return getLocations(low, high, effect);
     }
 
-    public static boolean getChance(double chance) {
-
-        return Extra.getChance(chance);
-    }
 
     public static List<Chunk> getChunks(Location location, int amount, int size) {
         List<Chunk> lista = new ArrayList<>();
@@ -1231,7 +1197,7 @@ public final class Mine {
     }
 
     @SuppressWarnings("deprecation")
-    public static Enchantment getEnchant(Object object) {
+    public static Enchantment parseEnchant(Object object) {
         String str = object.toString().replace("_", "").trim();
         for (Enchantment enchant : Enchantment.values()) {
             if (str.equals("" + enchant.getId())) {
@@ -1465,7 +1431,6 @@ public final class Mine {
     }
 
     public static Location getLowLocation(Location loc, double low, double size) {
-
         loc.subtract(size, low, size);
         return loc;
     }
@@ -2036,22 +2001,16 @@ public final class Mine {
     }
 
     /**
-     * Carrega o mundo especificado
+     * Carrega o mundo especificado porem se o Mundo não existir vai gerar um
+     * Mundo vazio
      *
      * @param name Nome
      * @return Mundo carregado
      */
     public static World loadWorld(String name) {
-        return new WorldCreator(name).generator(new EmptyWorldGenerator()).createWorld();
-    }
-
-    /**
-     * Executa o runCommand()
-     *
-     * @param command Comando
-     */
-    public static void makeCommand(String command) {
-        runCommand(command);
+        return new WorldCreator(name).environment(World.Environment.NORMAL)
+                .type(WorldType.CUSTOMIZED)
+                .generator(new EmptyWorldGenerator()).createWorld();
     }
 
 
@@ -2065,7 +2024,7 @@ public final class Mine {
      *
      * @param player Jogador
      */
-    public static void makeInvunerable(Player player) {
+    public static void setInvunerable(Player player) {
         player.setNoDamageTicks((int) (TimeUnit.DAYS.toSeconds(1) * 20));
 
     }
@@ -2085,7 +2044,7 @@ public final class Mine {
      * @param seconds Tempo (em segundos)
      * @param player  Jogador
      */
-    public static void makeInvunerable(Player player, int seconds) {
+    public static void setInvunerable(Player player, int seconds) {
         player.setNoDamageTicks(seconds * 20);
 
     }
@@ -2096,8 +2055,7 @@ public final class Mine {
      *
      * @param player Jogador
      */
-    public static void makeVulnerable(Player player) {
-
+    public static void setVulnerable(Player player) {
         player.setNoDamageTicks(0);
     }
 
@@ -2600,28 +2558,13 @@ public final class Mine {
         location.getWorld().playEffect(location, Effect.STEP_SOUND, material);
     }
 
-    public static boolean noConsole(CommandSender sender) {
-
+    public static boolean onlyPlayer(CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(Mine.MSG_ONLY_PLAYER);
             return false;
         }
         return true;
-    }
 
-    /**
-     * Testa se o numero passado é da coluna expecificada
-     *
-     * @param index  Numero
-     * @param colunm Coluna
-     * @return O resultado do teste
-     */
-    public static boolean isColumn(int index, int colunm) {
-        return Extra.isColumn(index, colunm);
-    }
-
-    public static boolean onlyPlayer(CommandSender sender) {
-        return noConsole(sender);
     }
 
     /**
@@ -2667,16 +2610,6 @@ public final class Mine {
 
 
     /**
-     * Faz um teste de Chance com Porcetagem
-     *
-     * @param chance Porcetagem de Chance
-     * @return Se retornar True é porque Deu Sorte se não é um Fudido
-     */
-    public static boolean random(double chance) {
-        return getChance(chance);
-    }
-
-    /**
      * Recupera vida, fome, deixa o cara normal
      *
      * @param player Jogador
@@ -2686,7 +2619,7 @@ public final class Mine {
         removeEffects(player);
         refreshLife(player);
         refreshFood(player);
-        makeVulnerable(player);
+        setVulnerable(player);
         resetLevel(player);
     }
 
@@ -3157,7 +3090,6 @@ public final class Mine {
     }
 
     public static void setSpawn(Entity entity) {
-
         entity.getWorld().setSpawnLocation((int) entity.getLocation().getX(), (int) entity.getLocation().getY(),
                 (int) entity.getLocation().getZ());
     }
@@ -3198,7 +3130,6 @@ public final class Mine {
     }
 
     public static void teleportToSpawn(Entity entity) {
-
         entity.teleport(entity.getWorld().getSpawnLocation().setDirection(entity.getLocation().getDirection()));
     }
 
@@ -3211,25 +3142,12 @@ public final class Mine {
         return text.replace(ChatColor.COLOR_CHAR, '&');
     }
 
-
     public static List<String> toMessages(List<Object> list) {
         List<String> lines = new ArrayList<>();
         for (Object line : list) {
             lines.add(toChatMessage(line.toString()));
         }
         return lines;
-    }
-
-
-    /**
-     * Transforma o objeto em Texto
-     *
-     * @param object Objeto
-     * @return a forma textual de um Objeto
-     */
-    public static String toString(Object object) {
-
-        return object == null ? "" : object.toString();
     }
 
 
@@ -3353,7 +3271,7 @@ public final class Mine {
     }
 
     /**
-     * Descarrega um mundo
+     * Descarrega um mundo salvando ou nao o Mundo no HD
      *
      * @param name Nome do Mundo
      */
@@ -3361,92 +3279,21 @@ public final class Mine {
         World world = Bukkit.getWorld(name);
         if (world != null) {
             World mundoPadrao = Bukkit.getWorlds().get(0);
-            for (Player p : world.getPlayers()) {
-                p.teleport(mundoPadrao.getSpawnLocation());
+            for (Player player : world.getPlayers()) {
+                player.teleport(mundoPadrao.getSpawnLocation());
             }
 
         }
         Bukkit.unloadWorld(name, saveWorld);
     }
 
+    /**
+     * Descarrega um mundo salvando as Chunks no HD
+     *
+     * @param name Nome do Mundo
+     */
     public static void unloadWorld(String name) {
         unloadWorld(name, true);
-    }
-
-
-    public static String[] wordWrap(String rawString, int lineLength) {
-        if (rawString == null) {
-            return new String[]{""};
-        }
-
-        if ((rawString.length() <= lineLength) && (!(rawString.contains("\n")))) {
-            return new String[]{rawString};
-        }
-
-        char[] rawChars = (rawString + ' ').toCharArray();
-        StringBuilder word = new StringBuilder();
-        StringBuilder line = new StringBuilder();
-        List<String> lines = new LinkedList<>();
-        int lineColorChars = 0;
-
-        for (int i = 0; i < rawChars.length; ++i) {
-            char c = rawChars[i];
-
-            if (c == 167) {
-                word.append(ChatColor.getByChar(rawChars[(i + 1)]));
-                lineColorChars += 2;
-                ++i;
-            } else if ((c == ' ') || (c == '\n')) {
-                String[] split = word.toString()
-                        .split("(?<=\\G.{" + lineLength + "})");
-                if ((line.length() == 0) && (word.length() > lineLength)) {
-                    lines.addAll(Arrays.asList(split));
-                } else if (line.length() + word.length() - lineColorChars == lineLength) {
-                    line.append(word);
-                    lines.add(line.toString());
-                    line = new StringBuilder();
-                    lineColorChars = 0;
-                } else if (line.length() + 1 + word.length() - lineColorChars > lineLength) {
-                    for (String partialWord : split) {
-                        lines.add(line.toString());
-                        line = new StringBuilder(partialWord);
-                    }
-                    lineColorChars = 0;
-                } else {
-                    if (line.length() > 0) {
-                        line.append(' ');
-                    }
-                    line.append(word);
-                }
-                word = new StringBuilder();
-
-                if (c == '\n') {
-                    lines.add(line.toString());
-                    line = new StringBuilder();
-                }
-            } else {
-                word.append(c);
-            }
-        }
-
-        if (line.length() > 0) {
-            lines.add(line.toString());
-        }
-
-        if ((lines.get(0).length() == 0) || (lines.get(0).charAt(0) != 167)) {
-            lines.set(0, ChatColor.WHITE + lines.get(0));
-        }
-        for (int i = 1; i < lines.size(); ++i) {
-            String pLine = lines.get(i - 1);
-            String subLine = lines.get(i);
-
-            char color = pLine.charAt(pLine.lastIndexOf(167) + 1);
-            if ((subLine.length() == 0) || (subLine.charAt(0) != 167)) {
-                lines.set(i, ChatColor.getByChar(color) + subLine);
-            }
-        }
-
-        return (lines.toArray(new String[0]));
     }
 
 

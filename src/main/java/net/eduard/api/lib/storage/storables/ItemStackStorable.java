@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import com.google.gson.*;
 import net.eduard.api.lib.game.ItemBuilder;
+import net.eduard.api.lib.kotlin.BukkitExKt;
 import net.eduard.api.lib.storage.StorageAPI;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -45,7 +46,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
             Map<String, Material> mats = (Map<String, Material>) Extra.getFieldValue(Material.class, "BY_NAME");
             for (Entry<String, Material> entry : mats.entrySet()) {
                 Material mat = entry.getValue();
-                if (mat==null)continue;
+                if (mat == null) continue;
                 boolean isOld = (boolean) isLegacy.invoke(mat);
                 //Mine.console("§aMaterialName: "+mat.name());
                 //Mine.console("§aMaterialString: "+mat.toString());
@@ -55,11 +56,11 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 }
             }
         } catch (Exception ex) {
-           // ex.printStackTrace();
+            // ex.printStackTrace();
         }
         try {
             getTypeId = Extra.getMethod(ItemStack.class, "getTypeId");
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -82,8 +83,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
 
     public static Material getMaterial(int id) {
         if (isLegacy != null) {
-            Material mat = typesByID.get(id);
-            return mat;
+            return typesByID.get(id);
         } else {
             return Material.getMaterial(id);
         }
@@ -159,13 +159,14 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 }
             }
         }
+        if (map.containsKey("texture")) {
+            item.setSkinURL(map.get("texture").toString());
+        }
         if (map.containsKey("head-name")) {
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof SkullMeta) {
                 SkullMeta skullmeta = (SkullMeta) meta;
-
                 skullmeta.setOwner("" + map.get("head-name"));
-
                 item.setItemMeta(skullmeta);
             }
 
@@ -174,7 +175,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
             if (meta instanceof SkullMeta) {
                 GameProfile profile = new GameProfile(UUID.randomUUID(), null);
                 profile.getProperties().put("textures", new Property("textures", (String) map.get("texture-value")));
-                Field profileField = null;
+                Field profileField;
                 try {
                     profileField = meta.getClass().getDeclaredField("profile");
                     profileField.setAccessible(true);
@@ -186,6 +187,7 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 item.setItemMeta(meta);
             }
         } else if (map.containsKey("texture")) {
+            item.setSkinURL(map.get("texture").toString());
             Mine.setSkin(item, (String) map.get("texture"));
         }
         if (map.containsKey("glow")) {
@@ -193,6 +195,13 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
             if (glowed) {
                 EnchantGlow.addGlow(item);
             }
+        }
+        try {
+            if (!item.getEnchantments().isEmpty()) {
+                BukkitExKt.displayEnchants(item);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
         return item;
     }
@@ -213,6 +222,12 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
         }
         if (item.containsEnchantment(EnchantGlow.getGlow())) {
             map.put("glow", true);
+        }
+        if (item instanceof ItemBuilder) {
+            ItemBuilder itemBuilder = (ItemBuilder) item;
+            if (itemBuilder.getSkinURL() != null) {
+                map.put("texture", itemBuilder.getSkinURL());
+            }
         }
         List<String> enchants = new ArrayList<>();
         ItemMeta itemMeta = item.getItemMeta();
@@ -251,11 +266,9 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                     return;
                 if (textures.size() == 0) return;
                 for (Property texture : textures) {
-
                     map.put("texture-value", texture.getValue());
                     map.put("texture-signature", texture.getSignature());
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }

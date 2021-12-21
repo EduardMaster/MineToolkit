@@ -76,8 +76,8 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
             currentInstance.configs.add("settings", currentInstance.settings)
             currentInstance.configs.add("database", currentInstance.dbManager)
             currentInstance.configs.saveConfig()
-            currentInstance.settings = currentInstance.configs.get("settings", PluginSettings::class.java)
-            currentInstance.dbManager = currentInstance.configs.get("database", DBManager::class.java)
+            currentInstance.settings = currentInstance.configs["settings", PluginSettings::class.java]
+            currentInstance.dbManager = currentInstance.configs["database", DBManager::class.java]
             currentInstance.sqlManager = SQLManager(currentInstance.dbManager)
             //  currentInstance.setStorageManager(new StorageManager(currentInstance.getSqlManager()));
             currentInstance.started = true
@@ -184,7 +184,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
 
         log("Ativando Sistema atualizador de menus abertos")
 
-        if (getBoolean("menu-auto-updater"))
+        if (getBoolean("menu-updater.enabled"))
             MenuAutoUpdaterTask().asyncTimer()
 
         BukkitInfoGenerator(this)
@@ -200,6 +200,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         log("Ativando tasks (Timers)")
         // Na versão 1.16 precisa ser em Sync não pode ser Async
         PlayerTargetPlayerTask().asyncTimer()
+
         AutoSaveAndBackupTask().asyncTimer()
         DatabaseUpdater().asyncTimer()
         log("Tasks ativados com sucesso")
@@ -210,7 +211,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         EduardAPIListener().register(this)
         HooksListener().register(this)
         EduWorldEditListener().register(this)
-        PlayerTargetListener().register(this)
+
         BukkitPlugins().register(this)
         log("Listeners dos Eventos ativados com sucesso")
     }
@@ -219,13 +220,12 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         log("Ativando comandos")
         ApiCommand().register()
         MapCommand().register()
-        EnchantCommand().register()
-        GotoCommand().register()
-        SoundCommand().register()
-        SetXPCommand().register()
-        SetSkinCommand().register()
-        MemoryCommand().register()
-        MacroCommand().registerCommand(plugin)
+        EnchantCommand().registerCommand(plugin)
+        GotoCommand().registerCommand(plugin)
+        SoundCommand().registerCommand(plugin)
+        SetXPCommand().registerCommand(plugin)
+        SetSkinCommand().registerCommand(plugin)
+        MemoryCommand().registerCommand(plugin)
         RunCommand().registerCommand(plugin)
         log("Comandos ativados com sucesso")
     }
@@ -260,40 +260,23 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         PlayerSkin.reloadSkins()
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
         loadMaps()
-        configs.add("block-mine-custom-event", true)
-        configs.add("sound-teleport", OPT_SOUND_TELEPORT)
-        configs.add("sound-error", OPT_SOUND_ERROR)
-        configs.add("sound-success", OPT_SOUND_SUCCESS)
-        configs.add("show-plugins-on-join", true)
+
         configs.saveConfig()
-        Mine.OPT_AUTO_RESPAWN = configs.getBoolean("auto-respawn")
-        Mine.OPT_NO_JOIN_MESSAGE = configs.getBoolean("no-join-message")
-        Mine.OPT_NO_QUIT_MESSAGE = configs.getBoolean("no-quit-message")
-        Mine.OPT_NO_DEATH_MESSAGE = configs.getBoolean("no-death-message")
 
         try {
             log("Carregando formatador de dinheiro")
-            val format = configs.getString("money-format")
-            val locale =
-                DecimalFormatSymbols.getInstance(Locale.forLanguageTag(configs.getString("money-format-locale")))
-
-            Extra.MONEY = DecimalFormat(
-                format,
-                locale
-            )
+            val format = configs.getString("money.format")
+            val locale = DecimalFormatSymbols.getInstance(Locale.forLanguageTag(configs.getString("money.locale")))
+            Extra.MONEY = DecimalFormat(format, locale)
             log("Formatador de dinheiro: $format")
             log("Locale do Formatador de dinheiro: $locale")
             log("Formatando numero 1m: " + Extra.MONEY.format(1000000))
             log("Formatando numero 1000,50: " + Extra.MONEY.format(1000.500))
-        } catch (e: Exception) {
-            error("Formato do dinheiro invalido " + configs.getString("money-format"))
-
+        } catch (exception: Exception) {
+            error("Formato do dinheiro invalido " + configs.getString("money.format"))
+            exception.printStackTrace()
         }
-        MSG_ON_JOIN = configs.message("on-join-message")
-        MSG_ON_QUIT = configs.message("on-quit-message")
-        OPT_SOUND_TELEPORT = configs["sound-teleport", SoundEffect::class.java]
-        OPT_SOUND_ERROR = configs["sound-error", SoundEffect::class.java]
-        OPT_SOUND_SUCCESS = configs["sound-success", SoundEffect::class.java]
+
         DisplayBoard.colorFix = configs.getBoolean("scoreboard.color-fix")
         DisplayBoard.nameLimit = configs.getInt("scoreboard.name-limit")
         DisplayBoard.prefixLimit = configs.getInt("scoreboard.prefix-limit")
@@ -313,42 +296,22 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         configs.add("debug.database", false)
         configs.add("debug.holograms", false)
         configs.add("debug.menu", false)
-        configs.add("menu-updater.enabled", false)
+        configs.add("menu-updater.enabled", true)
         configs.add("menu-updater.ticks", 20L)
-
+        configs.add("features.block-mine-event", true)
+        configs.add("features.show-plugins", false)
+        configs.add("features.skins", false)
+        configs.add("features.custom-skin", "Eduard")
+        configs.add("features.auto-respawn", true)
         configs.add("scoreboard.name-limit", 40)
         configs.add("scoreboard.prefix-limit", 16)
         configs.add("scoreboard.suffix-limit", 16)
         configs.add("scoreboard.color-fix", true)
         configs.add("async-license-check", false);
-        configs.add("skins", false)
-        configs.add("auto-respawn", true)
-        configs.add("custom-skin", "EduardKillerPro")
-        configs.add("on-target.show-text", false)
-        configs.add("on-target.text", "{player_name} - {player_level}")
-        configs.add("stack-design", "§aQuantidade: §f\$stack")
-        configs.add("money-format", "###,###.##")
-        configs.add("money-format-locale", "PT-BR")
-        configs.add("no-join-message", true)
-        configs.add("custom-join-message", false)
-        configs.add("custom-first-join-message", false)
-        configs.add("on-join-message", "&6O jogador &e\$player &6entrou no server")
-        configs.add("first-join-message", "&6Seja bem vindo ao servidor!!")
-        configs.add("no-quit-message", true)
-        configs.add("custom-quit-message", false)
-        configs.add("on-quit-message", "&6O jogador &e\$player &6saiu do server")
-        configs.add("no-quit-message", true)
-        configs.add("no-death-message", true)
-        configs.add("custom-death-message", false)
-        configs.add("on-death-player-message", "&6O jogador &e\$killer matou o jogador \$player")
-
-        configs.add("custom-motd", false)
-        configs.add("custom-motd-amount", -1)
-        configs.add("motd", listOf("Seja bem vindo", "Ao meu servidor!"))
-
+        configs.add("stack-design", "§aQuantidade: §f%stack")
+        configs.add("money.format", "###,###.##")
+        configs.add("money.locale", "PT-BR")
         configs.saveConfig()
-
-
     }
 
     fun save() {
@@ -383,7 +346,9 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
     }
 
     fun unregisterCommands() {
-        for ((name, cmd) in CommandManager.commandsRegistred) {
+        val commands = CommandManager.commandsRegistred.values.toList()
+        for (cmd in commands) {
+            val name = cmd.name
             CommandManager.log("Comando $name desregistrado")
             cmd.unregisterCommand()
             cmd.unregisterListener()
@@ -401,30 +366,11 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
     }
 
     companion object {
-
         lateinit var instance: EduardAPI
-
 
         init {
             Hybrid.instance = BukkitServer
         }
-
-        /**
-         * Som para o Teleporte
-         */
-        var OPT_SOUND_TELEPORT = SoundEffect.create("ENDERMAN_TELEPORT")
-
-        /**
-         * Som para algum sucesso
-         */
-        var OPT_SOUND_SUCCESS = SoundEffect.create("LEVEL_UP")
-
-        /**
-         * Som para algum erro
-         */
-        var OPT_SOUND_ERROR = SoundEffect.create("NOTE_BASS_DRUM")
-
-
         /*
 
         Som do rosnar do gato
@@ -447,23 +393,10 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         private val DAY_IN_MILLIS = DAY_IN_TICKS * 50
 
          */
-        /**
-         * Mensagem de quando Entrar no Servidor
-         */
-        var MSG_ON_JOIN = "§6O jogador \$player entrou no Jogo!"
-
-        /**
-         * Mensagem de quando Sair do Servidor
-         */
-        var MSG_ON_QUIT = "§6O jogador \$player saiu no Jogo!"
-
-
         fun loadMaps() {
             MinigameSchematic.loadAll(MinigameSchematic.MAPS_FOLDER)
             instance.log("Mapas carregados!")
         }
-
-
         /**
          * Salva todos os mapas no sistema de armazenamento
          */

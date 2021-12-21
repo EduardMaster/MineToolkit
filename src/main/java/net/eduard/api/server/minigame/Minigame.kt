@@ -51,45 +51,23 @@ open class Minigame(
     @Transient
     var setting: MinigameMap? = null
     var lobby: Location? = null
-    var mapsWorld = MinigameWorld("worlds/$name/map_creation")
-
+    var mapsWorld = MinigameWorld("$name/map_creation")
     @Transient
     var players: MutableMap<FakePlayer, MinigamePlayer> = mutableMapOf()
-
-
     @Transient
     var lobbies = mutableListOf<MinigameLobby>()
-
     @Transient
     var maps = mutableListOf<MinigameMap>()
-
     @Transient
     var rooms = mutableListOf<MinigameRoom>()
-
     @Transient
     var modes = mutableListOf<MinigameMode>()
 
-    /**
-     * Pega a primera sala existente do Minigame
-     *
-     * @return Sala
-     */
-    //		getRooms().get(0);
-    open val game: MinigameRoom?
-        get() = rooms.firstOrNull()
-
     open val mainLobby: MinigameLobby
         get() = if (lobbies.isNotEmpty()) lobbies[0] else createLobby(1)
+
     open val mode: MinigameMode?
         get() = modes.firstOrNull()
-
-    /**
-     * Pega o mapa referente a sala principal do Minigame
-     *
-     * @return
-     */
-    val map: MinigameMap?
-        get() = getMap(name)
 
     fun getMode(name: String) = modes.firstOrNull { it.name.equals(name, true) }
 
@@ -167,15 +145,6 @@ open class Minigame(
         return getMap(name) != null
     }
 
-    /**
-     * Cria um sala unica e um mapa unico Também usando o Nome do Minigame
-     *
-     * @return Minigame criado com mapa já configurado
-     */
-    open fun uniqueGame(): MinigameRoom {
-        return createRoom(createMap(name), mode!!)
-    }
-
 
     /**
      * Manda mensagem para todos jogadores participando do minigame
@@ -183,13 +152,7 @@ open class Minigame(
      * @param message Mensagem
      */
     fun broadcast(message: String) {
-        for (minigamePlayer in players.values) {
-            minigamePlayer.sendMessage(
-                messagePrefix +
-                        Mine.getReplacers(message, minigamePlayer.player)
-            )
-
-        }
+        for (minigamePlayer in players.values) { minigamePlayer.sendMessage(messagePrefix + Mine.getReplacers(message, minigamePlayer.player)) }
     }
 
     /**
@@ -200,7 +163,6 @@ open class Minigame(
      */
     open fun getRoom(id: Int) = rooms.firstOrNull { it.id == id }
 
-
     /**
      * Verifica se a sala com este ID existe
      *
@@ -208,7 +170,6 @@ open class Minigame(
      * @return Sala
      */
     open fun hasRoom(id: Int) = getRoom(id) != null
-
 
     /**
      * Cria uma Sala com este ID para o Mapa expecifico
@@ -258,7 +219,6 @@ open class Minigame(
      * Cria um lobby com ID novo
      */
     open fun createLobby(id: Int): MinigameLobby {
-
         val lobby = MinigameLobby()
         lobby.id = id
         lobbies.add(lobby)
@@ -280,9 +240,6 @@ open class Minigame(
             member.fakePlayer = player
             players[player] = member
         }
-
-
-
         return member
     }
 
@@ -343,16 +300,6 @@ open class Minigame(
     fun isSpectator(player: Player): Boolean {
         return getPlayer(player).isState(MinigamePlayerState.SPECTATOR)
 
-    }
-
-    /**
-     * Verifica se o Estado da Sala principal é igual este estado
-     *
-     * @param state Estado
-     * @return
-     */
-    fun isState(state: MinigameState): Boolean {
-        return game?.isState(state) ?: false
     }
 
     /**
@@ -466,19 +413,14 @@ open class Minigame(
 
     fun saveLobbies() {
         File(plugin.dataFolder, "lobby/")
-            .saveListInFolder(lobbies) {
-                it.id.toString()
-            }
+            .saveListInFolder(lobbies) { it.id.toString() }
 
     }
 
 
     fun saveMaps() {
         File(plugin.dataFolder, "maps/").saveListInFolder(maps) {
-            name.toLowerCase()
-                .replace(" ", "_")
-        }
-
+            it.name.toLowerCase().replace(" ", "_") }
     }
 
     open fun reload() {

@@ -25,14 +25,15 @@ class EduWorldEditListener : EventsManager() {
         if (e.item.type != Material.IRON_AXE) return
         val mapa = MinigameSchematic.getSchematic(player)
         if (e.action == Action.LEFT_CLICK_BLOCK) {
-            mapa.high = e.clickedBlock.location.toVector()
-            player.sendMessage("§aPosição 1 setada!")
+            e.isCancelled = true
+            val vec = e.clickedBlock.location.toVector()
+            mapa.low = vec
+            player.sendMessage("§aPosição 1 setada! §2x: ${vec.x.toInt()} y: ${vec.y.toInt()} z: ${vec.z.toInt()}")
         } else if (e.action == Action.RIGHT_CLICK_BLOCK) {
-            mapa.low = e.clickedBlock.location.toVector()
-            player.sendMessage("§aPosição 2 setada!")
+            val vec = e.clickedBlock.location.toVector()
+            mapa.high = vec
+            player.sendMessage("§aPosição 2 setada! §2x: ${vec.x.toInt()} y: ${vec.y.toInt()} z: ${vec.z.toInt()}")
         }
-
-
     }
 
 }

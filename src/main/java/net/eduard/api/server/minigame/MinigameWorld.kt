@@ -11,7 +11,6 @@ class MinigameWorld( var worldName: String ) {
 
     constructor() : this("minigame-map")
 
-    fun nameNotSet() = worldName == "minigame-map"
 
     @Transient
     var world : World? = null

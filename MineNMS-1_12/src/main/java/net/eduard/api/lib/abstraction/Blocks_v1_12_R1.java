@@ -109,7 +109,17 @@ public class Blocks_v1_12_R1 extends CraftBlock implements Blocks {
     }
 
     @Override
-    public void setTypeAndData(@NotNull org.bukkit.Material material, int data) {
-        setTypeIdAndData(material.getId(), (byte) data, false);
+    public boolean setTypeAndData(@NotNull org.bukkit.Material material, int data) {
+       return setTypeIdAndData(material.getId(), (byte) data, false);
+    }
+
+    @Override
+    public void fixLightning() {
+
+    }
+
+    @Override
+    public void sendPacket() {
+
     }
 }

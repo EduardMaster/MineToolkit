@@ -477,7 +477,7 @@ open class Menu(
                 return true
         }
         for (column in autoAlignSkipColumns) {
-            if (Mine.isColumn(lastSlot, column))
+            if (Extra.isColumn(lastSlot, column))
                 return true
         }
         return false;

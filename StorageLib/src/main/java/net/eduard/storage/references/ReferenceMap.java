@@ -20,8 +20,15 @@ public class ReferenceMap extends ReferenceBase<Map<Object,Object>> {
 
 	@Override
 	public void update() {
+		/**
+		 * Dia 13/11/2021 Ta com erro na recuperacao do HashMap Referenciado
+		 */
 		for (Entry<Object,Object> entry : getRestore().entrySet()){
-			Object realKey = StorageAPI.getObjectByKey(keyInfo.getType(), entry.getKey());
+			Object realKey = entry.getKey();
+
+			// Desativando suporte a Key de HashMap ser Referencia
+			//realKey = StorageAPI.getObjectByKey(keyInfo.getType(), entry.getKey());
+
 			Object realValue = StorageAPI.getObjectByKey(valueInfo.getType(), entry.getValue());
 			realMap.put(realKey, realValue);
 

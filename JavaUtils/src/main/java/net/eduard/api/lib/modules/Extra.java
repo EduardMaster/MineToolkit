@@ -35,6 +35,17 @@ import java.util.zip.ZipInputStream;
  */
 @SuppressWarnings("unused")
 public final class Extra {
+    /**
+     * Verifica se contem a Mensagem dentro do Texto (Ignora se é maiuscula ou
+     * minuscula)
+     *
+     * @param message Mensagem
+     * @param text    Texto
+     * @return a resposta
+     */
+    public static boolean contains(String message, String text) {
+        return message.toLowerCase().contains(text.toLowerCase());
+    }
 
     /**
      * Transforma um objeto em um Tipo Wrapper (Tipos padrões e String)
@@ -170,7 +181,7 @@ public final class Extra {
     public static DecimalFormat MONEY = new DecimalFormat("###,###.##",
             DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));
 
-    public static List<String> MONEY_OP_CLASSES = Arrays.asList("","K","M","B","T","Q","QQ","S","SS","OC","N","D","UN","DD","TR","QT","QN","SD","SPD","OD","ND","VG","UVG","DVG","TVG","QTV","QNV","SEV","SPV","OVG","NVG","TD");
+    public static List<String> MONEY_OP_CLASSES = Arrays.asList("", "K", "M", "B", "T", "Q", "QQ", "S", "SS", "OC", "N", "D", "UN", "DD", "TR", "QT", "QN", "SD", "SPD", "OD", "ND", "VG", "UVG", "DVG", "TVG", "QTV", "QNV", "SEV", "SPV", "OVG", "NVG", "TD");
     public static DecimalFormat MONEY_OP_FORMATER = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR")));
     public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
     public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
@@ -178,6 +189,7 @@ public final class Extra {
     private static final Map<String, String> REPLACERS = new LinkedHashMap<>();
     private static final Random RANDOM = new Random();
     private static final Map<Class<?>, Class<?>> wrappers = new HashMap<>();
+
     static {
         wrappers.put(String.class, String.class);
         wrappers.put(int.class, Integer.class);
@@ -230,18 +242,6 @@ public final class Extra {
 
     }
 
-
-    /**
-     * Verifica se contem a Mensagem dentro do Texto (Ignora se é maiuscula ou
-     * minuscula)
-     *
-     * @param message Mensagem
-     * @param text    Texto
-     * @return a resposta
-     */
-    public static boolean contains(String message, String text) {
-        return message.toLowerCase().contains(text.toLowerCase());
-    }
 
     /**
      * Faz uma copia da Stream para UTF8 no arquivo
@@ -514,42 +514,44 @@ public final class Extra {
 
 
     /**
-     * Cria uma formação de tempo muito melhor do que a DateFormat faz
+     * Cria uma formatação de tempo que mostra os detalhes da duração
      *
-     * @param time Tempo em forma de numero
+     * @param time Tempo (TimeStamp long)
      * @return Tempo formatado
      */
     public static String formatTime(long time) {
         if (time == 0L) {
             return "Nunca";
         }
-        long day = TimeUnit.MILLISECONDS.toDays(time);
-        long hours = TimeUnit.MILLISECONDS.toHours(time) - day * 24L;
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - TimeUnit.MILLISECONDS.toHours(time) * 60L;
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MILLISECONDS.toMinutes(time) * 60L;
-        long ticks = (1000 - (time % 1000L)) / 50;
-        StringBuilder sb = new StringBuilder();
+        final char space = ' ';
+        final char and = 'e';
+        final long day = TimeUnit.MILLISECONDS.toDays(time);
+        final long hours = TimeUnit.MILLISECONDS.toHours(time) - day * 24L;
+        final long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - TimeUnit.MILLISECONDS.toHours(time) * 60L;
+        final long seconds = TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MILLISECONDS.toMinutes(time) * 60L;
+        StringBuilder stringBuilder = new StringBuilder();
         if (day > 0L) {
-            sb.append(day).append(" ").append(day == 1L ? "dia" : "dias").append(" ");
+            stringBuilder.append(day).append(space).append(day == 1L ? "dia" : "dias");
+            if (minutes > 0 || seconds > 0 || hours > 0) {
+                stringBuilder.append(space).append(and).append(space);
+            }
         }
         if (hours > 0L) {
-            sb.append(hours).append(" ").append(hours == 1L ? "hora" : "horas").append(" ");
+            stringBuilder.append(hours).append(space).append(hours == 1L ? "hora" : "horas");
+            if (minutes > 0 || seconds > 0) {
+                stringBuilder.append(space).append(and).append(space);
+            }
         }
         if (minutes > 0L) {
-
-            sb.append(minutes).append(" ").append(minutes == 1L ? "minuto" : "minutos").append(" ");
-        }
-        if (seconds >= 0L) {
-            if (ticks == 20 && seconds > 0) {
-                sb.append(seconds).append(" ").append(seconds == 1L ? "segundo" : "segundos");
-            } else if (ticks != 20 && seconds != 0) {
-                sb.append(seconds).append(".").append(ticks).append(" ").append(seconds == 1L ? "segundo" : "segundos");
-            } else {
-                sb.deleteCharAt(sb.length() - 1);
+            stringBuilder.append(minutes).append(space).append(minutes == 1L ? "minuto" : "minutos");
+            if (seconds > 0) {
+                stringBuilder.append(space).append(and).append(space);
             }
-
         }
-        String tempoFormatado = sb.toString();
+        if (seconds > 0L) {
+            stringBuilder.append(seconds).append(space).append(seconds == 1L ? "segundo" : "segundos");
+        }
+        String tempoFormatado = stringBuilder.toString();
         return tempoFormatado.isEmpty() ? "Agora" : tempoFormatado;
     }
 
@@ -559,7 +561,7 @@ public final class Extra {
      * metodo incompleto
      *
      * @param classUsed Plugin
-     * @param pack   Package
+     * @param pack      Package
      * @return Lista de Classes
      */
     public static List<String> getClassesName(Class<?> classUsed, String pack) {
@@ -584,12 +586,13 @@ public final class Extra {
         }
         return classes;
     }
-    public List<Class<?>> toClasses(List<String> names){
+
+    public List<Class<?>> toClasses(List<String> names) {
         List<Class<?>> classes = new ArrayList<>();
-        for (String className : names){
-            try{
+        for (String className : names) {
+            try {
                 classes.add(Class.forName(className));
-            }catch (Exception | Error ignored){
+            } catch (Exception | Error ignored) {
             }
         }
         return classes;
@@ -637,7 +640,6 @@ public final class Extra {
 
         return Math.random() <= chance;
     }
-
 
 
     /**
@@ -1887,7 +1889,7 @@ public final class Extra {
             return number.doubleValue();
         }
         try {
-            return Double.valueOf(object.toString());
+            return Double.parseDouble(object.toString());
         } catch (Exception e) {
             return 0D;
         }

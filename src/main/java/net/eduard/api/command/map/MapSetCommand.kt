@@ -18,11 +18,11 @@ class MapSetCommand : CommandManager("set", "setblock") {
             dataId = Extra.toInt(args[1]);
         }
         val mat = Material.getMaterial(typeId)
-        val minigameSchematic =
-            MinigameSchematic.getSchematic(player)
-        minigameSchematic.copy(player.location)
+        val worldUsed = player.location.world
+        val minigameSchematic =  MinigameSchematic.getSchematic(player)
+        minigameSchematic.prepare(player.location, minigameSchematic.low.toLocation(worldUsed), minigameSchematic.high.toLocation(worldUsed))
         minigameSchematic.setType(typeId.toShort(),dataId.toByte())
-        minigameSchematic.paste(player.location,false)
+        minigameSchematic.paste(player.location,true)
         player.sendMessage("§bEduardAPI §aSetando blocos para §e$mat")
     }
 

@@ -19,10 +19,9 @@ class PlayerTargetPlayerTask : TimeManager(20L) {
                         target, player).mineCallEvent()
                 }
             } catch (ex: Exception) {
-                EduardAPI.instance.log("Erro ao causar o Evento PlayerTargetEvent ")
+                EduardAPI.instance.log("Erro ao executar o Evento PlayerTargetEvent ")
                 ex.printStackTrace()
             }
-
         }
     }
 }

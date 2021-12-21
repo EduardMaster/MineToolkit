@@ -8,27 +8,20 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class MapPasteCommand : CommandManager("paste", "colar") {
-    override fun onCommand(
-        sender: CommandSender,
-        command: Command,
-        label: String,
-        args: Array<String>
-    ): Boolean {
-        if (!Mine.onlyPlayer(sender)) return true
-        val player = sender as Player
+
+    override fun playerCommand(player: Player, args: Array<String>) {
         if (!MinigameSchematic.isEditing(player)) {
             player.sendMessage("§bEduardAPI §aPrimeiro copie um Mapa:§2 /map copy")
-            return true
+            return
         }
         val map: MinigameSchematic =
             MinigameSchematic.getSchematic(player)
         map.paste(player.location, false)
         player.sendMessage(
-            "§bEduardAPI §aMapa colado com sucesso! §2(\$blocks)"
-                .replace("\$blocks", "" + map.count)
+            "§bEduardAPI §aMapa colado com sucesso! §2(%blocks)"
+                .replace("%blocks", "" + map.count)
         )
 
-        return true
     }
 
     init {

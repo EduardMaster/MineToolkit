@@ -21,7 +21,13 @@ class Minecraft_v1_7_R4 : Minecraft() {
     override fun forceOpen(chest: Chest, player: Player) {
 
     }
+
     override fun canAttackMelee(creature: Creature, classEntityName: String, priority: Int) {}
+    override fun followTarget(creature: Creature) {
+    }
+
+    override fun followLocation(creature: Creature, location: Location) {
+    }
 
     override fun canTarget(creature: Creature, classEntityName: String, priority: Int) {}
 
@@ -44,7 +50,7 @@ class Minecraft_v1_7_R4 : Minecraft() {
 
     override fun updateDisplayName(playerToAdd: Player) {}
     override fun getItemNBT(item: ItemStack): Any {
-      return 1
+        return 1
     }
 
     override fun setItemNBT(item: ItemStack, nbt: Any): ItemStack {
@@ -98,6 +104,6 @@ class Minecraft_v1_7_R4 : Minecraft() {
     }
 
     override fun getPlayers(): Collection<Player> {
-      return mutableListOf()
+        return mutableListOf()
     }
 }

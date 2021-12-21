@@ -28,16 +28,15 @@ class MinigameMap(
     var chestsFeastsLocations = mutableListOf<Location>()
     var chestsIslandsLocations = mutableListOf<Location>()
 
+    fun defaultWorldName(): String {
+        return "${minigame.name}/map/$name"
+    }
 
-
-
-    @Transient
-    var diferenceApplied = Vector()
 
     var feastCenter: Location? = null
         get() {
             if (field == null)
-                field = Location(world, 0.0, 100.0, 0.0)
+                field = Location(world, 0.5, 100.5, 0.5)
             return field
         }
 
@@ -73,10 +72,6 @@ class MinigameMap(
     val hasLobby get() = lobby != null
     val hasSpawn get() = spawn != null
     val hasSpawns get() = spawns.isNotEmpty()
-
-    fun defaultWorldName(): String {
-        return "worlds/${minigame.name}/map/$name"
-    }
 
 
     fun copyWorld(map: MinigameMap) {
@@ -131,14 +126,14 @@ class MinigameMap(
         for (loc in chestsFeastsLocations) {
             loc.world = world
         }
-        for ((id,island) in islands){
+        for ((_, island) in islands) {
             island.chest1Location?.world = world
             island.chest2Location?.world = world
             island.spawnLocation?.world = world
             island.centerLocation?.world = world
             island.lowLocation?.world = world
             island.highLocation?.world = world
-            for (locChest in island.chestsLocation){
+            for (locChest in island.chestsLocation) {
                 locChest.world = world
             }
         }
@@ -149,7 +144,7 @@ class MinigameMap(
 
     var worldUsed = MinigameWorld()
         get() {
-            if (field.nameNotSet()) {
+            if (field.worldName == "minigame-map") {
                 field.worldName = defaultWorldName()
             }
             return field
@@ -159,67 +154,73 @@ class MinigameMap(
         Bukkit.getConsoleSender().sendMessage("§b[MinigameMap] §f$msg")
     }
 
-    fun paste(relative: Location) {
+    @Transient
+    var preparedForPasting = false
+
+    fun prepareForPasting(diference: Vector) {
+        if (preparedForPasting){
+            debug("Ja foi aplicado o diferencial nas locations.")
+            return
+        }
+        debug("Aplicando diferencial em todas as locations")
+        this.spawn?.add(diference)
+        this.lobby?.add(diference)
+
+        for (spawn in spawns) {
+            spawn.add(diference)
+        }
+        for (chest in chestsIslandsLocations) {
+            chest.add(diference)
+        }
+        for (chest in chestsFeastsLocations) {
+            chest.add(diference)
+        }
+
+        for (chest in chestsMiniFeastLocations) {
+            chest.add(diference)
+        }
+        for ((_, island) in islands) {
+            island.chest1Location?.add(diference)
+            island.chest2Location?.add(diference)
+            island.spawnLocation?.add(diference)
+            island.centerLocation?.add(diference)
+            island.lowLocation?.add(diference)
+            island.highLocation?.add(diference)
+            for (locChest in island.chestsLocation) {
+                locChest.add(diference)
+            }
+        }
+        preparedForPasting = true
+    }
+
+    fun paste(): MinigameSchematic.SchematicPasting? {
+        return paste(feastCenter!!)
+    }
+
+    fun paste(relative: Location): MinigameSchematic.SchematicPasting? {
         world(relative.world)
         feastCenter = relative
         val map = gameMap
-        if (map == null){
-            debug("Nao foi encontrado o schematic do mapa "+ mapName())
-            return
+        if (map == null) {
+            debug("Nao foi encontrado o schematic do mapa " + mapName())
+            return null
         }
+        val difX = (relative.blockX - map.relative.blockX)
+        val difY = (relative.blockY - map.relative.blockY)
+        val difZ = (relative.blockZ - map.relative.blockZ)
+        val diference = Vector(difX, difY, difZ)
+        debug("Diferenca entre Ambos: $diference")
+        prepareForPasting(diference)
         debug("Local central da colagem: " + relative.toVector())
         debug("Local central do Schematic: " + map.relative)
-        val difX = relative.blockX - map.relative.blockX
-        val difY = relative.blockY - map.relative.blockY
-        val difZ = relative.blockZ - map.relative.blockZ
-        val diference = Vector(difX,difY,difZ)
-        debug("Diferenca entre Ambos: $diference")
-
-        map.paste(relative, false)
-
-        if (diferenceApplied == Vector()) {
-            debug("Aplicando diferencial em todas as locations")
-            this.spawn?.add(diference)
-            this.lobby?.add(diference)
-
-            for (spawn in spawns) {
-                spawn.add(diference)
-            }
-            for (chest in chestsIslandsLocations) {
-                chest.add(diference)
-            }
-            for (chest in chestsFeastsLocations) {
-                chest.add(diference)
-            }
-
-            for (chest in chestsMiniFeastLocations) {
-                chest.add(diference)
-            }
-            for ((id,island) in islands){
-                island.chest1Location?.add(diference)
-                island.chest2Location?.add(diference)
-                island.spawnLocation?.add(diference)
-                island.centerLocation?.add(diference)
-                island.lowLocation?.add(diference)
-                island.highLocation?.add(diference)
-                for (locChest in island.chestsLocation){
-                    locChest.add(diference)
-                }
-            }
-            diferenceApplied = diference
-        }else{
-            debug("Diferencial ja foi aplicado nas locations")
-        }
+        return map.paste(relative, true)
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-
         other as MinigameMap
-
         if (name != other.name) return false
-
         return true
     }
 

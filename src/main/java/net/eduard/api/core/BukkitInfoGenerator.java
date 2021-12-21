@@ -2,10 +2,14 @@ package net.eduard.api.core;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
 
+import lombok.val;
+import lombok.var;
+import net.eduard.api.lib.modules.Extra;
 import org.bukkit.Effect;
 import org.bukkit.EntityEffect;
 import org.bukkit.Material;
@@ -37,28 +41,54 @@ public class BukkitInfoGenerator {
         pasta.mkdirs();
         if (Objects.requireNonNull(pasta.listFiles()).length == 0) {
             saveEnum(DamageCause.class);
-            saveEnum(Material.class);
+
             saveEnum(Effect.class);
-            saveEnum(EntityType.class,"getKey");
+            saveEnum(EntityType.class, "getKey");
             saveEnum(TargetReason.class);
             saveEnum(Sound.class);
             saveEnum(EntityEffect.class);
             saveEnum(Environment.class);
             saveEnum(PotionType.class);
-            saveClassLikeEnum(PotionEffectType.class);
+            saveClassLikeEnum();
             plugin.log("DataBase gerada!");
         } else {
             plugin.log("DataBase ja foi gerada!");
         }
+        val configMaterial = new Config(plugin, "database/Material.yml");
+        var isLegacy = (Method) null;
+        try {
+            isLegacy = Extra.getMethod(Material.class, "isLegacy");
+        } catch (Exception e) {
+          //  e.printStackTrace();
+        }
+
+        for (val mat : Material.values()) {
+            if (isLegacy == null)
+                try {
+                    configMaterial.add(mat.name() + ".id", mat.getId());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            else{
+                try {
+                    if ((boolean)isLegacy.invoke(mat)){
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        configMaterial.saveConfig();
 
     }
 
-    private void saveClassLikeEnum(Class<?> value) {
+    private void saveClassLikeEnum() {
         try {
-            Config config = new Config(plugin, "database/" + value.getSimpleName() + ".yml");
-            for (Field field : value.getFields()) {
-                if (field.getType().equals(value)) {
-                    Object obj = field.get(value);
+            Config config = new Config(plugin, "database/" + PotionEffectType.class.getSimpleName() + ".yml");
+            for (Field field : PotionEffectType.class.getFields()) {
+                if (field.getType().equals(PotionEffectType.class)) {
+                    Object obj = field.get(PotionEffectType.class);
                     ConfigSection section = config.getSection(field.getName());
                     for (Method method : obj.getClass().getDeclaredMethods()) {
                         String name = method.getName();
@@ -82,18 +112,18 @@ public class BukkitInfoGenerator {
 
     private void saveEnum(Class<?> value, String... ignoredMethods) {
         try {
-
             Config config = new Config(plugin, "database/" + value.getSimpleName() + ".yml");
             boolean used = false;
             for (Object part : value.getEnumConstants()) {
                 try {
                     Enum<?> obj = (Enum<?>) part;
                     ConfigSection section = config.add(obj.name(), obj.ordinal());
-                        if (obj.name().startsWith("LEGACY")){
-                           // getPlugin().log("Ignorando Enum Legacy que não suporta mais ID: "+obj.name());
-                            continue;
-                        }
-                    inicial: for (Method method : obj.getClass().getDeclaredMethods()) {
+                    if (obj.name().startsWith("LEGACY")) {
+                        // getPlugin().log("Ignorando Enum Legacy que não suporta mais ID: "+obj.name());
+                        continue;
+                    }
+                    inicial:
+                    for (Method method : obj.getClass().getDeclaredMethods()) {
                         String name = method.getName();
                         if (Modifier.isStatic(method.getModifiers())) continue;
                         for (String metName : ignoredMethods) {
@@ -132,7 +162,6 @@ public class BukkitInfoGenerator {
             config.saveConfig();
 				/*
 			}
-
 			*/
 
 

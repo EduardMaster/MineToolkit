@@ -1,6 +1,5 @@
 package net.eduard.api.lib.event
 
-import net.eduard.api.lib.abstraction.Blocks
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
@@ -20,21 +19,22 @@ class BlockMineEvent(
     var needGiveDrops = true
     var needGiveExp = true
     var needApplyFortune = true
-    private var cancel = false
-
+    private var cancelled = false
     override fun isCancelled(): Boolean {
-        return cancel
+        return cancelled
     }
-
     override fun setCancelled(toggle: Boolean) {
-        cancel = toggle
+        cancelled = toggle
     }
 
     fun breakBlock(){
+        /*
         val blockInfo = Blocks.get(block.location)
         if (blockInfo != null)
             blockInfo.setType(Material.AIR)
-        else block.type = Material.AIR
+        */
+
+        block.type = Material.AIR
     }
 
     fun useDefaultDrops() {
@@ -44,7 +44,8 @@ class BlockMineEvent(
     }
 
     fun giveDrops() {
-        for (item in drops.keys) {
+        for ((item, amount) in drops) {
+            item.amount = amount.toInt()
             player.inventory.addItem(item)
         }
     }
@@ -56,8 +57,8 @@ class BlockMineEvent(
     }
 
     fun applyFortune() {
-        val item = player.itemInHand ?: return
-        val level = item.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS) ?: return
+        val item = player.itemInHand?:return
+        val level = item.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS)?:0
         for ((loopItem, amount) in drops) {
             drops[loopItem] = amount + (amount * level)
         }

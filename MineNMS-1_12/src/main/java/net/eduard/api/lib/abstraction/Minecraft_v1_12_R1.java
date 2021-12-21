@@ -262,4 +262,14 @@ final public class Minecraft_v1_12_R1 extends Minecraft {
     public void setTabList(@NotNull Player player, @NotNull String header, @NotNull String footer) {
 
     }
+
+    @Override
+    public void followTarget(@NotNull Creature creature) {
+
+    }
+
+    @Override
+    public void followLocation(@NotNull Creature creature, @NotNull Location location) {
+
+    }
 }

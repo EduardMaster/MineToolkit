@@ -29,6 +29,16 @@ import java.util.*;
 @SuppressWarnings("unused")
 public class ItemBuilder extends ItemStack {
 
+    private String skinURL;
+
+    public String getSkinURL() {
+        return skinURL;
+    }
+
+    public void setSkinURL(String skinURL) {
+        this.skinURL = skinURL;
+    }
+
     public ItemBuilder() {
         this(Material.STONE, 1);
     }
@@ -167,6 +177,7 @@ public class ItemBuilder extends ItemStack {
     }
 
     public ItemBuilder skin(String skinUrl) {
+        setSkinURL(skinUrl);
         byte[] encodedData = Base64.getEncoder()
                 .encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", skinUrl).getBytes());
 

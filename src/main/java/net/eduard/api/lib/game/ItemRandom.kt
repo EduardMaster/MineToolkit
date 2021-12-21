@@ -24,7 +24,7 @@ open class ItemRandom(
     var repeats = 0
     fun create(): ItemStack {
         if (item == null) return ItemStack(Material.AIR)
-        if (Mine.getChance(chance)) {
+        if (Extra.getChance(chance)) {
             val clone = item!!.clone()
             clone.amount = Extra.getRandomInt(minAmount, maxAmount)
             repeats++

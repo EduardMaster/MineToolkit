@@ -26,11 +26,11 @@ open class EffectManager {
             if (!player.hasPermission(requirePermission))
                 return
         for (cmd in consoleCommandsToRun) {
-            Mine.makeCommand(cmd.replace("\$player", player.name))
+            Mine.runCommand(cmd.replace("%player", player.name))
         }
         for (cmd in playerCommandsToRun) {
             print("Tentando fazer comando $cmd")
-            player.chat(cmd.replace("\$player", player.name))
+            player.chat(cmd.replace("%player", player.name))
         }
         soundToPlay?.create(player)
         messageToSend?.apply(player::sendMessage)

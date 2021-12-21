@@ -84,7 +84,6 @@ fun String.toLore(maxCharsPerLine: Int = 70, loreColor: String = "§7"): Mutable
     val list = mutableListOf<String>()
     if (contains(" ")) {
         var charCount = 0
-
         val words = split(" ")
         val text = StringBuilder()
         text.append(loreColor)
@@ -119,7 +118,6 @@ fun <T : Any> List<T>.randomByPercent(getDouble: (T.() -> Double)): T {
         }
         dataMinChance = dataMaxChance
     }
-
     return this[0]
 }
 

@@ -9,7 +9,6 @@ class BungeeReloadCommand : Command("bungeereload") {
 
 
     override fun execute(sender: CommandSender, args: Array<String>) {
-
         sender.sendMessage(TextComponent("§aToda configuracao foi recarregada!"))
         EduardAPIBungee.instance.reload()
     }

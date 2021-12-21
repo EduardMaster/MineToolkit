@@ -16,12 +16,10 @@ class BukkitPlugins : EventsManager() {
         if (e.plugin !is EduardPlugin) return
         val plugin = (e.plugin as EduardPlugin)
         if (plugin.isFree) return
-
         val pluginName = plugin.name
         val tag = "§b[" + plugin.name + "]§f"
         Bukkit.getConsoleSender().sendMessage("$tag Verificando licenca do Plugin no site")
         val config = Config(plugin, "license.yml")
-
         config.add("key", "INSIRA_KEY")
         config.add("owner", "INSIRA_Dono")
         config.saveConfig()
@@ -47,6 +45,5 @@ class BukkitPlugins : EventsManager() {
             }
         }
     }
-
 
 }

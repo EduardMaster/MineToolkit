@@ -4,16 +4,21 @@ import net.eduard.api.lib.manager.CommandManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
-class MemoryCommand : CommandManager("memory", "memoria") {
+class MemoryCommand : CommandManager("memory", "memoria", "ram") {
+
+    init {
+        description = "Verifica uso de memoria geral do servidor"
+        usage = "</command> [gc]"
+    }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        if (args.isNotEmpty()){
-            if (args[0] == "gc"){
+        if (args.isNotEmpty()) {
+            if (args[0] == "gc") {
                 Runtime.getRuntime().gc()
                 sender.sendMessage("§aGC Run")
             }
         }
-        val div = 1000*1000
+        val div = 1000 * 1000
         val memoriaDisponivel = (Runtime.getRuntime().freeMemory() / div)
         val totalMemoria = (Runtime.getRuntime().totalMemory() / div)
         val maximoMemoria = Runtime.getRuntime().maxMemory() / div

@@ -12,19 +12,15 @@ open class CurrencyManager : SimpleCurrencySystem() {
     companion object {
         val currencies = mutableMapOf<String, CurrencySystem>()
         val currenciesByPosition = mutableMapOf<Int, CurrencySystem>()
-
         fun getNextCurrency(currency: CurrencySystem): CurrencySystem? {
             return currenciesByPosition[currency.position + 1]
         }
-
         fun getPreviousCurrency(currency: CurrencySystem): CurrencySystem? {
             return currenciesByPosition[currency.position - 1]
         }
-
         fun getCurrencyByIcon(icon: ItemStack): CurrencySystem? {
             return currencies.values.firstOrNull { it.icon == icon }
         }
-
         fun register(currency: SimpleCurrencySystem) {
             var simpleCurrency = currency
             EduardAPI.instance.configs.add(
@@ -33,31 +29,24 @@ open class CurrencyManager : SimpleCurrencySystem() {
             )
             EduardAPI.instance.configs.saveConfig()
             simpleCurrency =
-                EduardAPI.instance.configs.get(
-                    "currency." +
-                            simpleCurrency.name, SimpleCurrencySystem::class.java
-                )
+                EduardAPI.instance.configs["currency." +
+                        simpleCurrency.name, SimpleCurrencySystem::class.java]
             EduardAPI.instance.log(
                 "§aMoeda registrada: §f"
                         + simpleCurrency.name
             )
             register(simpleCurrency.name, simpleCurrency)
             currenciesByPosition[simpleCurrency.position] = simpleCurrency
-
         }
-
         fun register(currencyName: String, currencyHandler: CurrencySystem) {
             currencies[currencyName.toLowerCase()] = currencyHandler
         }
-
         fun isRegistred(currencName: String): Boolean {
             return currencies.containsKey(currencName.toLowerCase())
         }
-
         fun getCurrency(currencyName: String): CurrencySystem? {
             return currencies[currencyName.toLowerCase()]
         }
-
     }
 
 

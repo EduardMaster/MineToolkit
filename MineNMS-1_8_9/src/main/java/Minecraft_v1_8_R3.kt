@@ -27,7 +27,7 @@ import kotlin.collections.HashSet
  */
 class Minecraft_v1_8_R3 : Minecraft() {
 
-    override fun canTarget(creature: Creature, classEntityName : String, priority : Int){
+    override fun canTarget(creature: Creature, classEntityName: String, priority: Int) {
         try {
             val nmsCreature = (creature as CraftCreature).handle
             val clz = Extra.getClassFrom("#mEntity$classEntityName")
@@ -36,28 +36,52 @@ class Minecraft_v1_8_R3 : Minecraft() {
             val target = PathfinderGoalNearestAttackableTarget(nmsCreature, clz, true)
             nmsCreature.targetSelector.a(target)
             nmsCreature.targetSelector.a(priority, target)
-        }catch (ex : Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
-    override fun canAttackMelee(creature: Creature, classEntityName : String, priority : Int){
-        try {
 
+    override fun canAttackMelee(creature: Creature, classEntityName: String, priority: Int) {
+        try {
             val nmsCreature = (creature as CraftCreature).handle
             val clz = Extra.getClassFrom("#mEntity$classEntityName")
                     as Class<out net.minecraft.server.v1_8_R3.Entity>
-            val melee = PathfinderGoalMeleeAttack(
-                nmsCreature,
-                clz, 1.0, true
-            )
-            nmsCreature.goalSelector.a(melee)
-            nmsCreature.goalSelector.a(priority,melee)
 
-        }catch (ex : Exception){
+            val melee = PathfinderGoalMeleeAttack(nmsCreature, clz, 1.0, true)
+            nmsCreature.goalSelector.a(melee)
+            nmsCreature.goalSelector.a(priority, melee)
+
+
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
 
     }
+    override fun followTarget(creature: Creature) {
+        try {
+            val nmsCreature = (creature as CraftCreature).handle
+            nmsCreature.goalSelector.a(PathfinderGoalMoveTowardsTarget(nmsCreature,1.0,1.0f))
+            /*
+            val clz = Extra.getClassFrom("#mEntity$classEntityName")
+                    as Class<out net.minecraft.server.v1_8_R3.Entity>
+            val melee = PathfinderGoalMeleeAttack(nmsCreature, clz, 1.0, true)
+            nmsCreature.goalSelector.a(melee)
+            nmsCreature.goalSelector.a(priority, melee)
+            */
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+    override fun followLocation(creature: Creature, targetLocation: Location) {
+        try {
+
+            val nmsCreature = (creature as CraftCreature).handle
+            nmsCreature.goalSelector.a(0,PathFinderFollowLocation(creature,targetLocation))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
 
     override fun removeGoals(creature: Creature) {
 
@@ -72,8 +96,8 @@ class Minecraft_v1_8_R3 : Minecraft() {
     override fun removeTargetGoals(creature: Creature) {
 
     }
-    override fun sendPacket(packet: Any, player: Player) {
 
+    override fun sendPacket(packet: Any, player: Player) {
         (player as CraftPlayer).handle.playerConnection.sendPacket(packet as Packet<*>)
     }
 
@@ -89,8 +113,7 @@ class Minecraft_v1_8_R3 : Minecraft() {
         xOffset: Float,
         yOffset: Float,
         zOffset: Float,
-        speed: Float
-    ) {
+        speed: Float) {
         val x = location.x.toFloat()
         val y = location.y.toFloat()
         val z = location.z.toFloat()
@@ -121,9 +144,7 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
     override fun performRespawn(player: Player) {
         (player as CraftPlayer).handle.playerConnection
-            .a(PacketPlayInClientCommand(
-                    PacketPlayInClientCommand
-                        .EnumClientCommand.PERFORM_RESPAWN))
+            .a(PacketPlayInClientCommand(PacketPlayInClientCommand.EnumClientCommand.PERFORM_RESPAWN))
     }
 
     override fun setPlayerSkin(player: Player, newSkin: String) {
@@ -166,27 +187,37 @@ class Minecraft_v1_8_R3 : Minecraft() {
         val destroy = PacketPlayOutEntityDestroy(entityPlayer.id)
         val removePlayerInfo = PacketPlayOutPlayerInfo(
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-            playerToRespawn.handle)
+            playerToRespawn.handle
+        )
         val spawn = PacketPlayOutNamedEntitySpawn(entityPlayer)
         val addPlayerInfo = PacketPlayOutPlayerInfo(
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-            playerToRespawn.handle)
+            playerToRespawn.handle
+        )
         val metadata = PacketPlayOutEntityMetadata(
             entityPlayer.id,
-            entityPlayer.dataWatcher, true)
+            entityPlayer.dataWatcher, true
+        )
         val headRotation = PacketPlayOutEntityHeadRotation(
             entityPlayer,
-            MathHelper.d(entityPlayer.headRotation * 256.0f / 360.0f).toByte())
+            MathHelper.d(entityPlayer.headRotation * 256.0f / 360.0f).toByte()
+        )
         sendPacketsToOthers(playerToRespawn, removePlayerInfo, destroy, metadata, addPlayerInfo, spawn, headRotation)
     }
 
     override fun reloadPlayer(player: Player) {
-        sendPacket(player,PacketPlayOutPlayerInfo(
+        sendPacket(
+            player, PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                (player as CraftPlayer).handle))
-        sendPacket( player,PacketPlayOutPlayerInfo(
+                (player as CraftPlayer).handle
+            )
+        )
+        sendPacket(
+            player, PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                player.handle))
+                player.handle
+            )
+        )
         (Bukkit.getServer() as CraftServer).handle.moveToWorld(
             player.handle, player
                 .handle.dimension, true, player.getLocation(),
@@ -235,7 +266,7 @@ class Minecraft_v1_8_R3 : Minecraft() {
         val nmsEntity = ((entity as CraftEntity).handle)
         val compound = NBTTagCompound()
         nmsEntity.c(compound)
-        compound.setByte("NoAI",1.toByte())
+        compound.setByte("NoAI", 1.toByte())
         nmsEntity.f(compound)
     }
 
