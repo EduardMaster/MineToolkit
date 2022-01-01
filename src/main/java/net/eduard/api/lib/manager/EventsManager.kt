@@ -40,10 +40,6 @@ open class EventsManager : Listener {
     open fun registerListener(plugin: JavaPlugin) {
         unregisterListener()
         this.plugin = plugin
-        registerListener()
-    }
-
-    private fun registerListener() {
         this.isRegistered = true
         Bukkit.getPluginManager().registerEvents(this, plugin)
     }
@@ -53,10 +49,9 @@ open class EventsManager : Listener {
      * Desregistra o Listener
      */
     fun unregisterListener() {
-        if (isRegistered) {
-            HandlerList.unregisterAll(this)
-            this.isRegistered = false
-        }
+        if (!isRegistered) return
+        HandlerList.unregisterAll(this)
+        this.isRegistered = false
     }
 
 }

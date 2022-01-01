@@ -22,7 +22,6 @@ open class MenuButton(
     var page: Int
 ) : Slot(null,positionX, positionY) {
     var menu: Menu? = null
-
     @StorageReference
     var menuLink: Menu? = null
     var fixed = false

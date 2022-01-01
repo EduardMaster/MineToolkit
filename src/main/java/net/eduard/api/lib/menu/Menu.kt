@@ -369,6 +369,12 @@ open class Menu(
             button.page = lastPage
             button.index = lastSlot
         }
+        if (button.isCategory && isRegistered){
+            button.menu?.superiorMenu = this
+            button.menuLink?.superiorMenu = this
+            button.menu?.registerJavaMenu(plugin)
+            button.menuLink?.registerJavaMenu(plugin)
+        }
     }
 
     @Transient

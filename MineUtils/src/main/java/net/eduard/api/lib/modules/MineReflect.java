@@ -346,21 +346,21 @@ public class MineReflect {
                     "asNMSCopy",
                     ItemStack.class);
             Object itemCopia = asNMSCopy.invoke(0, item);
+            if (itemCopia!= null) {
+                Method setTag = Extra.getMethod(MineReflect.classMineItemStack, "setTag",
+                        MineReflect.classMineNBTTagCompound);
 
-            Method setTag = Extra.getMethod(MineReflect.classMineItemStack, "setTag",
-                    MineReflect.classMineNBTTagCompound);
+                setTag.invoke(itemCopia, data.getItemNBT().getNbtMap());
+                Method asCraftMirror = Extra.getMethod(MineReflect.classCraftItemStack,
+                        "asCraftMirror", MineReflect.classMineItemStack);
+                Object itemModified; //= asCraftMirror.invoke(0, itemCopia);
 
-            setTag.invoke(itemCopia, data.getItemNBT().getNbtMap());
-            Method asCraftMirror = Extra.getMethod(MineReflect.classCraftItemStack,
-                    "asCraftMirror", MineReflect.classMineItemStack);
-            Object itemModified; //= asCraftMirror.invoke(0, itemCopia);
-
-            Method asBukkitCopy = Extra.getMethod(MineReflect.classCraftItemStack,
-                    "asBukkitCopy", MineReflect.classMineItemStack);
-            itemModified = asBukkitCopy.invoke(0, itemCopia);
-            if (itemModified != null)
-                return (ItemStack) itemModified;
-
+                Method asBukkitCopy = Extra.getMethod(MineReflect.classCraftItemStack,
+                        "asBukkitCopy", MineReflect.classMineItemStack);
+                itemModified = asBukkitCopy.invoke(0, itemCopia);
+                if (itemModified != null)
+                    return (ItemStack) itemModified;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
