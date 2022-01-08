@@ -17,7 +17,7 @@ class Config(
     var folder: File,
     val name: String,
     @Transient
-    private var plugin: Any? = null
+    var plugin: Any? = null
 ) {
 
     @Transient
@@ -53,11 +53,13 @@ class Config(
     fun getIntList(path: String?): List<Int> {
         return config.getIntList(path!!)
     }
+    fun clear(){
+        config.map.clear()
+    }
 
     fun log(msg: String) {
         if (isDebug)
-            Hybrid.instance.console
-                .sendMessage("§b[ConfigAPI] §3($name) §f$msg")
+            Hybrid.instance.console.sendMessage("§b[ConfigAPI] §3($name) §f$msg")
     }
 
     fun saveDefaultConfig() {
