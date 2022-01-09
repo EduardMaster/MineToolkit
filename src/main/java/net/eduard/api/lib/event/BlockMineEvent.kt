@@ -21,6 +21,7 @@ class BlockMineEvent(
     var needGiveExp = true
     var needApplyFortune = true
     var multiplier = 1.0
+    var fortuneApplied = false
     private var cancelled = false
     override fun isCancelled(): Boolean {
         return cancelled
@@ -46,12 +47,32 @@ class BlockMineEvent(
         }
     }
 
+    fun clearDrops() {
+        drops.clear()
+    }
+
+    fun fixDropsAmount() {
+        for (entry in drops) {
+            val item = entry.key
+            var amount = entry.value
+            if (amount <= 0.0) {
+                amount = 1.0
+                entry.setValue(amount)
+            }
+            if (amount < Int.MAX_VALUE) {
+                item.amount = amount.toInt()
+            } else {
+                item.amount = Int.MAX_VALUE
+            }
+            if (item.amount <= 0) {
+                item.amount = 1
+            }
+        }
+    }
+
     fun giveDrops() {
-        for ((item, amount) in drops) {
-            if (amount > Int.MAX_VALUE) {
-                item.amount = amount.toInt()
-            } else
-                item.amount = amount.toInt()
+        fixDropsAmount()
+        for (item in drops.keys) {
             player.inventory.addItem(item)
         }
     }
@@ -62,14 +83,18 @@ class BlockMineEvent(
         }
     }
 
-    fun applyFortune() {
-        val item = player.itemInHand ?: return
+    fun applyFortune(): Boolean {
+        val item = player.itemInHand ?: return false
         val fortuneLevel = item.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS)
+        if (fortuneLevel <= 0) return false
         for (entry in drops.entries) {
             val amountBase = entry.value
             val amountMultiplied = amountBase * multiplier
             entry.setValue((amountMultiplied * fortuneLevel))
         }
+        fixDropsAmount()
+        fortuneApplied=true
+        return true
     }
 
     init {
