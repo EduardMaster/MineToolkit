@@ -1,6 +1,8 @@
 package net.eduard.api;
 
 import kotlin.KotlinVersion;
+import net.minecraft.server.v1_8_R3.EnchantmentLootBonus;
+import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.lang.reflect.Method;

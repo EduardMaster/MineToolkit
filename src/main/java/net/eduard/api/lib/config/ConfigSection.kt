@@ -37,7 +37,7 @@ class ConfigSection(var key: String, var data: Any) {
     fun log(msg: String) {
         val quantidade = if (isMap()) map.size else (if (isList()) list.size else "N")
         if (Config.isDebug)
-          logger.info("[ConfigSection] ($completeName)[$quantidade] $msg" )
+            logger.info("[ConfigSection] ($completeName)[$quantidade] $msg")
     }
 
     val map: MutableMap<String, ConfigSection>
@@ -199,9 +199,9 @@ class ConfigSection(var key: String, var data: Any) {
         get() = map.entries
     val string: String
         get() = ConfigUtil.removeQuotes(Extra.toString(data))
-            .replace("\\n", ConfigUtil.LINE_SEPARATOR, false)
-            .replace("<br>", ConfigUtil.LINE_SEPARATOR, false)
-            .replace("/n", ConfigUtil.LINE_SEPARATOR, false)
+            //.replace("\\n", ConfigUtil.LINE_SEPARATOR, false)
+           // .replace("<br>", ConfigUtil.LINE_SEPARATOR, false)
+            //.replace("/n", ConfigUtil.LINE_SEPARATOR, false)
 
     fun getString(path: String): String {
         return getSection(path).string
@@ -314,7 +314,7 @@ class ConfigSection(var key: String, var data: Any) {
         }
         when {
             isList() -> {
-                lines.add("$space$key" + ConfigUtil.CHAR_SECTION + (if (list.isEmpty())(" " +ConfigUtil.EMPTY_LIST) else ""))
+                lines.add("$space$key" + ConfigUtil.CHAR_SECTION + (if (list.isEmpty()) (" " + ConfigUtil.EMPTY_LIST) else ""))
                 for (text in list) {
                     lines.add("$space  ${ConfigUtil.CHAR_LIST_ITEM} $text")
                 }
@@ -322,7 +322,7 @@ class ConfigSection(var key: String, var data: Any) {
             isMap() -> {
                 if (spaceId != -1) {
 
-                    lines.add("$space$key" + ConfigUtil.CHAR_SECTION + (if (map.isEmpty()) (" "+ConfigUtil.EMPTY_SECTION) else ""))
+                    lines.add("$space$key" + ConfigUtil.CHAR_SECTION + (if (map.isEmpty()) (" " + ConfigUtil.EMPTY_SECTION) else ""))
                 }
                 for (section in map.values) {
                     section.save(lines, spaceId + 1)
@@ -338,9 +338,10 @@ class ConfigSection(var key: String, var data: Any) {
                     if (ConfigUtil.hasOnlySpaces(tempData)) {
                         tempData = ConfigUtil.STR1 + "" + ConfigUtil.STR1
                     }
-                    if (tempData.startsWith(" ") or tempData.endsWith(" ")){
+                    if (tempData.startsWith(" ") or tempData.endsWith(" ")) {
                         tempData = ConfigUtil.STR1 + tempData + ConfigUtil.STR1
                     }
+                    tempData = tempData.replace("\n","<br>",false)
                 }
                 lines.add("$space$key${ConfigUtil.CHAR_SECTION} $tempData")
             }
@@ -397,6 +398,9 @@ class ConfigSection(var key: String, var data: Any) {
                                 .trimStart()
                                 .removeSurrounding(ConfigUtil.STR1)
                                 .removeSurrounding(ConfigUtil.STR2)
+                                .replace("\\n", ConfigUtil.LINE_SEPARATOR, false)
+                                .replace("<br>", ConfigUtil.LINE_SEPARATOR, false)
+                                .replace("/n", ConfigUtil.LINE_SEPARATOR, false)
 
                         if (result == ConfigUtil.EMPTY_SECTION) {
                             path.map
@@ -415,10 +419,10 @@ class ConfigSection(var key: String, var data: Any) {
                     currentComments.clear()
                     if (path.isMap() || path.isList()) {
                         spaceId++
-                        path.father.log("§>> (${path.key})" )
+                        path.father.log("§>> (${path.key})")
                         path.log("Tentando ler Items da Lista ou SubSecoes")
                     } else {
-                        path.log("Info: \'${path.data}\'" )
+                        path.log("Info: \'${path.data}\'")
                         path = path.father
                     }
 

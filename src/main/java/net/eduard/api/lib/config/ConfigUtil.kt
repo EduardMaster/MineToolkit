@@ -117,7 +117,8 @@ object ConfigUtil {
 
 
     fun removeQuotes(text: String): String {
-        return text.removeSurrounding(STR1).removeSurrounding(STR2)
+        return text.removeSurrounding(STR1)
+            .removeSurrounding(STR2)
     }
 
     fun getPath(currentPath: String): String {

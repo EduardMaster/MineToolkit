@@ -8,6 +8,7 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import org.bukkit.inventory.ItemStack
+import org.bukkit.material.MaterialData
 
 class BlockMineEvent(
     val drops: MutableMap<ItemStack, Double>,
@@ -21,7 +22,7 @@ class BlockMineEvent(
     var needGiveExp = true
     var needApplyFortune = true
     var multiplier = 1.0
-    var fortuneApplied = false
+    var dropsMultiplied = false
     private var cancelled = false
     override fun isCancelled(): Boolean {
         return cancelled
@@ -39,6 +40,14 @@ class BlockMineEvent(
         */
 
         block.type = Material.AIR
+    }
+
+    fun setDrop(item: ItemStack, amount: Double) {
+        drops[item] = amount
+    }
+
+    fun addDrop(item: ItemStack, amount: Double) {
+        drops[item] = amount + (drops[item] ?: 0.0)
     }
 
     fun useDefaultDrops() {
@@ -88,12 +97,14 @@ class BlockMineEvent(
         val fortuneLevel = item.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS)
         if (fortuneLevel <= 0) return false
         for (entry in drops.entries) {
+            val blockDrop = entry.key
+            if (blockDrop.data !in fortuneBlocks) continue
             val amountBase = entry.value
             val amountMultiplied = amountBase * multiplier
             entry.setValue((amountMultiplied * fortuneLevel))
         }
         fixDropsAmount()
-        fortuneApplied=true
+        dropsMultiplied = true
         return true
     }
 
@@ -108,8 +119,40 @@ class BlockMineEvent(
     }
 
     companion object {
+
+        var fortuneBlocks = mutableListOf<MaterialData>()
+
+        init {
+            for (type in Material.values()) {
+                if (type.name.contains("ORE")) {
+                    fortuneBlocks.add(MaterialData(type))
+                }
+            }
+            fortuneBlocks.add(MaterialData(Material.NETHER_STALK))
+            fortuneBlocks.add(MaterialData(Material.CACTUS))
+            fortuneBlocks.add(MaterialData(Material.SEEDS))
+            fortuneBlocks.add(MaterialData(Material.MELON_SEEDS))
+            fortuneBlocks.add(MaterialData(Material.PUMPKIN_SEEDS))
+            fortuneBlocks.add(MaterialData(Material.IRON_BLOCK))
+            fortuneBlocks.add(MaterialData(Material.MELON))
+            fortuneBlocks.add(MaterialData(Material.LAPIS_BLOCK))
+            fortuneBlocks.add(MaterialData(Material.DIAMOND_BLOCK))
+            fortuneBlocks.add(MaterialData(Material.LAPIS_ORE))
+            fortuneBlocks.add(MaterialData(Material.POTATO_ITEM))
+            fortuneBlocks.add(MaterialData(Material.CARROT_ITEM))
+            fortuneBlocks.add(MaterialData(Material.DIAMOND))
+            fortuneBlocks.add(MaterialData(Material.GOLD_INGOT))
+            fortuneBlocks.add(MaterialData(Material.EMERALD))
+            // LAPIZ
+            fortuneBlocks.add(MaterialData(Material.INK_SACK, 4))
+            // COCOA BEANS
+            fortuneBlocks.add(MaterialData(Material.INK_SACK, 3))
+        }
+
+
         @JvmStatic
         val handlerList = HandlerList()
+
     }
 
 }

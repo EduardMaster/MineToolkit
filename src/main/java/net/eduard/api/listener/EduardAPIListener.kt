@@ -43,7 +43,7 @@ class EduardAPIListener : EventsManager() {
             event.fallDropsInWorld()
         }
         if (event.needGiveExp && event.expToDrop > 0)
-            event.player.giveExp(e.expToDrop)
+            event.player.giveExp(event.expToDrop)
         e.block.type = Material.AIR
     }
 
