@@ -70,7 +70,7 @@ class SoundCommand : CommandManager("sound","som") {
         if (world) {
             player.world.playSound(location, sound, volume, pitch)
         } else player.playSound(location, sound, volume, pitch)
-        sender.sendMessage("§aEfeito sonoro criado!")
+        sender.sendMessage("§aEfeito $sound sonoro criado!")
 
         return true
     }

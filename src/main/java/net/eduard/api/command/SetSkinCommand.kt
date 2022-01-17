@@ -6,7 +6,7 @@ import org.bukkit.entity.Player
 
 class SetSkinCommand : CommandManager("setskin","setplayerskin") {
     init{
-        description= "Defina uma Skin para o jogador"
+        description= "Defina uma Skin para si mesmo"
         usage= "/<command> <playerName>"
     }
     override fun playerCommand(player: Player, args: Array<String>) {

@@ -23,7 +23,7 @@ class RunCommand : CommandManager("run", "rodar") {
         }
         if (sender !is Player) return true
         val cmd = args[0]
-        var type: Class<*> = Void::class.java
+        val type: Class<*>
         if (args.size == 1) {
             try {
                 val method = Extra.getMethod(Player::class.java, cmd)

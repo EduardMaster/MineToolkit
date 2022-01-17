@@ -23,12 +23,12 @@ fun EduardPluginsAPI.childrenAPIClass(): Class<*>? {
     return null
 }
 
-fun EduardPluginsAPI.register() {
+fun EduardPluginsAPI.registerAPI() {
     val currentAPI = childrenAPIClass()!!
     EDUARD_PLUGINS_APIS[currentAPI] = this
 }
 
-fun EduardPluginsAPI.unregister() {
+fun EduardPluginsAPI.unregisterAPI() {
     val currentAPI = childrenAPIClass()!!
     EDUARD_PLUGINS_APIS.remove(currentAPI)
 }

@@ -26,9 +26,9 @@ class SetXPCommand : CommandManager("setexperience","setexp","setxp") {
             amount = Int.MAX_VALUE.toDouble()
         }
         player.giveExp(amount.toInt())
-        player.sendMessage("§aSua xp foi alterada para: §2$amount")
-        player.sendMessage("§aSeu novo nível é: §2" + player.level)
-        player.sendMessage("§aSua barra de XP: §2" + player.exp)
+        player.sendMessage("§bSua xp foi alterada para: §3$amount")
+        player.sendMessage("§bSeu novo nível é: §3" + player.level)
+        player.sendMessage("§bSua barra de XP: §3" + player.exp)
     }
 
 }
