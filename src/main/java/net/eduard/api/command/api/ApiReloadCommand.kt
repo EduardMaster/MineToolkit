@@ -17,7 +17,7 @@ class ApiReloadCommand : CommandManager("reload", "recarregar") {
             val plugin = Mine.getPlugin(pluginName)
             if (plugin is EduardPlugin) {
                 plugin.reload()
-                sender.sendMessage("§bEduardAPI §aPlugin do Eduard §2" + plugin.getName() + "§a foi recarregado")
+                sender.sendMessage("§bEduardAPI §aPlugin do Eduard §f" + plugin.getName() + " §afoi recarregado")
             } else {
                 sender.sendMessage("§cEste plugin nao é um plugin do Eduard")
             }

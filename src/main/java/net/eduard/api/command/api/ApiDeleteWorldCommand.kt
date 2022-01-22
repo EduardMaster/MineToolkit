@@ -14,7 +14,7 @@ class ApiDeleteWorldCommand : CommandManager("deleteworld", "deletarmundo") {
         val worldName = args[0]
         if (Mine.existsWorld(sender, worldName)) {
             Mine.deleteWorld(worldName)
-            sender.sendMessage("§bEduardAPI §aO Mundo §2$worldName§a foi deletado com sucesso!")
+            sender.sendMessage("§bEduardAPI §aO Mundo §f$worldName §afoi deletado com sucesso!")
         }
 
         return true

@@ -4,7 +4,7 @@ import net.eduard.api.lib.manager.CommandManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
-class ApiLoadCommand : CommandManager("load", "carregar") {
+class ApiLoadPluginCommand : CommandManager("loadplugin", "carregarplugin") {
     override fun onCommand(
         sender: CommandSender, command: Command,
         label: String, args: Array<String>
@@ -14,7 +14,7 @@ class ApiLoadCommand : CommandManager("load", "carregar") {
     }
 
     init {
-        usage = "/api load <plugin>"
+        usage = "/api loadplugin <plugin>"
         description = "Carrega um plugin descarregado no servidor"
     }
 }

@@ -6,9 +6,9 @@ import org.bukkit.command.CommandSender
 
 class ApiHelpCommand : CommandManager("help", "ajuda", "?") {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        for (sub in getCommand("api").subCommands.values) {
-            if (sender.hasPermission(sub.permission)) {
-                sender.sendMessage("§a" + sub.usage + " §8-§7 " + sub.description)
+        for (subCMD in parent!!.subCommands.values) {
+            if (sender.hasPermission(subCMD.permission)) {
+                sender.sendMessage("§b" + subCMD.usage + " §8-§3 " + subCMD.description)
             }
         }
         return true

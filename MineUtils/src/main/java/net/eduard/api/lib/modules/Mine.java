@@ -725,14 +725,14 @@ public final class Mine {
      * Verifica se o plugin existe se não manda mensagem para o sender
      *
      * @param sender Sender (Quem faz o comando)
-     * @param plugin Nome do Plugin
+     * @param pluginName Nome do Plugin
      * @return se o plugin esta no servidor ou não
      */
-    public static boolean existsPlugin(CommandSender sender, String plugin) {
+    public static boolean existsPlugin(CommandSender sender, String pluginName) {
 
-        Plugin p = getPlugin(plugin);
-        if (p == null) {
-            sender.sendMessage(Mine.MSG_PLUGIN_NOT_EXITS.replace("$plugin", plugin));
+        Plugin plugin = getPlugin(pluginName);
+        if (plugin == null) {
+            sender.sendMessage(Mine.MSG_PLUGIN_NOT_EXITS.replace("$plugin", pluginName));
             return false;
         }
         return true;

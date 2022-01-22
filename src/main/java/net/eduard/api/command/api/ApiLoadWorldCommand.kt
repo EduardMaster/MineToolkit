@@ -8,22 +8,23 @@ import org.bukkit.command.CommandSender
 
 class ApiLoadWorldCommand : CommandManager("loadworld", "carregarmundo", "ligarmundo") {
 
+    init {
+        usage = "/api loadworld <world>"
+        description = "Carrega um mundo descarregado no servidor"
+    }
     override fun command(sender: CommandSender, args: Array<String>) {
         if (args.isEmpty()) {
             sendUsage(sender)
             return
         }
-        if (Bukkit.getWorld(args[0]) == null) {
-            Mine.loadWorld(args[0])
-            sender.sendMessage("§bEduardAPI §aVoce carregou o mundo §2" + args[0])
+        val worldName = args[0]
+        if (Bukkit.getWorld(worldName) == null) {
+            Mine.loadWorld(worldName)
+            sender.sendMessage("§bEduardAPI §aVoce carregou o mundo §f$worldName")
         } else {
-            sender.sendMessage("§bEduardAPI §aEste mundo já esta carregado")
+            sender.sendMessage("§bEduardAPI §aO mundo §f$worldName §cjá esta carregado")
         }
     }
 
 
-    init {
-        usage = "/api loadworld <world>"
-        description = "Carrega um mundo descarregado no servidor"
-    }
 }

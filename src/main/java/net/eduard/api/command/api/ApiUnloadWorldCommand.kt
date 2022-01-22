@@ -15,7 +15,6 @@ class ApiUnloadWorldCommand : CommandManager("unloadworld", "descarregarmundo", 
             Mine.unloadWorld(args[0])
             sender.sendMessage("§bEduardAPI §aVoce descarregou o mundo §2" + args[0])
         }
-
         return true
     }
 

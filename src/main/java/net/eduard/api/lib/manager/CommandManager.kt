@@ -123,38 +123,41 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         args: Array<String>
     ): List<String>? {
         val vars = ArrayList<String>()
-        var cmd = this
+        var cmdSelected = this
         for (index in args.indices) {
             val arg = args[index].toLowerCase()
             vars.clear()
             var sub: CommandManager? = null
-            for (subcmd in cmd.subCommands.values) {
-                if (!sender.hasPermission(subcmd.permission)) continue
-                if (Extra.startWith(subcmd.name, arg)) {
-                    vars.add(subcmd.name)
+            for (subCMD in cmdSelected.subCommands.values) {
+                if (!sender.hasPermission(subCMD.permission)) continue
+                if (Extra.startWith(subCMD.name, arg)) {
+                    vars.add(subCMD.name)
                 }
-                if (subcmd.name.equals(arg, ignoreCase = true)) {
-                    sub = subcmd
+                if (subCMD.name.equals(arg, ignoreCase = true)) {
+                    sub = subCMD
                 }
-                for (alias in subcmd.aliases) {
+                for (alias in subCMD.aliases) {
                     if (Extra.startWith(alias, arg)) {
                         vars.add(alias)
                     }
                     if (alias.equals(arg, ignoreCase = true)) {
-                        sub = subcmd
+                        sub = subCMD
                     }
                 }
-
-
             }
             if (sub == null) {
                 break
             }
-            cmd = sub
+            cmdSelected = sub
         }
+        if (cmdSelected != this){
+            val subTabComplete = cmdSelected.onTabComplete(sender,command,label,args)
+            if (subTabComplete!=null) {
+                vars.addAll(subTabComplete)
+            }
+        }
+
         return if (vars.isEmpty()) {
-
-
             null
         } else vars
     }

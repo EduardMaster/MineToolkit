@@ -6,11 +6,8 @@ import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
-class ApiEnableCommand : CommandManager("enable", "habilitar") {
-    override fun onCommand(
-        sender: CommandSender, command: Command,
-        label: String, args: Array<String>
-    ): Boolean {
+class ApiDisablePluginCommand : CommandManager("disableplugin", "desabilitarplugin") {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             sendUsage(sender)
             return true
@@ -18,15 +15,15 @@ class ApiEnableCommand : CommandManager("enable", "habilitar") {
         val pluginName = args[0]
         if (Mine.existsPlugin(sender, pluginName)) {
             val plugin = Mine.getPlugin(pluginName)
-            sender.sendMessage("§bEduardAPI §aPlugin §2$pluginName§a foi ativado")
-            Bukkit.getPluginManager().enablePlugin(plugin)
+            sender.sendMessage("§bEduardAPI §aPlugin §f$pluginName§a foi desativado")
+            Bukkit.getPluginManager().disablePlugin(plugin)
         }
 
         return true
     }
 
     init {
-        usage = "/api enable <plugin>"
-        description = "Ativa um plugin desativado no servidor"
+        usage = "/api disable <plugin>"
+        description = "Desativa um plugin ativado no servidor"
     }
 }
