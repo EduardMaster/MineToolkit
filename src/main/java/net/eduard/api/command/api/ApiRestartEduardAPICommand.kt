@@ -9,6 +9,9 @@ import org.bukkit.command.CommandSender
 import java.util.ArrayList
 
 class ApiRestartEduardAPICommand : CommandManager("restarteduardapi","restarteduardplugins") {
+    init{
+        description = "Reinicia todos os plugins dependentes do EduardAPI"
+    }
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         sender.sendMessage("§eDescarregando plugins do Eduard")
         Mine.runCommand("timings off")

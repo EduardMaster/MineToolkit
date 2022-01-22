@@ -23,7 +23,7 @@ class ApiEnablePluginCommand : CommandManager("enableplugin", "habilitarplugin")
     }
 
     init {
-        usage = "/api enable <plugin>"
+        usage = "/api enableplugin <plugin>"
         description = "Ativa um plugin desativado no servidor"
     }
 }

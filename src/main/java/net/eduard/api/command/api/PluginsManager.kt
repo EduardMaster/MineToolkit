@@ -72,9 +72,9 @@ object PluginsManager {
     }
 
 
-    private fun unloadPlugin(pl: String): String? {
-        val pm = Bukkit.getServer().pluginManager
-        val spm = pm as SimplePluginManager
+    fun unloadPlugin(pluginName: String): String? {
+        val pluginManager = Bukkit.getServer().pluginManager
+        val serverPluginManager = pluginManager as SimplePluginManager
         var cmdMap: SimpleCommandMap? = null
         var plugins: MutableList<Plugin>? = null
         var names: MutableMap<String, Plugin>? = null
@@ -82,22 +82,22 @@ object PluginsManager {
         var listeners: Map<Event, SortedSet<RegisteredListener>>? = null
         var reloadlisteners = true
         try {
-            val pluginsField = spm.javaClass.getDeclaredField("plugins")
+            val pluginsField = serverPluginManager.javaClass.getDeclaredField("plugins")
             pluginsField.isAccessible = true
-            plugins = pluginsField[spm] as MutableList<Plugin>
-            val lookupNamesField = spm.javaClass.getDeclaredField("lookupNames")
+            plugins = pluginsField[serverPluginManager] as MutableList<Plugin>
+            val lookupNamesField = serverPluginManager.javaClass.getDeclaredField("lookupNames")
             lookupNamesField.isAccessible = true
-            names = lookupNamesField[spm] as MutableMap<String, Plugin>
+            names = lookupNamesField[serverPluginManager] as MutableMap<String, Plugin>
             try {
-                val listenersField = spm.javaClass.getDeclaredField("listeners")
+                val listenersField = serverPluginManager.javaClass.getDeclaredField("listeners")
                 listenersField.isAccessible = true
-                listeners = listenersField[spm] as Map<Event, SortedSet<RegisteredListener>>
+                listeners = listenersField[serverPluginManager] as Map<Event, SortedSet<RegisteredListener>>
             } catch (e: Exception) {
                 reloadlisteners = false
             }
-            val commandMapField = spm.javaClass.getDeclaredField("commandMap")
+            val commandMapField = serverPluginManager.javaClass.getDeclaredField("commandMap")
             commandMapField.isAccessible = true
-            cmdMap = commandMapField[spm] as SimpleCommandMap
+            cmdMap = commandMapField[serverPluginManager] as SimpleCommandMap
             val knownCommandsField = cmdMap.javaClass.getDeclaredField("knownCommands")
             knownCommandsField.isAccessible = true
             commands = knownCommandsField[cmdMap] as MutableMap<String, Command>
@@ -108,35 +108,35 @@ object PluginsManager {
         }
         var tp = ""
         for (plugin in Bukkit.getServer().pluginManager.plugins) {
-            if (plugin.description.name.equals(pl, ignoreCase = true)) {
-                pm.disablePlugin(plugin)
+            if (plugin.description.name.equals(pluginName, ignoreCase = true)) {
+                pluginManager.disablePlugin(plugin)
                 tp = tp + plugin.name + " "
                 if (plugins != null && plugins.contains(plugin)) {
                     plugins.remove(plugin)
                 }
-                if (names != null && names.containsKey(pl)) {
-                    names.remove(pl)
+                if (names != null && names.containsKey(pluginName)) {
+                    names.remove(pluginName)
                 }
                 if (listeners != null && reloadlisteners) {
-                    for (set in listeners.values) {
-                        val it2 = set.iterator()
-                        while (it2.hasNext()) {
-                            val value = it2.next() as RegisteredListener
+                    for (eventListeners in listeners.values) {
+                        val eventListenersIterator = eventListeners.iterator()
+                        while (eventListenersIterator.hasNext()) {
+                            val value = eventListenersIterator.next() as RegisteredListener
                             if (value.plugin === plugin) {
-                                it2.remove()
+                                eventListenersIterator.remove()
                             }
                         }
                     }
                 }
-                val it3: MutableIterator<Map.Entry<String?, Command?>> = commands!!.entries.iterator()
+                val commandsEntySetIterator: MutableIterator<Map.Entry<String, Command>> = commands.entries.iterator()
                 if (cmdMap != null) {
-                    while (it3.hasNext()) {
-                        val (_, value) = it3.next()
-                        if (value is PluginCommand) {
-                            val c = value
-                            if (c.plugin === plugin) {
-                                c.unregister(cmdMap)
-                                it3.remove()
+                    while (commandsEntySetIterator.hasNext()) {
+                        val (_, commmand) = commandsEntySetIterator.next()
+                        if (commmand is PluginCommand) {
+                            val pluginCmd = commmand
+                            if (pluginCmd.plugin === plugin) {
+                                pluginCmd.unregister(cmdMap)
+                                commandsEntySetIterator.remove()
                             }
                         }
                     }

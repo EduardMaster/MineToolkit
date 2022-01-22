@@ -19,7 +19,7 @@ class ApiUnloadWorldCommand : CommandManager("unloadworld", "descarregarmundo", 
     }
 
     init {
-        usage = "/api unload <world>"
+        usage = "/api unloadworld <world>"
         description = "Descarrega um mundo carregado no servidor"
     }
 }

@@ -23,7 +23,7 @@ class ApiDisablePluginCommand : CommandManager("disableplugin", "desabilitarplug
     }
 
     init {
-        usage = "/api disable <plugin>"
+        usage = "/api disableplugin <plugin>"
         description = "Desativa um plugin ativado no servidor"
     }
 }
