@@ -103,7 +103,11 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
                 val args2 = args.copyOfRange(1, args.size)
                 return sub.onCommand(sender, command, label, args2)
             } else {
-                command(sender, args)
+                if (sender.hasPermission(permission)) {
+                    command(sender, args)
+                }else {
+                    sender.sendMessage(permissionMessage)
+                }
             }
         } else {
             if (sender.hasPermission(permission)) {
@@ -359,12 +363,11 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         override fun execute(sender: CommandSender, label: String, args: Array<String>): Boolean {
             try {
                 if (!command.plugin.isEnabled) {
-                    sender.sendMessage("§cPlugin foi desabilitado.")
+                    sender.sendMessage("§cPlugin ${command.plugin.name} foi desabilitado.")
                     return false
                 }
                 if (sender.hasPermission(permission)) {
                     return command.onCommand(sender, this, label, args)
-
                 } else {
                     command.sendPermissionMessage(sender)
                 }
