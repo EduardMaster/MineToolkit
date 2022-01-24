@@ -5,16 +5,12 @@ import net.eduard.api.server.CurrencySystem
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-open class SimpleCurrencySystem
-    (
+open class SimpleCurrencySystem(
     override var name: String = "MoedaCustom",
     override var icon: ItemStack = ItemStack(Material.DIAMOND_BLOCK),
     override var symbol: String = "\$",
     override var displayName: String = "Moeda customizada",
-    override var inicialAmount: Int = 0
-
-): CurrencySystem
-{
+    override var inicialAmount: Int = 0): CurrencySystem {
     override var position = 1
     override fun get(player: FakePlayer): Double {
         return 0.0

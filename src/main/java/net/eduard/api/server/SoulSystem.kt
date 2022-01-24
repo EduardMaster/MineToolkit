@@ -3,7 +3,7 @@ package net.eduard.api.server
 import net.eduard.api.lib.modules.FakePlayer
 
 
-interface SoulSystem {
+interface SoulSystem : PluginSystem{
 
     fun addSouls(player: FakePlayer, amount: Double)
     fun removeSouls(player: FakePlayer, amount: Double)

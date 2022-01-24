@@ -4,7 +4,7 @@ import net.eduard.api.lib.score.DisplayBoard
 import org.bukkit.entity.Player
 
 
-interface ScoreSystem {
+interface ScoreSystem : PluginSystem{
 
     fun setScore(player: Player, scoreboard: DisplayBoard)
     fun setScoreDefault(player: Player)

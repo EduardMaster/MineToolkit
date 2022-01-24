@@ -3,7 +3,7 @@ package net.eduard.api.server
 /**
  * API de Economia do Servidor
  */
-interface EconomyAPI : EduardPluginsAPI{
+interface EconomySystem : PluginSystem{
 
     /**
      * Deposita dinheiro para o jogador com bonus aplicado

@@ -3,7 +3,7 @@ package net.eduard.api.server
 import net.eduard.api.lib.modules.FakePlayer
 import java.util.*
 
-interface ClanSystem {
+interface ClanSystem  : PluginSystem {
     interface ClanData{
         val id : UUID
         var tag : String

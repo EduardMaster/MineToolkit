@@ -5,9 +5,7 @@ import org.bukkit.inventory.ItemStack
 
 
 interface CurrencySystem {
-
     var name: String
-
     var displayName: String
     var icon: ItemStack
     var symbol: String
@@ -18,6 +16,4 @@ interface CurrencySystem {
     fun remove(player: FakePlayer, amount: Double): Boolean
     fun add(player: FakePlayer, amount: Double): Boolean
     fun set(player: FakePlayer, amount: Double)
-
-
 }

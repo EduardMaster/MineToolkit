@@ -23,18 +23,10 @@ open class CurrencyManager : SimpleCurrencySystem() {
         }
         fun register(currency: SimpleCurrencySystem) {
             var simpleCurrency = currency
-            EduardAPI.instance.configs.add(
-                "currency." +
-                        simpleCurrency.name, simpleCurrency
-            )
+            EduardAPI.instance.configs.add("currency." + simpleCurrency.name, simpleCurrency)
             EduardAPI.instance.configs.saveConfig()
-            simpleCurrency =
-                EduardAPI.instance.configs["currency." +
-                        simpleCurrency.name, SimpleCurrencySystem::class.java]
-            EduardAPI.instance.log(
-                "§aMoeda registrada: §f"
-                        + simpleCurrency.name
-            )
+            simpleCurrency = EduardAPI.instance.configs["currency." + simpleCurrency.name, SimpleCurrencySystem::class.java]
+            EduardAPI.instance.log("§aMoeda registrada: §f" + simpleCurrency.name)
             register(simpleCurrency.name, simpleCurrency)
             currenciesByPosition[simpleCurrency.position] = simpleCurrency
         }

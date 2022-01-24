@@ -1,6 +1,6 @@
 package net.eduard.api.server
 
-interface ChatAPI :  EduardPluginsAPI {
+interface ChatSystem :  PluginSystem {
 
     fun isMuted(playerName : String) : Boolean
     fun mute(playerName: String)

@@ -3,7 +3,7 @@ package net.eduard.api.server
 import net.eduard.api.lib.game.Tag
 import org.bukkit.entity.Player
 
-interface TagSystem {
+interface TagSystem : PluginSystem {
 
     fun getTag(player : Player) : Tag
     fun setTag(player : Player, tag : Tag)

@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 
-interface MineSystem {
+interface MineSystem : PluginSystem{
 
     fun hasMine(name : String) : Boolean
     fun getMine(name: String) : MineModule?
