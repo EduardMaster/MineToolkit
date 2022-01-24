@@ -7,6 +7,9 @@ object Systems {
     var clanSystem: ClanSystem? = null
 
     @JvmStatic
+    var arenaSystem: ArenaSystem? = null
+
+    @JvmStatic
     var cashSystem: CashSystem? = null
 
     @JvmStatic
