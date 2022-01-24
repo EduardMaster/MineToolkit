@@ -29,12 +29,10 @@ open class SimpleCurrencySystem
     }
 
     override fun add(player: FakePlayer, amount: Double): Boolean {
-
         return true
     }
 
     override fun set(player: FakePlayer, amount: Double){
-
     }
 
 }

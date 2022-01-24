@@ -4,6 +4,9 @@ package net.eduard.api.server
 object Systems {
 
     @JvmStatic
+    var clanSystem: ClanSystem? = null
+
+    @JvmStatic
     var cashSystem: CashSystem? = null
 
     @JvmStatic

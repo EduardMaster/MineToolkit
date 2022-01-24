@@ -449,13 +449,13 @@ public final class Extra {
             return 0D;
         }
         text = text.toLowerCase();
-        for (int i = MONEY_OP_CLASSES.size() - 1; i > 0; i--) {
-            String sigla = MONEY_OP_CLASSES.get(i).toLowerCase();
+        for (int siglaID = MONEY_OP_CLASSES.size() - 1; siglaID > 0; siglaID--) {
+            String sigla = MONEY_OP_CLASSES.get(siglaID).toLowerCase();
             if (text.endsWith(sigla)) {
                 text = text.replace(sigla, "");
                 double valor = Extra.toDouble(text);
                 valor = fixDouble(valor);
-                double potencia = Math.pow(10, (i) * 3);
+                double potencia = Math.pow(10, (siglaID) * 3);
                 return valor * potencia;
             }
         }
