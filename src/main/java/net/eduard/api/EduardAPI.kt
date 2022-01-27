@@ -11,11 +11,11 @@ import net.eduard.api.lib.abstraction.Hologram
 import net.eduard.api.lib.bungee.BungeeAPI
 import net.eduard.api.lib.bungee.ServerSpigot
 import net.eduard.api.lib.config.Config
+import net.eduard.api.lib.config.ConfigSection
 import net.eduard.api.lib.database.BukkitTypes
 import net.eduard.api.lib.database.DBManager
 import net.eduard.api.lib.database.HybridTypes
 import net.eduard.api.lib.database.SQLManager
-import net.eduard.api.lib.game.SoundEffect
 import net.eduard.api.lib.hybrid.BukkitServer
 import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.kotlin.store
@@ -33,7 +33,7 @@ import net.eduard.api.server.minigame.MinigameSchematic
 import net.eduard.api.supports.CurrencyJHCash
 import net.eduard.api.supports.CurrencyVaultEconomy
 import net.eduard.api.task.AutoSaveAndBackupTask
-import net.eduard.api.task.DatabaseUpdater
+import net.eduard.api.task.DatabaseUpdaterTask
 import net.eduard.api.task.MenuAutoUpdaterTask
 import net.eduard.api.task.PlayerTargetPlayerTask
 import org.bukkit.Bukkit
@@ -202,7 +202,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         PlayerTargetPlayerTask().asyncTimer()
 
         AutoSaveAndBackupTask().asyncTimer()
-        DatabaseUpdater().asyncTimer()
+        DatabaseUpdaterTask().asyncTimer()
         log("Tasks ativados com sucesso")
     }
 
@@ -251,6 +251,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         StorageAPI.setDebug(configs.getBoolean("debug.storage"))
         DBManager.setDebug(configs.getBoolean("debug.database"))
         Config.isDebug = configs.getBoolean("debug.config")
+        ConfigSection.isDebug = configs.getBoolean("debug.config-section")
         Menu.isDebug = configs.getBoolean("debug.menu")
         Hologram.debug = configs.getBoolean("debug.holograms")
         CommandManager.debugEnabled = configs.getBoolean("debug.commands")
@@ -288,6 +289,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
 
     fun configDefault() {
         configs.add("debug.config", false)
+        configs.add("debug.config-section", false)
         configs.add("debug.bungee-bukkit", false)
         configs.add("debug.storage", false)
         configs.add("debug.copyable", false)

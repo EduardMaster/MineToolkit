@@ -10,17 +10,14 @@ import net.eduard.api.lib.modules.Copyable
  * @since EduardAPI 1.0
  */
 class Tag(
-        var name: String,
-        var prefix: String,
-        var suffix: String,
-        var rank: Int
+    var name: String,
+    var prefix: String,
+    var suffix: String,
+    var rank: Int
 ) {
-    constructor() : this("Tag", "","",0)
-    constructor(  name: String,
-                  prefix: String,
-                  rank: Int) : this(name, prefix,"",rank)
-    constructor(name: String,
-                  prefix: String) : this(name, prefix,"",0)
+    constructor() : this("Tag", "", "", 0)
+    constructor(name: String, prefix: String, rank: Int) : this(name, prefix, "", rank)
+    constructor(name: String, prefix: String) : this(name, prefix, "", 0)
 
     fun copy(): Tag {
         return Copyable.copyObject(this)

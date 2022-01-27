@@ -1,22 +1,20 @@
 package net.eduard.api.task
 
-import net.eduard.api.EduardAPI
-import net.eduard.api.lib.manager.TimeManager
+import net.eduard.api.EduardAPIBungee
 import net.eduard.api.lib.modules.Extra
-import net.eduard.api.server.EduardPlugin
-import org.bukkit.Bukkit
+import net.eduard.api.server.EduardBungeePlugin
+import net.md_5.bungee.api.ProxyServer
 
-class DatabaseUpdater : TimeManager(20L) {
-
+class BungeeDatabaseUpdaterTask : Runnable {
     fun log(msg: String) {
-        EduardAPI.instance.log(msg)
+        EduardAPIBungee.instance.log(msg)
     }
 
     override fun run() {
-        for (plugin in Bukkit.getPluginManager().plugins) {
-            if (plugin !is EduardPlugin) continue
+        for (plugin in ProxyServer.getInstance().pluginManager.plugins) {
+            if (plugin !is EduardBungeePlugin) continue
             if (plugin.dbManager.hasConnection()) {
-                val name = plugin.name
+                val name = plugin.pluginName
                 run {
                     val agora = Extra.getNow()
                     val amountUpdated = plugin.sqlManager.runUpdatesQueue()
@@ -33,6 +31,8 @@ class DatabaseUpdater : TimeManager(20L) {
                     if (amountDeleted > 0)
                         log("Deletando $amountDeleted objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
                 }
+
+
             }
         }
     }

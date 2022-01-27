@@ -37,6 +37,11 @@ class Config(
 
 
     companion object {
+        fun debug(message: String) {
+            if (isDebug)
+                Hybrid.instance.console.sendMessage("§b[ConfigAPI] §f$message")
+        }
+
         private val Any.dataFolder: File
             get() {
                 try {
@@ -57,7 +62,7 @@ class Config(
         config.map.clear()
     }
 
-    fun log(msg: String) {
+    fun debug(msg: String) {
         if (isDebug)
             Hybrid.instance.console.sendMessage("§b[ConfigAPI] §3($name) §f$msg")
     }
@@ -66,39 +71,39 @@ class Config(
         file.parentFile.mkdirs()
         if (file.exists()) return
         if (Extra.isDirectory(file)) {
-            log("IS A FOLDER")
+            debug("IS A FOLDER")
             file.mkdirs()
             return
         }
         if (plugin == null) {
-            log("PLUGIN NULL")
+            debug("PLUGIN NULL")
             return
         }
         try {
-            log("COPYING DEFAULT...")
+            debug("COPYING DEFAULT...")
             val defaultResourceFile = Extra.getResource(plugin!!.javaClass.classLoader, name)
             if (defaultResourceFile == null) {
-                log("DEFAULT NOT FOUNDED!")
+                debug("DEFAULT NOT FOUNDED!")
                 return
             }
             Extra.copyAsUTF8(defaultResourceFile, file)
-            log("DEFAULT COPIED!")
+            debug("DEFAULT COPIED!")
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
     fun saveConfig() {
-        log("SAVING...")
+        debug("SAVING...")
         try {
             if (Extra.isDirectory(file)) {
-                log("NOT SAVED!")
+                debug("NOT SAVED!")
                 return
             }
             val lines = mutableListOf<String>()
             config.save(lines, -1)
             Extra.writeLines(file, lines)
-            log("SAVED!")
+            debug("SAVED!")
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -108,12 +113,12 @@ class Config(
         try {
             saveDefaultConfig()
             if (file.isFile && file.exists()) {
-                log("RELOADING...")
+                debug("RELOADING...")
                 config.map.clear()
                 config.reload(Extra.readLines(file))
-                log("RELOADED!")
+                debug("RELOADED!")
             } else {
-                log("NOT RELOADED!")
+                debug("NOT RELOADED!")
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

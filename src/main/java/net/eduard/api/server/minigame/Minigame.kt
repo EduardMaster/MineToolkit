@@ -5,6 +5,7 @@ import org.bukkit.entity.Player
 
 import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.kotlin.reloadListFromFolder
+import net.eduard.api.lib.kotlin.saveListIn
 import net.eduard.api.lib.kotlin.saveListInFolder
 import net.eduard.api.lib.modules.BukkitBungeeAPI
 import net.eduard.api.lib.modules.FakePlayer
@@ -399,13 +400,13 @@ open class Minigame(
             mode.saveKits()
         }
         File(plugin.dataFolder, "modes/")
-            .saveListInFolder(modes) { it.modeName }
+            .saveListIn(modes) { modeName }
     }
 
 
     fun saveRooms() {
         File(plugin.dataFolder, "rooms/")
-            .saveListInFolder(rooms) { it.id.toString() }
+            .saveListIn(rooms) { id.toString() }
     }
     open fun hasMinPlayerAmount(room : MinigameRoom) : Boolean{
         return room.getPlayers(MinigamePlayerState.NORMAL).size >= room.map.minPlayersAmount

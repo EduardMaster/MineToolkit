@@ -15,12 +15,9 @@ import net.eduard.api.lib.plugin.IPluginInstance
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.listener.BungeePlugins
-import net.eduard.api.task.BungeeDatabaseUpdater
-import net.md_5.bungee.api.Callback
+import net.eduard.api.task.BungeeDatabaseUpdaterTask
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.config.ServerInfo
-import net.md_5.bungee.api.connection.Server
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 import java.text.DecimalFormat
@@ -166,7 +163,7 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
 
         ProxyServer.getInstance().scheduler.schedule(
             plugin,
-            BungeeDatabaseUpdater(),
+            BungeeDatabaseUpdaterTask(),
             1, 1, TimeUnit.SECONDS
         );
 
@@ -180,7 +177,7 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
     lateinit var databaseUpdater: Thread
     fun asyncSQLUpdater(){
         databaseUpdater = thread {
-            val updater = BungeeDatabaseUpdater()
+            val updater = BungeeDatabaseUpdaterTask()
             while (true){
                 updater.run()
                 Thread.sleep(50)

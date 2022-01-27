@@ -14,12 +14,13 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
-import net.minecraft.server.v1_8_R3.CommandDebug
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import java.nio.file.Files
+import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
 
@@ -43,8 +44,55 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     var reloaded = false
     var started = false
 
-    fun backup() {
+    fun File.copyFolderTo(folderTo: File, deep: Int = 0) {
+        if (deep>4){
+            return
+        }
+        try {
+            if (this.isDirectory) {
+                folderTo.mkdirs()
+                for (file in listFiles()!!) {
+                    if (file.isDirectory) {
+                        file.copyFolderTo(File(folderTo, file.name), deep + 1)
+                    } else {
+                        val target = File(folderTo, file.name)
+                        if (!target.exists()) {
+                            Files.copy(file.toPath(), target.toPath())
+                        }
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+    @Transient
+    @Volatile
+    var creatingBackup = false
 
+    fun backup() {
+        if (creatingBackup)return
+        creatingBackup=true
+        settings.lastBackup = System.currentTimeMillis()
+        val pastaBackup = File(pluginFolder, "/backup/")
+        pastaBackup.mkdirs()
+        val pluginsDataFile = pluginFolder.listFiles() ?: return
+        val formatador = SimpleDateFormat("dd-MM-yyyy-HH-mm")
+        val backupName = formatador.format(System.currentTimeMillis())
+        val backupPasta = File(pastaBackup,backupName )
+        backupPasta.mkdirs()
+        for (file in pluginsDataFile) {
+            if (file.name.contains("backup")) continue
+            if (file.isDirectory) {
+                file.copyFolderTo(File(backupPasta, file.name))
+            } else {
+                val target = File(backupPasta, file.name)
+                if (!target.exists()){
+                    Files.copy(file.toPath(), target.toPath())
+                }
+            }
+        }
+        creatingBackup=false
     }
 
     override fun getPlugin(): EduardPlugin {
@@ -124,10 +172,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      */
     override fun onEnable() {
         if (!started) onLoad()
-        log(
-            "Foi ativado na v" + description.version + " um plugin "
-                    + (if (isFree) "§aGratuito" else "§bPago") + "§f feito pelo Eduard"
-        )
+        log("Foi ativado na v" + description.version + " um plugin " + (if (isFree) "§aGratuito" else "§bPago") + "§f feito pelo Eduard")
         resolvePut(this)
     }
 
@@ -135,12 +180,9 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         return Mine.getClasses(this, pack)
     }
 
-
     fun autosave() {
         settings.lastSave = Extra.getNow()
-
         save()
-
     }
 
 
@@ -193,12 +235,8 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         calculate("Desregistrando Tasks") { unregisterTasks() }
         calculate("Desregistrando Storables") { unregisterStorableClasses() }
         calculate("Desregistrando menus") { unregisterMenus() }
-
         calculate("Desconectando Database Connections e Limpando Cache") { dbManager.closeConnection() }
-        log(
-            "Foi desativado na v" + description.version + " um plugin "
-                    + if (isFree) "§aGratuito" else "§bPago"
-        )
+        log("Foi desativado na v" + description.version + " um plugin " + if (isFree) "§aGratuito" else "§bPago")
         resolveTake(this)
     }
 
@@ -217,23 +255,6 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
 
     }
 
-
-    /**
-     * Deleta os ultimos backups
-     */
-    private fun deleteLastBackups() {
-        val pasta = File(getPluginFolder(), "/backup/")
-        pasta.mkdirs()
-        val lista = mutableListOf(*pasta.listFiles()!!)
-        lista.sortBy { it.lastModified() }
-        for (position in lista.size - 10 downTo 0) {
-            val arquivo = lista[position]
-            Extra.deleteFolder(arquivo)
-            if (arquivo.exists())
-                arquivo.delete()
-
-        }
-    }
 
     fun unregisterStorableClasses() {
         StorageAPI.unregisterPlugin(javaClass)

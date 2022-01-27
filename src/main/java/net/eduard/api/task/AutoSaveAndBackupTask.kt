@@ -15,44 +15,38 @@ class AutoSaveAndBackupTask : TimeManager(20L) {
         for (plugin in Bukkit.getPluginManager().plugins) {
             if (plugin !is EduardPlugin) continue
             val pluginSettings = plugin.settings
+            val pluginName = "§e(${plugin.name})"
             try {
                 val agora = Extra.getNow()
-                if (pluginSettings.isAutoSave && pluginSettings.lastSave + pluginSettings.autoBackupSeconds * 1000 < agora) {
-                    log("Salvando dados do plugin §b" + plugin.name)
-                    val tempo1 = Extra.getNow()
+                val canRunSaveNow = pluginSettings.lastSave + pluginSettings.autoBackupSeconds * 1000 < agora
+                if (pluginSettings.isAutoSave && canRunSaveNow) {
+                    log("$pluginName§f Salvando dados do plugin")
+                    val inicioSave = Extra.getNow()
                     plugin.autosave()
-                    val tempo2 = Extra.getNow()
-                    log(
-                        "Tempo levado para salvar os dados do plugin: §a" + (tempo2 - tempo1)
-                                + " milisegundos"
-                    )
-                    log("§7-----")
-                }
-
-
-                if (pluginSettings.isAutoBackup && pluginSettings.lastBackup + pluginSettings.autoBackupSeconds * 1000 < agora) {
-                    log("Iniciando sistema de backup para o plugin §b" + plugin.name)
-                    log("Deletando backups dos dias anteriores")
-                    val tempo1 = Extra.getNow()
-                    plugin.deleteOldBackups()
-                    val tempo2 = Extra.getNow()
-                    log("Tempo levado para deletar os backups: §a" + (tempo2 - tempo1) + " milisegundos")
-                    log("Fazendo backup ")
-                    val tempo3 = Extra.getNow()
-                    plugin.backup()
-                    val tempo4 = Extra.getNow()
-                    log(
-                        "Backup finalizado tempo levado para fazer: §a" + (tempo4 - tempo3)
-                                + " milisegundos"
-                    )
-                    log("§7-----")
+                    val fimSave = Extra.getNow()
+                    log("$pluginName§f Tempo levado para salvar §e" + (fimSave - inicioSave) + "§fms")
 
                 }
-
             } catch (ex: Exception) {
-                log("Falha ao tentar salvar dados do plugin ou gerar backup do plugin " + plugin.name)
+                log("$pluginName §cFalha ao rodar metodo save()")
                 ex.printStackTrace()
             }
+            try {
+                val agora = Extra.getNow()
+                val canBackupNow = pluginSettings.lastBackup + pluginSettings.autoBackupSeconds * 1000L < agora
+                if (pluginSettings.isAutoBackup && canBackupNow) {
+                    log("$pluginName§f Gerando Backup")
+                    val inicioBackup = Extra.getNow()
+                    plugin.backup()
+                    val fimBackup = Extra.getNow()
+                    log("$pluginName§f Backup gerado com: §e" + (fimBackup - inicioBackup) + "§fms")
+                }
+            } catch (ex: Exception) {
+                plugin.creatingBackup
+                log("$pluginName §cFalha ao rodar metodo backup()")
+                ex.printStackTrace()
+            }
+
 
         }
     }

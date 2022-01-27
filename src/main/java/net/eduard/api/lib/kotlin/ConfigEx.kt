@@ -42,3 +42,10 @@ fun <T> File.saveListInFolder(list: List<T>, clearConfigFirst: Boolean, fileName
         config.save(data)
     }
 }
+inline fun <T> File.saveListIn(list: List<T>, fileNamer: T.() -> String) {
+    for (listItem in list) {
+        val config = Config(this, fileNamer(listItem) + ".yml")
+        config.clear()
+        config.save(listItem)
+    }
+}

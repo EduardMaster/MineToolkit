@@ -13,14 +13,14 @@ public class PluginSettings {
         return autoSave;
     }
 
-    private int autoSaveSeconds = 1;
+    private int autoSaveSeconds = 60;
     private boolean autoBackup = false;
 
     public boolean isAutoBackup() {
         return autoBackup;
     }
 
-    private int autoBackupSeconds = 1;
+    private int autoBackupSeconds = 60*10;
 
     public int getAutoBackupSeconds() {
         return autoBackupSeconds;
@@ -34,7 +34,7 @@ public class PluginSettings {
         return lastBackup;
     }
 
-    private transient long lastBackup = 0L;
+    private long lastBackup = 0L;
     private transient long lastSave = 0L;
 
     public boolean isDebug() {

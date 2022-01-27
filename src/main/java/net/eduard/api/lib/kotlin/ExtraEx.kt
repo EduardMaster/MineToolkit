@@ -3,6 +3,7 @@ package net.eduard.api.lib.kotlin
 import net.eduard.api.lib.modules.Copyable
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.lib.storage.StorageAPI
+import java.util.concurrent.TimeUnit
 
 /**
  * Alias para Copyable.copyObject, copia este Objeto
@@ -23,6 +24,36 @@ inline fun <reified T : Any> store(alias: String) {
 fun Int.toRadians() = Math.toRadians(this.toDouble())
 fun Double.toRadians() = Math.toRadians(this)
 
+fun String.parseWordDuration(): Long {
+    var time = 0L
+    try {
+        if (endsWith("d", true)) {
+            time += (TimeUnit.DAYS.toMillis(substring(0, length - 1).toLong()))
+        }
+        if (endsWith("h", true)) {
+            time += (TimeUnit.HOURS.toMillis(substring(0, length - 1).toLong()))
+        }
+        if (endsWith("s", true)) {
+            time += (TimeUnit.SECONDS.toMillis(substring(0, length - 1).toLong()))
+        }
+        if (endsWith("m", true)) {
+            time += (TimeUnit.MINUTES.toMillis(substring(0, length - 1).toLong()))
+        }
+    } catch (ex: NumberFormatException) {
+        ex.printStackTrace()
+    }
+    return time
+}
+
+fun String.parseDuration(): Long {
+    var time = 0L
+    if (contains(" ", false))
+        for (word in split(" ")) {
+            time += word.parseWordDuration()
+        }
+    else time = parseWordDuration()
+    return time
+}
 
 inline fun <reified T : Any> new(setup: T.() -> Unit): T {
     val element = T::class.java.newInstance() as T
@@ -37,6 +68,7 @@ inline fun <reified T : Any> MutableList<T>.add(setup: T.() -> Unit): T {
     add(element)
     return element
 }
+
 
 /**
  * Formata o Tempo do Jeito de Data ou por Duração
@@ -167,9 +199,16 @@ fun String.cut(maxSize: Int): String {
     return Extra.cutText(this, maxSize)
 }
 
+@Deprecated(replaceWith = ReplaceWith("this.contains(message,true)"), message = "Aliases" )
+fun String.lowerContains(message: String) = Extra.contains(this, message)
 
-fun String.lowerContains(msg: String) = Extra.contains(this, msg)
-
+fun <T : Any?> T.isInitialized() : Boolean{
+    return try{
+        this != null
+    }catch (e : UninitializedPropertyAccessException){
+        false
+    }
+}
 
 
 

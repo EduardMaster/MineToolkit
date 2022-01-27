@@ -28,6 +28,6 @@ class MapSetCommand : CommandManager("set", "setblock") {
 
     init {
         usage = "/map set <blockID>"
-        description = "Define a posição 2"
+        description = "Altera o tipo dos blocos da Posição 1 ate a Posção 2"
     }
 }
