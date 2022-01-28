@@ -6,6 +6,7 @@ import org.bukkit.potion.PotionEffect
 
 import net.eduard.api.lib.game.VisualEffect
 import net.eduard.api.lib.game.SoundEffect
+import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.modules.Mine
 
 open class EffectManager {
@@ -29,7 +30,7 @@ open class EffectManager {
             Mine.runCommand(cmd.replace("%player", player.name))
         }
         for (cmd in playerCommandsToRun) {
-            print("Tentando fazer comando $cmd")
+            Hybrid.instance.console.sendMessage("§eRUNNING CMD: §f/$cmd")
             player.chat(cmd.replace("%player", player.name))
         }
         soundToPlay?.create(player)

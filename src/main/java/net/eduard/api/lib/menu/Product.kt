@@ -32,9 +32,7 @@ open class Product(
     val hasUpgrades get() = upgrades.isNotEmpty()
 
     @Transient
-    lateinit var realProduct: Any
-
-    fun hasRealProductLinked() = this::realProduct.isInitialized
+    var realProduct: Any?=null
 
     var product: ItemStack? = null
         set(value) {
