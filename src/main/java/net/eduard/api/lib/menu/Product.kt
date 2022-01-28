@@ -33,6 +33,9 @@ open class Product(
 
     @Transient
     lateinit var realProduct: Any
+
+    fun hasRealProductLinked() = this::realProduct.isInitialized
+
     var product: ItemStack? = null
         set(value) {
             field = value
@@ -80,20 +83,16 @@ open class Product(
     var moneyFormatedOP = false
 
     override fun getIcon(player: Player): ItemStack {
-
-        val clone = super.getIcon(player).clone()
-
-        if (isLimited) {
-            if (clone.amount > 64) {
-                clone.amount = 64
-            }
+        val iconClone = super.getIcon(player).clone()
+        if (iconClone.amount > 64) {
+            iconClone.amount = 64
         }
-        val lore = Mine.getLore(clone)
+        val lore = Mine.getLore(iconClone)
         if (parentMenu == null) {
-            return clone
+            return iconClone
         }
         if (parentMenu !is Shop) {
-            return clone
+            return iconClone
         }
         var template: List<String>? = null
         if (tradeType === TradeType.BUYABLE) {
@@ -101,7 +100,7 @@ open class Product(
             if (parentShop.isPermissionShop) {
                 if (player.hasPermission(permission)) {
                     if (parentShop.glowIconWhenAlreadyBought) {
-                        EnchantGlow.addGlow(clone)
+                        EnchantGlow.addGlow(iconClone)
                     }
                     template = parentShop.boughtTemplate
                 }
@@ -111,26 +110,25 @@ open class Product(
         } else if (tradeType === TradeType.BOTH) {
             template = parentShop.sellBuyTemplate
         }
+        val productIconAmount = iconClone.amount
         for (line in template!!) {
             lore.add(
             line.replace("%product_name", display,false)
                 .replace("%product_stock",  stock.format(moneyFormatedOP),false)
                 .replace("%product_buy_unit_price", unitBuyPrice.format(moneyFormatedOP),false)
                 .replace("%product_buy_pack_price", (unitBuyPrice * 64.0).format(moneyFormatedOP),false)
+                .replace("%product_buy_x_price", (unitBuyPrice * productIconAmount).format(moneyFormatedOP),false)
+                .replace("%product_amount" , ""+ productIconAmount)
                 .replace("%product_sell_unit_price", unitSellPrice.format(moneyFormatedOP),false)
                 .replace("%product_sell_pack_price", (unitSellPrice * 64).format(moneyFormatedOP),false)
                 .replace("%product_buy_total_price", (unitBuyPrice * stock).format(moneyFormatedOP),false)
                 .replace("%product_sell_total_price", (unitSellPrice * stock).format(moneyFormatedOP),false)
-
-                .replace(
-                    "%product_sell_inventory_price",
-                    (unitSellPrice * 64 * 4 * 9).format(moneyFormatedOP)
-                )
+                .replace("%product_sell_inventory_price", (unitSellPrice * 64 * 4 * 9).format(moneyFormatedOP))
             )
         }
 
-        Mine.setLore(clone, lore)
-        return clone
+        Mine.setLore(iconClone, lore)
+        return iconClone
     }
 
 }

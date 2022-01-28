@@ -62,7 +62,6 @@ fun Player.getMenu(): Menu? {
         } catch (ex: RuntimeException) {
             // causa esse erro na versão 1.16.5 por tentar acessar o Holder usando Async
         }
-
     } catch (ex: Exception) {
         ex.printStackTrace()
     }
@@ -277,7 +276,6 @@ open class Menu(
             organize()
         }
         if (isCacheInventories) return
-        // isPerPlayerInventory
         for (player in Mine.getPlayers()) {
             val menu = player.getMenu() ?: continue
             if (menu != this) continue

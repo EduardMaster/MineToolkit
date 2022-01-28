@@ -154,7 +154,6 @@ public class EduardBungeePlugin extends Plugin implements IPluginInstance {
 
     public void onLoad() {
         val loadingHybrids = HybridTypes.INSTANCE;
-
         val currentInstance = this;
         if (!currentInstance.getStarted()) {
             currentInstance.setDbManager(new DBManager());

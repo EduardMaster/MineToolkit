@@ -50,8 +50,8 @@ open class Shop(
                 field = CurrencyManager.getCurrency(currencyType)
             }
             return field
-
         }
+    var sortable = false
     var sortType = ShopSortType.BUY_PRICE_ASC
     var menuUpgrades: Menu? = null
     var menuConfirmation: Menu? = null
@@ -99,9 +99,10 @@ open class Shop(
         var TEMPLATE_BUY = listOf(
             "§e%product_name",
             "",
-            "§7Valor unitário: §a%product_buy_unit_price",
-            "§7Valor do Pack: §a%product_buy_pack_price",
-            "§7Quantidade em Estoque: §b%product_stock"
+            "§7Custo de x1: §a%product_buy_unit_price",
+            "§7Custo de x%product_amount: §a%product_buy_x_price",
+            "§7Custo de x64: §a%product_buy_pack_price",
+            "§7Estoque de x§b%product_stock"
         )
         var TEMPLATE_BOUGHT = listOf(
             "",
@@ -110,24 +111,23 @@ open class Shop(
         var TEMPLATE_SELL = listOf(
             "§e%product_name",
             "",
-            "§7Valor do Pack: §a%product_sell_pack_price",
-            "§7Valor do Inventário: §a%product_sell_inventory_price",
-            "§7Quantidade em Estoque: §b%product_stock"
+            "§7Valor de x64: §a%product_sell_pack_price",
+            "§7Valor de x2304: §a%product_sell_inventory_price",
+            "§7Estoque de: x§b%product_stock"
         )
         var TEMPLATE_BUY_SELL = listOf(
             "§e%product_name",
             "",
             "§cComprar",
-            " §7Custo x1: §a%product_buy_unit_price",
-            " §7Custo x64: §a%product_buy_pack_price",
+            " §7Custo de x1: §a%product_buy_unit_price",
+            " §7Custo de x%product_amount: §a%product_buy_x_price",
+            " §7Custo de x64: §a%product_buy_pack_price",
             "",
             "§cVender",
-            " §7Custo do Pack: §a%product_sell_pack_price",
-            " §7Custo do Inventário: §a%product_sell_inventory_price",
+            " §7Valor de x64: §a%product_sell_pack_price",
+            " §7Valor de x2304: §a%product_sell_inventory_price",
             "",
-            "§7Quantidade em Estoque: §b%product_stock",
-
-
+            "§7Estoque de x§b%product_stock"
             )
         const val PLAYER_INVENTORY_LIMIT = 4 * 64 * 9
     }
@@ -184,16 +184,14 @@ open class Shop(
     }
 
     fun organize() {
+        if (!sortable)return
         if (sortType === ShopSortType.BUY_PRICE_ASC) {
             updateButtonPositions(buttons.filterIsInstance<Product>().sortedBy { it.buyPrice })
-        }
-        else if (sortType === ShopSortType.BUY_PRICE_DESC) {
+        } else if (sortType === ShopSortType.BUY_PRICE_DESC) {
             updateButtonPositions(buttons.filterIsInstance<Product>().sortedByDescending { it.buyPrice })
-        }
-        else if (sortType === ShopSortType.SELL_PRICE_ASC) {
+        } else if (sortType === ShopSortType.SELL_PRICE_ASC) {
             updateButtonPositions(buttons.filterIsInstance<Product>().sortedBy { it.sellPrice })
-        }
-        else if (sortType === ShopSortType.SELL_PRICE_DESC) {
+        } else if (sortType === ShopSortType.SELL_PRICE_DESC) {
             updateButtonPositions(buttons.filterIsInstance<Product>().sortedByDescending { it.sellPrice })
         }
     }
@@ -203,6 +201,7 @@ open class Shop(
         val player = e.player
         if (selectingAmount.containsKey(player)) {
             val product = selectingAmount[player]!!
+            e.isCancelled = true
             var amount = Extra.fromMoneyToDouble(e.message)
             amount = abs(amount)
             selectingAmount.remove(player)
@@ -213,7 +212,7 @@ open class Shop(
             } else if (trade === TradeType.SELABLE) {
                 sell(player, product, amount)
             }
-            e.isCancelled = true
+
         }
     }
 
@@ -262,23 +261,19 @@ open class Shop(
         // após uma compra ser feita define o stock do evento para o produto
         product.stock = evento.newStock
         for (cmd in product.commands) {
-            val cmdExecuted =
-                cmd.replace("%player", player.name)
-                    .replace("%formated_amount", Extra.formatMoney(amount))
-                    .replace("%amount", "" + amount)
+            val cmdExecuted = cmd.replace("%player", player.name)
+                .replace("%formated_amount", Extra.formatMoney(amount))
+                .replace("%amount", "" + amount)
             debug("CMD: $cmdExecuted")
             Mine.runCommand(cmdExecuted)
         }
+
         player.sendMessage(
             messageBoughtItem
-                .replace(
-                    "%amount",
-                    Extra.formatMoney(amount)
-                ).replace(
-                    "%product",
-                     product.display
-                )
+                .replace("%amount", Extra.formatMoney(amount))
+                .replace("%product", product.display)
         )
+
         if (isPermissionShop) {
             if (VaultAPI.hasVault() && VaultAPI.hasPermission()) {
                 VaultAPI.getPermission().playerAdd(null, fake, product.permission)
@@ -288,20 +283,19 @@ open class Shop(
         if (product.product == null) {
             return
         }
-        var clone = product.product!!.clone()
+        var productItem = product.product!!.clone()
         if (evento.amount > PLAYER_INVENTORY_LIMIT) {
-            clone = MineReflect.toStack(clone, evento.amount)
+            productItem = MineReflect.toStack(productItem, evento.amount)
         } else {
-            clone.amount = evento.amount.toInt()
+            productItem.amount = evento.amount.toInt()
         }
         if (Mine.isFull(player.inventory)) {
-            val inv = Mine.newInventory("Pegue seus items comprados", 6 * 9)
-            inv.addItem(clone)
-            player.openInventory(inv)
+            val inventory = Mine.newInventory("Pegue seus items comprados", 6 * 9)
+            inventory.addItem(productItem)
+            player.openInventory(inventory)
             player.sendMessage("§cPegue seus items comprados e coloca no seu inventário.")
-
         } else {
-            player.inventory.addItem(clone)
+            player.inventory.addItem(productItem)
         }
     }
 
@@ -478,25 +472,31 @@ open class Shop(
                 return@ClickEffect
             }
 
-            if (((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT)
-                        && (product.tradeType === TradeType.BOTH))
-                || (product.tradeType === TradeType.BUYABLE)
+            if (((event.click == ClickType.RIGHT || event.click == ClickType.SHIFT_RIGHT) &&
+                        (product.tradeType === TradeType.BOTH)) ||
+                (product.tradeType === TradeType.BUYABLE)
             ) {
-                if (isAmountPerChat&&event.click.name.contains("SHIFT")) {
+                if (isAmountPerChat && event.click.name.contains("SHIFT")) {
                     selectingAmount[player] = product
                     trading[player] = TradeType.BUYABLE
                     player.closeInventory()
                     player.sendMessage(
                         messageChoiceAmount.replace(
                             "%product",
-                             product.display
+                            product.display
                         ).replace("%trader", "comprar")
                     )
                     return@ClickEffect
                 }
-                var amount = 64
+
+                var amount = product.amount
                 if (event.click.name.contains("SHIFT")) {
-                    if (amount > product.stock) {
+                    if (amount < 64) {
+                        amount = 64
+                    }else {
+                        amount = 64 * 16
+                    }
+                    if (product.isLimited && amount > product.stock) {
                         amount = product.stock.toInt()
                     }
                 }
@@ -507,7 +507,7 @@ open class Shop(
                         || product.tradeType === TradeType.SELABLE)
             ) {
                 if (product.product == null) return@ClickEffect
-                if (isAmountPerChat&&event.click.name.contains("SHIFT")) {
+                if (isAmountPerChat && event.click.name.contains("SHIFT")) {
                     selectingAmount[player] = product
                     trading[player] = TradeType.SELABLE
                     player.closeInventory()
