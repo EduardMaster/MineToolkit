@@ -1937,23 +1937,13 @@ public final class Mine {
     }
 
     /**
-     * Verifica
+     * Verifica Se o Inventario esta cheio
      *
      * @param inventory Inventario
      * @return Se o Inventario esta cheio
      */
     public static boolean isFull(Inventory inventory) {
         return inventory.firstEmpty() == -1;
-    }
-
-
-    public static boolean isIpProxy(String ip) {
-        return Extra.isIpProxy(ip);
-    }
-
-    public static boolean isMultBy(int number1, int numer2) {
-
-        return Extra.isMultBy(number1, numer2);
     }
 
     public static boolean isOnGround(Entity entity) {

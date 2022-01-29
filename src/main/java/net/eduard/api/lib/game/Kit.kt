@@ -17,9 +17,7 @@ class Kit() {
         var level: Int = 1,
         var price: Double = 0.0,
         var cooldown: Long = TimeUnit.HOURS.toMillis(1)
-
     ) {
-
         var items = mutableListOf<ItemStack>()
 
         @Transient
@@ -37,8 +35,9 @@ class Kit() {
 
     var name = "kit"
     var permission = "kits.kit"
+
     @Transient
-    var mode : MinigameMode? = null
+    var mode: MinigameMode? = null
     var menuPosition = 10
     var cooldown: Long = TimeUnit.HOURS.toMillis(1)
     var price = 1000.0
@@ -50,57 +49,80 @@ class Kit() {
     var items = mutableListOf<ItemStack>()
     var upgrades = mutableListOf<KitUpgrade>()
 
+    fun deliverAutoEquip(player : Player, item : ItemStack){
+        if (item.type == Material.AIR)return
+        val playerInventory = player.inventory
+        val type = item.type.name
+        if (type.contains("LEGGINGS")) {
+            if (playerInventory.leggings == null) {
+                playerInventory.leggings = item
+            } else {
+                deliver(player, item)
+            }
+        } else if (type.contains("CHESTPLATE")) {
+            if (playerInventory.chestplate == null) {
+                playerInventory.chestplate = item
+            } else {
+                deliver(player, item)
+            }
+        } else if (type.contains("BOOTS")) {
+            if (playerInventory.boots == null) {
+                playerInventory.boots = item
+            } else {
+                deliver(player, item)
+            }
 
-    fun give(player: Player, level: Int = 1) {
-        val inv = player.inventory
+        } else if (type.contains("HELMET")) {
+            if (playerInventory.helmet == null) {
+                playerInventory.helmet = item
+            } else {
+                deliver(player, item)
+            }
+        } else {
+            deliver(player, item)
+        }
+    }
+    fun deliver(player: Player, item: ItemStack) {
+        if (item.type == Material.AIR)return
+        if (Mine.isFull(player.inventory)) {
+            player.world.dropItemNaturally(player.location, item)
+        } else {
+            player.inventory.addItem(item)
+        }
+    }
+    fun give(player: Player) {
+        give(player,1)
+    }
+    fun give(player: Player, level: Int ) {
+        val playerInventory = player.inventory
         if (isClearInventory) {
             Mine.clearInventory(player)
         }
         if (level == 1) {
             for (item in items) {
-                val type = item.type.name
                 if (isAutoEquip) {
-                    if (type.contains("LEGGINGS")) {
-                        inv.leggings = item
-                    } else if (type.contains("CHESTPLATE")) {
-                        inv.chestplate = item
-                    } else if (type.contains("BOOTS")) {
-                        inv.boots = item
-                    } else if (type.contains("HELMET")) {
-                        inv.helmet = item
-                    } else {
-                        inv.addItem(item)
-                    }
+                    deliverAutoEquip(player,item)
                 } else {
-                    inv.addItem(item)
+                    deliver(player, item)
                 }
             }
         } else {
-
             val upgrade = getUpgrade(level)
             for (item in upgrade.items) {
-                val type = item.type.name
                 if (isAutoEquip) {
-                    if (type.contains("LEGGINGS")) {
-                        inv.leggings = item
-                    } else if (type.contains("CHESTPLATE")) {
-                        inv.chestplate = item
-                    } else if (type.contains("BOOTS")) {
-                        inv.boots = item
-                    } else if (type.contains("HELMET")) {
-                        inv.helmet = item
-                    } else {
-                        inv.addItem(item)
-                    }
+                   deliverAutoEquip(player,item)
                 } else {
-                    inv.addItem(item)
+                    deliver(player, item)
                 }
             }
         }
-        if (isFillSoup) Mine.fill(inv, ItemStack(Material.MUSHROOM_SOUP))
+        if (isFillSoup) Mine.fill(playerInventory, ItemStack(Material.MUSHROOM_SOUP))
     }
 
-    fun getUpgrade(level: Int) = upgrades.first { it.level == level }
+    fun getUpgrade(level: Int) = upgrades.first {
+        it.level == level
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
