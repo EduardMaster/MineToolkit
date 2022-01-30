@@ -26,7 +26,8 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
     @Transient
     var customCommand: CustomCommand? = null
-    var subCommands: MutableMap<String, CommandManager> = HashMap()
+    @Transient
+    var subCommands: MutableMap<String, CommandManager> = mutableMapOf()
 
     open fun playerCommand(player: Player, args: Array<String>) {
 

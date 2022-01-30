@@ -5,11 +5,12 @@ import net.eduard.api.lib.kotlin.register
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 /**
- * Sistema de verificar quem deu o ultimo Hit no jogador
+ * Verificador de quem causou o ultimo Dano no jogador
  * @author Eduard
  */
 object DamagerManager : EventsManager() {
@@ -33,8 +34,8 @@ object DamagerManager : EventsManager() {
 
 
 
-    @EventHandler
-    private fun aoIrPvP(e: EntityDamageByEntityEvent) {
+    @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
+    private fun onDamage(e: EntityDamageByEntityEvent) {
         lastPvP[e.entity] = e.damager
     }
 }

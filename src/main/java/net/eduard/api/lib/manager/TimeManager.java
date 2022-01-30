@@ -14,15 +14,12 @@ import net.eduard.api.lib.modules.BukkitTimeHandler;
  */
 
 public class TimeManager extends EventsManager implements Runnable, BukkitTimeHandler {
-
      transient long taskDuration = 20;
      transient long taskStart;
      transient BukkitTask taskUsed;
-
     public boolean existsTask() {
         return taskUsed != null;
     }
-
     /**
      * Desliga o Timer/Delay criado
      */
@@ -33,27 +30,21 @@ public class TimeManager extends EventsManager implements Runnable, BukkitTimeHa
             taskUsed = null;
         }
     }
-
     public void run() {
     }
-
     public Plugin getPluginConnected() {
         return getPlugin();
     }
-
     public boolean isRunning() {
         return existsTask() && Bukkit.getScheduler().isCurrentlyRunning(taskUsed.getTaskId());
     }
 
-
     public TimeManager() {
         this(1);
     }
-
     public TimeManager(long ticks) {
         this.taskDuration = ticks;
     }
-
     public TimeManager(int seconds) {
         this.taskDuration = 20L * seconds;
     }

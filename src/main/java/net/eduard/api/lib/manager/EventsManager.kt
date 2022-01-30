@@ -19,10 +19,16 @@ open class EventsManager : Listener {
     @Transient
     var isRegistered: Boolean = false
 
+    /**
+     * Plugin utilizado para registrar o Listener
+     */
     @Transient
     var plugin: JavaPlugin = defaultPlugin()
 
 
+    /**
+     * Pega o Plugin que ligou esta classe
+     */
     private fun defaultPlugin(): JavaPlugin {
 
         return JavaPlugin.getProvidingPlugin(javaClass)

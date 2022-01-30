@@ -17,10 +17,17 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public enum ItemCategory {
 
-    WEAPON, ARMOUR,
-    BLOCK, ORE, TOOL,
-    OTHER, FARM, FOOD,
-    SPAWNER, SKULL, POTION,
+    WEAPON,
+    ARMOUR,
+    BLOCK,
+    ORE,
+    TOOL,
+    OTHER,
+    FARM,
+    FOOD,
+    SPAWNER,
+    SKULL,
+    POTION,
     ENCHANTED_BOOK;
 
     ItemCategory() {
@@ -39,9 +46,9 @@ public enum ItemCategory {
         for (Material type : Material.values()) {
             String nome = type.name();
             if (nome.contains("HELMET") ||
-                nome.contains("CHESTPLATE") ||
-                nome.contains("BOOTS") ||
-                nome.contains("LEGGINGS")) {
+                    nome.contains("CHESTPLATE") ||
+                    nome.contains("BOOTS") ||
+                    nome.contains("LEGGINGS")) {
                 types.add(type);
             }
         }

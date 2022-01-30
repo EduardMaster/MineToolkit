@@ -3,24 +3,24 @@ package net.eduard.api.lib.manager
 import java.util.UUID
 import org.bukkit.entity.Player
 
-class CooldownManager( var duration: Long = 20) {
+class CooldownManager(var duration: Long = 20) {
 
-    var msgCooldown: String=""
-    var msgOver: String=""
-    var msgStart: String=""
-    init{
-        msgCooldown = "§cAinda faltam §7%time segundos §cpara desabilitar o sistema"
+    var messageOnCooldown: String = ""
+    var messageCooldownOver: String = ""
+    var messageCooldownStart: String = ""
+
+    init {
+        messageOnCooldown = "§cAinda faltam §7%time segundos §cpara desabilitar o sistema"
     }
-    fun noMessages(){
-        msgCooldown = ""
-        msgOver = ""
-        msgStart = ""
+
+    fun noMessages() {
+        messageOnCooldown = ""
+        messageCooldownOver = ""
+        messageCooldownStart = ""
     }
 
     @Transient
-    val cooldowns= mutableMapOf<UUID, TimeManager>()
-
-
+    val cooldowns = mutableMapOf<UUID, TimeManager>()
 
     fun cooldown(player: Player): Boolean {
         if (onCooldown(player)) {
@@ -42,11 +42,11 @@ class CooldownManager( var duration: Long = 20) {
         return getResult(player) > 0
     }
 
-    inner class CooldownOverTask(val player : Player) : TimeManager(duration){
+    inner class CooldownOverTask(val player: Player) : TimeManager(duration) {
         override fun run() {
             sendOverCooldown(player)
         }
-        init{
+        init {
             asyncDelay()
         }
     }
@@ -60,20 +60,21 @@ class CooldownManager( var duration: Long = 20) {
     }
 
     fun sendOverCooldown(player: Player) {
-        if (msgOver.isNotEmpty())
-        player.sendMessage(msgOver)
+        if (messageCooldownOver.isNotEmpty())
+            player.sendMessage(messageCooldownOver)
     }
 
     fun sendOnCooldown(player: Player) {
-        if (msgCooldown.isNotEmpty())
-        player.sendMessage(
-            msgCooldown
-            .replace("%time" ,""+ getCooldown(player)))
+        if (messageOnCooldown.isNotEmpty())
+            player.sendMessage(
+                messageOnCooldown
+                    .replace("%time", "" + getCooldown(player))
+            )
     }
 
     fun sendStartCooldown(player: Player) {
-        if (msgStart.isNotEmpty())
-        player.sendMessage(msgStart)
+        if (messageCooldownStart.isNotEmpty())
+            player.sendMessage(messageCooldownStart)
     }
 
     fun getResult(player: Player): Long {
@@ -92,6 +93,6 @@ class CooldownManager( var duration: Long = 20) {
     }
 
     fun getCooldown(player: Player): Int {
-        return (getResult(player) / 20).toInt() +1
+        return (getResult(player) / 20).toInt() + 1
     }
 }

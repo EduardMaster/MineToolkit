@@ -9,7 +9,7 @@ import java.util.Random;
 
 /**
  * Um ChunkGenerator sem definir nenhum tipo de Bloco ou seja completamente vazio<br>
- * Usado no WorldCreator função ...generator(new EmptyWorldGenerator())
+ * Usado no WorldCreator na função ...generator(new EmptyWorldGenerator())
  * 
  * @author Eduard
  *
