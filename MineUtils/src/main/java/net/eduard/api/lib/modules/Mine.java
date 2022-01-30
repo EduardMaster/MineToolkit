@@ -45,19 +45,19 @@ import java.util.stream.Collectors;
 
 
 /**
- * API de controle do Bukkit com métodos adicionais
+ * Extensão da API do Bukkit com varios métodos uteis e alguns métodos aliases
  *
  * @author Eduard
  * @version 3.0
- * *@author Eduard
- * *@since 24/01/2020
+ * @author Eduard
+ * @since 24/01/2020
  */
 @SuppressWarnings({"unused", "deprecated"})
 public final class Mine {
 
     /**
-     * Usa o runCommand()
-     * @param cmd
+     * Alias para a função runCommand()
+     * @param cmd Comando String
      */
     @Deprecated
     public static void makeCommand(String cmd){
@@ -65,10 +65,12 @@ public final class Mine {
     }
 
     /**
-     * Interface de criar Replacer (Placeholders)
+     * Interface de criar Replacer (Placeholder)<br>
+     * 'Um texto que irá se tornar outro texto'
      *
      * @author Eduard
      */
+
     public interface Replacer extends Function<Player, Object> {
         /**
          * Retorna o valor do Placeholder
@@ -81,8 +83,19 @@ public final class Mine {
         default Object getText(Player player) {
             return this.apply(player);
         }
+    }
+    /**
+     * Adiciona um Replacer novo
+     *
+     * @param key   Chave do Replacer
+     * @param value Replacer
+     */
+    public static void addReplacer(String key, Replacer value) {
+        replacers.put(key, value);
+    }
 
-
+    public static Replacer getReplacer(String key) {
+        return replacers.get(key);
     }
 
     /**
@@ -372,15 +385,6 @@ public final class Mine {
         Bukkit.getPluginManager().addPermission(new Permission(permission));
     }
 
-    /**
-     * Adiciona um Replacer novo
-     *
-     * @param key   Chave do Replacer
-     * @param value Replacer
-     */
-    public static void addReplacer(String key, Replacer value) {
-        replacers.put(key, value);
-    }
 
 
     /**
@@ -1618,9 +1622,6 @@ public final class Mine {
         return ChatColor.RED + "♥";
     }
 
-    public static Replacer getReplacer(String key) {
-        return replacers.get(key);
-    }
 
     public static ItemStack getReplacers(ItemStack itemOriginal, Player player) {
         ItemStack itemCopia = itemOriginal.clone();
@@ -1850,14 +1851,13 @@ public final class Mine {
     }
 
     public static boolean hasPerm(CommandSender sender, String permission, int max, int min) {
-
-        boolean has = false;
+        boolean hasPermission = false;
         for (int i = max; i >= min; i--) {
             if (sender.hasPermission(permission + "." + i)) {
-                has = true;
+                hasPermission = true;
             }
         }
-        return has;
+        return hasPermission;
 
     }
 

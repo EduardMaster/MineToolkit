@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * API de categorização de Itens baseado no seu Material
+ * Categorizador de Itens baseado no seu Material
  *
  * @author Eduard
  * @version 1.0

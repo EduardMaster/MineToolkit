@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * API de utilização do Vault
+ * Classe que Facilita o Acesso a API Vault
  * 
  * @author Eduard
  * @version 2.0
@@ -62,7 +62,7 @@ public final class VaultAPI {
 		return Bukkit.getPluginManager().getPlugin("Vault") != null;
 	}
 
-	/*
+	/**
 	 * Se tiver o vault ele  ativado automaticamente
 	 */
 	static {

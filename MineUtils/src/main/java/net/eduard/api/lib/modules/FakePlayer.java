@@ -12,7 +12,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
- * API de criação de Jogador Offline melhor para uso de Scoreboard
+ * Jogador Offline Fake em vez do CraftOfflinePlayer
  *
  * @author Eduard
  * @version 1.2

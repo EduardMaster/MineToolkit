@@ -256,7 +256,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         Hologram.debug = configs.getBoolean("debug.holograms")
         CommandManager.debugEnabled = configs.getBoolean("debug.commands")
         Copyable.setDebug(configs.getBoolean("debug.copyable"))
-        BukkitBungeeAPI.setDebug(configs.getBoolean("debug.bungee-bukkit"))
+        BukkitBungeeAPI.setDebuging(configs.getBoolean("debug.bungee-bukkit"))
         Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug.replacers")
         PlayerSkin.reloadSkins()
         MineReflect.MSG_ITEM_STACK = configs.message("stack-design")

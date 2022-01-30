@@ -8,7 +8,8 @@ import org.bukkit.generator.ChunkGenerator;
 import java.util.Random;
 
 /**
- * API de criação de Mundo Vazio
+ * Um ChunkGenerator sem definir nenhum tipo de Bloco ou seja completamente vazio<br>
+ * Usado no WorldCreator função ...generator(new EmptyWorldGenerator())
  * 
  * @author Eduard
  *

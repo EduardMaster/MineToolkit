@@ -13,7 +13,8 @@ import java.io.*;
 import java.util.*;
 
 /**
- * API de controlar o BungeeCord pelo Servidor Spigot
+ * API de requisitar Ações/Informações do BungeeCord e<br>
+ * Guardar as Informações retornadas no Spigot
  * @author Eduard
  * @version 2.0
  * @since 2.3
@@ -21,10 +22,10 @@ import java.util.*;
  */
 @SuppressWarnings("unused")
 public final class BukkitBungeeAPI {
-	private static boolean debug = true;
+	private static boolean debuging = true;
 
 	public static void log(String message) {
-		if (debug)
+		if (debuging)
 			Bukkit.getConsoleSender().sendMessage("§b[BukkitBungeeAPI] §e" + message);
 	}
 
@@ -36,8 +37,14 @@ public final class BukkitBungeeAPI {
 	}
 
 	public static int getPlayerCount(String server) {
-
 		return getServer(server).playerCount;
+	}
+	public static int getPlayerCount(){
+		int quantidade = 0;
+		for (SimpleServer server : servers.values()) {
+			quantidade+= server.getPlayerCount();
+		}
+		return quantidade;
 	}
 
 	public static List<String> getPlayers(String server) {
@@ -117,7 +124,6 @@ public final class BukkitBungeeAPI {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 
@@ -437,12 +443,12 @@ public final class BukkitBungeeAPI {
 	}
 
 
-	public static boolean isDebug() {
-		return debug;
+	public static boolean isDebuging() {
+		return debuging;
 	}
 
-	public static void setDebug(boolean debug) {
-		BukkitBungeeAPI.debug = debug;
+	public static void setDebuging(boolean debuging) {
+		BukkitBungeeAPI.debuging = debuging;
 	}
 
 

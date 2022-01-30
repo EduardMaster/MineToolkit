@@ -7,10 +7,10 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
- * Timer = Repetidor de Ação a cada X Tempo
- * Delay = Atrasa a execução de Ação
- * Classe cheia de Aliases para as Funções do BukkitScheduler, para
- * facilitar a criação de BukkitTask
+ * Timer = Repetidor de Ação a cada X Tempo <br>
+ * Delay = Atrasa a execução de Ação <br>
+ * Classe cheia de Aliases para as Funções do BukkitScheduler <br>
+ * para facilitar a criação de BukkitTask
  *
  * @author Eduard
  */

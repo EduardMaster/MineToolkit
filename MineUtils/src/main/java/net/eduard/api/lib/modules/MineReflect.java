@@ -1,6 +1,5 @@
 package net.eduard.api.lib.modules;
 
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -14,7 +13,9 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * API que tem métodos que usa Reflection para funções que não possui na Bukkit API
+ * Extensão da Bukkit API com métodos que utilizam Reflection para Interagir com NMS<br>
+ * Independentemente da Versão do servidor vai funcionar os Métodos
+ *
  * <br>
  * Nome antigo: RexAPI
  *
