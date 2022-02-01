@@ -4,6 +4,18 @@ package net.eduard.api.server
 object Systems {
 
     @JvmStatic
+    fun <T : PluginSystem> getAPI(classAPI: Class<T>): T? {
+        return net.eduard.api.server.getAPI(classAPI)
+    }
+    @JvmStatic
+    fun registerAPI(api: PluginSystem) {
+        api.registerAPI()
+    }
+    @JvmStatic
+    fun unregisterAPI(api: PluginSystem) {
+        api.unregisterAPI()
+    }
+    @JvmStatic
     var clanSystem: ClanSystem? = null
 
     @JvmStatic

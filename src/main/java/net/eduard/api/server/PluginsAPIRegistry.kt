@@ -1,30 +1,14 @@
 package net.eduard.api.server
 
+private val pluginsAPI = mutableMapOf<Class<*>, PluginSystem>()
 
-class PluginsAPIRegistry {
-    companion object{
-        val PLUGINS_APIS = mutableMapOf<Class<*>, PluginSystem>()
-        fun <T : PluginSystem> getAPI(classAPI: Class<T>): T? {
-            return PLUGINS_APIS[classAPI] as T?
-        }
-        private fun PluginSystem.getChildrenAPIClass(): Class<*>? {
-            for (interfaceClass in javaClass.interfaces) {
-                if (PluginSystem::class.java.isAssignableFrom(interfaceClass)
-                    && PluginSystem::class.java != interfaceClass
-                ) return interfaceClass
-            }
-            return null
-        }
-        fun registerAPI(api: PluginSystem) {
-            val currentAPI = api.getChildrenAPIClass()!!
-            PLUGINS_APIS[currentAPI] = api
-        }
-
-        fun unregisterAPI(api: PluginSystem) {
-            val currentAPI = api.getChildrenAPIClass()!!
-            PLUGINS_APIS.remove(currentAPI)
-        }
+private fun PluginSystem.getChildrenAPIClass(): Class<*> {
+    for (interfaceClass in javaClass.interfaces) {
+        if (PluginSystem::class.java.isAssignableFrom(interfaceClass)
+            && PluginSystem::class.java != interfaceClass
+        ) return interfaceClass as Class<*>
     }
+    throw IllegalArgumentException("Precisa ser uma classe que Implementa PluginnSystem")
 }
 
 inline fun <reified T : PluginSystem> useAPI(): T {
@@ -32,18 +16,18 @@ inline fun <reified T : PluginSystem> useAPI(): T {
 }
 
 fun <T : PluginSystem> getAPI(classAPI: Class<T>): T? {
-    return PluginsAPIRegistry.getAPI(classAPI)
+    return  pluginsAPI[classAPI] as T?
 }
 
 inline fun <reified T : PluginSystem> hasAPI(): Boolean {
     return getAPI(T::class.java) != null
 }
-
 fun PluginSystem.registerAPI() {
-    PluginsAPIRegistry.registerAPI(this)
+    val classAPI = getChildrenAPIClass()
+    pluginsAPI[classAPI] = this
 }
-
 fun PluginSystem.unregisterAPI() {
-    PluginsAPIRegistry.unregisterAPI(this)
+    val classAPI = getChildrenAPIClass()
+    pluginsAPI.remove(classAPI)
 }
 
