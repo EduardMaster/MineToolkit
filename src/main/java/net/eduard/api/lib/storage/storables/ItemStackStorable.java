@@ -159,18 +159,11 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 }
             }
         }
+
         if (map.containsKey("texture")) {
             item.setSkinURL(map.get("texture").toString());
         }
-        if (map.containsKey("head-name")) {
-            ItemMeta meta = item.getItemMeta();
-            if (meta instanceof SkullMeta) {
-                SkullMeta skullmeta = (SkullMeta) meta;
-                skullmeta.setOwner("" + map.get("head-name"));
-                item.setItemMeta(skullmeta);
-            }
-
-        } else if (map.containsKey("texture-value")) {
+        if (map.containsKey("texture-value")) {
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof SkullMeta) {
                 GameProfile profile = new GameProfile(UUID.randomUUID(), null);
@@ -187,8 +180,14 @@ public class ItemStackStorable implements Storable<ItemStack>, JsonSerializer<It
                 item.setItemMeta(meta);
             }
         } else if (map.containsKey("texture")) {
-            item.setSkinURL(map.get("texture").toString());
             Mine.setSkin(item, (String) map.get("texture"));
+        } else if (map.containsKey("head-name")) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta instanceof SkullMeta) {
+                SkullMeta skullmeta = (SkullMeta) meta;
+                skullmeta.setOwner("" + map.get("head-name"));
+                item.setItemMeta(skullmeta);
+            }
         }
         if (map.containsKey("glow")) {
             boolean glowed = Extra.toBoolean(map.get("glow"));

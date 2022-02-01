@@ -161,7 +161,7 @@ public class ItemBuilder extends ItemStack {
         type(Material.SKULL_ITEM);
         data(SkullType.PLAYER.ordinal());
         SkullMeta itemMeta = (SkullMeta) getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), "Notch");
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         profile.getProperties().put("textures",
                 new Property("textures", textureBase64));
 

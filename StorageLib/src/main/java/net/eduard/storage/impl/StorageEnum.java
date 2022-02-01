@@ -45,10 +45,10 @@ public class StorageEnum extends StorageBase<Enum<?>, String> {
             }
         }
 
-        /**
+        /*
          * Dia 31/01/2022 Erro grave porque modificou as Enums para o Tipo Default
          */
-        /*
+
         try {
             if (enumFinded == null) {
                 enumFinded = getEnums(info.getType())[0];
@@ -57,7 +57,6 @@ public class StorageEnum extends StorageBase<Enum<?>, String> {
             e.printStackTrace();
         }
 
-         */
         if (enumFinded == null) {
             System.out.println("Enum nao encontrada retornando null para: " + enumName);
         }
