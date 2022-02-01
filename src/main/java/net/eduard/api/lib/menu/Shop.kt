@@ -265,6 +265,7 @@ open class Shop(
                 .replace("%formated_amount", Extra.formatMoney(amount))
                 .replace("%amount", "" + amount)
             debug("CMD: $cmdExecuted")
+            //println("CMD: $cmdExecuted")
             Mine.runCommand(cmdExecuted)
         }
 

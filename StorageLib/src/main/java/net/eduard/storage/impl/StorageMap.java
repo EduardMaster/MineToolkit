@@ -54,8 +54,14 @@ final public class StorageMap extends StorageBase<Map<?,?> , Object> {
 
             Map<?, ?> map = (Map<?, ?>) data;
             for (Entry<?, ?> entry : map.entrySet()) {
+                if (mapInfoKey.isEnum()){
+                    System.out.println("Lendo é uma Enum: "+entry.getKey());
 
+                }
                 Object key = StorageAPI.STORE_OBJECT.restore(mapInfoKey,entry.getKey());
+                if (mapInfoKey.isEnum()){
+                    System.out.println("Resultado da mudanca Enum: "+key);
+                }
                 Object value = StorageAPI.STORE_OBJECT.restore(mapInfoValue,entry.getValue());
                 debug("^^ " + key + " " + value);
                 newMap.put(key, value);
@@ -83,6 +89,13 @@ final public class StorageMap extends StorageBase<Map<?,?> , Object> {
         debug("<< MAP VALUE TYPE: " + mapInfoValue.getAlias());
         Map<String, Object> newMap = new HashMap<>();
         for (Entry<?, ?> entry : data.entrySet()) {
+            if (entry.getKey() == null){
+                System.out.println("Chave do HashMap NULL");
+                continue;
+            }
+            if (entry.getKey() instanceof Enum){
+                System.out.println("Enum: "+entry.getKey());
+            }
             debug("<< KEY FROM MAP");
             String key = StorageAPI.STORE_OBJECT.store(mapInfoKey,entry.getKey()).toString();
             debug("<< VALUE FROM MAP");

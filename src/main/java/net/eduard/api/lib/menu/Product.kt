@@ -7,9 +7,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 @Suppress("unused")
-open class Product(
-    name: String, menu: Menu?
-) : MenuButton(name, menu,1,1,1) {
+open class Product(name: String, menu: Menu?) : MenuButton(name, menu,1,1,1) {
 
 
     constructor() : this("Produto", null)
@@ -53,10 +51,10 @@ open class Product(
         get() = parentMenu as Shop
 
     val amount: Int
-        get() = if (product != null) product!!.amount else 1
+        get() = product?.amount ?: item?.amount ?: 1
 
     val unitSellPrice: Double
-        get() = sellPrice / amount
+        get() = sellPrice / (item?.amount ?: 1)
 
     val unitBuyPrice: Double
         get() = buyPrice / amount

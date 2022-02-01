@@ -563,8 +563,8 @@ public final class Mine {
     /**
      * Copia o mundo 'fromWorld' e cola por cima do 'toWorld'
      *
-     * @param fromWorld Mundo a ser copiado
-     * @param toWorld   Mundo a ser subistituido
+     * @param fromWorld Mundo que vai ser copiado
+     * @param toWorld   Mundo que vai ser substituido
      * @return o novo mundo gerado
      */
     public static World copyWorld(String fromWorld, String toWorld) {
@@ -582,7 +582,7 @@ public final class Mine {
      * @param location Local
      * @param type     Tipo do bloco
      */
-    public static void createCage(Location location, Material type) {
+    public static void newCage(Location location, Material type) {
         location.clone().add(0, -1, 0).getBlock().setType(type, true);
         location.clone().add(0, 3, 0).getBlock().setType(type, true);
         location.clone().add(0, 0, 1).getBlock().setType(type, true);

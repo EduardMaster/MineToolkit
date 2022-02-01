@@ -180,14 +180,8 @@ open class Menu(
 
 
 
-    var backPage = Slot(
-        Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."),
-        1,
-        3
-    )
-    var nextPage = Slot(
-        Mine.newItem(Material.ARROW, "§aPróxima Página.", 1, 0, "§7Clique para ir para a próxima página."), 9, 1
-    )
+    var backPage = Slot(Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."), 1, 3)
+    var nextPage = Slot(Mine.newItem(Material.ARROW, "§aPróxima Página.", 1, 0, "§7Clique para ir para a próxima página."), 9, 1)
     var buttons = mutableListOf<MenuButton>()
 
     @Transient
@@ -384,9 +378,6 @@ open class Menu(
         get(): Int {
             return (lineAmount * 9) - 1
         }
-
-
-
 
     /**
      * Remove varias informações em Cache
