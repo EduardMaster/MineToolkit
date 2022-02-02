@@ -56,7 +56,10 @@ public class StorageObject extends StorageBase<Object, Object> {
             debug(">> BY MAP ");
             return StorageAPI.STORE_MAP.restore(info, data);
         }
-
+        if (Extra.isSet(claz)) {
+            debug(">> BY SET ");
+            return StorageAPI.STORE_SET.restore(info, data);
+        }
         alias = StorageAPI.getAlias(claz);
         Storable<?> store = StorageAPI.getStore(claz);
         Class<?> wrapper = Extra.getWrapper(claz);
@@ -237,6 +240,10 @@ public class StorageObject extends StorageBase<Object, Object> {
         if (Extra.isMap(claz)) {
             debug("<< AS MAP");
             return StorageAPI.STORE_MAP.store(info, (Map<?, ?>) data);
+        }
+        if (Extra.isSet(claz)) {
+            debug(">> BY SET ");
+            return StorageAPI.STORE_SET.restore(info, data);
         }
         Storable<Object> store = (Storable<Object>) getStore(claz);
         /* Se caso a Storable for nula ainda sim vai continuar

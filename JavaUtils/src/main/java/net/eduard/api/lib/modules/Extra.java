@@ -75,6 +75,10 @@ public final class Extra {
         return Extra.getColumn(index) == colunm;
     }
 
+    public static boolean isSet(Class<?> claz) {
+        return Set.class.isAssignableFrom(claz);
+    }
+
     /**
      * Tipo de geração de Key
      *

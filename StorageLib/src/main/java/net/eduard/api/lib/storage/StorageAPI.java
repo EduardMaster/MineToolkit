@@ -29,10 +29,13 @@ import java.util.Map.Entry;
  */
 public final class StorageAPI {
 
+
+
     private StorageAPI() {
     }
 
     public static final StorageObject STORE_OBJECT = new StorageObject();
+    public static final StorageSet STORE_SET = new StorageSet();
     public static final StorageList STORE_LIST = new StorageList();
     public static final StorageEnum STORE_ENUM = new StorageEnum();
     public static final StorageInline STORE_INLINE = new StorageInline();

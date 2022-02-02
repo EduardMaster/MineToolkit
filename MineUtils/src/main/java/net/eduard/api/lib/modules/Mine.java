@@ -717,7 +717,7 @@ public final class Mine {
      * @return se o jogador está online ou não
      */
     public static boolean existsPlayer(CommandSender sender, String playerName) {
-        Player player = Bukkit.getPlayer(playerName);
+        Player player = Bukkit.getPlayerExact(playerName);
         if (player == null) {
             sender.sendMessage(Mine.MSG_PLAYER_NOT_EXISTS.replace("$player", playerName));
             return false;
@@ -1531,14 +1531,12 @@ public final class Mine {
     }
 
     public static List<Player> getPlayerAtRange(Location location, double range) {
-
         List<Player> players = new ArrayList<>();
-        for (Player p : location.getWorld().getPlayers()) {
-
-            if (!location.getWorld().equals(p.getWorld()))
+        for (Player player : location.getWorld().getPlayers()) {
+            if (!location.getWorld().equals(player.getWorld()))
                 continue;
-            if (p.getLocation().distance(location) <= range) {
-                players.add(p);
+            if (player.getLocation().distance(location) <= range) {
+                players.add(player);
             }
         }
         return players;
@@ -1560,7 +1558,6 @@ public final class Mine {
             return -1;
         }
         for (int i = 0; i < 10; i++) {
-
             int slot = Extra.getRandomInt(1, inv.getSize());
             if (inv.getItem(slot) == null) {
                 return slot;
