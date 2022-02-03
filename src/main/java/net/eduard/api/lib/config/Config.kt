@@ -17,23 +17,40 @@ class Config(
     var folder: File,
     val name: String,
     @Transient
-    var plugin: Any? = null
+    var plugin: Any? = null,
+    reloadOnStart: Boolean
 ) {
 
     @Transient
     var config: ConfigSection
+
     @Transient
     var file: File = File(folder, name)
+
     init {
         file.parentFile.mkdirs()
         config = ConfigSection("root", "")
         config.indent = 1
-        reloadConfig()
+        if (reloadOnStart) {
+            debug("READING FILE CONFIG ON START")
+            reloadConfig()
+        }
     }
 
-    constructor(plugin: IPlugin, name: String) : this(plugin.pluginFolder, name, plugin)
-    constructor(plugin: Any, name: String) : this(plugin.dataFolder, name, plugin)
-
+    constructor(plugin: IPlugin, name: String) : this(plugin.pluginFolder, name, plugin, true)
+    constructor(plugin: Any, name: String) : this(plugin.autoFolder, name, plugin, true)
+    constructor(plugin: IPlugin, name: String, reloadOnStart: Boolean) : this(
+        plugin.pluginFolder,
+        name,
+        plugin,
+        reloadOnStart
+    )
+    constructor(plugin: Any, name: String, reloadOnStart: Boolean) : this(
+        plugin.autoFolder,
+        name,
+        plugin,
+        reloadOnStart
+    )
 
 
     companion object {
@@ -42,8 +59,11 @@ class Config(
                 Hybrid.instance.console.sendMessage("§b[ConfigAPI] §f$message")
         }
 
-        private val Any.dataFolder: File
+        private val Any.autoFolder: File
             get() {
+                if (this is File){
+                    return this;
+                }
                 try {
                     return Extra.getMethodInvoke(this, "getDataFolder") as File
                 } catch (e: Exception) {
@@ -55,11 +75,16 @@ class Config(
         var isDebug = false
 
     }
+
     fun getIntList(path: String?): List<Int> {
         return config.getIntList(path!!)
     }
-    fun clear(){
+
+    fun clear() {
         config.map.clear()
+    }
+    fun isEmpty(): Boolean {
+        return config.keys.isEmpty()
     }
 
     fun debug(msg: String) {

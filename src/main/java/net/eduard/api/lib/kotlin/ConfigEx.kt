@@ -8,7 +8,7 @@ import java.util.function.Function
 fun <T> File.reloadListFromFolder(listType: Class<T>): List<T> {
     mkdirs()
     val list = mutableListOf<T>()
-    for (fileName in list()) {
+    for (fileName in list()!!) {
         if (!fileName.endsWith(".yml", false)) continue
         val config = Config(this, fileName)
         val data = config[listType]
@@ -31,21 +31,36 @@ inline fun <reified T> Config.reload(): T {
 }
 
 fun <T> File.saveListInFolder(list: List<T>, fileNamer: Function<T, String>) {
-    saveListInFolder(list, false, fileNamer)
+    saveListInFolder(list, true, fileNamer)
 }
 
 fun <T> File.saveListInFolder(list: List<T>, clearConfigFirst: Boolean, fileNamer: Function<T, String>) {
-    for (data in list) {
-        val config = Config(this, fileNamer.apply(data) + ".yml")
+    saveAll(list, clearConfigFirst , fileNamer)
+}
+
+fun <T> File.saveAll(collection: Collection<T>, clearConfigFirst: Boolean, fileNamer: Function<T, String>) {
+    for (item in collection) {
+        val config = Config(this, fileNamer.apply(item) + ".yml", !clearConfigFirst)
         if (clearConfigFirst)
             config.clear()
-        config.save(data)
+        config.save(item)
     }
 }
+
+fun <T> File.saveAll(collection: Collection<T>, fileNamer: Function<T, String>) {
+    saveAll(collection, true, fileNamer)
+}
 inline fun <T> File.saveListIn(list: List<T>, fileNamer: T.() -> String) {
-    for (listItem in list) {
-        val config = Config(this, fileNamer(listItem) + ".yml")
+    for (itemList in list) {
+        val config = Config(this, fileNamer(itemList) + ".yml", false)
         config.clear()
-        config.save(listItem)
+        config.save(itemList)
+    }
+}
+inline fun <T> File.saveAllIn(collection: Collection<T>, fileNamer: T.() -> String) {
+    for (item in collection) {
+        val config = Config(this, fileNamer(item) + ".yml", false)
+        config.clear()
+        config.save(item)
     }
 }

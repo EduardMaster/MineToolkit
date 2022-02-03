@@ -332,7 +332,7 @@ class MySQLTable<T : Any>(
     }
 
     override fun insert(data: T) {
-        log("Dado a ser inserido "+data)
+       // log("Dado a ser inserido $data")
         var prepare : PreparedStatement? = null
         try {
 
