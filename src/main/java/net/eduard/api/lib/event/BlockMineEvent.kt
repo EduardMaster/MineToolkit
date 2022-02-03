@@ -1,5 +1,6 @@
 package net.eduard.api.lib.event
 
+import net.eduard.api.lib.modules.Mine
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
@@ -12,17 +13,23 @@ import org.bukkit.material.MaterialData
 
 class BlockMineEvent(
     val drops: MutableMap<ItemStack, Double>,
-    var block: Block,
-    var player: Player,
+    val block: Block,
+    val player: Player,
     var useEnchants: Boolean,
     var expToDrop: Int = 1
 ) : Event(), Cancellable {
-    var needGiveDrops = true
-    var needFallDropsInWorld = false
+
+    enum class DropDestination {
+        GROUND, INVENTORY, STORAGE
+    }
+
+    var dropsDestination = mutableMapOf<ItemStack, DropDestination>()
+    var dropsStorator: ((ItemStack, Double) -> Unit)? = null
     var needGiveExp = true
+    var needBreakBlock = true
     var needApplyFortune = true
     var multiplier = 1.0
-    var dropsMultiplied = false
+    var fortuneApplied = false
     private var cancelled = false
     override fun isCancelled(): Boolean {
         return cancelled
@@ -30,6 +37,29 @@ class BlockMineEvent(
 
     override fun setCancelled(toggle: Boolean) {
         cancelled = toggle
+    }
+
+    fun storeDrops() {
+        for ((item, doubleAmount) in drops) {
+            if (getDestination(item) == DropDestination.STORAGE) {
+                dropsStorator?.invoke(item, doubleAmount)
+            }
+        }
+
+    }
+
+    fun defaultEventActions() {
+        if (needApplyFortune) {
+            applyFortune()
+        }
+        giveDrops()
+        storeDrops();
+        fallDropsInWorld()
+        if (needGiveExp && expToDrop > 0)
+            player.giveExp(expToDrop)
+
+        if (needBreakBlock)
+            breakBlock()
     }
 
     fun breakBlock() {
@@ -43,16 +73,34 @@ class BlockMineEvent(
     }
 
     fun setDrop(item: ItemStack, amount: Double) {
+        item.amount = 1
         drops[item] = amount
     }
 
     fun addDrop(item: ItemStack, amount: Double) {
-        drops[item] = amount + (drops[item] ?: 0.0)
+        item.amount = 1
+        if (item in drops){
+            val lastDropAmount = drops[item]!!
+            drops[item] = amount +  lastDropAmount
+        }else{
+            drops[item] = amount
+        }
+
+    }
+
+    fun hasDrop(item: ItemStack): Boolean {
+        val itemAmount = item.amount
+        item.amount = 1
+        val have = item in drops
+        item.amount = itemAmount
+        return have
     }
 
     fun useDefaultDrops() {
         for (dropItem in block.getDrops(player.itemInHand)) {
-            drops[dropItem] = dropItem.amount.toDouble()
+            val dropAmount = dropItem.amount
+            dropItem.amount = 1
+            drops[dropItem] = dropAmount.toDouble()
         }
     }
 
@@ -60,35 +108,32 @@ class BlockMineEvent(
         drops.clear()
     }
 
-    fun fixDropsAmount() {
-        for (entry in drops) {
-            val item = entry.key
-            var amount = entry.value
-            if (amount <= 0.0) {
-                amount = 1.0
-                entry.setValue(amount)
-            }
-            if (amount < Int.MAX_VALUE) {
-                item.amount = amount.toInt()
-            } else {
-                item.amount = Int.MAX_VALUE
-            }
-            if (item.amount <= 0) {
-                item.amount = 1
-            }
-        }
+
+    fun getDestination(item: ItemStack): DropDestination {
+        return dropsDestination[item] ?: DropDestination.GROUND
+    }
+
+    fun setDestination(item: ItemStack, destination: DropDestination) {
+        dropsDestination[item] = destination
     }
 
     fun giveDrops() {
-        fixDropsAmount()
-        for (item in drops.keys) {
-            player.inventory.addItem(item)
+        for ((item, doubleAmount) in drops) {
+            if (getDestination(item) == DropDestination.INVENTORY) {
+                val itemToGive = item.clone()
+                itemToGive.amount = if (doubleAmount < Int.MAX_VALUE) doubleAmount.toInt() else Int.MAX_VALUE
+                player.inventory.addItem(itemToGive)
+            }
         }
     }
 
     fun fallDropsInWorld() {
-        for (item in drops.keys) {
-            player.world.dropItemNaturally(block.location, item)
+        for ((item, doubleAmount) in drops) {
+            if (getDestination(item) == DropDestination.GROUND) {
+                val itemToGive = item.clone()
+                itemToGive.amount = if (doubleAmount < Int.MAX_VALUE) doubleAmount.toInt() else Int.MAX_VALUE
+                player.world.dropItemNaturally(block.location, itemToGive)
+            }
         }
     }
 
@@ -101,10 +146,10 @@ class BlockMineEvent(
             if (blockDrop.data !in fortuneBlocks) continue
             val amountBase = entry.value
             val amountMultiplied = amountBase * multiplier
-            entry.setValue((amountMultiplied * fortuneLevel))
+            val result = (amountMultiplied * fortuneLevel)
+            entry.setValue(result)
         }
-        fixDropsAmount()
-        dropsMultiplied = true
+        fortuneApplied = true
         return true
     }
 

@@ -27,24 +27,17 @@ class EduardAPIListener : EventsManager() {
 
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    fun onBreakCallMineEvent(e: BlockBreakEvent) {
+    fun onBreakCallMineEvent(breakEvent: BlockBreakEvent) {
+        if (breakEvent.block.type == Material.ICE){
+            return
+        }
         if (!EduardAPI.instance.getBoolean("features.block-mine-event")) return
-        val event = BlockMineEvent(mutableMapOf(), e.block, e.player, true, e.expToDrop)
-        e.isCancelled = true
-        event.mineCallEvent()
-        if (event.isCancelled) return
-        if (event.needApplyFortune) {
-            event.applyFortune()
-        }
-        if (event.needGiveDrops) {
-            event.giveDrops()
-        }
-        if (event.needFallDropsInWorld) {
-            event.fallDropsInWorld()
-        }
-        if (event.needGiveExp && event.expToDrop > 0)
-            event.player.giveExp(event.expToDrop)
-        e.block.type = Material.AIR
+        val mineEvent = BlockMineEvent(mutableMapOf(), breakEvent.block, breakEvent.player, true, breakEvent.expToDrop)
+        breakEvent.isCancelled = true
+        mineEvent.mineCallEvent()
+        if (mineEvent.isCancelled) return
+        mineEvent.defaultEventActions()
+
     }
 
     @EventHandler

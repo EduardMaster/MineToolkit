@@ -3,6 +3,7 @@ package net.eduard.api.lib.modules;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.entity.Player;
 
 import java.nio.charset.StandardCharsets;
@@ -23,7 +24,6 @@ public class FakePlayer implements OfflinePlayer {
 
     private String name;
     private UUID id;
-    private transient Player playerCache = null;
 
 
     public void setIdByName() {
@@ -82,6 +82,7 @@ public class FakePlayer implements OfflinePlayer {
         } else {
             setIdByName();
         }
+
     }
 
 
@@ -146,16 +147,21 @@ public class FakePlayer implements OfflinePlayer {
 
     @Override
     public Player getPlayer() {
-        if (playerCache != null && playerCache.isOnline()) {
-            return playerCache;
+        Player player = null;
+        /*if (playerCache != null
+                    && playerCache.isOnline() && playerCache.isValid()) {
+                return playerCache;
+
+            }
+        */
+        if (name != null) {
+            player = Bukkit.getPlayerExact(name);
+        }
+        if (player == null && id != null) {
+            player = Bukkit.getPlayer(id);
         }
 
-        if (id != null)
-            playerCache = Bukkit.getPlayer(id);
-        if (playerCache == null && name != null)
-            playerCache = Bukkit.getPlayer(name);
-
-        return playerCache;
+        return player;
     }
 
 
