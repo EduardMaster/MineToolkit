@@ -1,6 +1,5 @@
 package net.eduard.api.lib.event
 
-import net.eduard.api.lib.modules.Mine
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
@@ -8,16 +7,17 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
+import org.bukkit.event.player.PlayerEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 
 class BlockMineEvent(
     val drops: MutableMap<ItemStack, Double>,
     val block: Block,
-    val player: Player,
+   player: Player,
     var useEnchants: Boolean,
     var expToDrop: Int = 1
-) : Event(), Cancellable {
+) : PlayerEvent(player), Cancellable {
 
     enum class DropDestination {
         GROUND, INVENTORY, STORAGE
