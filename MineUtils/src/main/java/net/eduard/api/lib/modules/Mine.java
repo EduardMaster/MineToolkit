@@ -10,6 +10,7 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftMetaBanner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
@@ -48,8 +49,8 @@ import java.util.stream.Collectors;
  * Extensão da API do Bukkit com varios métodos uteis e alguns métodos aliases
  *
  * @author Eduard
- * @version 3.0
  * @author Eduard
+ * @version 3.0
  * @since 24/01/2020
  */
 @SuppressWarnings({"unused", "deprecated"})
@@ -57,10 +58,11 @@ public final class Mine {
 
     /**
      * Alias para a função runCommand()
+     *
      * @param cmd Comando String
      */
     @Deprecated
-    public static void makeCommand(String cmd){
+    public static void makeCommand(String cmd) {
         runCommand(cmd);
     }
 
@@ -84,6 +86,7 @@ public final class Mine {
             return this.apply(player);
         }
     }
+
     /**
      * Adiciona um Replacer novo
      *
@@ -386,7 +389,6 @@ public final class Mine {
     }
 
 
-
     /**
      * Envia mensagens para todos jogadores
      *
@@ -516,7 +518,7 @@ public final class Mine {
      * @return o Comando
      */
     public static PluginCommand registerCommand(String commandName, CommandExecutor command, String permission,
-                                        String permissionMessage) {
+                                                String permissionMessage) {
 
         PluginCommand pluginCommand = Bukkit.getPluginCommand(commandName);
         pluginCommand.setExecutor(command);
@@ -680,6 +682,51 @@ public final class Mine {
      * @return se todas as verificações são TRUE a resposta
      */
     public static boolean equals(ItemStack item1, ItemStack item2) {
+        if (item1 == null || (item2 == null)) return false;
+        boolean typeEqual = item1.getType() == item2.getType();
+        boolean durabilityEqual = item1.getDurability() == item2.getDurability();
+        boolean amountEqual = item1.getAmount() == item2.getAmount();
+        try {
+            Field metaField = Extra.getField(ItemStack.class, "meta");
+            ItemMeta meta1 = (ItemMeta) metaField.get(item1);
+            ItemMeta meta2 = (ItemMeta) metaField.get(item2);
+            if (meta1 != null && meta2 != null) {
+                //  ItemMeta meta1 = item1.getItemMeta();
+                //  ItemMeta meta2 = item2.getItemMeta();
+                if (meta1.hasDisplayName() != meta2.hasDisplayName()) {
+                    return false;
+                }
+                if (meta1.hasLore() != meta2.hasLore()) {
+                    return false;
+                }
+                if (meta1.hasEnchants() != meta2.hasEnchants()) {
+                    return false;
+                }
+                if (meta1.hasDisplayName() && meta2.hasDisplayName()) {
+                    if (!meta1.getDisplayName().equals(meta2.getDisplayName())) {
+                        return false;
+                    }
+                }
+                if (meta1.hasLore() && meta2.hasLore()) {
+                    if (!meta1.getLore().equals(meta2.getLore())) {
+                        return false;
+                    }
+                }
+                if (meta1.hasEnchants() && meta2.hasEnchants()) {
+                    if (!meta1.getEnchants().equals(meta2.getEnchants())) {
+                        return false;
+                    }
+                }
+                if (!meta1.getItemFlags().equals(meta2.getItemFlags())) {
+                    return false;
+                }
+                return typeEqual && durabilityEqual && amountEqual;
+            } else {
+                return typeEqual && durabilityEqual && amountEqual;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return getLore(item1).equals(getLore(item2)) && getName(item1).equals(getName(item2))
                 && item1.getType() == item2.getType() && item1.getAmount() == item2.getAmount()
                 && item1.getDurability() == item2.getDurability();
@@ -712,7 +759,7 @@ public final class Mine {
      * Verifica se existe um jogador no servidor e manda a mensagem para o Sender
      * caso o jogador esteja offline
      *
-     * @param sender Sender (Quem faz o comando)
+     * @param sender     Sender (Quem faz o comando)
      * @param playerName Nome do jogador
      * @return se o jogador está online ou não
      */
@@ -728,7 +775,7 @@ public final class Mine {
     /**
      * Verifica se o plugin existe se não manda mensagem para o sender
      *
-     * @param sender Sender (Quem faz o comando)
+     * @param sender     Sender (Quem faz o comando)
      * @param pluginName Nome do Plugin
      * @return se o plugin esta no servidor ou não
      */
@@ -2753,7 +2800,7 @@ public final class Mine {
 
     public static void customCommandUnregister(PluginCommand cmd, String aliase) {
         String cmdName = cmd.getName().toLowerCase();
-        if (getCustomCommandsMap().containsKey(aliase)) {
+        if (Objects.requireNonNull(getCustomCommandsMap()).containsKey(aliase)) {
             getCustomCommandsMap().remove(aliase);
             console("§bCommandAPI §fremovendo aliase §a" + aliase + "§f do comando §b" + cmdName);
         } else {

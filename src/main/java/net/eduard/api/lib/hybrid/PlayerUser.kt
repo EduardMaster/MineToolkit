@@ -4,31 +4,39 @@ import net.eduard.api.lib.storage.annotations.StorageAttributes
 import java.io.Serializable
 import java.nio.charset.StandardCharsets
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 @StorageAttributes(inline = true)
 class PlayerUser(
     var name: String = "Eduard",
     uuid: UUID? = null
-) : Serializable {
+) {
 
-    lateinit var uniqueId: UUID
+    var uniqueId: UUID? = null
+    get() {
+        if (field==null){
+            setUUIDByName()
+        }
+        return field
+    }
+
 
     init {
         if (uuid == null) {
-            setUUIDByName()
+            asyncSetUUIDByName()
         } else {
             uniqueId = uuid
         }
     }
 
-    @Transient
-    private var onlinePlayer: IPlayer<*> = Hybrid.instance.getPlayer(name, uniqueId)
+    fun asyncSetUUIDByName() {
+        Hybrid.instance.asyncTask(this::setUUIDByName)
+    }
 
-    fun setUUIDByName(): UUID {
+    fun setUUIDByName() {
         uniqueId = UUID.nameUUIDFromBytes(
             ("OfflinePlayer:$name").toByteArray(StandardCharsets.UTF_8)
         )
-        return uniqueId
     }
 
     fun sendMessage(message: String) {
@@ -41,15 +49,24 @@ class PlayerUser(
         return "$name;$uniqueId"
     }
 
-    constructor(player: IPlayer<*>) : this(player.name, player.uniqueId) {
+    constructor(player: IPlayer<*>) : this(player.name , player.uniquedId) {
         this.onlinePlayer = player
     }
 
     val isOnline: Boolean
-        get() = onlinePlayer.isOnline
+        get() = onlinePlayer?.isOnline ?: false
 
 
-    val player: IPlayer<*> get() = onlinePlayer
+    val player: IPlayer<*>
+        get() {
+            if (onlinePlayer == null) {
+                onlinePlayer = Hybrid.instance.getPlayer(name, uniqueId!!)
+            }
+            return onlinePlayer!!
+        }
+
+    @Transient
+    private var onlinePlayer: IPlayer<*>? = null
 
     override fun equals(other: Any?): Boolean {
         if (other == null) return false

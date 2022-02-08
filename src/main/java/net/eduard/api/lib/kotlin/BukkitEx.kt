@@ -37,15 +37,15 @@ fun ItemStack.extra(setup: MineReflect.ItemExtraData.(ItemStack) -> Unit): ItemS
     return MineReflect.setData(this, extra).apply {
         mineLore = if (extra.customStack > 0.0) {
             val currentLore = mineLore
-            currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
+            currentLore.removeIf { it.startsWith(MineReflect.LORE_ITEM_STACK) }
             currentLore.add(
-                MineReflect.MSG_ITEM_STACK
+                MineReflect.LORE_ITEM_STACK
                     .replace("%stack", Extra.formatMoney(extra.customStack))
             )
             currentLore
         } else {
             val currentLore = mineLore
-            currentLore.removeIf { it.startsWith(MineReflect.MSG_ITEM_STACK) }
+            currentLore.removeIf { it.startsWith(MineReflect.LORE_ITEM_STACK) }
             currentLore
         }
     }

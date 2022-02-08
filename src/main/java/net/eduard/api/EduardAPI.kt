@@ -27,7 +27,10 @@ import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.score.DisplayBoard
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.storage.storables.BukkitStorables
-import net.eduard.api.listener.*
+import net.eduard.api.listener.BukkitPlugins
+import net.eduard.api.listener.EduWorldEditListener
+import net.eduard.api.listener.EduardAPIListener
+import net.eduard.api.listener.HooksListener
 import net.eduard.api.server.currency.CurrencyManager
 import net.eduard.api.server.minigame.MinigameSchematic
 import net.eduard.api.supports.CurrencyJHCash
@@ -225,7 +228,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         SoundCommand().registerCommand(plugin)
         SetXPCommand().registerCommand(plugin)
         SetSkinCommand().registerCommand(plugin)
-        MemoryCommand().registerCommand(plugin)
+        PerformanceCommand().registerCommand(plugin)
         RunCommand().registerCommand(plugin)
         log("Comandos ativados com sucesso")
     }
@@ -259,7 +262,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         BukkitBungeeAPI.setDebuging(configs.getBoolean("debug.bungee-bukkit"))
         Mine.OPT_DEBUG_REPLACERS = configs.getBoolean("debug.replacers")
         PlayerSkin.reloadSkins()
-        MineReflect.MSG_ITEM_STACK = configs.message("stack-design")
+        MineReflect.LORE_ITEM_STACK = configs.message("stack-design")
         loadMaps()
 
         configs.saveConfig()
@@ -273,6 +276,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
             log("Locale do Formatador de dinheiro: $locale")
             log("Formatando numero 1m: " + Extra.MONEY.format(1000000))
             log("Formatando numero 1000,50: " + Extra.MONEY.format(1000.500))
+
         } catch (exception: Exception) {
             error("Formato do dinheiro invalido " + configs.getString("money.format"))
             exception.printStackTrace()

@@ -12,6 +12,7 @@ import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerJoinEvent
 
@@ -25,17 +26,20 @@ import org.bukkit.event.player.PlayerJoinEvent
  */
 class EduardAPIListener : EventsManager() {
 
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    fun onBreakCallMineEvent(breakEvent: BlockBreakEvent) {
-        if (breakEvent.block.type == Material.ICE){
+    fun onBreakCallMineEvent(event: BlockDamageEvent) {
+    }
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    fun onBreakCallMineEvent(event: BlockBreakEvent) {
+        if (event.block.type == Material.ICE){
             return
         }
         if (!EduardAPI.instance.getBoolean("features.block-mine-event")) return
-        val mineEvent = BlockMineEvent(mutableMapOf(), breakEvent.block, breakEvent.player, true, breakEvent.expToDrop)
-        breakEvent.isCancelled = true
+        val mineEvent = BlockMineEvent(mutableMapOf(), event.block, event.player, true, event.expToDrop)
+        event.isCancelled = true
         mineEvent.mineCallEvent()
         if (mineEvent.isCancelled) return
+        event.isCancelled = false
         mineEvent.defaultEventActions()
 
     }

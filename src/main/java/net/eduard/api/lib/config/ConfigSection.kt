@@ -4,6 +4,7 @@ import net.eduard.api.lib.hybrid.Hybrid
 import java.util.LinkedHashMap
 import net.eduard.api.lib.storage.StorageAPI
 import net.eduard.api.lib.modules.Extra
+import java.lang.StringBuilder
 import java.util.ArrayList
 import java.util.logging.Logger
 
@@ -38,8 +39,8 @@ class ConfigSection(var key: String, var data: Any) {
     lateinit var father: ConfigSection
 
     fun debug(message: String) {
-        val quantidade = if (isMap()) map.size else (if (isList()) list.size else "N")
-        if (ConfigSection.isDebug)
+        val quantidade = if (isMap()) map.size else (if (isList()) list.size else 0)
+        if (isDebug)
             logger.info("[ConfigSection] ($completeName)[$quantidade] $message")
     }
 
@@ -47,7 +48,7 @@ class ConfigSection(var key: String, var data: Any) {
         get() {
             if (data !is LinkedHashMap<*, *>) {
                 data = LinkedHashMap<String, ConfigSection>()
-                debug("Criando o HashMap")
+                //debug("Criando o HashMap")
             }
             return data as MutableMap<String, ConfigSection>
         }
@@ -135,13 +136,16 @@ class ConfigSection(var key: String, var data: Any) {
     val list: MutableList<Any>
         get() {
             if (data !is List<*>) {
-                debug("Criando a lista")
+                //debug("Criando a lista")
                 data = ArrayList<Any>()
             }
             return data as MutableList<Any>
         }
     val long: Long
-        get() = Extra.toLong(data)
+        get() {
+            data = Extra.toLong(data)
+            return data as Long
+        }
 
     fun getLong(path: String): Long {
         return getSection(path).long
@@ -159,12 +163,10 @@ class ConfigSection(var key: String, var data: Any) {
 
 
     private fun createSection(key: String): ConfigSection {
-        debug("Criando Secao: §a$key")
+        //debug("Criando Secao: §a$key")
         val section = ConfigSection(key, "")
         section.father = this
         map[key] = section
-
-
         return section
     }
 
@@ -176,26 +178,42 @@ class ConfigSection(var key: String, var data: Any) {
         path = ConfigUtil.getPath(path)
         val spliter = ConfigUtil.SECTION_SEPARATOR
         if (path.contains(spliter)) {
-
-            val split = path.split(spliter).toMutableList()
+            val split = path.split(spliter)
             if (split.isEmpty()) {
-                debug("Esta vazio")
+                //debug("Esta vazio")
                 return createSection(path.replace(".", "$"));
             }
+            val whereIsFinalPoint = path.indexOf('.')
+            val firstKey = path.substring(0,whereIsFinalPoint)
+            val lastKey = path.substring(whereIsFinalPoint+1)
+            /*
             val key = split[0]
-            split.removeAt(0)
-            val restPath = split.joinToString(spliter, limit = 10)
-            debug("Preparando Secao: §a$key§f dependentes: §a$restPath")
-
-            val section = getSection(key);
-            return section.getSection(restPath)
-        } else {
-            if (map.containsKey(path)) {
-                debug("Cache §2$path")
-                return map[path]!!
-            } else {
-                return createSection(path);
+            val builder = StringBuilder()
+            var first = true;
+            for (subKey in split) {
+                if (first) {
+                    first = false
+                } else {
+                    builder.append(subKey)
+                    builder.append(".")
+                }
             }
+            builder.deleteCharAt(builder.length - 1)
+            val restPath = builder.toString()
+            //split.removeAt(0)
+            //val restPath = split.joinToString(spliter, limit = 10)
+
+             */
+            //debug("Preparando Secao: §a$firstKey§f dependentes: §a$lastKey")
+            val section = getSection(firstKey);
+            return section.getSection(lastKey)
+        } else {
+            val sectionFinded = map[path];
+            if (sectionFinded != null) {
+                //debug("Cache §2$path")
+                return sectionFinded
+            }
+            return createSection(path);
         }
     }
 

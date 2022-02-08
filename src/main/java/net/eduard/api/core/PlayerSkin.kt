@@ -35,7 +35,7 @@ class PlayerSkin {
     fun update(player: Player) {
         if (playerUUID == null) return
         try {
-            val handle = MineReflect.getHandle(player)
+            val handle = MineReflect.getPlayerHandle(player)
             val profile = Extra.getMethodInvoke(handle, "getProfile") as GameProfile
             profile.properties.clear()
             try {

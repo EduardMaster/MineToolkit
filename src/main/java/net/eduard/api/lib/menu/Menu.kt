@@ -694,7 +694,7 @@ open class Menu(
             return
         if (e.action == Action.PHYSICAL) return
         if (openWithItem == null) return
-        if (!Mine.equals(player.itemInHand, openWithItem)) return
+        if (!Mine.equals(openWithItem , player.itemInHand)) return
         e.isCancelled = true
         open(player)
     }

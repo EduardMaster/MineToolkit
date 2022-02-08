@@ -69,7 +69,7 @@ class BlockMineEvent(
             blockInfo.setType(Material.AIR)
         */
 
-        block.type = Material.AIR
+        block.setTypeIdAndData(0,0,false)
     }
 
     fun setDrop(item: ItemStack, amount: Double) {

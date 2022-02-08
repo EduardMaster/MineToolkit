@@ -186,7 +186,10 @@ public final class Extra {
             DecimalFormatSymbols.getInstance(Locale.forLanguageTag("PT-BR")));
 
     public static List<String> MONEY_OP_CLASSES = Arrays.asList("", "K", "M", "B", "T", "Q", "QQ", "S", "SS", "OC", "N", "D", "UN", "DD", "TR", "QT", "QN", "SD", "SPD", "OD", "ND", "VG", "UVG", "DVG", "TVG", "QTV", "QNV", "SEV", "SPV", "OVG", "NVG", "TD");
-    public static DecimalFormat MONEY_OP_FORMATER = new DecimalFormat("#,###.###", new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR")));
+    public static DecimalFormatSymbols MONEY_OP_FORMATER_SYMBOLS = new DecimalFormatSymbols(Locale.forLanguageTag("PT-BR"));
+    public static DecimalFormat MONEY_OP_FORMATER = new DecimalFormat("#,###.###", MONEY_OP_FORMATER_SYMBOLS);
+
+
     public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
     public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
     public static SimpleDateFormat FORMAT_DATETIME = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -209,9 +212,6 @@ public final class Extra {
     static {
         REPLACERS.put("#b", "org.bukkit.");
         REPLACERS.put("#s", "org.spigotmc.");
-        REPLACERS.put("#a", "net.eduard.api.");
-        REPLACERS.put("#e", "net.eduard.eduardapi.");
-        REPLACERS.put("#k", "net.eduard.api.kits.");
         REPLACERS.put("#p", "#mPacket");
         REPLACERS.put("#m", "net.minecraft.server.#v.");
         REPLACERS.put("#c", "org.bukkit.craftbukkit.#v.");
@@ -460,7 +460,7 @@ public final class Extra {
                 double valor = Extra.toDouble(text);
                 valor = fixDouble(valor);
                 double potencia = Math.pow(10, (siglaID) * 3);
-                return valor * potencia;
+                return fixDouble(valor * potencia);
             }
         }
 
@@ -480,6 +480,7 @@ public final class Extra {
         return number;
     }
 
+
     /**
      * Formata um numero grande, formatação estilo de servidores OP
      * <br>
@@ -491,9 +492,8 @@ public final class Extra {
      */
     public static String formatMoney(double numero) {
 
-
         String numeroFormatado = MONEY_OP_FORMATER.format(numero);
-        String separador = "" + MONEY_OP_FORMATER.getDecimalFormatSymbols().getGroupingSeparator();
+        String separador = "" + MONEY_OP_FORMATER_SYMBOLS.getGroupingSeparator();
         if (separador.contains(".")) {
             separador = "\\.";
         }
@@ -508,8 +508,9 @@ public final class Extra {
             sigla = MONEY_OP_CLASSES.get(tamanho - 1);
         }
         try {
-            Number numeroFinal = MONEY_OP_FORMATER.parse(conjuntoDeTresCasas[0] + MONEY_OP_FORMATER.getDecimalFormatSymbols().getDecimalSeparator() + conjuntoDeTresCasas[1]);
-            return MONEY_OP_FORMATER.format(numeroFinal) + sigla;
+
+            // Number numeroFinal = MONEY_OP_FORMATER.parse(conjuntoDeTresCasas[0] + MONEY_OP_DECIMAL_FORMATING_SYMBOLS.getDecimalSeparator() + conjuntoDeTresCasas[1]);
+            return MONEY_OP_FORMATER.format(numero / (Math.pow(10, (tamanho-1) * 3))) + sigla;
         } catch (Exception ex) {
             return "-1.0";
         }
@@ -645,6 +646,7 @@ public final class Extra {
         return Math.random() <= chance;
     }
 
+    private static final Map<String, Class<?>> classCache = new HashMap<>();
 
     /**
      * Puxa a classe apartir de objeto sendo , ele classe, objecto, ou até mesmo texto
@@ -659,17 +661,31 @@ public final class Extra {
         }
         if (object instanceof String) {
             String string = (String) object;
+            Class<?> cached = classCache.get(string);
+            if (cached != null) {
+                // System.out.println("Cached Class: " + cached);
+                return cached;
+            }
             if (string.startsWith("#")) {
+                String newName = string;
                 for (Entry<String, String> entry : REPLACERS.entrySet()) {
-                    string = string.replace(entry.getKey(), entry.getValue());
+                    newName = newName.replace(entry.getKey(), entry.getValue());
                 }
-                return Class.forName(string);
+                Class<?> classFounded = Class.forName(newName);
+                classCache.put(string, classFounded);
+                //  System.out.println("Registrando texto: " + string + " para a classe: " + classFounded);
+                return classFounded;
             }
         }
+        /*
         try {
+
+            //if (wrappers.containsKey())
+
             return (Class<?>) object.getClass().getField("TYPE").get(0);
         } catch (Exception ignored) {
         }
+         */
         return object.getClass();
     }
 
@@ -839,6 +855,8 @@ public final class Extra {
      * INICIO DA AREA DE REFLECTION
      *
      */
+    private static final Map<Class<?>, Map<Class<?>[], Constructor<?>>> construtorWithParametersCache = new HashMap<>();
+    private static final Map<Class<?>, Constructor<?>> construtorCache = new HashMap<>();
 
     /**
      * Procura o cosntrutor deste Objeto com os seguitnes parametros
@@ -849,19 +867,43 @@ public final class Extra {
      * @throws Exception Não encontrou o construtor
      */
     public static Constructor<?> getConstructor(Object object, Object... parameters) throws Exception {
-
         Class<?> claz = getClassFrom(object);
+        Class<?>[] parametersFixed = getParameters(parameters);
+        if (parameters.length == 0) {
+            Constructor<?> construtor = construtorCache.get(claz);
+            if (construtor != null) {
+                return construtor;
+            }
+        }
+        Map<Class<?>[], Constructor<?>> construtorMap = construtorWithParametersCache.get(claz);
+        if (construtorMap != null) {
+            Constructor<?> construtor = construtorMap.get(parametersFixed);
+            if (construtor != null) {
+                return construtor;
+            }
+        }
         try {
-            Constructor<?> cons = claz.getDeclaredConstructor(getParameters(parameters));
-            cons.setAccessible(true);
-            return cons;
+            Constructor<?> constructor = claz.getDeclaredConstructor(parametersFixed);
+            constructor.setAccessible(true);
+            if (parameters.length > 0) {
+                if (construtorMap == null) {
+                    construtorMap = new HashMap<>();
+                    construtorWithParametersCache.put(claz, construtorMap);
+                }
+                construtorMap.put(parametersFixed, constructor);
+            } else {
+                construtorCache.put(claz, constructor);
+            }
+            return constructor;
         } catch (Exception e) {
-            Constructor<?> cons = claz.getConstructor(getParameters(parameters));
-            cons.setAccessible(true);
-            return cons;
+            Constructor<?> constructor = claz.getConstructor(parametersFixed);
+            constructor.setAccessible(true);
+            return constructor;
         }
 
     }
+
+    private static final HashMap<Class<?>, Map<String, Method>> methodCache = new HashMap<>();
 
     /**
      * Procura um método deste Objeto com o seguinte nome e parametros
@@ -874,13 +916,61 @@ public final class Extra {
      */
     public static Method getMethod(Object object, String name, Object... parameters) throws Exception {
         Class<?> claz = getClassFrom(object);
+        Class<?>[] parametersFixed = getParameters(parameters);
+        Map<String, Method> methodsMap = methodCache.get(claz);
+        if (methodsMap != null) {
+            Method methodFinded = methodsMap.get(name);
+            if (methodFinded != null) {
+                // System.out.println("Retornando metodo Cacheado "+ methodFinded);
+                return methodFinded;
+            }
+        }
+        Class<?> superClass = claz.getSuperclass();
+        if (superClass != Object.class && superClass != Class.class) {
+            Map<String, Method> parentMethodsMap = methodCache.get(superClass);
+            if (parentMethodsMap != null) {
+                Method methodInParentFinded = parentMethodsMap.get(name);
+                if (methodInParentFinded != null) {
+                    return methodInParentFinded;
+                }
+            }
+        }
+
+
+        /*
+        Class<?> superClass = claz;
+        while(superClass!= Object.class){
+            superClass = superClass.getSuperclass();
+            Map<String, Method> newMethodsMap = methodCache.get(superClass);
+            if (methodsMap != null) {
+                Method methodFinded = newMethodsMap.get(name);
+                if (methodFinded != null) {
+                    // System.out.println("Retornando metodo Cacheado "+ methodFinded);
+                    return methodFinded;
+                }
+            }
+        }
+         */
         try {
-            Method method = claz.getDeclaredMethod(name, getParameters(parameters));
+            Method method = claz.getDeclaredMethod(name, parametersFixed);
             method.setAccessible(true);
+            if (methodsMap == null) {
+                methodsMap = new HashMap<>();
+                methodCache.put(claz, methodsMap);
+            }
+            methodsMap.put(name, method);
             return method;
         } catch (Exception e) {
-            Method method = claz.getMethod(name, getParameters(parameters));
+            Method method = claz.getMethod(name, parametersFixed);
             method.setAccessible(true);
+            Class<?> classDeclaring = method.getDeclaringClass();
+            methodsMap = methodCache.get(classDeclaring);
+            if (methodsMap == null) {
+                methodsMap = new HashMap<>();
+                methodCache.put(classDeclaring, methodsMap);
+            }
+            System.out.println("Method " + method.getName() + " da classe " + classDeclaring + " que é pai da classe: " + claz);
+            methodsMap.put(name, method);
             return method;
         }
 
@@ -981,7 +1071,6 @@ public final class Extra {
      * @throws Exception se caso Não existir este método
      */
     public static Object getMethodInvoke(Object object, String name, Object... values) throws Exception {
-
         return getMethod(object, name, values).invoke(object, values);
     }
 
@@ -1004,6 +1093,8 @@ public final class Extra {
 
     }
 
+    private static final Map<Class<?>, Map<String, Field>> fieldCache = new HashMap<>();
+
     /**
      * Pega uma variavel apartir deste nome neste objeto
      *
@@ -1014,9 +1105,22 @@ public final class Extra {
      */
     public static Field getField(Object object, String name) throws Exception {
         Class<?> claz = getClassFrom(object);
+        Map<String, Field> fieldMap = fieldCache.get(claz);
+        if (fieldMap != null) {
+            Field fieldFinded = fieldMap.get(name);
+            if (fieldFinded != null) {
+                // System.out.println("Retornando Field Cached: "+fieldFinded);
+                return fieldFinded;
+            }
+        }
         try {
             Field field = claz.getDeclaredField(name);
             field.setAccessible(true);
+            if (fieldMap == null) {
+                fieldMap = new HashMap<>();
+                fieldCache.put(claz, fieldMap);
+            }
+            fieldMap.put(name, field);
             return field;
         } catch (Exception e) {
             Field field = claz.getField(name);
@@ -1770,16 +1874,16 @@ public final class Extra {
      * @param obj any
      * @return Boolean
      */
-    public static Boolean toBoolean(Object obj) {
+    public static boolean toBoolean(Object obj) {
 
         if (obj == null) {
             return false;
         }
         if (obj instanceof Boolean) {
-            return (Boolean) obj;
+            return (boolean) obj;
         }
         try {
-            return Boolean.valueOf(obj.toString());
+            return Boolean.parseBoolean(obj.toString());
         } catch (Exception e) {
             return false;
         }
@@ -1791,20 +1895,20 @@ public final class Extra {
      * @param object any
      * @return Byte
      */
-    public static Byte toByte(Object object) {
+    public static byte toByte(Object object) {
 
         if (object == null) {
             return 0;
         }
         if (object instanceof Byte) {
-            return (Byte) object;
+            return (byte) object;
         }
         if (object instanceof Number) {
             Number number = (Number) object;
             return number.byteValue();
         }
         try {
-            return Byte.valueOf(object.toString());
+            return Byte.parseByte(object.toString());
         } catch (Exception e) {
             return 0;
         }
@@ -1880,13 +1984,13 @@ public final class Extra {
      * @param object Objeto
      * @return Double (Decimal)
      */
-    public static Double toDouble(Object object) {
+    public static double toDouble(Object object) {
 
         if (object == null) {
             return 0D;
         }
         if (object instanceof Double) {
-            return (Double) object;
+            return (double) object;
         }
         if (object instanceof Number) {
             Number number = (Number) object;
@@ -1906,24 +2010,23 @@ public final class Extra {
      * @param object Objeto
      * @return Float (Decimal)
      */
-    public static Float toFloat(Object object) {
+    public static float toFloat(Object object) {
 
         if (object == null) {
             return 0F;
         }
         if (object instanceof Float) {
-            return (Float) object;
+            return (float) object;
         }
         if (object instanceof Number) {
             Number number = (Number) object;
             return number.floatValue();
         }
         try {
-            return Float.valueOf(object.toString());
+            return Float.parseFloat(object.toString());
         } catch (Exception e) {
             return 0F;
         }
-
     }
 
     /**
@@ -1932,20 +2035,20 @@ public final class Extra {
      * @param object Objeto
      * @return Integer
      */
-    public static Integer toInt(Object object) {
+    public static int toInt(Object object) {
 
         if (object == null) {
             return 0;
         }
         if (object instanceof Integer) {
-            return (Integer) object;
+            return (int) object;
         }
         if (object instanceof Number) {
             Number number = (Number) object;
             return number.intValue();
         }
         try {
-            return Integer.valueOf(object.toString());
+            return Integer.parseInt(object.toString());
         } catch (Exception e) {
             return 0;
         }
@@ -1958,7 +2061,7 @@ public final class Extra {
      * @param object Objeto
      * @return Inteiro
      */
-    public static Integer toInteger(Object object) {
+    public static int toInteger(Object object) {
         return toInt(object);
     }
 
@@ -1993,20 +2096,23 @@ public final class Extra {
      * @param object Objeto
      * @return Long
      */
-    public static Long toLong(Object object) {
-
+    public static long toLong(Object object) {
         if (object == null) {
             return 0L;
         }
         if (object instanceof Long) {
-            return (Long) object;
+            return (long) object;
         }
         if (object instanceof Number) {
             Number number = (Number) object;
             return number.longValue();
         }
         try {
-            return Long.valueOf(object.toString());
+            String longText = object.toString();
+            if (longText.isEmpty()) {
+                return 0L;
+            }
+            return Long.parseLong(longText);
         } catch (Exception e) {
             return 0L;
         }
@@ -2032,20 +2138,20 @@ public final class Extra {
      * @param object Objeto
      * @return Short
      */
-    public static Short toShort(Object object) {
+    public static short toShort(Object object) {
 
         if (object == null) {
             return 0;
         }
         if (object instanceof Short) {
-            return (Short) object;
+            return (short) object;
         }
         if (object instanceof Number) {
             Number number = (Number) object;
             return number.shortValue();
         }
         try {
-            return Short.valueOf(object.toString());
+            return Short.parseShort(object.toString());
         } catch (Exception e) {
             return 0;
         }
@@ -2140,7 +2246,7 @@ public final class Extra {
         try {
             File destDir = new File(destDirectory);
             if (!destDir.exists())
-                destDir.mkdirs();
+                if (!destDir.mkdir()) return;
 
             ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
             ZipEntry entry = zipIn.getNextEntry();

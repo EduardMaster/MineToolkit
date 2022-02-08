@@ -48,6 +48,7 @@ public class FakePlayer implements OfflinePlayer {
 
     public void sendMessage(String message) {
         consume(p -> p.sendMessage(message));
+
     }
 
     public void consume(Consumer<Player> playerConsume) {
@@ -119,10 +120,10 @@ public class FakePlayer implements OfflinePlayer {
 
     @Override
     public Map<String, Object> serialize() {
-        HashMap<String, Object> mapaNovo = new HashMap<>();
-        mapaNovo.put("name", this.name);
-        mapaNovo.put("uuid", this.getUniqueId());
-        return mapaNovo;
+        HashMap<String, Object> userData = new HashMap<>();
+        userData.put("name", this.name);
+        userData.put("uuid", this.getUniqueId());
+        return userData;
     }
 
     @Override

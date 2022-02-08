@@ -28,51 +28,34 @@ public class MineReflect {
      * INICIO Métodos ABAIXO
      */
 
-    public static String MSG_ITEM_STACK = "§aQuantidade: §f%stack";
+    public static String LORE_ITEM_STACK = "§aQuantidade: §f%stack";
 
     public static ItemStack toStack(ItemStack original, double amount) {
-        List<String> lore = getLore(original);
-        lore.add(MineReflect.MSG_ITEM_STACK
+        List<String> lore = null;
+        ItemMeta meta = original.getItemMeta();
+        if (meta != null) {
+            lore = meta.getLore();
+            if (lore == null) {
+                lore = new ArrayList<>();
+            }
+        }
+        lore.add(MineReflect.LORE_ITEM_STACK
                 .replace("%stack", Extra.formatMoney(amount)));
-        setLore(original, lore);
+
+        if (meta != null) {
+            meta.setLore(lore);
+            original.setItemMeta(meta);
+        }
         ItemExtraData data = getData(original);
         data.setCustomStack(amount);
         return setData(original, data);
-    }
-
-    /**
-     * Pega o descrição do Item
-     *
-     * @param item Item
-     * @return Descrição
-     */
-    private static List<String> getLore(ItemStack item) {
-        if (item != null) {
-            if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
-                return item.getItemMeta().getLore();
-            }
-        }
-        return new ArrayList<>();
-    }
-
-    /**
-     * Modifica a Descrição do Item
-     *
-     * @param item Item
-     * @param lore Descrição
-     */
-    private static void setLore(ItemStack item, List<String> lore) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setLore(lore);
-            item.setItemMeta(meta);
-        }
     }
 
 
     /**
      * API criada para gerenciar HashMap de NBT (NBTCompound)
      * via Reflection
+     *
      * @version 1.0
      * @since 19/09/2021
      */
@@ -127,6 +110,7 @@ public class MineReflect {
             return false;
 
         }
+
         public int getInt(String key) {
 
             try {
@@ -139,6 +123,7 @@ public class MineReflect {
             return 0;
 
         }
+
         public long getLong(String key) {
 
             try {
@@ -151,6 +136,7 @@ public class MineReflect {
             return 0L;
 
         }
+
         public double getDouble(String key) {
 
             try {
@@ -208,6 +194,7 @@ public class MineReflect {
                 e.printStackTrace();
             }
         }
+
         public void setLong(String key, long value) {
             try {
                 Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setLong", String.class, int.class);
@@ -217,14 +204,16 @@ public class MineReflect {
             }
 
         }
+
         public void setBoolean(String key, boolean value) {
             try {
-                Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setBoolean", String.class, boolean.class );
+                Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setBoolean", String.class, boolean.class);
                 setDouble.invoke(nbtMap, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
         public void setString(String key, String value) {
             try {
                 Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setString", String.class, String.class);
@@ -347,7 +336,7 @@ public class MineReflect {
                     "asNMSCopy",
                     ItemStack.class);
             Object itemCopia = asNMSCopy.invoke(0, item);
-            if (itemCopia!= null) {
+            if (itemCopia != null) {
                 Method setTag = Extra.getMethod(MineReflect.classMineItemStack, "setTag",
                         MineReflect.classMineNBTTagCompound);
 
@@ -540,7 +529,7 @@ public class MineReflect {
     public static void changeName(Player player, String displayName) {
 
         try {
-            Object entityplayer = getHandle(player);
+            Object entityplayer = getPlayerHandle(player);
             // PacketPlayOutNamedEntitySpawn a;
             // EntityPlayer c;
             // PacketPlayOutEntity d;
@@ -733,7 +722,7 @@ public class MineReflect {
      */
     public static boolean isAbove1_8(Player player) {
         try {
-            return (int) Extra.getMethodInvoke(Extra.getFieldValue(getConnection(player), "networkManager"), "getVersion") == 47;
+            return (int) Extra.getMethodInvoke(Extra.getFieldValue(getPlayerConnection(player), "networkManager"), "getVersion") == 47;
 
         } catch (Exception ignored) {
         }
@@ -746,7 +735,7 @@ public class MineReflect {
      */
     public static String getPing(Player player) {
         try {
-            return Extra.getFieldValue(getHandle(player), "ping").toString();
+            return Extra.getFieldValue(getPlayerHandle(player), "ping").toString();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -762,8 +751,7 @@ public class MineReflect {
     public static void sendActionBar(Player player, String text) {
         try {
             Object component = getChatComponentText(text);
-            Object packet = Extra.getNew(MineReflect.classPacketPlayOutChat,
-                    Extra.getParameters(MineReflect.classMineIChatBaseComponent, byte.class), component, (byte) 2);
+            Object packet = Extra.getNew(MineReflect.classPacketPlayOutChat, Extra.getParameters(MineReflect.classMineIChatBaseComponent, byte.class), component, (byte) 2);
             sendPacket(player, packet);
         } catch (Exception e) {
             e.printStackTrace();
@@ -866,8 +854,16 @@ public class MineReflect {
      * @throws Exception Erro
      */
     public static void sendPacket(Object packet, Player player) throws Exception {
+        Extra.getMethodInvoke(getPlayerConnection(player), "sendPacket", Extra.getParameters(MineReflect.classPacketPacket), packet);
 
-        Extra.getMethodInvoke(getConnection(player), "sendPacket", Extra.getParameters(MineReflect.classPacketPacket), packet);
+    }
+
+    static {
+        try {
+            Mine.console("§c" + Extra.getMethod("#mPlayerConnection", "sendPacket", "#p"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -919,20 +915,36 @@ public class MineReflect {
      * @return EntityPlayer pelo metodo getHandle da classe CraftPlayer(Player)
      * @throws Exception Erro
      */
-    public static Object getHandle(Player player) throws Exception {
+    public static Object getPlayerHandle(Player player) throws Exception {
         return Extra.getMethodInvoke(player, "getHandle");
     }
 
+    static {
+        try {
+            Mine.console("§c" + Extra.getMethod("#centity.CraftPlayer", "getHandle"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
-     * Retorna Um PlayerConnection pela variavel playerConnection da classe
+     * Retorna PlayerConnection da variavel playerConnection da classe
      * EntityPlayer <Br>
      * Pega o EntityPlayer pelo metodo getHandle(player)
      *
      * @param player Jogador (CraftPlayer)
      * @return Conexão do jogador
      */
-    public static Object getConnection(Player player) throws Exception {
-        return Extra.getFieldValue(getHandle(player), "playerConnection");
+    public static Object getPlayerConnection(Player player) throws Exception {
+        return Extra.getFieldValue(getPlayerHandle(player), "playerConnection");
+    }
+
+    static {
+        try {
+            Mine.console("§c" + Extra.getField("#mEntityPlayer", "playerConnection"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -944,14 +956,14 @@ public class MineReflect {
         try {
             Object packet = Extra.getNew(MineReflect.classPacketPlayInClientCommand,
                     Extra.getFieldValue(MineReflect.classMineEnumClientCommand, "PERFORM_RESPAWN"));
-            Extra.getMethodInvoke(getConnection(player), "a", packet);
+            Extra.getMethodInvoke(getPlayerConnection(player), "a", packet);
 
         } catch (Exception ex) {
             try {
 
                 Object packet = Extra.getNew(MineReflect.classPacketPlayInClientCommand,
                         Extra.getFieldValue(MineReflect.classMineEnumClientCommand2, "PERFORM_RESPAWN"));
-                Extra.getMethodInvoke(getConnection(player), "a", packet);
+                Extra.getMethodInvoke(getPlayerConnection(player), "a", packet);
             } catch (Exception e) {
                 e.printStackTrace();
             }
