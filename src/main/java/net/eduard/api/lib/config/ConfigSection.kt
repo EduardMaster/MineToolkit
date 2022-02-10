@@ -90,22 +90,15 @@ class ConfigSection(var key: String, var data: Any) {
         return getSection(path).data
     }
 
-    val boolean: Boolean
-        get() = Extra.toBoolean(data)
 
     fun getBoolean(path: String): Boolean {
         return getSection(path).boolean
     }
 
-    val double: Double
-        get() = Extra.toDouble(data)
 
     fun getDouble(path: String): Double {
         return getSection(path).double
     }
-
-    val float: Float
-        get() = Extra.toFloat(data)
 
 
     fun getFloat(path: String): Float {
@@ -113,7 +106,47 @@ class ConfigSection(var key: String, var data: Any) {
     }
 
     val int: Int
-        get() = Extra.toInt(data)
+        get() {
+            if (data is Int) {
+                return data as Int
+            }
+            data = Extra.toInt(data)
+            return data as Int
+        }
+
+    val float: Float
+        get() {
+            if (data is Float) {
+                return data as Float
+            }
+            data = Extra.toFloat(data)
+            return data as Float
+        }
+    val double: Double
+        get() {
+            if (data is Double) {
+                return data as Double
+            }
+            data = Extra.toDouble(data)
+            return data as Double
+        }
+
+    val long: Long
+        get() {
+            if (data is Long) {
+                return data as Long
+            }
+            data = Extra.toLong(data)
+            return data as Long
+        }
+    val boolean: Boolean
+        get() {
+            if (data is Boolean) {
+                return data as Boolean
+            }
+            data = Extra.toBoolean(data)
+            return data as Boolean
+        }
 
     fun getInt(path: String): Int {
         return getSection(path).int
@@ -141,11 +174,7 @@ class ConfigSection(var key: String, var data: Any) {
             }
             return data as MutableList<Any>
         }
-    val long: Long
-        get() {
-            data = Extra.toLong(data)
-            return data as Long
-        }
+
 
     fun getLong(path: String): Long {
         return getSection(path).long
@@ -176,45 +205,42 @@ class ConfigSection(var key: String, var data: Any) {
             return this
         }
         path = ConfigUtil.getPath(path)
-        val spliter = ConfigUtil.SECTION_SEPARATOR
-        if (path.contains(spliter)) {
-            val split = path.split(spliter)
-            if (split.isEmpty()) {
-                //debug("Esta vazio")
-                return createSection(path.replace(".", "$"));
-            }
-            val whereIsFinalPoint = path.indexOf('.')
-            val firstKey = path.substring(0,whereIsFinalPoint)
-            val lastKey = path.substring(whereIsFinalPoint+1)
-            /*
-            val key = split[0]
-            val builder = StringBuilder()
-            var first = true;
-            for (subKey in split) {
-                if (first) {
-                    first = false
-                } else {
-                    builder.append(subKey)
-                    builder.append(".")
-                }
-            }
-            builder.deleteCharAt(builder.length - 1)
-            val restPath = builder.toString()
-            //split.removeAt(0)
-            //val restPath = split.joinToString(spliter, limit = 10)
-
-             */
-            //debug("Preparando Secao: §a$firstKey§f dependentes: §a$lastKey")
-            val section = getSection(firstKey);
-            return section.getSection(lastKey)
-        } else {
+       // val spliter = ConfigUtil.SECTION_SEPARATOR
+        val whereIsFinalPoint = path.indexOf('.')
+        if (whereIsFinalPoint == -1) {
             val sectionFinded = map[path];
             if (sectionFinded != null) {
-                //debug("Cache §2$path")
                 return sectionFinded
             }
             return createSection(path);
         }
+        val firstKey = path.substring(0, whereIsFinalPoint)
+        //  val split = path.split(spliter)
+        if (firstKey.isEmpty()) {
+            return createSection(path.replace(".", "$"));
+        }
+        val lastKey = path.substring(whereIsFinalPoint + 1)
+        /*
+        val key = split[0]
+        val builder = StringBuilder()
+        var first = true;
+        for (subKey in split) {
+            if (first) {
+                first = false
+            } else {
+                builder.append(subKey)
+                builder.append(".")
+            }
+        }
+        builder.deleteCharAt(builder.length - 1)
+        val restPath = builder.toString()
+        //split.removeAt(0)
+        //val restPath = split.joinToString(spliter, limit = 10)
+
+         */
+        //debug("Preparando Secao: §a$firstKey§f dependentes: §a$lastKey")
+        val section = getSection(firstKey);
+        return section.getSection(lastKey)
     }
 
     val set: Set<Map.Entry<String, ConfigSection>>

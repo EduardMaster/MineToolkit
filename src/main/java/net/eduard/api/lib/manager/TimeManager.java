@@ -25,9 +25,14 @@ public class TimeManager extends EventsManager implements Runnable, BukkitTimeHa
      */
     public void stopTask() {
         if (existsTask()) {
-            taskUsed.cancel();
-            Bukkit.getScheduler().cancelTask(taskUsed.getTaskId());
-            taskUsed = null;
+            try {
+                int id = taskUsed.getTaskId();
+                taskUsed.cancel();
+                Bukkit.getScheduler().cancelTask(id);
+                taskUsed = null;
+            }catch (NullPointerException ex){
+                ex.printStackTrace();
+            }
         }
     }
     public void run() {

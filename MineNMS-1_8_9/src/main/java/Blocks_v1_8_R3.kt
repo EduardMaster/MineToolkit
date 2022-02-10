@@ -1,40 +1,35 @@
 package net.eduard.api.lib.abstraction
 
 import net.minecraft.server.v1_8_R3.*
+import org.bukkit.*
 import org.bukkit.Chunk
-import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.craftbukkit.v1_8_R3.CraftChunk
 import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
+import org.spigotmc.AsyncCatcher
 
 /**
  *
  */
 class Blocks_v1_8_R3(
-    x: Int, y: Int, z: Int,
-    val worldServer: WorldServer
-) : CraftBlock(null, x, y, z),
+    x: Int, y: Int, z: Int, blockChunk: Chunk?,
+    world : World
+) : CraftBlock((blockChunk as CraftChunk?), x, y, z),
     Blocks {
     val position = BlockPosition(x, y, z)
-
-    constructor(x: Int, y: Int, z: Int, world: World) : this(x, y, z, (world as CraftWorld).handle)
-    constructor(location: Location) : this(
-        location.x.toInt(),
-        location.y.toInt(),
-        location.z.toInt(),
-        (location.world as CraftWorld).handle
-    )
-
-    constructor(block: Block) : this(block.x, block.y, block.z, (block.world as CraftWorld).handle)
-
+    val worldServer: WorldServer = (world as CraftWorld).handle
+    var chunkCache: net.minecraft.server.v1_8_R3.Chunk?
+    = (blockChunk as CraftChunk?)?.handle ?: worldServer.chunkProviderServer.originalGetChunkAt(x shr 4, z shr 4)
 
     override fun getWorld(): World {
         return worldServer.world
     }
 
     override fun getChunk(): Chunk {
+        AsyncCatcher.catchOp("Cannot get Chunk")
         return worldServer.getChunkAt(x shr 4, z shr 4).bukkitChunk
     }
 
@@ -62,39 +57,35 @@ class Blocks_v1_8_R3(
         val ySec = y and 0xF
         val zSec = z and 0xF
         val combined: Int = type + (data.toInt() shl 12)
-        val blockData = net.minecraft.server.v1_8_R3.Block
-            .getByCombinedId(combined)
+        val blockData = net.minecraft.server.v1_8_R3.Block.getByCombinedId(combined)
         if (blockData === section.getType(xSec, ySec, zSec)) {
             //println("Travou aqui type $type  / $data")
             return false
         }
         section.setType(xSec, ySec, zSec, blockData)
         //worldServer.x(position)
-        // altera a luz emitida do bloco (eles ficam igula glowstone)
+        // altera a luz emitida do bloco (eles ficam igual a glowstone)
         //section.b(x, y, z, 0)
         //altera a luz do ceu aparentemente setar 15 n ta ajudando
-       //section.a(xSec, (y shr 0xF) and 0xF, zSec, 15)
-        /*
-        if (type != 0) {
-            section.a((x + 1) and 15, ySec, zSec, 15)
-            section.a((x - 1) and 15, ySec, zSec, 15)
-            section.a(xSec, ySec, (z + 1) and 15, 15)
-            section.a(xSec, ySec, (z - 1) and 15, 15)
-            section.a(xSec, (y + 1) and 15, zSec, 15)
-        }
-         */
+        //section.a(xSec, (y shr 0xF) and 0xF, zSec, 15)
 
         if (applyPhysics) {
             // worldServer.notifyAndUpdatePhysics(position)
         } else {
             //println("notificando mudanca")
-            sendPacket()
+
         }
+        // Mine.broadcast("Modificando bloco")
+        // worldServer.x(position)
+        Bukkit.getScheduler().runTask(Bukkit.getPluginManager().plugins.first(), this::sendPacket)
+
+
         //super.setTypeIdAndData(type, data, applyPhysics)
         return true
     }
 
     override fun sendPacket() {
+        AsyncCatcher.catchOp("Cannot Send BlockChangePacket")
         worldServer.notify(position)
     }
 
@@ -102,6 +93,7 @@ class Blocks_v1_8_R3(
         //método responsavel por concertar as luzes porem da mais lag
         worldServer.x(position)
         //worldServer.getLightLevel(position)
+
         sendPacket()
     }
 
@@ -110,7 +102,7 @@ class Blocks_v1_8_R3(
     }
 
     override fun getRelative(modX: Int, modY: Int, modZ: Int): Block {
-        return Blocks_v1_8_R3(x + modX, y + modY, z + modZ, worldServer)
+        return Blocks_v1_8_R3(x + modX, y + modY, z + modZ, chunkCache?.bukkitChunk, worldServer.world)
     }
 
     private val section: ChunkSection?
@@ -118,12 +110,11 @@ class Blocks_v1_8_R3(
             val x = x
             val y = y
             val z = z
-
-            val chunk = worldServer.chunkProviderServer
-                .originalGetChunkAt(x shr 4, z shr 4)
-            val yBitShifted = (y shr 4) and 0xF
             try {
-                if (yBitShifted>=16){
+                val chunk = chunkCache ?: return null
+                // val chunk = worldServer.chunkProviderServer.originalGetChunkAt(x shr 4, z shr 4)
+                val yBitShifted = (y shr 4) and 0xF
+                if (yBitShifted >= 16) {
                     return null;
                 }
                 var chunkSection = chunk.sections[yBitShifted]
@@ -133,9 +124,8 @@ class Blocks_v1_8_R3(
                     //chunkSection = chunk.sections[y shr 4]
                 }
                 return chunkSection
-            }catch (error : ArrayIndexOutOfBoundsException){
+            } catch (ex: Exception) {
                 return null;
             }
-
         }
 }

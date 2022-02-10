@@ -250,7 +250,7 @@ public final class StorageAPI {
 
     public static Object transform(Object object, Class<?> type) throws Exception {
         String fieldTypeName = Extra.toTitle(getClassName(type));
-        Object value = Extra.getMethodInvoke(Extra.class, "to" + fieldTypeName, Extra.getParameters(Object.class), object);
+        Object value = Extra.getMethodInvoke(Extra.class, "to" + fieldTypeName, Extra.getParametersTypes(Object.class), object);
         if (value instanceof String) {
             value = Extra.toChatMessage((String) value);
         }

@@ -38,7 +38,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     fun getLong(key: String) = configs.getLong(key)
     fun getBoolean(key: String) = configs.getBoolean(key)
     fun getMessages(key: String) = messages.getMessages(key)
-    var calulatingLag = false
+    var calcLag = false
     var isFree = false
     var activated = false
     var reloaded = false
@@ -223,7 +223,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
         action.invoke()
         val fim = System.currentTimeMillis()
         val lag = fim - inicio
-        if (calulatingLag) {
+        if (calcLag) {
             log("Lag causado em $actionName -> ${lag}ms")
         }
     }

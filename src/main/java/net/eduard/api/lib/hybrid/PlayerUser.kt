@@ -5,6 +5,7 @@ import java.io.Serializable
 import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
 
 @StorageAttributes(inline = true)
 class PlayerUser(
@@ -30,7 +31,7 @@ class PlayerUser(
     }
 
     fun asyncSetUUIDByName() {
-        Hybrid.instance.asyncTask(this::setUUIDByName)
+        uuidIndentifier.submit(this::setUUIDByName)
     }
 
     fun setUUIDByName() {
@@ -81,5 +82,9 @@ class PlayerUser(
         return name.toLowerCase().hashCode()
     }
 
+    companion object{
+        val uuidIndentifier = Executors.newFixedThreadPool(4)
+
+    }
 
 }

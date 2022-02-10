@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.spigotmc.AsyncCatcher;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -24,6 +25,127 @@ import java.util.*;
  */
 @SuppressWarnings("unused")
 public class MineReflect {
+    private static String version;
+    /**
+     * @return Versão do Servidor
+     */
+    public static String getVersion() {
+
+        try {
+            if (version ==null){
+                version= Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            }
+            return version;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "v_Not_Definied";
+    }
+    private static Class<?> class_NBTCompound;
+    private static Class<?> class_NBTBase;
+    private static Class<?> class_CraftItemStack;
+    private static Class<?> class_NMSItemStack;
+    private static Class<?> enumclass_ClientCommand;
+    private static Method method_asNMSCopy;
+    private static Method method_asBukkitCopy;
+    private static Method method_getItem;
+    private static Method method_NMSItemStack_setMaxDurability;
+    private static Method method_forcePlayerRespawn;
+    private static Method method_NBT_hasKey;
+    private static Method method_NBT_getString;
+    private static Method method_NBT_getBoolean;
+    private static Method method_NBT_getInt;
+    private static Method method_NBT_getDouble;
+    private static Method method_NBT_getLong;
+    private static Method method_NBT_setLong;
+    private static Method method_NBT_setDouble;
+    private static Method method_NBT_setInt;
+    private static Method method_NBT_setBoolean;
+    private static Method method_NBT_setString;
+    private static Method method_NBT_set;
+    private static Method method_NBT_get;
+    private static Method method_NMSItemStack_setTag;
+    private static Method method_NMSItemStack_getTag;
+
+    static {
+        try {
+            Extra.newReplacer("#v", MineReflect.getVersion());
+            class_NBTCompound = Extra.getClassFrom("#mNBTTagCompound");
+            class_NBTBase = Extra.getClassFrom("#mNBTBase");
+            class_CraftItemStack = Extra.getClassFrom("#cinventory.CraftItemStack");
+            class_NMSItemStack = Extra.getClassFrom("#mItemStack");
+            method_asNMSCopy = Extra.getMethod(class_CraftItemStack, "asNMSCopy", ItemStack.class);
+            method_asBukkitCopy = Extra.getMethod(class_CraftItemStack, "asBukkitCopy", class_NMSItemStack);
+            method_getItem = Extra.getMethod(class_NMSItemStack, "getItem");
+            method_NMSItemStack_getTag = Extra.getMethod(class_NMSItemStack, "getTag");
+            method_NBT_hasKey = Extra.getMethod(class_NBTCompound, "hasKey", String.class);
+            method_NBT_getString = Extra.getMethod(class_NBTCompound, "getString", String.class);
+            method_NBT_getBoolean= Extra.getMethod(class_NBTCompound, "getBoolean", String.class);
+            method_NBT_getInt = Extra.getMethod(class_NBTCompound, "getInt", String.class);
+            method_NBT_getDouble = Extra.getMethod(class_NBTCompound, "getDouble", String.class);
+            method_NBT_getLong = Extra.getMethod(class_NBTCompound, "getLong", String.class);
+            method_NMSItemStack_setTag = Extra.getMethod(class_NMSItemStack, "setTag", class_NBTCompound);
+            method_NBT_setDouble = Extra.getMethod(class_NBTCompound, "setDouble", String.class, double.class);
+            method_NBT_setInt = Extra.getMethod(class_NBTCompound, "setInt", String.class, int.class);
+            method_NBT_setLong = Extra.getMethod(class_NBTCompound, "setLong", String.class, long.class);
+            method_NBT_setString = Extra.getMethod(class_NBTCompound, "setString", String.class, String.class);
+            method_NBT_setBoolean = Extra.getMethod(class_NBTCompound, "setBoolean", String.class, boolean.class);
+            method_NBT_set = Extra.getMethod(class_NBTCompound, "set", String.class, class_NBTBase);
+            method_NBT_get = Extra.getMethod(class_NBTCompound, "get", String.class);
+
+        }
+        catch (Exception exception){
+            exception.printStackTrace();
+        }
+    }
+    public static void asyncCatch(String message){
+        AsyncCatcher.catchOp(message);
+    }
+    /**
+     * Força o Respawn do Jogador (Respawn Automatico)
+     *
+     * @param player Jogador
+     */
+    public static void makeRespawn(Player player) {
+        try {
+            Object packet = Extra.getNew(MineReflect.classPacketPlayInClientCommand,
+                    Extra.getFieldValue(MineReflect.classMineEnumClientCommand, "PERFORM_RESPAWN"));
+            Extra.getMethodInvoke(getPlayerConnection(player), "a", packet);
+
+        } catch (Exception ex) {
+            try {
+
+                Object packet = Extra.getNew(MineReflect.classPacketPlayInClientCommand,
+                        Extra.getFieldValue(MineReflect.classMineEnumClientCommand2, "PERFORM_RESPAWN"));
+                Extra.getMethodInvoke(getPlayerConnection(player), "a", packet);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+    /**
+     * Altera a stack máxima do Item
+     *
+     * @param itemOriginal Item Original
+     * @param amount       Quantidade
+     * @return ItemStack novo
+     */
+    public static ItemStack setMaxStackSize(ItemStack itemOriginal, int amount) {
+        try {
+            Object nmsItemStack = method_asNMSCopy.invoke(0, itemOriginal);
+            Object nmsItem = method_getItem.invoke(nmsItemStack);
+            method_NMSItemStack_setMaxDurability = Extra.getMethod(class_NMSItemStack, "c", int.class);
+            method_NMSItemStack_setMaxDurability.invoke(nmsItem, amount);
+            Object newItem = method_asBukkitCopy.invoke(0, nmsItemStack);
+            return (ItemStack) newItem;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+
     /**
      * INICIO Métodos ABAIXO
      */
@@ -39,9 +161,7 @@ public class MineReflect {
                 lore = new ArrayList<>();
             }
         }
-        lore.add(MineReflect.LORE_ITEM_STACK
-                .replace("%stack", Extra.formatMoney(amount)));
-
+        lore.add(MineReflect.LORE_ITEM_STACK.replace("%stack", Extra.formatMoney(amount)));
         if (meta != null) {
             meta.setLore(lore);
             original.setItemMeta(meta);
@@ -77,8 +197,7 @@ public class MineReflect {
 
         public boolean has(String key) {
             try {
-                Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "hasKey", String.class);
-                return (boolean) getString.invoke(nbtMap, key);
+                return (boolean) method_NBT_hasKey.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -86,10 +205,8 @@ public class MineReflect {
         }
 
         public String getString(String key) {
-
             try {
-                Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "getString", String.class);
-                return (String) getString.invoke(nbtMap, key);
+                return (String) method_NBT_getString.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -101,8 +218,7 @@ public class MineReflect {
         public boolean getBoolean(String key) {
 
             try {
-                Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "getBoolean", String.class);
-                return (boolean) getString.invoke(nbtMap, key);
+                return (boolean) method_NBT_getBoolean.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -112,14 +228,11 @@ public class MineReflect {
         }
 
         public int getInt(String key) {
-
             try {
-                Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "getInt", String.class);
-                return (int) getString.invoke(nbtMap, key);
+                return (int) method_NBT_getInt.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return 0;
 
         }
@@ -127,8 +240,7 @@ public class MineReflect {
         public long getLong(String key) {
 
             try {
-                Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "getLong", String.class);
-                return (long) getString.invoke(nbtMap, key);
+                return (long) method_NBT_getLong.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -138,10 +250,8 @@ public class MineReflect {
         }
 
         public double getDouble(String key) {
-
             try {
-                Method getString = Extra.getMethod(MineReflect.classMineNBTTagCompound, "getDouble", String.class);
-                return (double) getString.invoke(nbtMap, key);
+                return (double) method_NBT_getDouble.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -153,8 +263,7 @@ public class MineReflect {
 
         public void setDouble(String key, double value) {
             try {
-                Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setDouble", String.class, double.class);
-                setDouble.invoke(nbtMap, key, value);
+                method_NBT_setDouble.invoke(nbtMap, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -162,34 +271,24 @@ public class MineReflect {
 
         public void setNBT(String key, Object newNBT) {
             try {
-
-                Method set = Extra.getMethod(MineReflect.classMineNBTTagCompound, "set", String.class,
-                        MineReflect.classMineNBTBase);
-                set.invoke(nbtMap, key, newNBT);
+                method_NBT_set.invoke(nbtMap, key, newNBT);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         public Object getNBT(String key) {
-
             try {
-
-                Method getKey = Extra.getMethod(MineReflect.classMineNBTTagCompound, "get",
-                        String.class);
-                return getKey.invoke(nbtMap, key);
+                return method_NBT_get.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return null;
-
         }
 
         public void setInt(String key, int value) {
             try {
-                Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setInt", String.class, int.class);
-                setDouble.invoke(nbtMap, key, value);
+                method_NBT_setInt.invoke(nbtMap, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -197,8 +296,7 @@ public class MineReflect {
 
         public void setLong(String key, long value) {
             try {
-                Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setLong", String.class, int.class);
-                setDouble.invoke(nbtMap, key, value);
+                method_NBT_setLong.invoke(nbtMap, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -207,8 +305,7 @@ public class MineReflect {
 
         public void setBoolean(String key, boolean value) {
             try {
-                Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setBoolean", String.class, boolean.class);
-                setDouble.invoke(nbtMap, key, value);
+                method_NBT_setBoolean.invoke(nbtMap, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -216,8 +313,7 @@ public class MineReflect {
 
         public void setString(String key, String value) {
             try {
-                Method setDouble = Extra.getMethod(MineReflect.classMineNBTTagCompound, "setString", String.class, String.class);
-                setDouble.invoke(nbtMap, key, value);
+                method_NBT_setString.invoke(nbtMap, key, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -296,7 +392,7 @@ public class MineReflect {
 
     private static Object emptyNBT() {
         try {
-            return Extra.getNew(MineReflect.classMineNBTTagCompound);
+            return Extra.getNew(class_NBTCompound);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -315,14 +411,11 @@ public class MineReflect {
 
     private static Object getNBT(ItemStack item) {
         try {
-            Method asNMSCopy = Extra.getMethod(MineReflect.classCraftItemStack,
-                    "asNMSCopy", ItemStack.class);
-            Object itemCopia = asNMSCopy.invoke(0, item);
+            Object itemCopia = method_asNMSCopy.invoke(0, item);
             if (itemCopia == null) {
                 return null;
             }
-            Method getTag = Extra.getMethod(MineReflect.classMineItemStack, "getTag");
-            return getTag.invoke(itemCopia);
+            return method_NMSItemStack_getTag.invoke(itemCopia);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -332,22 +425,16 @@ public class MineReflect {
 
     public static ItemStack setData(ItemStack item, ItemExtraData data) {
         try {
-            Method asNMSCopy = Extra.getMethod(MineReflect.classCraftItemStack,
-                    "asNMSCopy",
-                    ItemStack.class);
-            Object itemCopia = asNMSCopy.invoke(0, item);
-            if (itemCopia != null) {
-                Method setTag = Extra.getMethod(MineReflect.classMineItemStack, "setTag",
-                        MineReflect.classMineNBTTagCompound);
 
-                setTag.invoke(itemCopia, data.getItemNBT().getNbtMap());
-                Method asCraftMirror = Extra.getMethod(MineReflect.classCraftItemStack,
-                        "asCraftMirror", MineReflect.classMineItemStack);
+            Object itemCopia = method_asNMSCopy.invoke(0, item);
+            if (itemCopia != null) {
+              ;
+
+                method_NMSItemStack_setTag.invoke(itemCopia, data.getItemNBT().getNbtMap());
+                //Method asCraftMirror = Extra.getMethod(class_CraftItemStack,"asCraftMirror", MineReflect.classMineItemStack);
                 Object itemModified; //= asCraftMirror.invoke(0, itemCopia);
 
-                Method asBukkitCopy = Extra.getMethod(MineReflect.classCraftItemStack,
-                        "asBukkitCopy", MineReflect.classMineItemStack);
-                itemModified = asBukkitCopy.invoke(0, itemCopia);
+                itemModified = method_asBukkitCopy.invoke(0, itemCopia);
                 if (itemModified != null)
                     return (ItemStack) itemModified;
             }
@@ -357,18 +444,7 @@ public class MineReflect {
         return item;
     }
 
-    /**
-     * @return Versão do Servidor
-     */
-    public static String getVersion() {
 
-        try {
-            return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        } catch (Exception er) {
-            return "";
-        }
-
-    }
 
     /**
      * (Não funciona)
@@ -381,7 +457,7 @@ public class MineReflect {
     }
 
     static {
-        Extra.newReplacer("#v", MineReflect.getVersion());
+
     }
 
     /**
@@ -425,13 +501,11 @@ public class MineReflect {
     /**
      * Classes abaixo relacionado a items
      */
-    public static String classMineNBTTagCompound = "#mNBTTagCompound";
-    public static String classMineNBTBase = "#mNBTBase";
+
+
     public static String classMineNBTTagList = "#mNBTTagList";
     public static String classPacketPacket = "#p";
-    public static String classCraftItemStack = "#cinventory.CraftItemStack";
-    public static String classMineItemStack = "#mItemStack";
-    public static String classBukkitItemStack = "#bItemStack";
+
 
 
     public static Villager newNPCVillager(Location location, String name) {
@@ -460,34 +534,8 @@ public class MineReflect {
         return (int) Extra.getFieldValue(MineReflect.classMineMinecraftServer, "currentTick");
     }
 
-    /**
-     * Altera a stack máxima do Item
-     *
-     * @param itemOriginal Item Original
-     * @param amount       Quantidade
-     * @return ItemStack novo
-     */
-    public static ItemStack setMaxStackSize(ItemStack itemOriginal, int amount) {
-        try {
 
-            Class<?> claz = Extra.getClassFrom(MineReflect.classCraftItemStack);
-            Method method_asNMSCopy = Extra.getMethod(claz, "asNMSCopy", ItemStack.class);
-            Method method_asBukkitCopy = Extra.getMethod(claz, "asBukkitCopy", MineReflect.classMineItemStack);
-            Object nmsItemStack = method_asNMSCopy.invoke(0, itemOriginal);
 
-            Method method_getItem = nmsItemStack.getClass().getDeclaredMethod("getItem");
-            Object nmsItem = method_getItem.invoke(nmsItemStack);
-            Method method_c = nmsItem.getClass().getDeclaredMethod("c", int.class);
-            method_c.invoke(nmsItem, amount);
-
-            Object newItem = method_asBukkitCopy.invoke(0, nmsItemStack);
-
-            return (ItemStack) newItem;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * Desabilita a Inteligência da Entidade<br>
@@ -507,7 +555,7 @@ public class MineReflect {
      */
     public static void disableAI(Entity entity) {
         try {
-            Object compound = Extra.getNew(MineReflect.classMineNBTTagCompound);
+            Object compound = Extra.getNew(class_NBTCompound);
             Object getHandle = Extra.getMethodInvoke(entity, "getHandle");
             Extra.getMethodInvoke(getHandle, "c", compound);
             Extra.getMethodInvoke(compound, "setByte", "NoAI", (byte) 1);
@@ -633,14 +681,15 @@ public class MineReflect {
         try {
             if (isAbove1_8(player)) {
                 sendPacket(player, Extra.getNew(MineReflect.classSpigotPacketTitle,
+                        new Object[]{MineReflect.classSpigotAction, int.class,int.class,int.class},
                         Extra.getFieldValue(MineReflect.classSpigotAction, "TIMES"), fadeIn, stay, fadeOut));
                 sendPacket(player,
                         Extra.getNew(MineReflect.classSpigotPacketTitle,
-                                Extra.getParameters(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
+                                Extra.getParametersTypes(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
                                 Extra.getFieldValue(MineReflect.classSpigotAction, "TITLE"), getChatComponentText(title)));
                 sendPacket(player,
                         Extra.getNew(MineReflect.classSpigotPacketTitle,
-                                Extra.getParameters(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
+                                Extra.getParametersTypes(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
                                 Extra.getFieldValue(MineReflect.classSpigotAction, "SUBTITLE"), getChatComponentText(subTitle)));
 
                 return;
@@ -649,27 +698,30 @@ public class MineReflect {
         } catch (Exception ignored) {
         }
         try {
-            sendPacket(player, Extra.getNew(MineReflect.classPacketPlayOutTitle, fadeIn, stay, fadeOut));
+            sendPacket(player, Extra.getNew(MineReflect.classPacketPlayOutTitle,new Object[]{int.class,int.class,int.class}, fadeIn, stay, fadeOut));
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
-                            Extra.getParameters(MineReflect.classCraftEnumTitleAction, MineReflect.classMineIChatBaseComponent),
+                            Extra.getParametersTypes(MineReflect.classCraftEnumTitleAction, MineReflect.classMineIChatBaseComponent),
                             Extra.getFieldValue(MineReflect.classCraftEnumTitleAction, "TITLE"), getChatComponentText(title)));
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
-                            Extra.getParameters(MineReflect.classCraftEnumTitleAction, MineReflect.classMineIChatBaseComponent),
+                            Extra.getParametersTypes(MineReflect.classCraftEnumTitleAction, MineReflect.classMineIChatBaseComponent),
                             Extra.getFieldValue(MineReflect.classCraftEnumTitleAction, "SUBTITLE"), getChatComponentText(subTitle)));
             return;
         } catch (Exception ignored) {
         }
         try {
-            sendPacket(player, Extra.getNew(MineReflect.classPacketPlayOutTitle, fadeIn, stay, fadeOut));
+
+            sendPacket(player, Extra.getNew(MineReflect.classPacketPlayOutTitle,
+                    new Object[]{int.class,int.class,int.class}, fadeIn, stay, fadeOut));
+
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
-                            Extra.getParameters(MineReflect.classPacketEnumTitleAction2, MineReflect.classMineIChatBaseComponent),
+                            Extra.getParametersTypes(MineReflect.classPacketEnumTitleAction2, MineReflect.classMineIChatBaseComponent),
                             Extra.getFieldValue(MineReflect.classPacketEnumTitleAction2, "TITLE"), getChatComponentText(title)));
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
-                            Extra.getParameters(MineReflect.classPacketEnumTitleAction2, MineReflect.classMineIChatBaseComponent),
+                            Extra.getParametersTypes(MineReflect.classPacketEnumTitleAction2, MineReflect.classMineIChatBaseComponent),
                             Extra.getFieldValue(MineReflect.classPacketEnumTitleAction2, "SUBTITLE"), getChatComponentText(subTitle)));
         } catch (Exception e) {
             e.printStackTrace();
@@ -688,7 +740,7 @@ public class MineReflect {
         try {
             if (isAbove1_8(player)) {
                 Object packet = Extra.getNew(MineReflect.classSpigotPacketTabHeader,
-                        Extra.getParameters(MineReflect.classMineIChatBaseComponent, MineReflect.classMineIChatBaseComponent),
+                        Extra.getParametersTypes(MineReflect.classMineIChatBaseComponent, MineReflect.classMineIChatBaseComponent),
                         getChatComponentText(header), getChatComponentText(footer));
                 sendPacket(packet, player);
                 return;
@@ -698,7 +750,7 @@ public class MineReflect {
         }
         try {
             Object packet = Extra.getNew(MineReflect.classPacketPlayOutPlayerListHeaderFooter,
-                    Extra.getParameters(MineReflect.classMineIChatBaseComponent), getChatComponentText(header));
+                    Extra.getParametersTypes(MineReflect.classMineIChatBaseComponent), getChatComponentText(header));
 
 
             Extra.setFieldValue(packet, "b", getChatComponentText(footer));
@@ -707,7 +759,7 @@ public class MineReflect {
         }
         try {
             Object packet = Extra.getNew(MineReflect.classPacketPlayOutPlayerListHeaderFooter,
-                    Extra.getParameters(MineReflect.classMineIChatBaseComponent), getChatComponentText(header));
+                    Extra.getParametersTypes(MineReflect.classMineIChatBaseComponent), getChatComponentText(header));
             Extra.setFieldValue(packet, "b", getChatComponentText(footer));
             sendPacket(packet, player);
         } catch (Exception ex) {
@@ -751,7 +803,7 @@ public class MineReflect {
     public static void sendActionBar(Player player, String text) {
         try {
             Object component = getChatComponentText(text);
-            Object packet = Extra.getNew(MineReflect.classPacketPlayOutChat, Extra.getParameters(MineReflect.classMineIChatBaseComponent, byte.class), component, (byte) 2);
+            Object packet = Extra.getNew(MineReflect.classPacketPlayOutChat, Extra.getParametersTypes(MineReflect.classMineIChatBaseComponent, byte.class), component, (byte) 2);
             sendPacket(player, packet);
         } catch (Exception e) {
             e.printStackTrace();
@@ -854,7 +906,7 @@ public class MineReflect {
      * @throws Exception Erro
      */
     public static void sendPacket(Object packet, Player player) throws Exception {
-        Extra.getMethodInvoke(getPlayerConnection(player), "sendPacket", Extra.getParameters(MineReflect.classPacketPacket), packet);
+        Extra.getMethodInvoke(getPlayerConnection(player), "sendPacket", Extra.getParametersTypes(MineReflect.classPacketPacket), packet);
 
     }
 
@@ -947,28 +999,6 @@ public class MineReflect {
         }
     }
 
-    /**
-     * Força o Respawn do Jogador (Respawn Automatico)
-     *
-     * @param player Jogador
-     */
-    public static void makeRespawn(Player player) {
-        try {
-            Object packet = Extra.getNew(MineReflect.classPacketPlayInClientCommand,
-                    Extra.getFieldValue(MineReflect.classMineEnumClientCommand, "PERFORM_RESPAWN"));
-            Extra.getMethodInvoke(getPlayerConnection(player), "a", packet);
 
-        } catch (Exception ex) {
-            try {
-
-                Object packet = Extra.getNew(MineReflect.classPacketPlayInClientCommand,
-                        Extra.getFieldValue(MineReflect.classMineEnumClientCommand2, "PERFORM_RESPAWN"));
-                Extra.getMethodInvoke(getPlayerConnection(player), "a", packet);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
 
 }

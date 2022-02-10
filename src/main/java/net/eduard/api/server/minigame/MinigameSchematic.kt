@@ -155,7 +155,7 @@ class MinigameSchematic(var name: String) {
                         locationBase.x.toInt() + currentX,
                         locationBase.y.toInt() + currentY,
                         locationBase.z.toInt() + currentZ,
-                        world
+                        world, null
                     ) ?: continue
                     if ((blockOf.getType().id == typeID)) {
                         blocksRead++

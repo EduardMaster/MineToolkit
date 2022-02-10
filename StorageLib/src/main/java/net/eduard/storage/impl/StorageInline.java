@@ -28,7 +28,7 @@ public final class StorageInline extends StorageBase<Object, String> {
         }
         if (resultadoFinal == null) {
             try {
-                resultadoFinal = Extra.getEmptyConstructor(info.getType()).newInstance();
+                resultadoFinal = Extra.getConstructor(info.getType()).newInstance();
             } catch (Exception ignored) {
             }
         }

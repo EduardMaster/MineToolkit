@@ -1,11 +1,12 @@
 package net.eduard.api.lib.event
 
+import net.eduard.api.EduardAPI
+import net.eduard.api.lib.abstraction.Blocks
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
-import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
 import org.bukkit.inventory.ItemStack
@@ -14,7 +15,7 @@ import org.bukkit.material.MaterialData
 class BlockMineEvent(
     val drops: MutableMap<ItemStack, Double>,
     val block: Block,
-   player: Player,
+    player: Player,
     var useEnchants: Boolean,
     var expToDrop: Int = 1
 ) : PlayerEvent(player), Cancellable {
@@ -54,22 +55,25 @@ class BlockMineEvent(
         }
         giveDrops()
         storeDrops();
-        fallDropsInWorld()
+        EduardAPI.instance.syncTask {
+            fallDropsInWorld()
+        }
+
         if (needGiveExp && expToDrop > 0)
             player.giveExp(expToDrop)
-
         if (needBreakBlock)
             breakBlock()
     }
 
     fun breakBlock() {
-        /*
-        val blockInfo = Blocks.get(block.location)
-        if (blockInfo != null)
-            blockInfo.setType(Material.AIR)
-        */
+        if (block.type == Material.SIGN || block.type == Material.SIGN_POST) {
+            EduardAPI.instance.syncTask {
+                block.type = Material.AIR
+            }
+        } else {
+          Blocks.get(block)?.setType(Material.AIR)
+        }
 
-        block.setTypeIdAndData(0,0,false)
     }
 
     fun setDrop(item: ItemStack, amount: Double) {
@@ -79,10 +83,10 @@ class BlockMineEvent(
 
     fun addDrop(item: ItemStack, amount: Double) {
         item.amount = 1
-        if (item in drops){
+        if (item in drops) {
             val lastDropAmount = drops[item]!!
-            drops[item] = amount +  lastDropAmount
-        }else{
+            drops[item] = amount + lastDropAmount
+        } else {
             drops[item] = amount
         }
 

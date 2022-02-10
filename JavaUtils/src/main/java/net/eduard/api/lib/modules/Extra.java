@@ -35,6 +35,10 @@ import java.util.zip.ZipInputStream;
  */
 @SuppressWarnings("unused")
 public final class Extra {
+    private static final Map<Class<?>, Map<String, Field>> reflectionFieldCache = new HashMap<>();
+    private static final HashMap<Class<?>, Map<String, Method>> reflectionEmptyMethodCache = new HashMap<>();
+    private static final Map<Class<?>, Constructor<?>> reflectionEmptyConstrutorCache = new HashMap<>();
+
     /**
      * Verifica se contem a Mensagem dentro do Texto (Ignora se é maiuscula ou
      * minuscula)
@@ -57,7 +61,7 @@ public final class Extra {
      */
     public static Object transform(Object object, Class<?> type) throws Exception {
         String fieldTypeName = Extra.toTitle(type.getSimpleName());
-        Object value = Extra.getMethodInvoke(Extra.class, "to" + fieldTypeName, Extra.getParameters(Object.class), object);
+        Object value = Extra.getMethodInvoke(Extra.class, "to" + fieldTypeName, Extra.getParametersTypes(Object.class), object);
         if (value instanceof String) {
             value = Extra.toChatMessage((String) value);
         }
@@ -510,7 +514,7 @@ public final class Extra {
         try {
 
             // Number numeroFinal = MONEY_OP_FORMATER.parse(conjuntoDeTresCasas[0] + MONEY_OP_DECIMAL_FORMATING_SYMBOLS.getDecimalSeparator() + conjuntoDeTresCasas[1]);
-            return MONEY_OP_FORMATER.format(numero / (Math.pow(10, (tamanho-1) * 3))) + sigla;
+            return MONEY_OP_FORMATER.format(numero / (Math.pow(10, (tamanho - 1) * 3))) + sigla;
         } catch (Exception ex) {
             return "-1.0";
         }
@@ -855,11 +859,9 @@ public final class Extra {
      * INICIO DA AREA DE REFLECTION
      *
      */
-    private static final Map<Class<?>, Map<Class<?>[], Constructor<?>>> construtorWithParametersCache = new HashMap<>();
-    private static final Map<Class<?>, Constructor<?>> construtorCache = new HashMap<>();
 
     /**
-     * Procura o cosntrutor deste Objeto com os seguitnes parametros
+     * Procura o cosntrutor deste Objeto com os seguintes parametros
      *
      * @param object     Objeto
      * @param parameters Parametros
@@ -868,42 +870,32 @@ public final class Extra {
      */
     public static Constructor<?> getConstructor(Object object, Object... parameters) throws Exception {
         Class<?> claz = getClassFrom(object);
-        Class<?>[] parametersFixed = getParameters(parameters);
+        Class<?>[] parametersFixed = getParametersTypes(parameters);
         if (parameters.length == 0) {
-            Constructor<?> construtor = construtorCache.get(claz);
+            Constructor<?> construtor = reflectionEmptyConstrutorCache.get(claz);
             if (construtor != null) {
                 return construtor;
             }
         }
-        Map<Class<?>[], Constructor<?>> construtorMap = construtorWithParametersCache.get(claz);
-        if (construtorMap != null) {
-            Constructor<?> construtor = construtorMap.get(parametersFixed);
-            if (construtor != null) {
-                return construtor;
-            }
-        }
+
         try {
             Constructor<?> constructor = claz.getDeclaredConstructor(parametersFixed);
             constructor.setAccessible(true);
-            if (parameters.length > 0) {
-                if (construtorMap == null) {
-                    construtorMap = new HashMap<>();
-                    construtorWithParametersCache.put(claz, construtorMap);
-                }
-                construtorMap.put(parametersFixed, constructor);
-            } else {
-                construtorCache.put(claz, constructor);
+            if (parameters.length == 0) {
+                reflectionEmptyConstrutorCache.put(claz, constructor);
             }
             return constructor;
         } catch (Exception e) {
             Constructor<?> constructor = claz.getConstructor(parametersFixed);
             constructor.setAccessible(true);
+            Class<?> declaringClass = constructor.getDeclaringClass();
+            if (parameters.length == 0) {
+                reflectionEmptyConstrutorCache.put(declaringClass, constructor);
+            }
             return constructor;
         }
 
     }
-
-    private static final HashMap<Class<?>, Map<String, Method>> methodCache = new HashMap<>();
 
     /**
      * Procura um método deste Objeto com o seguinte nome e parametros
@@ -915,19 +907,21 @@ public final class Extra {
      * @throws Exception Se não encontrou o método
      */
     public static Method getMethod(Object object, String name, Object... parameters) throws Exception {
-        Class<?> claz = getClassFrom(object);
-        Class<?>[] parametersFixed = getParameters(parameters);
-        Map<String, Method> methodsMap = methodCache.get(claz);
-        if (methodsMap != null) {
-            Method methodFinded = methodsMap.get(name);
-            if (methodFinded != null) {
-                // System.out.println("Retornando metodo Cacheado "+ methodFinded);
-                return methodFinded;
+        Class<?> methodOwnerClass = getClassFrom(object);
+        Class<?>[] parametersFixed = getParametersTypes(parameters);
+        if (parameters.length == 0) {
+            Map<String, Method> methodsMap = reflectionEmptyMethodCache.get(methodOwnerClass);
+            if (methodsMap != null) {
+                Method methodFinded = methodsMap.get(name);
+                if (methodFinded != null) {
+                    // System.out.println("Retornando metodo Cacheado "+ methodFinded);
+                    return methodFinded;
+                }
             }
         }
-        Class<?> superClass = claz.getSuperclass();
-        if (superClass != Object.class && superClass != Class.class) {
-            Map<String, Method> parentMethodsMap = methodCache.get(superClass);
+        Class<?> superClass = methodOwnerClass.getSuperclass();
+        if (parameters.length == 0 && superClass != Object.class && superClass != Class.class ) {
+            Map<String, Method> parentMethodsMap = reflectionEmptyMethodCache.get(superClass);
             if (parentMethodsMap != null) {
                 Method methodInParentFinded = parentMethodsMap.get(name);
                 if (methodInParentFinded != null) {
@@ -937,40 +931,31 @@ public final class Extra {
         }
 
 
-        /*
-        Class<?> superClass = claz;
-        while(superClass!= Object.class){
-            superClass = superClass.getSuperclass();
-            Map<String, Method> newMethodsMap = methodCache.get(superClass);
-            if (methodsMap != null) {
-                Method methodFinded = newMethodsMap.get(name);
-                if (methodFinded != null) {
-                    // System.out.println("Retornando metodo Cacheado "+ methodFinded);
-                    return methodFinded;
-                }
-            }
-        }
-         */
         try {
-            Method method = claz.getDeclaredMethod(name, parametersFixed);
+            Method method = methodOwnerClass.getDeclaredMethod(name, parametersFixed);
             method.setAccessible(true);
-            if (methodsMap == null) {
-                methodsMap = new HashMap<>();
-                methodCache.put(claz, methodsMap);
+            if (parameters.length==0){
+                Map<String, Method> methodsMap = reflectionEmptyMethodCache.get(methodOwnerClass);
+                if (methodsMap == null) {
+                    methodsMap = new HashMap<>();
+                    reflectionEmptyMethodCache.put(methodOwnerClass, methodsMap);
+                }
+                methodsMap.put(name, method);
             }
-            methodsMap.put(name, method);
             return method;
         } catch (Exception e) {
-            Method method = claz.getMethod(name, parametersFixed);
+            Method method = methodOwnerClass.getMethod(name, parametersFixed);
             method.setAccessible(true);
             Class<?> classDeclaring = method.getDeclaringClass();
-            methodsMap = methodCache.get(classDeclaring);
-            if (methodsMap == null) {
-                methodsMap = new HashMap<>();
-                methodCache.put(classDeclaring, methodsMap);
+            if (parameters.length==0) {
+                Map<String, Method> methodsMap = reflectionEmptyMethodCache.get(classDeclaring);
+                if (methodsMap == null) {
+                    methodsMap = new HashMap<>();
+                    reflectionEmptyMethodCache.put(classDeclaring, methodsMap);
+                }
+                System.out.println("Method " + method.getName() + " da classe " + classDeclaring + " que é pai da classe: " + methodOwnerClass);
+                methodsMap.put(name, method);
             }
-            System.out.println("Method " + method.getName() + " da classe " + classDeclaring + " que é pai da classe: " + claz);
-            methodsMap.put(name, method);
             return method;
         }
 
@@ -1001,23 +986,6 @@ public final class Extra {
         return getField(object, name).get(object);
     }
 
-    /**
-     * Retorna o construtor vazio da classe
-     *
-     * @param clz Classe com o Construtor vazio
-     * @param <T> Classe
-     * @return Construtor da classe com zero parametros
-     */
-    public static <T> Constructor<T> getEmptyConstructor(Class<T> clz) {
-        Constructor<T> constructor = null;
-        for (Constructor<?> loopConstructor : clz.getDeclaredConstructors()) {
-            if (loopConstructor.getParameterCount() == 0) {
-                constructor = (Constructor<T>) loopConstructor;
-                break;
-            }
-        }
-        return constructor;
-    }
 
     /**
      * Define o valor da variavel
@@ -1052,12 +1020,12 @@ public final class Extra {
      * @return Array do tipos dos Obetos (Array de classes)
      * @throws Exception Se caso não encontrar alguma classe
      */
-    public static Class<?>[] getParameters(Object... parameters) throws Exception {
-        Class<?>[] objects = new Class<?>[parameters.length];
+    public static Class<?>[] getParametersTypes(Object... parameters) throws Exception {
+        Class<?>[] classes = new Class<?>[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
-            objects[i] = getClassFrom(parameters[i]);
+            classes[i] = getClassFrom(parameters[i]);
         }
-        return objects;
+        return classes;
 
     }
 
@@ -1093,7 +1061,6 @@ public final class Extra {
 
     }
 
-    private static final Map<Class<?>, Map<String, Field>> fieldCache = new HashMap<>();
 
     /**
      * Pega uma variavel apartir deste nome neste objeto
@@ -1105,7 +1072,7 @@ public final class Extra {
      */
     public static Field getField(Object object, String name) throws Exception {
         Class<?> claz = getClassFrom(object);
-        Map<String, Field> fieldMap = fieldCache.get(claz);
+        Map<String, Field> fieldMap = reflectionFieldCache.get(claz);
         if (fieldMap != null) {
             Field fieldFinded = fieldMap.get(name);
             if (fieldFinded != null) {
@@ -1118,7 +1085,7 @@ public final class Extra {
             field.setAccessible(true);
             if (fieldMap == null) {
                 fieldMap = new HashMap<>();
-                fieldCache.put(claz, fieldMap);
+                reflectionFieldCache.put(claz, fieldMap);
             }
             fieldMap.put(name, field);
             return field;
@@ -1318,9 +1285,7 @@ public final class Extra {
     public static Class<?> getTypeKey(Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
-
             Type[] types = parameterizedType.getActualTypeArguments();
-
             return (Class<?>) types[0];
 
         }
@@ -1501,11 +1466,7 @@ public final class Extra {
         if (name.endsWith("/")) {
             return true;
         }
-        if (name.endsWith(File.pathSeparator)) {
-            return true;
-
-        }
-        return false;
+        return name.endsWith(File.pathSeparator);
 
     }
 

@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import java.util.concurrent.CompletableFuture
 
 /**
  * Pequenas manipulações de Eventos criados que qualquer servidor precise
@@ -26,21 +27,24 @@ import org.bukkit.event.player.PlayerJoinEvent
  */
 class EduardAPIListener : EventsManager() {
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    fun onBreakCallMineEvent(event: BlockDamageEvent) {
-    }
+    var minerationEventEnabled = EduardAPI.instance.getBoolean("features.block-mine-event")
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     fun onBreakCallMineEvent(event: BlockBreakEvent) {
-        if (event.block.type == Material.ICE){
+        if (event.block.type == Material.ICE) {
             return
         }
-        if (!EduardAPI.instance.getBoolean("features.block-mine-event")) return
-        val mineEvent = BlockMineEvent(mutableMapOf(), event.block, event.player, true, event.expToDrop)
+        if (!minerationEventEnabled) return
+        val block = event.block
         event.isCancelled = true
-        mineEvent.mineCallEvent()
-        if (mineEvent.isCancelled) return
-        event.isCancelled = false
-        mineEvent.defaultEventActions()
+        event.expToDrop = 0
+        val mineEvent = BlockMineEvent(mutableMapOf(), block, event.player, true, event.expToDrop)
+        EduardAPI.instance.asyncTask {
+            mineEvent.mineCallEvent()
+            if (mineEvent.isCancelled) return@asyncTask
+            mineEvent.defaultEventActions()
+        }
+
 
     }
 
