@@ -64,7 +64,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
     lateinit var settings: PluginSettings
     lateinit var dbManager: DBManager
     lateinit var sqlManager: SQLManager
-
+    lateinit var databaseUpdaterThread : DatabaseUpdaterTask
     fun onLoad() {
         HybridTypes
         StorageAPI.setDebug(false)
@@ -205,7 +205,8 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         PlayerTargetPlayerTask().asyncTimer()
 
         AutoSaveAndBackupTask().asyncTimer()
-        DatabaseUpdaterTask().asyncTimer()
+        databaseUpdaterThread = DatabaseUpdaterTask()
+        databaseUpdaterThread.start()
         log("Tasks ativados com sucesso")
     }
 
@@ -337,6 +338,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         unregisterServices()
         MinigameSchematic.unloadAll()
         sqlManager.dbManager.closeConnection()
+        databaseUpdaterThread.interrupt()
     }
 
     fun unregisterTasks() {

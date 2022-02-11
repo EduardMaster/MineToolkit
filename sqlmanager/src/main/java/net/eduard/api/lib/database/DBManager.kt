@@ -5,8 +5,6 @@ import net.eduard.api.lib.database.api.SQLEngineType
 import net.eduard.api.lib.database.impl.MySQLEngine
 import net.eduard.api.lib.modules.Extra
 import java.sql.*
-import javax.persistence.ColumnResult
-import kotlin.jvm.internal.Intrinsics
 
 /**
  * API de Controle de MySQL ou SQLite com apenas 1 conexão
@@ -112,11 +110,10 @@ class DBManager(
      *
      * @return Se a conexao existe
      */
-    fun hasConnectionInFact(time: Int = 500): Boolean {
+    fun hasConnectionReally(timeoutOfChecker: Int = 100): Boolean {
         try {
 
-            return hasConnectionInMemory()
-                    && connection.isValid(time)
+            return hasConnectionInMemory() && connection.isValid(timeoutOfChecker)
         } catch (ex: SQLException) {
             ex.printStackTrace()
         }
@@ -134,7 +131,7 @@ class DBManager(
      */
     fun hasConnection(): Boolean {
         try {
-            var have = hasConnectionInFact()
+            var have = hasConnectionReally()
             if (!have && autoReconnect && isEnabled) {
                 openConnection()
                 have = hasConnectionInMemory()

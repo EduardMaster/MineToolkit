@@ -9,6 +9,7 @@ import org.bukkit.block.Block
 import org.bukkit.craftbukkit.v1_8_R3.CraftChunk
 import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
+import org.bukkit.craftbukkit.v1_8_R3.scheduler.CraftScheduler
 
 /**
  *
@@ -22,14 +23,16 @@ class Blocks_v1_8_R3(
     val worldServer: WorldServer = (world as CraftWorld).handle
     var chunkCache: net.minecraft.server.v1_8_R3.Chunk? =
         (blockChunk as CraftChunk?)?.handle ?: worldServer.chunkProviderServer.originalGetChunkAt(x shr 4, z shr 4)
+    init{
 
+    }
     override fun getWorld(): World {
         return worldServer.world
     }
 
 
     override fun getChunk(): Chunk {
-        return worldServer.getChunkAt(x shr 4, z shr 4).bukkitChunk
+        return chunkCache?.bukkitChunk ?: return worldServer.getChunkAt(x shr 4, z shr 4).bukkitChunk
     }
 
     override fun getType(): Material {
@@ -80,11 +83,11 @@ class Blocks_v1_8_R3(
             // worldServer.notifyAndUpdatePhysics(position)
         } else {
             //println("notificando mudanca")
-
+            worldServer.x(position)
+            Bukkit.getScheduler().runTask(Bukkit.getPluginManager().plugins.first(), this::sendPacket)
         }
         // Mine.broadcast("Modificando bloco")
-        worldServer.x(position)
-        Bukkit.getScheduler().runTask(Bukkit.getPluginManager().plugins.first(), this::sendPacket)
+
         // sendPacket()
         // Bukkit.getScheduler().runTask(Bukkit.getPluginManager().plugins.first(), this::sendPacket)
         //super.setTypeIdAndData(type, data, applyPhysics)

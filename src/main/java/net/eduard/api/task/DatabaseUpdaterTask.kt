@@ -6,32 +6,43 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 
-class DatabaseUpdaterTask : TimeManager(20L) {
+class DatabaseUpdaterTask : Thread("EduardAPI SQLUpdater/DatabaseUpdater") {
 
     fun log(msg: String) {
         EduardAPI.instance.log(msg)
     }
 
     override fun run() {
-        for (plugin in Bukkit.getPluginManager().plugins) {
-            if (plugin !is EduardPlugin) continue
-            if (plugin.dbManager.hasConnection()) {
-                val name = plugin.name
-                run {
-                    val agora = Extra.getNow()
-                    val amountUpdated = plugin.sqlManager.runUpdatesQueue()
-                    val tempoDepois = Extra.getNow()
-                    val tempoPassado = tempoDepois - agora
-                    if (amountUpdated > 0)
-                        log("Atualizando $amountUpdated objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
-                }
-                run {
-                    val agora = Extra.getNow()
-                    val amountDeleted = plugin.sqlManager.runDeletesQueue()
-                    val tempoDepois = Extra.getNow()
-                    val tempoPassado = tempoDepois - agora
-                    if (amountDeleted > 0)
-                        log("Deletando $amountDeleted objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
+        while (true) {
+            try {
+                sleep(1000L)
+            } catch (ex: InterruptedException) {
+                break
+            }
+            for (plugin in Bukkit.getPluginManager().plugins) {
+                if (plugin !is EduardPlugin) continue
+                try {
+                    if (plugin.dbManager.hasConnection()) {
+                        val name = plugin.name
+                        run {
+                            val agora = Extra.getNow()
+                            val amountUpdated = plugin.sqlManager.runUpdatesQueue()
+                            val tempoDepois = Extra.getNow()
+                            val tempoPassado = tempoDepois - agora
+                            if (amountUpdated > 0)
+                                log("Atualizando $amountUpdated objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
+                        }
+                        run {
+                            val agora = Extra.getNow()
+                            val amountDeleted = plugin.sqlManager.runDeletesQueue()
+                            val tempoDepois = Extra.getNow()
+                            val tempoPassado = tempoDepois - agora
+                            if (amountDeleted > 0)
+                                log("Deletando $amountDeleted objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
+                        }
+                    }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
             }
         }
