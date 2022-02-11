@@ -28,7 +28,7 @@ import kotlin.concurrent.thread
 
 
 @Suppress("deprecated")
-class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
+class EduardAPIBungee(val plugin: Plugin) : IPluginInstance {
 
     companion object {
         lateinit var instance: EduardAPIBungee
@@ -57,8 +57,9 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
     val dataFolder get() = plugin.dataFolder
 
     override fun getPluginFolder(): File {
-        return  plugin.dataFolder
+        return plugin.dataFolder
     }
+
     fun log(message: String) {
         console("§f$message")
     }
@@ -174,13 +175,18 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
 
         asyncSQLUpdater()
     }
+
     lateinit var databaseUpdater: Thread
-    fun asyncSQLUpdater(){
+    fun asyncSQLUpdater() {
         databaseUpdater = thread {
             val updater = BungeeDatabaseUpdaterTask()
-            while (true){
+            while (true) {
                 updater.run()
-                Thread.sleep(50)
+                try {
+                    Thread.sleep(50)
+                } catch (ex: Exception) {
+                    break
+                }
             }
         }
     }
@@ -208,7 +214,9 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
             BungeeAPI.bungee.unregister()
         }
         dbManager.closeConnection()
+
         databaseUpdater.interrupt()
+
     }
 
     fun unregisterTasks() {
@@ -234,7 +242,6 @@ class EduardAPIBungee(val plugin: Plugin): IPluginInstance {
     override fun getSystemName(): String {
         return pluginName;
     }
-
 
 
 }

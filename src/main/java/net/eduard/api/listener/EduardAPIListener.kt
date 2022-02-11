@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockDamageEvent
+import org.bukkit.event.entity.ItemSpawnEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import java.util.concurrent.CompletableFuture
@@ -29,22 +30,31 @@ class EduardAPIListener : EventsManager() {
 
     var minerationEventEnabled = EduardAPI.instance.getBoolean("features.block-mine-event")
 
+    @EventHandler
+    fun itemSpawnEvent(event: ItemSpawnEvent) {
+
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     fun onBreakCallMineEvent(event: BlockBreakEvent) {
-        if (event.block.type == Material.ICE) {
+        val block = event.block
+        val type = block.type
+        if (type == Material.ICE ||
+            type == Material.CHEST ||
+            type == Material.TRAPPED_CHEST ||
+            type == Material.SKULL_ITEM ||
+            type == Material.ITEM_FRAME ||
+            type == Material.ENDER_CHEST ||
+            type == Material.BEDROCK ||
+            type == Material.SIGN_POST ||
+            type == Material.WALL_SIGN
+        ) {
             return
         }
         if (!minerationEventEnabled) return
-        val block = event.block
         event.isCancelled = true
         event.expToDrop = 0
-        val mineEvent = BlockMineEvent(mutableMapOf(), block, event.player, true, event.expToDrop)
-        EduardAPI.instance.asyncTask {
-            mineEvent.mineCallEvent()
-            if (mineEvent.isCancelled) return@asyncTask
-            mineEvent.defaultEventActions()
-        }
-
+        BlockMineEvent.callEvent(event, BlockMineEvent(mutableMapOf(), block, event.player, true, event.expToDrop))
 
     }
 

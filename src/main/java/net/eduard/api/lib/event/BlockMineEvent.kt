@@ -6,19 +6,17 @@ import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import org.bukkit.event.Cancellable
-import org.bukkit.event.HandlerList
-import org.bukkit.event.player.PlayerEvent
+import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 
 class BlockMineEvent(
     val drops: MutableMap<ItemStack, Double>,
     val block: Block,
-    player: Player,
+    val player: Player,
     var useEnchants: Boolean,
     var expToDrop: Int = 1
-) : PlayerEvent(player), Cancellable {
+) {
 
     enum class DropDestination {
         GROUND, INVENTORY, STORAGE
@@ -31,14 +29,8 @@ class BlockMineEvent(
     var needApplyFortune = true
     var multiplier = 1.0
     var fortuneApplied = false
-    private var cancelled = false
-    override fun isCancelled(): Boolean {
-        return cancelled
-    }
+    var isCancelled = false
 
-    override fun setCancelled(toggle: Boolean) {
-        cancelled = toggle
-    }
 
     fun storeDrops() {
         for ((item, doubleAmount) in drops) {
@@ -55,10 +47,7 @@ class BlockMineEvent(
         }
         giveDrops()
         storeDrops();
-        EduardAPI.instance.syncTask {
-            fallDropsInWorld()
-        }
-
+        EduardAPI.instance.syncTask(this::fallDropsInWorld)
         if (needGiveExp && expToDrop > 0)
             player.giveExp(expToDrop)
         if (needBreakBlock)
@@ -66,14 +55,7 @@ class BlockMineEvent(
     }
 
     fun breakBlock() {
-        if (block.type == Material.SIGN || block.type == Material.SIGN_POST) {
-            EduardAPI.instance.syncTask {
-                block.type = Material.AIR
-            }
-        } else {
-          Blocks.get(block)?.setType(Material.AIR)
-        }
-
+        Blocks.get(block)?.setType(Material.AIR)
     }
 
     fun setDrop(item: ItemStack, amount: Double) {
@@ -163,11 +145,52 @@ class BlockMineEvent(
         }
     }
 
-    override fun getHandlers(): HandlerList {
-        return handlerList
+    abstract class BlockMineListener(val priority: Int) {
+        fun register() {
+            listeners[priority] = this
+        }
+
+        fun unregister() {
+            listeners.remove(priority)
+        }
+
+        abstract fun modify(event: BlockMineEvent)
+
     }
 
     companion object {
+
+        val listeners = mutableMapOf<Int, BlockMineListener>()
+
+        fun registerListener(listener: BlockMineListener) {
+            listeners[listener.priority] = listener
+        }
+
+        fun unregisterListener(listener: BlockMineListener) {
+            listeners.remove(listener.priority, listener)
+
+        }
+        fun callEvent(event: BlockMineEvent) {
+            callEvent(null, event)
+
+        }
+        fun callEvent(originalEvent: BlockBreakEvent?, event: BlockMineEvent) {
+            var priority = 0;
+            while (priority < 10) {
+                try {
+                    listeners[priority]?.modify(event)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+                if (event.isCancelled) {
+                    return
+                }
+                priority++
+            }
+            event.defaultEventActions()
+            originalEvent?.isCancelled=false
+
+        }
 
         var fortuneBlocks = mutableListOf<MaterialData>()
 
@@ -198,9 +221,6 @@ class BlockMineEvent(
             fortuneBlocks.add(MaterialData(Material.INK_SACK, 3))
         }
 
-
-        @JvmStatic
-        val handlerList = HandlerList()
 
     }
 

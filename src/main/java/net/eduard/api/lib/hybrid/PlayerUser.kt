@@ -24,20 +24,14 @@ class PlayerUser(
 
     init {
         if (uuid == null) {
-            asyncSetUUIDByName()
+            setUUIDByName()
         } else {
             uniqueId = uuid
         }
     }
 
-    fun asyncSetUUIDByName() {
-        uuidIndentifier.submit(this::setUUIDByName)
-    }
-
     fun setUUIDByName() {
-        uniqueId = UUID.nameUUIDFromBytes(
-            ("OfflinePlayer:$name").toByteArray(StandardCharsets.UTF_8)
-        )
+        uniqueId = UUID.nameUUIDFromBytes(("OfflinePlayer:$name").toByteArray(StandardCharsets.UTF_8))
     }
 
     fun sendMessage(message: String) {
@@ -55,7 +49,7 @@ class PlayerUser(
     }
 
     val isOnline: Boolean
-        get() = onlinePlayer?.isOnline ?: false
+        get() = player.isOnline
 
 
     val player: IPlayer<*>
@@ -82,9 +76,5 @@ class PlayerUser(
         return name.toLowerCase().hashCode()
     }
 
-    companion object{
-        val uuidIndentifier = Executors.newFixedThreadPool(4)
-
-    }
 
 }

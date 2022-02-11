@@ -21,7 +21,9 @@ class ConfigSection(var key: String, var data: Any) {
         var isDebug: Boolean = false
         val logger = Logger.getLogger("ConfigSection")
     }
-
+    inline fun section(sectionName : String, setup : ConfigSection.() -> Unit): ConfigSection {
+        return getSection(sectionName).apply(setup)
+    }
     fun isRoot(): Boolean {
         return !this::father.isInitialized
     }

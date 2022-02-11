@@ -86,6 +86,9 @@ class Config(
     fun isEmpty(): Boolean {
         return config.keys.isEmpty()
     }
+    inline fun section(sectionName : String, setup : ConfigSection.() -> Unit): ConfigSection {
+       return getSection(sectionName).apply(setup)
+    }
 
     fun debug(msg: String) {
         if (isDebug)
