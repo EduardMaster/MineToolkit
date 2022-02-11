@@ -5,6 +5,10 @@ package net.eduard.api.server
  */
 interface EconomySystem : PluginSystem{
 
+    fun getGroupBonus(groupName : String) : Double
+    fun getGroupDiscount(groupName : String) : Double
+    fun setGroupBonus(groupName : String, percent : Double)
+    fun setGroupDiscount(groupName : String, percent : Double)
     /**
      * Deposita dinheiro para o jogador com bonus aplicado
      */
