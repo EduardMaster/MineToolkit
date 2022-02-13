@@ -62,6 +62,7 @@ public class ItemBuilder extends ItemStack {
         if (state != null) {
             CreatureSpawner spawner = (CreatureSpawner) state;
             spawner.setSpawnedType(type);
+            setItemMeta(meta);
         }
         return this;
     }

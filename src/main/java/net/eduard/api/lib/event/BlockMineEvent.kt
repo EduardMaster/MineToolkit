@@ -2,6 +2,7 @@ package net.eduard.api.lib.event
 
 import net.eduard.api.EduardAPI
 import net.eduard.api.lib.abstraction.Blocks
+import net.eduard.api.lib.game.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
@@ -55,7 +56,7 @@ class BlockMineEvent(
     }
 
     fun breakBlock() {
-        Blocks.get(block)?.setType(Material.AIR)
+        block.type = Material.AIR
     }
 
     fun setDrop(item: ItemStack, amount: Double) {
@@ -188,7 +189,9 @@ class BlockMineEvent(
                 priority++
             }
             event.defaultEventActions()
-            originalEvent?.isCancelled=false
+            if (!event.isCancelled && event.needBreakBlock) {
+                originalEvent?.isCancelled = false
+            }
 
         }
 

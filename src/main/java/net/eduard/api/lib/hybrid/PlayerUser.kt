@@ -1,11 +1,9 @@
 package net.eduard.api.lib.hybrid
 
 import net.eduard.api.lib.storage.annotations.StorageAttributes
-import java.io.Serializable
 import java.nio.charset.StandardCharsets
 import java.util.*
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executors
+import kotlin.ConcurrentModificationException
 
 @StorageAttributes(inline = true)
 class PlayerUser(
@@ -13,26 +11,43 @@ class PlayerUser(
     uuid: UUID? = null
 ) {
 
-    var uniqueId: UUID? = null
-    get() {
-        if (field==null){
-            setUUIDByName()
+    companion object {
+       private val offlineUUIDCache = mutableMapOf<String, UUID>()
+        fun createID(name: String): UUID {
+            val id = UUID.nameUUIDFromBytes(("OfflinePlayer:$name").toByteArray(StandardCharsets.UTF_8))
+            try {
+                offlineUUIDCache[name.toLowerCase()] = id
+            } catch (ex: ConcurrentModificationException) {
+            }
+            return id;
         }
-        return field
+
+        fun getUUIDOrCreate(name: String): UUID {
+            var id: UUID? = null
+            try {
+                id = offlineUUIDCache[name]
+            } catch (ex: ConcurrentModificationException) {
+            }
+            return id ?: createID(name);
+        }
+
     }
+
+    var uniqueId: UUID? = null
+        get() {
+            if (field == null) {
+                field = getUUIDOrCreate(name)
+            }
+            return field
+        }
 
 
     init {
-        if (uuid == null) {
-            setUUIDByName()
-        } else {
+        if (uuid != null) {
             uniqueId = uuid
         }
     }
 
-    fun setUUIDByName() {
-        uniqueId = UUID.nameUUIDFromBytes(("OfflinePlayer:$name").toByteArray(StandardCharsets.UTF_8))
-    }
 
     fun sendMessage(message: String) {
         player.sendMessage(message)
@@ -44,7 +59,7 @@ class PlayerUser(
         return "$name;$uniqueId"
     }
 
-    constructor(player: IPlayer<*>) : this(player.name , player.uniquedId) {
+    constructor(player: IPlayer<*>) : this(player.name, player.uniquedId) {
         this.onlinePlayer = player
     }
 

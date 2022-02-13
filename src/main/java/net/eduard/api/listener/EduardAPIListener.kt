@@ -9,6 +9,7 @@ import net.eduard.api.lib.kotlin.mineCallEvent
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
@@ -30,11 +31,6 @@ class EduardAPIListener : EventsManager() {
 
     var minerationEventEnabled = EduardAPI.instance.getBoolean("features.block-mine-event")
 
-    @EventHandler
-    fun itemSpawnEvent(event: ItemSpawnEvent) {
-
-    }
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     fun onBreakCallMineEvent(event: BlockBreakEvent) {
         val block = event.block
@@ -47,15 +43,13 @@ class EduardAPIListener : EventsManager() {
             type == Material.ENDER_CHEST ||
             type == Material.BEDROCK ||
             type == Material.SIGN_POST ||
-            type == Material.WALL_SIGN
-        ) {
+            type == Material.WALL_SIGN) {
             return
         }
         if (!minerationEventEnabled) return
         event.isCancelled = true
         event.expToDrop = 0
         BlockMineEvent.callEvent(event, BlockMineEvent(mutableMapOf(), block, event.player, true, event.expToDrop))
-
     }
 
     @EventHandler
