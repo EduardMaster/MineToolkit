@@ -27,14 +27,15 @@ import java.util.*;
 @SuppressWarnings("unused")
 public class MineReflect {
     private static String version;
+
     /**
      * @return Versão do Servidor
      */
     public static String getVersion() {
 
         try {
-            if (version ==null){
-                version= Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            if (version == null) {
+                version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             }
             return version;
         } catch (Exception ex) {
@@ -42,6 +43,7 @@ public class MineReflect {
         }
         return "v_Not_Definied";
     }
+
     private static Class<?> class_MinecraftServer;
     private static Class<?> class_NBTCompound;
     private static Class<?> class_NBTBase;
@@ -87,7 +89,7 @@ public class MineReflect {
             method_NMSItemStack_getTag = Extra.getMethod(class_NMSItemStack, "getTag");
             method_NBT_hasKey = Extra.getMethod(class_NBTCompound, "hasKey", String.class);
             method_NBT_getString = Extra.getMethod(class_NBTCompound, "getString", String.class);
-            method_NBT_getBoolean= Extra.getMethod(class_NBTCompound, "getBoolean", String.class);
+            method_NBT_getBoolean = Extra.getMethod(class_NBTCompound, "getBoolean", String.class);
             method_NBT_getInt = Extra.getMethod(class_NBTCompound, "getInt", String.class);
             method_NBT_getDouble = Extra.getMethod(class_NBTCompound, "getDouble", String.class);
             method_NBT_getLong = Extra.getMethod(class_NBTCompound, "getLong", String.class);
@@ -102,11 +104,11 @@ public class MineReflect {
             class_NMSPlayerConnection = Extra.getClassFrom("#mPlayerConnection");
             class_Packet = Extra.getClassFrom("#p");
             method_sendPacket = Extra.getMethod(class_NMSPlayerConnection, "sendPacket", class_Packet);
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
+
     /**
      * Se terminar com 2, é porque a classe esta dentro de outra classe
      */
@@ -165,17 +167,19 @@ public class MineReflect {
 
     /**
      * Bloqueia uso de Async na execução do Método atual
+     *
      * @param message
      */
-    public static void asyncCatch(String message){
+    public static void asyncCatch(String message) {
         AsyncCatcher.catchOp(message);
     }
 
-    public static boolean isOnMainThread(){
+    public static boolean isOnMainThread() {
 
-       // Thread.currentThread() == MinecraftServer.getServer().primaryThread
+        // Thread.currentThread() == MinecraftServer.getServer().primaryThread
         return Bukkit.isPrimaryThread();
     }
+
     /**
      * Força o Respawn do Jogador (Respawn Automatico)
      *
@@ -199,6 +203,7 @@ public class MineReflect {
 
         }
     }
+
     /**
      * Altera a stack máxima do Item
      *
@@ -406,7 +411,6 @@ public class MineReflect {
                 setCustomNBT(new NBTReflection(itemNBT.getNBT("EXTRA_DATA")));
             } else {
                 setCustomNBT(new NBTReflection(emptyNBT()));
-
                 itemNBT.setNBT("EXTRA_DATA", customNBT.getNbtMap());
             }
 
@@ -415,10 +419,19 @@ public class MineReflect {
         public boolean has(String key) {
             return customNBT.has(key);
         }
-
         public void setDouble(String key, double value) {
             customNBT.setDouble(key, value);
         }
+        public void setInt(String key, int value) {
+            customNBT.setInt(key, value);
+        }
+        public void setLong(String key, long value) {
+            customNBT.setLong(key, value);
+        }
+        public void setBoolean(String key, boolean flag) {
+            customNBT.setBoolean(key, flag);
+        }
+
 
         public double getDouble(String key) {
             return customNBT.getDouble(key);
@@ -430,6 +443,18 @@ public class MineReflect {
 
         public String getString(String key) {
             return customNBT.getString(key);
+        }
+
+        public int getInt(String key) {
+            return customNBT.getInt(key);
+        }
+
+        public long getLong(String key) {
+            return customNBT.getLong(key);
+        }
+
+        public boolean getBoolean(String key) {
+            return customNBT.getBoolean(key);
         }
 
         public String getUniqueId() {
@@ -503,7 +528,7 @@ public class MineReflect {
 
             Object itemCopia = method_asNMSCopy.invoke(0, item);
             if (itemCopia != null) {
-              ;
+                ;
 
                 method_NMSItemStack_setTag.invoke(itemCopia, data.getItemNBT().getNbtMap());
                 //Method asCraftMirror = Extra.getMethod(class_CraftItemStack,"asCraftMirror", MineReflect.classMineItemStack);
@@ -520,7 +545,6 @@ public class MineReflect {
     }
 
 
-
     /**
      * (Não funciona)
      *
@@ -534,7 +558,6 @@ public class MineReflect {
     static {
 
     }
-
 
 
     public static Villager newNPCVillager(Location location, String name) {
@@ -562,8 +585,6 @@ public class MineReflect {
     public static int getCurrentTick() throws Exception {
         return (int) Extra.getFieldValue(class_MinecraftServer, "currentTick");
     }
-
-
 
 
     /**
@@ -710,7 +731,7 @@ public class MineReflect {
         try {
             if (isAbove1_8(player)) {
                 sendPacket(player, Extra.getNew(MineReflect.classSpigotPacketTitle,
-                        new Object[]{MineReflect.classSpigotAction, int.class,int.class,int.class},
+                        new Object[]{MineReflect.classSpigotAction, int.class, int.class, int.class},
                         Extra.getFieldValue(MineReflect.classSpigotAction, "TIMES"), fadeIn, stay, fadeOut));
                 sendPacket(player,
                         Extra.getNew(MineReflect.classSpigotPacketTitle,
@@ -727,7 +748,7 @@ public class MineReflect {
         } catch (Exception ignored) {
         }
         try {
-            sendPacket(player, Extra.getNew(MineReflect.classPacketPlayOutTitle,new Object[]{int.class,int.class,int.class}, fadeIn, stay, fadeOut));
+            sendPacket(player, Extra.getNew(MineReflect.classPacketPlayOutTitle, new Object[]{int.class, int.class, int.class}, fadeIn, stay, fadeOut));
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
                             Extra.getParametersTypes(MineReflect.classCraftEnumTitleAction, MineReflect.classMineIChatBaseComponent),
@@ -742,7 +763,7 @@ public class MineReflect {
         try {
 
             sendPacket(player, Extra.getNew(MineReflect.classPacketPlayOutTitle,
-                    new Object[]{int.class,int.class,int.class}, fadeIn, stay, fadeOut));
+                    new Object[]{int.class, int.class, int.class}, fadeIn, stay, fadeOut));
 
             sendPacket(player,
                     Extra.getNew(MineReflect.classPacketPlayOutTitle,
@@ -999,9 +1020,6 @@ public class MineReflect {
     public static Object getPlayerConnection(Player player) throws Exception {
         return Extra.getFieldValue(getPlayerHandle(player), "playerConnection");
     }
-
-
-
 
 
 }

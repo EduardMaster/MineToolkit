@@ -1,6 +1,7 @@
 package net.eduard.api.lib.bungee
 
 import com.google.common.util.concurrent.Futures
+import net.eduard.api.EduardAPI
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.ObjectInputStream
@@ -36,7 +37,7 @@ class BukkitMessageListener(var bukkitController: BukkitController) : PluginMess
         if (channel == BungeeAPI.channel) {
             val arrayIn = ByteArrayInputStream(message)
             val data = DataInputStream(arrayIn)
-            CompletableFuture.runAsync {
+            EduardAPI.instance.asyncTask{
                 readMessage(arrayIn, data)
             }
         }

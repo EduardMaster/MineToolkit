@@ -28,19 +28,18 @@ fun String.parseWordDuration(): Long {
     var time = 0L
     try {
         if (endsWith("d", true)) {
-            time += (TimeUnit.DAYS.toMillis(substring(0, length - 1).toLong()))
+            time += (TimeUnit.DAYS.toMillis(Extra.toLong(substring(0, length - 1))))
         }
         if (endsWith("h", true)) {
-            time += (TimeUnit.HOURS.toMillis(substring(0, length - 1).toLong()))
+            time += (TimeUnit.HOURS.toMillis(Extra.toLong(substring(0, length - 1))))
         }
         if (endsWith("s", true)) {
-            time += (TimeUnit.SECONDS.toMillis(substring(0, length - 1).toLong()))
+            time += (TimeUnit.SECONDS.toMillis(Extra.toLong(substring(0, length - 1))))
         }
         if (endsWith("m", true)) {
-            time += (TimeUnit.MINUTES.toMillis(substring(0, length - 1).toLong()))
+            time += (TimeUnit.MINUTES.toMillis(Extra.toLong(substring(0, length - 1))))
         }
     } catch (ex: NumberFormatException) {
-        ex.printStackTrace()
     }
     return time
 }

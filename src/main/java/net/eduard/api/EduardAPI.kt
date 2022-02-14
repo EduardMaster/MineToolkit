@@ -89,7 +89,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
                 currentInstance.dbManager.openConnection()
             }
         }
-        BukkitTypes
+        BukkitTypes.register()
 
 
     }

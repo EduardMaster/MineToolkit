@@ -1,12 +1,11 @@
 package net.eduard.api.task
 
 import net.eduard.api.EduardAPI
-import net.eduard.api.lib.manager.TimeManager
 import net.eduard.api.lib.modules.Extra
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 
-class DatabaseUpdaterTask : Thread("EduardAPI SQLUpdater/DatabaseUpdater") {
+class DatabaseUpdaterTask : Thread("EduardAPI Databases Updater") {
 
     fun log(msg: String) {
         EduardAPI.instance.log(msg)
@@ -23,22 +22,13 @@ class DatabaseUpdaterTask : Thread("EduardAPI SQLUpdater/DatabaseUpdater") {
                 if (plugin !is EduardPlugin) continue
                 try {
                     if (plugin.dbManager.hasConnection()) {
-                        val name = plugin.name
                         run {
                             val agora = Extra.getNow()
-                            val amountUpdated = plugin.sqlManager.runUpdatesQueue()
+                            val amountChanges = plugin.sqlManager.runChanges()
                             val tempoDepois = Extra.getNow()
-                            val tempoPassado = tempoDepois - agora
-                            if (amountUpdated > 0)
-                                log("Atualizando $amountUpdated objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
-                        }
-                        run {
-                            val agora = Extra.getNow()
-                            val amountDeleted = plugin.sqlManager.runDeletesQueue()
-                            val tempoDepois = Extra.getNow()
-                            val tempoPassado = tempoDepois - agora
-                            if (amountDeleted > 0)
-                                log("Deletando $amountDeleted objetos na tabela (tempo levado: ${tempoPassado}ms) do plugin $name")
+                            val tempoPercorrido = tempoDepois - agora
+                            if (amountChanges > 0)
+                                plugin.log("Database Update: §e$amountChanges §fChanges in §c${tempoPercorrido}ms")
                         }
                     }
                 } catch (ex: Exception) {

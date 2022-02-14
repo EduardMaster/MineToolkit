@@ -10,7 +10,7 @@ import org.bukkit.util.Vector
 import java.util.*
 
 object BukkitTypes {
-    init {
+   fun register() {
         customType<World> {
             saveMethod = {
                 name

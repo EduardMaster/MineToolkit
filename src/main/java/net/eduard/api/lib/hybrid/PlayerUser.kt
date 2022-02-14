@@ -14,14 +14,19 @@ class PlayerUser(
     companion object {
        private val offlineUUIDCache = mutableMapOf<String, UUID>()
         fun createID(name: String): UUID {
-            val id = UUID.nameUUIDFromBytes(("OfflinePlayer:$name").toByteArray(StandardCharsets.UTF_8))
+            val id = generateUUID(name)
             try {
-                offlineUUIDCache[name.toLowerCase()] = id
+                offlineUUIDCache[name] = id
             } catch (ex: ConcurrentModificationException) {
             }
             return id;
         }
-
+        fun generateUUID(name: String): UUID {
+            return  UUID.nameUUIDFromBytes(("OfflinePlayer:$name").toByteArray())
+        }
+        fun generateUUIDLowerCase(name: String): UUID {
+            return  UUID.nameUUIDFromBytes(("OfflinePlayer:${name.toLowerCase()}").toByteArray())
+        }
         fun getUUIDOrCreate(name: String): UUID {
             var id: UUID? = null
             try {
