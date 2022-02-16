@@ -236,21 +236,21 @@ public final class BukkitBungeeAPI {
 
 
     public static SimpleServer getServer(String serverName) {
-        SimpleServer server = servers.get(serverName);
+        SimpleServer server = servers.get(serverName.toLowerCase());
         if (server == null) {
             server = new SimpleServer();
             server.name = serverName;
-            servers.put(serverName, server);
+            servers.put(serverName.toLowerCase(), server);
         }
         return server;
     }
 
     public static SimplePlayer getPlayer(String playerName) {
-        SimplePlayer player = players.get(playerName);
+        SimplePlayer player = players.get(playerName.toLowerCase());
         if (player == null) {
             player = new SimplePlayer();
             player.name = playerName;
-            players.put(playerName, player);
+            players.put(playerName.toLowerCase(), player);
         }
         return player;
     }
