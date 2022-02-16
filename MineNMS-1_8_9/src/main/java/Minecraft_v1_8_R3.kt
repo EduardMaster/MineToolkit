@@ -62,13 +62,14 @@ class Minecraft_v1_8_R3 : Minecraft() {
             val position = BlockPosition(x, y, z)
 
             if (updateLightning) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin) {
                     worldHandle.x(position)
                     //worldHandle.getLightLevel(position)
-                    Bukkit.getScheduler().runTaskLater(plugin, {
+                    Bukkit.getScheduler().runTask(plugin) {
+                        worldHandle.notify(position)
                         /*
                         // Este pacote é muito gastoso causa bastante lag na GPU
-                        // Acho precisa usar outro pacote MultiBlockChange
+                        // Acho que precisa usar outro pacote o MultiBlockChange
                         for (player in Bukkit.getOnlinePlayers()){
                             val craft = (player as CraftPlayer)
                             val packet = PacketPlayOutBlockChange(
@@ -78,9 +79,9 @@ class Minecraft_v1_8_R3 : Minecraft() {
                             craft.handle.playerConnection.sendPacket(packet)
                         }
                          */
-                        worldHandle.notify(position)
-                    }, 1L);
-                }, 2L);
+
+                    };
+                };
             }
             worldHandle.notify(position)
         } catch (ex: Exception) {

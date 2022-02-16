@@ -201,13 +201,7 @@ fun String.cut(maxSize: Int): String {
 @Deprecated(replaceWith = ReplaceWith("this.contains(message,true)"), message = "Aliases" )
 fun String.lowerContains(message: String) = Extra.contains(this, message)
 
-fun <T : Any?> T.isInitialized() : Boolean{
-    return try{
-        this != null
-    }catch (e : UninitializedPropertyAccessException){
-        false
-    }
-}
+
 
 
 
