@@ -113,10 +113,6 @@ public class Blocks_v1_12_R1 extends CraftBlock implements Blocks {
        return setTypeIdAndData(material.getId(), (byte) data, false);
     }
 
-    @Override
-    public void fixLightning() {
-
-    }
 
     @Override
     public void sendPacket() {

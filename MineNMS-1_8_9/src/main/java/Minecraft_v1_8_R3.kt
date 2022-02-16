@@ -5,9 +5,14 @@ import com.mojang.authlib.properties.Property
 import net.eduard.api.lib.modules.Extra
 import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Bukkit
+import org.bukkit.Chunk
 import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.Chest
+import org.bukkit.craftbukkit.v1_8_R3.CraftChunk
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
 import org.bukkit.craftbukkit.v1_8_R3.block.CraftChest
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
@@ -17,23 +22,80 @@ import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.lang.Exception
 import java.lang.reflect.Field
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 
 /**
  * @author Eduard
  */
 class Minecraft_v1_8_R3 : Minecraft() {
+    override fun setBlock(block: Block, chunk: Chunk, material: Material, dataAsInt: Int, updateLightning: Boolean) {
+        try {
+            val chunkHandle = (chunk as CraftChunk).handle
+            val worldHandle = (block.world as CraftWorld).handle
+            // val chunk = worldServer.chunkProviderServer.originalGetChunkAt(x shr 4, z shr 4)
+            val y = block.y
+            val x = block.x
+            val z = block.z
+            val typeID = material.id
+            val yBitShifted = (y shr 4) and 0xF
+            if (yBitShifted >= 16) {
+                return;
+            }
+            var chunkSection = chunkHandle.sections[yBitShifted]
+            if (chunkSection == null) {
+                chunkSection = ChunkSection(y shr 4 shl 4, !worldHandle.worldProvider.o())
+                chunkHandle.sections[yBitShifted] = chunkSection
+                //chunkSection = chunk.sections[y shr 4]
+            }
+            val xSec = x and 0xF
+            val ySec = y and 0xF
+            val zSec = z and 0xF
+
+            val combined: Int = typeID + (dataAsInt shl 12)
+            val blockData = net.minecraft.server.v1_8_R3.Block.getByCombinedId(combined)
+            if (blockData === chunkSection.getType(xSec, ySec, zSec)) {
+                //println("Travou aqui type $type  / $data")
+                return
+            }
+            val plugin = Bukkit.getPluginManager().plugins.first()
+            chunkSection.setType(xSec, ySec, zSec, blockData)
+            val position = BlockPosition(x, y, z)
+
+            if (updateLightning) {
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, {
+                    worldHandle.x(position)
+                    //worldHandle.getLightLevel(position)
+                    Bukkit.getScheduler().runTaskLater(plugin, {
+                        /*
+                        // Este pacote é muito gastoso causa bastante lag na GPU
+                        // Acho precisa usar outro pacote MultiBlockChange
+                        for (player in Bukkit.getOnlinePlayers()){
+                            val craft = (player as CraftPlayer)
+                            val packet = PacketPlayOutBlockChange(
+                                worldHandle,
+                                position)
+                            packet.block = blockData //CraftMagicNumbers.getBlock(material).fromLegacyData(data)
+                            craft.handle.playerConnection.sendPacket(packet)
+                        }
+                         */
+                        worldHandle.notify(position)
+                    }, 1L);
+                }, 2L);
+            }
+            worldHandle.notify(position)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
 
     override fun canTarget(creature: Creature, classEntityName: String, priority: Int) {
+
         try {
             val nmsCreature = (creature as CraftCreature).handle
-            val clz = Extra.getClassFrom("#mEntity$classEntityName")
-                    as Class<out net.minecraft.server.v1_8_R3.EntityLiving>
-
-            val target = PathfinderGoalNearestAttackableTarget(nmsCreature, clz, true)
+            val entityClass =
+                Extra.getClassFrom("#mEntity$classEntityName") as Class<out net.minecraft.server.v1_8_R3.EntityLiving>
+            val target = PathfinderGoalNearestAttackableTarget(nmsCreature, entityClass, true)
             nmsCreature.targetSelector.a(target)
             nmsCreature.targetSelector.a(priority, target)
         } catch (ex: Exception) {
@@ -44,10 +106,10 @@ class Minecraft_v1_8_R3 : Minecraft() {
     override fun canAttackMelee(creature: Creature, classEntityName: String, priority: Int) {
         try {
             val nmsCreature = (creature as CraftCreature).handle
-            val clz = Extra.getClassFrom("#mEntity$classEntityName")
+            val entityClass = Extra.getClassFrom("#mEntity$classEntityName")
                     as Class<out net.minecraft.server.v1_8_R3.Entity>
 
-            val melee = PathfinderGoalMeleeAttack(nmsCreature, clz, 1.0, true)
+            val melee = PathfinderGoalMeleeAttack(nmsCreature, entityClass, 1.0, true)
             nmsCreature.goalSelector.a(melee)
             nmsCreature.goalSelector.a(priority, melee)
 
@@ -57,10 +119,11 @@ class Minecraft_v1_8_R3 : Minecraft() {
         }
 
     }
+
     override fun followTarget(creature: Creature) {
         try {
             val nmsCreature = (creature as CraftCreature).handle
-            nmsCreature.goalSelector.a(PathfinderGoalMoveTowardsTarget(nmsCreature,1.0,1.0f))
+            nmsCreature.goalSelector.a(PathfinderGoalMoveTowardsTarget(nmsCreature, 1.0, 1.0f))
             /*
             val clz = Extra.getClassFrom("#mEntity$classEntityName")
                     as Class<out net.minecraft.server.v1_8_R3.Entity>
@@ -72,11 +135,11 @@ class Minecraft_v1_8_R3 : Minecraft() {
             ex.printStackTrace()
         }
     }
+
     override fun followLocation(creature: Creature, targetLocation: Location) {
         try {
-
             val nmsCreature = (creature as CraftCreature).handle
-            nmsCreature.goalSelector.a(0,PathFinderFollowLocation(creature,targetLocation))
+            nmsCreature.goalSelector.a(0, PathFinderFollowLocation(creature, targetLocation))
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -113,11 +176,12 @@ class Minecraft_v1_8_R3 : Minecraft() {
         xOffset: Float,
         yOffset: Float,
         zOffset: Float,
-        speed: Float) {
+        speed: Float
+    ) {
         val x = location.x.toFloat()
         val y = location.y.toFloat()
         val z = location.z.toFloat()
-        val result = particles[name.toLowerCase()]
+        val result = particlesEnumsByName[name.toLowerCase()]
         if (result == null) {
             val text = "Particle not exist in this version $name"
             if (blockedMessage.contains(text)) return
@@ -297,13 +361,13 @@ class Minecraft_v1_8_R3 : Minecraft() {
     }
 
     companion object {
-        var particles: MutableMap<String, Any> = HashMap()
+        var particlesEnumsByName: MutableMap<String, Any> = HashMap()
         var blockedMessage: MutableSet<String> = HashSet()
     }
 
     init {
-        if (particles.isEmpty()) for (particle in EnumParticle.values()) {
-            particles[particle.b().toLowerCase()] = particle
+        if (particlesEnumsByName.isEmpty()) for (particle in EnumParticle.values()) {
+            particlesEnumsByName[particle.b().toLowerCase()] = particle
         }
     }
 }

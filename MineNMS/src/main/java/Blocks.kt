@@ -8,14 +8,12 @@ import org.bukkit.block.Block
 import java.lang.reflect.Constructor
 
 interface Blocks {
-
     fun setType(material: Material)
     fun setTypeAndData(material: Material, data: Int): Boolean
     fun getType(): Material
     fun getX(): Int
     fun getY(): Int
     fun getZ(): Int
-    fun fixLightning()
     fun sendPacket()
 
     companion object {

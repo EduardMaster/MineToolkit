@@ -10,21 +10,29 @@ import java.util.concurrent.ConcurrentLinkedQueue
 @Suppress("unused")
 class SQLManager(var dbManager: DBManager) {
     enum class SQLAction {
-        UPDATE, DELETE, INSERT, UPDATE_CACHE
+        UPDATE, DELETE, INSERT
     }
-    class DataChanged(val data: Any,
-                      val action: SQLAction,
-                      vararg val collumnsNames : String)
+
+    class DataChanged(
+        val data: Any,
+        val action: SQLAction,
+        vararg val collumnsNames: String
+    )
+
     val actions: Queue<DataChanged> = ConcurrentLinkedQueue()
-    val queueRunsLimit = 100
+
+    var changesLimitPerTime = 100
 
     fun runChanges(): Int {
         var amount = 0
-        val updatesDone = mutableListOf<Any>()
-        val deletesDone = mutableListOf<Any>()
-        for (i in 0 until queueRunsLimit) {
+        // val updatesDone = mutableListOf<Any>()
+        // val deletesDone = mutableListOf<Any>()
+        for (currentChange in 0 until changesLimitPerTime) {
             val dataChange = actions.poll() ?: break
-            if (dataChange.action == SQLAction.UPDATE) {
+            if (dataChange.action == SQLAction.INSERT) {
+                insertData(dataChange.data)
+            } else if (dataChange.action == SQLAction.UPDATE) {
+                /*
                 if (dataChange.collumnsNames.isEmpty()){
                     if (!updatesDone.contains(dataChange.data)) {
                         updatesDone.add(dataChange.data)
@@ -32,29 +40,26 @@ class SQLManager(var dbManager: DBManager) {
                         continue
                     }
                 }
-                updateData(dataChange.data,*dataChange.collumnsNames)
+                 */
+                updateData(dataChange.data, *dataChange.collumnsNames)
             } else if (dataChange.action == SQLAction.DELETE) {
+                /*
                 if (deletesDone.contains(dataChange.data)) {
                     continue
                 }
                 deletesDone.add(dataChange.data)
+                 */
                 deleteData(dataChange.data)
-            } else if (dataChange.action == SQLAction.INSERT) {
-                insertData(dataChange.data)
-            } else if (dataChange.action == SQLAction.UPDATE_CACHE) {
+            }
+
+            /*
+            else if (dataChange.action == SQLAction.UPDATE_CACHE) {
                 updateCache(dataChange.data)
             }
+             */
             amount++
         }
         return amount
-    }
-
-    fun runUpdatesQueue(): Int {
-        return runChanges()
-    }
-
-    fun runDeletesQueue(): Int {
-        return 0
     }
 
     fun hasConnection(): Boolean {
@@ -74,9 +79,11 @@ class SQLManager(var dbManager: DBManager) {
     inline fun <reified E : Any> getDataOf(reference: Any): E? {
         return getDataOf(E::class.java, reference)
     }
+
     inline fun <reified E : Any> getDatasOf(reference: Any): MutableList<E> {
         return getDatasOf(E::class.java, reference)
     }
+
     /**
      *
      * @param dataClass
@@ -93,14 +100,12 @@ class SQLManager(var dbManager: DBManager) {
     }
 
 
-
     fun <E : Any> getDataOf(dataClass: Class<E>, reference: Any): E? {
         return if (hasConnection()) {
             dbManager.engineUsed.getTable(dataClass)
                 .findByReference(reference)
         } else null
     }
-
 
 
     fun <E : Any> getDatasOf(dataClass: Class<E>, reference: Any): MutableList<E> {
@@ -197,8 +202,8 @@ class SQLManager(var dbManager: DBManager) {
      *
      * @param data
      */
-    fun <E : Any> updateDataQueue(data: E,vararg columnsNames: String) {
-        actions.offer(DataChanged(data, SQLAction.UPDATE,*columnsNames))
+    fun <E : Any> updateDataQueue(data: E, vararg columnsNames: String) {
+        actions.offer(DataChanged(data, SQLAction.UPDATE, *columnsNames))
     }
 
     /**
@@ -216,20 +221,22 @@ class SQLManager(var dbManager: DBManager) {
     fun <E : Any> insertDataQueue(data: E) {
         actions.offer(DataChanged(data, SQLAction.INSERT))
     }
+
     fun <T : Any> updateData(data: T) {
         return updateData(data, *arrayOf())
     }
+
     /**
      *
      * @param data
      * @param <T>
     </T> */
-    fun <T : Any> updateData(data: T, vararg columnsNames : String) {
+    fun <T : Any> updateData(data: T, vararg columnsNames: String) {
         if (hasConnection()) {
 
             val dataClass = data.javaClass
             dbManager.engineUsed.getTable(dataClass)
-                .update(data,*columnsNames)
+                .update(data, *columnsNames)
 
         }
     }
@@ -272,6 +279,7 @@ class SQLManager(var dbManager: DBManager) {
             dbManager.engineUsed.clearTable(dataClass)
         }
     }
+
     inline fun <reified E : Any> deleteReferences() {
         deleteReferences(E::class.java)
     }

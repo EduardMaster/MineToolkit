@@ -1,6 +1,9 @@
 package net.eduard.api.lib.abstraction
 import net.eduard.api.lib.modules.MineReflect
+import org.bukkit.Chunk
 import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
@@ -14,7 +17,9 @@ import org.bukkit.inventory.ItemStack
  * @author Eduard
  */
 abstract class Minecraft {
-    /**
+    abstract fun setBlock(block : Block, chunk: Chunk, material : Material, data : Int, updateLightning : Boolean)
+
+        /**
      * Envia um Pacote de dados para o jogador
      *
      * @param packet Pacote

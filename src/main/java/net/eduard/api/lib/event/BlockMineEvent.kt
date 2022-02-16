@@ -2,6 +2,7 @@ package net.eduard.api.lib.event
 
 import net.eduard.api.EduardAPI
 import net.eduard.api.lib.abstraction.Blocks
+import net.eduard.api.lib.abstraction.Minecraft
 import net.eduard.api.lib.game.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -48,15 +49,19 @@ class BlockMineEvent(
         }
         giveDrops()
         storeDrops();
-        EduardAPI.instance.syncTask(this::fallDropsInWorld)
+
         if (needGiveExp && expToDrop > 0)
             player.giveExp(expToDrop)
         if (needBreakBlock)
             breakBlock()
+
+        fallDropsInWorld()
     }
 
     fun breakBlock() {
-        block.type = Material.AIR
+        //block.type = Material.AIR
+        val chunk = block.chunk
+        Minecraft.instance.setBlock(block , chunk, Material.AIR, 0, false)
     }
 
     fun setDrop(item: ItemStack, amount: Double) {

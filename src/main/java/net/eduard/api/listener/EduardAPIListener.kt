@@ -35,7 +35,8 @@ class EduardAPIListener : EventsManager() {
     fun onBreakCallMineEvent(event: BlockBreakEvent) {
         val block = event.block
         val type = block.type
-        if (type == Material.ICE ||
+        if (type == Material.AIR ||
+            type == Material.ICE ||
             type == Material.CHEST ||
             type == Material.TRAPPED_CHEST ||
             type == Material.SKULL_ITEM ||

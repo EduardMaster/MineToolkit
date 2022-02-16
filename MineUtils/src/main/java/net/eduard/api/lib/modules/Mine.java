@@ -665,8 +665,18 @@ public final class Mine {
      * @param chunk2 Terreno 2
      * @return o resultado da verificação
      */
-    public static boolean equals(Chunk chunk1, Chunk chunk2) {
+    public static boolean equalsChunck(Chunk chunk1, Chunk chunk2) {
         return chunk1.getX() == chunk2.getX() && chunk1.getZ() == chunk2.getZ();
+    }
+
+    private static Field fieldItemMeta;
+
+    static {
+        try {
+            fieldItemMeta = Extra.getField(ItemStack.class, "meta");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -687,9 +697,8 @@ public final class Mine {
         boolean durabilityEqual = item1.getDurability() == item2.getDurability();
         boolean amountEqual = item1.getAmount() == item2.getAmount();
         try {
-            Field metaField = Extra.getField(ItemStack.class, "meta");
-            ItemMeta meta1 = (ItemMeta) metaField.get(item1);
-            ItemMeta meta2 = (ItemMeta) metaField.get(item2);
+            ItemMeta meta1 = (ItemMeta) fieldItemMeta.get(item1);
+            ItemMeta meta2 = (ItemMeta) fieldItemMeta.get(item2);
             if (meta1 != null && meta2 != null) {
                 //  ItemMeta meta1 = item1.getItemMeta();
                 //  ItemMeta meta2 = item2.getItemMeta();

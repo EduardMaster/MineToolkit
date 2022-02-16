@@ -5,7 +5,10 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
@@ -26,6 +29,11 @@ import java.util.*;
 final public class Minecraft_v1_12_R1 extends Minecraft {
     private static final Map<String, Object> particles = new HashMap<>();
 
+    @Override
+    public void setBlock(@NotNull Block block, @NotNull Chunk chunk, @NotNull Material material, int data, boolean updateLightning) {
+
+    }
+
     public Minecraft_v1_12_R1() {
         if (particles.isEmpty())
             for (EnumParticle particle : EnumParticle.values()) {
@@ -33,6 +41,8 @@ final public class Minecraft_v1_12_R1 extends Minecraft {
             }
 
     }
+
+
 
     @Override
     public void forceOpen(@NotNull Chest chest, @NotNull Player player) {

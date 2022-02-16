@@ -1,7 +1,10 @@
 package net.eduard.api.lib.abstraction
 
 import net.minecraft.server.v1_7_R4.*
+import org.bukkit.Chunk
 import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer
 import org.bukkit.entity.Creature
@@ -13,6 +16,10 @@ import org.bukkit.inventory.ItemStack
  * @author Eduard
  */
 class Minecraft_v1_7_R4 : Minecraft() {
+
+    override fun setBlock(block: Block, chunk: Chunk, material: Material, data: Int, updateLightning: Boolean) {
+
+    }
     override fun sendPacket(packet: Any, player: Player) {
         (player as CraftPlayer).handle.playerConnection
             .sendPacket(packet as Packet)

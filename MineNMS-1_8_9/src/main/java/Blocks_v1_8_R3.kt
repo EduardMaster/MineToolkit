@@ -19,13 +19,16 @@ class Blocks_v1_8_R3(
     world: World
 ) : CraftBlock((blockChunk as CraftChunk?), x, y, z),
     Blocks {
+
     val position = BlockPosition(x, y, z)
     val worldServer: WorldServer = (world as CraftWorld).handle
     var chunkCache: net.minecraft.server.v1_8_R3.Chunk? =
-        (blockChunk as CraftChunk?)?.handle ?: worldServer.chunkProviderServer.originalGetChunkAt(x shr 4, z shr 4)
-    init{
+        (blockChunk as CraftChunk?)?.handle ?: worldServer.getChunkAt(x shr 4, z shr 4)
+
+    init {
 
     }
+
     override fun getWorld(): World {
         return worldServer.world
     }
@@ -73,36 +76,33 @@ class Blocks_v1_8_R3(
             return false
         }
         section.setType(xSec, ySec, zSec, blockData)
-        //worldServer.x(position)
+
         // altera a luz emitida do bloco (eles ficam igual a glowstone)
-        //section.b(x, y, z, 0)
+        //section.b(xSec, ySec, zSec, 0)
         //altera a luz do ceu aparentemente setar 15 n ta ajudando
         //section.a(xSec, (y shr 0xF) and 0xF, zSec, 15)
 
+        /*
+         Atualizar luz
+           //método responsavel por concertar as luzes porem da mais lag
+        worldServer.x(position)
+        worldServer.getLightLevel(position)
+
+         */
+
         if (applyPhysics) {
-            // worldServer.notifyAndUpdatePhysics(position)
+            //worldServer.notifyAndUpdatePhysics(position)
         } else {
-            //println("notificando mudanca")
             worldServer.x(position)
             Bukkit.getScheduler().runTask(Bukkit.getPluginManager().plugins.first(), this::sendPacket)
         }
-        // Mine.broadcast("Modificando bloco")
-
         // sendPacket()
-        // Bukkit.getScheduler().runTask(Bukkit.getPluginManager().plugins.first(), this::sendPacket)
         //super.setTypeIdAndData(type, data, applyPhysics)
         return true
     }
 
     override fun sendPacket() {
         worldServer.notify(position)
-    }
-
-    override fun fixLightning() {
-        //método responsavel por concertar as luzes porem da mais lag
-        worldServer.x(position)
-        //worldServer.getLightLevel(position)
-        sendPacket()
     }
 
 
@@ -113,20 +113,20 @@ class Blocks_v1_8_R3(
 
     private val section: ChunkSection?
         get() {
-            val x = x
+           // val x = x
             val y = y
-            val z = z
+           // val z = z
             try {
                 val chunk = chunkCache ?: return null
                 // val chunk = worldServer.chunkProviderServer.originalGetChunkAt(x shr 4, z shr 4)
                 val yBitShifted = (y shr 4) and 0xF
-                if (yBitShifted >= 16) {
+                if (yBitShifted >= 16 || yBitShifted < 0) {
                     return null;
                 }
                 var chunkSection = chunk.sections[yBitShifted]
                 if (chunkSection == null) {
-                    chunkSection = ChunkSection(y shr 4 shl 4, !worldServer.worldProvider.o())
-                    chunk.sections[y shr 4] = chunkSection
+                    chunkSection = ChunkSection(yBitShifted, !worldServer.worldProvider.o())
+                    chunk.sections[yBitShifted] = chunkSection
                     //chunkSection = chunk.sections[y shr 4]
                 }
                 return chunkSection

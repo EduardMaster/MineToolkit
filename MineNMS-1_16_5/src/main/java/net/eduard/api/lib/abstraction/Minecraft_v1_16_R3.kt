@@ -6,7 +6,10 @@ import net.eduard.api.lib.modules.Extra
 import net.minecraft.server.v1_16_R3.Packet
 import net.minecraft.server.v1_16_R3.*
 import org.bukkit.Bukkit
+import org.bukkit.Chunk
 import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer
@@ -25,6 +28,9 @@ import kotlin.collections.HashSet
  */
 class Minecraft_v1_16_R3 : Minecraft() {
 
+    override fun setBlock(block: Block, chunk: Chunk, material: Material, data: Int, updateLightning: Boolean) {
+
+    }
     override fun sendPacket(packet: Any, player: Player) {
 
         (player as CraftPlayer).handle.playerConnection.sendPacket(packet as Packet<*>)
