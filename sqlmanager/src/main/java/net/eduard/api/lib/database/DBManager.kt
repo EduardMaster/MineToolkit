@@ -326,7 +326,7 @@ class DBManager(
      * @param alter Alteração
      */
     fun alter(table: String, alter: String) {
-        if (hasConnection()) update("alter table $table $alter")
+        update("alter table $table $alter")
     }
 
     /**
@@ -337,12 +337,7 @@ class DBManager(
      * @param edit   Modificar
      * @param values Valores
      */
-    fun change(
-        table: String,
-        edit: String,
-        where: String,
-        vararg values: Any?
-    ) {
+    fun change(table: String, edit: String, where: String, vararg values: Any?) {
         update("UPDATE $table SET $edit WHERE $where", *values)
     }
 
@@ -355,12 +350,7 @@ class DBManager(
      * @param select    Select completo
      * @return ResultSet
      */
-    fun join(
-        table: String,
-        joinTable: String,
-        onClause: String,
-        select: String
-    ): ResultSet? {
+    fun join(table: String, joinTable: String, onClause: String, select: String): ResultSet? {
         return select("$select FROM $table JOIN $joinTable ON $onClause")
     }
 
@@ -401,9 +391,7 @@ class DBManager(
      * @param objects Objetos
      * @return Se tem ou nao registro com esta Query
      */
-    fun contains(
-        query: String, vararg objects: Any?
-    ): Boolean {
+    fun contains(query: String, vararg objects: Any?): Boolean {
         var has = false
         if (hasConnection()) try {
             val resultSet = select(
@@ -424,9 +412,7 @@ class DBManager(
      * @param objects Objetos
      * @return -1 se o não ocorreu update em nada, e retorna o numero do update ou insert caso tenha feito pelo menos 1
      */
-    fun update(
-        query: String, vararg objects: Any?
-    ): Int {
+    fun update(query: String, vararg objects: Any?): Int {
         var resultado = -1
         if (hasConnection()) {
             var state: PreparedStatement? = null
@@ -452,31 +438,15 @@ class DBManager(
         return resultado
     }
 
-    fun getDouble(
-        table: String,
-        column: String,
-        where: String,
-        vararg objects: Any?
-    ): Double {
+    fun getDouble(table: String, column: String, where: String, vararg objects: Any?): Double {
         return getData(Double::class.java, table, column, where, *objects) ?: 1.0
     }
 
-    fun getInt(
-        table: String,
-        column: String,
-        where: String,
-        vararg objects: Any?
-    ): Int {
+    fun getInt(table: String, column: String, where: String, vararg objects: Any?): Int {
         return getData(Int::class.java, table, column, where, *objects) ?: 1
     }
 
-    fun <T> getData(
-        type: Class<T>,
-        table: String,
-        column: String,
-        where: String,
-        vararg objects: Any?
-    ): T? {
+    fun <T> getData(type: Class<T>, table: String, column: String, where: String, vararg objects: Any?): T? {
         var result: T? = null
         var queryResult: ResultSet? = null
         if (hasConnection()) try {
@@ -501,9 +471,7 @@ class DBManager(
      * @param objects Objetos
      * @return PreparedStatement (Estado da Query)
      */
-    fun query(
-        queryStr: String, vararg objects: Any?
-    ): PreparedStatement? {
+    fun query(queryStr: String, vararg objects: Any?): PreparedStatement? {
 
         var query = queryStr
         var state: PreparedStatement? = null
@@ -532,9 +500,7 @@ class DBManager(
         return state
     }
 
-    fun selectAll(
-        table: String, where: String, vararg objects: Any?
-    ): ResultSet? {
+    fun selectAll(table: String, where: String, vararg objects: Any?): ResultSet? {
         return select(
             "SELECT * FROM $table WHERE $where", *objects
         )
@@ -547,9 +513,7 @@ class DBManager(
      * @param objects Objetos
      * @return ResultSet (Resultado da Query)
      */
-    fun select(
-        query: String, vararg objects: Any?
-    ): ResultSet? {
+    fun select(query: String, vararg objects: Any?): ResultSet? {
         return try {
             query(
                 query, *objects

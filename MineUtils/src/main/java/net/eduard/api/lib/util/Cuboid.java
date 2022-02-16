@@ -11,7 +11,7 @@ import java.util.*;
 
 /**
  * 
- * Sistema de geração de Cuboid
+ * Sistema de Geração de Cuboid
  * @author Internet
  */
 public class Cuboid implements Cloneable, ConfigurationSerializable, Iterable<Block> {
