@@ -14,7 +14,9 @@ import java.util.*;
 
 /**
  * API de requisitar Ações/Informações do BungeeCord e<br>
- * Guardar as Informações retornadas no Spigot
+ * Guardar as Informações retornadas no Spigot<br>
+ * Esta classe é limitada as ações que o Bungeecord pode fazer do lado do Bukkit<br>
+ * Regras: https://www.spigotmc.org/wiki/bukkit-bungee-plugin-messaging-channel/#playercount
  *
  * @author Eduard
  * @version 2.0
@@ -32,17 +34,21 @@ public final class BukkitBungeeAPI {
     private static String currentServer = "lobby";
     private static final Map<String, SimpleServer> servers = new HashMap<>();
     private static final Map<String, SimplePlayer> players = new HashMap<>();
+
     public static Map<String, SimplePlayer> getPlayers() {
         return players;
     }
+
     public static Map<String, SimpleServer> getServers() {
         return servers;
     }
 
     private static int playerCountTotal = 0;
+
     public static String getCurrentServer() {
         return currentServer;
     }
+
     public static int getPlayerCount(String server) {
         return getServer(server).playerCount;
     }
@@ -52,9 +58,10 @@ public final class BukkitBungeeAPI {
         for (SimpleServer server : servers.values()) {
             somando += server.getPlayerCount();
         }
-      return playerCountTotal = somando;
+        return playerCountTotal = somando;
     }
-    public static int getPlayerCount(){
+
+    public static int getPlayerCount() {
         return playerCountTotal;
     }
 
@@ -96,7 +103,7 @@ public final class BukkitBungeeAPI {
                     List<String> list = Arrays.asList(players);
                     server.players = list;
                     log("RESPONSE §aPLAYER-NAMES §fFROM SERVER " + server.name + " = " + list);
-                    for (String playerName : players){
+                    for (String playerName : players) {
                         getPlayer(playerName).server = serverName;
                     }
                     server.playerCount = players.length;
@@ -262,16 +269,13 @@ public final class BukkitBungeeAPI {
     }
 
     public static void sendMessage(ByteArrayOutputStream message) {
-
         if (Bukkit.getOnlinePlayers().size() == 0) {
-            //nao requisita nada pois n tem ninguem on
+            // nao requisita nada pois n tem ninguem on
             // antes a mensagem era colocado em uma fila e depois era enviada tudo ao player entrar, porem
             // acumula muita mensagem para ser enviada de uma vez só crashando o jogador por 5s
         } else {
             sendMessage(Bukkit.getOnlinePlayers().iterator().next(), message);
         }
-
-
     }
 
     public static void sendMessage(Player player, ByteArrayOutputStream message) {
@@ -578,6 +582,7 @@ public final class BukkitBungeeAPI {
         }
 
     }
+
     public static void requestPlayerList() {
         log("REQUEST ALL PLAYERS CONNECTED");
         try {
@@ -592,6 +597,7 @@ public final class BukkitBungeeAPI {
         }
 
     }
+
     public static void requestPlayerList(String server) {
         log("REQUEST PLAYERS FROM SERVER §a" + server);
         try {
