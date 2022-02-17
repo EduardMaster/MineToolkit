@@ -9,9 +9,7 @@ import org.bukkit.inventory.ItemStack
 @Suppress("unused")
 open class Product(name: String, menu: Menu?) : MenuButton(name, menu,1,1,1) {
 
-
     constructor() : this("Produto", null)
-
     fun upgrade(level: Int, body: ProductUpgrade.() -> Unit): ProductUpgrade {
         val upgrade = ProductUpgrade(level, this)
         body.invoke(upgrade)

@@ -18,10 +18,7 @@ import kotlin.math.abs
 
 @Suppress("unused")
 @StorageAttributes(indentificate = true)
-open class Shop(
-    name: String,
-    lineAmount: Int
-) : Menu(name, lineAmount) {
+open class Shop(name: String, lineAmount: Int) : Menu(name, lineAmount) {
 
     constructor() : this("Loja", 3)
 

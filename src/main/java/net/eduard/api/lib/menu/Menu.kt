@@ -154,7 +154,15 @@ open class Menu(
     var closeMenuWhenButtonsCleared = false
     var rebuildMenuWhenOpen = false
     var cooldownBetweenInteractions = 250L
-    var openWithItem: ItemStack? = Mine.newItem(Material.COMPASS, "§aMenu Exemplo", 1, 0, "§2Clique abrir o menu")
+    var openWithItem: ItemStack? = null
+        get() {
+            if (field != null && Mine.newItem(Material.COMPASS, "§aMenu Exemplo",
+                    1, 0, "§2Clique abrir o menu").equals(field)){
+                field = null
+            }
+                return field
+        }
+
     var openWithCommand: String? = null
     var openWithCommandText: String? = null
     var openNeedPermission: String? = null
@@ -179,9 +187,17 @@ open class Menu(
     }
 
 
-
-    var backPage = Slot(Mine.newItem(Material.ARROW, "§aVoltar para Menu Principal.", 1, 0, "§7Clique para ir para a página superior."), 1, 3)
-    var nextPage = Slot(Mine.newItem(Material.ARROW, "§aPróxima Página.", 1, 0, "§7Clique para ir para a próxima página."), 9, 1)
+    var backPage = Slot(
+        Mine.newItem(
+            Material.ARROW,
+            "§aVoltar para Menu Principal.",
+            1,
+            0,
+            "§7Clique para ir para a página superior."
+        ), 1, 3
+    )
+    var nextPage =
+        Slot(Mine.newItem(Material.ARROW, "§aPróxima Página.", 1, 0, "§7Clique para ir para a próxima página."), 9, 1)
     var buttons = mutableListOf<MenuButton>()
 
     @Transient
@@ -303,7 +319,6 @@ open class Menu(
         return Copyable.copyObject(this)
     }
 
-
     fun getButtonUsingStream(icon: ItemStack, player: Player): MenuButton? {
 
         val page = pageOpened[player] ?: 1
@@ -315,6 +330,7 @@ open class Menu(
             return stream.get()
         return null
     }
+
 
     fun getButtonUsingFor(icon: ItemStack, player: Player): MenuButton? {
         val tempoAntes = System.currentTimeMillis()
@@ -361,7 +377,7 @@ open class Menu(
             button.page = lastPage
             button.index = lastSlot
         }
-        if (button.isCategory && isRegistered){
+        if (button.isCategory && isRegistered) {
             button.menu?.superiorMenu = this
             button.menuLink?.superiorMenu = this
             button.menu?.registerJavaMenu(plugin)
@@ -519,8 +535,8 @@ open class Menu(
                 "%max_page", "" +
                         pageAmount
             )
-                .replace("%page", "" + page,false)
-                .replace("\$page", "" + page,false)
+                .replace("%page", "" + page, false)
+                .replace("\$page", "" + page, false)
             val suffix = pageSuffix.replace("%max_page", "" + pageAmount)
                 .replace("%page", "" + page, false)
                 .replace("\$page", "" + page, false)
@@ -641,8 +657,9 @@ open class Menu(
      * Registra o Listener deste menu e de seus submenus e configura nomes de botões sem nomes
      */
     open fun registerMenu(pluginInstance: IPluginInstance) {
-       registerJavaMenu(pluginInstance.plugin as JavaPlugin)
+        registerJavaMenu(pluginInstance.plugin as JavaPlugin)
     }
+
     /**
      * Registra o Listener deste menu e de seus submenus e configura nomes de botões sem nomes
      */
@@ -694,9 +711,11 @@ open class Menu(
             return
         if (e.action == Action.PHYSICAL) return
         if (openWithItem == null) return
-        if (!Mine.equals(openWithItem , player.itemInHand)) return
-        e.isCancelled = true
-        open(player)
+        if (openWithItem!!.isSimilar(player.itemInHand)) {
+            e.isCancelled = true
+            open(player)
+        }
+
     }
 
     @EventHandler(ignoreCancelled = true)
