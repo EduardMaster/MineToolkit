@@ -112,9 +112,7 @@ open class Command(
                             sub = subcmd
                         }
                     }
-
                 }
-
             }
             if (sub == null) {
                 break
@@ -177,7 +175,6 @@ open class Command(
     }
 
     fun register(main: IPluginInstance) {
-
         if (usage.isEmpty()) {
             usage = autoUsage()
         }
@@ -192,7 +189,6 @@ open class Command(
                 sub.permission = sub.autoPermission()
             }
         }
-
         if (Hybrid.instance.isBungeecord) {
             command = BungeeCommand(this)
             command?.register(main)

@@ -15,6 +15,10 @@ object Systems {
     fun unregisterAPI(api: PluginSystem) {
         api.unregisterAPI()
     }
+
+    @JvmStatic
+    var mailSystem : MailSystem? = null
+
     @JvmStatic
     var clanSystem: ClanSystem? = null
 

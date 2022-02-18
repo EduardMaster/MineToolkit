@@ -264,7 +264,7 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
      * Deleta os backups dos dias anteriores
      */
     fun deleteOldBackups() {
-        val pasta = File(getPluginFolder(), "/backup/")
+        val pasta = File(pluginFolder, "/backup/")
         pasta.mkdirs()
         val lista = listOf(*pasta.listFiles()!!)
         lista.filter {
