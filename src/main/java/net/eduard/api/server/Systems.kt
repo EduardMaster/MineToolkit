@@ -26,6 +26,9 @@ object Systems {
     var clanSystem: ClanSystem? = null
 
     @JvmStatic
+    var playTimeSystem: PlayTimeSystem? = null
+
+    @JvmStatic
     var arenaSystem: ArenaSystem? = null
 
     @JvmStatic
