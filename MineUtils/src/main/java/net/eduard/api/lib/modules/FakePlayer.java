@@ -47,7 +47,7 @@ public class FakePlayer implements OfflinePlayer {
     }
 
     public void sendMessage(String message) {
-        consume(p -> p.sendMessage(message));
+        consume(player -> player.sendMessage(message));
 
     }
 
@@ -149,7 +149,9 @@ public class FakePlayer implements OfflinePlayer {
     @Override
     public Player getPlayer() {
         Player player = null;
-        /*if (playerCache != null
+        /*
+            // Essas verificações não funcionavam muito bem se o jogador relogava
+            if (playerCache != null
                     && playerCache.isOnline() && playerCache.isValid()) {
                 return playerCache;
 

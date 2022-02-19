@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Todos plugins para BungeeCord e Waterfall feitos pelo Eduard extendem esta classe<br>
+ */
 @Setter
 @Getter
 public class EduardBungeePlugin extends Plugin implements IPluginInstance {

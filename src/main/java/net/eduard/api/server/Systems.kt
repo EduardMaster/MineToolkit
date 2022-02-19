@@ -1,6 +1,9 @@
 package net.eduard.api.server
 
-
+/**
+ * Classe onde possui Métodos de Acesso as APIs do Servidor<br>
+ * e também possui as Variaveis de algumas APIs definidas na classe
+ */
 object Systems {
 
     @JvmStatic
