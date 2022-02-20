@@ -64,7 +64,7 @@ class Minecraft_v1_8_R3 : Minecraft() {
             if (updateLightning) {
                 Bukkit.getScheduler().runTaskAsynchronously(plugin) {
                     worldHandle.x(position)
-                    //worldHandle.getLightLevel(position)
+                   // worldHandle.getLightLevel(position)
                     Bukkit.getScheduler().runTask(plugin) {
                         worldHandle.notify(position)
                         /*

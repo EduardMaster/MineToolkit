@@ -1,9 +1,6 @@
 package net.eduard.api.lib.event
 
-import net.eduard.api.EduardAPI
-import net.eduard.api.lib.abstraction.Blocks
 import net.eduard.api.lib.abstraction.Minecraft
-import net.eduard.api.lib.game.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment

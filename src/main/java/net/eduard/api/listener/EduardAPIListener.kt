@@ -5,19 +5,15 @@ import net.eduard.api.lib.manager.EventsManager
 
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.lib.event.BlockMineEvent
-import net.eduard.api.lib.kotlin.mineCallEvent
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 import org.bukkit.Material
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
-import org.bukkit.event.block.BlockDamageEvent
-import org.bukkit.event.entity.ItemSpawnEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import java.util.concurrent.CompletableFuture
 
 /**
  * Pequenas manipulações de Eventos criados que qualquer servidor precise
@@ -48,6 +44,7 @@ class EduardAPIListener : EventsManager() {
             return
         }
         if (!minerationEventEnabled) return
+        if (event.player.gameMode == GameMode.CREATIVE)return
         event.isCancelled = true
         event.expToDrop = 0
         BlockMineEvent.callEvent(event, BlockMineEvent(mutableMapOf(), block, event.player, true, event.expToDrop))

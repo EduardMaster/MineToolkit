@@ -1,5 +1,6 @@
 package net.eduard.api.lib.menu
 
+import net.eduard.api.lib.abstraction.Minecraft_v1_8_R3
 import net.eduard.api.lib.game.SoundEffect
 
 import org.bukkit.Bukkit
@@ -156,8 +157,7 @@ open class Menu(
     var cooldownBetweenInteractions = 250L
     var openWithItem: ItemStack? = null
         get() {
-            if (field != null && Mine.newItem(Material.COMPASS, "§aMenu Exemplo",
-                    1, 0, "§2Clique abrir o menu").equals(field)){
+            if (field != null && openIconDefault.equals(field)){
                 field = null
             }
                 return field
@@ -869,8 +869,10 @@ open class Menu(
         var isDebug = true
         val registeredMenus = ArrayList<Menu>()
         val lastOpennedMenu = mutableMapOf<Player, Menu>()
-
+        val openIconDefault = Mine.newItem(Material.COMPASS, "§aMenu Exemplo",
+        1, 0, "§2Clique abrir o menu")
         fun debug(msg: String) {
+            Minecraft_v1_8_R3
             if (isDebug) {
                 Mine.console("§b[Menu] §7$msg")
             }
