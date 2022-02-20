@@ -871,10 +871,9 @@ open class Menu(
         val lastOpennedMenu = mutableMapOf<Player, Menu>()
         val openIconDefault = Mine.newItem(Material.COMPASS, "§aMenu Exemplo",
         1, 0, "§2Clique abrir o menu")
-        fun debug(msg: String) {
-            Minecraft_v1_8_R3
+        fun debug(message: String) {
             if (isDebug) {
-                Mine.console("§b[Menu] §7$msg")
+                Mine.console("§b[Menu] §7$message")
             }
         }
     }

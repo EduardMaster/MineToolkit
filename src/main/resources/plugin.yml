@@ -5,7 +5,7 @@ version: "1.7.6"
 author: "Eduard"
 api-version: 1.16
 authors: ["Eduard"]
-softdepend: [Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials]
+softdepend: [Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials, JH_Shop]
 website: "https://www.youtube.com/user/EduTutoriaisHD"
 commands:
   map:

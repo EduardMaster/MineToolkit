@@ -364,6 +364,10 @@ class Minecraft_v1_8_R3 : Minecraft() {
     companion object {
         var particlesEnumsByName: MutableMap<String, Any> = HashMap()
         var blockedMessage: MutableSet<String> = HashSet()
+        fun clear(){
+            particlesEnumsByName.clear()
+            blockedMessage.clear()
+        }
     }
 
     init {

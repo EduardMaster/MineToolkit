@@ -96,7 +96,7 @@ class Blocks_v1_8_R3(
             worldServer.x(position)
             Bukkit.getScheduler().runTask(Bukkit.getPluginManager().plugins.first(), this::sendPacket)
         }
-        // sendPacket()
+
         //super.setTypeIdAndData(type, data, applyPhysics)
         return true
     }
