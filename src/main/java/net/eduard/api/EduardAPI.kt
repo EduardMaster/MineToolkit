@@ -289,6 +289,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         DisplayBoard.suffixLimit = configs.getInt("scoreboard.suffix-limit")
 
         log("Recarregamento do EduardAPI concluido.")
+
     }
 
 

@@ -12,7 +12,7 @@ class ApiUnloadWorldCommand : CommandManager("unloadworld", "descarregarmundo", 
             return true
         }
         if (Mine.existsWorld(sender, args[0])) {
-            Mine.unloadWorld(args[0])
+            Mine.unloadWorld(args[0], true)
             sender.sendMessage("§bEduardAPI §aVoce descarregou o mundo §2" + args[0])
         }
         return true

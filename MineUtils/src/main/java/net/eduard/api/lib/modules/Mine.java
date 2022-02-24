@@ -10,7 +10,6 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftMetaBanner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
@@ -117,8 +116,6 @@ public final class Mine {
         Vector differenceUpper = targetLocationUpper.subtract(eyeLocation);
         float angle = lookDirection.angle(difference);
         float angleUpper = lookDirection.angle(differenceUpper);
-
-
         return (angle < 0.2f || angleUpper < 0.2f) && player.hasLineOfSight(target);
     }
 
@@ -392,27 +389,13 @@ public final class Mine {
     /**
      * Envia mensagens para todos jogadores
      *
-     * @param message Mensagem
+     * @param message Alias para
      *                <code>Bukkit.broadcastMessage(message)</code>
      */
     public static void broadcast(String message) {
-        for (Player player : Mine.getPlayers()) {
-            player.sendMessage(message);
-        }
+        Bukkit.broadcastMessage(message);
     }
 
-    /**
-     * Envia mensagens para todos jogadores que tiverem a Permissão
-     *
-     * @param message Mensagem
-     */
-    public static void broadcast(String message, String permission) {
-        for (Player player : Mine.getPlayers()) {
-            if (player.hasPermission(permission))
-                player.sendMessage(message);
-        }
-
-    }
 
     /**
      * Executa um Evento para todos os Listeners alterarem ele
@@ -570,8 +553,8 @@ public final class Mine {
      * @return o novo mundo gerado
      */
     public static World copyWorld(String fromWorld, String toWorld) {
-        unloadWorld(fromWorld);
-        unloadWorld(toWorld);
+        unloadWorld(fromWorld, true);
+        unloadWorld(toWorld, true);
         deleteWorld(toWorld);
         Extra.copyWorldFolder(getWorldFolder(fromWorld), getWorldFolder(toWorld));
         return loadWorld(toWorld);
@@ -611,7 +594,7 @@ public final class Mine {
      * @param name Nome do Mundo
      */
     public static void deleteWorld(String name) {
-        unloadWorld(name);
+        unloadWorld(name, true);
         Extra.deleteFolder(getWorldFolder(name));
     }
 
@@ -1236,7 +1219,7 @@ public final class Mine {
         return amount;
     }
 
-    public static ItemStack applyPlaceholders(ItemStack item, Map<String, String> placeholders) {
+    public static ItemStack getReplacers(ItemStack item, Map<String, String> placeholders) {
         String name = Mine.getName(item);
         for (Entry<String, String> placeholder : placeholders.entrySet()) {
             name = name.replace(placeholder.getKey(), placeholder.getValue());
@@ -1676,7 +1659,7 @@ public final class Mine {
     }
 
 
-    public static ItemStack getReplacers(ItemStack itemOriginal, Player player) {
+    public static ItemStack applyPlaceholders(ItemStack itemOriginal, Player player) {
         ItemStack itemCopia = itemOriginal.clone();
         String displayName = getName(itemCopia);
         List<String> linhas = getLore(itemCopia);
@@ -1692,10 +1675,12 @@ public final class Mine {
     }
 
     public static String getReplacers(String text, Player player) {
-        return getReplacers(player, text, '{', '}');
+        return applyPlaceholders(player, text, '{', '}');
     }
-
-    public static String getReplacers(Player player, String text, char startChar, char endChar) {
+    public static String applyPlaceholders(String text, Player player) {
+        return applyPlaceholders(player, text, '{', '}');
+    }
+    public static String applyPlaceholders(Player player, String text, char startChar, char endChar) {
         if (player == null) {
             return "";
         }
@@ -1724,9 +1709,9 @@ public final class Mine {
         // necessario continuar para tirar o lag
         for (String key : placeHoldersFound) {
 
-            Replacer replacer = replacers.get(key);
+            Replacer placeholder = replacers.get(key);
             try {
-                text = text.replace(startChar + key + endChar, "" + replacer.getText(player));
+                text = text.replace(startChar + key + endChar, "" + placeholder.getText(player));
             } catch (Exception ex) {
                 if (OPT_DEBUG_REPLACERS) {
                     Mine.console("§cREPLACER ERROR: §f" + startChar + key + endChar);
@@ -3328,15 +3313,6 @@ public final class Mine {
 
         }
         Bukkit.unloadWorld(name, saveWorld);
-    }
-
-    /**
-     * Descarrega um mundo salvando as Chunks no HD
-     *
-     * @param name Nome do Mundo
-     */
-    public static void unloadWorld(String name) {
-        unloadWorld(name, true);
     }
 
 

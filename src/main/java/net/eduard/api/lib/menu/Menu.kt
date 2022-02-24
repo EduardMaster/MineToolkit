@@ -1,6 +1,5 @@
 package net.eduard.api.lib.menu
 
-import net.eduard.api.lib.abstraction.Minecraft_v1_8_R3
 import net.eduard.api.lib.game.SoundEffect
 
 import org.bukkit.Bukkit
@@ -607,7 +606,7 @@ open class Menu(
             menu.clear()
         if (hasPages) {
             if (page > 1) {
-                val itemPageBack = Mine.applyPlaceholders(
+                val itemPageBack = Mine.getReplacers(
                     previousPage.item!!.clone(),
                     mapOf(
                         "%page" to "" + (page - 1),
@@ -618,7 +617,7 @@ open class Menu(
 
             }
             if (page < pageAmount) {
-                val itemPageNext = Mine.applyPlaceholders(
+                val itemPageNext = Mine.getReplacers(
                     nextPage.item!!.clone(),
                     mapOf(
                         "%page" to "" + (page + 1),

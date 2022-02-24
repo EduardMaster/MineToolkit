@@ -14,7 +14,7 @@ import java.lang.Exception
 import java.lang.reflect.Field
 
 object PetsAPI {
-    private var gsa: Field? = null
+    private var pathFinderListField: Field? = null
     private var goalSelector: Field? = null
     private var targetSelector: Field? = null
     fun makePet(e: LivingEntity, toFollow: UUID?) {
@@ -23,8 +23,8 @@ object PetsAPI {
             if (nmsEntity is EntityInsentient) {
                 val goal = goalSelector!![nmsEntity] as PathfinderGoalSelector
                 val target = targetSelector!![nmsEntity] as PathfinderGoalSelector
-                gsa!![goal] = UnsafeList<Any>()
-                gsa!![target] = UnsafeList<Any>()
+                pathFinderListField!![goal] = UnsafeList<Any>()
+                pathFinderListField!![target] = UnsafeList<Any>()
                 goal.a(0, PathfinderGoalFloat(nmsEntity))
                 goal.a(1, PathfinderGoalWalktoTile(nmsEntity, toFollow))
             } else {
@@ -70,8 +70,8 @@ object PetsAPI {
 
     init {
         try {
-            gsa = PathfinderGoalSelector::class.java.getDeclaredField("b")
-            gsa!!.isAccessible = true
+            pathFinderListField = PathfinderGoalSelector::class.java.getDeclaredField("b")
+            pathFinderListField!!.isAccessible = true
             goalSelector = EntityInsentient::class.java.getDeclaredField("goalSelector")
             goalSelector!!.isAccessible = true
             targetSelector = EntityInsentient::class.java.getDeclaredField("targetSelector")

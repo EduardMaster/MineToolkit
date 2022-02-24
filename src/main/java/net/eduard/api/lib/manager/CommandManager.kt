@@ -81,7 +81,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
 
     fun broadcast(message: String) {
-        Mine.broadcast(message, permission)
+        Bukkit.broadcast(message, permission)
     }
 
 

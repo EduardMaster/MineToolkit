@@ -9,7 +9,7 @@ interface ClanSystem  : PluginSystem {
         var tag : String
         var name : String
         val members : List<ClanPlayerData>
-        var leader : ClanPlayerData
+        val leader : ClanPlayerData
     }
     interface ClanPlayerData {
         var player : FakePlayer

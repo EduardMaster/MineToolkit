@@ -9,7 +9,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.function.BiConsumer
-import java.util.function.BiPredicate
 import java.util.function.Function
 import java.util.function.Predicate
 
@@ -85,7 +84,7 @@ open class MenuButton(
         if (hideWhen?.test(player) == true) return
         var icon = getIcon(player)
         if (parentMenu?.isTranslateIcon == true) {
-            icon = Mine.getReplacers(icon, player)
+            icon = Mine.applyPlaceholders(icon, player)
         }
         if (icon.type != Material.AIR) {
             val data = MineReflect.getData(icon)

@@ -67,7 +67,7 @@ open class Slot(
 
     fun give(menu: Inventory, placeholders: Map<String?, String?>?) {
         val clone = item?.clone()
-        Mine.applyPlaceholders(clone, placeholders)
+        Mine.getReplacers(clone, placeholders)
         menu.setItem(index, clone)
     }
 
