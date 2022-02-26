@@ -1,20 +1,20 @@
 name: "EduardAPI"
 description: "API de desenvolvimento de plugins que facilita sua vida"
 main: "net.eduard.api.EduardAPIMain"
-version: "1.7.6"
+version: "1.7.7"
 author: "Eduard"
 api-version: 1.16
-authors: ["Eduard"]
-softdepend: [Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials, JH_Shop]
+authors: [ "Eduard" ]
+softdepend: [ Multiverse-Core,Vault,PermissionEX,LegendChat,HolographicDisplays,Citizens,Essentials,JH_Shop ]
 website: "https://www.youtube.com/user/EduTutoriaisHD"
 commands:
   map:
     description: "Controla os Mapas criados (baseado no Schematic do WorldEdit)"
-    aliases: [mapa]
+    aliases: [ mapa ]
     usage: "/<command> help"
   api:
     description: "Controla plugins feitos pelo Edu"
-    aliases: [eduardapi,eduard,e]
+    aliases: [ eduardapi,eduard,e ]
     usage: "/<command> help"
 
 

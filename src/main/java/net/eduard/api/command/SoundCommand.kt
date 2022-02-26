@@ -21,9 +21,9 @@ class SoundCommand : CommandManager("sound","som") {
         argument = argument.trim { it <= ' ' }
             .replace("_", "")
         val list: MutableList<String> = ArrayList()
-        for (enchant in Sound.values()) {
-            val text = Extra.toTitle(enchant.name, "")
-            val line = enchant.name.trim { it <= ' ' }.replace("_", "")
+        for (soundType in Sound.values()) {
+            val text = Extra.toTitle(soundType.name, "")
+            val line = soundType.name.trim { it <= ' ' }.replace("_", "")
             if (Extra.startWith(line, argument)) {
                 list.add(text)
             }
@@ -31,10 +31,7 @@ class SoundCommand : CommandManager("sound","som") {
         return list
     }
 
-    override fun onCommand(
-        sender: CommandSender, command: Command,
-        label: String, args: Array<String>
-    ): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             sendUsage(sender)
             return true
@@ -71,14 +68,10 @@ class SoundCommand : CommandManager("sound","som") {
             player.world.playSound(location, sound, volume, pitch)
         } else player.playSound(location, sound, volume, pitch)
         sender.sendMessage("§aEfeito $sound sonoro criado!")
-
         return true
     }
 
-    override fun onTabComplete(
-        sender: CommandSender, command: Command,
-        label: String, args: Array<String>
-    ): List<String>? {
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): List<String>? {
         return if (args.size == 1) {
             parseSound(args[0])
         } else null

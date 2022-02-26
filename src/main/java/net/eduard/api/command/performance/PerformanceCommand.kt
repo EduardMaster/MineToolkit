@@ -2,7 +2,7 @@ package net.eduard.api.command.performance
 
 import net.eduard.api.lib.manager.CommandManager
 
-class PerformanceCommand : CommandManager("performance", "desempenho","nolag","checklag") {
+class PerformanceCommand : CommandManager("performance", "desempenho","checklag") {
 
     init {
         description = "Verifica Desempenho do Servidor e derivados"
