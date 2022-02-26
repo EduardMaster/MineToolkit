@@ -3,6 +3,7 @@ package net.eduard.api
 import net.eduard.api.command.*
 import net.eduard.api.command.api.ApiCommand
 import net.eduard.api.command.map.MapCommand
+import net.eduard.api.command.performance.PerformanceCommand
 import net.eduard.api.core.BukkitInfoGenerator
 import net.eduard.api.core.BukkitReplacers
 import net.eduard.api.core.PlayerSkin

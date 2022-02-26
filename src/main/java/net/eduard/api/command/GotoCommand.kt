@@ -9,12 +9,13 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class GotoCommand : CommandManager("goto","ir","irpara") {
-    init{
-        description= "Teleporta para outro mundo"
-        usage= "/<command> <world>"
+class GotoCommand : CommandManager("goto", "ir", "irpara") {
 
+    init {
+        description = "Teleporta para outro mundo"
+        usage = "/<command> <world>"
     }
+
     /**
      * Som para o Teleporte
      */
