@@ -16,11 +16,11 @@ fun IPluginInstance.enableTests() {
 }
 class CommandTest() : CommandManager("commandtest"){
     override fun command(sender: CommandSender, args: Array<String>) {
-        sender.sendMessage("§cEste é um comando criado para puro teste.")
+        sender.sendMessage("§aEste eh um comando criado para puro teste.")
     }
 }
 
-class MenuTest : Menu("Teste de Menu", 5) {
+class MenuTest : Menu("Teste de Menu", 3) {
     init {
         openWithCommand = "/menutest"
         button("novo-botao") {
@@ -29,7 +29,7 @@ class MenuTest : Menu("Teste de Menu", 5) {
                 .lore("§7","§7Lore Exemplo")
             click = ClickEffect {
                 val player = it.player
-                player.sendMessage("§cVocê clicou no Item")
+                player.sendMessage("§aVocê clicou no Item")
             }
         }
     }

@@ -239,10 +239,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         command.usage = usage
         command.permissionMessage = permissionMessage
         command.permission = permission
-        log(
-            "O comando §a" + name + " §ffoi registrado para o Plugin §b" + plugin.name
-                    + "§f sem plugin.yml"
-        )
+        log("O comando §a" + name + " §ffoi registrado para o Plugin §b" + plugin.name + "§f sem plugin.yml")
 
         commandsRegistred[name.toLowerCase()] = this
         commandRegistred = command
