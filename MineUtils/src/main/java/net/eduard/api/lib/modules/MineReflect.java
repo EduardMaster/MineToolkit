@@ -168,7 +168,7 @@ public class MineReflect {
     /**
      * Bloqueia uso de Async na execução do Método atual
      *
-     * @param message
+     * @param message Mensagem
      */
     public static void asyncCatch(String message) {
         AsyncCatcher.catchOp(message);
@@ -261,20 +261,15 @@ public class MineReflect {
      */
     public static class NBTReflection {
         private Object nbtMap;
-
         public NBTReflection(Object currentNBT) {
             this.nbtMap = currentNBT;
         }
-
         public Object getNbtMap() {
             return nbtMap;
         }
-
         public void setNbtMap(Object nbtMap) {
             this.nbtMap = nbtMap;
         }
-
-
         public boolean has(String key) {
             try {
                 return (boolean) method_NBT_hasKey.invoke(nbtMap, key);
@@ -283,30 +278,22 @@ public class MineReflect {
             }
             return false;
         }
-
         public String getString(String key) {
             try {
                 return (String) method_NBT_getString.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return null;
-
         }
-
         public boolean getBoolean(String key) {
-
             try {
                 return (boolean) method_NBT_getBoolean.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return false;
-
         }
-
         public int getInt(String key) {
             try {
                 return (int) method_NBT_getInt.invoke(nbtMap, key);
@@ -314,19 +301,15 @@ public class MineReflect {
                 e.printStackTrace();
             }
             return 0;
-
         }
 
         public long getLong(String key) {
-
             try {
                 return (long) method_NBT_getLong.invoke(nbtMap, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return 0L;
-
         }
 
         public double getDouble(String key) {
@@ -335,9 +318,7 @@ public class MineReflect {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return 0;
-
         }
 
 
@@ -380,7 +361,6 @@ public class MineReflect {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
 
         public void setBoolean(String key, boolean value) {
@@ -528,12 +508,9 @@ public class MineReflect {
 
             Object itemCopia = method_asNMSCopy.invoke(0, item);
             if (itemCopia != null) {
-                ;
-
                 method_NMSItemStack_setTag.invoke(itemCopia, data.getItemNBT().getNbtMap());
                 //Method asCraftMirror = Extra.getMethod(class_CraftItemStack,"asCraftMirror", MineReflect.classMineItemStack);
                 Object itemModified; //= asCraftMirror.invoke(0, itemCopia);
-
                 itemModified = method_asBukkitCopy.invoke(0, itemCopia);
                 if (itemModified != null)
                     return (ItemStack) itemModified;
@@ -555,9 +532,6 @@ public class MineReflect {
         return Bukkit.getServer().getClass().getPackage().getName().split("\\\\")[3];
     }
 
-    static {
-
-    }
 
 
     public static Villager newNPCVillager(Location location, String name) {
@@ -578,7 +552,6 @@ public class MineReflect {
             return Math.min(20.0D, Math.round(MineReflect.getCurrentTick() * 10) / 10.0D);
         } catch (Exception ignored) {
         }
-
         return 0D;
     }
 
@@ -589,18 +562,7 @@ public class MineReflect {
 
     /**
      * Desabilita a Inteligência da Entidade<br>
-     * <p>
-     * NMS código executado <br>
-     *
-     * <code>
-     * net.minecraft.server.v1_8_R3.Entity NMS = ((CraftEntity) entidade).getHandle();<br>
-     * NBTTagCompound compound = new NBTTagCompound();<br>
-     * NMS.c(compound);<br>
-     * compound.setByte("NoAI", (byte) 1);<br>
-     * NMS.f(compound);
-     *
-     * </code>
-     *
+
      * @param entity Entidade
      */
     public static void disableAI(Entity entity) {
@@ -608,13 +570,13 @@ public class MineReflect {
             Object compound = Extra.getNew(class_NBTCompound);
             Object getHandle = Extra.getMethodInvoke(entity, "getHandle");
             Extra.getMethodInvoke(getHandle, "c", compound);
-            Extra.getMethodInvoke(compound, "setByte", "NoAI", (byte) 1);
+            Method method = Extra.getMethod(compound, "setByte" , String.class, byte.class);
+            method.invoke(compound, "NoAI", (byte) 1);
+            //Extra.getMethodInvoke(compound, "setByte", "NoAI", (byte) 1);
             Extra.getMethodInvoke(getHandle, "f", compound);
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     /**
