@@ -25,7 +25,8 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         }
 
     @Transient
-    var customCommand: CustomCommand? = null
+    var commandRegistred: Command? = null
+
     @Transient
     var subCommands: MutableMap<String, CommandManager> = mutableMapOf()
 
@@ -45,11 +46,11 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         }
     }
 
-    var usagePrefix: String = "§cUtilize: "
-    var description = "Este comando faz algo"
-    var permission: String = ""
+    var usagePrefix: String = DEFAULT_USAGE_PREFIX
+    var description = DEFAULT_DESCRIPTION
+    var permission: String = DEFAULT_PERMISSION
     var usage: String = ""
-    var aliases: List<String> = ArrayList()
+    var aliases: MutableList<String> = ArrayList()
     var permissionMessage = Mine.MSG_NO_PERMISSION
 
 
@@ -57,7 +58,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         get() = Bukkit.getPluginCommand(name)
 
     init {
-        this.aliases = aliases.toList()
+        this.aliases = aliases.toMutableList()
     }
 
     constructor() : this("") {}
@@ -106,7 +107,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             } else {
                 if (sender.hasPermission(permission)) {
                     command(sender, args)
-                }else {
+                } else {
                     sender.sendMessage(permissionMessage)
                 }
             }
@@ -155,9 +156,9 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
             }
             cmdSelected = sub
         }
-        if (cmdSelected != this){
-            val subTabComplete = cmdSelected.onTabComplete(sender,command,label,args)
-            if (subTabComplete!=null) {
+        if (cmdSelected != this) {
+            val subTabComplete = cmdSelected.onTabComplete(sender, command, label, args)
+            if (subTabComplete != null) {
                 vars.addAll(subTabComplete)
             }
         }
@@ -234,7 +235,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         command.aliases = aliases
         command.description = description
         command.label = name
-        // command.setName(name);
+        command.setName(name);
         command.usage = usage
         command.permissionMessage = permissionMessage
         command.permission = permission
@@ -244,18 +245,14 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         )
 
         commandsRegistred[name.toLowerCase()] = this
-        customCommand = command
+        commandRegistred = command
         updateSubs()
         registerListener(plugin)
         Bukkit.getScheduler().runTask(plugin) {
             try {
                 val registrado = getServerCommandsMap()?.register(plugin.name, command) ?: false
                 log("O Comando $name foi registrado com sucesso: $registrado")
-                /*
-                    for (aliase in command.aliases) {
-                        map.register(aliase.toLowerCase(), command);
-                    }
-                 */
+
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -265,30 +262,27 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
 
     fun unregisterCommand() {
-        customCommand ?: return
-        val command = customCommand!!
+        val command =  commandRegistred ?: return
         val cmdName = command.name.toLowerCase()
         val pluginName = plugin.name.toLowerCase()
         commandsRegistred.remove(name.toLowerCase())
         commandsRegistred.remove(name)
         command.unregister(getServerCommandsMap())
-        val currentCommands = getServerCommandsHashMap()!!
-
+        val commandsMap = getServerCommandsHashMap()!!
         for (aliase in aliases) {
+            val aliasLowercase = aliase.toLowerCase()
             log("Removendo aliase §a$aliase§f do comando §b$cmdName")
-            currentCommands.remove(aliase.toLowerCase())
-            currentCommands.remove(pluginName.toLowerCase() + ":" + aliase.toLowerCase())
+            commandsMap.remove(aliasLowercase)
+            commandsMap.remove("$pluginName:$aliasLowercase")
         }
         try {
-            currentCommands.remove(cmdName)
-            currentCommands.remove(pluginName.toLowerCase() + ":" + cmdName)
+            commandsMap.remove(cmdName)
+            commandsMap.remove("$pluginName:$cmdName")
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
         log("Removendo o comando §a$cmdName§f do Plugin §b$pluginName")
-
     }
-
 
     fun sendPermissionMessage(sender: CommandSender) {
         sender.sendMessage(permissionMessage)
@@ -310,6 +304,9 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
     companion object {
         var debugEnabled = true
+        var DEFAULT_USAGE_PREFIX = "§cUtilize: "
+        var DEFAULT_DESCRIPTION = "Descrição do Comando"
+        var DEFAULT_PERMISSION = ""
         val commandsRegistred: MutableMap<String, CommandManager> = HashMap()
 
         /**
@@ -317,6 +314,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
          */
         private fun getServerCommandsMap(): CommandMap? {
             try {
+
                 return Extra.getFieldValue(Bukkit.getServer().pluginManager, "commandMap") as CommandMap
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -329,8 +327,10 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
          */
         private fun getServerCommandsHashMap(): MutableMap<String, Command>? {
             try {
-                val map = getServerCommandsMap()
-                return Extra.getFieldValue(map, "knownCommands") as MutableMap<String, Command>
+                val simpleCommandMap = getServerCommandsMap()
+                val field = SimpleCommandMap::class.java.getDeclaredField("knownCommands")
+                field.isAccessible = true
+                return field.get(simpleCommandMap) as MutableMap<String, Command>
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -358,7 +358,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
 
 
     /**
-     * Classe para o comando customizado
+     * Classe para registrar Comando sem a plugin.yml parecido com PluginCommand
      */
     class CustomCommand(val command: CommandManager) : Command(command.name) {
         override fun execute(sender: CommandSender, label: String, args: Array<String>): Boolean {
@@ -373,6 +373,7 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
                     command.sendPermissionMessage(sender)
                 }
             } catch (ex: Exception) {
+                sender.sendMessage("§cUm Erro ocorreu ao executar este comando.")
                 ex.printStackTrace()
             }
 
@@ -382,9 +383,8 @@ open class CommandManager(var name: String, vararg aliases: String) : EventsMana
         @Throws(IllegalArgumentException::class)
         override fun tabComplete(sender: CommandSender, alias: String, args: Array<String>): List<String>? {
 
-            val vars = command.onTabComplete(sender, this, name, args)
-            val superior = super.tabComplete(sender, alias, args)
-            return vars ?: superior
+            val tabCompletePossible = command.onTabComplete(sender, this, name, args)
+            return tabCompletePossible ?: super.tabComplete(sender, alias, args)
 
 
         }

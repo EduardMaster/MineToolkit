@@ -40,6 +40,7 @@ import net.eduard.api.task.AutoSaveAndBackupTask
 import net.eduard.api.task.DatabaseUpdaterTask
 import net.eduard.api.task.MenuAutoUpdaterTask
 import net.eduard.api.task.PlayerTargetPlayerTask
+import net.eduard.api.test.enableTests
 import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -159,7 +160,7 @@ class EduardAPI(private val plugin: JavaPlugin) : BukkitTimeHandler, IPluginInst
         tasks()
         loadServers()
         log("§aCarregado com sucesso!")
-
+        enableTests()
     }
 
 

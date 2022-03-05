@@ -3,7 +3,6 @@ package net.eduard.api.lib.command
 import net.eduard.api.lib.hybrid.Hybrid
 import net.eduard.api.lib.manager.CommandManager
 import net.eduard.api.lib.modules.Extra
-import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.Bukkit
 import org.bukkit.command.*
@@ -23,27 +22,54 @@ class BukkitCommand(val command: net.eduard.api.lib.command.Command)
     override fun unregister(plugin: IPluginInstance){
         unregister(plugin.plugin as JavaPlugin)
     }
+    /**
+     * @return O Hashmap onde estão registrados todos comandos e aliases
+     */
+    private fun getServerCommandsMap(): CommandMap? {
+        try {
+
+            return Extra.getFieldValue(Bukkit.getServer().pluginManager, "commandMap") as CommandMap
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return null
+    }
+    /**
+     * @return O HashMap onde estão registrados todos comandos e aliases
+     */
+    private fun getServerCommandsHashMap(): MutableMap<String, Command>? {
+        try {
+            val simpleCommandMap = getServerCommandsMap()
+            val field = SimpleCommandMap::class.java.getDeclaredField("knownCommands")
+            field.isAccessible = true
+            return field.get(simpleCommandMap) as MutableMap<String, Command>
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return null
+    }
 
     fun unregister(plugin: JavaPlugin){
         try {
-            val commandMap = Extra.getFieldValue(Bukkit.getServer().pluginManager, "commandMap") as CommandMap
+
+            val commandMap = getServerCommandsMap()
             unregister(commandMap)
             //commandMap.getCommand("cmd").unregister(commandMap)
-            val currentCommands =  Extra.getFieldValue(commandMap, "knownCommands") as MutableMap<String, Command>
+            val commandsMap =  getServerCommandsHashMap()!!
             val cmdName = name.toLowerCase()
             val pluginName = plugin.name.toLowerCase()
             for (aliase in aliases) {
                 //log("Removendo aliase §a$aliase§f do comando §b$cmdName")
-                currentCommands.remove(aliase.toLowerCase())
-                currentCommands.remove(pluginName.toLowerCase() + ":" + aliase.toLowerCase())
+                commandsMap.remove(aliase.toLowerCase())
+                commandsMap.remove(pluginName.toLowerCase() + ":" + aliase.toLowerCase())
             }
             try {
-                currentCommands.remove(cmdName)
-                currentCommands.remove(pluginName.toLowerCase() + ":" + cmdName)
+                commandsMap.remove(cmdName)
+                commandsMap.remove(pluginName.toLowerCase() + ":" + cmdName)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-        } catch (ex: java.lang.Exception) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
 
