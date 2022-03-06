@@ -32,16 +32,14 @@ public class MineReflect {
      * @return Versão do Servidor
      */
     public static String getVersion() {
-
         try {
             if (version == null) {
                 version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             }
             return version;
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception ignored) {
         }
-        return "v_Not_Definied";
+        return "";
     }
 
     private static Class<?> class_MinecraftServer;
@@ -78,11 +76,33 @@ public class MineReflect {
         try {
 
             Extra.newReplacer("#v", MineReflect.getVersion());
+            Extra.newReplacer("#ms", "net.minecraft.server.");
+            Extra.newReplacer("#mn", "net.minecraft.nbt.");
             class_MinecraftServer = Extra.getClassFrom("#mMinecraftServer");
+            if (class_MinecraftServer == null) {
+                class_MinecraftServer = Extra.getClassFrom("#ms.MinecraftServer");
+            }
             class_NBTCompound = Extra.getClassFrom("#mNBTTagCompound");
+            if (class_NBTCompound == null) {
+                class_NBTCompound = Extra.getClassFrom("#mnNBTTagCompound");
+            }
             class_NBTBase = Extra.getClassFrom("#mNBTBase");
+            if (class_NBTBase == null) {
+                class_NBTBase = Extra.getClassFrom("#mnNBTBase");
+            }
             class_CraftItemStack = Extra.getClassFrom("#cinventory.CraftItemStack");
             class_NMSItemStack = Extra.getClassFrom("#mItemStack");
+            if (class_NMSItemStack == null) {
+                class_NMSItemStack = Extra.getClassFrom("net.minecraft.world.item.ItemStack");
+            }
+            class_NMSPlayerConnection = Extra.getClassFrom("#mPlayerConnection");
+            if (class_NMSPlayerConnection == null) {
+                class_NMSPlayerConnection = Extra.getClassFrom("#ms.network.PlayerConnection");
+            }
+            class_Packet = Extra.getClassFrom("#p");
+            if (class_Packet == null) {
+                class_Packet = Extra.getClassFrom("#ms.network.Packet");
+            }
             method_asNMSCopy = Extra.getMethod(class_CraftItemStack, "asNMSCopy", ItemStack.class);
             method_asBukkitCopy = Extra.getMethod(class_CraftItemStack, "asBukkitCopy", class_NMSItemStack);
             method_getItem = Extra.getMethod(class_NMSItemStack, "getItem");
@@ -101,8 +121,7 @@ public class MineReflect {
             method_NBT_setBoolean = Extra.getMethod(class_NBTCompound, "setBoolean", String.class, boolean.class);
             method_NBT_set = Extra.getMethod(class_NBTCompound, "set", String.class, class_NBTBase);
             method_NBT_get = Extra.getMethod(class_NBTCompound, "get", String.class);
-            class_NMSPlayerConnection = Extra.getClassFrom("#mPlayerConnection");
-            class_Packet = Extra.getClassFrom("#p");
+
             method_sendPacket = Extra.getMethod(class_NMSPlayerConnection, "sendPacket", class_Packet);
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -261,15 +280,19 @@ public class MineReflect {
      */
     public static class NBTReflection {
         private Object nbtMap;
+
         public NBTReflection(Object currentNBT) {
             this.nbtMap = currentNBT;
         }
+
         public Object getNbtMap() {
             return nbtMap;
         }
+
         public void setNbtMap(Object nbtMap) {
             this.nbtMap = nbtMap;
         }
+
         public boolean has(String key) {
             try {
                 return (boolean) method_NBT_hasKey.invoke(nbtMap, key);
@@ -278,6 +301,7 @@ public class MineReflect {
             }
             return false;
         }
+
         public String getString(String key) {
             try {
                 return (String) method_NBT_getString.invoke(nbtMap, key);
@@ -286,6 +310,7 @@ public class MineReflect {
             }
             return null;
         }
+
         public boolean getBoolean(String key) {
             try {
                 return (boolean) method_NBT_getBoolean.invoke(nbtMap, key);
@@ -294,6 +319,7 @@ public class MineReflect {
             }
             return false;
         }
+
         public int getInt(String key) {
             try {
                 return (int) method_NBT_getInt.invoke(nbtMap, key);
@@ -399,15 +425,19 @@ public class MineReflect {
         public boolean has(String key) {
             return customNBT.has(key);
         }
+
         public void setDouble(String key, double value) {
             customNBT.setDouble(key, value);
         }
+
         public void setInt(String key, int value) {
             customNBT.setInt(key, value);
         }
+
         public void setLong(String key, long value) {
             customNBT.setLong(key, value);
         }
+
         public void setBoolean(String key, boolean flag) {
             customNBT.setBoolean(key, flag);
         }
@@ -533,7 +563,6 @@ public class MineReflect {
     }
 
 
-
     public static Villager newNPCVillager(Location location, String name) {
         Villager npc = location.getWorld().spawn(location, Villager.class);
         npc.setCustomName(name);
@@ -562,7 +591,7 @@ public class MineReflect {
 
     /**
      * Desabilita a Inteligência da Entidade<br>
-
+     *
      * @param entity Entidade
      */
     public static void disableAI(Entity entity) {
@@ -570,7 +599,7 @@ public class MineReflect {
             Object compound = Extra.getNew(class_NBTCompound);
             Object getHandle = Extra.getMethodInvoke(entity, "getHandle");
             Extra.getMethodInvoke(getHandle, "c", compound);
-            Method method = Extra.getMethod(compound, "setByte" , String.class, byte.class);
+            Method method = Extra.getMethod(compound, "setByte", String.class, byte.class);
             method.invoke(compound, "NoAI", (byte) 1);
             //Extra.getMethodInvoke(compound, "setByte", "NoAI", (byte) 1);
             Extra.getMethodInvoke(getHandle, "f", compound);
@@ -597,9 +626,9 @@ public class MineReflect {
 
             // EntityHuman b;
             Field profileField = Extra.getField(MineReflect.classMineEntityHuman, "bH");
-            Object gameprofile = profileField.get(entityplayer);
+            Object gameProfile = profileField.get(entityplayer);
             // Object before = Extra.getFieldValue(gameprofile, "name");
-            Extra.setFieldValue(gameprofile, "name", displayName);
+            Extra.setFieldValue(gameProfile, "name", displayName);
             // EntityPlayer a;
             // Object packet = Extra.getNew(MineReflect.classPacketPlayOutNamedEntitySpawn,
             // Extra.getParameters(MineReflect.classMineEntityHuman),
@@ -695,14 +724,12 @@ public class MineReflect {
                 sendPacket(player, Extra.getNew(MineReflect.classSpigotPacketTitle,
                         new Object[]{MineReflect.classSpigotAction, int.class, int.class, int.class},
                         Extra.getFieldValue(MineReflect.classSpigotAction, "TIMES"), fadeIn, stay, fadeOut));
-                sendPacket(player,
-                        Extra.getNew(MineReflect.classSpigotPacketTitle,
-                                Extra.getParametersTypes(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
-                                Extra.getFieldValue(MineReflect.classSpigotAction, "TITLE"), getChatComponentText(title)));
-                sendPacket(player,
-                        Extra.getNew(MineReflect.classSpigotPacketTitle,
-                                Extra.getParametersTypes(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
-                                Extra.getFieldValue(MineReflect.classSpigotAction, "SUBTITLE"), getChatComponentText(subTitle)));
+                sendPacket(player, Extra.getNew(MineReflect.classSpigotPacketTitle,
+                        Extra.getParametersTypes(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
+                        Extra.getFieldValue(MineReflect.classSpigotAction, "TITLE"), getChatComponentText(title)));
+                sendPacket(player, Extra.getNew(MineReflect.classSpigotPacketTitle,
+                        Extra.getParametersTypes(MineReflect.classSpigotAction, MineReflect.classMineIChatBaseComponent),
+                        Extra.getFieldValue(MineReflect.classSpigotAction, "SUBTITLE"), getChatComponentText(subTitle)));
 
                 return;
             }
