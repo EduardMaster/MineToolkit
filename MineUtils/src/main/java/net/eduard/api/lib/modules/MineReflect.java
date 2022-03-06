@@ -1,6 +1,5 @@
 package net.eduard.api.lib.modules;
 
-import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -16,12 +15,14 @@ import java.util.*;
 
 /**
  * Extensão da Bukkit API com métodos que utilizam Reflection para Interagir com NMS<br>
- * Independentemente da Versão do servidor vai funcionar os Métodos
+ * Independentemente da Versão do servidor vai funcionar os Métodos exceto
+ * <br>
+ * Versão 1.17 e Superior
  *
  * <br>
  * Nome antigo: RexAPI
  *
- * @version 1.0
+ * @version 1.1
  * @since 02/06/2020
  */
 @SuppressWarnings("unused")
@@ -551,18 +552,6 @@ public class MineReflect {
         return item;
     }
 
-
-    /**
-     * (Não funciona)
-     *
-     * @return Versão do Servidor
-     */
-    @Deprecated
-    public static String getVersion2() {
-        return Bukkit.getServer().getClass().getPackage().getName().split("\\\\")[3];
-    }
-
-
     public static Villager newNPCVillager(Location location, String name) {
         Villager npc = location.getWorld().spawn(location, Villager.class);
         npc.setCustomName(name);
@@ -581,7 +570,7 @@ public class MineReflect {
             return Math.min(20.0D, Math.round(MineReflect.getCurrentTick() * 10) / 10.0D);
         } catch (Exception ignored) {
         }
-        return 0D;
+        return 1D;
     }
 
     public static int getCurrentTick() throws Exception {
@@ -603,8 +592,8 @@ public class MineReflect {
             method.invoke(compound, "NoAI", (byte) 1);
             //Extra.getMethodInvoke(compound, "setByte", "NoAI", (byte) 1);
             Extra.getMethodInvoke(getHandle, "f", compound);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -618,7 +607,7 @@ public class MineReflect {
     public static void changeName(Player player, String displayName) {
 
         try {
-            Object entityplayer = getPlayerHandle(player);
+            Object playerHandle = getPlayerHandle(player);
             // PacketPlayOutNamedEntitySpawn a;
             // EntityPlayer c;
             // PacketPlayOutEntity d;
@@ -626,7 +615,7 @@ public class MineReflect {
 
             // EntityHuman b;
             Field profileField = Extra.getField(MineReflect.classMineEntityHuman, "bH");
-            Object gameProfile = profileField.get(entityplayer);
+            Object gameProfile = profileField.get(playerHandle);
             // Object before = Extra.getFieldValue(gameprofile, "name");
             Extra.setFieldValue(gameProfile, "name", displayName);
             // EntityPlayer a;
