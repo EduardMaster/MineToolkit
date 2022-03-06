@@ -122,8 +122,9 @@ public class MineReflect {
             method_NBT_setBoolean = Extra.getMethod(class_NBTCompound, "setBoolean", String.class, boolean.class);
             method_NBT_set = Extra.getMethod(class_NBTCompound, "set", String.class, class_NBTBase);
             method_NBT_get = Extra.getMethod(class_NBTCompound, "get", String.class);
-
             method_sendPacket = Extra.getMethod(class_NMSPlayerConnection, "sendPacket", class_Packet);
+            method_NMSItemStack_setMaxDurability = Extra.getMethod(class_NMSItemStack, "c", int.class);
+
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -235,7 +236,6 @@ public class MineReflect {
         try {
             Object nmsItemStack = method_asNMSCopy.invoke(0, itemOriginal);
             Object nmsItem = method_getItem.invoke(nmsItemStack);
-            method_NMSItemStack_setMaxDurability = Extra.getMethod(class_NMSItemStack, "c", int.class);
             method_NMSItemStack_setMaxDurability.invoke(nmsItem, amount);
             Object newItem = method_asBukkitCopy.invoke(0, nmsItemStack);
             return (ItemStack) newItem;

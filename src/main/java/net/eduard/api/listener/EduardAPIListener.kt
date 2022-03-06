@@ -33,6 +33,7 @@ class EduardAPIListener : EventsManager() {
         val type = block.type
         if (type == Material.AIR ||
             type == Material.ICE ||
+            type == Material.PACKED_ICE ||
             type == Material.CHEST ||
             type == Material.TRAPPED_CHEST ||
             type == Material.SKULL_ITEM ||
@@ -40,6 +41,7 @@ class EduardAPIListener : EventsManager() {
             type == Material.ENDER_CHEST ||
             type == Material.BEDROCK ||
             type == Material.SIGN_POST ||
+            type == Material.MOB_SPAWNER ||
             type == Material.WALL_SIGN) {
             return
         }
