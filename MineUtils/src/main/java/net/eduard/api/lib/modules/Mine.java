@@ -1677,9 +1677,11 @@ public final class Mine {
     public static String getReplacers(String text, Player player) {
         return applyPlaceholders(player, text, '{', '}');
     }
+
     public static String applyPlaceholders(String text, Player player) {
         return applyPlaceholders(player, text, '{', '}');
     }
+
     public static String applyPlaceholders(Player player, String text, char startChar, char endChar) {
         if (player == null) {
             return "";
@@ -2514,7 +2516,12 @@ public final class Mine {
     public static ArmorStand newHologram(Location location, String line) {
         ArmorStand holo = location.getWorld().spawn(location, ArmorStand.class);
         if (!location.getChunk().isLoaded())
-            location.getChunk().load(true);
+            location.getChunk().load();
+        else if (!location.getWorld().isChunkLoaded(location.getChunk())) {
+            location.getWorld().loadChunk(location.getChunk());
+        } else {
+            location.getChunk();
+        }
         holo.setGravity(false);
         holo.setVisible(false);
         holo.setSmall(true);
