@@ -2,6 +2,7 @@ package net.eduard.api.lib.modules;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -54,7 +55,7 @@ public class MineReflect {
     private static Method method_asNMSCopy;
     private static Method method_asBukkitCopy;
     private static Method method_getItem;
-    private static Method method_NMSItemStack_setMaxDurability;
+
     private static Method method_forcePlayerRespawn;
     private static Method method_NBT_hasKey;
     private static Method method_NBT_getString;
@@ -123,7 +124,6 @@ public class MineReflect {
             method_NBT_set = Extra.getMethod(class_NBTCompound, "set", String.class, class_NBTBase);
             method_NBT_get = Extra.getMethod(class_NBTCompound, "get", String.class);
             method_sendPacket = Extra.getMethod(class_NMSPlayerConnection, "sendPacket", class_Packet);
-            method_NMSItemStack_setMaxDurability = Extra.getMethod(class_NMSItemStack, "c", int.class);
 
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -236,6 +236,7 @@ public class MineReflect {
         try {
             Object nmsItemStack = method_asNMSCopy.invoke(0, itemOriginal);
             Object nmsItem = method_getItem.invoke(nmsItemStack);
+            Method method_NMSItemStack_setMaxDurability = Extra.getMethod(class_NMSItemStack, "c", int.class);
             method_NMSItemStack_setMaxDurability.invoke(nmsItem, amount);
             Object newItem = method_asBukkitCopy.invoke(0, nmsItemStack);
             return (ItemStack) newItem;
