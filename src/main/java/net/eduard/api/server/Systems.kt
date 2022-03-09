@@ -47,6 +47,9 @@ object Systems {
     var dropsSystem: DropSystem? = null
 
     @JvmStatic
+    var spawnerSystem : SpawnerSystem? = null
+
+    @JvmStatic
     var mineSystem: MineSystem? = null
 
 

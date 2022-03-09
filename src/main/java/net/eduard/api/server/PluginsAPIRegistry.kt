@@ -8,7 +8,7 @@ private fun PluginSystem.getChildrenAPIClass(): Class<*> {
             && PluginSystem::class.java != interfaceClass
         ) return interfaceClass as Class<*>
     }
-    throw IllegalArgumentException("Precisa ser uma classe que Implementa PluginnSystem")
+    throw IllegalArgumentException("Precisa ser uma classe que Implementa PluginSystem")
 }
 
 inline fun <reified T : PluginSystem> useAPI(): T {
