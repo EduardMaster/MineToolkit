@@ -149,8 +149,12 @@ public class ItemBuilder extends ItemStack {
     }
 
     public ItemBuilder skull(String skullName) {
-        type(Material.SKULL_ITEM);
-        data(SkullType.PLAYER.ordinal());
+        try {
+            type(Material.SKULL_ITEM);
+            data(SkullType.PLAYER.ordinal());
+        }catch (Error ignored){
+        }
+
         SkullMeta meta = (SkullMeta) getItemMeta();
         meta.setOwner(skullName);
         setItemMeta(meta);
@@ -159,8 +163,11 @@ public class ItemBuilder extends ItemStack {
     }
 
     public ItemBuilder texture(String textureBase64) {
-        type(Material.SKULL_ITEM);
-        data(SkullType.PLAYER.ordinal());
+        try {
+            type(Material.SKULL_ITEM);
+            data(SkullType.PLAYER.ordinal());
+        }catch (Error ignored){
+        }
         SkullMeta itemMeta = (SkullMeta) getItemMeta();
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         profile.getProperties().put("textures",

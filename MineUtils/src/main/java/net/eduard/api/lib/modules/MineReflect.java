@@ -42,7 +42,7 @@ public class MineReflect {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return "NotFoudned";
+        return "Not Founded";
     }
 
     private static Class<?> class_MinecraftServer;
@@ -79,7 +79,7 @@ public class MineReflect {
 
     static {
         try {
-            Mine.console("§cVersion do servidor: §e"+getVersion());
+            Mine.console("§b[MineReflect] §fVersion: §e"+getVersion());
             Extra.newReplacer("#v", MineReflect.getVersion());
             Extra.newReplacer("#home", "net.minecraft");
             Extra.newReplacer("#game", "net.minecraft.server");
