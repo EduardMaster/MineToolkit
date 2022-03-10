@@ -26,6 +26,9 @@ fun PluginSystem.registerAPI() {
     val classAPI = getChildrenAPIClass()
     pluginsAPI[classAPI] = this
 }
+fun <E: PluginSystem> PluginSystem.registerAPI(apiClass : Class<E>) {
+    pluginsAPI[apiClass] = this
+}
 fun PluginSystem.unregisterAPI() {
     val classAPI = getChildrenAPIClass()
     pluginsAPI.remove(classAPI)

@@ -6,7 +6,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 
 interface MineSystem : PluginSystem{
-
     fun hasMine(name : String) : Boolean
     fun getMine(name: String) : MineModule?
     fun getMine(location: Location) : MineModule?
@@ -19,6 +18,5 @@ interface MineSystem : PluginSystem{
         fun setType(type : MaterialData)
         fun setTypes(vararg type : MaterialData)
         fun autoRegen()
-
     }
 }

@@ -5,7 +5,7 @@ import net.eduard.api.lib.modules.FakePlayer
 /**
  * API de Verificar Tempo Jogando (Tempo de Jogo)
  */
-interface PlayTimeSystem {
+interface PlayTimeSystem : PluginSystem{
     fun getPlayTime(player : FakePlayer) : Long
     fun getPlayTimeAverage(player : FakePlayer) : Long
     fun getPlayTimeAverageOfToday(player : FakePlayer) : Long

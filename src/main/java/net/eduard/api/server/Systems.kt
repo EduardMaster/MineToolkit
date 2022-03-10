@@ -15,12 +15,13 @@ object Systems {
         api.registerAPI()
     }
     @JvmStatic
+    fun <T : PluginSystem> registerAPI(classAPI : Class<T>, api: T) {
+        api.registerAPI(classAPI)
+    }
+    @JvmStatic
     fun unregisterAPI(api: PluginSystem) {
         api.unregisterAPI()
     }
-
-    @JvmStatic
-    var mailSystem : MailSystem? = null
 
     @JvmStatic
     var clanSystem: ClanSystem? = null
@@ -45,9 +46,6 @@ object Systems {
 
     @JvmStatic
     var dropsSystem: DropSystem? = null
-
-    @JvmStatic
-    var spawnerSystem : SpawnerSystem? = null
 
     @JvmStatic
     var mineSystem: MineSystem? = null

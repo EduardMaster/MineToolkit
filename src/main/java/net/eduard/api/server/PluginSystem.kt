@@ -1,5 +1,3 @@
 package net.eduard.api.server
 
-interface PluginSystem {
-
-}
+interface PluginSystem

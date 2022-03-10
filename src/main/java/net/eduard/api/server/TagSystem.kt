@@ -5,7 +5,6 @@ import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Scoreboard
 
 interface TagSystem : PluginSystem {
-
     /**
      * Pega a tag registrada do jogador
      */
@@ -16,16 +15,9 @@ interface TagSystem : PluginSystem {
      */
     fun setTag(player: Player, tag: Tag)
 
-
-
-
     fun setTagOnlyFor(player: Player, tag: Tag, players: List<Player>)
 
     fun getTagsOf(player: Player): MutableMap<Player, Tag>
-
-
-
-
     /**
      * Define a tag Membro para o jogador
      */
@@ -56,12 +48,9 @@ interface TagSystem : PluginSystem {
      * Aplica as tags registradas nas scoreboards dos jogadores
      */
     fun updateTags()
-
     /**
      * Aplica as tags registradas em uma scoreboard de um jogador
      */
     fun updateTags(scoreboard : Scoreboard)
-
-
 
 }

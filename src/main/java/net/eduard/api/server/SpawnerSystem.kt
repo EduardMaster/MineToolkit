@@ -6,7 +6,7 @@ import org.bukkit.entity.EntityType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-interface SpawnerSystem {
+interface SpawnerSystem : PluginSystem{
     fun getMaxAmount(player: FakePlayer, entity: EntityType): Double
     fun getAmount(player: FakePlayer, entity: EntityType): Double
     fun removeSpawner(player: FakePlayer)
