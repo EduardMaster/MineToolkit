@@ -2,7 +2,6 @@ package net.eduard.api.lib.modules;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -36,22 +35,26 @@ public class MineReflect {
     public static String getVersion() {
         try {
             if (version == null) {
-                version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                version = Bukkit.getScoreboardManager().getClass().getPackage().getName().replace(".","-")
+                        .split("-")[3];
             }
             return version;
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return "";
+        return "NotFoudned";
     }
 
     private static Class<?> class_MinecraftServer;
     private static Class<?> class_NBTCompound;
     private static Class<?> class_NBTBase;
+    private static Class<?> class_NBTTagList;
     private static Class<?> class_CraftItemStack;
     private static Class<?> class_NMSItemStack;
     private static Class<?> enumclass_ClientCommand;
     private static Class<?> class_NMSPlayerConnection;
     private static Class<?> class_Packet;
+    private static Class<?> class_EntityPlayer;
     private static Method method_asNMSCopy;
     private static Method method_asBukkitCopy;
     private static Method method_getItem;
@@ -76,35 +79,61 @@ public class MineReflect {
 
     static {
         try {
-
+            Mine.console("§cVersion do servidor: §e"+getVersion());
             Extra.newReplacer("#v", MineReflect.getVersion());
-            Extra.newReplacer("#ms", "net.minecraft.server.");
-            Extra.newReplacer("#mn", "net.minecraft.nbt.");
-            class_MinecraftServer = Extra.getClassFrom("#mMinecraftServer");
-            if (class_MinecraftServer == null) {
-                class_MinecraftServer = Extra.getClassFrom("#ms.MinecraftServer");
+            Extra.newReplacer("#home", "net.minecraft");
+            Extra.newReplacer("#game", "net.minecraft.server");
+            Extra.newReplacer("#nbt", "net.minecraft.nbt");
+            try {
+                class_MinecraftServer = Extra.getClassFrom("#mMinecraftServer");
+            }catch (ClassNotFoundException ex){
+                class_MinecraftServer = Extra.getClassFrom("#game.MinecraftServer");
             }
-            class_NBTCompound = Extra.getClassFrom("#mNBTTagCompound");
-            if (class_NBTCompound == null) {
-                class_NBTCompound = Extra.getClassFrom("#mnNBTTagCompound");
+
+            try {
+                class_NBTCompound = Extra.getClassFrom("#mNBTTagCompound");
+            }catch (ClassNotFoundException ex){
+                class_NBTCompound = Extra.getClassFrom("#nbt.NBTTagCompound");
             }
-            class_NBTBase = Extra.getClassFrom("#mNBTBase");
-            if (class_NBTBase == null) {
-                class_NBTBase = Extra.getClassFrom("#mnNBTBase");
+
+            try {
+                class_NBTTagList = Extra.getClassFrom("#mNBTTagList");
+            }catch (ClassNotFoundException ex){
+                class_NBTTagList = Extra.getClassFrom("#nbt.NBTTagList");
             }
+
+            try {
+                class_NBTBase = Extra.getClassFrom("#mNBTBase");
+            }catch (ClassNotFoundException ex){
+                class_NBTBase = Extra.getClassFrom("#nbt.NBTBase");
+            }
+
             class_CraftItemStack = Extra.getClassFrom("#cinventory.CraftItemStack");
-            class_NMSItemStack = Extra.getClassFrom("#mItemStack");
-            if (class_NMSItemStack == null) {
-                class_NMSItemStack = Extra.getClassFrom("net.minecraft.world.item.ItemStack");
+
+            try {
+                class_NMSItemStack = Extra.getClassFrom("#mItemStack");
+            }catch (ClassNotFoundException ex){
+                class_NMSItemStack = Extra.getClassFrom("#home.world.item.ItemStack");
             }
-            class_NMSPlayerConnection = Extra.getClassFrom("#mPlayerConnection");
-            if (class_NMSPlayerConnection == null) {
-                class_NMSPlayerConnection = Extra.getClassFrom("#ms.network.PlayerConnection");
+
+            try {
+                class_NMSPlayerConnection = Extra.getClassFrom("#mPlayerConnection");
+            }catch (ClassNotFoundException ex){
+                class_NMSPlayerConnection = Extra.getClassFrom("#game.network.PlayerConnection");
             }
-            class_Packet = Extra.getClassFrom("#p");
-            if (class_Packet == null) {
-                class_Packet = Extra.getClassFrom("#ms.network.Packet");
+
+            try {
+                class_Packet = Extra.getClassFrom("#p");
+            }catch (ClassNotFoundException ex){
+                class_Packet = Extra.getClassFrom("#home.network.protocol.Packet");
             }
+            try {
+                class_EntityPlayer = Extra.getClassFrom("#mEntityPlayer");
+            }catch (ClassNotFoundException ex){
+                class_EntityPlayer = Extra.getClassFrom("#game.level.EntityPlayer");
+            }
+
+
             method_asNMSCopy = Extra.getMethod(class_CraftItemStack, "asNMSCopy", ItemStack.class);
             method_asBukkitCopy = Extra.getMethod(class_CraftItemStack, "asBukkitCopy", class_NMSItemStack);
             method_getItem = Extra.getMethod(class_NMSItemStack, "getItem");
@@ -134,8 +163,6 @@ public class MineReflect {
      * Se terminar com 2, é porque a classe esta dentro de outra classe
      */
     public static String classBukkitBukkit = "#bBukkit";
-
-    public static String classMineEntityPlayer = "#mEntityPlayer";
     public static String classCraftCraftPlayer = "#cCraftPlayer";
     public static String classMineEntityHuman = "#mEntityHuman";
     public static String classSpigotPacketTitle = "#sProtocolInjector$PacketTitle";
@@ -173,17 +200,7 @@ public class MineReflect {
      */
 
 
-    public static String classMineNBTTagList = "#mNBTTagList";
 
-    static {
-        try {
-            Mine.console("§c" + Extra.getMethod("#centity.CraftPlayer", "getHandle"));
-            Mine.console("§c" + Extra.getField("#mEntityPlayer", "playerConnection"));
-            Mine.console("§c" + Extra.getMethod("#mPlayerConnection", "sendPacket", "#p"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     /**

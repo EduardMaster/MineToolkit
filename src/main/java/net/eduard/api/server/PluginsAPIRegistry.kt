@@ -14,7 +14,9 @@ private fun PluginSystem.getChildrenAPIClass(): Class<*> {
 inline fun <reified T : PluginSystem> useAPI(): T {
     return getAPI(T::class.java)!!
 }
-
+inline fun <reified T : PluginSystem> useAPI(apply : T.() -> Unit): T? {
+    return getAPI(T::class.java)?.apply(apply)
+}
 fun <T : PluginSystem> getAPI(classAPI: Class<T>): T? {
     return  pluginsAPI[classAPI] as T?
 }
@@ -27,6 +29,9 @@ fun PluginSystem.registerAPI() {
     pluginsAPI[classAPI] = this
 }
 fun <E: PluginSystem> PluginSystem.registerAPI(apiClass : Class<E>) {
+    pluginsAPI[apiClass] = this
+}
+fun <E: PluginSystem> PluginSystem.unregisterAPI(apiClass : Class<E>) {
     pluginsAPI[apiClass] = this
 }
 fun PluginSystem.unregisterAPI() {

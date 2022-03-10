@@ -659,7 +659,7 @@ public final class Extra {
      * @return Classe
      * @throws Exception Causa um erro caso nao encontrar a classe
      */
-    public static Class<?> getClassFrom(Object object) throws Exception {
+    public static Class<?> getClassFrom(Object object) throws ClassNotFoundException {
         if (object instanceof Class) {
             return (Class<?>) object;
         }
@@ -667,7 +667,6 @@ public final class Extra {
             String string = (String) object;
             Class<?> cached = classCache.get(string);
             if (cached != null) {
-                // System.out.println("Cached Class: " + cached);
                 return cached;
             }
             if (string.startsWith("#")) {
@@ -677,19 +676,9 @@ public final class Extra {
                 }
                 Class<?> classFounded = Class.forName(newName);
                 classCache.put(string, classFounded);
-                //  System.out.println("Registrando texto: " + string + " para a classe: " + classFounded);
                 return classFounded;
             }
         }
-        /*
-        try {
-
-            //if (wrappers.containsKey())
-
-            return (Class<?>) object.getClass().getField("TYPE").get(0);
-        } catch (Exception ignored) {
-        }
-         */
         return object.getClass();
     }
 
