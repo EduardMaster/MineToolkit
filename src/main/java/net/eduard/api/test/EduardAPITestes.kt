@@ -11,8 +11,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.plugin.Plugin
 
 fun IPluginInstance.enableTests() {
-    MenuTest().registerMenu(this)
-    CommandTest().registerCommand(plugin as Plugin)
+    //MenuTest().registerMenu(this)
+    //CommandTest().registerCommand(plugin as Plugin)
 }
 class CommandTest() : CommandManager("commandtest"){
     override fun command(sender: CommandSender, args: Array<String>) {
