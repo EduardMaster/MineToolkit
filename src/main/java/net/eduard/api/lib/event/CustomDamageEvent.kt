@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import kotlin.math.absoluteValue
 
 class CustomDamageEvent(
     val attacker: Player?,
@@ -15,11 +16,11 @@ class CustomDamageEvent(
     val defenserEntity: LivingEntity,
     val damageEvent: EntityDamageByEntityEvent,
     var baseDamage: CustomDamage,
-    var baseProtection: CustomDamgeReduction,
+    var baseProtection: CustomDamageReduction,
 
     ) : Event() {
     var extraDamage = mutableListOf<CustomDamage>()
-    var extraProtection = mutableListOf<CustomDamgeReduction>()
+    var extraProtection = mutableListOf<CustomDamageReduction>()
     var damageIgnoringDefense = mutableListOf<CustomDamage>()
 
     class CustomDamage(
@@ -29,7 +30,7 @@ class CustomDamageEvent(
         fun text() = "§c${value.text} §4${percent.percent()}§7%"
     }
 
-    class CustomDamgeReduction(
+    class CustomDamageReduction(
         var name: String,
         val value: Double,
         val percent: Double = 0.0) {
@@ -37,6 +38,7 @@ class CustomDamageEvent(
     }
 
     fun sendDetails(player: Player) {
+        player.sendMessage("§8=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         player.sendMessage("§7Dano base: " + baseDamage.text())
         player.sendMessage("§7Proteção base: " + baseProtection.text())
         extraDamage.forEach {
@@ -57,7 +59,7 @@ class CustomDamageEvent(
     }
 
     fun calculateFinalDamageAnulation(): Double {
-        return baseProtection.value + extraProtection.sumOf { it.value };
+        return baseProtection.value.absoluteValue + extraProtection.sumOf { it.value.absoluteValue };
     }
 
     fun calculateFinalDamageReduction(): Double {
@@ -66,10 +68,10 @@ class CustomDamageEvent(
     }
 
     fun calculateResult(): Double {
-        val finalDamageReduced = calculateFinalDamage() - calculateFinalDamageAnulation()
-        if (finalDamageReduced < 0) return 0.0
-        val result = finalDamageReduced - (finalDamageReduced * calculateFinalDamageReduction())
-        return result + damageIgnoringDefense.sumOf { it.value }
+        val finalDamageAnulated = calculateFinalDamage() - calculateFinalDamageAnulation()
+        if (finalDamageAnulated <= 0) return 0.0
+        val finalDamageReduced = finalDamageAnulated - (finalDamageAnulated * calculateFinalDamageReduction())
+        return finalDamageReduced + damageIgnoringDefense.sumOf { it.value }
     }
 
     companion object {
