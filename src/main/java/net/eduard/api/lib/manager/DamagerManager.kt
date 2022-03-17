@@ -1,12 +1,10 @@
 package net.eduard.api.lib.manager
 
 import net.eduard.api.EduardAPI
-import net.eduard.api.lib.kotlin.register
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
