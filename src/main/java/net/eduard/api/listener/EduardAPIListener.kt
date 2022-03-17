@@ -5,6 +5,7 @@ import net.eduard.api.lib.manager.EventsManager
 
 import net.eduard.api.core.PlayerSkin
 import net.eduard.api.lib.event.BlockMineEvent
+import net.eduard.api.lib.kotlin.mineCallEvent
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -42,14 +43,18 @@ class EduardAPIListener : EventsManager() {
             type == Material.BEDROCK ||
             type == Material.SIGN_POST ||
             type == Material.MOB_SPAWNER ||
-            type == Material.WALL_SIGN) {
+            type == Material.WALL_SIGN
+        ) {
             return
         }
         if (!minerationEventEnabled) return
-        if (event.player.gameMode == GameMode.CREATIVE)return
+        if (event.player.gameMode == GameMode.CREATIVE) return
         event.isCancelled = true
         event.expToDrop = 0
-        BlockMineEvent.callEvent(event, BlockMineEvent(mutableMapOf(), block, event.player, true, event.expToDrop))
+        val newEvent = BlockMineEvent(event, event.player, block, mutableMapOf(), true, event.expToDrop)
+        newEvent.mineCallEvent()
+        newEvent.defaultEventActions()
+
     }
 
     @EventHandler

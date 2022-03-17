@@ -1,21 +1,26 @@
 package net.eduard.api.lib.event
 
 import net.eduard.api.lib.abstraction.Minecraft
+import net.eduard.api.lib.kotlin.mineCallEvent
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.event.Cancellable
+import org.bukkit.event.Event
+import org.bukkit.event.HandlerList
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 
 class BlockMineEvent(
-    val drops: MutableMap<ItemStack, Double>,
-    val block: Block,
+    val originalEvent : BlockBreakEvent? = null,
     val player: Player,
+    val block: Block,
+    val drops: MutableMap<ItemStack, Double>,
     var useEnchants: Boolean,
     var expToDrop: Int = 1
-) {
+): Event(), Cancellable {
 
     enum class DropDestination {
         GROUND, INVENTORY, STORAGE
@@ -28,7 +33,7 @@ class BlockMineEvent(
     var needApplyFortune = true
     var multiplier = 1.0
     var fortuneApplied = false
-    var isCancelled = false
+    private var isCancelled = false
 
 
     fun storeDrops() {
@@ -41,6 +46,10 @@ class BlockMineEvent(
     }
 
     fun defaultEventActions() {
+        if (isCancelled)return
+        if (!isCancelled && needBreakBlock) {
+            originalEvent?.isCancelled = false
+        }
         if (needApplyFortune) {
             applyFortune()
         }
@@ -86,7 +95,8 @@ class BlockMineEvent(
     }
 
     fun useDefaultDrops() {
-        for (dropItem in block.getDrops(player.itemInHand)) {
+        val defaultDrops = block.getDrops(player.itemInHand)
+        for (dropItem in defaultDrops) {
             val dropAmount = dropItem.amount
             dropItem.amount = 1
             drops[dropItem] = dropAmount.toDouble()
@@ -148,21 +158,23 @@ class BlockMineEvent(
         }
     }
 
-    abstract class BlockMineListener(val priority: Int) {
-        fun register() {
-            listeners[priority] = this
+    /*
+        abstract class BlockMineListener(val priority: Int) {
+            fun register() {
+                listeners[priority] = this
+            }
+            fun unregister() {
+                listeners.remove(priority)
+            }
+            abstract fun modify(event: BlockMineEvent)
         }
 
-        fun unregister() {
-            listeners.remove(priority)
-        }
-
-        abstract fun modify(event: BlockMineEvent)
-
-    }
+     */
 
     companion object {
-
+        @JvmStatic
+        val handlerList = HandlerList()
+        /*
         val listeners = mutableMapOf<Int, BlockMineListener>()
 
         fun registerListener(listener: BlockMineListener) {
@@ -177,7 +189,10 @@ class BlockMineEvent(
             callEvent(null, event)
 
         }
-        fun callEvent(originalEvent: BlockBreakEvent?, event: BlockMineEvent) {
+
+         */
+        fun callEvent(event: BlockMineEvent): BlockMineEvent {
+            /*
             var priority = 0;
             while (priority < 10) {
                 try {
@@ -190,12 +205,15 @@ class BlockMineEvent(
                 }
                 priority++
             }
+            */
+            event.mineCallEvent()
             event.defaultEventActions()
             if (!event.isCancelled && event.needBreakBlock) {
-                originalEvent?.isCancelled = false
+                event.originalEvent?.isCancelled = false
             }
-
+            return event
         }
+
 
         var fortuneBlocks = mutableListOf<MaterialData>()
 
@@ -227,6 +245,13 @@ class BlockMineEvent(
         }
 
 
+    }
+
+    override fun getHandlers()=handlerList
+    override fun isCancelled(): Boolean  = isCancelled
+
+    override fun setCancelled(cancel: Boolean) {
+        isCancelled=cancel
     }
 
 }

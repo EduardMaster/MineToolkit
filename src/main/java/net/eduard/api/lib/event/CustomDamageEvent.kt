@@ -64,7 +64,7 @@ class CustomDamageEvent(
 
     fun calculateFinalDamageReduction(): Double {
         val finalValue = baseProtection.percent + extraProtection.sumOf { it.percent }
-        return if (finalValue > maxDamageReduction) maxDamageReduction else finalValue
+        return if (finalValue > MAX_DAMAGE_REDUCTION) MAX_DAMAGE_REDUCTION else finalValue
     }
 
     fun calculateResult(): Double {
@@ -75,7 +75,7 @@ class CustomDamageEvent(
     }
 
     companion object {
-        val maxDamageReduction = 0.95
+        const val MAX_DAMAGE_REDUCTION = 0.95
 
         @JvmStatic
         val handlerList = HandlerList()
