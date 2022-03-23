@@ -34,14 +34,12 @@ object DamagerManager : EventsManager() {
         return damager
     }
 
-
-
-
     @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     private fun onDamage(e: EntityDamageByEntityEvent) {
         lastPvP[e.entity] = e.damager
         lastHitTaken[e.entity] = System.currentTimeMillis()
     }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onQuit(e: PlayerQuitEvent) {
         lastPvP.remove(e.player)

@@ -14,14 +14,16 @@ import net.eduard.api.lib.modules.Mine
 import net.eduard.api.lib.plugin.IPlugin
 import net.eduard.api.lib.plugin.PluginSettings
 import net.eduard.api.lib.storage.StorageAPI
+import org.apache.commons.io.IOUtils
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
-import java.io.File
-import java.nio.file.Files
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 
 /**
@@ -44,54 +46,50 @@ open class EduardPlugin : JavaPlugin(), BukkitTimeHandler, IPlugin {
     var reloaded = false
     var started = false
 
-    fun File.copyFolderTo(folderTo: File, deep: Int = 0) {
-        if (deep>4){
-            return
-        }
-        try {
-            if (this.isDirectory) {
-                folderTo.mkdirs()
-                for (file in listFiles()!!) {
-                    if (file.isDirectory) {
-                        file.copyFolderTo(File(folderTo, file.name), deep + 1)
-                    } else {
-                        val target = File(folderTo, file.name)
-                        if (!target.exists()) {
-                            Files.copy(file.toPath(), target.toPath())
-                        }
-                    }
-                }
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
     @Transient
     @Volatile
     var creatingBackup = false
 
+    @Throws(IOException::class)
+    private fun zipFolder(folder: File, zipFile: File) {
+        zipFolder(folder, FileOutputStream(zipFile))
+    }
+
+    @Throws(IOException::class)
+    private fun zipFolder(folder: File, outputStream: OutputStream) {
+        ZipOutputStream(outputStream).use { zipOutputStream ->
+            processFolder(
+                folder,
+                zipOutputStream,
+                folder.path.length + 1
+            )
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun processFolder(folder: File, zipOutputStream: ZipOutputStream, prefixLength: Int) {
+        for (file in folder.listFiles()!!) {
+            if (file.isFile) {
+                val zipEntry = ZipEntry(file.path.substring(prefixLength))
+                zipOutputStream.putNextEntry(zipEntry)
+                FileInputStream(file).use { inputStream -> IOUtils.copy(inputStream, zipOutputStream) }
+                zipOutputStream.closeEntry()
+            } else if (file.isDirectory) {
+                processFolder(file, zipOutputStream, prefixLength)
+            }
+        }
+    }
+    @Throws(IOException::class)
     fun backup() {
         if (creatingBackup)return
         creatingBackup=true
         settings.lastBackup = System.currentTimeMillis()
-        val pastaBackup = File(pluginFolder, "/backup/")
+        val pastaBackup = File("plugins-backup/$name/")
         pastaBackup.mkdirs()
-        val pluginsDataFile = pluginFolder.listFiles() ?: return
         val formatador = SimpleDateFormat("dd-MM-yyyy-HH-mm")
         val backupName = formatador.format(System.currentTimeMillis())
-        val backupPasta = File(pastaBackup,backupName )
-        backupPasta.mkdirs()
-        for (file in pluginsDataFile) {
-            if (file.name.contains("backup")) continue
-            if (file.isDirectory) {
-                file.copyFolderTo(File(backupPasta, file.name))
-            } else {
-                val target = File(backupPasta, file.name)
-                if (!target.exists()){
-                    Files.copy(file.toPath(), target.toPath())
-                }
-            }
-        }
+        val backupZip = File(pastaBackup, "$backupName.zip")
+        zipFolder(pluginFolder , backupZip)
         creatingBackup=false
     }
 

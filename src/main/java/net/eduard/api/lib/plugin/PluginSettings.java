@@ -6,28 +6,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PluginSettings {
+    public static long BACKUP_MIN_SECONDS = 60 * 10;
     private boolean debug = true;
     private boolean autoSave = false;
-
     public boolean isAutoSave() {
         return autoSave;
     }
+    private long autoSaveSeconds = 60;
+    private long autoBackupSeconds = 60 * 60 * 3;
+    public long getAutoBackupSeconds() {
 
-    private int autoSaveSeconds = 60;
-    private boolean autoBackup = false;
-
-    public boolean isAutoBackup() {
-        return autoBackup;
-    }
-
-    private int autoBackupSeconds = 60*10;
-
-    public int getAutoBackupSeconds() {
+        if (autoBackupSeconds < BACKUP_MIN_SECONDS) {
+            autoBackupSeconds = BACKUP_MIN_SECONDS;
+        }
         return autoBackupSeconds;
-    }
-
-    public int getAutoSaveSeconds() {
-        return autoSaveSeconds;
     }
 
     public long getLastBackup() {

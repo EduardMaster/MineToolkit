@@ -16,6 +16,7 @@ class AutoSaveAndBackupTask : TimeManager(20L) {
             if (plugin !is EduardPlugin) continue
             val pluginSettings = plugin.settings
             val pluginName = "§e(${plugin.name})"
+
             try {
                 val agora = Extra.getNow()
                 val canRunSaveNow = pluginSettings.lastSave + pluginSettings.autoBackupSeconds * 1000 < agora
@@ -34,7 +35,7 @@ class AutoSaveAndBackupTask : TimeManager(20L) {
             try {
                 val agora = Extra.getNow()
                 val canBackupNow = pluginSettings.lastBackup + pluginSettings.autoBackupSeconds * 1000L < agora
-                if (pluginSettings.isAutoBackup && canBackupNow) {
+                if (canBackupNow) {
                     log("$pluginName§f Gerando Backup")
                     val inicioBackup = Extra.getNow()
                     plugin.backup()
