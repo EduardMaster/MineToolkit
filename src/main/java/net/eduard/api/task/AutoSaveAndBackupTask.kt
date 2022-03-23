@@ -43,7 +43,7 @@ class AutoSaveAndBackupTask : TimeManager(20L) {
                     log("$pluginName§f Backup gerado com: §e" + (fimBackup - inicioBackup) + "§fms")
                 }
             } catch (ex: Exception) {
-                plugin.creatingBackup
+                plugin.creatingBackup=false
                 log("$pluginName §cFalha ao rodar metodo backup()")
                 ex.printStackTrace()
             }

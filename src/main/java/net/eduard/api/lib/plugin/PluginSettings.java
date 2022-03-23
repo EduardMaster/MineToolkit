@@ -26,8 +26,8 @@ public class PluginSettings {
         return lastBackup;
     }
 
-    private long lastBackup = 0L;
-    private transient long lastSave = 0L;
+    private long lastBackup = System.currentTimeMillis();
+    private transient long lastSave = System.currentTimeMillis();
 
     public boolean isDebug() {
         return debug;
