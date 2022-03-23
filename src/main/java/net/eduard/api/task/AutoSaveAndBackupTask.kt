@@ -41,6 +41,7 @@ class AutoSaveAndBackupTask : TimeManager(20L) {
                     plugin.backup()
                     val fimBackup = Extra.getNow()
                     log("$pluginName§f Backup gerado com: §e" + (fimBackup - inicioBackup) + "§fms")
+                    return
                 }
             } catch (ex: Exception) {
                 plugin.creatingBackup=false
