@@ -46,14 +46,13 @@ class Minecraft_v1_16_R3 : Minecraft() {
 
     override fun canAttackMelee(creature: Creature, classEntityName: String, priority: Int) {}
 
-    override fun followTarget(creature: Creature) {
+    override fun followLocation(creature: Creature, location: Location, speed: Double, priority: Int) {
 
     }
 
-    override fun followLocation(creature: Creature, location: Location) {
+    override fun followTarget(creature: Creature, speed: Double, priority: Int) {
 
     }
-
 
     override fun canTarget(creature: Creature, classEntityName: String, priority: Int) {}
 

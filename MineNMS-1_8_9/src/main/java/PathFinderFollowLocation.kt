@@ -1,31 +1,38 @@
 package net.eduard.api.lib.abstraction
 
-import net.eduard.api.lib.modules.Mine
 import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftCreature
 import org.bukkit.entity.Creature
 
-class PathFinderFollowLocation(val creature: Creature, val targetLocation: Location) : PathfinderGoal() {
+class PathFinderFollowLocation(val creature: Creature, val targetLocation: Location, val speed : Double, val minDistance : Double = 4.0) : PathfinderGoal() {
     val nmsCreature get() = (creature as CraftCreature).handle
     var lastFollow = System.currentTimeMillis()
-    val followDelay = 1000L;
+    val followDelay = 1000L
     var lastPath : PathEntity? = null
     val canFollow get() = System.currentTimeMillis() > (lastFollow + followDelay)
     lateinit var toFollowLocation: Location
+    val minDistanceSquared get() = minDistance * minDistance
 
     fun debug(msg: String) {
       //  Mine.console("[EntityID: " + nmsCreature.id + "] " + msg)
     }
-
+    fun run() {
+        //debug("Movendo")
+        lastFollow = System.currentTimeMillis();
+        if (targetLocation.distanceSquared(creature.location) > 20) {
+            updateToFollowLocation()
+        }
+        nmsCreature.navigation.a(toFollowLocation.x, toFollowLocation.y, toFollowLocation.z, speed)
+    }
     init {
-
         updateToFollowLocation()
     }
 
     fun updateToFollowLocation() {
         val diference = creature.location.subtract(targetLocation)
         toFollowLocation = creature.location.add(diference.toVector().normalize().multiply(-19))
+
        // debug("§cNew TargetLocation: $toFollowLocation ")
        // debug("§bTargetLocation Real: $targetLocation ")
     }
@@ -59,21 +66,14 @@ class PathFinderFollowLocation(val creature: Creature, val targetLocation: Locat
 
     fun needStop(): Boolean {
         //Mine.console("Precisa parar")
-        return creature.location.distanceSquared(targetLocation) < 4*4;
+        return creature.location.distanceSquared(targetLocation) < minDistanceSquared;
     }
 
     fun stop() {
         //debug("Parando de Mover")
     }
 
-    fun run() {
-        //debug("Movendo")
-        lastFollow = System.currentTimeMillis();
-        if (targetLocation.distanceSquared(creature.location) > 20) {
-            updateToFollowLocation()
-        }
-        nmsCreature.navigation.a(toFollowLocation.x, toFollowLocation.y, toFollowLocation.z,2.0)
-    }
+
 
 
     /*

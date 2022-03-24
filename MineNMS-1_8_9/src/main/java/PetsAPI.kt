@@ -34,7 +34,6 @@ object PetsAPI {
             ex.printStackTrace()
         }
     }
-
     class PathfinderGoalWalktoTile(private val entity: EntityInsentient, private val uuid: UUID?) : PathfinderGoal() {
         private var path: PathEntity? = null
         override fun a(): Boolean {
@@ -50,24 +49,17 @@ object PetsAPI {
             }
             return path != null
         }
-
-
         override fun e() {
-
         }
-
         override fun d() {
-
         }
         override fun i(): Boolean {
             return true
         }
-
         override fun c() {
             entity.navigation.a(path, 1.0)
         }
     }
-
     init {
         try {
             pathFinderListField = PathfinderGoalSelector::class.java.getDeclaredField("b")

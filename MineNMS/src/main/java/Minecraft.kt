@@ -89,8 +89,8 @@ abstract class Minecraft {
     abstract fun forceOpen(chest : Chest, player: Player);
     abstract fun canTarget(creature: Creature, classEntityName : String, priority : Int)
     abstract fun canAttackMelee(creature: Creature, classEntityName : String, priority : Int)
-    abstract fun followTarget(creature: Creature)
-    abstract fun followLocation(creature: Creature, location : Location)
+    abstract fun followTarget(creature: Creature ,speed : Double, priority : Int)
+    abstract fun followLocation(creature: Creature, location : Location, speed : Double, priority : Int)
     abstract fun removeGoals(creature: Creature)
     abstract fun removeTargetGoals(creature: Creature)
     companion object {

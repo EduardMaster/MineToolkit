@@ -121,26 +121,21 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
     }
 
-    override fun followTarget(creature: Creature) {
+    override fun followTarget(creature: Creature, speed: Double, priority: Int) {
         try {
+            val radiusLimit = 5.0f
             val nmsCreature = (creature as CraftCreature).handle
-            nmsCreature.goalSelector.a(PathfinderGoalMoveTowardsTarget(nmsCreature, 1.0, 1.0f))
-            /*
-            val clz = Extra.getClassFrom("#mEntity$classEntityName")
-                    as Class<out net.minecraft.server.v1_8_R3.Entity>
-            val melee = PathfinderGoalMeleeAttack(nmsCreature, clz, 1.0, true)
-            nmsCreature.goalSelector.a(melee)
-            nmsCreature.goalSelector.a(priority, melee)
-            */
+            nmsCreature.goalSelector.a(priority, PathfinderGoalMoveTowardsTarget(nmsCreature, speed, radiusLimit))
+
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-    override fun followLocation(creature: Creature, targetLocation: Location) {
+    override fun followLocation(creature: Creature, targetLocation: Location,speed: Double, priority : Int) {
         try {
             val nmsCreature = (creature as CraftCreature).handle
-            nmsCreature.goalSelector.a(0, PathFinderFollowLocation(creature, targetLocation))
+            nmsCreature.goalSelector.a(priority, PathFinderFollowLocation(creature, targetLocation,speed))
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

@@ -274,12 +274,13 @@ final public class Minecraft_v1_12_R1 extends Minecraft {
     }
 
     @Override
-    public void followTarget(@NotNull Creature creature) {
+    public void followLocation(@NotNull Creature creature, @NotNull Location location, double speed, int priority) {
 
     }
 
     @Override
-    public void followLocation(@NotNull Creature creature, @NotNull Location location) {
+    public void followTarget(@NotNull Creature creature, double speed, int priority) {
 
     }
+
 }
