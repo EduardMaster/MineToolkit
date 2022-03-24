@@ -283,4 +283,38 @@ final public class Minecraft_v1_12_R1 extends Minecraft {
 
     }
 
+    @Override
+    public void registerRule(@NotNull Creature creature, @NotNull EntityRule rule, int priority) {
+
+    }
+
+    @Override
+    public void registerTargetRule(@NotNull Creature creature, @NotNull EntityRule rule, int priority) {
+
+    }
+
+    @Override
+    public boolean isNavigating(@NotNull Creature creature) {
+        return false;
+    }
+
+    @Override
+    public boolean navigateCancel(@NotNull Creature creature) {
+        return false;
+    }
+
+    @Override
+    public boolean navigateTo(@NotNull Creature creature, double speed, @NotNull Location location) {
+        return false;
+    }
+
+    @Override
+    public boolean navigateTo(@NotNull Creature creature, double speed, @NotNull Entity entity) {
+        return false;
+    }
+
+    @Override
+    public boolean navigateTo(@NotNull Creature creature, double speed, double x, double y, double z) {
+        return false;
+    }
 }

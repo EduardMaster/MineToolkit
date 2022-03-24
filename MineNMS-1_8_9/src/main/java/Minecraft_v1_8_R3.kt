@@ -29,6 +29,51 @@ import java.lang.reflect.Field
  * @author Eduard
  */
 class Minecraft_v1_8_R3 : Minecraft() {
+    override fun registerRule(creature: Creature, rule: EntityRule, priority: Int) {
+        try {
+            ((creature as CraftCreature).handle).goalSelector
+                .a(priority, EntityRule_v1_8_R3(creature, rule))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    override fun isNavigating(creature: Creature): Boolean {
+        return ((creature as CraftCreature).handle).navigation.m()
+    }
+
+    override fun navigateTo(creature: Creature, speed: Double, entity: Entity): Boolean {
+        return ((creature as CraftCreature).handle).navigation.a((entity as CraftEntity).handle, speed)
+    }
+
+    override fun navigateCancel(creature: Creature): Boolean {
+        return ((creature as CraftCreature).handle).navigation.let {
+            if (it.j() != null) {
+                it.n()
+                true
+            } else
+                false
+        }
+    }
+
+    override fun navigateTo(creature: Creature, speed: Double, location: Location): Boolean {
+        return ((creature as CraftCreature).handle).navigation.a(location.x, location.y, location.z, speed)
+    }
+
+    override fun navigateTo(creature: Creature, speed: Double, x: Double, y: Double, z: Double): Boolean {
+        return ((creature as CraftCreature).handle).navigation.a(x, y, z, speed)
+    }
+
+    override fun registerTargetRule(creature: Creature, rule: EntityRule, priority: Int) {
+        try {
+            ((creature as CraftCreature).handle).targetSelector
+                .a(priority, EntityRule_v1_8_R3(creature, rule))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+
+    }
+
     override fun setBlock(block: Block, chunk: Chunk, material: Material, dataAsInt: Int, updateLightning: Boolean) {
         try {
             val chunkHandle = (chunk as CraftChunk).handle
@@ -92,13 +137,12 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
 
     override fun canTarget(creature: Creature, classEntityName: String, priority: Int) {
-
         try {
             val nmsCreature = (creature as CraftCreature).handle
             val entityClass =
                 Extra.getClassFrom("#mEntity$classEntityName") as Class<out net.minecraft.server.v1_8_R3.EntityLiving>
             val target = PathfinderGoalNearestAttackableTarget(nmsCreature, entityClass, true)
-            nmsCreature.targetSelector.a(target)
+            //nmsCreature.targetSelector.a(target)
             nmsCreature.targetSelector.a(priority, target)
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -112,9 +156,8 @@ class Minecraft_v1_8_R3 : Minecraft() {
                     as Class<out net.minecraft.server.v1_8_R3.Entity>
 
             val melee = PathfinderGoalMeleeAttack(nmsCreature, entityClass, 1.0, true)
-            nmsCreature.goalSelector.a(melee)
+            //nmsCreature.goalSelector.a(melee)
             nmsCreature.goalSelector.a(priority, melee)
-
 
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -133,18 +176,13 @@ class Minecraft_v1_8_R3 : Minecraft() {
     }
 
     override fun followLocation(creature: Creature, targetLocation: Location, speed: Double, priority: Int) {
-        try {
-            val nmsCreature = (creature as CraftCreature).handle
-            nmsCreature.goalSelector.a(priority, PathFinderFollowLocation(creature, targetLocation, speed))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+        registerRule(creature, EntityRuleFollowLocation(creature, targetLocation, speed), priority)
     }
 
 
     override fun removeGoals(creature: Creature) {
         try {
-            val nmsCreature =((creature as CraftCreature).handle)
+            val nmsCreature = ((creature as CraftCreature).handle)
             val pathFinderListField = PathfinderGoalSelector::class.java.getDeclaredField("b")
             pathFinderListField.isAccessible = true
             pathFinderListField.set(nmsCreature.goalSelector, UnsafeList<Any>())
@@ -155,7 +193,7 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
     override fun removeTargetGoals(creature: Creature) {
         try {
-            val nmsCreature =((creature as CraftCreature).handle)
+            val nmsCreature = ((creature as CraftCreature).handle)
             val pathFinderListField = PathfinderGoalSelector::class.java.getDeclaredField("b")
             pathFinderListField.isAccessible = true
             pathFinderListField.set(nmsCreature.targetSelector, UnsafeList<Any>())

@@ -93,6 +93,13 @@ abstract class Minecraft {
     abstract fun followLocation(creature: Creature, location : Location, speed : Double, priority : Int)
     abstract fun removeGoals(creature: Creature)
     abstract fun removeTargetGoals(creature: Creature)
+    abstract fun registerRule(creature: Creature, rule : EntityRule , priority: Int)
+    abstract fun registerTargetRule(creature: Creature, rule : EntityRule , priority: Int)
+    abstract fun isNavigating(creature: Creature) : Boolean
+    abstract fun navigateCancel(creature: Creature) : Boolean
+    abstract fun navigateTo(creature: Creature,speed: Double, location: Location) : Boolean
+    abstract fun navigateTo(creature: Creature,speed: Double, entity: Entity) : Boolean
+    abstract fun navigateTo(creature: Creature,speed: Double, x : Double , y: Double, z : Double) : Boolean
     companion object {
         fun getVersion() = MineReflect.getVersion()
         /**

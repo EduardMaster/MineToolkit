@@ -59,6 +59,34 @@ class Minecraft_v1_16_R3 : Minecraft() {
     override fun removeGoals(creature: Creature) {}
 
     override fun removeTargetGoals(creature: Creature) {}
+    override fun registerRule(creature: Creature, rule: EntityRule, priority: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun registerTargetRule(creature: Creature, rule: EntityRule, priority: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun isNavigating(creature: Creature): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun navigateCancel(creature: Creature): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun navigateTo(creature: Creature, speed: Double, location: Location): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun navigateTo(creature: Creature, speed: Double, entity: Entity): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun navigateTo(creature: Creature, speed: Double, x: Double, y: Double, z: Double): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override fun sendParticle(
         player: Player,
         name: String,

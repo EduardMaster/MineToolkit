@@ -6,6 +6,6 @@ interface EntityRule {
     fun finished(): Boolean
     fun unregister()
     fun priority() : Int
-    fun setPriority(newPriority : Int)
+
 
 }

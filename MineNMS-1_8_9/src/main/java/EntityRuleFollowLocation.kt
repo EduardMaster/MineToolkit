@@ -6,14 +6,12 @@ import org.bukkit.entity.Creature
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
-class PathFinderFollowLocation(val creature: Creature, val targetLocation: Location, val speed: Double) :
-    EntityRule_v1_8_R3() {
+class EntityRuleFollowLocation(val creature: Creature, val targetLocation: Location, val speed: Double) : EntityRule{
     val nmsCreature get() = (creature as CraftCreature).handle
     var lastFollow = System.currentTimeMillis()
     val followDelay = TimeUnit.SECONDS.toMillis(5)
     val canFollow
         get() = System.currentTimeMillis() > (lastFollow + followDelay)
-                && nmsCreature.goalTarget == null
     var toFollowLocation: Location = targetLocation
     val minDistanceSquared get() = 2.0.pow(2.0)
 
@@ -31,7 +29,7 @@ class PathFinderFollowLocation(val creature: Creature, val targetLocation: Locat
     }
 
     override fun canRun(): Boolean {
-        return canFollow
+        return canFollow && creature.target == null
     }
 
     override fun finished(): Boolean {
@@ -42,6 +40,10 @@ class PathFinderFollowLocation(val creature: Creature, val targetLocation: Locat
 
     override fun unregister() {
 
+    }
+
+    override fun priority(): Int {
+        return 0
     }
 
 }

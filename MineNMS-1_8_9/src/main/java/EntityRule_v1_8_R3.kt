@@ -1,19 +1,21 @@
 package net.eduard.api.lib.abstraction
 
 import net.minecraft.server.v1_8_R3.PathfinderGoal
+import org.bukkit.entity.Creature
 
-abstract class EntityRule_v1_8_R3 : PathfinderGoal(), EntityRule {
+open class EntityRule_v1_8_R3(
+val creature : Creature,
+var entityRule : EntityRule?) : PathfinderGoal() {
     override fun a(): Boolean {
-        return canRun()
+        return entityRule?.canRun() ?: false
     }
 
     override fun c() {
-
-        run()
+        entityRule?.run()
     }
 
     override fun d() {
-       unregister()
+        entityRule?.unregister()
     }
 
     override fun i(): Boolean {
@@ -21,14 +23,14 @@ abstract class EntityRule_v1_8_R3 : PathfinderGoal(), EntityRule {
     }
 
     override fun b(): Boolean {
-        return finished()
+        return entityRule?.finished() ?: true
     }
 
-    override fun priority(): Int {
+    fun priority(): Int {
         return j()
     }
 
-    override fun setPriority(newPriority: Int) {
+    fun setPriority(newPriority: Int) {
         a(newPriority)
     }
 }
