@@ -1,129 +1,47 @@
 package net.eduard.api.lib.abstraction
 
-import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftCreature
 import org.bukkit.entity.Creature
+import java.util.concurrent.TimeUnit
+import kotlin.math.pow
 
-class PathFinderFollowLocation(val creature: Creature, val targetLocation: Location, val speed : Double, val minDistance : Double = 4.0) : PathfinderGoal() {
+class PathFinderFollowLocation(val creature: Creature, val targetLocation: Location, val speed: Double) :
+    EntityRule_v1_8_R3() {
     val nmsCreature get() = (creature as CraftCreature).handle
     var lastFollow = System.currentTimeMillis()
-    val followDelay = 1000L
-    var lastPath : PathEntity? = null
-    val canFollow get() = System.currentTimeMillis() > (lastFollow + followDelay)
-    lateinit var toFollowLocation: Location
-    val minDistanceSquared get() = minDistance * minDistance
+    val followDelay = TimeUnit.SECONDS.toMillis(5)
+    val canFollow
+        get() = System.currentTimeMillis() > (lastFollow + followDelay)
+                && nmsCreature.goalTarget == null
+    var toFollowLocation: Location = targetLocation
+    val minDistanceSquared get() = 2.0.pow(2.0)
 
-    fun debug(msg: String) {
-      //  Mine.console("[EntityID: " + nmsCreature.id + "] " + msg)
-    }
-    fun run() {
-        //debug("Movendo")
+    override fun run() {
         lastFollow = System.currentTimeMillis();
-        if (targetLocation.distanceSquared(creature.location) > 20) {
+        if (targetLocation.distanceSquared(creature.location) > 20.0.pow(2.0)) {
             updateToFollowLocation()
         }
         nmsCreature.navigation.a(toFollowLocation.x, toFollowLocation.y, toFollowLocation.z, speed)
-    }
-    init {
-        updateToFollowLocation()
     }
 
     fun updateToFollowLocation() {
         val diference = creature.location.subtract(targetLocation)
         toFollowLocation = creature.location.add(diference.toVector().normalize().multiply(-19))
-
-       // debug("§cNew TargetLocation: $toFollowLocation ")
-       // debug("§bTargetLocation Real: $targetLocation ")
     }
 
-
-    override fun a(): Boolean {
-        return canStart()
+    override fun canRun(): Boolean {
+        return canFollow
     }
 
-    override fun c() {
-        run()
+    override fun finished(): Boolean {
+        return !nmsCreature.navigation.m() && (creature.target != null || creature.location.distanceSquared(
+            targetLocation
+        ) < minDistanceSquared)
     }
 
-    override fun d() {
+    override fun unregister() {
 
     }
-
-    override fun i(): Boolean {
-        return true
-    }
-
-
-    override fun b(): Boolean {
-        return needStop();
-    }
-
-
-    fun canStart(): Boolean {
-        return canFollow && !needStop();
-    }
-
-    fun needStop(): Boolean {
-        //Mine.console("Precisa parar")
-        return creature.location.distanceSquared(targetLocation) < minDistanceSquared;
-    }
-
-    fun stop() {
-        //debug("Parando de Mover")
-    }
-
-
-
-
-    /*
-    class PathfinderGoalMoveTowardsTarget(private val a: EntityCreature, private val f: Double, private val g: Float) :
-        PathfinderGoal() {
-        private var b: EntityLiving? = null
-        private var c = 0.0
-        private var d = 0.0
-        private var e = 0.0
-        override fun a(): Boolean {
-            b = this.a.goalTarget
-            return if (b == null) {
-                false
-            } else if (b!!.h(this.a) > (g * g).toDouble()) {
-                false
-            } else {
-                val var1 = RandomPositionGenerator.a(
-                    this.a, 16, 7, Vec3D(
-                        b!!.locX, b!!.locY, b!!.locZ
-                    )
-                )
-                if (var1 == null) {
-                    false
-                } else {
-                    c = var1.a
-                    d = var1.b
-                    e = var1.c
-                    true
-                }
-            }
-        }
-
-        override fun b(): Boolean {
-            return !this.a.navigation.m() && b!!.isAlive
-             && b!!.h(this.a) < (g * g).toDouble()
-        }
-
-        override fun d() {
-            b = null
-        }
-
-        override fun c() {
-            this.a.navigation.a(c, d, e, f)
-        }
-
-        init {
-            this.a(1)
-        }
-    }
-
-     */
 
 }

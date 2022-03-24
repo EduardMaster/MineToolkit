@@ -1,4 +1,5 @@
 package net.eduard.api.lib.abstraction
+
 import java.util.UUID
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity
 import net.minecraft.server.v1_8_R3.EntityInsentient
@@ -14,34 +15,37 @@ import java.lang.Exception
 import java.lang.reflect.Field
 
 object PetsAPI {
-    private var pathFinderListField: Field? = null
-    private var goalSelector: Field? = null
-    private var targetSelector: Field? = null
-    fun makePet(e: LivingEntity, toFollow: UUID?) {
+    private lateinit var pathFinderListField: Field
+    private lateinit var goalSelectorField: Field
+    private lateinit var targetSelectorField: Field
+    fun makePetFollowPlayer(petEntity: LivingEntity, playerUUID: UUID) {
         try {
-            val nmsEntity: Any = (e as CraftLivingEntity).handle
+            val nmsEntity: Any = (petEntity as CraftLivingEntity).handle
             if (nmsEntity is EntityInsentient) {
-                val goal = goalSelector!![nmsEntity] as PathfinderGoalSelector
-                val target = targetSelector!![nmsEntity] as PathfinderGoalSelector
-                pathFinderListField!![goal] = UnsafeList<Any>()
-                pathFinderListField!![target] = UnsafeList<Any>()
+                val goal = goalSelectorField[nmsEntity] as PathfinderGoalSelector
+                val target = targetSelectorField[nmsEntity] as PathfinderGoalSelector
+                pathFinderListField[goal] = UnsafeList<Any>()
+                pathFinderListField[target] = UnsafeList<Any>()
                 goal.a(0, PathfinderGoalFloat(nmsEntity))
-                goal.a(1, PathfinderGoalWalktoTile(nmsEntity, toFollow))
+                goal.a(1, PathFinderFollowPlayer(nmsEntity, playerUUID))
             } else {
-                throw IllegalArgumentException(e.getType().getName() + " is not an instance of an EntityInsentient.")
+                throw IllegalArgumentException(
+                    petEntity.getType().getName() + " is not an instance of an EntityInsentient."
+                )
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
-    class PathfinderGoalWalktoTile(private val entity: EntityInsentient, private val uuid: UUID?) : PathfinderGoal() {
-        private var path: PathEntity? = null
+
+    class PathFinderFollowPlayer(
+        val entity: EntityInsentient,
+        val playerID: UUID
+    ) : PathfinderGoal() {
+        var path: PathEntity? = null
         override fun a(): Boolean {
-            val alvo = Bukkit.getPlayer(uuid)
-            if (Bukkit.getPlayer(uuid) == null) {
-                return path != null
-            }
-            val targetLocation = alvo.location
+            val target = Bukkit.getPlayer(playerID) ?: return path != null
+            val targetLocation = target.location
             //boolean flag = this.entity.getNavigation().m();
             path = entity.navigation.a(targetLocation.x + 1, targetLocation.y, targetLocation.z + 1)
             if (path != null) {
@@ -49,25 +53,30 @@ object PetsAPI {
             }
             return path != null
         }
+
         override fun e() {
         }
+
         override fun d() {
         }
+
         override fun i(): Boolean {
             return true
         }
+
         override fun c() {
             entity.navigation.a(path, 1.0)
         }
     }
+
     init {
         try {
             pathFinderListField = PathfinderGoalSelector::class.java.getDeclaredField("b")
-            pathFinderListField!!.isAccessible = true
-            goalSelector = EntityInsentient::class.java.getDeclaredField("goalSelector")
-            goalSelector!!.isAccessible = true
-            targetSelector = EntityInsentient::class.java.getDeclaredField("targetSelector")
-            targetSelector!!.isAccessible = true
+            pathFinderListField.isAccessible = true
+            goalSelectorField = EntityInsentient::class.java.getDeclaredField("goalSelector")
+            goalSelectorField.isAccessible = true
+            targetSelectorField = EntityInsentient::class.java.getDeclaredField("targetSelector")
+            targetSelectorField.isAccessible = true
         } catch (e: Exception) {
             e.printStackTrace()
         }

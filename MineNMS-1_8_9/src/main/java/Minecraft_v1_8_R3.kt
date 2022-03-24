@@ -18,6 +18,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_8_R3.util.UnsafeList
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
@@ -64,7 +65,7 @@ class Minecraft_v1_8_R3 : Minecraft() {
             if (updateLightning) {
                 Bukkit.getScheduler().runTaskAsynchronously(plugin) {
                     worldHandle.x(position)
-                   // worldHandle.getLightLevel(position)
+                    // worldHandle.getLightLevel(position)
                     Bukkit.getScheduler().runTask(plugin) {
                         worldHandle.notify(position)
                         /*
@@ -123,19 +124,18 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
     override fun followTarget(creature: Creature, speed: Double, priority: Int) {
         try {
-            val radiusLimit = 5.0f
+            val radiusLimit = 1.0f
             val nmsCreature = (creature as CraftCreature).handle
             nmsCreature.goalSelector.a(priority, PathfinderGoalMoveTowardsTarget(nmsCreature, speed, radiusLimit))
-
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-    override fun followLocation(creature: Creature, targetLocation: Location,speed: Double, priority : Int) {
+    override fun followLocation(creature: Creature, targetLocation: Location, speed: Double, priority: Int) {
         try {
             val nmsCreature = (creature as CraftCreature).handle
-            nmsCreature.goalSelector.a(priority, PathFinderFollowLocation(creature, targetLocation,speed))
+            nmsCreature.goalSelector.a(priority, PathFinderFollowLocation(creature, targetLocation, speed))
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -143,7 +143,25 @@ class Minecraft_v1_8_R3 : Minecraft() {
 
 
     override fun removeGoals(creature: Creature) {
+        try {
+            val nmsCreature =((creature as CraftCreature).handle)
+            val pathFinderListField = PathfinderGoalSelector::class.java.getDeclaredField("b")
+            pathFinderListField.isAccessible = true
+            pathFinderListField.set(nmsCreature.goalSelector, UnsafeList<Any>())
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
 
+    override fun removeTargetGoals(creature: Creature) {
+        try {
+            val nmsCreature =((creature as CraftCreature).handle)
+            val pathFinderListField = PathfinderGoalSelector::class.java.getDeclaredField("b")
+            pathFinderListField.isAccessible = true
+            pathFinderListField.set(nmsCreature.targetSelector, UnsafeList<Any>())
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
     override fun forceOpen(chest: Chest, player: Player) {
@@ -152,9 +170,6 @@ class Minecraft_v1_8_R3 : Minecraft() {
         nmsPlayer.openTileEntity(nmsChestTile)
     }
 
-    override fun removeTargetGoals(creature: Creature) {
-
-    }
 
     override fun sendPacket(packet: Any, player: Player) {
         (player as CraftPlayer).handle.playerConnection.sendPacket(packet as Packet<*>)
@@ -359,7 +374,7 @@ class Minecraft_v1_8_R3 : Minecraft() {
     companion object {
         var particlesEnumsByName: MutableMap<String, Any> = HashMap()
         var blockedMessage: MutableSet<String> = HashSet()
-        fun clear(){
+        fun clear() {
             particlesEnumsByName.clear()
             blockedMessage.clear()
         }
