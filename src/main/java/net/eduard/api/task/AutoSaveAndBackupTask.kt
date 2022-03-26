@@ -32,22 +32,23 @@ class AutoSaveAndBackupTask : TimeManager(60) {
                 log("$pluginName §cFalha ao rodar metodo save()")
                 ex.printStackTrace()
             }
-            try {
-                val agora = Extra.getNow()
-                val canBackupNow = pluginSettings.lastBackup + pluginSettings.autoBackupSeconds * 1000L < agora
-                if (canBackupNow) {
-                    EduardAPI.instance.asyncTask{
+
+            val agora = Extra.getNow()
+            val canBackupNow = pluginSettings.lastBackup + pluginSettings.autoBackupSeconds * 1000L < agora
+            if (canBackupNow) {
+                EduardAPI.instance.asyncTask {
+                    try {
                         log("$pluginName§f Gerando Backup")
                         val inicioBackup = Extra.getNow()
                         plugin.backup()
                         val fimBackup = Extra.getNow()
                         log("$pluginName§f Backup gerado com: §e" + (fimBackup - inicioBackup) + "§fms")
+                    } catch (ex: Exception) {
+                        plugin.creatingBackup = false
+                        log("$pluginName §cFalha ao rodar metodo backup()")
+                        ex.printStackTrace()
                     }
                 }
-            } catch (ex: Exception) {
-                plugin.creatingBackup=false
-                log("$pluginName §cFalha ao rodar metodo backup()")
-                ex.printStackTrace()
             }
 
 
