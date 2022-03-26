@@ -6,7 +6,7 @@ import net.eduard.api.lib.modules.Extra
 import net.eduard.api.server.EduardPlugin
 import org.bukkit.Bukkit
 
-class AutoSaveAndBackupTask : TimeManager(20L) {
+class AutoSaveAndBackupTask : TimeManager(60) {
     fun log(msg: String) {
         EduardAPI.instance.log(msg)
     }
@@ -19,7 +19,7 @@ class AutoSaveAndBackupTask : TimeManager(20L) {
 
             try {
                 val agora = Extra.getNow()
-                val canRunSaveNow = pluginSettings.lastSave + pluginSettings.autoBackupSeconds * 1000 < agora
+                val canRunSaveNow = pluginSettings.lastSave + pluginSettings.autoBackupSeconds * 1000 <= agora
                 if (pluginSettings.isAutoSave && canRunSaveNow) {
                     log("$pluginName§f Salvando dados do plugin")
                     val inicioSave = Extra.getNow()
@@ -36,12 +36,13 @@ class AutoSaveAndBackupTask : TimeManager(20L) {
                 val agora = Extra.getNow()
                 val canBackupNow = pluginSettings.lastBackup + pluginSettings.autoBackupSeconds * 1000L < agora
                 if (canBackupNow) {
-                    log("$pluginName§f Gerando Backup")
-                    val inicioBackup = Extra.getNow()
-                    plugin.backup()
-                    val fimBackup = Extra.getNow()
-                    log("$pluginName§f Backup gerado com: §e" + (fimBackup - inicioBackup) + "§fms")
-                    return
+                    EduardAPI.instance.asyncTask{
+                        log("$pluginName§f Gerando Backup")
+                        val inicioBackup = Extra.getNow()
+                        plugin.backup()
+                        val fimBackup = Extra.getNow()
+                        log("$pluginName§f Backup gerado com: §e" + (fimBackup - inicioBackup) + "§fms")
+                    }
                 }
             } catch (ex: Exception) {
                 plugin.creatingBackup=false
