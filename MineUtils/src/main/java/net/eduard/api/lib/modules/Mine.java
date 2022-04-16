@@ -1112,11 +1112,6 @@ public final class Mine {
     }
 
 
-    public static long getCooldown(long before, long seconds) {
-        return Extra.getCooldown(before, seconds);
-
-    }
-
 
     /**
      * Pega a quantidade de dano causada pelo Item
@@ -1559,11 +1554,6 @@ public final class Mine {
 
         return target;
     }
-
-    public static long getNow() {
-        return Extra.getNow();
-    }
-
 
     public static Player getPlayer(String name) {
         return Bukkit.getPlayerExact(name);

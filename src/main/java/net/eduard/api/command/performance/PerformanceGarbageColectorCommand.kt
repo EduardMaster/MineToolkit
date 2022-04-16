@@ -12,7 +12,7 @@ class PerformanceGarbageColectorCommand : CommandManager("garbagecolector", "gc"
 
     override fun command(sender: CommandSender, args: Array<String>) {
         Runtime.getRuntime().gc()
-        sender.sendMessage("§aAttivando GC de Memoria no Java.")
+        sender.sendMessage("§aAtivando GC de Memoria no Java.")
 
     }
 

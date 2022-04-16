@@ -5,6 +5,7 @@ import net.eduard.api.lib.manager.CommandManager
 class ApiCommand : CommandManager("api") {
     init {
         register(ApiHelpCommand())
+        register(ApiSQLDebugCommand())
         register(ApiReloadCommand())
         register(ApiUnloadWorldCommand())
         register(ApiLoadWorldCommand())
