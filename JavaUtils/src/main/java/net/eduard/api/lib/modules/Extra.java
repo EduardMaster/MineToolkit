@@ -140,6 +140,10 @@ public final class Extra {
      * @throws IOException Erro
      */
     public static InputStream getResource(ClassLoader loader, String name) throws IOException {
+        if (name == null)
+            return null;
+        if (loader == null)
+            return null;
         URL url = loader.getResource(name);
         if (url == null)
             return null;

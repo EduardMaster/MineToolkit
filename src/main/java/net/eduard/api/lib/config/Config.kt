@@ -109,13 +109,15 @@ class Config(
         }
         try {
             debug("COPYING DEFAULT...")
-            val defaultResourceFile = Extra.getResource(plugin!!.javaClass.classLoader, name)
-            if (defaultResourceFile == null) {
-                debug("DEFAULT NOT FOUNDED!")
-                return
+            if (plugin !is File) {
+                val defaultResourceFile = Extra.getResource(plugin!!.javaClass.classLoader, name)
+                if (defaultResourceFile == null) {
+                    debug("DEFAULT NOT FOUNDED!")
+                    return
+                }
+                Extra.copyAsUTF8(defaultResourceFile, file)
+                debug("DEFAULT COPIED!")
             }
-            Extra.copyAsUTF8(defaultResourceFile, file)
-            debug("DEFAULT COPIED!")
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

@@ -22,10 +22,10 @@ class AutoSaveAndBackupTask : TimeManager(60) {
                 val canRunSaveNow = pluginSettings.lastSave + pluginSettings.autoBackupSeconds * 1000 <= agora
                 if (pluginSettings.isAutoSave && canRunSaveNow) {
                     log("$pluginName§f Salvando dados do plugin")
-                    val inicioSave = Extra.getNow()
+                    val startSave = Extra.getNow()
                     plugin.autosave()
-                    val fimSave = Extra.getNow()
-                    log("$pluginName§f Tempo levado para salvar §e" + (fimSave - inicioSave) + "§fms")
+                    val endSave = Extra.getNow()
+                    log("$pluginName§f Tempo levado para salvar §e" + (endSave - startSave) + "§fms")
 
                 }
             } catch (ex: Exception) {
