@@ -59,4 +59,19 @@ interface EconomySystem : PluginSystem{
      * Aplica uma transação entre dois jogadores (Pagamento de dividas)
      */
     fun pay(payerName : String, receiverName : String, amount: Double)
+
+    fun getBuyLimit(playerName : String) : Double
+    fun getSellLimit(playerName : String) : Double
+    fun giveBuyLimit(playerName : String, amount : Double)
+    fun giveSellLimit(playerName : String, amount : Double)
+    fun takeBuyLimit(playerName : String, amount : Double)
+    fun takeSellLimit(playerName : String, amount : Double)
+    fun modifySellLimit(playerName : String, amount : Double)
+    fun modifyBuyLimit(playerName : String, amount : Double)
+    fun checkBuyLimit(playerName : String, amount : Double) : Boolean
+    fun checkSellLimit(playerName : String, amount : Double) : Boolean
+    fun getBuyAmountFixed(playerName : String,amount: Double, pricePerAmount : Double) : Double
+    fun getSellAmountFixed(playerName : String,amount: Double, pricePerAmount : Double) : Double
+
+
 }

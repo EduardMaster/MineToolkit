@@ -8,7 +8,6 @@ import net.eduard.api.lib.menu.Menu
 import net.eduard.api.lib.plugin.IPluginInstance
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
-import org.bukkit.plugin.Plugin
 
 fun IPluginInstance.enableTests() {
     //MenuTest().registerMenu(this)
@@ -25,7 +24,8 @@ class MenuTest : Menu("Teste de Menu", 3) {
         openWithCommand = "/menutest"
         button("novo-botao") {
             setPosition(5,2)
-            icon = ItemBuilder(Material.DIAMOND_SWORD).name("§bMenu §3Exemplo")
+            icon = ItemBuilder(Material.DIAMOND_SWORD)
+                .name("§bMenu §3Exemplo")
                 .lore("§7","§7Lore Exemplo")
             click = ClickEffect {
                 val player = it.player

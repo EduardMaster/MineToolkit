@@ -24,6 +24,7 @@ final public class StorageInfo implements Cloneable {
 
     private Class<?> type;
     private boolean reference;
+    private boolean referenceMapValue;
     private boolean inline;
     private boolean indentifiable;
     private Field field;
@@ -103,7 +104,9 @@ final public class StorageInfo implements Cloneable {
             update(attributes);
         }
         if (getField().isAnnotationPresent(StorageReference.class)) {
-            setReference(true);
+            StorageReference reference = getField().getAnnotation(StorageReference.class);
+            setReference(reference.mapKey());
+            setReferenceMapValue(reference.mapValue());
         }
         if (getField().isAnnotationPresent(StorageIndex.class)) {
             setIndentifiable(true);
@@ -123,12 +126,20 @@ final public class StorageInfo implements Cloneable {
     }
 
     public void update(StorageAttributes attributes) {
+
         if (!reference)
             setReference(attributes.reference());
+
         if (!inline)
             setInline(attributes.inline());
+
         if (!indentifiable)
             setIndentifiable(attributes.indentificate());
+
+        if (!referenceMapValue){
+            setReferenceMapValue(attributes.referenceMapValue());
+        }
+
     }
 
 
@@ -181,4 +192,11 @@ final public class StorageInfo implements Cloneable {
     }
 
 
+    public boolean isReferenceMapValue() {
+        return referenceMapValue;
+    }
+
+    public void setReferenceMapValue(boolean referenceMapValue) {
+        this.referenceMapValue = referenceMapValue;
+    }
 }

@@ -15,4 +15,6 @@ public @interface StorageAttributes {
 
     boolean inline() default false;
 
+    boolean referenceMapValue() default false;
+
 }
