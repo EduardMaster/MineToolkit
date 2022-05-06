@@ -12,4 +12,5 @@ interface DropSystem : PluginSystem{
     fun getDropAmount(player : FakePlayer, item : ItemStack) : Double
     fun getDrops(player : FakePlayer) : Map<ItemStack, Double>
     fun getDropUnitPrice(item : ItemStack) : Double
+    fun setDropUnitPrice(item : ItemStack, price : Double)
 }
