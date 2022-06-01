@@ -1,5 +1,5 @@
 # EduardAPI
-## Toolking for Developing Bukkit/BungeeCord/Spigot/Paper Plugins
+## Toolkit for Developing Bukkit/BungeeCord/Spigot/Paper Plugins
 
 ### Features
 - Custom Database ORM based on **Hibernate** called "SQLMaanger"
