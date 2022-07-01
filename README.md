@@ -17,7 +17,7 @@
 
 ## Why I was using this Toolkit called "EduardAPI"
 - I dont like to move Helpers classes between projects
-- I challanged myself in creating a thing very hard like ORM Hibernate
+- I challenged myself in creating a thing very hard like ORM Hibernate
 - My first creation was my own Yaml implementation
 - I created a transformer of Object to HashMap with Keys and Values
 -  the Keys were the variables of the objects and de values, the values of the variables
