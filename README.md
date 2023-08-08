@@ -16,11 +16,14 @@
 - Kotlin Extensions for many functions of Toolkit
 
 ## Why I was using this Toolkit called "EduardAPI"
-- I dont like to move Helpers classes between projects
-- I challenged myself in creating a thing very hard like ORM Hibernate
+- I didn't like to install gradle or maven libraries when I started to create this tool, so, I needed to create
+- a data Save/Load from/to .yaml files, and I create this at end of 2017, but with time cames good and performed
+- I didn't like to move Helpers classes between projects so I let all helpers at same Project Library
+- I challenged myself in creating a thing very hard like ORM Hibernate, that I called SQLManager
 - My first creation was my own Yaml implementation
-- I created a transformer of Object to HashMap with Keys and Values
--  the Keys were the variables of the objects and de values, the values of the variables
+- I created a transformer of Object to HashMap with 'Keys' and 'Values'
+- using their variables Names and Variables Values (Deep Tranformation) that I called StorageAPI
+- I created some custom NMS Implementations for doing some special things not in spigot.jar, at version 1.8.9
 
 ## Why no more Updates
 - I stopped making Plugins in 2022
