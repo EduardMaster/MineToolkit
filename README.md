@@ -17,7 +17,7 @@
 
 ## Why I was using this Toolkit called "EduardAPI"
 - I didn't like to install gradle or maven libraries when I started to create this tool, so, I needed to create
-- a data Save/Load from/to .yaml files, and I create this at end of 2017, but with time cames good and performed
+- a data Save/Load from/to .yaml files, and I create this at end of 2017, but with time turned to a good and performed tool
 - I didn't like to move Helpers classes between projects so I let all helpers at same Project Library
 - I challenged myself in creating a thing very hard like ORM Hibernate, that I called SQLManager
 - My first creation was my own Yaml implementation
