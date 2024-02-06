@@ -1,6 +1,6 @@
 plugins {
     java
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm") version "1.9.22"
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
@@ -23,8 +23,7 @@ tasks {
     shadowJar{
         archiveVersion.set("1.0")
         archiveBaseName.set("EduardAPI")
-        destinationDirectory.set(
-            file("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\plugins\\"))
+       // destinationDirectory.set( file("E:\\Tudo\\Minecraft - Server\\Servidor Teste\\plugins\\"))
     }
 }
 

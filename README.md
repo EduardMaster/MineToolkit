@@ -14,8 +14,3 @@
 - Creating Scoreboard (Informative Screens) more easy with class **DisplayBoard**
 - Helpers classes for Java data control
 - Kotlin Extensions for many functions of Toolkit
-
-
-### Updates
-- I stopped making Plugins in 2022
-
