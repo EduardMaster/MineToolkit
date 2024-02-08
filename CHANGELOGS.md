@@ -1,63 +1,68 @@
+## This document is in Portuguese
+
+### Quanto eu comecei a programar?
 Iniciei estudos de programação bukkit em 2014 mês 10
-VERSÔES:
- - Não tem todas as versões que fiz
 
-0.1:
-  Data: 2015-07-16
-  Descrição:
-    - EduardAPI ainda era só uma Ideia tinha criado apenas uma classe chamado de Eduard com varias classes internas
-    - dentro destas classes tinha varias ideias como controle proprio de Tempo tipo um BukkitRunnable proprio,
-    - facilidade em criação de Scoreboard, criação de configuração com nome diferenciado alem do config.yml,
-    - criação de craft simples e composto, criação de efeito de Fogos de artifico, criação de minigame e arenas
-    - o objetivo de ser tudo junto era poder ficar facilmente arrastando deprojeto em projeto de plugin
-  classes: (Classes Internas) - Detalhes $Classe
-    - GUI (Event $Listener)
-    - Scoreboards - Scoreboard simples de fazer
-    - FireworkType - Desnecessário
-    - CraftExtra - CraftComposto $ShapedRecipe
-    - CraftNormal - Craft simples $ShapelessRecipe
-    - Fireworks - Tipo um Builder de FireworkEffect
-    - Timers - Fazer timer de minigame
-    - Time - Fazer uma Repetição de ação $BukkitRunnable
-    - Delay - Fazer um Atraso de ação $BukkitRunnable
-    - Delays - Armazenar delays de players
-    - Cooldowns - Criar Cooldown com Ação executada ao terminar o cooldown
-    - Cooldown - Criar Cooldown com apenas Timestamp
-    - Minigame (Arena) - Minigame salvando e puxando dados diretamente de Config
-    - Configs - Criar configs customizadas $YamlConfiguration com $File
+### Detalhes do que foi criado nas versões antigas
 
-  interfaces:
-    - ITimer - 3 Funções de ações com inicio, meio e fim
-    - IPlayer - Função para Placeholder de Scoreboard
-    - Eduard - Varios métodos default do Java8 e com Método estatico getInstance() que gerava uma instancia nova da Interface
-  veredito da versão:
-    - Nesta ponto a api estava muito longe de ser uma api usavel tudo muito acomplato dificil de entender e atualizar
+## Versão 0.1
+### Data
+2015-07-16
+### Descrição:
+- EduardAPI ainda era só uma Ideia tinha criado apenas uma classe chamado de Eduard com varias classes internas
+- dentro destas classes tinha varias ideias como controle proprio de Tempo tipo um BukkitRunnable proprio,
+- facilidade em criação de Scoreboard, criação de configuração com nome diferenciado alem do config.yml,
+- criação de craft simples e composto, criação de efeito de Fogos de artifico, criação de minigame e arenas
+- o objetivo de ser tudo junto era poder ficar facilmente arrastando deprojeto em projeto de plugin
+### Classes: (Classes Internas)
+- GUI (Event $Listener)
+- Scoreboards - Scoreboard simples de fazer
+- FireworkType - Desnecessário
+- CraftExtra - CraftComposto $ShapedRecipe
+- CraftNormal - Craft simples $ShapelessRecipe
+- Fireworks - Tipo um Builder de FireworkEffect
+- Timers - Fazer timer de minigame
+- Time - Fazer uma Repetição de ação $BukkitRunnable
+- Delay - Fazer um Atraso de ação $BukkitRunnable
+- Delays - Armazenar delays de players
+- Cooldowns - Criar Cooldown com Ação executada ao terminar o cooldown
+- Cooldown - Criar Cooldown com apenas Timestamp
+- Minigame (Arena) - Minigame salvando e puxando dados diretamente de Config
+- Configs - Criar configs customizadas $YamlConfiguration com $File
+### Interfaces:
+- ITimer - 3 Funções de ações com inicio, meio e fim
+- IPlayer - Função para Placeholder de Scoreboard
+- Eduard - Varios métodos default do Java8 e com Método estatico getInstance() que gerava uma instancia nova da Interface
+veredito da versão:
+ - Nesta ponto a api estava muito longe de ser uma api usavel tudo muito acomplato dificil de entender e atualizar
 
-0.2:
-  Data: 2015-07-18 - Dois dias depois
-  Descrição:
-    - Nesta versão já existia um JAR criado dele porem com muita repetição de classes e métodos
-    - e o pior tinha varias packages
-    , net/eduard/api/java7, net/eduard/api/java8_class, net/eduard/api/java8_interface, net/eduard/java7, net/eduard/java8, net/eduard/java8_interface
-    - Isso gerava muita confusão na hora de usar, o mótivo de ter feito isso que estava em transição do Java 7 para o 8 e queria
-    - continuar com as classes da maneira antiga, erro fatal porem né não sabia
-    - Eu nem sei como fazia para o Eclipse entender que estava trabalhando com Java 8 e 7 ao mesmo tempo
-  Mudanças:
-    - Classe ActionGUI, para definir como o GUI seria aberto
-    - Novos métodos na Interface Eduard
-    - IconEffect -> Efeito ao clique
-  veredito da versão:
-    - Ainda não usavel e o pior varias classes repetidas
+## Versão 0.2
+### Data
+2015-07-18 - Dois dias depois
+### Descrição:
+- Nesta versão já existia um JAR criado dele porem com muita repetição de classes e métodos
+- e o pior tinha varias packages
+, net/eduard/api/java7, net/eduard/api/java8_class, net/eduard/api/java8_interface, net/eduard/java7, net/eduard/java8, net/eduard/java8_interface
+- Isso gerava muita confusão na hora de usar, o mótivo de ter feito isso que estava em transição do Java 7 para o 8 e queria
+- continuar com as classes da maneira antiga, erro fatal porem né não sabia
+- Eu nem sei como fazia para o Eclipse entender que estava trabalhando com Java 8 e 7 ao mesmo tempo
+### Mudanças:
+- Classe ActionGUI, para definir como o GUI seria aberto
+- Novos métodos na Interface Eduard
+- IconEffect -> Efeito ao clique
+veredito da versão:
+- Ainda não usavel e o pior varias classes repetidas
 
-0.3:
-  Data: 2015-08-28 Quase um mês depois
-  Descrição:
-    - Nesta versão tudo ficou organizado em packages, varias, já estava começando a melhorar, porem criei um padrão de nomeclatura
-    - que terminava tudo com Setup até mesmo coisas que não fazia sentido hoje
-    - Vou marcar classes novas e como era na versão antiga, Package base do Jar /net/eduard/ , e Main class chamava Manager
-    - ficava nesta package
-    - Varias classes de reflection do NMS criado na package /packet/
-  classes refratoradas: (classe Antiga -> package/classe Nova)
+## Versão 0.3
+### Data
+2015-08-28 Quase um mês depois
+### Descrição:
+- Nesta versão tudo ficou organizado em packages, varias, já estava começando a melhorar, porem criei um padrão de nomeclatura
+- que terminava tudo com Setup até mesmo coisas que não fazia sentido hoje
+- Vou marcar classes novas e como era na versão antiga, Package base do Jar /net/eduard/ , e Main class chamava Manager
+- ficava nesta package
+- Varias classes de reflection do NMS criado na package /packet/
+### Classes refratoradas
     - Configs -> /config/ConfigSetup
     - Cooldowns -> /cooldown/CooldownSetup1
     - Cooldown -> /cooldown/CooldownSetup2
