@@ -156,92 +156,87 @@ Iniciei estudos de programação bukkit em 2014 mês 10
 - Monta um código derrepente tem que trocar importação porque mudou as packages da api
 
 
-0.5:
-  Data: 2015-12-17 - Quase 1 mês depois
-  Descrição:
-  - Nesta versão teve algumas Refratorações e a package mudou novamente para net/eduard/eduard_api/ e
-  - a classe Main se tornou Main na mesma package, package /packet continou mesmo jeito
-  - Classes de alterações de Eventos movidas para /edits/ e /extra/
-  - Criação de tres classes de Cooldown uma usando Player como Key da HashMap, outra com UUID, e outra com String
-  - Nova onda de nomeclatura em vez de sempre terminando com Setup terminando com Effect
-  - Surgimento das primeiras classes proprias de Config, nesta versão para fazer um plugin se extendia a classe manager/EduardAPI
-  - Surgimento da primeira classe com tudo dentro manager/API que se tornaria Mine no futuro
-  - Tudo relacionado ao game foi jogado para a package /game/
-  - Tendencia a colocar 's' no final de todos objetos para evitar bug de importação
-  - Aos poucos a package /game/ começou a ser uma forte tendencia de centralização de classes
-
-  class refratoradas:
-    - SaveSetup -> extra/Save
-  - TimeSetup -> time/util/TimedEffect
-  - GuiType -> player/gui/util/GuiType
-  - PlayerEffect -> player/gui/util/PlayerEffect
-  - Save -> manager/Information
-  - SoundSetup -> game/sound/Sounds
-  - Craft -> game/craft/normal/Craft
-  - Crafts -> game/craft/simples/Craft
-  - Arena -> /config/Arena
-  - Config -> /config/Config
-  - Minigame -> /config/Minigame
-  - Money -> /config/Money
-
-
-
-  classes novas:
-    - extra/VaultSetup - Classe para controlar o Vault
-    - game/Jump - Efeito de impulso para cima ou para frente
-    - game/potion/Potions - Classe com Efeitos de poção configuravel desnecessária pois existe PotionEffect
-
-  veredito da versão:
-  - Ainda assim a api não é boa para utilização pois há muitas refratorações de classes isso é péssimo para manter
-  - Códigos sempre funcionando porisso ainda continua sendo 0.5 em vez de ser a primeira 1.0
+## Versão 0.5
+### Data
+2015-12-17 - Quase 1 mês depois
+### Descrição:
+- Nesta versão teve algumas Refratorações e a package mudou novamente para net/eduard/eduard_api/ e
+- a classe Main se tornou Main na mesma package, package /packet continou mesmo jeito
+- Classes de alterações de Eventos movidas para /edits/ e /extra/
+- Criação de tres classes de Cooldown uma usando Player como Key da HashMap, outra com UUID, e outra com String
+- Nova onda de nomeclatura em vez de sempre terminando com Setup terminando com Effect
+- Surgimento das primeiras classes proprias de Config, nesta versão para fazer um plugin se extendia a classe manager/EduardAPI
+- Surgimento da primeira classe com tudo dentro manager/API que se tornaria Mine no futuro
+- Tudo relacionado ao game foi jogado para a package /game/
+- Tendencia a colocar 's' no final de todos objetos para evitar bug de importação
+- Aos poucos a package /game/ começou a ser uma forte tendencia de centralização de classes
+### Class refratoradas:
+- SaveSetup -> extra/Save
+- TimeSetup -> time/util/TimedEffect
+- GuiType -> player/gui/util/GuiType
+- PlayerEffect -> player/gui/util/PlayerEffect
+- Save -> manager/Information
+- SoundSetup -> game/sound/Sounds
+- Craft -> game/craft/normal/Craft
+- Crafts -> game/craft/simples/Craft
+- Arena -> /config/Arena
+- Config -> /config/Config
+- Minigame -> /config/Minigame
+- Money -> /config/Money
+### Classes novas:
+- extra/VaultSetup - Classe para controlar o Vault
+- game/Jump - Efeito de impulso para cima ou para frente
+- game/potion/Potions - Classe com Efeitos de poção configuravel desnecessária pois existe PotionEffect
+### Veredito da versão:
+- Ainda assim a api não é boa para utilização pois há muitas refratorações de classes isso é péssimo para manter
+- Códigos sempre funcionando porisso ainda continua sendo 0.5 em vez de ser a primeira 1.0
 
 
-0.6:
-  Data: 2016-05-14 - Quase 5 mês depois
-  Descrição:
-    - No ano de 2016 comecei a trabalhar diariamente então não programava mais com frequencia
-    - Nesta versão novamente foram feitas mais refratorações separando mais ainda as classes
-    - Package net/eduard/tutorial/ criado onde ficava todo código Snippets de Listener ou CommandExectur
-    - Surgimento da package onde ficava classes que termina como API um padrão que ainda uso até hoje
-    - na package /util/api/
-    - Package packet/ dividida em subpackages packet/game , packet/item/ , packet/player/
-    - Surgimento da package Time, trazendo todas classes relacionadas com Tempo para lá
-    - Surgimento dos primeiros comandos dentro da package manager/command/
+## Versão 0.6
+### Data
+2016-05-14 - Quase 5 mês depois
+### Descrição:
+- No ano de 2016 comecei a trabalhar diariamente então não programava mais com frequencia
+- Nesta versão novamente foram feitas mais refratorações separando mais ainda as classes
+- Package net/eduard/tutorial/ criado onde ficava todo código Snippets de Listener ou CommandExectur
+- Surgimento da package onde ficava classes que termina como API um padrão que ainda uso até hoje
+- na package /util/api/
+- Package packet/ dividida em subpackages packet/game , packet/item/ , packet/player/
+- Surgimento da package Time, trazendo todas classes relacionadas com Tempo para lá
+- Surgimento dos primeiros comandos dentro da package manager/command/
+### Classes refratoradas:
+- Money -> /config/money/Money
+- Minigame -> /config/minigame/Minigame
+- Arena -> /config/Minigame/Arena
+- VaultAPI -> /manager/vault/Vault
+- Informatio -> Classe transformada em varias outras que ficaram na package /manager/information/info
+- Craft -> game/craft/CraftNormal
+- Craft -> game/craft/CraftSimples
+- Fake -> game/Fakes
+### Classes novas:
+- /config/money/Account -> Representa contas dos jogadores
+- /manager/map/Maps - Surgimento da classe que um dia se tornaria Schematic
+- /manager/map/util/MapParts - Representa partes do Mapa
+- varias classes de comandos na packge /manager/command/
+- Commands - Representa um comando CommandExector
+- SubCommands - Representa um SubComando do Commands
+- game/TabList - Aplicar uma mudança no tab
+- /game/particle/ParticleEffect - Efeito de particula
+- /game/particle/ParticleType - Tipo de Efeito de particula
 
-  classes refratoradas:
-    - Money -> /config/money/Money
-    - Minigame -> /config/minigame/Minigame
-    - Arena -> /config/Minigame/Arena
-    - VaultAPI -> /manager/vault/Vault
-    - Informatio -> Classe transformada em varias outras que ficaram na package /manager/information/info
-    - Craft -> game/craft/CraftNormal
-    - Craft -> game/craft/CraftSimples
-    - Fake -> game/Fakes
+## Versões sem Relatorios:
+- 0.7: Embreve vou marcar as mudanças que rolou nesta versão.
+- 0.8: Embreve vou marcar as mudanças que rolou nesta versão.
+- 0.9: Embreve vou marcar as mudanças que rolou nesta versão.
+- 0.10: Embreve vou marcar as mudanças que rolou nesta versão.
+- 1.0: Parando de renomear package principal, Package setup/ fica as classes mais importantes
+- 1.1: Embreve vou marcar as mudanças que rolou nesta versão.
+- 1.2: Embreve vou marcar as mudanças que rolou nesta versão.
+- 1.3: Embreve vou marcar as mudanças que rolou nesta versão.
+- 1.4: Embreve vou marcar as mudanças que rolou nesta versão.
+- 1.5: Embreve vou marcar as mudanças que rolou nesta versão.
+- 1.6: Embreve vou marcar as mudanças que rolou nesta versão.
 
-  classes novas:
-    - /config/money/Account -> Representa contas dos jogadores
-    - /manager/map/Maps - Surgimento da classe que um dia se tornaria Schematic
-    - /manager/map/util/MapParts - Representa partes do Mapa
-    - varias classes de comandos na packge /manager/command/
-    - Commands - Representa um comando CommandExector
-    - SubCommands - Representa um SubComando do Commands
-    - game/TabList - Aplicar uma mudança no tab
-    - /game/particle/ParticleEffect - Efeito de particula
-    - /game/particle/ParticleType - Tipo de Efeito de particula
-
-
-
-0.7: Embreve vou marcar as mudanças que rolou nesta versão.
-0.8: Embreve vou marcar as mudanças que rolou nesta versão.
-0.9: Embreve vou marcar as mudanças que rolou nesta versão.
-0.10: Embreve vou marcar as mudanças que rolou nesta versão.
-1.0: Parando de renomear package principal, Package setup/ fica as classes mais importantes
-1.1: Embreve vou marcar as mudanças que rolou nesta versão.
-1.2: Embreve vou marcar as mudanças que rolou nesta versão.
-1.3: Embreve vou marcar as mudanças que rolou nesta versão.
-1.4: Embreve vou marcar as mudanças que rolou nesta versão.
-1.5: Embreve vou marcar as mudanças que rolou nesta versão.
-1.6: Embreve vou marcar as mudanças que rolou nesta versão.
 1.7:
   Descriçao: Utilizando o Kotlin em boa parte do projeto
   Detalhes:
