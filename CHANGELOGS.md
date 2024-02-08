@@ -239,8 +239,10 @@ Iniciei estudos de programação bukkit em 2014 mês 10
 
 ## Versão 1.7
 ### Data
-2021/02/01 - Varios anos depois
+2020-01-01 - Varios anos depois
 ### Descriçao
+- Neste momento a API já era utilizavel desda v1.0
+- Criei outros facilitadores de Armazenamentos para focar no desenvolvimento e deixar automatizar isso
 - Utilizando o Kotlin em boa parte do projeto
 ### Detalhes:
 - Os debugs de tudo é ativavel pela config.yml
